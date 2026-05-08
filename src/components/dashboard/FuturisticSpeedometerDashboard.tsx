@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "current_month", label: "Mês Atual" },
@@ -42,6 +43,7 @@ const accentMap = {
 };
 
 const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta, size = 220 }: SpeedometerProps) => {
+  const { theme } = useDashboardTheme();
   const [animatedValue, setAnimatedValue] = useState(0);
   const colors = accentMap[accent];
   const pct = Math.min(1, max > 0 ? value / max : 0);
@@ -106,52 +108,65 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
       whileHover={{ y: -3, transition: { type: "spring", stiffness: 300, damping: 20 } }}
       className="relative group"
     >
-      {/* Pulsing ambient glow */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
-        style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
-        animate={{ opacity: [0.35, 0.7, 0.35] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {/* Pulsing ambient glow - Cyber Only */}
+      {theme === "cyber" && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
+          style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
+          animate={{ opacity: [0.35, 0.7, 0.35] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
 
-      {/* Rotating conic neon ring */}
-      <motion.div
-        className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
-        style={{
-          background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
-          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-          padding: "1px",
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-      />
+      {/* Rotating conic neon ring - Cyber Only */}
+      {theme === "cyber" && (
+        <motion.div
+          className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
+          style={{
+            background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
+            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            padding: "1px",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+        />
+      )}
 
       {/* Card */}
       <div
-        className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-5 overflow-hidden"
-        style={{ boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` }}
+        className={cn(
+          "relative rounded-2xl border transition-all duration-300 p-5 overflow-hidden",
+          theme === "cyber" 
+            ? "border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl shadow-[inset_0_0_30px_rgba(var(--primary-rgb),0.05)]" 
+            : "bg-card border-border shadow-sm"
+        )}
+        style={theme === "cyber" ? { boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` } : {}}
       >
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.06] pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
-          }}
-        />
+        {/* Grid overlay - Cyber Only */}
+        {theme === "cyber" && (
+          <div
+            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            style={{
+              backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
+              backgroundSize: "20px 20px",
+            }}
+          />
+        )}
 
-        {/* Scanline sweep */}
-        <motion.div
-          className="absolute inset-x-0 h-[2px] pointer-events-none"
-          style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
-          animate={{ top: ["0%", "100%", "0%"] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        />
+        {/* Scanline sweep - Cyber Only */}
+        {theme === "cyber" && (
+          <motion.div
+            className="absolute inset-x-0 h-[2px] pointer-events-none"
+            style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
+            animate={{ top: ["0%", "100%", "0%"] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+          />
+        )}
 
-        {/* Corner brackets */}
-        {(["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
+        {/* Corner brackets - Cyber Only */}
+        {theme === "cyber" && (["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
           <div
             key={i}
             className={cn("absolute w-3 h-3 pointer-events-none", pos)}
@@ -302,6 +317,7 @@ const isValidPeriod = (v: string | null): v is KPIPeriod =>
   v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
 
 export const FuturisticSpeedometerDashboard = () => {
+  const { theme } = useDashboardTheme();
   const { salesperson: currentUser } = useAuth();
   const { data: salespeople = [] } = useSalespeopleList();
 
@@ -372,29 +388,33 @@ export const FuturisticSpeedometerDashboard = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       aria-label="Painel futurista de velocímetros de vendas"
-      className="relative p-6 rounded-3xl border border-white/5 bg-black/20 backdrop-blur-sm"
+      className={cn("relative p-6 rounded-3xl transition-all duration-500", theme === "cyber" ? "border border-white/5 bg-black/20 backdrop-blur-sm" : "bg-card shadow-sm border border-border/40")}
     >
-      {/* Decorative HUD Elements */}
-      <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-xl pointer-events-none" />
-      <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-xl pointer-events-none" />
-      <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-xl pointer-events-none" />
-      <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-xl pointer-events-none" />
-      
-      {/* Status Tags */}
-      <div className="absolute -top-3 left-10 flex items-center gap-4 pointer-events-none">
-        <div className="px-2 py-0.5 rounded bg-black border border-primary/30 text-[8px] font-mono font-bold text-primary tracking-[0.2em] uppercase shadow-[0_0_10px_rgba(14,165,233,0.2)]">
-          System: Online
-        </div>
-        <div className="px-2 py-0.5 rounded bg-black border border-success/30 text-[8px] font-mono font-bold text-success tracking-[0.2em] uppercase">
-          Signal: Stable
-        </div>
-      </div>
+      {/* Decorative HUD Elements - Cyber Only */}
+      {theme === "cyber" && (
+        <>
+          <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-xl pointer-events-none" />
+          <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-xl pointer-events-none" />
+          <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-xl pointer-events-none" />
+          <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-xl pointer-events-none" />
+          
+          {/* Status Tags */}
+          <div className="absolute -top-3 left-10 flex items-center gap-4 pointer-events-none">
+            <div className="px-2 py-0.5 rounded bg-black border border-primary/30 text-[8px] font-mono font-bold text-primary tracking-[0.2em] uppercase shadow-[0_0_10px_rgba(14,165,233,0.2)]">
+              System: Online
+            </div>
+            <div className="px-2 py-0.5 rounded bg-black border border-success/30 text-[8px] font-mono font-bold text-success tracking-[0.2em] uppercase">
+              Signal: Stable
+            </div>
+          </div>
 
-      <div className="absolute -bottom-3 right-10 flex items-center gap-3 pointer-events-none opacity-40">
-        <div className="text-[7px] font-mono text-muted-foreground uppercase tracking-widest">
-          Telemetry Version 4.0.8 // CRC: OK
-        </div>
-      </div>
+          <div className="absolute -bottom-3 right-10 flex items-center gap-3 pointer-events-none opacity-40">
+            <div className="text-[7px] font-mono text-muted-foreground uppercase tracking-widest">
+              Telemetry Version 4.0.8 // CRC: OK
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
@@ -538,20 +558,23 @@ export const FuturisticSpeedometerDashboard = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className={cn(
-            "mt-6 relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl p-5 transition-opacity duration-300",
-            kpisFetching && "opacity-60"
+            "mt-6 relative overflow-hidden rounded-xl transition-all duration-500 p-5 transition-opacity duration-300",
+            kpisFetching && "opacity-60",
+            theme === "cyber" ? "border border-border/40 bg-card/40 backdrop-blur-xl" : "bg-card border border-border shadow-sm"
           )}
         >
-          {/* Subtle animated scanline for the strip */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none opacity-[0.03]"
-            style={{
-              backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.1) 50%)",
-              backgroundSize: "100% 4px",
-            }}
-            animate={{ backgroundPositionY: ["0px", "20px"] }}
-            transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
-          />
+          {/* Subtle animated scanline for the strip - Cyber Only */}
+          {theme === "cyber" && (
+            <motion.div
+              className="absolute inset-0 pointer-events-none opacity-[0.03]"
+              style={{
+                backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.1) 50%)",
+                backgroundSize: "100% 4px",
+              }}
+              animate={{ backgroundPositionY: ["0px", "20px"] }}
+              transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+            />
+          )}
 
           <div className="relative flex items-center gap-4 mb-4">
             <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-primary/50" />

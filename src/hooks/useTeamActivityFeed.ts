@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CACHE_TIMES } from "@/constants";
+import { useEffect } from "react";
 
 export interface TeamActivity {
   id: string;
@@ -44,6 +45,32 @@ const ACTIVITY_LABELS: Record<string, string> = {
 };
 
 export const useTeamActivityFeed = (limit = 20) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('team-activity-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["team-activity-feed"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'activities' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["team-activity-feed"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery<TeamActivity[]>({
     queryKey: ["team-activity-feed", limit],
     queryFn: async () => {

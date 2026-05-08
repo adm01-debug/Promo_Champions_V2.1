@@ -2,11 +2,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio } from "lucide-react";
+import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap } from "lucide-react";
 import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
+import { cn } from "@/lib/utils";
 
 const motivationalTips = [
   "SYSTEM STATUS: PEAK PERFORMANCE REQUIRED 🎯",
@@ -18,6 +20,7 @@ const motivationalTips = [
 
 export const DashboardHeader = () => {
   const { salesperson } = useAuth();
+  const { theme, toggleTheme } = useDashboardTheme();
   const navigate = useNavigate();
   const today = format(new Date(), "EEEE, d 'De' MMMM", { locale: ptBR });
   const [exporting, setExporting] = useState(false);
@@ -96,6 +99,19 @@ export const DashboardHeader = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleTheme}
+            className={cn(
+              "h-9 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]",
+              theme === "cyber" ? "bg-black/60 shadow-[0_0_15px_rgba(14,165,233,0.1)]" : "bg-background"
+            )}
+          >
+            {theme === "cyber" ? <Zap className="h-3.5 w-3.5 mr-2" /> : <Monitor className="h-3.5 w-3.5 mr-2" />}
+            {theme === "cyber" ? "Standard Mode" : "Cyber Mode"}
+          </Button>
+          
           <Button
             variant="outline"
             size="sm"

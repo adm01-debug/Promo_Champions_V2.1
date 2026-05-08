@@ -14,6 +14,7 @@ import { TeamActivityFeed } from "@/components/collaboration/TeamActivityFeed";
 import { ClientHealthPanel } from "@/components/analytics/ClientHealthPanel";
 import { SalesForecast } from "@/components/dashboard/SalesForecast";
 import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
+import { cn } from "@/lib/utils";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
@@ -47,6 +48,7 @@ import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkel
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import {
   DollarSign,
   ShoppingBag,
@@ -63,6 +65,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const { theme } = useDashboardTheme();
   const { data: kpis, isLoading } = useDashboardKPIs();
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
@@ -102,26 +105,28 @@ const Index = () => {
       duration={400}
     >
       <PageTransition>
-        <div className="min-h-screen bg-[#020617] relative overflow-hidden" suppressHydrationWarning>
-          {/* Global Cyber Background Layers */}
-          <div className="absolute inset-0 pointer-events-none">
-            {/* Ambient Nebula */}
-            <div className="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
-            <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-purple-500/5 blur-[120px] rounded-full" style={{ animationDelay: "2s" }} />
-            <div className="absolute -bottom-[10%] left-[20%] w-[40%] h-[40%] bg-success/5 blur-[100px] rounded-full" style={{ animationDelay: "4s" }} />
-            
-            {/* Digital Grid */}
-            <div 
-              className="absolute inset-0 opacity-[0.03]" 
-              style={{ 
-                backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-                backgroundSize: "60px 60px"
-              }} 
-            />
-            
-            {/* Scanline pattern */}
-            <div className="absolute inset-0 opacity-[0.02] bg-[length:100%_4px]" style={{ backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.5) 50%)" }} />
-          </div>
+        <div className={cn("min-h-screen relative overflow-hidden", theme === "cyber" ? "bg-[#020617]" : "bg-background")} suppressHydrationWarning>
+          {/* Global Cyber Background Layers - Only in Cyber Mode */}
+          {theme === "cyber" && (
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Ambient Nebula */}
+              <div className="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
+              <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-purple-500/5 blur-[120px] rounded-full" style={{ animationDelay: "2s" }} />
+              <div className="absolute -bottom-[10%] left-[20%] w-[40%] h-[40%] bg-success/5 blur-[100px] rounded-full" style={{ animationDelay: "4s" }} />
+              
+              {/* Digital Grid */}
+              <div 
+                className="absolute inset-0 opacity-[0.03]" 
+                style={{ 
+                  backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
+                  backgroundSize: "60px 60px"
+                }} 
+              />
+              
+              {/* Scanline pattern */}
+              <div className="absolute inset-0 opacity-[0.02] bg-[length:100%_4px]" style={{ backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.5) 50%)" }} />
+            </div>
+          )}
 
           <div className="relative z-10 max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-6 space-y-8">
             {/* ── SECTION: Greeting ── */}

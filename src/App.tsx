@@ -9,6 +9,7 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { I18nProvider } from "@/contexts/I18nContext";
+import { DashboardThemeProvider } from "@/contexts/DashboardThemeContext";
 import { PageErrorBoundary } from "@/components/errors/PageErrorBoundary";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
@@ -48,9 +49,11 @@ const App = () => {
                 <KeyboardShortcutsProvider>
                   <AuthProvider>
                     <I18nProvider>
-                      <CommandPalette />
-                      <AppRoutes />
-                      <LGPDConsentBanner />
+                      <DashboardThemeProvider>
+                        <CommandPalette />
+                        <AppRoutes />
+                        <LGPDConsentBanner />
+                      </DashboardThemeProvider>
                     </I18nProvider>
                   </AuthProvider>
                 </KeyboardShortcutsProvider>

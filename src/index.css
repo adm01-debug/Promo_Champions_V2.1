@@ -364,6 +364,24 @@
     --race-checkered-light: 0 0% 92%;
     --race-checkered-dark: 0 0% 6%;
   }
+
+  .cyber-mode {
+    --background: 230 40% 4%;
+    --foreground: 199 89% 95%;
+    --card: 230 35% 6%;
+    --card-foreground: 199 89% 95%;
+    --border: 199 89% 20%;
+    --primary: 199 89% 48%; /* Cyber Cyan */
+    --ring: 199 89% 48%;
+  }
+
+  .standard-mode {
+    --background: 220 20% 97%;
+    --foreground: 230 25% 12%;
+    --card: 0 0% 100%;
+    --primary: 262 83% 58%;
+    --border: 220 15% 88%;
+  }
 }
 
 @layer base {
