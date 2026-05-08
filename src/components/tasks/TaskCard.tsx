@@ -16,6 +16,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const priorityConfig = {
+  urgent: { label: 'Urgente', className: 'bg-destructive/20 text-destructive border-destructive/30' },
   high: { label: 'Alta', className: 'bg-status-error/20 text-status-error border-status-error/30' },
   medium: { label: 'Média', className: 'bg-status-warning/20 text-status-warning border-status-warning/30' },
   low: { label: 'Baixa', className: 'bg-status-success/20 text-status-success border-status-success/30' },
@@ -27,6 +28,7 @@ const typeConfig = {
   follow_up: { label: 'Follow-up', icon: Clock, color: 'text-streak', bgClass: 'bg-streak/15' },
   email: { label: 'E-mail', icon: Mail, color: 'text-secondary', bgClass: 'bg-secondary/15' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-primary', bgClass: 'bg-primary/15' },
+  discount: { label: 'Desconto', icon: Check, color: 'text-status-success', bgClass: 'bg-status-success/15' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground', bgClass: 'bg-muted/40' },
 };
 
