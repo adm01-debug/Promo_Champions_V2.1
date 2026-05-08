@@ -38,6 +38,7 @@ export function CadenceFunnelConfig() {
     to_stage: "high_interest",
     condition_type: "email_open",
     condition_value: 1,
+    time_window_hours: 24,
     is_active: true
   });
 
@@ -54,6 +55,7 @@ export function CadenceFunnelConfig() {
           to_stage: newRule.to_stage,
           condition_type: newRule.condition_type,
           condition_value: newRule.condition_value,
+          time_window_hours: newRule.time_window_hours,
           is_active: newRule.is_active
         }]);
 
@@ -198,6 +200,16 @@ export function CadenceFunnelConfig() {
                   className="h-8 text-xs"
                 />
               </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">Janela (horas)</label>
+                <Input 
+                  type="number"
+                  min="1"
+                  value={newRule.time_window_hours}
+                  onChange={(e) => setNewRule({...newRule, time_window_hours: parseInt(e.target.value)})}
+                  className="h-8 text-xs"
+                />
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setIsAdding(false)}>
@@ -229,25 +241,15 @@ export function CadenceFunnelConfig() {
                     <Badge variant="secondary" className="text-[10px] font-medium uppercase px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
                       {STAGES.find(s => s.id === rule.to_stage)?.label}
                     </Badge>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase text-muted-foreground">Janela (horas)</label>
-                <Input 
-                  type="number"
-                  min="1"
-                  value={newRule.time_window_hours}
-                  onChange={(e) => setNewRule({...newRule, time_window_hours: parseInt(e.target.value)})}
-                  className="h-8 text-xs"
-                />
-              </div>
-            </div>
-
+                  </div>
+                  
                   <div className="h-4 w-[1px] bg-border/40 hidden md:block" />
                   
                   <div className="flex items-center gap-2">
                     <Zap className="h-3 w-3 text-status-warning" />
                     <span className="text-xs font-medium">
                       {CONDITION_TYPES.find(c => c.id === rule.condition_type)?.label} 
-                      {rule.condition_type !== 'manual' && rule.condition_type !== 'reply' && ` (x${rule.condition_value})`}
+                      {rule.condition_type !== 'manual' && rule.condition_type !== 'reply' && ` (x${rule.condition_value} em ${rule.time_window_hours}h)`}
                     </span>
                   </div>
                 </div>
