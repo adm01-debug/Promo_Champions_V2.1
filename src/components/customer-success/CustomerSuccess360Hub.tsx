@@ -452,23 +452,71 @@ export function CustomerSuccess360Hub() {
           </div>
         </TabsContent>
 
-        <TabsContent value="cohorts" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle></CardHeader>
-            <CardContent className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cohortData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                  <XAxis type="number" />
-                  <YAxis dataKey="month" type="category" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
-                  <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <TabsContent value="cohorts" className="mt-4 space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle>
+                <CardDescription>Visualização da retenção baseada na primeira compra</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={cohortData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" />
+                    <YAxis dataKey="month" type="category" />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
+                    <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Maiores Causas de Perda</CardTitle>
+                <CardDescription>Motivos de cancelamento no período</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[250px] mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie 
+                        data={lossStats} 
+                        cx="50%" 
+                        cy="50%" 
+                        innerRadius={60} 
+                        outerRadius={80} 
+                        paddingAngle={5} 
+                        dataKey="value"
+                      >
+                        {lossStats.map((_, index) => (
+                          <Cell key={`cell-loss-cohort-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-3">
+                  {lossStats.slice(0, 5).map((stat, i) => (
+                    <div key={i} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 max-w-[180px]">
+                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span className="truncate text-muted-foreground">{stat.name}</span>
+                      </div>
+                      <span className="font-semibold">{stat.value}</span>
+                    </div>
+                  ))}
+                  {lossStats.length === 0 && (
+                    <p className="text-center text-muted-foreground text-xs py-10 italic">Sem registros de perdas no período.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="orders" className="mt-4">
