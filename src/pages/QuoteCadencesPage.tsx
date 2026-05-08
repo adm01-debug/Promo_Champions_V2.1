@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Download } from "lucide-react";
+import { Send, Download, LayoutDashboard, Settings2, ShieldCheck } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
 import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
@@ -22,6 +22,9 @@ import { useQuoteCadenceRealtime } from "@/hooks/cadences/useQuoteCadenceRealtim
 import { exportToCSV } from "@/lib/csvExporter";
 import { quoteCadencesToCsvRows } from "@/lib/quoteCadenceExport";
 import { useQuoteCadenceShortcuts } from "@/hooks/cadences/useQuoteCadenceShortcuts";
+import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
+import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
+import { ApprovalQueue } from "@/components/sales/cadence/ApprovalQueue";
 
 type Filter = "all" | "active" | "paused" | "completed";
 type ViewMode = "monitoring" | "strategy";
