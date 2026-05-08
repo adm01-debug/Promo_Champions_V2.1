@@ -65,7 +65,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard, Gauge } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 
 const SECTION_MAP: Record<string, string> = {
   performance: "performance",
