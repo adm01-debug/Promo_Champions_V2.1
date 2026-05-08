@@ -115,6 +115,9 @@ export default function Configuracoes() {
                 <TabsTrigger value="feature-flags" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
                   <Flag className="h-3.5 w-3.5 mr-2" />Flags
                 </TabsTrigger>
+                <TabsTrigger value="follow-up" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <RefreshCw className="h-3.5 w-3.5 mr-2" />Follow-up
+                </TabsTrigger>
 
               </>
             )}
