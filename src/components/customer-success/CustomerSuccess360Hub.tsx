@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info } from "lucide-react";
-import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon } from "lucide-react";
+import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, Cell, PieChart, Pie } from "recharts";
 import { useState, useMemo } from "react";
@@ -21,6 +21,7 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { formatBRL, daysUntil, renewalSemaphore, RENEWAL_STATUS_LABEL, TICKET_STATUS_LABEL, ONBOARDING_STATUS_LABEL, EXPANSION_TYPE_LABEL } from "./cs360Helpers";
 import { HelpdeskConnectorPanel } from "./HelpdeskConnectorPanel";
 import { SurveyTriggerDialog } from "./SurveyTriggerDialog";
+import { useToast } from "@/hooks/use-toast";
 
 const fadeIn = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } };
 
@@ -32,12 +33,23 @@ const SEMA_BG: Record<string, string> = {
   gray: "bg-muted text-muted-foreground border-border",
 };
 
+const CHART_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--success))",
+  "hsl(var(--warning))",
+  "hsl(var(--destructive))",
+  "hsl(var(--info))",
+  "hsl(var(--accent))"
+];
+
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
+  const { toast } = useToast();
   const [period, setPeriod] = useState("30");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
+  const [orderSearch, setOrderSearch] = useState("");
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
@@ -106,8 +118,9 @@ export function CustomerSuccess360Hub() {
     const cohorts: Record<string, { month: string; retained: number; churned: number; revenue: number }> = {};
     
     accounts.forEach(a => {
-      if (!a.created_at) return;
-      const month = format(startOfMonth(parseISO(a.created_at)), "MMM yy", { locale: ptBR });
+      const createdAt = (a as any).created_at;
+      if (!createdAt) return;
+      const month = format(startOfMonth(parseISO(createdAt)), "MMM yy", { locale: ptBR });
       if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0, revenue: 0 };
       
       // Retention simulation: Health > 50 is retained
@@ -142,6 +155,42 @@ export function CustomerSuccess360Hub() {
 
     return Object.values(statusMap);
   }, [filteredData?.orders]);
+
+  const cancellationStats = useMemo(() => {
+    const reasons: Record<string, number> = {};
+    orders.filter(o => o.status === "cancelled").forEach(o => {
+      const reason = o.cancellation_reason || "Não informado";
+      reasons[reason] = (reasons[reason] || 0) + 1;
+    });
+
+    return Object.entries(reasons)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [orders]);
+
+  const handleDateChange = (type: "start" | "end", value: string) => {
+    if (type === "start") {
+      if (endDate && value && isAfter(parseISO(value), parseISO(endDate))) {
+        toast({
+          title: "Data inválida",
+          description: "A data inicial não pode ser posterior à data final.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setStartDate(value);
+    } else {
+      if (startDate && value && isAfter(parseISO(startDate), parseISO(value))) {
+        toast({
+          title: "Data inválida",
+          description: "A data final não pode ser anterior à data inicial.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setEndDate(value);
+    }
+  };
 
   const exportPDF = () => {
     const doc = new jsPDF();
@@ -222,14 +271,14 @@ export function CustomerSuccess360Hub() {
                   type="date"
                   className="w-[130px] h-9"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => handleDateChange("start", e.target.value)}
                 />
                 <span className="text-muted-foreground text-xs">até</span>
                 <Input
                   type="date"
                   className="w-[130px] h-9"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => handleDateChange("end", e.target.value)}
                 />
               </div>
             )}
@@ -385,21 +434,83 @@ export function CustomerSuccess360Hub() {
           </Card>
         </TabsContent>
 
-        <Dialog open={!!orderModalStatus} onOpenChange={(open) => !open && setOrderModalStatus(null)}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
-              <DialogDescription>
-                Lista completa de pedidos com este status no período selecionado.
-              </DialogDescription>
-            </DialogHeader>
+        <Dialog open={!!orderModalStatus} onOpenChange={(open) => {
+          if (!open) {
+            setOrderModalStatus(null);
+            setOrderSearch("");
+          }
+        }}>
+          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+            <div className="p-6 pb-2">
+              <DialogHeader>
+                <DialogTitle>Detalhes dos Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}</DialogTitle>
+                <DialogDescription>
+                  Lista completa de pedidos com este status no período selecionado.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
             
-            <div className="space-y-4 mt-4">
+            <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
+              {orderModalStatus === "cancelled" && cancellationStats.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start bg-muted/30 p-4 rounded-xl border border-border/50">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold flex items-center gap-2">
+                      <PieIcon className="h-4 w-4 text-destructive" />
+                      Motivos de Cancelamento
+                    </h4>
+                    <div className="space-y-1">
+                      {cancellationStats.slice(0, 5).map((stat, i) => (
+                        <div key={i} className="flex justify-between text-xs items-center">
+                          <span className="text-muted-foreground truncate max-w-[180px]">{stat.name}</span>
+                          <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-bold">
+                            {stat.value}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="h-[140px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={cancellationStats}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={30}
+                          outerRadius={50}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {cancellationStats.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "8px", border: "1px solid hsl(var(--border))" }}
+                          itemStyle={{ fontSize: "12px" }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por cliente ou número do pedido..."
+                  className="pl-10"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                />
+              </div>
+
               <div className="rounded-md border">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
                       <th className="p-3 text-left">Pedido</th>
+                      <th className="p-3 text-left">Cliente</th>
                       <th className="p-3 text-left">Data</th>
                       <th className="p-3 text-right">Valor</th>
                       <th className="p-3 text-left">Informações Extras</th>
@@ -409,16 +520,25 @@ export function CustomerSuccess360Hub() {
                     {(filteredData?.orders || [])
                       .filter(o => {
                         const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
-                        return s === orderModalStatus;
+                        if (s !== orderModalStatus) return false;
+                        
+                        if (!orderSearch) return true;
+                        
+                        const search = orderSearch.toLowerCase();
+                        const orderNum = o.order_number?.toString().toLowerCase() || "";
+                        const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
+                        
+                        return orderNum.includes(search) || accountName.includes(search);
                       })
                       .map((o) => (
-                        <tr key={o.id} className="border-b">
+                        <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
                           <td className="p-3 font-medium">#{o.order_number}</td>
-                          <td className="p-3">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
-                          <td className="p-3 text-right font-mono">{formatBRL(o.total)}</td>
+                          <td className="p-3">{accountById.get((o as any).account_id)?.name ?? "—"}</td>
+                          <td className="p-3 text-muted-foreground">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
+                          <td className="p-3 text-right font-mono font-medium">{formatBRL(o.total)}</td>
                           <td className="p-3">
                             {o.cancellation_reason && (
-                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20">
+                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20 bg-destructive/5">
                                 Motivo: {o.cancellation_reason}
                               </Badge>
                             )}
@@ -431,6 +551,21 @@ export function CustomerSuccess360Hub() {
                           </td>
                         </tr>
                       ))}
+                    {(filteredData?.orders || [])
+                      .filter(o => {
+                        const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+                        if (s !== orderModalStatus) return false;
+                        const search = orderSearch.toLowerCase();
+                        const orderNum = o.order_number?.toString().toLowerCase() || "";
+                        const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
+                        return orderNum.includes(search) || accountName.includes(search);
+                      }).length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
+                            Nenhum pedido encontrado.
+                          </td>
+                        </tr>
+                      )}
                   </tbody>
                 </table>
               </div>
