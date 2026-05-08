@@ -183,9 +183,9 @@ export default function AdminComercial() {
             <TabsTrigger value="comissoes"><Percent className="h-4 w-4 mr-2" /> Comissões</TabsTrigger>
             <TabsTrigger value="aprovacoes" className="relative">
               <Check className="h-4 w-4 mr-2" /> Aprovações
-              {approvalRequests?.filter(r => r.status === "pending").length > 0 && (
+              {(approvalRequests?.filter(r => r.status === "pending").length ?? 0) > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center font-bold">
-                  {approvalRequests.filter(r => r.status === "pending").length}
+                  {approvalRequests?.filter(r => r.status === "pending").length}
                 </span>
               )}
             </TabsTrigger>
