@@ -199,26 +199,51 @@ export function CustomerSuccess360Hub() {
           <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
         </motion.div>
 
-        <div className="flex items-center gap-2">
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[180px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Período" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Últimos 7 dias</SelectItem>
-              <SelectItem value="30">Últimos 30 dias</SelectItem>
-              <SelectItem value="90">Últimos 90 dias</SelectItem>
-              <SelectItem value="0">Tudo</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-[160px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Período" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Últimos 7 dias</SelectItem>
+                <SelectItem value="30">Últimos 30 dias</SelectItem>
+                <SelectItem value="90">Últimos 90 dias</SelectItem>
+                <SelectItem value="custom">Personalizado</SelectItem>
+                <SelectItem value="0">Tudo</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Button variant="outline" size="icon" onClick={exportPDF} title="Exportar PDF">
-            <Download className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon" onClick={exportCSV} title="Exportar CSV">
-            <Activity className="h-4 w-4" />
-          </Button>
+            {period === "custom" && (
+              <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-2 duration-300">
+                <Input
+                  type="date"
+                  className="w-[130px] h-9"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <span className="text-muted-foreground text-xs">até</span>
+                <Input
+                  type="date"
+                  className="w-[130px] h-9"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={exportPDF} className="h-9">
+              <Download className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportCSV} className="h-9">
+              <Activity className="h-4 w-4 mr-2" />
+              CSV
+            </Button>
+          </div>
         </div>
       </div>
 
