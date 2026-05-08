@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, FileText, MousePointerClick, History, CheckCircle2 } from "lucide-react";
+import { Play, FileText, MousePointerClick, History, CheckCircle2, GitBranch } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ interface SimulationLog {
   event: string;
   lead: string;
   result: string;
+  next_cadences?: string[];
+  rule_details?: string;
 }
 
 export function CadenceSimulationDialog() {
@@ -59,8 +61,16 @@ export function CadenceSimulationDialog() {
       return;
     }
 
-    const result = data as { transitioned: boolean; new_stage: string; event_count: number };
+    const result = data as { 
+      transitioned: boolean; 
+      new_stage: string; 
+      event_count: number;
+      applied_rule?: any;
+      planned_actions?: string[];
+    };
+
     let resultMsg = `Evento registrado (${result.event_count} ocorrências)`;
+    let ruleDetails = result.applied_rule ? `Regra: ${result.applied_rule.condition}` : "Processamento padrão";
     
     if (result.transitioned) {
       resultMsg = `Transição: ${prospect.funnel_stage} -> ${result.new_stage}`;
@@ -75,6 +85,8 @@ export function CadenceSimulationDialog() {
       event: eventName,
       lead: `Lead ${leadName}`,
       result: resultMsg,
+      next_cadences: result.planned_actions || ["Follow-up Automático"],
+      rule_details: ruleDetails
     };
 
     setLogs([newLog, ...logs]);
@@ -170,18 +182,35 @@ export function CadenceSimulationDialog() {
               ) : (
                 <div className="space-y-2">
                   {logs.map((log) => (
-                    <div key={log.id} className="flex items-start justify-between p-2 rounded bg-background/50 border border-border/30 text-[10px]">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-1.5 font-medium">
-                          <CheckCircle2 className="h-3 w-3 text-success" />
-                          <span>{log.event}</span>
+                    <div key={log.id} className="flex flex-col gap-2 p-3 rounded-lg bg-background/50 border border-border/30 text-[10px]">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-1.5 font-medium">
+                            <CheckCircle2 className="h-3 w-3 text-success" />
+                            <span>{log.event}</span>
+                          </div>
+                          <div className="text-muted-foreground">Lead: {log.lead}</div>
+                          <div className="text-primary/70 font-mono text-[9px]">{log.rule_details}</div>
                         </div>
-                        <div className="text-muted-foreground">Lead: {log.lead}</div>
+                        <div className="text-right space-y-0.5">
+                          <div className="text-muted-foreground">{log.timestamp}</div>
+                          <div className="text-primary font-bold">{log.result}</div>
+                        </div>
                       </div>
-                      <div className="text-right space-y-0.5">
-                        <div className="text-muted-foreground">{log.timestamp}</div>
-                        <div className="text-primary font-medium">{log.result}</div>
-                      </div>
+                      
+                      {log.next_cadences && log.next_cadences.length > 0 && (
+                        <div className="pt-2 border-t border-border/20">
+                          <div className="text-[9px] uppercase font-bold text-muted-foreground mb-1">Ações Planejadas / Próximas Cadências:</div>
+                          <div className="flex flex-wrap gap-1">
+                            {log.next_cadences.map((cadence, idx) => (
+                              <Badge key={idx} variant="secondary" className="bg-primary/5 text-primary text-[8px] h-4">
+                                <GitBranch className="h-2 w-2 mr-1" />
+                                {cadence}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
