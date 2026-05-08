@@ -109,27 +109,50 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
 
             {/* Actions */}
             <div className="flex flex-col items-end gap-2 shrink-0">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1.5 text-xs bg-muted/50 px-2.5 py-1.5 rounded-full">
-                      <ChannelIcon className="h-3 w-3" />
-                      <span>{channel.label}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>Canal recomendado para abordagem</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                        onClick={() => {
+                          const message = `Olá ${lead.client_name}! Notei que sua proposta do ${lead.product_name} está parada. Como posso te ajudar hoje?`;
+                          window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                        }}
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Enviar WhatsApp sugerido</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <div className="flex items-center gap-1.5 text-[10px] bg-muted/50 px-2 py-1 rounded-full uppercase font-bold tracking-wider">
+                  <ChannelIcon className="h-3 w-3" />
+                  <span>{channel.label}</span>
+                </div>
+              </div>
 
               <Button
                 size="sm"
-                variant="outline"
+                variant={lead.has_pending_task ? "ghost" : "outline"}
                 onClick={() => onCreateTask(lead)}
-                disabled={isCreating}
-                className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                disabled={isCreating || lead.has_pending_task}
+                className={lead.has_pending_task ? "text-muted-foreground" : "hover:bg-primary hover:text-primary-foreground transition-colors"}
               >
-                <Send className="h-3 w-3 mr-1" />
-                Criar Tarefa
+                {lead.has_pending_task ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Agendado
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-3 w-3 mr-1" />
+                    Criar Tarefa
+                  </>
+                )}
               </Button>
             </div>
           </div>
