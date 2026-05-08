@@ -45,7 +45,7 @@ export function ConversionFunnelChart({ metrics }: Props) {
               <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} fontSize={11} />
               <YAxis dataKey="name" type="category" width={140} fontSize={11} />
               <Tooltip
-                formatter={(value: number, _n, p: any) => {
+                formatter={(value: any, _n: any, p: any) => {
                   if (p.dataKey === "rate") return [`${value.toFixed(1)}%`, "Conversão"];
                   return [value, _n];
                 }}
