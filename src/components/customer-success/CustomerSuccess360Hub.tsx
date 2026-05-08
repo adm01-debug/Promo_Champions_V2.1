@@ -9,11 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon, ArrowUpDown, ChevronLeft, ChevronRight, X, ChevronUp, ChevronDown } from "lucide-react";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon, ArrowUpDown, ChevronLeft, ChevronRight, X, ChevronUp, ChevronDown, RefreshCw } from "lucide-react";
 import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, Cell, PieChart, Pie } from "recharts";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import Papa from "papaparse";
@@ -43,17 +43,35 @@ const CHART_COLORS = [
 ];
 
 export function CustomerSuccess360Hub() {
-  const { data, isLoading } = useCustomerSuccess360();
+  const { data, isLoading, isError, error, refetch } = useCustomerSuccess360();
   const { toast } = useToast();
-  const [period, setPeriod] = useState("30");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
-  const [orderSearch, setOrderSearch] = useState("");
-  const [orderPage, setOrderPage] = useState(1);
-  const [orderSortField, setOrderSortField] = useState<string>("created_at");
-  const [orderSortOrder, setOrderSortOrder] = useState<"asc" | "desc">("desc");
+  
+  // Persistence Keys
+  const STORAGE_KEY = "cs360_state";
+
+  // State with local storage initialization
+  const [period, setPeriod] = useState(() => localStorage.getItem(`${STORAGE_KEY}_period`) || "30");
+  const [startDate, setStartDate] = useState(() => localStorage.getItem(`${STORAGE_KEY}_startDate`) || "");
+  const [endDate, setEndDate] = useState(() => localStorage.getItem(`${STORAGE_KEY}_endDate`) || "");
+  const [orderModalStatus, setOrderModalStatus] = useState<string | null>(() => localStorage.getItem(`${STORAGE_KEY}_modalStatus`) || null);
+  const [orderSearch, setOrderSearch] = useState(() => localStorage.getItem(`${STORAGE_KEY}_orderSearch`) || "");
+  const [orderPage, setOrderPage] = useState(() => Number(localStorage.getItem(`${STORAGE_KEY}_orderPage`)) || 1);
+  const [orderSortField, setOrderSortField] = useState<string>(() => localStorage.getItem(`${STORAGE_KEY}_sortField`) || "created_at");
+  const [orderSortOrder, setOrderSortOrder] = useState<"asc" | "desc">(() => (localStorage.getItem(`${STORAGE_KEY}_sortOrder`) as "asc" | "desc") || "desc");
   const orderItemsPerPage = 10;
+
+  // Effects to persist state
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_period`, period); }, [period]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_startDate`, startDate); }, [startDate]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_endDate`, endDate); }, [endDate]);
+  useEffect(() => { 
+    if (orderModalStatus) localStorage.setItem(`${STORAGE_KEY}_modalStatus`, orderModalStatus);
+    else localStorage.removeItem(`${STORAGE_KEY}_modalStatus`);
+  }, [orderModalStatus]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_orderSearch`, orderSearch); }, [orderSearch]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_orderPage`, orderPage.toString()); }, [orderPage]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_sortField`, orderSortField); }, [orderSortField]);
+  useEffect(() => { localStorage.setItem(`${STORAGE_KEY}_sortOrder`, orderSortOrder); }, [orderSortOrder]);
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
@@ -356,10 +374,57 @@ export function CustomerSuccess360Hub() {
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(8)].map((_, i) => <Skeleton key={i} className="h-24" />)}
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton className="h-10 w-64" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+          </div>
         </div>
-        <Skeleton className="h-96" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="overflow-hidden border-none shadow-md">
+              <CardContent className="p-6 space-y-3">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-2 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="shadow-md"><CardContent className="p-6"><Skeleton className="h-[300px] w-full" /></CardContent></Card>
+          <Card className="shadow-md"><CardContent className="p-6"><Skeleton className="h-[300px] w-full" /></CardContent></Card>
+        </div>
+        <Card className="shadow-md">
+          <CardHeader><Skeleton className="h-6 w-48" /></CardHeader>
+          <CardContent><Skeleton className="h-96 w-full" /></CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] space-y-4 text-center">
+        <div className="p-4 bg-destructive/10 rounded-full">
+          <AlertTriangle className="h-12 w-12 text-destructive" />
+        </div>
+        <div className="max-w-md">
+          <h2 className="text-2xl font-bold text-foreground">Ops! Algo deu errado</h2>
+          <p className="text-muted-foreground mt-2">
+            Não conseguimos carregar os dados da Visão 360°. Isso pode ser um problema de conexão ou permissão.
+          </p>
+          {error instanceof Error && (
+            <code className="block mt-4 p-3 bg-muted rounded-lg text-xs text-left overflow-x-auto">
+              {error.message}
+            </code>
+          )}
+        </div>
+        <Button onClick={() => refetch()} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Tentar novamente
+        </Button>
       </div>
     );
   }
