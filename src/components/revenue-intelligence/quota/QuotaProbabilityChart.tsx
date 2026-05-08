@@ -37,7 +37,7 @@ export const QuotaProbabilityChart: FC = () => {
             <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-25} textAnchor="end" height={60} stroke="hsl(var(--muted-foreground))" />
             <YAxis tickFormatter={(v) => fmtBRL(Number(v))} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
             <Tooltip
-              formatter={(v: number, k: string) => [fmtBRL(v), k === "p50" ? "P50 (mediana)" : k === "quota" ? "Meta" : k]}
+              formatter={(v: any, k: any) => [fmtBRL(v), k === "p50" ? "P50 (mediana)" : k === "quota" ? "Meta" : k]}
               contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
             />
             <ReferenceLine y={avgQuota} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" label={{ value: "Meta média", fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
