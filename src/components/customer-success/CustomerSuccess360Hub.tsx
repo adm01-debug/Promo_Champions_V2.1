@@ -185,6 +185,8 @@ export function CustomerSuccess360Hub() {
 
   const modalStats = useMemo(() => {
     if (!orderModalStatus) return [];
+    
+    // We'll show top customers for any status in the modal
     const targetOrders = (filteredData?.orders || []).filter(o => {
       const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
       return s === orderModalStatus;
@@ -192,12 +194,7 @@ export function CustomerSuccess360Hub() {
 
     const counts: Record<string, number> = {};
     targetOrders.forEach(o => {
-      let key = "Não informado";
-      if (orderModalStatus === "cancelled") {
-        key = o.cancellation_reason || "Não informado";
-      } else {
-        key = accountById.get((o as any).account_id)?.name || "Cliente Desconhecido";
-      }
+      const key = accountById.get((o as any).account_id)?.name || "Cliente Desconhecido";
       counts[key] = (counts[key] || 0) + 1;
     });
 
@@ -205,6 +202,32 @@ export function CustomerSuccess360Hub() {
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
   }, [filteredData?.orders, orderModalStatus, accountById]);
+
+  // Specific reasons for the selected status if cancelled, or top buyers
+  const statusReasons = useMemo(() => {
+    if (!orderModalStatus) return [];
+    const targetOrders = (filteredData?.orders || []).filter(o => {
+      const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
+      return s === orderModalStatus;
+    });
+
+    const counts: Record<string, number> = {};
+    targetOrders.forEach(o => {
+      let key = "Faturamento Normal";
+      if (orderModalStatus === "cancelled") {
+        key = o.cancellation_reason || "Não informado";
+      } else if (orderModalStatus === "delivered") {
+        key = "Venda Concluída";
+      } else {
+        key = "Processamento";
+      }
+      counts[key] = (counts[key] || 0) + 1;
+    });
+
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [filteredData?.orders, orderModalStatus]);
 
   const lossStats = useMemo(() => {
     const targetOrders = (filteredData?.orders || []).filter(o => o.status === "cancelled");
