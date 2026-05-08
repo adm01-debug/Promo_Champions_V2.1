@@ -29,6 +29,7 @@ export const StatCard = React.memo(({
   hero = false,
   sparklineData,
 }: StatCardProps) => {
+  const { theme } = useDashboardTheme();
   const isPositive = change >= 0;
 
   const animatedNum = useCountUp(numericValue ?? 0, {
