@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bell, Mail, Save, Plus, Trash2, Info } from "lucide-react";
+import { Bell, Mail, Save, Plus, Trash2, Info, Eye, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -25,7 +25,10 @@ export function CadenceAlertConfig() {
     name: "",
     type: "push",
     subject: "",
-    content: ""
+    content: "",
+    start_time: "09:00",
+    end_time: "18:00",
+    days_of_week: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
   });
 
   useEffect(() => {
@@ -106,7 +109,15 @@ export function CadenceAlertConfig() {
           {!editingId && (
             <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => {
               setEditingId("new");
-              setFormData({ name: "", type: "push", subject: "", content: "" });
+              setFormData({ 
+                name: "", 
+                type: "push", 
+                subject: "", 
+                content: "",
+                start_time: "09:00",
+                end_time: "18:00",
+                days_of_week: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+              });
             }}>
               <Plus className="h-3 w-3" />
               Novo Template
@@ -138,6 +149,27 @@ export function CadenceAlertConfig() {
                     <SelectItem value="email">E-mail</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Janela de Disparo (Início)</Label>
+                <Input 
+                  type="time"
+                  value={formData.start_time} 
+                  onChange={e => setFormData({ ...formData, start_time: e.target.value })}
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Janela de Disparo (Fim)</Label>
+                <Input 
+                  type="time"
+                  value={formData.end_time} 
+                  onChange={e => setFormData({ ...formData, end_time: e.target.value })}
+                  className="h-8 text-xs"
+                />
               </div>
             </div>
 
@@ -179,6 +211,20 @@ export function CadenceAlertConfig() {
               />
             </div>
 
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
+              <Label className="text-[10px] font-bold uppercase flex items-center gap-2">
+                <Eye className="h-3 w-3" />
+                Pré-visualização (Dados Reais)
+              </Label>
+              <div className="text-[11px] italic text-muted-foreground p-2 bg-background rounded border border-border/40">
+                {formData.content ? formData.content
+                  .replace(/{{singu_lead_name}}/g, "Ana Silva")
+                  .replace(/{{funnel_stage}}/g, "Interesse Alto")
+                  .replace(/{{trigger_name}}/g, "3 cliques em preço")
+                  .replace(/{{singu_preferred_service}}/g, "Massagem VIP") : "Digite o conteúdo para ver a prévia..."}
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setEditingId(null)}>
                 Cancelar
@@ -202,7 +248,13 @@ export function CadenceAlertConfig() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {t.type === "push" ? <Bell className="h-3.5 w-3.5 text-orange-500" /> : <Mail className="h-3.5 w-3.5 text-blue-500" />}
-                      <span className="text-xs font-bold">{t.name}</span>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold">{t.name}</span>
+                        <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                          <Clock className="h-2.5 w-2.5" />
+                          {t.start_time?.substring(0, 5)} - {t.end_time?.substring(0, 5)}
+                        </div>
+                      </div>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => {
