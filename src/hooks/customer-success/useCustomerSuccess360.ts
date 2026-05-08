@@ -31,6 +31,17 @@ export interface CS360AccountRow {
   open_tickets: number;
   adoption_score: number | null;
   next_renewal: string | null;
+  created_at: string;
+}
+
+export interface CS360Order {
+  id: string;
+  user_id: string;
+  order_number: string;
+  status: string;
+  total: number;
+  created_at: string;
+  cancellation_reason: string | null;
 }
 
 export interface CS360Ticket {
