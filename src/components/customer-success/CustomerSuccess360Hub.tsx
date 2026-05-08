@@ -1011,7 +1011,7 @@ export function CustomerSuccess360Hub() {
                         );
                       })}
                       {isLoading && (
-                        {[...Array(5)].map((_, i) => (
+                        [...Array(5)].map((_, i) => (
                           <tr key={`skel-${i}`} className="border-b">
                             <td className="p-3"><Skeleton className="h-4 w-16" /></td>
                             <td className="p-3"><Skeleton className="h-4 w-32" /></td>
@@ -1019,7 +1019,7 @@ export function CustomerSuccess360Hub() {
                             <td className="p-3 text-right"><Skeleton className="h-4 w-20 ml-auto" /></td>
                             <td className="p-3"><Skeleton className="h-4 w-40" /></td>
                           </tr>
-                        ))}
+                        ))
                       )}
                       {sortedAndPaginatedOrders.length === 0 && !isLoading && (
                         <tr>
