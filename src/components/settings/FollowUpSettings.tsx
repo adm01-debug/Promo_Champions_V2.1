@@ -68,7 +68,7 @@ export function FollowUpSettings() {
       const { data, error } = await supabase
         .from("whatsapp_template_versions")
         .select("*")
-        .eq("is_active", false) // Assuming we show older versions
+        .eq("template_id", settings.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -87,13 +87,13 @@ export function FollowUpSettings() {
       const targetTemplate = newTemplate !== undefined ? newTemplate : whatsappTemplate;
       const days = cadenceDays.split(",").map(d => parseInt(d.trim())).filter(d => !isNaN(d));
       
-      // 1. Create a version record
+      // 1. Create a version record if template changed
       if (settings?.whatsapp_template && settings.whatsapp_template !== targetTemplate) {
         await supabase.from("whatsapp_template_versions").insert({
-          template_text: settings.whatsapp_template,
-          version: (versions[0]?.version || 0) + 1,
-          created_by: user?.id,
-          is_active: false
+          template_id: settings.id,
+          body: settings.whatsapp_template,
+          version_number: (versions[0]?.version_number || 0) + 1,
+          created_by: user?.id
         });
       }
 
@@ -276,7 +276,7 @@ export function FollowUpSettings() {
                   <div key={v.id} className="p-3 border rounded-lg hover:border-primary/30 transition-colors group">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                    <Badge variant="outline" className="text-[10px] mb-1">Versão {v.version}</Badge>
+                    <Badge variant="outline" className="text-[10px] mb-1">Versão {v.version_number}</Badge>
                     <p className="text-[10px] text-muted-foreground">
                       {format(new Date(v.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                     </p>
@@ -286,14 +286,14 @@ export function FollowUpSettings() {
                           size="icon" 
                           variant="ghost" 
                           className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleRevert(v.template_text)}
+                          onClick={() => handleRevert(v.body)}
                           title="Restaurar esta versão"
                         >
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Button>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-3 italic">"{v.template_text}"</p>
+                    <p className="text-xs text-muted-foreground line-clamp-3 italic">"{v.body}"</p>
                   </div>
                 ))}
               </div>
