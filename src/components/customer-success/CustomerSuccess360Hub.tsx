@@ -1040,6 +1040,24 @@ export function CustomerSuccess360Hub() {
   );
 }
 
+function SortableHeader({ label, field, currentField, order, onSort, align = "left" }: { label: string; field: string; currentField: string; order: "asc" | "desc"; onSort: (f: string) => void; align?: "left" | "right" }) {
+  const isActive = currentField === field;
+  return (
+    <th 
+      className={`p-3 cursor-pointer hover:bg-muted/80 transition-colors group ${align === "right" ? "text-right" : "text-left"}`}
+      onClick={() => onSort(field)}
+    >
+      <div className={`flex items-center gap-1 ${align === "right" ? "justify-end" : "justify-start"}`}>
+        <span className={`font-medium ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}>{label}</span>
+        <div className="flex flex-col -space-y-1">
+          <ChevronUp className={`h-2.5 w-2.5 ${isActive && order === 'asc' ? 'text-primary' : 'text-muted-foreground/30 group-hover:text-muted-foreground/60'}`} />
+          <ChevronDown className={`h-2.5 w-2.5 ${isActive && order === 'desc' ? 'text-primary' : 'text-muted-foreground/30 group-hover:text-muted-foreground/60'}`} />
+        </div>
+      </div>
+    </th>
+  );
+}
+
 function KPI({ title, value, sub, icon, accent }: { title: string; value: string; sub: string; icon: React.ReactNode; accent?: "destructive" | "warning" }) {
   const valueClass = accent === "destructive" ? "text-destructive" : accent === "warning" ? "text-warning" : "";
   return (
