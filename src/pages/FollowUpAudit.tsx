@@ -17,6 +17,7 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
 const actionIcons: Record<string, any> = {
   "whatsapp_sent": { icon: MessageCircle, color: "text-green-500", label: "WhatsApp Enviado" },
+  "whatsapp_attempt": { icon: Send, color: "text-blue-400", label: "Tentativa WhatsApp" },
   "task_created": { icon: UserPlus, color: "text-blue-500", label: "Tarefa Criada" },
   "lead_reactivated": { icon: Zap, color: "text-amber-500", label: "Lead Reativado" },
   "status_change": { icon: Clock, color: "text-purple-500", label: "Mudança de Status" },
