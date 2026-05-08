@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
       surveysRes,
       qbrRes,
     ] = await Promise.all([
-      supabase.from("accounts").select("id, name, tier, health_status, account_score, annual_revenue").order("annual_revenue", { ascending: false, nullsFirst: false }).limit(100),
+      supabase.from("accounts").select("id, name, tier, health_status, account_score, annual_revenue, created_at").order("annual_revenue", { ascending: false, nullsFirst: false }).limit(100),
       supabase.from("support_tickets").select("id, account_id, subject, status, priority, sentiment, created_at, resolved_at").order("created_at", { ascending: false }).limit(500),
       supabase.from("renewals").select("id, account_id, contract_value, renewal_date, status, owner_salesperson_id, auto_renew").order("renewal_date", { ascending: true }).limit(200),
       supabase.from("product_usage_summary").select("account_id, dau, wau, mau, last_login_at, top_features, adoption_score").limit(500),
@@ -27,6 +27,7 @@ Deno.serve(async (req) => {
       supabase.from("expansion_opportunities").select("id, account_id, type, estimated_value, status, confidence_score, owner_salesperson_id, created_at").order("estimated_value", { ascending: false }).limit(200),
       supabase.from("csat_ces_surveys").select("id, account_id, survey_type, score, comment, sent_at, responded_at").order("sent_at", { ascending: false }).limit(500),
       supabase.from("qbr_schedule").select("id, account_id, frequency, next_qbr_at, last_qbr_at, owner_salesperson_id, is_active").eq("is_active", true).order("next_qbr_at", { ascending: true }).limit(200),
+      supabase.from("orders").select("id, user_id, order_number, status, total, created_at, cancellation_reason").order("created_at", { ascending: false }).limit(500),
     ]);
 
     const accounts = accountsRes.data ?? [];
