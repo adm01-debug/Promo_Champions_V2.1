@@ -176,9 +176,18 @@ export function PurchasePredictionCard({ clientId }: Props) {
                   <div className="text-xl font-black text-foreground tracking-tight group-hover/card:text-primary transition-colors">{formatDatePt(ai.predicted_next_purchase_date)}</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-sm font-bold text-muted-foreground">{formatBRL(ai.predicted_amount)}</span>
-                    <Badge variant="outline" className="text-[9px] border-primary/20 text-primary bg-primary/10 shadow-[0_0_10px_rgba(139,92,246,0.2)]">
-                      {(ai.confidence * 100).toFixed(0)}% CONFIDENCE
-                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge variant="outline" className="text-[9px] border-primary/20 text-primary bg-primary/10 shadow-[0_0_10px_rgba(139,92,246,0.2)] cursor-help">
+                            {(ai.confidence * 100).toFixed(0)}% CONFIDENCE
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-black/90 border-primary/30 text-[10px] p-2 backdrop-blur-xl">
+                          Calculado com base em 128 parâmetros de comportamento.
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
 
