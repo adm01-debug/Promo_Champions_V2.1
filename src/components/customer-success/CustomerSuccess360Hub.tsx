@@ -557,7 +557,7 @@ export function CustomerSuccess360Hub() {
                         if (s !== orderModalStatus) return false;
                         const search = orderSearch.toLowerCase();
                         const orderNum = o.order_number?.toString().toLowerCase() || "";
-                        const accountName = accountById.get(o.account_id)?.name.toLowerCase() || "";
+                        const accountName = accountById.get((o as any).account_id)?.name.toLowerCase() || "";
                         return orderNum.includes(search) || accountName.includes(search);
                       }).length === 0 && (
                         <tr>
