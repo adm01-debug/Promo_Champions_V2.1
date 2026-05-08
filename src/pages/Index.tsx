@@ -64,6 +64,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const { theme } = useDashboardTheme();
   const { data: kpis, isLoading } = useDashboardKPIs();
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
