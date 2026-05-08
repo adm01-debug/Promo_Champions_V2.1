@@ -67,8 +67,8 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
               <div className="absolute inset-0 blur-[20px] opacity-20 bg-primary rounded-full" />
               <ProgressRing
                 value={percentage}
-                size={140}
-                strokeWidth={10}
+                size={160}
+                strokeWidth={12}
                 variant={variant}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -80,14 +80,14 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
             </div>
 
             <div className="w-full space-y-4">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2 rounded-lg bg-black/40 border border-white/5">
-                  <p className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Current</p>
-                  <p className="text-xs font-mono font-bold text-foreground truncate">R$ {current.toLocaleString("pt-BR")}</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl bg-black/60 border border-white/10 shadow-inner">
+                  <p className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Current</p>
+                  <p className="text-sm font-mono font-black text-foreground truncate">R$ {current.toLocaleString("pt-BR")}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-black/40 border border-white/5 text-right">
-                  <p className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Target</p>
-                  <p className="text-xs font-mono font-bold text-foreground truncate">R$ {goal.toLocaleString("pt-BR")}</p>
+                <div className="p-3 rounded-xl bg-black/60 border border-white/10 text-right shadow-inner">
+                  <p className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Target</p>
+                  <p className="text-sm font-mono font-black text-foreground truncate">R$ {goal.toLocaleString("pt-BR")}</p>
                 </div>
               </div>
 

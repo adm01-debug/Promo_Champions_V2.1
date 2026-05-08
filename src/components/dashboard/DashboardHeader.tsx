@@ -82,8 +82,8 @@ export const DashboardHeader = () => {
               <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/60">Session Established</span>
               <div className="h-[1px] w-8 bg-primary/20" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tighter font-mono uppercase text-foreground">
-              {greeting}, <span className="text-primary" style={{ textShadow: '0 0 15px rgba(14,165,233,0.4)' }}>{firstName}</span>
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tighter font-display uppercase text-foreground">
+              {greeting}, <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary animate-pulse" style={{ textShadow: '0 0 25px rgba(14,165,233,0.5)' }}>{firstName}</span>
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/10">

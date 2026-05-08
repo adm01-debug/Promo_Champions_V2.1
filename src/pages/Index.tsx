@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import React, { Suspense, lazy } from "react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
@@ -10,12 +11,14 @@ import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBann
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
-import { OverviewModule } from "@/components/dashboard/modules/OverviewModule";
-import { PerformanceModule } from "@/components/dashboard/modules/PerformanceModule";
-import { AnalyticsModule } from "@/components/dashboard/modules/AnalyticsModule";
-import { CompetitionModule } from "@/components/dashboard/modules/CompetitionModule";
-import { IntelligenceModule } from "@/components/dashboard/modules/IntelligenceModule";
-import { EngagementModule } from "@/components/dashboard/modules/EngagementModule";
+
+// Lazy-loaded modules for better performance
+const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
+const PerformanceModule = lazy(() => import("@/components/dashboard/modules/PerformanceModule").then(m => ({ default: m.PerformanceModule })));
+const AnalyticsModule = lazy(() => import("@/components/dashboard/modules/AnalyticsModule").then(m => ({ default: m.AnalyticsModule })));
+const CompetitionModule = lazy(() => import("@/components/dashboard/modules/CompetitionModule").then(m => ({ default: m.CompetitionModule })));
+const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
+const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -118,6 +121,7 @@ const Index = () => {
                       change={kpis?.changes.revenue ?? 0}
                       previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
                       icon={DollarSign}
+                      variant="primary"
                     />
                   ) : (
                     <DashboardEmptyState type="revenue" />
@@ -146,6 +150,7 @@ const Index = () => {
                       change={kpis?.changes.clients ?? 0}
                       previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                       icon={Users}
+                      variant="success"
                     />
                   ) : (
                     <DashboardEmptyState type="clients" />
@@ -160,6 +165,7 @@ const Index = () => {
                       change={kpis?.changes.conversion ?? 0}
                       previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
                       icon={TrendingUp}
+                      variant="warning"
                     />
                   ) : (
                     <DashboardEmptyState type="conversion" />
@@ -180,33 +186,45 @@ const Index = () => {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 1.02, y: -10 }}
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
-                    <OverviewModule goalsData={goalsData} kpis={kpis} />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <OverviewModule goalsData={goalsData} kpis={kpis} />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="performance" className="mt-0 focus-visible:outline-none">
-                    <PerformanceModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <PerformanceModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="analytics" className="mt-0 focus-visible:outline-none">
-                    <AnalyticsModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <AnalyticsModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="competition" className="mt-0 focus-visible:outline-none">
-                    <CompetitionModule salesperson={salesperson} />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <CompetitionModule salesperson={salesperson} />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="intelligence" className="mt-0 focus-visible:outline-none">
-                    <IntelligenceModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <IntelligenceModule />
+                    </Suspense>
                   </TabsContent>
 
                   <TabsContent value="engagement" className="mt-0 focus-visible:outline-none">
-                    <EngagementModule />
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <EngagementModule />
+                    </Suspense>
                   </TabsContent>
                 </motion.div>
               </AnimatePresence>

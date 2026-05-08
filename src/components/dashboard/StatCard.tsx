@@ -102,12 +102,15 @@ export const StatCard = React.memo(({
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-2xl font-black tabular-nums font-mono tracking-tighter",
+              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter",
               hero && "text-2xl sm:text-4xl lg:text-5xl text-primary",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
-            )} style={{ textShadow: hero ? `0 0 20px rgba(14,165,233,0.3)` : 'none' }}>
+            )} style={{ 
+              textShadow: hero ? `0 0 20px rgba(14,165,233,0.3)` : 
+                          variant !== 'default' ? '0 0 10px currentColor' : 'none' 
+            }}>
               {displayValue}
             </p>
             {change !== undefined && (
@@ -145,7 +148,7 @@ export const StatCard = React.memo(({
                 hero && "h-6 w-6 sm:h-8 sm:w-8"
               )} />
             </div>
-            {!hero && sparklineData && sparklineData.length > 1 && (
+            {sparklineData && sparklineData.length > 1 && (
               <div className="opacity-50 group-hover:opacity-100 transition-opacity">
                 <MiniSparkline
                   data={sparklineData}
