@@ -96,6 +96,8 @@ export function useCreateCadenceStep() {
       description?: string;
       template_content?: string;
       step_order: number;
+      needs_approval?: boolean;
+      singu_variables?: any;
     }) => {
       const { data, error } = await supabase
         .from("cadence_steps")
