@@ -72,10 +72,10 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
                 variant={variant}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-black font-display tracking-tighter text-foreground" style={{ textShadow: `0 0 20px hsl(var(--${variant}))` }}>
+                <span className="text-5xl font-black font-display tracking-tighter text-foreground" style={{ textShadow: `0 0 25px hsl(var(--${variant}))` }}>
                   {Math.round(percentage)}<span className="text-sm opacity-60">%</span>
                 </span>
-                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted-foreground">Complete</span>
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">Complete</span>
               </div>
             </div>
 
