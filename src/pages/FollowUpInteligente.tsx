@@ -179,7 +179,7 @@ const FollowUpInteligente = () => {
       }
 
       // Permissions check
-      if (lead.temperature === 'frozen' && lead.score >= 80 && !isAdmin) {
+      if (lead.temperature === 'frozen' && lead.score !== undefined && lead.score >= 80 && !isAdmin) {
         toast.error("Apenas administradores podem gerenciar leads Classe A congelados.");
         return;
       }
