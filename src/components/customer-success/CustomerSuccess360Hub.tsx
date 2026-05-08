@@ -373,7 +373,7 @@ export function CustomerSuccess360Hub() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6" data-testid="loading-skeletons">
         <div className="flex justify-between items-center mb-4">
           <Skeleton className="h-10 w-64" />
           <div className="flex gap-2">

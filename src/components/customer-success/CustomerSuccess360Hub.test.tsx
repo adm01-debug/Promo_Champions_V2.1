@@ -14,16 +14,43 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
-// Mock react-helmet-async to avoid issues in test environment
+// Mock react-helmet-async
 vi.mock("react-helmet-async", () => ({
   Helmet: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock ResizeObserver for Recharts
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock jsPDF
+vi.mock("jspdf", () => {
+  return {
+    jsPDF: vi.fn().mockImplementation(() => ({
+      text: vi.fn(),
+      save: vi.fn(),
+      autoTable: vi.fn(),
+    }))
+  };
+});
+
+vi.mock("papaparse", () => ({
+  default: {
+    unparse: vi.fn(() => "mock-csv-content"),
+  },
+}));
+
+// Mock framer-motion
+vi.mock("framer-motion", () => ({
+  motion: {
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
+    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+  },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 const mockData = {
@@ -57,19 +84,18 @@ const mockData = {
   surveys: [],
   qbrs: [],
   orders: [
-    { id: "o1", account_id: "1", order_number: "ORD-001", status: "delivered", total: 1000, created_at: "2024-04-20T10:00:00Z" },
-    { id: "o2", account_id: "2", order_number: "ORD-002", status: "cancelled", total: 500, created_at: "2024-04-21T10:00:00Z", cancellation_reason: "Erro no pedido" },
+    { id: "o1", account_id: "1", order_number: "ORD-001", status: "delivered", total: 1000, created_at: new Date().toISOString() },
+    { id: "o2", account_id: "2", order_number: "ORD-002", status: "cancelled", total: 500, created_at: new Date().toISOString(), cancellation_reason: "Erro no pedido" },
   ],
 };
 
 describe("CustomerSuccess360Hub", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Clear localStorage
     localStorage.clear();
   });
 
-  it("renders loading state", () => {
+  it("renders loading state with skeletons", () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: undefined,
       isLoading: true,
@@ -77,77 +103,76 @@ describe("CustomerSuccess360Hub", () => {
     });
 
     render(<CustomerSuccess360Hub />);
-    
-    // Check for skeletons - using a more specific selector
-    const skeletons = document.querySelectorAll(".animate-pulse, .skeleton");
-    // If specific class not found, check if it's rendered by looking for any skeleton div
-    expect(skeletons.length).toBeGreaterThanOrEqual(0); 
+    const container = screen.getByTestId("loading-skeletons");
+    expect(container).toBeInTheDocument();
   });
 
-  it("renders error state", () => {
+  it("renders error state with retry option", () => {
+    const refetch = vi.fn();
     (useCustomerSuccess360 as any).mockReturnValue({
       data: undefined,
       isLoading: false,
       isError: true,
-      error: new Error("Failed to fetch data"),
-      refetch: vi.fn(),
+      error: new Error("Network Error"),
+      refetch,
     });
 
     render(<CustomerSuccess360Hub />);
-    
     expect(screen.getByText("Ops! Algo deu errado")).toBeInTheDocument();
-    expect(screen.getByText("Failed to fetch data")).toBeInTheDocument();
+    const retryButton = screen.getByRole("button", { name: /Tentar novamente/i });
+    fireEvent.click(retryButton);
+    expect(refetch).toHaveBeenCalled();
   });
 
-  it("renders dashboard with data", async () => {
+  it("renders dashboard with data correctly", () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: mockData,
       isLoading: false,
       isError: false,
-      refetch: vi.fn(),
     });
 
     render(<CustomerSuccess360Hub />);
-    
-    // Check for summary cards values (using regex for potential formatting differences)
-    expect(screen.getByText(/Health Médio/i)).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { level: 1, name: /Customer Success 360/i });
+    expect(heading).toBeInTheDocument();
     expect(screen.getByText("85/100")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument(); // Tickets Abertos
   });
 
-  it("persists period selection in localStorage", async () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    });
-
-    render(<CustomerSuccess360Hub />);
-    
-    const selectTrigger = screen.getByText("Últimos 30 dias");
-    fireEvent.click(selectTrigger);
-    
-    // Note: Radix Select might need different event handling in tests, 
-    // but we can check if it initializes from localStorage
+  it("initializes state from localStorage", () => {
     localStorage.setItem("cs360_state_period", "90");
-    
-    render(<CustomerSuccess360Hub />);
-    expect(localStorage.getItem("cs360_state_period")).toBe("90");
-  });
-
-  it("renders with basic summary", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
       data: mockData,
       isLoading: false,
       isError: false,
-      refetch: vi.fn(),
     });
 
     render(<CustomerSuccess360Hub />);
-    
-    // Check if some key summary text is present
-    expect(screen.getByText(/Health Médio/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tickets Abertos/i)).toBeInTheDocument();
+    expect(screen.getByText(/Últimos 90 dias/i)).toBeInTheDocument();
+  });
+
+  it("renders the main tabs", () => {
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    expect(screen.getByRole("tab", { name: /Visão Geral/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Pedidos/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Health v2/i })).toBeInTheDocument();
+  });
+
+  it("calculates summary correctly", () => {
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CustomerSuccess360Hub />);
+    // Check if multiple KPI values are rendered
+    expect(screen.getByText("10 contas")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument(); // open tickets
+    expect(screen.getByText("1 urgentes")).toBeInTheDocument();
   });
 });
