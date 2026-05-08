@@ -16,6 +16,8 @@ interface FollowUpLeadCardProps {
   onToggle: (id: string) => void;
   onCreateTask: (lead: ColdLead) => void;
   isCreating: boolean;
+  onOpenAudit: (lead: ColdLead) => void;
+  onReactivate: (lead: ColdLead) => void;
 }
 
 const channelIcons: Record<string, { icon: typeof Mail; label: string }> = {
