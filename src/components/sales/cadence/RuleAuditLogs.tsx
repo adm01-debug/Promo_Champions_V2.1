@@ -122,7 +122,7 @@ export function RuleAuditLogs() {
                     <div className="flex flex-wrap gap-1">
                       {log.details?.transitioned ? (
                         <Badge variant="default" className="text-[9px] h-5">
-                          {log.details.old_stage} -> {log.details.new_stage}
+                          {log.details.old_stage} {"->"} {log.details.new_stage}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-[9px] h-5">
