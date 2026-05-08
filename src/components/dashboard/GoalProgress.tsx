@@ -64,7 +64,7 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
           <>
             <div className="relative">
               {/* Extra glow for progress ring */}
-              <div className="absolute inset-0 blur-[50px] opacity-50 bg-primary rounded-full animate-pulse" />
+              <div className="absolute inset-0 blur-[60px] opacity-60 bg-primary rounded-full animate-pulse transition-opacity duration-1000" />
               <ProgressRing
                 value={percentage}
                 size={160}
