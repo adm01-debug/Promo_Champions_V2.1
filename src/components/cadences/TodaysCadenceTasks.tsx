@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType, useUpdateLeadStage } from "@/hooks/useCadences";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,10 +44,11 @@ export function TodaysCadenceTasks() {
   const { data: tasks, isLoading } = useTodaysCadenceTasks();
   const completeTask = useCompleteCadenceTask();
   const skipTask = useSkipCadenceTask();
+  const updateStage = useUpdateLeadStage();
   const [notesTaskId, setNotesTaskId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState("");
   const [noteAction, setNoteAction] = useState<"complete" | "skip">("complete");
-  const [callResult, setCallResult] = useState<string>("answered");
+  const [callResult, setCallResult] = useState<string>("nao_atendeu");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -54,7 +56,36 @@ export function TodaysCadenceTasks() {
     setNotesTaskId(taskId);
     setNoteAction(action);
     setNoteText("");
-    setCallResult("answered");
+    setCallResult("nao_atendeu");
+  };
+
+  const applyOutcomeRules = async (outcome: string, saleId: string) => {
+    try {
+      const { data: rules } = await supabase
+        .from("cadence_outcome_rules")
+        .select("*")
+        .eq("outcome", outcome);
+
+      if (rules && rules.length > 0) {
+        const rule = rules[0];
+        // Atualizar etapa
+        if (rule.to_stage) {
+          await updateStage.mutateAsync({ saleId, stage: rule.to_stage });
+        }
+        
+        // Ações adicionais (next_action)
+        if (rule.next_action === 'pause') {
+          await supabase.from("prospect_cadences").update({ status: 'paused' }).eq("sale_id", saleId);
+        }
+        
+        toast({
+          title: "Regra aplicada",
+          description: `Lead movido para ${rule.to_stage} baseado no desfecho.`,
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao aplicar regras de desfecho:", err);
+    }
   };
 
   const executeAction = async () => {
@@ -80,6 +111,8 @@ export function TodaysCadenceTasks() {
           // Registrar log detalhado
           const prospectCadence = task?.prospect_cadence as any;
           if (prospectCadence?.sale_id) {
+            await applyOutcomeRules(callResult, prospectCadence.sale_id);
+            
             await supabase.from("lead_detailed_logs").insert({
               client_id: prospectCadence.sale_id,
               event_type: 'interaction',
@@ -223,6 +256,23 @@ export function TodaysCadenceTasks() {
                             <X className="h-3 w-3" />
                           </Button>
                         </div>
+                        {step?.action_type === 'call' && (
+                          <div className="space-y-1.5 pt-1">
+                            <Label className="text-[10px] uppercase font-bold text-muted-foreground">Resultado da Ligação</Label>
+                            <Select value={callResult} onValueChange={setCallResult}>
+                              <SelectTrigger className="h-7 text-xs bg-background/50">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="atendeu">Atendeu</SelectItem>
+                                <SelectItem value="nao_atendeu">Não Atendeu</SelectItem>
+                                <SelectItem value="interessado">Interessado</SelectItem>
+                                <SelectItem value="agendado">Agendado</SelectItem>
+                                <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                         <Textarea
                           value={noteText}
                           onChange={(e) => setNoteText(e.target.value)}

@@ -163,3 +163,25 @@ export function useCancelCadence() {
     },
   });
 }
+
+export function useUpdateLeadStage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ saleId, stage }: { saleId: string; stage: string }) => {
+      const { data, error } = await supabase
+        .from("prospect_cadences")
+        .update({ funnel_stage: stage })
+        .eq("sale_id", saleId);
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+      queryClient.invalidateQueries({ queryKey: ["funnel-data"] });
+      toast.success("Etapa do lead atualizada!");
+    },
+  });
+}
+

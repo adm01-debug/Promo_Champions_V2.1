@@ -1455,6 +1455,39 @@ export type Database = {
           },
         ]
       }
+      cadence_alert_templates: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          subject: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          subject?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          subject?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       cadence_enrollment_rules: {
         Row: {
           cadence_id: string
@@ -1569,6 +1602,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cadence_outcome_rules: {
+        Row: {
+          created_at: string | null
+          fallback_action: string | null
+          id: string
+          max_retries: number | null
+          next_action: string | null
+          outcome: string
+          retry_delay_hours: number | null
+          to_stage: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          fallback_action?: string | null
+          id?: string
+          max_retries?: number | null
+          next_action?: string | null
+          outcome: string
+          retry_delay_hours?: number | null
+          to_stage: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          fallback_action?: string | null
+          id?: string
+          max_retries?: number | null
+          next_action?: string | null
+          outcome?: string
+          retry_delay_hours?: number | null
+          to_stage?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       cadence_steps: {
         Row: {
