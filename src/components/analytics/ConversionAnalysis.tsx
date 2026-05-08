@@ -48,7 +48,7 @@ export const ConversionAnalysis: FC<ConversionAnalysisProps> = ({
             <XAxis type="number" />
             <YAxis dataKey="stage" type="category" width={100} tick={{ fontSize: 12 }} />
             <Tooltip
-              formatter={(value: number, name: string) => {
+              formatter={(value: any, name: any) => {
                 if (name === 'count') return [value, 'Negócios'];
                 if (name === 'conversionRate') return [`${value}%`, 'Conversão'];
                 return [value, name];

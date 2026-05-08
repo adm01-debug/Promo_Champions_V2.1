@@ -41,7 +41,7 @@ export function CommitteeCoverageSparkline({ saleId }: Props) {
             <Tooltip
               contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", fontSize: 11 }}
               labelFormatter={(v) => new Date(v as string).toLocaleDateString("pt-BR")}
-              formatter={(v: number) => [`${v.toFixed(0)} pts`, "Cobertura"]}
+              formatter={(v: any) => [`${v.toFixed(0)} pts`, "Cobertura"]}
             />
             <Line type="monotone" dataKey="coverage_score" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
           </LineChart>

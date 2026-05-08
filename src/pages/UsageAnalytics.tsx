@@ -164,7 +164,7 @@ const UsageAnalytics = () => {
               ) : (
                 <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
-                    <Pie data={pieData} dataKey="count" nameKey="path" cx="50%" cy="50%" outerRadius={100} label={({ path }) => path}>
+                    <Pie data={pieData} dataKey="count" nameKey="path" cx="50%" cy="50%" outerRadius={100} label={(props: any) => props.path}>
                       {pieData.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}

@@ -93,28 +93,27 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
         <div className="relative h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                activeIndex={activeIndex}
-                activeShape={renderActiveShape}
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={65}
-                outerRadius={85}
-                paddingAngle={6}
-                dataKey="value"
-                stroke="none"
-                onMouseEnter={(_, index) => setActiveIndex(index)}
-              >
-                {data.map((entry, i) => (
+              {React.createElement(Pie as any, {
+                activeIndex,
+                activeShape: renderActiveShape,
+                data,
+                cx: "50%",
+                cy: "50%",
+                innerRadius: 65,
+                outerRadius: 85,
+                paddingAngle: 6,
+                dataKey: "value",
+                stroke: "none",
+                onMouseEnter: (_: any, index: number) => setActiveIndex(index),
+                children: data.map((entry, i) => (
                   <Cell 
                     key={i} 
                     fill={entry.color} 
                     className="transition-all duration-300 outline-none" 
                     style={{ filter: activeIndex === i ? `drop-shadow(0 0 8px ${entry.color})` : 'none' }}
                   />
-                ))}
-              </Pie>
+                )),
+              })}
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {

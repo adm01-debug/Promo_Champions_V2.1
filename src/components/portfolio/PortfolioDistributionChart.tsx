@@ -76,7 +76,7 @@ export const PortfolioDistributionChart: FC<PortfolioDistributionChartProps> = (
               ))}
             </Pie>
             <Tooltip
-              formatter={(v: number) => [`${v} clientes`, "Carteira"]}
+              formatter={(v: any) => [`${v} clientes`, "Carteira"]}
               contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
             />
             <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />

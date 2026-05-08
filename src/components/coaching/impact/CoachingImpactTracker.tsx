@@ -91,7 +91,7 @@ export function CoachingImpactTracker() {
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
                 <Tooltip
                   contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
-                  formatter={(v: number) => [`${v.toFixed(1)}%`, "Δ Score"]}
+                  formatter={(v: any) => [`${v.toFixed(1)}%`, "Δ Score"]}
                 />
                 <Line type="monotone" dataKey="avg_delta" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>

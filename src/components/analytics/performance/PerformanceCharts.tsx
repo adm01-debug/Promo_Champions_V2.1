@@ -9,7 +9,7 @@ import {
 const ROLE_LABELS: Record<string, string> = { sdr: "SDRs", closer: "Closers", hybrid: "Híbridos" };
 const ROLE_COLORS: Record<string, string> = { sdr: "hsl(var(--status-info))", closer: "hsl(var(--status-success))", hybrid: "hsl(var(--status-purple))" };
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: any): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 }).format(value);
 }
 
@@ -68,7 +68,7 @@ export const PerformanceCharts = React.memo(function PerformanceCharts({ benchma
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
                 <XAxis type="number" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
                 <YAxis type="category" dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatCurrency(value), "Receita"]} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(value: any) => [formatCurrency(value), "Receita"]} />
                 <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                   {revenueChartData.map((entry, index) => (
                     <Cell key={index} fill={entry.fill} />

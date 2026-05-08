@@ -67,7 +67,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
               </defs>
               <XAxis dataKey="day" hide />
               <Tooltip
-                formatter={(v: number, name: string) => [
+                formatter={(v: any, name: any) => [
                   `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
                   name === "actual" ? "Real" : "Projeção",
                 ]}

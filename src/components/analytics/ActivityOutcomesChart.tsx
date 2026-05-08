@@ -67,7 +67,7 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   outerRadius={80}
                   paddingAngle={2}
                   dataKey="value"
-                  label={({ _name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                  label={({ percent }: any) => `${((percent ?? 0) * 100).toFixed(0)}%`}
                   labelLine={false}
                 >
                   {chartData.map((entry, index) => (
@@ -81,7 +81,7 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => [value, "Quantidade"]}
+                  formatter={(value: any) => [value, "Quantidade"]}
                   contentStyle={{
                     backgroundColor: "hsl(var(--card))",
                     border: "1px solid hsl(var(--border))",

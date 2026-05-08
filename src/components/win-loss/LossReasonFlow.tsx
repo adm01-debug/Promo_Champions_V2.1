@@ -60,7 +60,7 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <Treemap
-              data={data}
+              data={data as any}
               dataKey="size"
               stroke="hsl(var(--background))"
               isAnimationActive={false}
@@ -71,7 +71,7 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
             >
               <Tooltip
                 contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                formatter={(value: number, _name: string, item: { payload?: { reason?: string } }) =>
+                formatter={(value: any, _name: any, item: any) =>
                   [`${value} perdas`, item?.payload?.reason ?? ""]
                 }
               />

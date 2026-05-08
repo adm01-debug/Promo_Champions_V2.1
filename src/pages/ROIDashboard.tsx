@@ -11,8 +11,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { ROIRankingList } from '@/components/roi/ROIRankingList';
 import { PageTransition } from "@/components/transitions/PageTransition";
 
-const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
-const formatPercent = (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
+const formatCurrency = (v: any) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
+const formatPercent = (v: any) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
 const periodOptions = [{ label: '1 mês', value: 1 }, { label: '3 meses', value: 3 }, { label: '6 meses', value: 6 }, { label: '12 meses', value: 12 }];
 
 const ROIDashboard = () => {
@@ -74,7 +74,7 @@ const ROIDashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={(value: number, name: string) => [name === 'roi' ? `${value}%` : formatCurrency(value), name === 'roi' ? 'ROI' : name === 'revenue' ? 'Receita' : 'Custo']} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                    <Tooltip formatter={(value: any, name: any) => [name === 'roi' ? `${value}%` : formatCurrency(value), name === 'roi' ? 'ROI' : name === 'revenue' ? 'Receita' : 'Custo']} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
                     <Legend />
                     <Bar dataKey="revenue" name="Receita" radius={[6, 6, 0, 0]}>{roiChartData.map((_entry, index) => <Cell key={index} fill={`hsl(262, 83%, ${58 + index * 5}%)`} />)}</Bar>
                     <Bar dataKey="cost" name="Custo" fill="hsl(var(--muted-foreground) / 0.3)" radius={[6, 6, 0, 0]} />
@@ -98,7 +98,7 @@ const ROIDashboard = () => {
                     <XAxis type="number" dataKey="x" name="Atividades" tick={{ fontSize: 12 }} />
                     <YAxis type="number" dataKey="y" name="Receita" tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                     <ZAxis type="number" dataKey="z" range={[60, 400]} name="Vendas" />
-                    <Tooltip formatter={(value: number, name: string) => [name === 'Receita' ? formatCurrency(value) : value, name]} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                    <Tooltip formatter={(value: any, name: any) => [name === 'Receita' ? formatCurrency(value) : value, name]} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
                     <Legend />
                     <Scatter name="Vendedores" data={efficiencyData} fill="hsl(262, 83%, 58%)" />
                   </ScatterChart>

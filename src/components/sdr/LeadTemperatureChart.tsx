@@ -77,7 +77,7 @@ export function LeadTemperatureChart() {
                   borderRadius: '12px',
                   boxShadow: '0 10px 40px -10px rgba(0,0,0,0.2)'
                 }}
-                formatter={(value: number, name: string) => [`${value} leads`, name]}
+                formatter={(value: any, name: any) => [`${value} leads`, name]}
               />
             </PieChart>
           </ResponsiveContainer>

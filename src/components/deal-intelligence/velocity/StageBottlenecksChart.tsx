@@ -81,7 +81,7 @@ export function StageBottlenecksChart() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number, name: string) => [formatHours(value), name.toUpperCase()]}
+                  formatter={(value: any, name: any) => [formatHours(value), name.toUpperCase()]}
                 />
                 <Bar dataKey="p50" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="p75" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>

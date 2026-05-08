@@ -11,7 +11,7 @@ interface MonthData {
 
 interface HistoryTabProps {
   monthlyHistory: MonthData[];
-  formatCurrency: (value: number) => string;
+  formatCurrency: (value: any) => string;
 }
 
 export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurrency }: HistoryTabProps) {
@@ -29,7 +29,7 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
                   <YAxis stroke="hsl(var(--muted-foreground))" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} />
                   <Tooltip
                     contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                    formatter={(value: number) => [formatCurrency(value), "Total"]}
+                    formatter={(value: any) => [formatCurrency(value), "Total"]}
                   />
                   <Line type="monotone" dataKey="totalSales" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: "hsl(var(--primary))", strokeWidth: 2 }} />
                 </LineChart>

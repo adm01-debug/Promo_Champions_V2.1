@@ -81,7 +81,7 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
               <XAxis dataKey="week" hide />
               <Tooltip
                 contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}
-                formatter={(v: number) => [`${v}%`, "Conversão"]}
+                formatter={(v: any) => [`${v}%`, "Conversão"]}
               />
               <Area type="monotone" dataKey="rate" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#convGrad)" dot={false} activeDot={{ r: 3 }} />
             </AreaChart>

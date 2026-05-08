@@ -61,7 +61,7 @@ export function WeightedForecastDashboard() {
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
                 <XAxis type="number" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} className="text-xs" />
                 <YAxis type="category" dataKey="name" width={90} className="text-xs" />
-                <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }} />
+                <Tooltip formatter={(value: any) => formatCurrency(value)} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }} />
                 <Bar dataKey="total" name="Valor Total" fill="hsl(var(--muted))" radius={[0, 4, 4, 0]} />
                 <Bar dataKey="value" name="Valor Ponderado" radius={[0, 4, 4, 0]}>{funnelData.map((entry, index) => <Cell key={index} fill={entry.fill} />)}</Bar>
               </BarChart>
