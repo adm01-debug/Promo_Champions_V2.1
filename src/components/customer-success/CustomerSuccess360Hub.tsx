@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info } from "lucide-react";
-import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter, Search, Info, PieChart as PieIcon } from "lucide-react";
+import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, endOfDay, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, Cell, PieChart, Pie } from "recharts";
 import { useState, useMemo } from "react";
@@ -21,6 +21,7 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { formatBRL, daysUntil, renewalSemaphore, RENEWAL_STATUS_LABEL, TICKET_STATUS_LABEL, ONBOARDING_STATUS_LABEL, EXPANSION_TYPE_LABEL } from "./cs360Helpers";
 import { HelpdeskConnectorPanel } from "./HelpdeskConnectorPanel";
 import { SurveyTriggerDialog } from "./SurveyTriggerDialog";
+import { useToast } from "@/hooks/use-toast";
 
 const fadeIn = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } };
 
@@ -32,12 +33,23 @@ const SEMA_BG: Record<string, string> = {
   gray: "bg-muted text-muted-foreground border-border",
 };
 
+const CHART_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--success))",
+  "hsl(var(--warning))",
+  "hsl(var(--destructive))",
+  "hsl(var(--info))",
+  "hsl(var(--accent))"
+];
+
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
+  const { toast } = useToast();
   const [period, setPeriod] = useState("30");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [orderModalStatus, setOrderModalStatus] = useState<string | null>(null);
+  const [orderSearch, setOrderSearch] = useState("");
 
   const s = data?.summary;
   const accounts = data?.accounts ?? [];
