@@ -19,6 +19,7 @@ const motivationalTips = [
 
 export const DashboardHeader = () => {
   const { salesperson } = useAuth();
+  const { theme, toggleTheme } = useDashboardTheme();
   const navigate = useNavigate();
   const today = format(new Date(), "EEEE, d 'De' MMMM", { locale: ptBR });
   const [exporting, setExporting] = useState(false);
