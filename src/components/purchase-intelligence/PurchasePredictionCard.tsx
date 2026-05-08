@@ -16,6 +16,12 @@ import {
   ChevronRight,
   MousePointerClick
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { usePurchaseIntelligence } from "@/hooks/purchase-intelligence/usePurchaseIntelligence";
 import {
   CONTACT_WINDOW_LABELS,
