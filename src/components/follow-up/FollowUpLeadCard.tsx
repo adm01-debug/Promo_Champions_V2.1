@@ -34,7 +34,16 @@ const statusLabels: Record<string, string> = {
   open: 'Aberto',
 };
 
-const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelected, onToggle, onCreateTask, isCreating }: FollowUpLeadCardProps) {
+const FollowUpLeadCardInner = function FollowUpLeadCard({ 
+  lead, 
+  index, 
+  isSelected, 
+  onToggle, 
+  onCreateTask, 
+  isCreating,
+  onOpenAudit,
+  onReactivate
+}: FollowUpLeadCardProps) {
   const config = temperatureConfig[lead.temperature];
   const channel = channelIcons[lead.suggested_channel] || channelIcons.email;
   const ChannelIcon = channel.icon;
