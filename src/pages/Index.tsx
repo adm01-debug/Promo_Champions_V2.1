@@ -180,6 +180,7 @@ const Index = () => {
               onValueChange={(value) => {
                 const sectionKey = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
                 navigate(`/dashboard/${sectionKey}`);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="w-full"
             >
