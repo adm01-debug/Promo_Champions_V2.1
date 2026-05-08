@@ -1,4 +1,4 @@
-import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord } from "@/hooks/useCadences";
+import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord, ProspectCadence } from "@/hooks/useCadences";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText } from "lucide-react";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText, ChevronDown, CheckCircle2 } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
@@ -23,6 +23,10 @@ import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimul
 import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
 import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelConfig";
+import { LeadDetailedAuditLogs } from "@/components/sales/cadence/LeadDetailedAuditLogs";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -30,6 +34,8 @@ export default function Cadencias() {
   const deleteCadence = useDeleteCadence();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const { data: allProspects } = useProspectCadences();
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
@@ -98,6 +104,10 @@ export default function Cadencias() {
               <TabsTrigger value="templates" className="data-[state=active]:bg-background">
                 <FileText className="h-4 w-4 mr-2" />
                 Templates SINGU
+              </TabsTrigger>
+              <TabsTrigger value="audit" className="data-[state=active]:bg-background">
+                <Search className="h-4 w-4 mr-2" />
+                Auditoria por Lead
               </TabsTrigger>
             </TabsList>
 
@@ -247,6 +257,51 @@ export default function Cadencias() {
                     <ABTestDialog />
                   </CardContent>
                 </Card>
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="audit" className="space-y-6 animate-in fade-in-50 duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="glass border-border/40 lg:col-span-1">
+                <CardHeader>
+                  <CardTitle className="text-sm">Selecionar Lead</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[500px]">
+                    <div className="p-2 space-y-1">
+                      {allProspects?.map((p: any) => (
+                        <Button
+                          key={p.id}
+                          variant={selectedLeadId === p.sale_id ? "secondary" : "ghost"}
+                          className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
+                          onClick={() => setSelectedLeadId(p.sale_id)}
+                        >
+                          <span className="font-bold">{(p as any).sale?.client_name || (p as any).client_name || "Lead sem nome"}</span>
+                          <span className="text-[10px] text-muted-foreground">Status: {p.status} | Etapa: {p.funnel_stage}</span>
+                        </Button>
+                      ))}
+                      {(!allProspects || allProspects.length === 0) && (
+                        <div className="p-8 text-center text-muted-foreground text-xs">
+                          Nenhum lead em cadência encontrado.
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+
+              <div className="lg:col-span-2">
+                {selectedLeadId ? (
+                  <LeadDetailedAuditLogs 
+                    clientId={selectedLeadId} 
+                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name || "Lead"} 
+                  />
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">
+                    <Search className="h-12 w-12 opacity-20 mb-3" />
+                    <p className="text-sm">Selecione um lead para ver o histórico detalhado.</p>
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>

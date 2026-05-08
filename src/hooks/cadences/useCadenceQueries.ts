@@ -156,8 +156,8 @@ export function useTodaysCadenceTasks() {
             cadence:cadences(*)
           )
         `)
-        .eq("scheduled_date", today)
-        .eq("status", "pending");
+        .eq("status", "pending")
+        .order("priority", { ascending: false });
 
       if (error) throw error;
       return data;
@@ -206,6 +206,9 @@ export interface FunnelRule {
   condition_value: number;
   time_window_hours: number;
   is_active: boolean;
+  notify_push: boolean;
+  notify_email: boolean;
+  alert_priority: 'low' | 'normal' | 'high' | 'urgent';
 }
 
 export function useFunnelRules(cadenceId?: string) {

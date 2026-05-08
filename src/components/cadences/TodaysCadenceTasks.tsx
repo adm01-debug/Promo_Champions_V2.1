@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
@@ -42,17 +46,53 @@ export function TodaysCadenceTasks() {
   const [notesTaskId, setNotesTaskId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState("");
   const [noteAction, setNoteAction] = useState<"complete" | "skip">("complete");
+  const [callResult, setCallResult] = useState<string>("answered");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleAction = (taskId: string, action: "complete" | "skip") => {
     setNotesTaskId(taskId);
     setNoteAction(action);
     setNoteText("");
+    setCallResult("answered");
   };
 
-  const executeAction = () => {
+  const executeAction = async () => {
     if (!notesTaskId) return;
-    const payload = { taskId: notesTaskId, notes: noteText.trim() || undefined };
+    
+    const task = tasks?.find(t => t.id === notesTaskId);
+    const step = task?.cadence_step as any;
+    
+    const payload: any = { 
+      taskId: notesTaskId, 
+      notes: noteText.trim() || undefined 
+    };
+
     if (noteAction === "complete") {
+      // Se for ligação, salvar o resultado
+      if (step?.action_type === 'call') {
+        try {
+          await supabase
+            .from("cadence_tasks")
+            .update({ call_result: callResult })
+            .eq("id", notesTaskId);
+            
+          // Registrar log detalhado
+          const prospectCadence = task?.prospect_cadence as any;
+          if (prospectCadence?.sale_id) {
+            await supabase.from("lead_detailed_logs").insert({
+              client_id: prospectCadence.sale_id,
+              event_type: 'interaction',
+              action: 'Call Logged',
+              details: { result: callResult, notes: noteText },
+              created_by: (await supabase.auth.getUser()).data.user?.id
+            });
+          }
+        } catch (err) {
+          console.error("Erro ao salvar resultado da ligação:", err);
+        }
+      }
+      
       completeTask.mutate(payload);
     } else {
       skipTask.mutate(payload);
