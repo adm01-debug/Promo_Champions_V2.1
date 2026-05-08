@@ -5,8 +5,8 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { useToast } from "@/hooks/use-toast";
 import "@testing-library/jest-dom";
 
-// Standard jsPDF mock
-const mockJsPDF = {
+// Standard jsPDF mock instance
+const mockJsPDFInstance = {
   text: vi.fn(),
   save: vi.fn(),
   autoTable: vi.fn(),
@@ -33,11 +33,10 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Proper jsPDF mock for Vitest
+// Mock jsPDF
 vi.mock("jspdf", () => {
-  return { 
-    jsPDF: vi.fn().mockImplementation(() => mockJsPDF)
-  };
+  const jsPDF = vi.fn(() => mockJsPDFInstance);
+  return { jsPDF };
 });
 
 vi.mock("papaparse", () => ({
@@ -46,7 +45,7 @@ vi.mock("papaparse", () => ({
   },
 }));
 
-// Mock framer-motion to disable animations in tests
+// Mock framer-motion
 vi.mock("framer-motion", () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
@@ -196,12 +195,12 @@ describe("CustomerSuccess360Hub", () => {
     // Switch to Pedidos tab
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
 
-    // The 'Ver Detalhes' buttons are inside the table that appears in the TabContent
-    // Let's wait for them
+    // Find and click 'Ver Detalhes'
     await waitFor(() => {
-      const detailButtons = screen.getAllByRole("button").filter(btn => btn.textContent?.includes("Ver Detalhes"));
-      expect(detailButtons.length).toBeGreaterThan(0);
-      fireEvent.click(detailButtons[0]);
+      const detailButtons = screen.getAllByRole("button");
+      const verDetalhes = detailButtons.find(b => b.textContent?.includes("Ver Detalhes"));
+      if (!verDetalhes) throw new Error("Button not found");
+      fireEvent.click(verDetalhes);
     });
 
     // Modal should be open
