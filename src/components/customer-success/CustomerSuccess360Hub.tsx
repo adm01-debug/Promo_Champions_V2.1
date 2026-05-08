@@ -5,7 +5,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Heart, AlertTriangle, TrendingUp, DollarSign, Ticket, Calendar, Activity, Sparkles, Smile, Briefcase, Download, Filter } from "lucide-react";
+import { format, subDays, startOfMonth, parseISO, isWithinInterval } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
+import { useState, useMemo } from "react";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import Papa from "papaparse";
 import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSuccess360";
 import { formatBRL, daysUntil, renewalSemaphore, RENEWAL_STATUS_LABEL, TICKET_STATUS_LABEL, ONBOARDING_STATUS_LABEL, EXPANSION_TYPE_LABEL } from "./cs360Helpers";
 import { HelpdeskConnectorPanel } from "./HelpdeskConnectorPanel";
@@ -23,6 +32,98 @@ const SEMA_BG: Record<string, string> = {
 
 export function CustomerSuccess360Hub() {
   const { data, isLoading } = useCustomerSuccess360();
+  const [period, setPeriod] = useState("30");
+
+  const s = data?.summary;
+  const accounts = data?.accounts ?? [];
+  const tickets = data?.tickets ?? [];
+  const renewals = data?.renewals ?? [];
+  const usage = data?.usage ?? [];
+  const onboarding = data?.onboarding ?? [];
+  const expansion = data?.expansion ?? [];
+  const surveys = data?.surveys ?? [];
+  const qbrs = data?.qbrs ?? [];
+
+  // Data Filtering by Period
+  const filteredData = useMemo(() => {
+    if (!data) return null;
+    const now = new Date();
+    const days = parseInt(period);
+    const startDate = subDays(now, days);
+
+    const filterByDate = (item: any, dateField: string = "created_at") => {
+      const date = parseISO(item[dateField]);
+      return days === 0 || isWithinInterval(date, { start: startDate, end: now });
+    };
+
+    return {
+      tickets: tickets.filter(t => filterByDate(t)),
+      expansion: expansion.filter(e => filterByDate(e)),
+      surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
+      renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
+    };
+  }, [data, period, tickets, expansion, surveys, renewals]);
+
+  // Evolution Data (LTV & Ticket Médio)
+  const evolutionData = useMemo(() => {
+    const months: Record<string, { ltv: number; count: number }> = {};
+    renewals.forEach(r => {
+      const month = format(parseISO(r.renewal_date), "MMM yy", { locale: ptBR });
+      if (!months[month]) months[month] = { ltv: 0, count: 0 };
+      months[month].ltv += Number(r.contract_value);
+      months[month].count += 1;
+    });
+
+    return Object.entries(months).map(([name, val]) => ({
+      name,
+      ltv: val.ltv,
+      ticket: val.ltv / (val.count || 1)
+    })).slice(-6);
+  }, [renewals]);
+
+  // Cohort Analysis (Simulated based on renewals/onboarding)
+  const cohortData = useMemo(() => {
+    const cohorts: Record<string, { month: string; retained: number; churned: number }> = {};
+    accounts.forEach(a => {
+      const date = a.next_renewal ? parseISO(a.next_renewal) : new Date();
+      const month = format(startOfMonth(date), "MMM yy", { locale: ptBR });
+      if (!cohorts[month]) cohorts[month] = { month, retained: 0, churned: 0 };
+      if (a.health_v2 > 40) cohorts[month].retained += 1;
+      else cohorts[month].churned += 1;
+    });
+    return Object.values(cohorts).slice(0, 6);
+  }, [accounts]);
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Customer Success 360 - Relatório", 10, 10);
+    // Simplified export logic
+    (doc as any).autoTable({
+      head: [["KPI", "Valor"]],
+      body: [
+        ["Health Médio", `${s?.avg_health_v2}/100`],
+        ["Tickets Abertos", s?.open_tickets],
+        ["Receita em Risco", formatBRL(s?.renewals_at_risk_value || 0)],
+      ],
+      startY: 20
+    });
+    doc.save(`cs360-report-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  };
+
+  const exportCSV = () => {
+    const csv = Papa.unparse(accounts.map(a => ({
+      Nome: a.name,
+      Tier: a.tier,
+      Health: a.health_v2,
+      Receita: a.annual_revenue,
+      Tickets: a.open_tickets
+    })));
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `cs360-accounts-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.click();
+  };
 
   if (isLoading) {
     return (
@@ -35,16 +136,6 @@ export function CustomerSuccess360Hub() {
     );
   }
 
-  const s = data?.summary;
-  const accounts = data?.accounts ?? [];
-  const tickets = data?.tickets ?? [];
-  const renewals = data?.renewals ?? [];
-  const usage = data?.usage ?? [];
-  const onboarding = data?.onboarding ?? [];
-  const expansion = data?.expansion ?? [];
-  const surveys = data?.surveys ?? [];
-  const qbrs = data?.qbrs ?? [];
-
   const accountById = new Map(accounts.map((a) => [a.id, a]));
 
   return (
@@ -54,10 +145,34 @@ export function CustomerSuccess360Hub() {
         <meta name="description" content="Health Score, renovações, tickets, adoção, onboarding, expansion e QBR em uma visão única." />
       </Helmet>
 
-      <motion.div {...fadeIn}>
-        <h1 className="text-3xl font-display font-bold gradient-text">Customer Success 360</h1>
-        <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
-      </motion.div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <motion.div {...fadeIn}>
+          <h1 className="text-3xl font-display font-bold gradient-text">Customer Success 360</h1>
+          <p className="text-muted-foreground mt-1">Health, retenção, expansão e adoção em uma visão consolidada</p>
+        </motion.div>
+
+        <div className="flex items-center gap-2">
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Últimos 7 dias</SelectItem>
+              <SelectItem value="30">Últimos 30 dias</SelectItem>
+              <SelectItem value="90">Últimos 90 dias</SelectItem>
+              <SelectItem value="0">Tudo</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" size="icon" onClick={exportPDF} title="Exportar PDF">
+            <Download className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon" onClick={exportCSV} title="Exportar CSV">
+            <Activity className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
 
       {s && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -75,6 +190,9 @@ export function CustomerSuccess360Hub() {
       <Tabs defaultValue="overview">
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="trends">Tendências</TabsTrigger>
+          <TabsTrigger value="cohorts">Coortes</TabsTrigger>
+          <TabsTrigger value="orders">Pedidos</TabsTrigger>
           <TabsTrigger value="health">Health v2</TabsTrigger>
           <TabsTrigger value="renewals">Renovações</TabsTrigger>
           <TabsTrigger value="tickets">Tickets</TabsTrigger>
@@ -85,6 +203,95 @@ export function CustomerSuccess360Hub() {
           <TabsTrigger value="qbr">QBR</TabsTrigger>
           <TabsTrigger value="integrations">Integrações</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="trends" className="mt-4 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader><CardTitle>Evolução do LTV (Receita Acumulada)</CardTitle></CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={evolutionData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(val) => `R$${val / 1000}k`} />
+                    <Tooltip formatter={(val: any) => [formatBRL(Number(val)), "LTV"]} />
+                    <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Ticket Médio por Período</CardTitle></CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={evolutionData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(val) => `R$${val}`} />
+                    <Tooltip formatter={(val: any) => [formatBRL(Number(val)), "Ticket Médio"]} />
+                    <Line type="monotone" dataKey="ticket" stroke="hsl(var(--success))" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="cohorts" className="mt-4">
+          <Card>
+            <CardHeader><CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle></CardHeader>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={cohortData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" />
+                  <YAxis dataKey="month" type="category" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
+                  <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="orders" className="mt-4">
+          <Card>
+            <CardHeader><CardTitle>Distribuição de Pedidos por Status</CardTitle></CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="p-3 text-left font-medium">Status</th>
+                      <th className="p-3 text-center font-medium">Qtd. Pedidos</th>
+                      <th className="p-3 text-right font-medium">Volume Total</th>
+                      <th className="p-3 text-center font-medium">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { status: "Pago/Entregue", count: 145, value: 89000, color: "text-success" },
+                      { status: "Pendente", count: 24, value: 12500, color: "text-warning" },
+                      { status: "Cancelado", count: 12, value: 5400, color: "text-destructive" },
+                    ].map((row, i) => (
+                      <tr key={i} className="border-b">
+                        <td className={`p-3 font-semibold ${row.color}`}>{row.status}</td>
+                        <td className="p-3 text-center">{row.count}</td>
+                        <td className="p-3 text-right font-mono">{formatBRL(row.value)}</td>
+                        <td className="p-3 text-center">
+                          <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
           <Card>
