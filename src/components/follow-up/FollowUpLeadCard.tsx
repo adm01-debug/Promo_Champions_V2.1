@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake } from 'lucide-react';
+import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake, History, RotateCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
@@ -117,6 +117,22 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
             {/* Actions */}
             <div className="flex flex-col items-end gap-2 shrink-0">
               <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        onClick={() => onOpenAudit(lead)}
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Ver histórico de ações</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
