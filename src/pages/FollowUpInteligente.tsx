@@ -508,5 +508,48 @@ const FollowUpInteligente = () => {
     </>
   );
 };
+      {/* WhatsApp Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-green-500" />
+              Revisar Mensagem
+            </DialogTitle>
+            <DialogDescription>
+              Revise o conteúdo antes de gerar o link do WhatsApp para {currentLeadForWA?.client_name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
+            <div className="absolute top-2 right-2">
+              <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-start">
+                <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-border/50">
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {currentLeadForWA && (followUpSettings?.whatsapp_template || "...")
+                      .replace("{{client_name}}", currentLeadForWA.client_name)
+                      .replace("{{product_name}}", currentLeadForWA.product_name || "produto")
+                      .replace("{{status}}", currentLeadForWA.status)
+                    }
+                  </p>
+                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">Agora</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Cancelar</Button>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 text-white gap-2"
+              onClick={() => currentLeadForWA && sendWhatsApp(currentLeadForWA)}
+            >
+              <Send className="h-4 w-4" />
+              Enviar para o WhatsApp
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
 export default FollowUpInteligente;
