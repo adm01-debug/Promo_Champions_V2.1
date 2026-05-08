@@ -10,7 +10,20 @@ interface FollowUpValueAtRiskProps {
 }
 
 export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAtRiskProps) {
+  const statusProbabilities: Record<string, number> = {
+    lead: 0.1,
+    qualified: 0.3,
+    proposal: 0.5,
+    negotiation: 0.8,
+    open: 0.1,
+  };
+
   const totalValue = leads.reduce((sum, l) => sum + (l.amount || 0), 0);
+  const weightedValue = leads.reduce((sum, l) => {
+    const prob = statusProbabilities[l.status] || 0.1;
+    return sum + ((l.amount || 0) * prob);
+  }, 0);
+  
   const criticalCount = leads.filter(l => l.temperature === 'cold' || l.temperature === 'frozen').length;
 
   if (totalValue === 0) return null;
