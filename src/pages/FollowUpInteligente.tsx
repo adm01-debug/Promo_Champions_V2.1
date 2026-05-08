@@ -537,6 +537,14 @@ const FollowUpInteligente = () => {
               Revise o conteúdo antes de gerar o link do WhatsApp para {currentLeadForWA?.client_name}.
             </DialogDescription>
           </DialogHeader>
+          
+          {missingVariables.length > 0 && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-xs text-destructive font-bold flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Atenção: Variáveis faltando no lead: {missingVariables.join(', ')}
+            </div>
+          )}
+
           <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
             <div className="absolute top-2 right-2">
               <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
@@ -545,11 +553,17 @@ const FollowUpInteligente = () => {
               <div className="flex justify-start">
                 <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-border/50">
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {currentLeadForWA && (followUpSettings?.whatsapp_template || "...")
-                      .replace("{{client_name}}", currentLeadForWA.client_name)
-                      .replace("{{product_name}}", currentLeadForWA.product_name || "produto")
-                      .replace("{{status}}", currentLeadForWA.status)
-                    }
+                    {currentLeadForWA && (() => {
+                      const template = followUpSettings?.whatsapp_template || 
+                        "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}}...";
+                      let msg = template;
+                      const vars = template.match(/{{(.*?)}}/g) || [];
+                      vars.forEach(v => {
+                        const key = v.replace(/{{|}}/g, '');
+                        msg = msg.replace(v, (currentLeadForWA as any)[key] || `[${key}?]`);
+                      });
+                      return msg;
+                    })()}
                   </p>
                   <span className="text-[10px] text-muted-foreground mt-1 block text-right">Agora</span>
                 </div>
@@ -561,13 +575,15 @@ const FollowUpInteligente = () => {
             <Button 
               className="bg-green-600 hover:bg-green-700 text-white gap-2"
               onClick={() => currentLeadForWA && sendWhatsApp(currentLeadForWA)}
+              disabled={missingVariables.length > 0}
             >
               <Send className="h-4 w-4" />
-              Enviar para o WhatsApp
+              Gerar Link WhatsApp
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </>
   );
 };
