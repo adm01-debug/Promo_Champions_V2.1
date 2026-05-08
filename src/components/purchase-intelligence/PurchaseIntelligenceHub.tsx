@@ -101,15 +101,18 @@ export function PurchaseIntelligenceHub() {
             
             <div className="grid lg:grid-cols-12 gap-6">
               <motion.div 
-                className="lg:col-span-5 xl:col-span-4"
+                className="lg:col-span-4"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <PurchasePredictionCard clientId={clientId} />
+                <div className="space-y-6">
+                  <PurchasePredictionCard clientId={clientId} />
+                  <IntelligenceAlerts />
+                </div>
               </motion.div>
               <motion.div 
-                className="lg:col-span-7 xl:col-span-8"
+                className="lg:col-span-8"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
@@ -117,6 +120,15 @@ export function PurchaseIntelligenceHub() {
                 <PurchaseHeatmapGrid clientId={clientId} months={24} />
               </motion.div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="audit" className="focus-visible:outline-none">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <DuplicateBlockAudit />
+            </motion.div>
           </TabsContent>
 
           <TabsContent value="global" className="focus-visible:outline-none">
