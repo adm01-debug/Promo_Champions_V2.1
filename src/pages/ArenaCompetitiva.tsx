@@ -9,7 +9,7 @@ import {
   BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard,
   WallOfFame, GamifiedProfile, Benchmarking, ActivityHeatmap,
   TournamentBrackets, PerformanceBets, TerritoryWars, EnhancedTVMode,
-  FeatureComparison
+  FeatureComparison, ImprovementPlan
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
