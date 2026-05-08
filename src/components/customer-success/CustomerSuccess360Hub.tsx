@@ -533,7 +533,7 @@ export function CustomerSuccess360Hub() {
                       .map((o) => (
                         <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
                           <td className="p-3 font-medium">#{o.order_number}</td>
-                          <td className="p-3">{accountById.get(o.account_id)?.name ?? "—"}</td>
+                          <td className="p-3">{accountById.get((o as any).account_id)?.name ?? "—"}</td>
                           <td className="p-3 text-muted-foreground">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
                           <td className="p-3 text-right font-mono font-medium">{formatBRL(o.total)}</td>
                           <td className="p-3">
