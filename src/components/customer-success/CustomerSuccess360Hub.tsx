@@ -196,7 +196,6 @@ export function CustomerSuccess360Hub() {
       if (orderModalStatus === "cancelled") {
         key = o.cancellation_reason || "Não informado";
       } else {
-        // For other statuses, show top customers as "sources" of orders
         key = accountById.get((o as any).account_id)?.name || "Cliente Desconhecido";
       }
       counts[key] = (counts[key] || 0) + 1;
@@ -268,24 +267,30 @@ export function CustomerSuccess360Hub() {
   };
 
   const handleDateChange = (type: "start" | "end", value: string) => {
-    const today = new Date();
+    if (!value) {
+      if (type === "start") setStartDate("");
+      else setEndDate("");
+      return;
+    }
+
     const selectedDate = parseISO(value);
+    const now = new Date();
 
     if (type === "start") {
-      if (endDate && value && isAfter(selectedDate, parseISO(endDate))) {
+      if (endDate && isAfter(selectedDate, endOfDay(parseISO(endDate)))) {
         toast({
-          title: "Período Inválido",
-          description: "A data inicial não pode ultrapassar a data final. Ajuste o intervalo para prosseguir.",
+          title: "Intervalo inválido",
+          description: "A data inicial não pode ser posterior à data final.",
           variant: "destructive",
         });
         return;
       }
       setStartDate(value);
     } else {
-      if (startDate && value && isAfter(parseISO(startDate), selectedDate)) {
+      if (startDate && isAfter(startOfDay(parseISO(startDate)), selectedDate)) {
         toast({
-          title: "Período Inválido",
-          description: "A data final deve ser posterior à data inicial. Verifique o filtro selecionado.",
+          title: "Intervalo inválido",
+          description: "A data final não pode ser anterior à data inicial.",
           variant: "destructive",
         });
         return;
@@ -812,27 +817,40 @@ export function CustomerSuccess360Hub() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedAndPaginatedOrders.map((o) => (
-                        <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
-                          <td className="p-3 font-medium">#{o.order_number}</td>
-                          <td className="p-3">{accountById.get((o as any).account_id)?.name ?? "—"}</td>
-                          <td className="p-3 text-muted-foreground">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
-                          <td className="p-3 text-right font-mono font-medium">{formatBRL(o.total)}</td>
-                          <td className="p-3">
-                            {o.cancellation_reason && (
-                              <Badge variant="outline" className="text-destructive font-normal border-destructive/20 bg-destructive/5">
-                                Motivo: {o.cancellation_reason}
-                              </Badge>
-                            )}
-                            {!o.cancellation_reason && o.status === "pending" && (
-                              <span className="text-xs text-muted-foreground italic">Aguardando pagamento</span>
-                            )}
-                            {!o.cancellation_reason && o.status !== "pending" && (
-                              <span className="text-xs text-muted-foreground italic">—</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                      {sortedAndPaginatedOrders.map((o) => {
+                        const accountName = accountById.get((o as any).account_id)?.name ?? "—";
+                        const highlight = (text: string) => {
+                          if (!orderSearch) return text;
+                          const parts = text.split(new RegExp(`(${orderSearch})`, "gi"));
+                          return parts.map((part, i) => 
+                            part.toLowerCase() === orderSearch.toLowerCase() 
+                              ? <span key={i} className="bg-primary/20 text-primary font-bold rounded-sm px-0.5">{part}</span> 
+                              : part
+                          );
+                        };
+
+                        return (
+                          <tr key={o.id} className="border-b transition-colors hover:bg-muted/10">
+                            <td className="p-3 font-medium">#{highlight(o.order_number)}</td>
+                            <td className="p-3">{highlight(accountName)}</td>
+                            <td className="p-3 text-muted-foreground">{format(parseISO(o.created_at), "dd/MM/yyyy HH:mm")}</td>
+                            <td className="p-3 text-right font-mono font-medium">{formatBRL(o.total)}</td>
+                            <td className="p-3">
+                              {o.cancellation_reason && (
+                                <Badge variant="outline" className="text-destructive font-normal border-destructive/20 bg-destructive/5">
+                                  Motivo: {highlight(o.cancellation_reason)}
+                                </Badge>
+                              )}
+                              {!o.cancellation_reason && o.status === "pending" && (
+                                <span className="text-xs text-muted-foreground italic">Aguardando pagamento</span>
+                              )}
+                              {!o.cancellation_reason && o.status !== "pending" && (
+                                <span className="text-xs text-muted-foreground italic">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {sortedAndPaginatedOrders.length === 0 && (
                         <tr>
                           <td colSpan={5} className="p-12 text-center text-muted-foreground">
