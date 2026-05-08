@@ -22,7 +22,8 @@ export function FollowUpHeader({
   searchQuery, 
   onSearchChange,
   minDaysInactive,
-  onMinDaysChange
+  onMinDaysChange,
+  isAdmin
 }: FollowUpHeaderProps) {
   return (
     <motion.div
