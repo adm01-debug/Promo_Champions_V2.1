@@ -297,8 +297,8 @@ const Speedometer = ({
                 <div
                   className={cn("font-mono font-black tabular-nums tracking-tighter leading-none transition-all duration-300", colors.text)}
                   style={{
-                    fontSize: s * 0.26,
-                    textShadow: theme === "cyber" ? `0 0 50px ${colors.glow}, 0 0 100px ${colors.glow}, 0 0 150px ${colors.glow}` : "none",
+                    fontSize: s * 0.32,
+                    textShadow: theme === "cyber" ? `0 0 80px ${colors.glow}, 0 0 160px ${colors.glow}, 0 0 240px ${colors.glow}` : "none",
                   }}
                 >
                   {displayValue}
