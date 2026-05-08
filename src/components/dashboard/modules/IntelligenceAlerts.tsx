@@ -32,7 +32,7 @@ const alerts = [
   }
 ];
 
-export const IntelligenceAlerts = () => {
+export const IntelligenceAlerts = React.memo(() => {
   return (
     <Card className="h-full border-white/5 bg-black/40 backdrop-blur-xl overflow-hidden group">
       <CardHeader className="pb-2 border-b border-white/5">
