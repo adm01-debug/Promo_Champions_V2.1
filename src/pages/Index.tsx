@@ -77,6 +77,9 @@ const SECTION_MAP: Record<string, string> = {
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();
+  if (section && !(section in SECTION_MAP) && section !== "visao-geral") {
+    return <Navigate to="/dashboard/visao-geral" replace />;
+  }
   const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
   const { theme } = useDashboardTheme();
