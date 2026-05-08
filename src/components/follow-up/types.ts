@@ -19,6 +19,7 @@ export interface ColdLead {
     type: string;
   };
   score?: number;
+  probability?: number;
   has_pending_task?: boolean;
 }
 
