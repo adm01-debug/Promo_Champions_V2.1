@@ -94,14 +94,16 @@ describe("Dashboard Routing", () => {
 
   it("exibe 404 para seções desconhecidas em /dashboard/:section", async () => {
     render(
-      <MemoryRouter initialEntries={["/dashboard/secao-inexistente"]}>
-        <Routes>
-          <Route path="/dashboard" element={<Index />} />
-          <Route path="/dashboard/:section" element={<Index />} />
-          <Route path="/404" element={<NotFound />} />
-        </Routes>
-        <LocationDisplay />
-      </MemoryRouter>
+      <AllProviders>
+        <MemoryRouter initialEntries={["/dashboard/secao-inexistente"]}>
+          <Routes>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/dashboard/:section" element={<Index />} />
+            <Route path="/404" element={<NotFound />} />
+          </Routes>
+          <LocationDisplay />
+        </MemoryRouter>
+      </AllProviders>
     );
 
     await waitFor(() => {
