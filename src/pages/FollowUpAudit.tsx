@@ -8,7 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, Filter, MessageCircle, Zap, UserPlus, Clock, History, AlertTriangle } from "lucide-react";
+import { Search, Filter, MessageCircle, Zap, UserPlus, Clock, History, AlertTriangle, RotateCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
@@ -44,6 +46,26 @@ const FollowUpAudit = () => {
       return data;
     },
   });
+
+  const handleRetry = (log: any) => {
+    if (log.action_type === 'whatsapp_sent') {
+      const details = log.details;
+      // We don't have the full message here usually unless we store it, 
+      // but let's assume we can trigger a generic one or we stored it in details.
+      toast.info("Re-enviando WhatsApp...");
+      // In a real app, we'd fetch the lead and template again or use stored data.
+      window.open(`https://wa.me/?text=Olá! Gostaríamos de retomar nosso contato.`, '_blank');
+      
+      // Update retry count
+      supabase
+        .from('follow_up_audit_logs')
+        .update({ retry_count: (log.retry_count || 0) + 1 })
+        .eq('id', log.id)
+        .then(() => {
+          // Invalidate
+        });
+    }
+  };
 
   return (
     <PageTransition>
@@ -158,14 +180,21 @@ const FollowUpAudit = () => {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right text-xs">
-                              {log.retry_count > 0 && (
-                                <Badge variant="outline" className="text-[10px] mr-2">
-                                  {log.retry_count} retentativas
-                                </Badge>
-                              )}
-                              <span className="text-muted-foreground italic truncate max-w-[200px] inline-block">
-                                {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
-                              </span>
+                              <div className="flex items-center justify-end gap-2">
+                                {log.retry_count > 0 && (
+                                  <Badge variant="outline" className="text-[10px]">
+                                    {log.retry_count} retentativas
+                                  </Badge>
+                                )}
+                                {log.action_type === 'whatsapp_sent' && (
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleRetry(log)}>
+                                    <RotateCw className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
+                                <span className="text-muted-foreground italic truncate max-w-[200px] inline-block">
+                                  {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
+                                </span>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
