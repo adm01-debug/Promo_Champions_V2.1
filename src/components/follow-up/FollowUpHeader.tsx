@@ -12,6 +12,7 @@ interface FollowUpHeaderProps {
   onSearchChange: (query: string) => void;
   minDaysInactive: number;
   onMinDaysChange: (days: number) => void;
+  isAdmin?: boolean;
 }
 
 export function FollowUpHeader({ 
