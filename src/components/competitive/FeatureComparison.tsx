@@ -146,7 +146,7 @@ export const FeatureComparison = () => {
           </CardHeader>
           <CardContent>
             <ul className="text-sm space-y-2 text-muted-foreground">
-              <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> Native Lead/Decision Maker Database</li>
+              <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> SINGU Lead/Decision Maker Database</li>
               <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> AI Behavioral Analysis</li>
               <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-amber-500" /> Auto-discovery of Emails/Phones</li>
             </ul>
