@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -12,8 +13,9 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Flag, Plus, Trash2, Settings2, Users, Percent } from "lucide-react";
+import { Flag, Plus, Trash2, Settings2, Users, Percent, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const FeatureFlagsAdmin = () => {
   const queryClient = useQueryClient();
@@ -21,14 +23,7 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState("");
   const [newDesc, setNewDesc] = useState("");
 
-  const { data: flags, isLoading } = useQuery({
-    queryKey: ["feature-flags-admin"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("feature_flags").select("*").order("key");
-      if (error) throw error;
-      return data || [];
-    },
-  });
+  const { flags, isLoading } = useFeatureFlags();
 
   const toggleMutation = useMutation({
     mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
