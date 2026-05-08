@@ -21,45 +21,65 @@ interface SimulationLog {
 
 export function CadenceSimulationDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLead, setSelectedLead] = useState("");
-  const [selectedSalesperson, setSelectedSalesperson] = useState("");
+  const [selectedProspectId, setSelectedProspectId] = useState("");
   const [logs, setLogs] = useState<SimulationLog[]>([]);
   const { data: salespeople } = useSalespeople();
+  const { data: prospects } = useProspectCadences();
+  const { data: rules } = useFunnelRules();
+  const queryClient = useQueryClient();
 
-  const simulateEvent = async (type: "proposal_view" | "price_click") => {
-    if (!selectedSalesperson) {
-      toast.error("Selecione um vendedor para a simulação");
+  const simulateEvent = async (type: "quote_open" | "price_click") => {
+    if (!selectedProspectId) {
+      toast.error("Selecione um lead para a simulação");
       return;
     }
 
-    const eventName = type === "proposal_view" ? "Abertura de Proposta" : "Clique em Preço";
-    const leadName = selectedLead || "Lead Simulado";
+    const prospect = prospects?.find(p => p.id === selectedProspectId);
+    if (!prospect) return;
 
-    // Registrar log simulado
+    const eventName = type === "quote_open" ? "Abertura de Proposta" : "Clique em Preço";
+    const leadName = prospect.id.substring(0, 8); // Simplificado
+
+    // Encontrar regra aplicável
+    const applicableRule = rules?.find(r => 
+      r.is_active && 
+      r.from_stage === prospect.funnel_stage && 
+      r.condition_type === type
+    );
+
+    let resultMsg = "Evento registrado";
+    let newStage = prospect.funnel_stage;
+
+    if (applicableRule) {
+      newStage = applicableRule.to_stage as any;
+      resultMsg = `Transição: ${prospect.funnel_stage} -> ${newStage}`;
+      
+      // Atualizar no banco
+      const { error } = await supabase
+        .from('prospect_cadences')
+        .update({ funnel_stage: newStage })
+        .eq('id', prospect.id);
+        
+      if (error) {
+        toast.error("Erro ao atualizar estágio do funil");
+        return;
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
+    }
+
     const newLog: SimulationLog = {
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date().toLocaleTimeString(),
       event: eventName,
-      lead: leadName,
-      result: "Gatilho 'Ligar Agora' Disparado",
+      lead: `Lead ${leadName}`,
+      result: resultMsg,
     };
 
     setLogs([newLog, ...logs]);
 
-    // Em um cenário real, inseriríamos na tabela 'activities'
-    const { error } = await supabase.from('activities').insert({
-      salesperson_id: selectedSalesperson,
-      activity_type: type as any,
-      notes: `Simulação: ${eventName} para ${leadName}`,
-      outcome: 'connected' as any,
-    });
-
-    if (error) {
-      console.error("Erro ao registrar atividade:", error);
-    }
-
-    toast.success(`${eventName} simulado com sucesso!`, {
-      description: "Gatilho de intenção registrado nos logs de auditoria.",
+    toast.success(`${eventName} simulado!`, {
+      description: resultMsg,
     });
   };
 
