@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "current_month", label: "Mês Atual" },
@@ -299,7 +300,7 @@ export const FuturisticSpeedometerDashboard = () => {
     return salespeople.find((s) => s.id === salespersonFilter)?.name ?? "Vendedor";
   }, [salespersonFilter, salespeople, currentUser?.name]);
 
-  const { data: kpis } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
+  const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
   const { data: goals } = useGoalsDashboard();
 
   const revenue = kpis?.current.totalRevenue ?? 0;
