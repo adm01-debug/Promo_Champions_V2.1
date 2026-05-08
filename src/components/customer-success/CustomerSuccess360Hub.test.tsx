@@ -162,11 +162,7 @@ describe("CustomerSuccess360Hub", () => {
     const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
     
-    // Check if we are in building mode or preview mode might affect Tabs content visibility
-    // Since it's Radix Tabs, content is hidden when inactive.
-    
-    // Click "Ver Detalhes" directly via the first button that has the text
-    // In our component: data-testid={`ver-detalhes-${row.key}`}
+    // Verify "Ver Detalhes" button using data-testid
     const detailsButton = await screen.findByTestId("ver-detalhes-delivered");
     fireEvent.click(detailsButton);
     
