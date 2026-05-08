@@ -160,18 +160,18 @@ export function PurchasePredictionCard({ clientId }: Props) {
               className="space-y-4"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-xl border-2 border-primary/30 bg-primary/10 p-4 relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <TrendingUp className="h-16 w-16" />
+                <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 relative overflow-hidden group/card shadow-[0_0_20px_rgba(139,92,246,0.05)] hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all">
+                  <div className="absolute -right-4 -top-4 opacity-10 group-hover/card:opacity-20 transition-opacity">
+                    <TrendingUp className="h-16 w-16 text-primary" />
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-tight">
                     <Sparkles className="h-3.5 w-3.5" /> Próxima Compra
                   </div>
-                  <div className="text-xl font-black text-foreground tracking-tight">{formatDatePt(ai.predicted_next_purchase_date)}</div>
+                  <div className="text-xl font-black text-foreground tracking-tight group-hover/card:text-primary transition-colors">{formatDatePt(ai.predicted_next_purchase_date)}</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-sm font-bold text-muted-foreground">{formatBRL(ai.predicted_amount)}</span>
-                    <Badge variant="outline" className="text-[9px] border-primary/20 text-primary">
-                      {(ai.confidence * 100).toFixed(0)}% Confiança
+                    <Badge variant="outline" className="text-[9px] border-primary/20 text-primary bg-primary/10 shadow-[0_0_10px_rgba(139,92,246,0.2)]">
+                      {(ai.confidence * 100).toFixed(0)}% CONFIDENCE
                     </Badge>
                   </div>
                 </div>
