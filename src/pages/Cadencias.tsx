@@ -11,11 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle } from "lucide-react";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
+import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
