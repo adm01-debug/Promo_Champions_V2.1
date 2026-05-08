@@ -184,12 +184,23 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
           {/* AI Suggestion */}
           <div className="mt-3 flex flex-col gap-2">
             {lead.temperature === 'frozen' && lead.score && lead.score >= 80 && (
-              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center gap-2 text-destructive font-bold animate-pulse">
-                <Snowflake className="h-3.5 w-3.5" />
-                ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center justify-between gap-2 text-destructive font-bold animate-pulse">
+                <div className="flex items-center gap-2">
+                  <Snowflake className="h-3.5 w-3.5" />
+                  ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-6 px-2 text-[10px] bg-destructive/20 hover:bg-destructive/30 text-destructive border-none"
+                  onClick={() => onReactivate(lead)}
+                >
+                  <RotateCw className="h-3 w-3 mr-1" />
+                  REATIVAR AGORA
+                </Button>
               </div>
             )}
-            
+
             <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
               <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
               <span className="text-muted-foreground">
