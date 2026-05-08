@@ -60,16 +60,16 @@ export function PurchasePredictionCard({ clientId }: Props) {
   const isOverdue = daysSinceLast > cycleDays;
 
   return (
-    <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-xl h-full flex flex-col overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
+    <Card className="border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl h-full flex flex-col overflow-hidden relative group">
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
       
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-lg font-bold">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              <Brain className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground/90">
+            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+              <Brain className="h-5 w-5 text-primary animate-pulse" />
             </div>
-            Análise Preditiva 360°
+            Inteligência Preditiva
           </CardTitle>
           <AnimatePresence>
             {isFetching && (
