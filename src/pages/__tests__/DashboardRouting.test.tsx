@@ -75,14 +75,16 @@ describe("Dashboard Routing", () => {
 
   it("redireciona para visao-geral quando acessado /dashboard pela primeira vez", async () => {
     render(
-      <MemoryRouter initialEntries={["/dashboard"]}>
-        <Routes>
-          <Route path="/dashboard" element={<Index />} />
-          <Route path="/dashboard/:section" element={<Index />} />
-          <Route path="/404" element={<NotFound />} />
-        </Routes>
-        <LocationDisplay />
-      </MemoryRouter>
+      <AllProviders>
+        <MemoryRouter initialEntries={["/dashboard"]}>
+          <Routes>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/dashboard/:section" element={<Index />} />
+            <Route path="/404" element={<NotFound />} />
+          </Routes>
+          <LocationDisplay />
+        </MemoryRouter>
+      </AllProviders>
     );
 
     await waitFor(() => {
