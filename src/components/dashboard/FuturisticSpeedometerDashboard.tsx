@@ -4,7 +4,7 @@ import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/u
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2 } from "lucide-react";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,6 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
@@ -243,12 +244,7 @@ const Speedometer = ({
                     : {}
                 }
               />
-              <svg
-                width={s}
-                height={s}
-                viewBox={`0 0 ${s} ${s}`}
-                className="absolute inset-0"
-              >
+              <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} className="absolute inset-0">
                 <defs>
                   <linearGradient id={"grad-" + accent + "-" + label} x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor={colors.stroke} stopOpacity="0.4" />
@@ -346,3 +342,295 @@ const Speedometer = ({
     </motion.div>
   );
 };
+
+const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";
+const SALESPERSON_STORAGE_KEY = "dashboard.speedometer.salesperson";
+const ALL_SALESPEOPLE = "__all__";
+const ME = "__me__";
+
+const isValidPeriod = (v: string | null): v is KPIPeriod =>
+  v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
+
+export const FuturisticSpeedometerDashboard = () => {
+  const { theme } = useDashboardTheme();
+  const { salesperson: currentUser } = useAuth();
+  const { data: salespeople = [] } = useSalespeopleList();
+
+  const [period, setPeriodState] = useState<KPIPeriod>(() => {
+    if (typeof window === "undefined") return "current_month";
+    const saved = window.localStorage.getItem(PERIOD_STORAGE_KEY);
+    return isValidPeriod(saved) ? saved : "current_month";
+  });
+
+  const [salespersonFilter, setSalespersonFilterState] = useState<string>(() => {
+    if (typeof window === "undefined") return ME;
+    return window.localStorage.getItem(SALESPERSON_STORAGE_KEY) || ME;
+  });
+
+  const setPeriod = (p: KPIPeriod) => {
+    setPeriodState(p);
+    try {
+      window.localStorage.setItem(PERIOD_STORAGE_KEY, p);
+    } catch { /* ignore */ }
+  };
+
+  const setSalespersonFilter = (id: string) => {
+    setSalespersonFilterState(id);
+    try {
+      window.localStorage.setItem(SALESPERSON_STORAGE_KEY, id);
+    } catch { /* ignore */ }
+  };
+
+  const resolvedSalespersonId = useMemo(() => {
+    if (salespersonFilter === ALL_SALESPEOPLE) return null;
+    if (salespersonFilter === ME) return currentUser?.id ?? null;
+    return salespersonFilter;
+  }, [salespersonFilter, currentUser?.id]);
+
+  const selectedLabel = useMemo(() => {
+    if (salespersonFilter === ALL_SALESPEOPLE) return "Toda Equipe";
+    if (salespersonFilter === ME) return currentUser?.name ? `Eu (${currentUser.name})` : "Eu";
+    return salespeople.find((s) => s.id === salespersonFilter)?.name ?? "Vendedor";
+  }, [salespersonFilter, salespeople, currentUser?.name]);
+
+  const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
+  const { data: goals } = useGoalsDashboard();
+
+  // Settings state
+  const [ticksCount, setTicksCount] = useState(33);
+  const [gaugeMode, setGaugeMode] = useState<"standard" | "compact" | "kilo">("standard");
+  const [minVal, setMinVal] = useState(0);
+  const [customMax, setCustomMax] = useState<number | null>(null);
+  const [customUnit, setCustomUnit] = useState("");
+
+  const revenue = kpis?.current.totalRevenue ?? 0;
+  const sales = kpis?.current.totalSales ?? 0;
+  const conversion = kpis?.current.conversionRate ?? 0;
+  const ticket = kpis?.current.avgTicket ?? 0;
+
+  const prevRevenue = kpis?.previous.totalRevenue ?? 0;
+  const prevSales = kpis?.previous.totalSales ?? 0;
+  const prevTicket = kpis?.previous.avgTicket ?? 0;
+
+  const goalAmount = customMax || goals?.totalGoal || Math.max(revenue * 1.3, 50000);
+  const salesMax = customMax || Math.max(sales * 1.5, prevSales * 1.5, 20);
+  const ticketMax = customMax || Math.max(ticket * 1.5, prevTicket * 1.5, 1000);
+
+  const fmtBRL = (v: number) => {
+    if (gaugeMode === "compact") return `R$ ${v.toLocaleString("pt-BR", { notation: "compact" })}`;
+    if (gaugeMode === "kilo") return `R$ ${(v / 1000).toFixed(1)}k`;
+    return `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0, notation: v >= 1000000 ? "compact" : "standard" })}`;
+  };
+
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      aria-label="Painel futurista de velocímetros de vendas"
+      className={cn("relative p-6 rounded-3xl transition-all duration-500", theme === "cyber" ? "border border-white/5 bg-black/20 backdrop-blur-sm" : "bg-card shadow-sm border border-border/40")}
+    >
+      {theme === "cyber" && (
+        <>
+          <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-xl pointer-events-none" />
+          <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-xl pointer-events-none" />
+          <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-xl pointer-events-none" />
+          <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-xl pointer-events-none" />
+          <div className="absolute -top-3 left-10 flex items-center gap-4 pointer-events-none">
+            <div className="px-2 py-0.5 rounded bg-black border border-primary/30 text-[8px] font-mono font-bold text-primary tracking-[0.2em] uppercase shadow-[0_0_10px_rgba(14,165,233,0.2)]">
+              System: Online
+            </div>
+            <div className="px-2 py-0.5 rounded bg-black border border-success/30 text-[8px] font-mono font-bold text-success tracking-[0.2em] uppercase">
+              Signal: Stable
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/40 blur-lg rounded-full animate-pulse" />
+            <div className="relative p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30">
+              <Gauge className="h-5 w-5 text-primary" />
+            </div>
+          </div>
+          <div>
+            <h2 className="font-display text-lg font-bold tracking-tight text-primary" style={{ textShadow: "0 0 10px hsl(var(--primary) / 0.6), 0 0 22px hsl(var(--primary) / 0.35)" }}>
+              Performance HUD
+            </h2>
+            <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
+              Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="h-8 w-8 flex items-center justify-center rounded-lg bg-background/60 border border-border/40 hover:bg-background/80 transition-colors">
+                <Settings2 className="h-3.5 w-3.5 text-primary" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 bg-popover/95 backdrop-blur-xl border-primary/20 p-4">
+              <div className="space-y-4">
+                <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-2">HUD Configuration</h4>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-mono uppercase text-muted-foreground">Minimo</label>
+                    <Input 
+                      type="number" 
+                      value={minVal} 
+                      onChange={(e) => setMinVal(Number(e.target.value))}
+                      className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-mono uppercase text-muted-foreground">Maximo (Manual)</label>
+                    <Input 
+                      type="number" 
+                      placeholder="Auto"
+                      value={customMax || ""} 
+                      onChange={(e) => setCustomMax(e.target.value ? Number(e.target.value) : null)}
+                      className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-mono uppercase text-muted-foreground">
+                    <span>Densidade de Ticks</span>
+                    <span className="text-primary">{ticksCount}</span>
+                  </div>
+                  <Slider value={[ticksCount]} min={5} max={65} step={4} onValueChange={(val) => setTicksCount(val[0])} />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-mono uppercase text-muted-foreground">Unidade Personalizada</label>
+                  <Input 
+                    placeholder="ex: km/h, pts"
+                    value={customUnit} 
+                    onChange={(e) => setCustomUnit(e.target.value)}
+                    className="h-7 text-[10px] bg-background/40 border-border/40 font-mono"
+                  />
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-primary/10">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1.5">Format Display</div>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(["standard", "compact", "kilo"] as const).map((m) => (
+                      <button
+                        key={m}
+                        onClick={() => setGaugeMode(m)}
+                        className={cn("px-1 py-1 text-[8px] font-mono uppercase rounded border transition-all", gaugeMode === m ? "bg-primary/20 border-primary text-primary" : "bg-background/40 border-border/40 text-muted-foreground hover:border-primary/40")}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <Select value={salespersonFilter} onValueChange={setSalespersonFilter}>
+            <SelectTrigger className="h-8 w-[160px] bg-background/60 border-border/40 backdrop-blur text-[11px] font-mono">
+              <Users className="h-3.5 w-3.5 mr-1.5 text-primary shrink-0" />
+              <SelectValue placeholder="Selecionar vendedor" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover/95 backdrop-blur-xl">
+              <SelectItem value={ME}><span className="font-mono text-xs">Eu{currentUser?.name ? ` (${currentUser.name})` : ""}</span></SelectItem>
+              <SelectItem value={ALL_SALESPEOPLE}><span className="font-mono text-xs">Toda Equipe</span></SelectItem>
+              {salespeople.map((sp) => (
+                <SelectItem key={sp.id} value={sp.id}><span className="font-mono text-xs">{sp.name}</span></SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-background/60 border border-border/40 backdrop-blur">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setPeriod(opt.value)}
+                className={cn("px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all", period === opt.value ? "bg-primary/20 text-primary border border-primary/30" : "text-muted-foreground hover:text-foreground hover:bg-background/80")}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            </span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
+          </div>
+        </div>
+      </div>
+
+      {kpisLoading || !kpis ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <SpeedometerSkeleton key={i} />)}
+        </div>
+      ) : (
+        <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity duration-300", kpisFetching && "opacity-60")}>
+          <Speedometer label="Faturamento" value={revenue} min={minVal} max={goalAmount} formatValue={fmtBRL} accent="primary" icon={DollarSign} delta={kpis?.changes.revenue} ticksCount={ticksCount} unit={customUnit || "BRL"} />
+          <Speedometer label="Vendas" value={sales} min={minVal} max={salesMax} accent="success" icon={Zap} delta={kpis?.changes.sales} ticksCount={ticksCount} unit={customUnit || "vendas"} />
+          <Speedometer label="Conversão" value={conversion} min={minVal} max={customMax || 100} formatValue={(v) => `${v.toFixed(1)}%`} accent="warning" icon={Target} delta={kpis?.changes.conversion} ticksCount={ticksCount} unit={customUnit || "%"} />
+          <Speedometer label="Ticket Médio" value={ticket} min={minVal} max={ticketMax} formatValue={fmtBRL} accent="destructive" icon={Activity} delta={kpis?.changes.avgTicket} ticksCount={ticksCount} unit={customUnit || "BRL"} />
+        </div>
+      )}
+
+      {kpis && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={cn("mt-6 relative overflow-hidden rounded-xl transition-all duration-500 p-5", theme === "cyber" ? "border border-border/40 bg-card/40 backdrop-blur-xl" : "bg-card border border-border shadow-sm")}
+        >
+          <div className="relative flex items-center gap-4 mb-4">
+            <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-primary/50" />
+            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-primary/80">Comparative Telemetry · {PERIOD_LABELS[period].comparison}</span>
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/50 via-border/20 to-transparent" />
+          </div>
+
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { label: "Faturamento", curr: revenue, prev: prevRevenue, fmt: fmtBRL, color: "hsl(var(--primary))", glow: "rgba(14, 165, 233, 0.2)" },
+              { label: "Vendas", curr: sales, prev: prevSales, fmt: (v: number) => String(v), color: "hsl(var(--success))", glow: "rgba(34, 197, 94, 0.2)" },
+              { label: "Conversão", curr: conversion, prev: (kpis?.previous.conversionRate ?? 0), fmt: (v: number) => `${v.toFixed(1)}%`, color: "hsl(var(--warning))", glow: "rgba(234, 179, 8, 0.2)" },
+              { label: "Ticket Médio", curr: ticket, prev: prevTicket, fmt: fmtBRL, color: "hsl(var(--destructive))", glow: "rgba(239, 68, 68, 0.2)" },
+            ].map((row, idx) => {
+              const delta = row.prev > 0 ? ((row.curr - row.prev) / row.prev) * 100 : 100;
+              const isPositive = delta >= 0;
+              return (
+                <div key={row.label} className="group relative">
+                  <div className="flex justify-between items-end mb-1.5">
+                    <div>
+                      <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{row.label}</div>
+                      <div className="text-lg font-mono font-black tracking-tighter" style={{ color: row.color, textShadow: `0 0 10px ${row.glow}` }}>{row.fmt(row.curr)}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[9px] font-mono text-muted-foreground/60">PRV: {row.fmt(row.prev)}</div>
+                      <div className={cn("text-[10px] font-mono font-bold flex items-center justify-end gap-1", isPositive ? "text-success" : "text-destructive")}>
+                        {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                        {isPositive ? "+" : ""}{delta.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden relative">
+                    <div className="absolute inset-y-0 left-0 bg-white/5 border-r border-white/20 transition-all duration-1000" style={{ width: `${Math.min(100, (row.prev / Math.max(row.curr, row.prev, 1)) * 100)}%` }} />
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (row.curr / Math.max(row.curr, row.prev, 1)) * 100)}%` }} transition={{ duration: 1, delay: idx * 0.1 }} className="absolute inset-y-0 left-0 transition-all" style={{ backgroundColor: row.color, boxShadow: `0 0 10px ${row.color}` }} />
+                  </div>
+                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-gradient-to-b from-transparent via-muted-foreground/20 to-transparent group-hover:via-primary/40 transition-colors" />
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+    </motion.section>
+  );
+};
+
+export default FuturisticSpeedometerDashboard;
