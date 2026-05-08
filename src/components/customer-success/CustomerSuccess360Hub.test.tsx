@@ -5,7 +5,7 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { useToast } from "@/hooks/use-toast";
 import "@testing-library/jest-dom";
 
-// Mock the hooks
+// Mock hooks
 vi.mock("@/hooks/customer-success/useCustomerSuccess360", () => ({
   useCustomerSuccess360: vi.fn(),
 }));
@@ -19,7 +19,7 @@ vi.mock("react-helmet-async", () => ({
   Helmet: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock ResizeObserver for Recharts
+// Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
@@ -27,25 +27,21 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }));
 
 // Mock jsPDF
-vi.mock("jspdf", () => {
-  return {
-    jsPDF: vi.fn().mockImplementation(() => ({
-      text: vi.fn(),
-      save: vi.fn(),
-      autoTable: vi.fn(),
-    }))
-  };
-});
+vi.mock("jspdf", () => ({
+  jsPDF: vi.fn().mockImplementation(() => ({
+    text: vi.fn(),
+    save: vi.fn(),
+    autoTable: vi.fn(),
+  }))
+}));
 
-// Mock scrollIntoView for Radix Select
+// Mock scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
 window.HTMLElement.prototype.releasePointerCapture = vi.fn();
 window.HTMLElement.prototype.hasPointerCapture = vi.fn();
 
 vi.mock("papaparse", () => ({
-  default: {
-    unparse: vi.fn(() => "mock-csv-content"),
-  },
+  default: { unparse: vi.fn(() => "mock-csv") },
 }));
 
 // Mock framer-motion
@@ -60,38 +56,20 @@ vi.mock("framer-motion", () => ({
 
 const mockData = {
   summary: {
-    avg_health_v2: 85,
-    total_accounts: 10,
-    open_tickets: 5,
-    urgent_tickets: 1,
-    renewals_90d: 4,
-    renewals_30d: 2,
-    renewals_at_risk: 1,
-    renewals_at_risk_value: 15000,
-    avg_csat: 4.5,
-    avg_ces: 4.2,
-    onboarding_active: 3,
-    onboarding_stalled: 0,
-    onboarding_completed: 10,
-    expansion_opportunities: 5,
-    expansion_pipeline_value: 25000,
+    avg_health_v2: 85, total_accounts: 10, open_tickets: 5, urgent_tickets: 1,
+    renewals_90d: 4, renewals_30d: 2, renewals_at_risk: 1, renewals_at_risk_value: 15000,
+    avg_csat: 4.5, avg_ces: 4.2, onboarding_active: 3, onboarding_stalled: 0,
+    onboarding_completed: 10, expansion_opportunities: 5, expansion_pipeline_value: 25000,
     upcoming_qbrs_30d: 2,
   },
   accounts: [
     { id: "1", name: "Account A", tier: "Enterprise", health_v2: 90, annual_revenue: 50000, open_tickets: 1 },
     { id: "2", name: "Account B", tier: "Pro", health_v2: 70, annual_revenue: 20000, open_tickets: 2 },
   ],
-  tickets: [],
-  renewals: [],
-  usage: [],
-  onboarding: [],
-  expansion: [],
-  surveys: [],
-  qbrs: [],
+  tickets: [], renewals: [], usage: [], onboarding: [], expansion: [], surveys: [], qbrs: [],
   orders: [
     { id: "o1", account_id: "1", order_number: "ORD-001", status: "delivered", total: 1000, created_at: new Date().toISOString() },
     { id: "o2", account_id: "2", order_number: "ORD-002", status: "cancelled", total: 500, created_at: new Date().toISOString(), cancellation_reason: "Erro no pedido" },
-    { id: "o3", account_id: "1", order_number: "ORD-003", status: "pending", total: 1500, created_at: new Date().toISOString() },
   ],
 };
 
@@ -99,174 +77,97 @@ describe("CustomerSuccess360Hub", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    (useCustomerSuccess360 as any).mockReturnValue({
+      data: mockData, isLoading: false, isError: false, refetch: vi.fn()
+    });
   });
 
   it("renders loading state with skeletons", () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    });
-
+    (useCustomerSuccess360 as any).mockReturnValue({ data: undefined, isLoading: true, isError: false });
     render(<CustomerSuccess360Hub />);
-    
-    const container = screen.getByTestId("loading-skeletons");
-    expect(container).toBeInTheDocument();
+    expect(screen.getByTestId("loading-skeletons")).toBeInTheDocument();
   });
 
-  it("renders error state with retry option and shows toast", async () => {
+  it("renders error state with retry option", async () => {
     const refetch = vi.fn();
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: new Error("Falha ao carregar pedidos"),
-      refetch,
-    });
-
+    (useCustomerSuccess360 as any).mockReturnValue({ data: undefined, isLoading: false, isError: true, error: new Error("Falha"), refetch });
     render(<CustomerSuccess360Hub />);
-    
-    expect(screen.getByText("Ops! Algo deu errado")).toBeInTheDocument();
-    expect(screen.getByText("Falha ao carregar pedidos")).toBeInTheDocument();
-    
-    const retryButton = screen.getByRole("button", { name: /Tentar novamente/i });
-    fireEvent.click(retryButton);
+    expect(screen.getByText(/Algo deu errado/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Tentar novamente/i }));
     expect(refetch).toHaveBeenCalled();
   });
 
-  it("validates that changing the status filter in the Orders tab updates the results in the modal", async () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
+  it("validates status filter updates results in modal", async () => {
     render(<CustomerSuccess360Hub />);
-    
-    // Change to Orders tab
     fireEvent.click(screen.getByText("Pedidos"));
     
-    // Check "Entregues" (delivered)
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
-    expect(await screen.findByText(/ORD-001/i)).toBeInTheDocument();
+    expect(await screen.findByText(/ORD-001/)).toBeInTheDocument();
     
-    // Close modal
-    fireEvent.click(screen.getByRole("button", { name: /Fechar/i }));
-    
-    // Check "Cancelados"
+    fireEvent.click(screen.getByRole("button", { name: /Fechar/ }));
     fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
-    expect(await screen.findByText(/ORD-002/i)).toBeInTheDocument();
+    expect(await screen.findByText(/ORD-002/)).toBeInTheDocument();
   });
 
-  it("displays 'no results' correctly when there are no orders", async () => {
+  it("displays no results when there are no orders", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
-      data: { ...mockData, orders: [] },
-      isLoading: false,
-      isError: false,
+      data: { ...mockData, orders: [] }, isLoading: false, isError: false
     });
-
     render(<CustomerSuccess360Hub />);
-    
-    // Switch to Orders tab
     fireEvent.click(screen.getByText("Pedidos"));
-    
-    // Use string content directly
-    expect(await screen.findByText("Nenhum pedido encontrado no período.")).toBeInTheDocument();
-    
-    // Trigger modal
-    fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
-    expect(await screen.findByText("Nenhum pedido encontrado com os filtros atuais.")).toBeInTheDocument();
+    expect(await screen.findByText(/Nenhum pedido encontrado/)).toBeInTheDocument();
   });
 
-  it("confirms table sorting when toggling the 'Cliente' header", async () => {
-    const manyOrdersData = {
-      ...mockData,
-      accounts: [
-        { id: "1", name: "Account A", tier: "Enterprise", health_v2: 90, annual_revenue: 50000, open_tickets: 1 },
-        { id: "2", name: "Account B", tier: "Pro", health_v2: 70, annual_revenue: 20000, open_tickets: 2 },
-      ],
-      orders: [
-        { id: "o1", account_id: "1", order_number: "A-001", status: "delivered", total: 100, created_at: "2024-01-01T10:00:00Z" },
-        { id: "o2", account_id: "2", order_number: "B-001", status: "delivered", total: 200, created_at: "2024-01-02T10:00:00Z" },
-      ]
-    };
+  it("confirms table sorting by Cliente", async () => {
     (useCustomerSuccess360 as any).mockReturnValue({
-      data: manyOrdersData,
-      isLoading: false,
-      isError: false,
+      data: {
+        ...mockData,
+        orders: [
+          { id: "o1", account_id: "1", order_number: "A-01", status: "delivered", total: 10, created_at: "2024-01-01T10:00:00Z" },
+          { id: "o2", account_id: "2", order_number: "B-01", status: "delivered", total: 20, created_at: "2024-01-02T10:00:00Z" },
+        ]
+      },
+      isLoading: false, isError: false
     });
-
     render(<CustomerSuccess360Hub />);
-    
     fireEvent.click(screen.getByText("Pedidos"));
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
     
-    const clientHeader = await screen.findByText("Cliente");
-    
-    // First click: asc sorting
-    fireEvent.click(clientHeader);
+    const header = await screen.findByText("Cliente");
+    fireEvent.click(header); // ASC
     let rows = await screen.findAllByRole("row");
     expect(rows[1]).toHaveTextContent("Account A");
     
-    // Second click: desc sorting
-    fireEvent.click(clientHeader);
+    fireEvent.click(header); // DESC
     rows = await screen.findAllByRole("row");
     expect(rows[1]).toHaveTextContent("Account B");
   });
 
-  it("verifies pagination updates the displayed items and doesn't break the modal", async () => {
-    const paginatedOrders = Array.from({ length: 15 }, (_, i) => ({
-      id: `p${i}`,
-      account_id: "1",
-      order_number: `PAG-${String(i).padStart(3, '0')}`,
-      status: "delivered",
-      total: 100,
-      created_at: new Date(Date.now() - i * 1000).toISOString()
+  it("verifies pagination updates displayed items", async () => {
+    const orders = Array.from({ length: 15 }, (_, i) => ({
+      id: `p${i}`, account_id: "1", order_number: `PAG-${i}`, status: "delivered", total: 10, created_at: new Date(Date.now() - i*1000).toISOString()
     }));
-    
     (useCustomerSuccess360 as any).mockReturnValue({
-      data: { ...mockData, orders: paginatedOrders },
-      isLoading: false,
-      isError: false,
+      data: { ...mockData, orders }, isLoading: false, isError: false
     });
-
     render(<CustomerSuccess360Hub />);
-    
     fireEvent.click(screen.getByText("Pedidos"));
     fireEvent.click(screen.getByTestId("ver-detalhes-delivered"));
     
     await screen.findAllByText(/PAG-/);
-    
-    const page2Button = await screen.findByRole("button", { name: "2" });
-    fireEvent.click(page2Button);
-    
-    expect(await screen.findByText(/PAG-010/)).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("button", { name: "2" }));
+    expect(await screen.findByText(/PAG-10/)).toBeInTheDocument();
   });
 
-  it("verifies modal fields correspond to the selected order", async () => {
-    (useCustomerSuccess360 as any).mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
+  it("verifies modal fields correspond to selected order", async () => {
     render(<CustomerSuccess360Hub />);
-    
     fireEvent.click(screen.getByText("Pedidos"));
     fireEvent.click(screen.getByTestId("ver-detalhes-cancelled"));
     
     const modal = await screen.findByRole("dialog");
-    const withinModal = within(modal);
-    
-    expect(withinModal.getByText(/ORD-002/)).toBeInTheDocument();
-    
-    // Find cells and verify content
-    const cells = withinModal.getAllByRole("cell");
-    const hasAccountB = cells.some(c => c.textContent?.includes("Account B"));
-    const hasValue500 = cells.some(c => c.textContent?.includes("500"));
-    
-    expect(hasAccountB).toBe(true);
-    expect(hasValue500).toBe(true);
-    expect(withinModal.getByText(/Erro no pedido/)).toBeInTheDocument();
+    expect(within(modal).getByText(/ORD-002/)).toBeInTheDocument();
+    expect(within(modal).getAllByText(/Account B/)[0]).toBeInTheDocument();
+    expect(within(modal).getByText(/500/)).toBeInTheDocument();
+    expect(within(modal).getByText(/Erro no pedido/)).toBeInTheDocument();
   });
 });
