@@ -118,24 +118,31 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
         />
       )}
 
-      {/* Rotating conic neon ring */}
-      <motion.div
-        className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
-        style={{
-          background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
-          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-          padding: "1px",
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-      />
+      {/* Rotating conic neon ring - Cyber Only */}
+      {theme === "cyber" && (
+        <motion.div
+          className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
+          style={{
+            background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
+            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            padding: "1px",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+        />
+      )}
 
       {/* Card */}
       <div
-        className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-5 overflow-hidden"
-        style={{ boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` }}
+        className={cn(
+          "relative rounded-2xl border transition-all duration-300 p-5 overflow-hidden",
+          theme === "cyber" 
+            ? "border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl shadow-[inset_0_0_30px_rgba(var(--primary-rgb),0.05)]" 
+            : "bg-card border-border shadow-sm"
+        )}
+        style={theme === "cyber" ? { boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` } : {}}
       >
         {/* Grid overlay */}
         <div
