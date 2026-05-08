@@ -69,7 +69,7 @@ export function EngagementScoreCard({ contactId, contactType }: Props) {
                 <Tooltip
                   contentStyle={{ fontSize: 11, padding: 4 }}
                   labelFormatter={(v) => format(new Date(v as string), "dd/MM", { locale: ptBR })}
-                  formatter={(v: number) => [Math.round(v), "Score"]}
+                  formatter={(v: any) => [Math.round(v), "Score"]}
                 />
                 <Line
                   type="monotone"

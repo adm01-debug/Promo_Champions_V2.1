@@ -17,12 +17,12 @@ import { ptBR } from "date-fns/locale";
 import type { TooltipProps as RechartsTooltipProps } from "recharts";
 import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
-const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-medium text-foreground mb-1">{label}</p>
-      {payload.map((entry, i) => (
+      {payload.map((entry: any, i: number) => (
         <p key={i} className="text-muted-foreground">
           <span style={{ color: entry.color }}>{entry.name}</span>:{" "}
           <span className="font-semibold text-foreground">

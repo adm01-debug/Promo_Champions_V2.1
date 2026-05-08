@@ -108,7 +108,7 @@ const useCloserRevenueEvolution = (period: PeriodFilter) => {
   });
 };
 
-const formatCurrency = (value: number) => {
+const formatCurrency = (value: any) => {
   if (value >= 1000) {
     return `R$ ${(value / 1000).toFixed(1)}k`;
   }
@@ -205,7 +205,7 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
                 borderRadius: '8px',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
               }}
-              formatter={(value: number, name: string) => {
+              formatter={(value: any, name: any) => {
                 const closer = closers.find(c => c.id === name);
                 return [
                   `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
