@@ -128,7 +128,7 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
                 type="monotone"
                 dataKey="value"
                 stroke="hsl(var(--primary))"
-                strokeWidth={7}
+                strokeWidth={10}
                 fillOpacity={1}
                 fill="url(#colorValue)"
                 animationDuration={2000}
