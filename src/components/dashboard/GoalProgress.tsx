@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Rocket } from "lucide-react";
+import { motion } from "framer-motion";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
