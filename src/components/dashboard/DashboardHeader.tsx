@@ -101,6 +101,19 @@ export const DashboardHeader = () => {
           <Button
             variant="outline"
             size="sm"
+            onClick={toggleTheme}
+            className={cn(
+              "h-9 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]",
+              theme === "cyber" ? "bg-black/60 shadow-[0_0_15px_rgba(14,165,233,0.1)]" : "bg-background"
+            )}
+          >
+            {theme === "cyber" ? <Zap className="h-3.5 w-3.5 mr-2" /> : <Monitor className="h-3.5 w-3.5 mr-2" />}
+            {theme === "cyber" ? "Standard Mode" : "Cyber Mode"}
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => navigate("/relatorios/vendas")}
             className="h-9 bg-black/40 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
