@@ -11,7 +11,7 @@ interface PriorityColumnProps {
   activeId: string | null;
 }
 
-const priorityConfig: Record<TaskPriority, { 
+const priorityConfig: Record<string, { 
   label: string; 
   icon: LucideIcon; 
   color: string;
