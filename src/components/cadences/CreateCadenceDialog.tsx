@@ -40,6 +40,7 @@ interface StepInput {
   action_type: ActionType;
   title: string;
   description: string;
+  needs_approval: boolean;
 }
 
 export function CreateCadenceDialog() {
