@@ -5633,6 +5633,68 @@ export type Database = {
           },
         ]
       }
+      follow_up_audit_logs: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          sale_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          sale_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          sale_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_audit_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follow_up_settings: {
+        Row: {
+          auto_reactivate_class_a: boolean | null
+          cadence_days: number[] | null
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          whatsapp_template: string | null
+        }
+        Insert: {
+          auto_reactivate_class_a?: boolean | null
+          cadence_days?: number[] | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          whatsapp_template?: string | null
+        }
+        Update: {
+          auto_reactivate_class_a?: boolean | null
+          cadence_days?: number[] | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          whatsapp_template?: string | null
+        }
+        Relationships: []
+      }
       forecast_accuracy: {
         Row: {
           actual_amount: number

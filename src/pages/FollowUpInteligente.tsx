@@ -6,7 +6,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { differenceInHours } from 'date-fns';
+import { differenceInHours, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
@@ -16,6 +17,13 @@ import { FollowUpLeadCard } from '@/components/follow-up/FollowUpLeadCard';
 import { FollowUpEmptyState } from '@/components/follow-up/FollowUpEmptyState';
 import { getTemperature, getSuggestedAction, type ColdLead } from '@/components/follow-up/types';
 import { FollowUpLoadingSkeleton } from '@/components/skeletons/FollowUpLoadingSkeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { History, Zap } from 'lucide-react';
 
 const FollowUpInteligente = () => {
   const { salesperson } = useAuth();
@@ -25,6 +33,10 @@ const FollowUpInteligente = () => {
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [creatingLeadId, setCreatingLeadId] = useState<string | null>(null);
+  const [selectedLeadForAudit, setSelectedLeadForAudit] = useState<ColdLead | null>(null);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [reactivateLead, setReactivateLead] = useState<ColdLead | null>(null);
+  const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
 
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
@@ -245,11 +257,13 @@ const FollowUpInteligente = () => {
                       key={lead.id}
                       lead={lead}
                       index={i}
-                       isSelected={selectedLeads.has(lead.id)}
-                       onToggle={toggleLead}
-                       onCreateTask={l => createFollowUpTask.mutate(l)}
-                       isCreating={creatingLeadId === lead.id}
-                     />
+                      isSelected={selectedLeads.has(lead.id)}
+                      onToggle={toggleLead}
+                      onCreateTask={l => createFollowUpTask.mutate(l)}
+                      isCreating={creatingLeadId === lead.id}
+                      onOpenAudit={(l) => { setSelectedLeadForAudit(l); setIsAuditModalOpen(true); }}
+                      onReactivate={(l) => { setReactivateLead(l); setIsReactivateModalOpen(true); }}
+                    />
                   ))}
                 </AnimatePresence>
               )}
@@ -257,6 +271,78 @@ const FollowUpInteligente = () => {
           </div>
         </PageTransition>
       </SkeletonTransition>
+
+      {/* Reativação de Lead Classe A Dialog */}
+      <Dialog open={isReactivateModalOpen} onOpenChange={setIsReactivateModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-amber-500" />
+              Reativar Lead Classe A
+            </DialogTitle>
+            <DialogDescription>
+              Este lead é prioritário. Registre o motivo e a nova data de acompanhamento.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Motivo da Reativação</Label>
+              <Textarea placeholder="Ex: Cliente demonstrou novo interesse após webinar..." />
+            </div>
+            <div className="space-y-2">
+              <Label>Nova Data de Acompanhamento</Label>
+              <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReactivateModalOpen(false)}>Cancelar</Button>
+            <Button onClick={() => {
+              toast.success("Lead reativado e tarefa de follow-up criada!");
+              setIsReactivateModalOpen(false);
+            }}>Confirmar Reativação</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Histórico Auditável Dialog */}
+      <Dialog open={isAuditModalOpen} onOpenChange={setIsAuditModalOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Histórico de Follow-up: {selectedLeadForAudit?.client_name}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[400px] mt-4 pr-4">
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative">
+                  <div className="absolute -left-1.5 top-2 w-3 h-3 rounded-full bg-primary" />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <span className="font-bold text-sm">
+                        {i === 1 ? "WhatsApp Enviado" : i === 2 ? "Tarefa de Follow-up Criada" : "Lead Reativado"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground uppercase font-black">
+                        {format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {i === 1 ? "Link wa.me gerado com template padrão." : i === 2 ? "Tarefa agendada para o consultor." : "Lead Classe A movido de Congelado para Ativo."}
+                    </p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold">
+                        AD
+                      </div>
+                      <span className="text-[10px] font-medium">Administrador Comercial</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

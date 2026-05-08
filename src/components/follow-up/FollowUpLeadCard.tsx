@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake } from 'lucide-react';
+import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake, History, RotateCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
@@ -16,6 +16,8 @@ interface FollowUpLeadCardProps {
   onToggle: (id: string) => void;
   onCreateTask: (lead: ColdLead) => void;
   isCreating: boolean;
+  onOpenAudit: (lead: ColdLead) => void;
+  onReactivate: (lead: ColdLead) => void;
 }
 
 const channelIcons: Record<string, { icon: typeof Mail; label: string }> = {
@@ -32,7 +34,16 @@ const statusLabels: Record<string, string> = {
   open: 'Aberto',
 };
 
-const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelected, onToggle, onCreateTask, isCreating }: FollowUpLeadCardProps) {
+const FollowUpLeadCardInner = function FollowUpLeadCard({ 
+  lead, 
+  index, 
+  isSelected, 
+  onToggle, 
+  onCreateTask, 
+  isCreating,
+  onOpenAudit,
+  onReactivate
+}: FollowUpLeadCardProps) {
   const config = temperatureConfig[lead.temperature];
   const channel = channelIcons[lead.suggested_channel] || channelIcons.email;
   const ChannelIcon = channel.icon;
@@ -121,6 +132,22 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                       <Button
                         size="icon"
                         variant="ghost"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        onClick={() => onOpenAudit(lead)}
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Ver histórico de ações</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
                         className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
                         onClick={() => {
                           const statusText = statusLabels[lead.status] || lead.status;
@@ -166,12 +193,23 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
           {/* AI Suggestion */}
           <div className="mt-3 flex flex-col gap-2">
             {lead.temperature === 'frozen' && lead.score && lead.score >= 80 && (
-              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center gap-2 text-destructive font-bold animate-pulse">
-                <Snowflake className="h-3.5 w-3.5" />
-                ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+              <div className="p-2 bg-destructive/10 border border-destructive/20 rounded-lg text-[11px] flex items-center justify-between gap-2 text-destructive font-bold animate-pulse">
+                <div className="flex items-center gap-2">
+                  <Snowflake className="h-3.5 w-3.5" />
+                  ALERTA: Lead Classe A congelado! Reativação imediata necessária.
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-6 px-2 text-[10px] bg-destructive/20 hover:bg-destructive/30 text-destructive border-none"
+                  onClick={() => onReactivate(lead)}
+                >
+                  <RotateCw className="h-3 w-3 mr-1" />
+                  REATIVAR AGORA
+                </Button>
               </div>
             )}
-            
+
             <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
               <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
               <span className="text-muted-foreground">

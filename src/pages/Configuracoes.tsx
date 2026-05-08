@@ -17,10 +17,11 @@ import { ApiIntegrationSettings } from "@/components/settings/ApiIntegrationSett
 import { CustomFieldsManager } from "@/components/settings/CustomFieldsManager";
 import { FeatureFlagsAdmin } from "@/components/settings/FeatureFlagsAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint, Flag } from "lucide-react";
+import { Settings, Shield, Volume2, FileWarning, Activity, Briefcase, Key, Globe, MapPin, KeyRound, Bot, Palette, Plug, Settings2, Fingerprint, Flag, RefreshCw } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { FollowUpSettings } from "@/components/settings/FollowUpSettings";
 
 export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
@@ -114,6 +115,9 @@ export default function Configuracoes() {
                 </TabsTrigger>
                 <TabsTrigger value="feature-flags" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
                   <Flag className="h-3.5 w-3.5 mr-2" />Flags
+                </TabsTrigger>
+                <TabsTrigger value="follow-up" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <RefreshCw className="h-3.5 w-3.5 mr-2" />Follow-up
                 </TabsTrigger>
 
               </>
