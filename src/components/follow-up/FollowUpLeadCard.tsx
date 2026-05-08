@@ -200,7 +200,10 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
                   size="sm" 
                   variant="ghost" 
                   className="h-6 px-2 text-[10px] bg-destructive/20 hover:bg-destructive/30 text-destructive border-none"
-                  onClick={() => onReactivate(lead)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReactivate(lead);
+                  }}
                 >
                   <RotateCw className="h-3 w-3 mr-1" />
                   REATIVAR AGORA
@@ -210,9 +213,18 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
 
             <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
               <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
-              </span>
+              <div className="flex-1">
+                <span className="text-muted-foreground">
+                  <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
+                </span>
+                {lead.suggested_channel === 'whatsapp' && (
+                  <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1 text-green-600 font-medium">
+                      <MessageCircle className="h-3 w-3" /> WhatsApp validado
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

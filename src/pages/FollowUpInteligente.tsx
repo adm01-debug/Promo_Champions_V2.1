@@ -273,20 +273,41 @@ const FollowUpInteligente = () => {
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [currentLeadForWA, setCurrentLeadForWA] = useState<ColdLead | null>(null);
+  const [missingVariables, setMissingVariables] = useState<string[]>([]);
 
-  const handleWhatsAppClick = useCallback((lead: ColdLead) => {
-    setCurrentLeadForWA(lead);
-    setIsPreviewOpen(true);
+  const validateTemplate = useCallback((template: string, lead: ColdLead) => {
+    const vars = template.match(/{{(.*?)}}/g) || [];
+    const missing = vars
+      .map(v => v.replace(/{{|}}/g, ''))
+      .filter(v => !(lead as any)[v]);
+    return missing;
   }, []);
 
-  const sendWhatsApp = useCallback((lead: ColdLead) => {
+  const handleWhatsAppClick = useCallback((lead: ColdLead) => {
     const template = followUpSettings?.whatsapp_template || 
       "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
     
-    const message = template
-      .replace("{{client_name}}", lead.client_name)
-      .replace("{{product_name}}", lead.product_name || "produto")
-      .replace("{{status}}", lead.status);
+    const missing = validateTemplate(template, lead);
+    setMissingVariables(missing);
+    setCurrentLeadForWA(lead);
+    setIsPreviewOpen(true);
+  }, [followUpSettings, validateTemplate]);
+
+  const sendWhatsApp = useCallback((lead: ColdLead) => {
+    if (missingVariables.length > 0) {
+      toast.error(`Variáveis faltando no template: ${missingVariables.join(', ')}`);
+      return;
+    }
+
+    const template = followUpSettings?.whatsapp_template || 
+      "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
+    
+    let message = template;
+    const vars = template.match(/{{(.*?)}}/g) || [];
+    vars.forEach(v => {
+      const key = v.replace(/{{|}}/g, '');
+      message = message.replace(v, (lead as any)[key] || '');
+    });
 
     logAction.mutate({
       saleId: lead.id,
@@ -297,7 +318,7 @@ const FollowUpInteligente = () => {
 
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     setIsPreviewOpen(false);
-  }, [followUpSettings, logAction]);
+  }, [followUpSettings, logAction, missingVariables]);
 
   const handleReactivate = useMutation({
     mutationFn: async () => {
