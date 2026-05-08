@@ -30,6 +30,7 @@ const typeConfig = {
   follow_up: { label: 'Follow-up', icon: Clock, color: 'text-status-warning' },
   email: { label: 'E-mail', icon: Mail, color: 'text-primary' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-accent' },
+  discount: { label: 'Desconto', icon: Check, color: 'text-status-success' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };
 
