@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Phone, ArrowRight, Save, Plus, Trash2, GitBranch, Zap, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RuleAuditLogs } from "./RuleAuditLogs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -34,7 +36,8 @@ export function CadenceOutcomeConfig() {
     retry_delay_hours: 4,
     max_retries: 3,
     push_template_id: null,
-    email_template_id: null
+    email_template_id: null,
+    timezone: "America/Sao_Paulo"
   });
   const [alertTemplates, setAlertTemplates] = useState<any[]>([]);
 
@@ -84,24 +87,31 @@ export function CadenceOutcomeConfig() {
   };
 
   return (
-    <Card className="glass border-border/40">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Phone className="h-4 w-4 text-primary" />
-              Regras de Desfecho de Ligação
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Automação do funil com base no resultado da chamada
-            </CardDescription>
-          </div>
-          <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => setIsAdding(true)}>
-            <Plus className="h-3 w-3" />
-            Nova Regra
-          </Button>
-        </div>
-      </CardHeader>
+    <Tabs defaultValue="config" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="config">Configurar Regras</TabsTrigger>
+        <TabsTrigger value="audit">Auditoria em Tempo Real</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="config" className="space-y-4">
+        <Card className="glass border-border/40">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  Regras de Desfecho de Ligação
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Automação do funil com base no resultado da chamada
+                </CardDescription>
+              </div>
+              <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => setIsAdding(true)}>
+                <Plus className="h-3 w-3" />
+                Nova Regra
+              </Button>
+            </div>
+          </CardHeader>
       <CardContent className="space-y-4">
         {isAdding && (
           <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-4 animate-in fade-in slide-in-from-top-2">
@@ -153,6 +163,30 @@ export function CadenceOutcomeConfig() {
                   />
                 </div>
               )}
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase">Fuso Horário</Label>
+                <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
+                  <SelectTrigger className="h-8 text-xs bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="America/Sao_Paulo">Brasília (GMT-3)</SelectItem>
+                    <SelectItem value="America/Manaus">Manaus (GMT-4)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase">Tentativas Máx.</Label>
+                <Input 
+                  type="number" 
+                  value={formData.max_retries} 
+                  onChange={e => setFormData({ ...formData, max_retries: parseInt(e.target.value) })}
+                  className="h-8 text-xs"
+                />
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-primary/10">
@@ -238,6 +272,12 @@ export function CadenceOutcomeConfig() {
           ))}
         </div>
       </CardContent>
-    </Card>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="audit">
+        <RuleAuditLogs />
+      </TabsContent>
+    </Tabs>
   );
 }
