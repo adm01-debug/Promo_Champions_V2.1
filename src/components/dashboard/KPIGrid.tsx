@@ -37,7 +37,7 @@ const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, in
       className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
     >
       <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.25em] group-hover:text-primary transition-all duration-300 z-10">{label}</span>
-      <span className="text-[12rem] sm:text-[16rem] lg:text-[22rem] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-12 drop-shadow-[0_0_200px_rgba(139,92,246,1)]" style={{ textShadow: '0 0 200px hsl(var(--primary) / 1), 0 0 400px hsl(var(--primary) / 0.6), 0 0 600px hsl(var(--primary) / 0.3)' }}>{formatted}</span>
+      <span className="text-[14rem] sm:text-[20rem] lg:text-[28rem] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-12 drop-shadow-[0_0_300px_rgba(139,92,246,1)]" style={{ textShadow: '0 0 300px hsl(var(--primary) / 1), 0 0 600px hsl(var(--primary) / 0.6), 0 0 900px hsl(var(--primary) / 0.3)' }}>{formatted}</span>
 
       {/* Visual activity indicator */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-10 group-hover:opacity-30 transition-opacity">
