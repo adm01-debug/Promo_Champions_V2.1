@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2 } from 'lucide-react';
+import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
