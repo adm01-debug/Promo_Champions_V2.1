@@ -1514,6 +1514,50 @@ export type Database = {
           },
         ]
       }
+      cadence_funnel_rules: {
+        Row: {
+          cadence_id: string | null
+          condition_type: string
+          condition_value: number | null
+          created_at: string | null
+          from_stage: string
+          id: string
+          is_active: boolean | null
+          to_stage: string
+          updated_at: string | null
+        }
+        Insert: {
+          cadence_id?: string | null
+          condition_type: string
+          condition_value?: number | null
+          created_at?: string | null
+          from_stage: string
+          id?: string
+          is_active?: boolean | null
+          to_stage: string
+          updated_at?: string | null
+        }
+        Update: {
+          cadence_id?: string | null
+          condition_type?: string
+          condition_value?: number | null
+          created_at?: string | null
+          from_stage?: string
+          id?: string
+          is_active?: boolean | null
+          to_stage?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cadence_funnel_rules_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_steps: {
         Row: {
           action_type: string
@@ -8632,6 +8676,7 @@ export type Database = {
           current_step: number
           enrolled_via_rule_id: string | null
           enrollment_source: string
+          funnel_stage: string | null
           id: string
           next_action_date: string | null
           paused_at: string | null
@@ -8650,6 +8695,7 @@ export type Database = {
           current_step?: number
           enrolled_via_rule_id?: string | null
           enrollment_source?: string
+          funnel_stage?: string | null
           id?: string
           next_action_date?: string | null
           paused_at?: string | null
@@ -8668,6 +8714,7 @@ export type Database = {
           current_step?: number
           enrolled_via_rule_id?: string | null
           enrollment_source?: string
+          funnel_stage?: string | null
           id?: string
           next_action_date?: string | null
           paused_at?: string | null
