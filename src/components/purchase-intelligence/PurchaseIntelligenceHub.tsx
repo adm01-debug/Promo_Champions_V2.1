@@ -6,11 +6,13 @@ import { ClientSelector } from "./ClientSelector";
 import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
 import { PurchasePredictionCard } from "./PurchasePredictionCard";
 import { SeasonalityHeatmap } from "./SeasonalityHeatmap";
+import { EmptyStateGuide } from "./EmptyStateGuide";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
+  const [hasData, setHasData] = useState(true); // Toggle to test empty state
 
   return (
     <div className="container mx-auto py-8 space-y-8 max-w-[1600px]">
