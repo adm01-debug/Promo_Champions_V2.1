@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { MiniSparkline } from "@/components/dashboard/MiniSparkline";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface StatCardProps {
   title: string;
