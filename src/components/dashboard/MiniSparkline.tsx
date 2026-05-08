@@ -19,7 +19,7 @@ export const MiniSparkline = React.memo(function MiniSparkline({
   className,
   width = 56,
   height = 20,
-  strokeWidth = 1.5,
+  strokeWidth = 2.5,
 }: MiniSparklineProps) {
   const pathData = useMemo(() => {
     if (data.length < 2) return { line: "", area: "" };
