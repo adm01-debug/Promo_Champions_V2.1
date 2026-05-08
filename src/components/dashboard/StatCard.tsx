@@ -74,44 +74,57 @@ export const StatCard = React.memo(({
 
   return (
     <Card className={cn(
-      "hover-lift transition-all duration-200",
+      "group relative overflow-hidden transition-all duration-300",
       variantStyles[variant],
       heroStyles,
     )}>
-      <CardContent className={cn("p-4 sm:p-6", hero && "sm:p-8")}>
+      {/* Decorative cyber-elements */}
+      <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
+        <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/20 group-hover:border-white/40 transition-colors" />
+      </div>
+      
+      {/* Ambient Glow for Hero */}
+      {hero && (
+        <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
+      )}
+
+      <CardContent className={cn("relative z-10 p-4 sm:p-5", hero && "sm:p-7")}>
         <div className="flex items-start justify-between">
           <div className={cn("space-y-1 sm:space-y-2 flex-1 min-w-0", hero && "space-y-2 sm:space-y-3")}>
             <p className={cn(
-              "text-xs sm:text-sm text-muted-foreground font-medium tracking-wide uppercase",
-              hero && "text-sm sm:text-base"
+              "text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground/80 transition-colors",
+              hero && "text-xs sm:text-sm"
             )}>
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-2xl font-bold tabular-nums font-display tracking-tight",
-              hero && "text-2xl sm:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text"
-            )}>
+              "text-lg sm:text-2xl font-black tabular-nums font-mono tracking-tighter",
+              hero && "text-2xl sm:text-4xl lg:text-5xl text-primary",
+              !hero && variant === "primary" && "text-primary",
+              !hero && variant === "success" && "text-success",
+              !hero && variant === "warning" && "text-warning"
+            )} style={{ textShadow: hero ? `0 0 20px rgba(14,165,233,0.3)` : 'none' }}>
               {displayValue}
             </p>
             {change !== undefined && (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className={cn(
-                  "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-xs font-semibold",
+                  "inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-mono font-black",
                   isPositive
-                    ? "bg-success/10 text-success"
-                    : "bg-destructive/10 text-destructive",
-                  hero && "text-sm px-2 py-1"
+                    ? "bg-success/10 text-success border-success/30 shadow-[0_0_8px_rgba(34,197,94,0.1)]"
+                    : "bg-destructive/10 text-destructive border-destructive/30 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
+                  hero && "text-xs px-2 py-1"
                 )}>
                   {isPositive ? (
-                    <TrendingUp className={cn("h-3 w-3", hero && "h-3.5 w-3.5")} />
+                    <TrendingUp className={cn("h-2.5 w-2.5", hero && "h-3.5 w-3.5")} />
                   ) : (
-                    <TrendingDown className={cn("h-3 w-3", hero && "h-3.5 w-3.5")} />
+                    <TrendingDown className={cn("h-2.5 w-2.5", hero && "h-3.5 w-3.5")} />
                   )}
                   {isPositive ? "+" : ""}{change.toFixed(1)}%
                 </span>
                 {previousValue && (
-                  <span className={cn("text-xs text-muted-foreground", hero && "text-sm")}>
-                    vs {previousValue}
+                  <span className={cn("text-[9px] font-mono text-muted-foreground/60 uppercase tracking-widest", hero && "text-[10px]")}>
+                    BASE: {previousValue}
                   </span>
                 )}
               </div>
@@ -119,7 +132,7 @@ export const StatCard = React.memo(({
           </div>
           <div className="flex flex-col items-end gap-2">
             <div className={cn(
-              "p-2 sm:p-3 rounded-xl transition-transform duration-200",
+              "p-2 sm:p-2.5 rounded-xl border transition-all duration-300 group-hover:scale-110",
               iconColors[variant],
               hero && "p-3 sm:p-4 rounded-2xl"
             )}>
@@ -129,35 +142,33 @@ export const StatCard = React.memo(({
               )} />
             </div>
             {!hero && sparklineData && sparklineData.length > 1 && (
-              <MiniSparkline
-                data={sparklineData}
-                className={sparklineColors[variant]}
-                width={56}
-                height={20}
-              />
+              <div className="opacity-50 group-hover:opacity-100 transition-opacity">
+                <MiniSparkline
+                  data={sparklineData}
+                  className={sparklineColors[variant]}
+                  width={60}
+                  height={24}
+                />
+              </div>
             )}
           </div>
         </div>
 
         {hero && sparklineData && sparklineData.length > 1 && (
-          <div className="mt-3 -mb-2">
+          <div className="mt-4 -mb-2 opacity-60 group-hover:opacity-100 transition-all">
             <MiniSparkline
               data={sparklineData}
               className={sparklineColors[variant]}
-              width={240}
-              height={32}
-              strokeWidth={2}
+              width={300}
+              height={40}
+              strokeWidth={3}
             />
           </div>
         )}
-
-        {hero && (
-          <>
-            <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -top-8 -left-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-          </>
-        )}
       </CardContent>
+
+      {/* Decorative Grid Scanline */}
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
     </Card>
   );
 });
