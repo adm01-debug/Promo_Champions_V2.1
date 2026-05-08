@@ -22,6 +22,8 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { FollowUpSettings } from "@/components/settings/FollowUpSettings";
+import { FollowUpTerritoryRules } from "@/components/settings/FollowUpTerritoryRules";
+
 
 export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
@@ -119,6 +121,10 @@ export default function Configuracoes() {
                 <TabsTrigger value="follow-up" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
                   <RefreshCw className="h-3.5 w-3.5 mr-2" />Follow-up
                 </TabsTrigger>
+                <TabsTrigger value="follow-up-rules" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300">
+                  <MapPin className="h-3.5 w-3.5 mr-2" />Regras Território
+                </TabsTrigger>
+
 
               </>
             )}
