@@ -118,7 +118,8 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                         variant="ghost"
                         className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
                         onClick={() => {
-                          const message = `Olá ${lead.client_name}! Notei que sua proposta do ${lead.product_name} está parada. Como posso te ajudar hoje?`;
+                          const statusText = statusLabels[lead.status] || lead.status;
+                          const message = `Olá ${lead.client_name}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o ${lead.product_name} está na etapa de ${statusText} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?`;
                           window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                         }}
                       >
