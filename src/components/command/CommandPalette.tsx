@@ -83,7 +83,12 @@ export function CommandPalette() {
   }, []);
 
   const navigationItems: CommandItemData[] = useMemo(() => [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, shortcut: "⌘D", action: () => navigate("/"), group: "navigation", keywords: ["home", "início", "painel"] },
+    { id: "dashboard-overview", label: "Visão Geral", icon: LayoutDashboard, shortcut: "⌘D", action: () => navigate("/dashboard/visao-geral"), group: "navigation", keywords: ["home", "início", "painel", "overview"] },
+    { id: "dashboard-performance", label: "Performance", icon: Gauge, action: () => navigate("/dashboard/performance"), group: "navigation", keywords: ["speedometer", "velocidade", "metas"] },
+    { id: "dashboard-analytics", label: "Dashboard Analytics", icon: BarChart3, action: () => navigate("/dashboard/analises"), group: "navigation", keywords: ["análises", "gráficos", "data"] },
+    { id: "dashboard-competition", label: "Competição", icon: Trophy, action: () => navigate("/dashboard/competicao"), group: "navigation", keywords: ["ranking", "arena", "leaderboard"] },
+    { id: "dashboard-intelligence", label: "Inteligência", icon: Zap, action: () => navigate("/dashboard/inteligencia"), group: "navigation", keywords: ["ai", "insight", "preditivo"] },
+    { id: "dashboard-engagement", label: "Engajamento", icon: HeartPulse, action: () => navigate("/dashboard/engajamento"), group: "navigation", keywords: ["mood", "pulse", "feedback"] },
     { id: "pipeline", label: "Pipeline", icon: Zap, shortcut: "⌘P", action: () => navigate("/pipeline"), group: "navigation", keywords: ["funil", "kanban"] },
     { id: "vendas", label: "Vendas", icon: ShoppingCart, shortcut: "⌘V", action: () => navigate("/vendas"), group: "navigation", keywords: ["sales", "deals", "negócios"] },
     { id: "clientes", label: "Clientes", icon: Users, shortcut: "⌘C", action: () => navigate("/clientes"), group: "navigation", keywords: ["customers", "contacts"] },
