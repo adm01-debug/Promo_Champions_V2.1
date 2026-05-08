@@ -22,3 +22,4 @@ export { TournamentBrackets } from './TournamentBrackets';
 export { PerformanceBets } from './PerformanceBets';
 export { TerritoryWars } from './TerritoryWars';
 export { EnhancedTVMode } from './EnhancedTVMode';
+export { FeatureComparison } from './FeatureComparison';
