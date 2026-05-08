@@ -37,6 +37,11 @@ vi.mock("jspdf", () => {
   };
 });
 
+// Mock scrollIntoView for Radix Select
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+
 vi.mock("papaparse", () => ({
   default: {
     unparse: vi.fn(() => "mock-csv-content"),
@@ -106,8 +111,8 @@ describe("CustomerSuccess360Hub", () => {
     const container = screen.getByTestId("loading-skeletons");
     expect(container).toBeInTheDocument();
     
-    // Validate consistent skeletons (at least 4 cards, charts and table)
-    const skeletons = container.querySelectorAll(".animate-pulse");
+    // Validate skeletons exist using class check
+    const skeletons = container.querySelectorAll("[class*='animate-pulse']");
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
@@ -159,6 +164,9 @@ describe("CustomerSuccess360Hub", () => {
     const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
     
+    // Verify the status rows are present
+    expect(screen.getByText("Pago/Entregue")).toBeInTheDocument();
+    
     // Find "Ver Detalhes" button for "Pago/Entregue" (delivered)
     const deliveredRow = screen.getByText("Pago/Entregue").closest("tr");
     const detailsButton = within(deliveredRow as HTMLElement).getByRole("button", { name: /Ver Detalhes/i });
@@ -166,7 +174,7 @@ describe("CustomerSuccess360Hub", () => {
     
     // Verify modal is open and shows correct status
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText("Pedidos: Pago/Entregue")).toBeInTheDocument();
+    expect(screen.getByText(/Pedidos: Pago\/Entregue/i)).toBeInTheDocument();
     
     // Verify order list in modal
     expect(screen.getByText("#ORD-001")).toBeInTheDocument();
@@ -183,6 +191,9 @@ describe("CustomerSuccess360Hub", () => {
     
     // Open modal directly by status via state (simulated by localStorage or just clicking)
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
+    // Verify the status rows are present
+    expect(screen.getByText("Pago/Entregue")).toBeInTheDocument();
+    
     const deliveredRow = screen.getByText("Pago/Entregue").closest("tr");
     fireEvent.click(within(deliveredRow as HTMLElement).getByRole("button", { name: /Ver Detalhes/i }));
     
