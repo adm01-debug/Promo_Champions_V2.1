@@ -372,8 +372,30 @@ export const FuturisticSpeedometerDashboard = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       aria-label="Painel futurista de velocímetros de vendas"
-      className="relative"
+      className="relative p-6 rounded-3xl border border-white/5 bg-black/20 backdrop-blur-sm"
     >
+      {/* Decorative HUD Elements */}
+      <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-xl pointer-events-none" />
+      <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-xl pointer-events-none" />
+      <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-xl pointer-events-none" />
+      <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-xl pointer-events-none" />
+      
+      {/* Status Tags */}
+      <div className="absolute -top-3 left-10 flex items-center gap-4 pointer-events-none">
+        <div className="px-2 py-0.5 rounded bg-black border border-primary/30 text-[8px] font-mono font-bold text-primary tracking-[0.2em] uppercase shadow-[0_0_10px_rgba(14,165,233,0.2)]">
+          System: Online
+        </div>
+        <div className="px-2 py-0.5 rounded bg-black border border-success/30 text-[8px] font-mono font-bold text-success tracking-[0.2em] uppercase">
+          Signal: Stable
+        </div>
+      </div>
+
+      <div className="absolute -bottom-3 right-10 flex items-center gap-3 pointer-events-none opacity-40">
+        <div className="text-[7px] font-mono text-muted-foreground uppercase tracking-widest">
+          Telemetry Version 4.0.8 // CRC: OK
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
