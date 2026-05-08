@@ -21,6 +21,7 @@ const actionIcons: Record<string, any> = {
   "task_created": { icon: UserPlus, color: "text-blue-500", label: "Tarefa Criada" },
   "lead_reactivated": { icon: Zap, color: "text-amber-500", label: "Lead Reativado" },
   "status_change": { icon: Clock, color: "text-purple-500", label: "Mudança de Status" },
+  "intent_trigger": { icon: Zap, color: "text-red-500", label: "Gatilho de Intenção" },
 };
 
 const FollowUpAudit = () => {
