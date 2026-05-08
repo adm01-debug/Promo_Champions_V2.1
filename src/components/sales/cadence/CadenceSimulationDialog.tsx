@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSalespeople } from "@/hooks/useSalespeople";
+import { useProspectCadences, useFunnelRules } from "@/hooks/cadences/useCadenceQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SimulationLog {
   id: string;
