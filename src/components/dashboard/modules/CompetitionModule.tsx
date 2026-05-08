@@ -1,4 +1,4 @@
-import { FuturisticRanking } from "@/components/gamification/FuturisticRanking";
+import { FuturisticRanking } from "@/components/dashboard/FuturisticRanking";
 import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { TopProducts } from "@/components/dashboard/TopProducts";
 import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
