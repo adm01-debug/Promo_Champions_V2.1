@@ -504,9 +504,6 @@ const FollowUpInteligente = () => {
           </ScrollArea>
         </DialogContent>
       </Dialog>
-    </>
-  );
-};
       {/* WhatsApp Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="sm:max-w-[500px]">
@@ -550,5 +547,8 @@ const FollowUpInteligente = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  );
+};
 
 export default FollowUpInteligente;
