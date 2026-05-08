@@ -118,65 +118,101 @@ export default function AdminComercial() {
     },
   });
 
-  // Mutation for updating goals
-  const updateGoalMutation = useMutation({
-    mutationFn: async ({ salespersonId, amount }: { salespersonId: string; amount: number }) => {
+  // Generic mutation to create approval request
+  const createApprovalMutation = useMutation({
+    mutationFn: async ({ type, entityId, newValues, oldValues, justification }: any) => {
       const { error } = await supabase
-        .from("sales_goals")
-        .upsert({
-          salesperson_id: salespersonId,
-          month: currentMonth,
-          goal_amount: amount,
-        }, {
-          onConflict: "salesperson_id,month",
+        .from("commercial_approval_requests")
+        .insert({
+          requester_id: user?.id,
+          type,
+          entity_id: entityId,
+          competence_month: currentMonthDate,
+          new_values: newValues,
+          old_values: oldValues,
+          justification,
+          status: "pending"
         });
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-goals"] });
-      toast({ title: "Sucesso", description: "Meta atualizada com sucesso." });
+      queryClient.invalidateQueries({ queryKey: ["admin-approvals"] });
+      toast({ title: "Solicitação Enviada", description: "Sua alteração foi enviada para aprovação." });
     },
     onError: (error) => {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
     },
   });
 
-  // Mutation for updating scoring rules
-  const updateRuleMutation = useMutation({
-    mutationFn: async (rule: any) => {
+  // Mutation to approve/reject request
+  const processApprovalMutation = useMutation({
+    mutationFn: async ({ requestId, status, justification }: { requestId: string; status: "approved" | "rejected"; justification?: string }) => {
+      const { data: request, error: fetchError } = await supabase
+        .from("commercial_approval_requests")
+        .select("*")
+        .eq("id", requestId)
+        .single();
+      
+      if (fetchError) throw fetchError;
+
+      if (status === "approved") {
+        // Apply the change based on type
+        if (request.type === "goal") {
+          await supabase.from("sales_goals").upsert({
+            salesperson_id: request.entity_id,
+            month: request.competence_month,
+            goal_amount: request.new_values.amount,
+          }, { onConflict: "salesperson_id,month" });
+        } else if (request.type === "scoring_rule") {
+          await supabase.from("race_scoring_rules").update({
+            weight: request.new_values.weight,
+            points_per_unit: request.new_values.points_per_unit,
+            label: request.new_values.label
+          }).eq("id", request.entity_id);
+        } else if (request.type === "commission") {
+          await supabase.from("salesperson_commission_configs").upsert({
+            salesperson_id: request.entity_id,
+            month: request.competence_month,
+            rate: request.new_values.rate
+          }, { onConflict: "salesperson_id,month" });
+        }
+
+        // Log to audit_logs
+        await supabase.from("audit_logs").insert({
+          actor_id: user?.id,
+          action: `approved_${request.type}`,
+          entity_type: request.type,
+          entity_id: request.entity_id,
+          changes: { from: request.old_values, to: request.new_values },
+          metadata: { approval_request_id: requestId, justification }
+        });
+      }
+
       const { error } = await supabase
-        .from("race_scoring_rules")
+        .from("commercial_approval_requests")
         .update({
-          weight: rule.weight,
-          points_per_unit: rule.points_per_unit,
-          label: rule.label
+          status,
+          approver_id: user?.id,
+          updated_at: new Date().toISOString()
         })
-        .eq("id", rule.id);
+        .eq("id", requestId);
+      
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-approvals"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-goals"] });
       queryClient.invalidateQueries({ queryKey: ["admin-scoring-rules"] });
-      toast({ title: "Sucesso", description: "Regra de pontuação atualizada." });
-    },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+      queryClient.invalidateQueries({ queryKey: ["admin-commissions"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-audit-logs"] });
+      toast({ 
+        title: variables.status === "approved" ? "Aprovado" : "Rejeitado", 
+        description: `A solicitação foi ${variables.status === "approved" ? "aprovada e aplicada" : "rejeitada"}.` 
+      });
     },
   });
 
-  // Mutation for updating commission rates
-  const updateCommissionMutation = useMutation({
-    mutationFn: async ({ salespersonId, rate }: { salespersonId: string; rate: number }) => {
-      const { error } = await supabase
-        .from("salespeople")
-        .update({ commission_rate: rate })
-        .eq("id", salespersonId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-salespeople"] });
-      toast({ title: "Sucesso", description: "Comissão atualizada." });
-    },
-  });
+  const isLoading = loadingSalespeople || loadingGoals || loadingRules || loadingCommissions || loadingApprovals || loadingLogs;
 
   const isLoading = loadingSalespeople || loadingGoals || loadingRules;
 
