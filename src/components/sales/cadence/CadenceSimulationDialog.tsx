@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, FileText, MousePointerClick, History, CheckCircle2, GitBranch } from "lucide-react";
+import { Play, FileText, MousePointerClick, History, CheckCircle2, GitBranch, Phone, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ export function CadenceSimulationDialog() {
   const { data: prospects } = useProspectCadences();
   const queryClient = useQueryClient();
 
-  const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual") => {
+  const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual" | "call_outcome_atendeu" | "call_outcome_nao_atendeu") => {
     if (!selectedProspectId) {
       toast.error("Selecione um lead para a simulação");
       return;
@@ -42,7 +42,9 @@ export function CadenceSimulationDialog() {
       quote_open: "Abertura de Proposta",
       price_click: "Clique em Preço",
       reply: "Resposta Recebida",
-      manual: "Ação Manual"
+      manual: "Ação Manual",
+      call_outcome_atendeu: "Desfecho: Atendeu",
+      call_outcome_nao_atendeu: "Desfecho: Não Atendeu"
     };
     
     const eventName = eventNames[type];
@@ -170,6 +172,24 @@ export function CadenceSimulationDialog() {
               <CheckCircle2 className="h-8 w-8 text-status-warning" />
               <div className="text-xs font-semibold">Ação Manual</div>
               <div className="text-[9px] text-muted-foreground">Qualquer momento</div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all"
+              onClick={() => simulateEvent("call_outcome_atendeu")}
+            >
+              <Phone className="h-8 w-8 text-blue-500" />
+              <div className="text-xs font-semibold">Desfecho: Atendeu</div>
+              <div className="text-[9px] text-muted-foreground">Regra de Transição</div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-24 flex-col gap-2 hover:border-red-500/50 hover:bg-red-500/5 transition-all"
+              onClick={() => simulateEvent("call_outcome_nao_atendeu")}
+            >
+              <XCircle className="h-8 w-8 text-red-500" />
+              <div className="text-xs font-semibold">Desfecho: Ñ Atendeu</div>
+              <div className="text-[9px] text-muted-foreground">Regra de Retry</div>
             </Button>
           </div>
 
