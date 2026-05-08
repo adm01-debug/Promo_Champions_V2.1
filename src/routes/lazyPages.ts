@@ -152,3 +152,4 @@ export const TerritoryOptimizationHubPage = lazy(() => import("@/pages/Territory
 export const CustomerSuccess360Page = lazy(() => import("@/pages/CustomerSuccess360"));
 export const AdminConexoesPage = lazy(() => import("@/pages/admin/AdminConexoesPage"));
 export const AdminComercial = lazy(() => import("@/pages/admin/AdminComercial"));
+export const Competencias = lazy(() => import("@/pages/Competencias"));
