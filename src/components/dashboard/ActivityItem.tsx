@@ -88,8 +88,8 @@ export const ActivityItem: FC<ActivityItemProps> = React.memo(({
 
   return (
     <motion.div
-      whileHover={{ x: 2 }}
-      className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+      whileHover={{ x: 6, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
+      className="flex items-start gap-4 p-4 rounded-xl hover:bg-muted cursor-pointer transition-all duration-300 border border-transparent hover:border-white/10"
       onClick={onClick}
     >
       <button
