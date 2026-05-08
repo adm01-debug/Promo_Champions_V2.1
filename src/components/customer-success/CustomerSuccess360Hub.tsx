@@ -190,6 +190,9 @@ export function CustomerSuccess360Hub() {
       <Tabs defaultValue="overview">
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="trends">Tendências</TabsTrigger>
+          <TabsTrigger value="cohorts">Coortes</TabsTrigger>
+          <TabsTrigger value="orders">Pedidos</TabsTrigger>
           <TabsTrigger value="health">Health v2</TabsTrigger>
           <TabsTrigger value="renewals">Renovações</TabsTrigger>
           <TabsTrigger value="tickets">Tickets</TabsTrigger>
@@ -200,6 +203,95 @@ export function CustomerSuccess360Hub() {
           <TabsTrigger value="qbr">QBR</TabsTrigger>
           <TabsTrigger value="integrations">Integrações</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="trends" className="mt-4 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader><CardTitle>Evolução do LTV (Receita Acumulada)</CardTitle></CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={evolutionData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(val) => `R$${val / 1000}k`} />
+                    <Tooltip formatter={(val: number) => [formatBRL(val), "LTV"]} />
+                    <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Ticket Médio por Período</CardTitle></CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={evolutionData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(val) => `R$${val}`} />
+                    <Tooltip formatter={(val: number) => [formatBRL(val), "Ticket Médio"]} />
+                    <Line type="monotone" dataKey="ticket" stroke="hsl(var(--success))" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="cohorts" className="mt-4">
+          <Card>
+            <CardHeader><CardTitle>Análise de Coortes (Retenção por Mês de Renovação)</CardTitle></CardHeader>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={cohortData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" />
+                  <YAxis dataKey="month" type="category" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" />
+                  <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="orders" className="mt-4">
+          <Card>
+            <CardHeader><CardTitle>Distribuição de Pedidos por Status</CardTitle></CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="p-3 text-left font-medium">Status</th>
+                      <th className="p-3 text-center font-medium">Qtd. Pedidos</th>
+                      <th className="p-3 text-right font-medium">Volume Total</th>
+                      <th className="p-3 text-center font-medium">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { status: "Pago/Entregue", count: 145, value: 89000, color: "text-success" },
+                      { status: "Pendente", count: 24, value: 12500, color: "text-warning" },
+                      { status: "Cancelado", count: 12, value: 5400, color: "text-destructive" },
+                    ].map((row, i) => (
+                      <tr key={i} className="border-b">
+                        <td className={`p-3 font-semibold ${row.color}`}>{row.status}</td>
+                        <td className="p-3 text-center">{row.count}</td>
+                        <td className="p-3 text-right font-mono">{formatBRL(row.value)}</td>
+                        <td className="p-3 text-center">
+                          <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="overview" className="space-y-4 mt-4">
           <Card>
