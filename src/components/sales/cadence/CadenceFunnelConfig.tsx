@@ -217,6 +217,49 @@ export function CadenceFunnelConfig() {
                 />
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="flex items-center justify-between p-2 rounded-lg border border-border/20 bg-background/50">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase">Notificação Push</span>
+                  <span className="text-[9px] text-muted-foreground">Alertar no navegador/app</span>
+                </div>
+                <Switch 
+                  checked={newRule.notify_push} 
+                  onCheckedChange={(v) => setNewRule({...newRule, notify_push: v})}
+                  className="scale-75"
+                />
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg border border-border/20 bg-background/50">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase">Notificação E-mail</span>
+                  <span className="text-[9px] text-muted-foreground">Enviar alerta por e-mail</span>
+                </div>
+                <Switch 
+                  checked={newRule.notify_email} 
+                  onCheckedChange={(v) => setNewRule({...newRule, notify_email: v})}
+                  className="scale-75"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">Prioridade</label>
+                <Select 
+                  value={newRule.alert_priority} 
+                  onValueChange={(v) => setNewRule({...newRule, alert_priority: v})}
+                >
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Baixa</SelectItem>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="high">Alta</SelectItem>
+                    <SelectItem value="urgent">Urgente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setIsAdding(false)}>
                 Cancelar
@@ -236,7 +279,7 @@ export function CadenceFunnelConfig() {
               <p className="text-xs text-muted-foreground">Nenhuma regra configurada ainda.</p>
             </div>
           ) : (
-            rules.map((rule) => (
+            rules.map((rule: any) => (
               <div key={rule.id} className="flex items-center justify-between p-3 rounded-xl border border-border/30 bg-muted/20 hover:bg-muted/30 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
