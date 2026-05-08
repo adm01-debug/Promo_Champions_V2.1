@@ -134,6 +134,8 @@ export function useUpdateCadenceStep() {
       description?: string;
       template_content?: string;
       step_order?: number;
+      needs_approval?: boolean;
+      singu_variables?: any;
     }) => {
       const { id, cadence_id: _cadence_id, ...updates } = input;
       const { data, error } = await supabase
