@@ -1,14 +1,15 @@
 import { Helmet } from 'react-helmet-async';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin } from 'lucide-react';
+import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin, Search } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
   WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
   StreakTracker, LeagueSystem, HeadToHead, PrizeWheel,
   BadgesGallery, ProgressiveGoals, CompetitiveChat, CompetitiveTVDashboard,
   WallOfFame, GamifiedProfile, Benchmarking, ActivityHeatmap,
-  TournamentBrackets, PerformanceBets, TerritoryWars, EnhancedTVMode
+  TournamentBrackets, PerformanceBets, TerritoryWars, EnhancedTVMode,
+  FeatureComparison
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -86,6 +87,7 @@ const ArenaCompetitiva = () => {
             <TabsTrigger value="tv" className="gap-1.5"><Tv className="h-4 w-4" /><span className="hidden sm:inline">TV</span></TabsTrigger>
             <TabsTrigger value="tvpro" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">TV Pro</span></TabsTrigger>
             <TabsTrigger value="scoreboard" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">Placar</span></TabsTrigger>
+            <TabsTrigger value="comparison" className="gap-1.5 bg-primary/10 text-primary animate-pulse"><Search className="h-4 w-4" /><span className="hidden sm:inline">Market Intel</span></TabsTrigger>
             <TabsTrigger value="alerts" className="gap-1.5 relative">
               <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alertas</span>
               {unreadCount > 0 && (
@@ -116,6 +118,7 @@ const ArenaCompetitiva = () => {
           <TabsContent value="tv"><CompetitiveTVDashboard /></TabsContent>
           <TabsContent value="tvpro"><EnhancedTVMode /></TabsContent>
           <TabsContent value="scoreboard"><LiveScoreboard /></TabsContent>
+          <TabsContent value="comparison"><FeatureComparison /></TabsContent>
           <TabsContent value="alerts"><RankNotifications salespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="evolution"><EvolutionChart /></TabsContent>
         </Tabs>
