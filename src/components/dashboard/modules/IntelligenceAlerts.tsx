@@ -93,7 +93,9 @@ export const IntelligenceAlerts = React.memo(() => {
       </CardContent>
     </Card>
   );
-};
+});
+
+IntelligenceAlerts.displayName = "IntelligenceAlerts";
 
 // Helper for cn
 function cn(...inputs: any[]) {
