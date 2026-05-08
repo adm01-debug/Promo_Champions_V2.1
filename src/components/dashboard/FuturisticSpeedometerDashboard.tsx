@@ -277,16 +277,34 @@ export const FuturisticSpeedometerDashboard = () => {
           <div>
             <h2 className="font-display text-lg font-bold tracking-tight">Performance HUD</h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
-              Telemetria em tempo real · mês atual
+              Telemetria · {PERIOD_LABELS[period].label}
             </p>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-          </span>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-background/60 border border-border/40 backdrop-blur">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setPeriod(opt.value)}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all",
+                  period === opt.value
+                    ? "bg-primary/20 text-primary border border-primary/30"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            </span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
+          </div>
         </div>
       </div>
 
