@@ -130,6 +130,39 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
+  // Lógica para Gatilhos de Intenção e Respostas do Lead
+  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && a.outcome === 'replied');
+  if (leadsWithResponse.length > 0) {
+    suggestions.push({
+      title: 'Responder lead interessado',
+      description: 'Lead respondeu ao último e-mail. Sugestão: Oferecer demonstração personalizada ou tirar dúvidas técnicas.',
+      rationale: 'Engajamento detectado: lead respondeu ativamente.',
+      actionType: 'follow_up',
+      priority: 'high',
+      confidence: 0.92,
+      category: 'growth',
+      channel: 'whatsapp',
+      expectedImpact: 'Converter resposta em reunião agendada.',
+    });
+  }
+
+  const highInterestDeals = allSales.filter(s => s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2);
+  if (highInterestDeals.length > 0) {
+    suggestions.push({
+      title: 'Gatilho de Desconto Estratégico',
+      description: `Lead demonstrou alto interesse na proposta de ${highInterestDeals[0].client_name}.`,
+      rationale: 'IA detectou padrão de fechamento. Um desconto de 5-10% pode acelerar o "sim" hoje.',
+      actionType: 'discount',
+      priority: 'high',
+      confidence: 0.88,
+      category: 'growth',
+      channel: 'phone',
+      expectedImpact: 'Acelerar fechamento em 40%.',
+      dealId: highInterestDeals[0].id,
+      dealName: highInterestDeals[0].client_name || undefined,
+    });
+  }
+
   const proposals = allSales.filter(s => s.status === 'proposal' || s.status === 'Proposta');
   if (proposals.length > 0) {
     suggestions.push({
