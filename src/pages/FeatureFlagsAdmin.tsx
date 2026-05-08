@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -12,8 +13,9 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Flag, Plus, Trash2, Settings2, Users, Percent } from "lucide-react";
+import { Flag, Plus, Trash2, Settings2, Users, Percent, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const FeatureFlagsAdmin = () => {
   const queryClient = useQueryClient();
@@ -21,14 +23,7 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState("");
   const [newDesc, setNewDesc] = useState("");
 
-  const { data: flags, isLoading } = useQuery({
-    queryKey: ["feature-flags-admin"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("feature_flags").select("*").order("key");
-      if (error) throw error;
-      return data || [];
-    },
-  });
+  const { flags, isLoading } = useFeatureFlags();
 
   const toggleMutation = useMutation({
     mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
@@ -36,7 +31,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Flag atualizada");
     },
   });
@@ -47,8 +42,19 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Rollout atualizado");
+    },
+  });
+
+  const rolesMutation = useMutation({
+    mutationFn: async ({ id, allowed_roles }: { id: string; allowed_roles: string[] }) => {
+      const { error } = await supabase.from("feature_flags").update({ allowed_roles, updated_at: new Date().toISOString() }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
+      toast.success("Regras de acesso atualizadas");
     },
   });
 
@@ -64,7 +70,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       setNewKey("");
       setNewDesc("");
       setShowAdd(false);
@@ -78,7 +84,7 @@ const FeatureFlagsAdmin = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feature-flags-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["feature-flags"] });
       toast.success("Feature flag removida");
     },
   });
@@ -138,7 +144,14 @@ const FeatureFlagsAdmin = () => {
                           {flag.is_enabled ? "ON" : "OFF"}
                         </Badge>
                       </div>
-                      {flag.description && <p className="text-xs text-muted-foreground mt-0.5">{flag.description}</p>}
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {flag.description && <p className="text-xs text-muted-foreground mr-2">{flag.description}</p>}
+                        {flag.allowed_roles?.map((role: string) => (
+                          <Badge key={role} variant="outline" className="text-[9px] py-0 h-4 uppercase">
+                            {role}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2 min-w-[140px]">
@@ -152,6 +165,29 @@ const FeatureFlagsAdmin = () => {
                         />
                         <span className="text-xs font-mono w-8 text-right">{flag.rollout_percentage}%</span>
                       </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={() => {
+                                const roles = prompt("Cargos permitidos (separados por vírgula):", flag.allowed_roles?.join(", ") || "");
+                                if (roles !== null) {
+                                  rolesMutation.mutate({ 
+                                    id: flag.id, 
+                                    allowed_roles: roles.split(",").map(r => r.trim()).filter(Boolean) 
+                                  });
+                                }
+                              }}
+                            >
+                              <Users className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Restringir por Cargo</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <Switch
                         checked={flag.is_enabled}
                         onCheckedChange={(checked) => toggleMutation.mutate({ id: flag.id, is_enabled: checked })}

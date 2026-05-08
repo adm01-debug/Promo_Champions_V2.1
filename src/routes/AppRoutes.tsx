@@ -38,7 +38,7 @@ import {
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
   AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
-  AdminComercial,
+  AdminComercial, Competencias,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
 } from "./lazyPages";
@@ -192,6 +192,7 @@ export function AppRoutes() {
                     <Route path="/pricing-intelligence" element={<Manager><PricingIntelligenceHubPage /></Manager>} />
                     <Route path="/territory-optimization" element={<Manager><TerritoryOptimizationHubPage /></Manager>} />
                     <Route path="/customer-success-360" element={<Manager><CustomerSuccess360Page /></Manager>} />
+                    <Route path="/competencias" element={<Competencias />} />
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
