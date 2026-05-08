@@ -115,12 +115,14 @@ describe("Dashboard Routing", () => {
   it("persiste a última seção visitada no localStorage", async () => {
     // Primeiro acessa performance
     const { unmount } = render(
-      <MemoryRouter initialEntries={["/dashboard/performance"]}>
-        <Routes>
-          <Route path="/dashboard" element={<Index />} />
-          <Route path="/dashboard/:section" element={<Index />} />
-        </Routes>
-      </MemoryRouter>
+      <AllProviders>
+        <MemoryRouter initialEntries={["/dashboard/performance"]}>
+          <Routes>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/dashboard/:section" element={<Index />} />
+          </Routes>
+        </MemoryRouter>
+      </AllProviders>
     );
 
     // Verifica se salvou no localStorage
