@@ -9,6 +9,7 @@ export interface ColdLead {
   amount: number;
   status: string;
   updated_at: string;
+  salesperson_id?: string;
   days_inactive: number;
   temperature: LeadTemperature;
   suggested_action: string;

@@ -1,6 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Loader2 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +39,51 @@ const FollowUpInteligente = () => {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [reactivateLead, setReactivateLead] = useState<ColdLead | null>(null);
   const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
+  const [reactivationReason, setReactivationReason] = useState('');
+  const [reactivationDate, setReactivationDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const { data: userRole } = useQuery({
+    queryKey: ["user-role", salesperson?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", salesperson?.id || "")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.role;
+    },
+    enabled: !!salesperson?.id,
+  });
+
+  const isAdmin = userRole === "admin";
+
+  const { data: followUpSettings } = useQuery({
+    queryKey: ["follow-up-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("follow_up_settings")
+        .select("*")
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: auditLogs = [] } = useQuery({
+    queryKey: ['follow-up-audit-logs', selectedLeadForAudit?.id],
+    queryFn: async () => {
+      if (!selectedLeadForAudit?.id) return [];
+      const { data, error } = await supabase
+        .from('follow_up_audit_view' as any)
+        .select('*')
+        .eq('sale_id', selectedLeadForAudit.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedLeadForAudit?.id,
+  });
 
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
@@ -201,6 +248,80 @@ const FollowUpInteligente = () => {
     setSelectedLeads(criticalIds);
   }, [coldLeads]);
 
+  const logAction = useMutation({
+    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: any, status?: string }) => {
+      const { error } = await supabase
+        .from('follow_up_audit_logs')
+        .insert({
+          sale_id: saleId,
+          user_id: salesperson?.id,
+          action_type: actionType,
+          details,
+          status
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['follow-up-audit-logs'] });
+    }
+  });
+
+  const handleWhatsAppClick = useCallback((lead: ColdLead) => {
+    const template = followUpSettings?.whatsapp_template || 
+      "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
+    
+    const message = template
+      .replace("{{client_name}}", lead.client_name)
+      .replace("{{product_name}}", lead.product_name || "produto")
+      .replace("{{status}}", lead.status);
+
+    logAction.mutate({
+      saleId: lead.id,
+      actionType: 'whatsapp_sent',
+      details: { message_preview: message.substring(0, 100) + "..." },
+      status: 'sent'
+    });
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  }, [followUpSettings, logAction, salesperson?.id]);
+
+  const handleReactivate = useMutation({
+    mutationFn: async () => {
+      if (!reactivateLead) return;
+      if (!isAdmin) throw new Error("Apenas administradores podem reativar leads Classe A.");
+
+      // 1. Log the action
+      await logAction.mutateAsync({
+        saleId: reactivateLead.id,
+        actionType: 'lead_reactivated',
+        details: { reason: reactivationReason, next_follow_up: reactivationDate }
+      });
+
+      // 2. Create a task
+      await supabase.from('tasks').insert({
+        title: `Follow-up Reativação: ${reactivateLead.client_name}`,
+        description: `Lead Classe A reativado. Motivo: ${reactivationReason}`,
+        task_type: 'follow_up',
+        priority: 'high',
+        due_date: new Date(reactivationDate).toISOString(),
+        sale_id: reactivateLead.id,
+        salesperson_id: reactivateLead.salesperson_id || salesperson?.id
+      });
+
+      // 3. Update deal updated_at to reset inactivity
+      await supabase.from('sales').update({ updated_at: new Date().toISOString() }).eq('id', reactivateLead.id);
+    },
+    onSuccess: () => {
+      toast.success("Lead reativado com sucesso!");
+      setIsReactivateModalOpen(false);
+      setReactivationReason('');
+      queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao reativar: " + error.message);
+    }
+  });
+
   return (
     <>
       <Helmet>
@@ -260,6 +381,7 @@ const FollowUpInteligente = () => {
                       isSelected={selectedLeads.has(lead.id)}
                       onToggle={toggleLead}
                       onCreateTask={l => createFollowUpTask.mutate(l)}
+                      onWhatsAppClick={handleWhatsAppClick}
                       isCreating={creatingLeadId === lead.id}
                       onOpenAudit={(l) => { setSelectedLeadForAudit(l); setIsAuditModalOpen(true); }}
                       onReactivate={(l) => { setReactivateLead(l); setIsReactivateModalOpen(true); }}
@@ -287,19 +409,33 @@ const FollowUpInteligente = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Motivo da Reativação</Label>
-              <Textarea placeholder="Ex: Cliente demonstrou novo interesse após webinar..." />
+              <Textarea 
+                placeholder="Ex: Cliente demonstrou novo interesse após webinar..." 
+                value={reactivationReason}
+                onChange={(e) => setReactivationReason(e.target.value)}
+                disabled={!isAdmin}
+              />
             </div>
             <div className="space-y-2">
               <Label>Nova Data de Acompanhamento</Label>
-              <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+              <Input 
+                type="date" 
+                value={reactivationDate}
+                onChange={(e) => setReactivationDate(e.target.value)}
+                disabled={!isAdmin}
+              />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsReactivateModalOpen(false)}>Cancelar</Button>
-            <Button onClick={() => {
-              toast.success("Lead reativado e tarefa de follow-up criada!");
-              setIsReactivateModalOpen(false);
-            }}>Confirmar Reativação</Button>
+            <Button 
+              onClick={() => handleReactivate.mutate()} 
+              disabled={handleReactivate.isPending || !isAdmin || !reactivationReason}
+              className="gap-2"
+            >
+              {handleReactivate.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+              Confirmar Reativação
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -315,26 +451,36 @@ const FollowUpInteligente = () => {
           </DialogHeader>
           <ScrollArea className="h-[400px] mt-4 pr-4">
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative">
+              {auditLogs.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma ação registrada para este lead.</p>
+              )}
+              {auditLogs.map((log: any) => (
+                <div key={log.id} className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative">
                   <div className="absolute -left-1.5 top-2 w-3 h-3 rounded-full bg-primary" />
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <span className="font-bold text-sm">
-                        {i === 1 ? "WhatsApp Enviado" : i === 2 ? "Tarefa de Follow-up Criada" : "Lead Reativado"}
+                        {log.action_type === 'whatsapp_sent' ? "WhatsApp Enviado" : 
+                         log.action_type === 'task_created' ? "Tarefa Criada" : 
+                         log.action_type === 'lead_reactivated' ? "Lead Reativado" : log.action_type}
                       </span>
                       <span className="text-[10px] text-muted-foreground uppercase font-black">
-                        {format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {i === 1 ? "Link wa.me gerado com template padrão." : i === 2 ? "Tarefa agendada para o consultor." : "Lead Classe A movido de Congelado para Ativo."}
+                      {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
                     </p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold">
-                        AD
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="h-4 w-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold">
+                        {log.user_name?.substring(0, 2).toUpperCase() || "UN"}
                       </div>
-                      <span className="text-[10px] font-medium">Administrador Comercial</span>
+                      <span className="text-[10px] font-medium">{log.user_name || "Sistema"}</span>
+                      {log.status && (
+                        <Badge variant="outline" className="text-[8px] h-4 px-1 uppercase font-bold ml-auto">
+                          {log.status}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -15,6 +15,7 @@ interface FollowUpLeadCardProps {
   isSelected: boolean;
   onToggle: (id: string) => void;
   onCreateTask: (lead: ColdLead) => void;
+  onWhatsAppClick: (lead: ColdLead) => void;
   isCreating: boolean;
   onOpenAudit: (lead: ColdLead) => void;
   onReactivate: (lead: ColdLead) => void;
@@ -40,6 +41,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
   isSelected, 
   onToggle, 
   onCreateTask, 
+  onWhatsAppClick,
   isCreating,
   onOpenAudit,
   onReactivate
@@ -149,11 +151,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                        onClick={() => {
-                          const statusText = statusLabels[lead.status] || lead.status;
-                          const message = `Olá ${lead.client_name}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o ${lead.product_name} está na etapa de ${statusText} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?`;
-                          window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-                        }}
+                        onClick={() => onWhatsAppClick(lead)}
                       >
                         <MessageCircle className="h-4 w-4" />
                       </Button>

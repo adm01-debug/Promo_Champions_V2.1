@@ -31,6 +31,7 @@ export const ICP = lazy(() => import("@/pages/ICP"));
 export const FonteLeads = lazy(() => import("@/pages/FonteLeads"));
 export const Playbooks = lazy(() => import("@/pages/Playbooks"));
 export const FollowUpInteligente = lazy(() => import("@/pages/FollowUpInteligente"));
+export const FollowUpAudit = lazy(() => import("@/pages/FollowUpAudit"));
 export const Sequences = lazy(() => import("@/pages/SequencesPage"));
 export const BulkComposer = lazy(() => import("@/pages/BulkComposer"));
 export const SendTimeOptimization = lazy(() => import("@/pages/SendTimeOptimization"));
