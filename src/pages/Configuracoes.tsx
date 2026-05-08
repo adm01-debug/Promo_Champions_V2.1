@@ -208,6 +208,15 @@ export default function Configuracoes() {
             <TabsContent value="feature-flags" className="mt-6">
               <FeatureFlagsAdmin />
             </TabsContent>
+
+            <TabsContent value="follow-up" className="mt-6">
+              <FollowUpSettings />
+            </TabsContent>
+
+            <TabsContent value="follow-up-rules" className="mt-6">
+              <FollowUpTerritoryRules />
+            </TabsContent>
+
           </>
         )}
       </Tabs>
