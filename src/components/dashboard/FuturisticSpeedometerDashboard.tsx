@@ -103,24 +103,61 @@ const Speedometer = ({ value, max, label, formatValue, accent, icon: Icon, delta
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -3, transition: { type: "spring", stiffness: 300, damping: 20 } }}
       className="relative group"
     >
-      {/* Ambient glow */}
-      <div
-        className="absolute inset-0 rounded-2xl opacity-40 blur-2xl transition-opacity group-hover:opacity-70 pointer-events-none"
+      {/* Pulsing ambient glow */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl blur-2xl pointer-events-none"
         style={{ background: `radial-gradient(circle at 50% 60%, ${colors.glow}, transparent 70%)` }}
+        animate={{ opacity: [0.35, 0.7, 0.35] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Rotating conic neon ring */}
+      <motion.div
+        className="absolute -inset-px rounded-2xl opacity-60 pointer-events-none"
+        style={{
+          background: `conic-gradient(from 0deg, transparent 0deg, ${colors.stroke} 60deg, transparent 140deg, transparent 220deg, ${colors.stroke} 300deg, transparent 360deg)`,
+          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+          padding: "1px",
+        }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
       />
 
       {/* Card */}
-      <div className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-5 overflow-hidden">
+      <div
+        className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-5 overflow-hidden"
+        style={{ boxShadow: `inset 0 0 30px ${colors.glow}, 0 0 0 1px ${colors.glow}` }}
+      >
         {/* Grid overlay */}
         <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(${colors.stroke} 1px, transparent 1px), linear-gradient(90deg, ${colors.stroke} 1px, transparent 1px)`,
             backgroundSize: "20px 20px",
           }}
         />
+
+        {/* Scanline sweep */}
+        <motion.div
+          className="absolute inset-x-0 h-[2px] pointer-events-none"
+          style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)`, opacity: 0.5 }}
+          animate={{ top: ["0%", "100%", "0%"] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Corner brackets */}
+        {(["top-2 left-2 border-t border-l", "top-2 right-2 border-t border-r", "bottom-2 left-2 border-b border-l", "bottom-2 right-2 border-b border-r"] as const).map((pos, i) => (
+          <div
+            key={i}
+            className={cn("absolute w-3 h-3 pointer-events-none", pos)}
+            style={{ borderColor: colors.stroke, opacity: 0.7 }}
+          />
+        ))}
 
         {/* Header */}
         <div className="relative flex items-center justify-between mb-3">
