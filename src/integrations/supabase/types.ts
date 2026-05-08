@@ -1523,6 +1523,7 @@ export type Database = {
           from_stage: string
           id: string
           is_active: boolean | null
+          time_window_hours: number | null
           to_stage: string
           updated_at: string | null
         }
@@ -1534,6 +1535,7 @@ export type Database = {
           from_stage: string
           id?: string
           is_active?: boolean | null
+          time_window_hours?: number | null
           to_stage: string
           updated_at?: string | null
         }
@@ -1545,6 +1547,7 @@ export type Database = {
           from_stage?: string
           id?: string
           is_active?: boolean | null
+          time_window_hours?: number | null
           to_stage?: string
           updated_at?: string | null
         }
@@ -15938,6 +15941,14 @@ export type Database = {
           subject: string
           variant_id: string
         }[]
+      }
+      process_lead_intent_event: {
+        Args: {
+          p_details?: Json
+          p_event_type: string
+          p_prospect_cadence_id: string
+        }
+        Returns: Json
       }
       recompute_engagement_score: {
         Args: { _contact_id: string; _contact_type: string }
