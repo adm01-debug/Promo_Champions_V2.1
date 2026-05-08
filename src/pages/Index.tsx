@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import React, { Suspense, lazy } from "react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
@@ -10,12 +11,14 @@ import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBann
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
-import { OverviewModule } from "@/components/dashboard/modules/OverviewModule";
-import { PerformanceModule } from "@/components/dashboard/modules/PerformanceModule";
-import { AnalyticsModule } from "@/components/dashboard/modules/AnalyticsModule";
-import { CompetitionModule } from "@/components/dashboard/modules/CompetitionModule";
-import { IntelligenceModule } from "@/components/dashboard/modules/IntelligenceModule";
-import { EngagementModule } from "@/components/dashboard/modules/EngagementModule";
+
+// Lazy-loaded modules for better performance
+const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
+const PerformanceModule = lazy(() => import("@/components/dashboard/modules/PerformanceModule").then(m => ({ default: m.PerformanceModule })));
+const AnalyticsModule = lazy(() => import("@/components/dashboard/modules/AnalyticsModule").then(m => ({ default: m.AnalyticsModule })));
+const CompetitionModule = lazy(() => import("@/components/dashboard/modules/CompetitionModule").then(m => ({ default: m.CompetitionModule })));
+const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
+const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
