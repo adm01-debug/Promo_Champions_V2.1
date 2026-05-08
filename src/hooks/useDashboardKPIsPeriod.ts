@@ -69,20 +69,42 @@ const getRanges = (period: KPIPeriod) => {
   }
 };
 
-const fetchPeriod = async (start: Date, end: Date): Promise<KPIData> => {
+const fetchPeriod = async (
+  start: Date,
+  end: Date,
+  salespersonId?: string | null
+): Promise<KPIData> => {
   const s = format(start, "yyyy-MM-dd");
   const e = format(end, "yyyy-MM-dd");
-  const [salesRes, metricsRes] = await Promise.all([
-    supabase.from("sales").select("amount, status").gte("created_at", s).lte("created_at", e),
-    supabase.from("daily_metrics").select("conversion_rate").gte("date", s).lte("date", e),
-  ]);
-  const completed = (salesRes.data ?? []).filter((s) => s.status === "completed");
+
+  let salesQuery = supabase
+    .from("sales")
+    .select("amount, status")
+    .gte("created_at", s)
+    .lte("created_at", e + "T23:59:59");
+  if (salespersonId) salesQuery = salesQuery.eq("salesperson_id", salespersonId);
+
+  const salesRes = await salesQuery;
+  const all = salesRes.data ?? [];
+  const completed = all.filter((s) => s.status === "completed");
   const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
   const totalSales = completed.length;
-  const metrics = metricsRes.data ?? [];
-  const conversionRate = metrics.length
-    ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length
-    : 0;
+
+  let conversionRate = 0;
+  if (salespersonId) {
+    // Per-salesperson conversion: completed / total sales records in period
+    conversionRate = all.length > 0 ? (completed.length / all.length) * 100 : 0;
+  } else {
+    const metricsRes = await supabase
+      .from("daily_metrics")
+      .select("conversion_rate")
+      .gte("date", s)
+      .lte("date", e);
+    const metrics = metricsRes.data ?? [];
+    conversionRate = metrics.length
+      ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length
+      : 0;
+  }
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
   return { totalRevenue, totalSales, conversionRate, avgTicket };
 };
@@ -92,14 +114,14 @@ const change = (cur: number, prev: number): number => {
   return Number((((cur - prev) / prev) * 100).toFixed(1));
 };
 
-export const useDashboardKPIsPeriod = (period: KPIPeriod) => {
+export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string | null) => {
   return useQuery({
-    queryKey: ["dashboard-kpis-period", period],
+    queryKey: ["dashboard-kpis-period", period, salespersonId ?? "all"],
     queryFn: async (): Promise<KPIPeriodResult> => {
       const { curStart, curEnd, prevStart, prevEnd } = getRanges(period);
       const [current, previous] = await Promise.all([
-        fetchPeriod(curStart, curEnd),
-        fetchPeriod(prevStart, prevEnd),
+        fetchPeriod(curStart, curEnd, salespersonId),
+        fetchPeriod(prevStart, prevEnd, salespersonId),
       ]);
       return {
         current,
