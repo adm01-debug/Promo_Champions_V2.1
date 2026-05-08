@@ -6,7 +6,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { differenceInHours } from 'date-fns';
+import { differenceInHours, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
@@ -16,6 +17,13 @@ import { FollowUpLeadCard } from '@/components/follow-up/FollowUpLeadCard';
 import { FollowUpEmptyState } from '@/components/follow-up/FollowUpEmptyState';
 import { getTemperature, getSuggestedAction, type ColdLead } from '@/components/follow-up/types';
 import { FollowUpLoadingSkeleton } from '@/components/skeletons/FollowUpLoadingSkeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { History, Zap, MessageCircle, Send, CheckCircle2 } from 'lucide-react';
 
 const FollowUpInteligente = () => {
   const { salesperson } = useAuth();
@@ -25,6 +33,10 @@ const FollowUpInteligente = () => {
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [creatingLeadId, setCreatingLeadId] = useState<string | null>(null);
+  const [selectedLeadForAudit, setSelectedLeadForAudit] = useState<ColdLead | null>(null);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [reactivateLead, setReactivateLead] = useState<ColdLead | null>(null);
+  const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
 
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
