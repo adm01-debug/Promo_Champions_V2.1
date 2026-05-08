@@ -48,7 +48,7 @@ export function CreateCadenceDialog() {
   const [step, setStep] = useState<"info" | "steps">("info");
   const [cadenceId, setCadenceId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepInput[]>([
-    { day_number: 1, action_type: "email", title: "Email de introdução", description: "" },
+    { day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false },
   ]);
 
   const createCadence = useCreateCadence();
