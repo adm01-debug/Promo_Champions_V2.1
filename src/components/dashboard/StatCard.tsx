@@ -117,6 +117,31 @@ export const StatCard = React.memo(({
                           variant !== 'default' ? '0 0 12px currentColor' : 'none' 
             }}>
               {displayValue}
+              {hero && (
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md cursor-help">
+                          <div className="relative w-12 h-1 bg-white/10 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: "94%" }}
+                              className="h-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                              transition={{ duration: 2, ease: "easeOut" }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-mono font-bold text-primary">94% CONFIDENCE</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-black/90 border-primary/30 text-xs p-3 max-w-[200px] backdrop-blur-xl">
+                        <p className="font-mono text-primary font-bold mb-1">IA INSIGHT</p>
+                        <p className="text-muted-foreground leading-relaxed">Alta probabilidade de conversão baseada em padrões históricos de comportamento e sazonalidade.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
             </p>
             {change !== undefined && (
               <div className="flex items-center gap-2">
