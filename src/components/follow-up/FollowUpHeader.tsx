@@ -52,20 +52,21 @@ export function FollowUpHeader({
           </Button>
           
           {selectedCount > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Button onClick={onBulkCreate} disabled={isBulkCreating} className="gap-2">
-              {isBulkCreating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Zap className="h-4 w-4" />
-              )}
-              Criar {selectedCount} tarefas
-            </Button>
-          </motion.div>
-        )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <Button onClick={onBulkCreate} disabled={isBulkCreating} className="gap-2">
+                {isBulkCreating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Zap className="h-4 w-4" />
+                )}
+                Criar {selectedCount} tarefas
+              </Button>
+            </motion.div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row items-center gap-4">
