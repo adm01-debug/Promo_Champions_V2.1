@@ -67,7 +67,7 @@ export function CreateCadenceDialog() {
     setStep("info");
     setCadenceId(null);
     form.reset();
-    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "" }]);
+    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false }]);
   };
 
   const handleCreateCadence = async (data: CadenceFormData) => {
