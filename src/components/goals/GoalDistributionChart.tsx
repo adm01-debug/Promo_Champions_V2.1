@@ -93,9 +93,10 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
         <div className="relative h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                activeIndex={activeIndex as any}
-                activeShape={renderActiveShape as any}
+              {(() => { const PieAny = Pie as any; return (
+              <PieAny
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
                 data={data}
                 cx="50%"
                 cy="50%"
@@ -104,7 +105,7 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
                 paddingAngle={6}
                 dataKey="value"
                 stroke="none"
-                onMouseEnter={(_, index) => setActiveIndex(index)}
+                onMouseEnter={(_: any, index: number) => setActiveIndex(index)}
               >
                 {data.map((entry, i) => (
                   <Cell 
