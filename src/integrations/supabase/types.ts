@@ -3154,6 +3154,51 @@ export type Database = {
           },
         ]
       }
+      commercial_approval_requests: {
+        Row: {
+          approver_id: string | null
+          competence_month: string
+          created_at: string | null
+          entity_id: string | null
+          id: string
+          justification: string | null
+          new_values: Json
+          old_values: Json | null
+          requester_id: string | null
+          status: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          approver_id?: string | null
+          competence_month: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          justification?: string | null
+          new_values: Json
+          old_values?: Json | null
+          requester_id?: string | null
+          status?: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          approver_id?: string | null
+          competence_month?: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          justification?: string | null
+          new_values?: Json
+          old_values?: Json | null
+          requester_id?: string | null
+          status?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       commission_rules: {
         Row: {
           category: string | null
@@ -9460,6 +9505,7 @@ export type Database = {
           id: string
           label: string | null
           metric_code: string
+          month: string | null
           points_per_unit: number
           season_id: string
           weight: number
@@ -9469,6 +9515,7 @@ export type Database = {
           id?: string
           label?: string | null
           metric_code: string
+          month?: string | null
           points_per_unit?: number
           season_id: string
           weight?: number
@@ -9478,6 +9525,7 @@ export type Database = {
           id?: string
           label?: string | null
           metric_code?: string
+          month?: string | null
           points_per_unit?: number
           season_id?: string
           weight?: number
@@ -10825,6 +10873,45 @@ export type Database = {
           trend_direction?: string
         }
         Relationships: []
+      }
+      salesperson_commission_configs: {
+        Row: {
+          created_at: string | null
+          month: string
+          rate: number
+          salesperson_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          month: string
+          rate: number
+          salesperson_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          month?: string
+          rate?: number
+          salesperson_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_commission_configs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_commission_configs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salesperson_custom_field_values: {
         Row: {
