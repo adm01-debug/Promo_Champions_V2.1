@@ -33,6 +33,7 @@ export interface ProspectCadence {
   cadence_id: string;
   salesperson_id: string | null;
   status: CadenceStatus;
+  funnel_stage: 'new' | 'high_interest' | 'waiting_approval' | 'scheduled';
   started_at: string;
   current_step: number;
   next_action_date: string | null;
