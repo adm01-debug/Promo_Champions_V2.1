@@ -270,14 +270,14 @@ export function CustomerSuccess360Hub() {
                   type="date"
                   className="w-[130px] h-9"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => handleDateChange("start", e.target.value)}
                 />
                 <span className="text-muted-foreground text-xs">até</span>
                 <Input
                   type="date"
                   className="w-[130px] h-9"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => handleDateChange("end", e.target.value)}
                 />
               </div>
             )}
