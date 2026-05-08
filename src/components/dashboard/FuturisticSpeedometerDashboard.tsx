@@ -37,6 +37,7 @@ const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
 
 interface SpeedometerProps {
   value: number;
+  min?: number;
   max: number;
   label: string;
   unit?: string;
