@@ -74,7 +74,8 @@ const FollowUpInteligente = () => {
       const now = new Date();
       return (deals || [])
         .map(deal => {
-          const daysInactive = differenceInDays(now, new Date(deal.updated_at));
+          const hoursInactive = differenceInHours(now, new Date(deal.updated_at));
+          const daysInactive = Math.floor(hoursInactive / 24);
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
