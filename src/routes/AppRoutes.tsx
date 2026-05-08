@@ -192,6 +192,7 @@ export function AppRoutes() {
                     <Route path="/pricing-intelligence" element={<Manager><PricingIntelligenceHubPage /></Manager>} />
                     <Route path="/territory-optimization" element={<Manager><TerritoryOptimizationHubPage /></Manager>} />
                     <Route path="/customer-success-360" element={<Manager><CustomerSuccess360Page /></Manager>} />
+                    <Route path="/competencias" element={<Competencias />} />
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
