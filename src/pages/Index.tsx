@@ -98,46 +98,23 @@ const Index = () => {
         <OnboardingChecklist />
         <DashboardHeader />
         
-        {/* Priority Alerts */}
-        <AnimatePresence>
-          {priorities.length > 0 && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="flex flex-col gap-3">
-                {priorities.map((priority, index) => (
-                  <motion.div
-                    key={priority.id}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={cn(
-                      "p-3 rounded-lg border flex items-center justify-between gap-4",
-                      priority.severity === "high" ? "bg-destructive/10 border-destructive/20 text-destructive" :
-                      priority.severity === "medium" ? "bg-warning/10 border-warning/20 text-warning-foreground" :
-                      "bg-primary/10 border-primary/20 text-primary"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-1.5 rounded-full bg-current/10">
-                        <Zap className="h-4 w-4" />
-                      </div>
-                      <p className="text-sm font-medium">{priority.message}</p>
-                    </div>
-                    <Button variant="ghost" size="sm" asChild className="shrink-0 h-8 text-xs">
-                      <Link to={priority.actionUrl}>Atender</Link>
-                    </Button>
-                  </motion.div>
-                ))}
+        {/* Priority Hints based on role */}
+        <div className="flex flex-col gap-3">
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded-full bg-current/10">
+                <Zap className="h-4 w-4" />
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <p className="text-sm font-medium">{priorities.roleHint}</p>
+            </div>
+          </motion.div>
+        </div>
 
-        <SkeletonTransition show={!isLoading}>
+        <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
             {/* KPI Overview */}
             {!allEmpty && (
