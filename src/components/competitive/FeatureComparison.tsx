@@ -74,7 +74,7 @@ export const FeatureComparison = () => {
 
   const roadmap = [
     { goal: "AI Engagement Score", impact: "Very High", effort: "Medium", status: "Planning", recommendation: "Implementar algoritmo de calor baseado em aberturas/cliques." },
-    { goal: "Native Decision Maker DB", impact: "Critical", effort: "High", status: "Backlog", recommendation: "Parceria com provedores de dados locais para busca direta." },
+    { goal: "SINGU Database Sync", impact: "Critical", effort: "High", status: "Backlog", recommendation: "Sincronização bidirecional total com a base de decisores SINGU." },
     { goal: "Automated Bounce Cleanup", impact: "High", effort: "Low", status: "Research", recommendation: "Trigger automático para marcar lead como bounce após erro 4xx/5xx no envio." },
     { goal: "AI behavioral approach", impact: "Medium", effort: "Medium", status: "Backlog", recommendation: "Sugestão de templates baseada no cargo/setor do decisor." }
   ];
