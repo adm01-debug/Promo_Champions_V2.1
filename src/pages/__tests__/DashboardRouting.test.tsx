@@ -78,6 +78,31 @@ vi.mock("@/components/dashboard/DashboardHeader", () => ({ DashboardHeader: () =
 vi.mock("@/components/gamification/CompetitiveStatusBar", () => ({ CompetitiveStatusBar: () => null }));
 vi.mock("@/components/gamification/SeasonalEventBanner", () => ({ SeasonalEventBanner: () => null }));
 vi.mock("@/components/gamification/FlashSalesBanner", () => ({ FlashSalesBanner: () => null }));
+vi.mock("@/components/dashboard/FuturisticSpeedometerDashboard", () => ({ FuturisticSpeedometerDashboard: () => <div data-testid="speedometer" /> }));
+vi.mock("@/components/dashboard/PeriodTrendChart", () => ({ PeriodTrendChart: () => null }));
+vi.mock("@/components/dashboard/TrendsChartsPanel", () => ({ TrendsChartsPanel: () => null }));
+vi.mock("@/components/analytics/DashboardNLQWidget", () => ({ DashboardNLQWidget: () => null }));
+vi.mock("@/components/dashboard/KPIGrid", () => ({ KPIGrid: () => null }));
+vi.mock("@/components/dashboard/FunnelChart", () => ({ FunnelChart: () => null }));
+vi.mock("@/components/dashboard/SalesForecast", () => ({ SalesForecast: () => null }));
+vi.mock("@/components/analytics/BenchmarkPanel", () => ({ BenchmarkPanel: () => null }));
+vi.mock("@/components/collaboration/TeamActivityFeed", () => ({ TeamActivityFeed: () => null }));
+vi.mock("@/components/analytics/ClientHealthPanel", () => ({ ClientHealthPanel: () => null }));
+vi.mock("@/components/engagement/EngagementLeaderboardWidget", () => ({ EngagementLeaderboardWidget: () => null }));
+vi.mock("@/components/dashboard/MiniLeaderboard", () => ({ MiniLeaderboard: () => null }));
+vi.mock("@/components/gamification/FuturisticRanking", () => ({ FuturisticRanking: () => null }));
+vi.mock("@/components/dashboard/RecentDeals", () => ({ RecentDeals: () => null }));
+vi.mock("@/components/dashboard/TopProducts", () => ({ TopProducts: () => null }));
+vi.mock("@/components/gamification/StreakWidget", () => ({ StreakWidget: () => null }));
+vi.mock("@/components/gamification/DailyChallengesCard", () => ({ DailyChallengesCard: () => null }));
+vi.mock("@/components/gamification/WeeklyChallengesCard", () => ({ WeeklyChallengesCard: () => null }));
+vi.mock("@/components/dashboard/widgets/MicroGoalsWidget", () => ({ MicroGoalsWidget: () => null }));
+vi.mock("@/components/dashboard/widgets/VelocityScoreWidget", () => ({ VelocityScoreWidget: () => null }));
+vi.mock("@/components/dashboard/widgets/ActivityQualityWidget", () => ({ ActivityQualityWidget: () => null }));
+vi.mock("@/components/dashboard/widgets/SelfBenchmarkWidget", () => ({ SelfBenchmarkWidget: () => null }));
+vi.mock("@/components/engagement/MoodTrackerWidget", () => ({ MoodTrackerWidget: () => null }));
+vi.mock("@/components/engagement/PulseSurveyWidget", () => ({ PulseSurveyWidget: () => null }));
+vi.mock("@/components/engagement/DailyQuizWidget", () => ({ DailyQuizWidget: () => null }));
 
 // Helper para ver a localização atual
 const LocationDisplay = () => {
