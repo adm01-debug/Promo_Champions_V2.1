@@ -81,6 +81,13 @@ export function CustomerSuccess360Hub() {
     if (period === "custom") {
       start = startDate ? parseISO(startDate) : subDays(now, 30);
       end = endDate ? parseISO(endDate) : now;
+      
+      // Safety check for isWithinInterval
+      if (isAfter(start, end)) {
+        const temp = start;
+        start = end;
+        end = temp;
+      }
     } else if (period === "0") {
       start = new Date(0);
     } else {
