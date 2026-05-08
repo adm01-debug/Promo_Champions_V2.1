@@ -111,11 +111,21 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
             value={String(data.total_purchases)} 
             icon={<Zap className="h-3 w-3" />}
             className="bg-primary/5 border-primary/10"
+            details={{
+              title: "Volume Total de Compras",
+              explanation: "Contagem histórica de todas as transações finalizadas por este cliente desde o primeiro registro no sistema.",
+              source: "Database Query: clients.total_purchases (Sincronizado via ERP)"
+            }}
           />
           <Stat 
             label="Ticket Médio" 
             value={formatBRL(data.avg_ticket)} 
             icon={<TrendingUp className="h-3 w-3" />}
+            details={{
+              title: "Ticket Médio",
+              explanation: "Valor médio investido por transação. Calculado dividindo o LTV total pelo volume de compras.",
+              source: "AI Compute Engine: sum(transaction_value) / count(transactions)"
+            }}
           />
         </div>
 
