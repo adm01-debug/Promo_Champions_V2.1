@@ -1516,6 +1516,7 @@ export type Database = {
       }
       cadence_funnel_rules: {
         Row: {
+          alert_priority: string | null
           cadence_id: string | null
           condition_type: string
           condition_value: number | null
@@ -1523,11 +1524,14 @@ export type Database = {
           from_stage: string
           id: string
           is_active: boolean | null
+          notify_email: boolean | null
+          notify_push: boolean | null
           time_window_hours: number | null
           to_stage: string
           updated_at: string | null
         }
         Insert: {
+          alert_priority?: string | null
           cadence_id?: string | null
           condition_type: string
           condition_value?: number | null
@@ -1535,11 +1539,14 @@ export type Database = {
           from_stage: string
           id?: string
           is_active?: boolean | null
+          notify_email?: boolean | null
+          notify_push?: boolean | null
           time_window_hours?: number | null
           to_stage: string
           updated_at?: string | null
         }
         Update: {
+          alert_priority?: string | null
           cadence_id?: string | null
           condition_type?: string
           condition_value?: number | null
@@ -1547,6 +1554,8 @@ export type Database = {
           from_stage?: string
           id?: string
           is_active?: boolean | null
+          notify_email?: boolean | null
+          notify_push?: boolean | null
           time_window_hours?: number | null
           to_stage?: string
           updated_at?: string | null
@@ -1614,30 +1623,36 @@ export type Database = {
       cadence_tasks: {
         Row: {
           cadence_step_id: string
+          call_result: string | null
           completed_at: string | null
           created_at: string
           id: string
           notes: string | null
+          priority: string | null
           prospect_cadence_id: string
           scheduled_date: string
           status: string
         }
         Insert: {
           cadence_step_id: string
+          call_result?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string
           notes?: string | null
+          priority?: string | null
           prospect_cadence_id: string
           scheduled_date: string
           status?: string
         }
         Update: {
           cadence_step_id?: string
+          call_result?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string
           notes?: string | null
+          priority?: string | null
           prospect_cadence_id?: string
           scheduled_date?: string
           status?: string
@@ -2857,6 +2872,7 @@ export type Database = {
           phone: string | null
           total_value: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           company?: string | null
@@ -2869,6 +2885,7 @@ export type Database = {
           phone?: string | null
           total_value?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           company?: string | null
@@ -2881,6 +2898,7 @@ export type Database = {
           phone?: string | null
           total_value?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -6678,6 +6696,51 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_detailed_logs: {
+        Row: {
+          action: string
+          client_id: string
+          created_at: string | null
+          created_by: string | null
+          details: Json | null
+          event_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          client_id: string
+          created_at?: string | null
+          created_by?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          client_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_detailed_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "lead_detailed_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
         ]
