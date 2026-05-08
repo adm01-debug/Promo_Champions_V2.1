@@ -214,7 +214,7 @@ export function CustomerSuccess360Hub() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="name" />
                     <YAxis tickFormatter={(val) => `R$${val / 1000}k`} />
-                    <Tooltip formatter={(val: number) => [formatBRL(val), "LTV"]} />
+                    <Tooltip formatter={(val: any) => [formatBRL(Number(val)), "LTV"]} />
                     <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -229,7 +229,7 @@ export function CustomerSuccess360Hub() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="name" />
                     <YAxis tickFormatter={(val) => `R$${val}`} />
-                    <Tooltip formatter={(val: number) => [formatBRL(val), "Ticket Médio"]} />
+                    <Tooltip formatter={(val: any) => [formatBRL(Number(val)), "Ticket Médio"]} />
                     <Line type="monotone" dataKey="ticket" stroke="hsl(var(--success))" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
