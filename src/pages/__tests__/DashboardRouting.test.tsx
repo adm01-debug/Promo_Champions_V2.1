@@ -3,6 +3,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "../Index";
 import NotFound from "../NotFound";
+import { DashboardThemeProvider } from "@/contexts/DashboardThemeContext";
+import { HelmetProvider } from "react-helmet-async";
 import "@testing-library/jest-dom";
 
 // Mock do DashboardKPIs hook
