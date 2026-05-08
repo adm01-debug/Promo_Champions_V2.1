@@ -83,6 +83,11 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({ lead, index, isSelecte
                 {lead.days_inactive >= 5 && (
                   <Badge variant="outline" className="text-[10px] border-destructive/30 text-destructive font-bold">D+5 Priority</Badge>
                 )}
+                {lead.follow_up_count && lead.follow_up_count > 0 && (
+                  <Badge variant="outline" className="text-[10px] border-muted-foreground/30">
+                    {lead.follow_up_count}ª tentativa
+                  </Badge>
+                )}
               </div>
 
               <div className="text-sm text-muted-foreground mb-1">
