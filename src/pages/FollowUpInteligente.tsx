@@ -185,6 +185,8 @@ const FollowUpInteligente = () => {
               isBulkCreating={createBulkTasks.isPending}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              minDaysInactive={minDaysInactive}
+              onMinDaysChange={setMinDaysInactive}
             />
 
             <FollowUpStatsGrid leads={coldLeads} onFilterChange={setFilterTemp} />
