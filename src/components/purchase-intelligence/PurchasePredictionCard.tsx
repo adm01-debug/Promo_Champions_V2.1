@@ -309,14 +309,38 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
 
 PurchasePredictionCard.displayName = "PurchasePredictionCard";
 
-function Stat({ label, value, icon, className }: { label: string; value: string; icon?: React.ReactNode; className?: string }) {
+function Stat({ label, value, icon, className, details }: { label: string; value: string; icon?: React.ReactNode; className?: string, details?: { title: string, explanation: string, source: string } }) {
   return (
-    <div className={cn("rounded-xl border border-border/50 bg-card/80 p-3.5 transition-all hover:border-primary/30 group", className)}>
-      <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
-        {icon && <span className="text-primary/70">{icon}</span>}
-        {label}
-      </div>
-      <div className="text-lg font-black text-foreground group-hover:text-primary transition-colors">{value}</div>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className={cn("rounded-xl border border-border/50 bg-card/80 p-3.5 transition-all hover:border-primary/30 group cursor-pointer active:scale-95", className)}>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              {icon && <span className="text-primary/70">{icon}</span>}
+              {label}
+            </div>
+            {details && <Info className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary transition-colors" />}
+          </div>
+          <div className="text-lg font-black text-foreground group-hover:text-primary transition-colors">{value}</div>
+        </div>
+      </DialogTrigger>
+      {details && (
+        <DialogContent className="bg-black/95 border-white/10 backdrop-blur-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-primary uppercase font-mono tracking-widest">
+              {icon} {label}: {value}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground pt-4 leading-relaxed">
+              <span className="block font-bold text-foreground mb-1 uppercase text-[10px] tracking-tighter">O que isso significa?</span>
+              {details.explanation}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 p-3 rounded-lg bg-white/5 border border-white/10">
+            <p className="text-[10px] font-mono font-bold text-primary/50 uppercase mb-1">Origem dos Dados (Lineage)</p>
+            <p className="text-xs text-muted-foreground font-mono">{details.source}</p>
+          </div>
+        </DialogContent>
+      )}
+    </Dialog>
   );
 }
