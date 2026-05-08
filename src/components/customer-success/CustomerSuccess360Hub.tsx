@@ -605,7 +605,7 @@ export function CustomerSuccess360Hub() {
           }
         }}>
           <DialogContent className="max-w-4xl max-h-[95vh] flex flex-col p-0 overflow-hidden bg-background">
-            <div className="p-6 border-b bg-muted/20">
+            <div className="p-6 border-b bg-muted/20 relative">
               <DialogHeader>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -614,17 +614,18 @@ export function CustomerSuccess360Hub() {
                       Pedidos: {ordersByStatus.find(s => s.key === orderModalStatus)?.status}
                     </DialogTitle>
                     <DialogDescription className="text-sm">
-                      Lista consolidada de pedidos filtrados por status e período.
+                      Visualizando {filteredModalOrders.length} de {ordersByStatus.find(s => s.key === orderModalStatus)?.count} pedidos totais para este status.
                     </DialogDescription>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right hidden md:block">
-                      <div className="text-2xl font-bold">{filteredModalOrders.length}</div>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Localizado</div>
+                  <div className="flex items-center gap-3 bg-background/50 p-3 rounded-lg border border-border/50 shadow-sm animate-in fade-in zoom-in duration-300">
+                    <div className="text-right">
+                      <div className="text-3xl font-black text-primary tracking-tighter tabular-nums">
+                        {filteredModalOrders.length}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Localizados</div>
                     </div>
-                    <Badge variant="secondary" className="md:hidden text-sm px-3 py-1">
-                      {filteredModalOrders.length} pedidos
-                    </Badge>
+                    <div className="h-8 w-px bg-border/60 mx-1" />
+                    <Activity className="h-5 w-5 text-primary/40" />
                   </div>
                 </div>
               </DialogHeader>
