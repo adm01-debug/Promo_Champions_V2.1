@@ -631,18 +631,20 @@ export function CustomerSuccess360Hub() {
                     }}
                   />
                 </div>
-                {orderSearch && (
+                {(orderSearch || orderSortField !== "created_at" || orderSortOrder !== "desc") && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => {
                       setOrderSearch("");
+                      setOrderSortField("created_at");
+                      setOrderSortOrder("desc");
                       setOrderPage(1);
                     }}
-                    className="h-9"
+                    className="h-9 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-4 w-4 mr-2" />
-                    Limpar
+                    Limpar filtros
                   </Button>
                 )}
               </div>
