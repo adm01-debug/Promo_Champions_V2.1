@@ -19,6 +19,9 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
 import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
+import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimulationDialog";
+import { CadenceFunnel } from "@/components/sales/cadence/CadenceFunnel";
+import { CadenceReportPanel } from "@/components/sales/cadence/CadenceReportPanel";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
