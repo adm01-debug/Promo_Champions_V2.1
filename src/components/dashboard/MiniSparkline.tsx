@@ -54,7 +54,8 @@ export const MiniSparkline = React.memo(function MiniSparkline({
     >
       <defs>
         <linearGradient id={`spark-fill-${isPositive ? "up" : "down"}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.2" />
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.4" />
+          <stop offset="60%" stopColor="currentColor" stopOpacity="0.1" />
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </linearGradient>
       </defs>
