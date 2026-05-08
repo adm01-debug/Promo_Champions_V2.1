@@ -372,8 +372,30 @@ export const FuturisticSpeedometerDashboard = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       aria-label="Painel futurista de velocímetros de vendas"
-      className="relative"
+      className="relative p-6 rounded-3xl border border-white/5 bg-black/20 backdrop-blur-sm"
     >
+      {/* Decorative HUD Elements */}
+      <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-xl pointer-events-none" />
+      <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-primary/40 rounded-tr-xl pointer-events-none" />
+      <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-primary/40 rounded-bl-xl pointer-events-none" />
+      <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-xl pointer-events-none" />
+      
+      {/* Status Tags */}
+      <div className="absolute -top-3 left-10 flex items-center gap-4 pointer-events-none">
+        <div className="px-2 py-0.5 rounded bg-black border border-primary/30 text-[8px] font-mono font-bold text-primary tracking-[0.2em] uppercase shadow-[0_0_10px_rgba(14,165,233,0.2)]">
+          System: Online
+        </div>
+        <div className="px-2 py-0.5 rounded bg-black border border-success/30 text-[8px] font-mono font-bold text-success tracking-[0.2em] uppercase">
+          Signal: Stable
+        </div>
+      </div>
+
+      <div className="absolute -bottom-3 right-10 flex items-center gap-3 pointer-events-none opacity-40">
+        <div className="text-[7px] font-mono text-muted-foreground uppercase tracking-widest">
+          Telemetry Version 4.0.8 // CRC: OK
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -512,46 +534,93 @@ export const FuturisticSpeedometerDashboard = () => {
       {kpisLoading || !kpis ? (
         <ComparativeStripSkeleton className="mt-5" />
       ) : (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           className={cn(
-            "mt-5 rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 backdrop-blur-xl p-4 transition-opacity duration-300",
+            "mt-6 relative overflow-hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl p-5 transition-opacity duration-300",
             kpisFetching && "opacity-60"
           )}
         >
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
-              Comparativo vs {PERIOD_LABELS[period].comparison}
+          {/* Subtle animated scanline for the strip */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none opacity-[0.03]"
+            style={{
+              backgroundImage: "linear-gradient(transparent 50%, rgba(255,255,255,0.1) 50%)",
+              backgroundSize: "100% 4px",
+            }}
+            animate={{ backgroundPositionY: ["0px", "20px"] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+          />
+
+          <div className="relative flex items-center gap-4 mb-4">
+            <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-primary/50" />
+            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-primary/80">
+              Comparative Telemetry · {PERIOD_LABELS[period].comparison}
             </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-primary/50 via-border/20 to-transparent" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { label: "Faturamento", curr: fmtBRL(revenue), prev: fmtBRL(prevRevenue), delta: kpis?.changes.revenue ?? 0 },
-              { label: "Vendas", curr: String(sales), prev: String(prevSales), delta: kpis?.changes.sales ?? 0 },
-              { label: "Conversão", curr: `${conversion.toFixed(1)}%`, prev: `${(kpis?.previous.conversionRate ?? 0).toFixed(1)}%`, delta: kpis?.changes.conversion ?? 0 },
-              { label: "Ticket", curr: fmtBRL(ticket), prev: fmtBRL(prevTicket), delta: kpis?.changes.avgTicket ?? 0 },
-            ].map((row) => (
-              <div key={row.label} className="space-y-1">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">{row.label}</div>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-mono font-bold text-sm tabular-nums">{row.curr}</span>
-                  <span className="text-[10px] text-muted-foreground/70 font-mono">← {row.prev}</span>
+              { label: "Faturamento", curr: revenue, prev: prevRevenue, fmt: fmtBRL, color: "hsl(var(--primary))", glow: "rgba(14, 165, 233, 0.2)" },
+              { label: "Vendas", curr: sales, prev: prevSales, fmt: (v: number) => String(v), color: "hsl(var(--success))", glow: "rgba(34, 197, 94, 0.2)" },
+              { label: "Conversão", curr: conversion, prev: (kpis?.previous.conversionRate ?? 0), fmt: (v: number) => `${v.toFixed(1)}%`, color: "hsl(var(--warning))", glow: "rgba(234, 179, 8, 0.2)" },
+              { label: "Ticket Médio", curr: ticket, prev: prevTicket, fmt: fmtBRL, color: "hsl(var(--destructive))", glow: "rgba(239, 68, 68, 0.2)" },
+            ].map((row, idx) => {
+              const delta = row.prev > 0 ? ((row.curr - row.prev) / row.prev) * 100 : 100;
+              const isPositive = delta >= 0;
+              
+              return (
+                <div key={row.label} className="group relative">
+                  <div className="flex justify-between items-end mb-1.5">
+                    <div>
+                      <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
+                        {row.label}
+                      </div>
+                      <div className="text-lg font-mono font-black tracking-tighter" style={{ color: row.color, textShadow: `0 0 10px ${row.glow}` }}>
+                        {row.fmt(row.curr)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[9px] font-mono text-muted-foreground/60">PRV: {row.fmt(row.prev)}</div>
+                      <div className={cn(
+                        "text-[10px] font-mono font-bold flex items-center justify-end gap-1",
+                        isPositive ? "text-success" : "text-destructive"
+                      )}>
+                        {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                        {isPositive ? "+" : ""}{delta.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Progress bar background */}
+                  <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden relative">
+                    {/* Ghost progress (previous) */}
+                    <div 
+                      className="absolute inset-y-0 left-0 bg-white/5 border-r border-white/20 transition-all duration-1000"
+                      style={{ width: `${Math.min(100, (row.prev / Math.max(row.curr, row.prev, 1)) * 100)}%` }}
+                    />
+                    {/* Active progress */}
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, (row.curr / Math.max(row.curr, row.prev, 1)) * 100)}%` }}
+                      transition={{ duration: 1, delay: idx * 0.1 }}
+                      className="absolute inset-y-0 left-0 transition-all"
+                      style={{ 
+                        backgroundColor: row.color,
+                        boxShadow: `0 0 10px ${row.color}`
+                      }}
+                    />
+                  </div>
+
+                  {/* Micro bracket decoration */}
+                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-gradient-to-b from-transparent via-muted-foreground/20 to-transparent group-hover:via-primary/40 transition-colors" />
                 </div>
-                <div
-                  className={cn(
-                    "text-[10px] font-mono font-bold flex items-center gap-1",
-                    row.delta >= 0 ? "text-success" : "text-destructive"
-                  )}
-                >
-                  {row.delta >= 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                  {row.delta >= 0 ? "+" : ""}
-                  {row.delta.toFixed(1)}%
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       )}
     </motion.section>
   );
