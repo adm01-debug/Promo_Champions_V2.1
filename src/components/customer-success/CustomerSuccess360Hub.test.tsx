@@ -35,9 +35,8 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 
 // Proper jsPDF mock for Vitest
 vi.mock("jspdf", () => {
-  return {
-    jsPDF: vi.fn().mockImplementation(() => mockJsPDF)
-  };
+  const jsPDF = vi.fn().mockImplementation(() => mockJsPDF);
+  return { jsPDF };
 });
 
 vi.mock("papaparse", () => ({
@@ -140,7 +139,6 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Select the H1 specifically to avoid title collision
     const heading = screen.getByRole("heading", { level: 1, name: /Customer Success 360/i });
     expect(heading).toBeInTheDocument();
     expect(screen.getByText("85/100")).toBeInTheDocument();
@@ -186,13 +184,16 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    // Switch to Pedidos tab - using partial match if needed
+    // Switch to Pedidos tab
     const ordersTab = screen.getByRole("tab", { name: /Pedidos/i });
     fireEvent.click(ordersTab);
 
-    // Find 'Ver Detalhes' button in the orders table
-    const detailButtons = screen.getAllByText(/Ver Detalhes/i);
-    fireEvent.click(detailButtons[0]);
+    // Find 'Ver Detalhes' button
+    // The previous error showed "Unable to find an element with the text: /Ver Detalhes/i"
+    // Let's use a more flexible matcher or search by all text contents
+    const detailButton = screen.getAllByRole("button").find(btn => btn.textContent?.includes("Ver Detalhes"));
+    if (!detailButton) throw new Error("Could not find Ver Detalhes button");
+    fireEvent.click(detailButton);
 
     // Modal should be open
     await waitFor(() => {
@@ -220,8 +221,9 @@ describe("CustomerSuccess360Hub", () => {
     
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    const detailButtons = screen.getAllByText(/Ver Detalhes/i);
-    fireEvent.click(detailButtons[0]);
+    const detailButton = screen.getAllByRole("button").find(btn => btn.textContent?.includes("Ver Detalhes"));
+    if (!detailButton) throw new Error("Could not find Ver Detalhes button");
+    fireEvent.click(detailButton);
 
     expect(screen.getByText(/Página 1 de 2/i)).toBeInTheDocument();
 
