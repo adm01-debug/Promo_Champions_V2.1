@@ -38,7 +38,7 @@ interface Props {
   clientId?: string;
 }
 
-export function PurchasePredictionCard({ clientId }: Props) {
+export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
   const { data, isLoading, isFetching } = usePurchaseIntelligence(clientId, true);
 
   if (!clientId) {
