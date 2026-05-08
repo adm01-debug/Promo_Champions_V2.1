@@ -282,137 +282,123 @@ const Index = () => {
               </motion.div>
             )}
 
-            {/* ===== FUTURISTIC SPEEDOMETER HUD ===== */}
-            <FuturisticSpeedometerDashboard />
-
-            {/* ===== PERIOD TREND LINE CHART ===== */}
-            <PeriodTrendChart />
-
-            {/* ===== MY GOAL ALERT ===== */}
-            <MyGoalAlertCard />
-
-            {/* ===== TRENDS CHARTS ===== */}
-            <TrendsChartsPanel />
-
-            {/* ===== FUTURISTIC RANKING ===== */}
-            <FuturisticRanking />
-
-            {/* ── SECTION: Charts & Goals ── */}
-            <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="lg:col-span-2 min-h-[280px] sm:min-h-[320px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-sm overflow-hidden">
-                <SalesChart />
+            {/* ===== SUB-MODULES (TABS) ===== */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="sticky top-0 z-30 -mx-3 sm:-mx-4 lg:-mx-8 px-3 sm:px-4 lg:px-8 py-2 backdrop-blur-md bg-background/70 border-b border-border/40">
+                <TabsList className="w-full flex flex-wrap justify-start gap-1 h-auto bg-transparent p-1">
+                  <TabsTrigger value="overview" className="gap-2">
+                    <LayoutDashboard className="h-4 w-4" /> Visão Geral
+                  </TabsTrigger>
+                  <TabsTrigger value="performance" className="gap-2">
+                    <Gauge className="h-4 w-4" /> Performance
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="gap-2">
+                    <BarChart3 className="h-4 w-4" /> Análises
+                  </TabsTrigger>
+                  <TabsTrigger value="competition" className="gap-2">
+                    <Trophy className="h-4 w-4" /> Competição
+                  </TabsTrigger>
+                  <TabsTrigger value="intelligence" className="gap-2">
+                    <Zap className="h-4 w-4" /> Inteligência
+                  </TabsTrigger>
+                  <TabsTrigger value="engagement" className="gap-2">
+                    <Heart className="h-4 w-4" /> Engajamento
+                  </TabsTrigger>
+                </TabsList>
               </div>
-              <div className="min-h-[200px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-sm overflow-hidden" data-tour="goals">
-                <GoalProgress 
-                  current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0} 
-                  goal={goalsData?.totalGoal || 0} 
-                />
-              </div>
-            </motion.div>
 
-            {/* ===== ANALYTICS — role-aware default ===== */}
-            <DashboardSection
-              title="Análises"
-              icon={<BarChart3 className="h-4 w-4" />}
-              defaultOpen={priorities.showAnalyticsOpen}
-            >
-              <div className="mb-4">
+              {/* === VISÃO GERAL === */}
+              <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none">
+                <MyGoalAlertCard />
+                <motion.div
+                  className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="lg:col-span-2 min-h-[280px] sm:min-h-[320px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-sm overflow-hidden">
+                    <SalesChart />
+                  </div>
+                  <div className="min-h-[200px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-sm overflow-hidden" data-tour="goals">
+                    <GoalProgress
+                      current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0}
+                      goal={goalsData?.totalGoal || 0}
+                    />
+                  </div>
+                </motion.div>
+              </TabsContent>
+
+              {/* === PERFORMANCE HUD === */}
+              <TabsContent value="performance" className="space-y-8 mt-6 focus-visible:outline-none">
+                <FuturisticSpeedometerDashboard />
+                <PeriodTrendChart />
+                <TrendsChartsPanel />
+              </TabsContent>
+
+              {/* === ANÁLISES === */}
+              <TabsContent value="analytics" className="space-y-6 mt-6 focus-visible:outline-none">
                 <DashboardNLQWidget />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <KPIGrid />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-2">
+                    <KPIGrid />
+                  </div>
+                  <AlertsPanel />
                 </div>
-                <AlertsPanel />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                <FunnelChart />
-                <SalesForecast />
-                <BenchmarkPanel />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-                <div className="lg:col-span-2">
-                  <TeamActivityFeed />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <FunnelChart />
+                  <SalesForecast />
+                  <BenchmarkPanel />
                 </div>
-                <div className="space-y-6">
-                  <ClientHealthPanel />
-                  <EngagementLeaderboardWidget limit={5} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-2">
+                    <TeamActivityFeed />
+                  </div>
+                  <div className="space-y-6">
+                    <ClientHealthPanel />
+                    <EngagementLeaderboardWidget limit={5} />
+                  </div>
                 </div>
-              </div>
-            </DashboardSection>
+              </TabsContent>
 
-            {/* ===== GAMIFICATION — role-aware default ===== */}
-            <DashboardSection
-              title="Competição & Conquistas"
-              icon={<Trophy className="h-4 w-4" />}
-              defaultOpen={priorities.showGamificationOpen}
-              badge="Ativo"
-            >
-              <div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                data-tour="gamification"
-              >
-                <RecentDeals />
-                <TopProducts />
-                <MiniLeaderboard />
-                <div className="lg:col-span-2">
-                  <StreakWidget salespersonId={salesperson?.id} />
+              {/* === COMPETIÇÃO === */}
+              <TabsContent value="competition" className="space-y-8 mt-6 focus-visible:outline-none">
+                <FuturisticRanking />
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  data-tour="gamification"
+                >
+                  <RecentDeals />
+                  <TopProducts />
+                  <MiniLeaderboard />
+                  <div className="lg:col-span-2">
+                    <StreakWidget salespersonId={salesperson?.id} />
+                  </div>
+                  <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
+                  <div className="lg:col-span-3">
+                    <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+                  </div>
                 </div>
-                <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
-                <div className="lg:col-span-3">
-                  <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
+              </TabsContent>
+
+              {/* === PERFORMANCE INTELIGENTE === */}
+              <TabsContent value="intelligence" className="space-y-6 mt-6 focus-visible:outline-none">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <MicroGoalsWidget />
+                  <VelocityScoreWidget />
+                  <ActivityQualityWidget />
+                  <SelfBenchmarkWidget />
                 </div>
-              </div>
-            </DashboardSection>
+              </TabsContent>
 
-            {/* ===== PERFORMANCE INTELLIGENCE ===== */}
-            <DashboardSection
-              title="Performance Inteligente"
-              icon={<Zap className="h-4 w-4" />}
-              defaultOpen={priorities.showPerformanceOpen}
-              teaser="📊 Descubra seu Score de Velocidade, qualidade de atividades e micro-metas"
-              previewStats={[
-                { label: "Velocidade", value: "—" },
-                { label: "Qualidade", value: "—" },
-                { label: "Micro-metas", value: "0/4" },
-              ]}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MicroGoalsWidget />
-                <VelocityScoreWidget />
-                <ActivityQualityWidget />
-                <SelfBenchmarkWidget />
-              </div>
-            </DashboardSection>
+              {/* === ENGAJAMENTO === */}
+              <TabsContent value="engagement" className="space-y-6 mt-6 focus-visible:outline-none">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <MoodTrackerWidget />
+                  <PulseSurveyWidget />
+                  <DailyQuizWidget />
+                </div>
+              </TabsContent>
+            </Tabs>
 
-            {/* ===== ENGAGEMENT ===== */}
-            <DashboardSection
-              title="Engajamento & Aprendizado"
-              icon={<Heart className="h-4 w-4" />}
-              defaultOpen={priorities.showEngagementOpen}
-              teaser="💡 Registre seu humor, responda pesquisas e complete quizzes diários"
-              previewStats={[
-                { label: "Humor", value: "😊" },
-                { label: "Quiz", value: "Disponível" },
-              ]}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <MoodTrackerWidget />
-                <PulseSurveyWidget />
-                <DailyQuizWidget />
-              </div>
-            </DashboardSection>
-          </div>
-        </div>
-      </PageTransition>
-    </SkeletonTransition>
-  </>
-  );
-};
 
 export default Index;
