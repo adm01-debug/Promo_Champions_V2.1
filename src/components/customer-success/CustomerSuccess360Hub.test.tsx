@@ -189,7 +189,9 @@ describe("CustomerSuccess360Hub", () => {
     const searchInput = screen.getByPlaceholderText(/Buscar por cliente ou número do pedido/i);
     fireEvent.change(searchInput, { target: { value: "Account A" } });
     
-    expect(screen.getByText("Account A")).toBeInTheDocument();
+    // Check for Account A in the table specifically
+    const table = screen.getByRole("table");
+    expect(within(table).getByText("Account A")).toBeInTheDocument();
     
     // Sorting (toggle sort by "Pedido")
     const orderHeader = screen.getByText("Pedido");
