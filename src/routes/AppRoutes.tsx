@@ -19,7 +19,7 @@ import {
   // CRM Core
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
-  Atividades, Cadencias, QuoteCadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
+  Atividades, Cadencias, QuoteCadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, FollowUpAudit, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
   LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
