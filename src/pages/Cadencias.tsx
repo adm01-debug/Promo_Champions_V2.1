@@ -73,6 +73,7 @@ export default function Cadencias() {
                 <Zap className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-primary">Automação</span>
               </div>
+              <CadenceSimulationDialog />
               <EnrollmentRulesDialog />
               <ContactRulesDialog />
               <ABTestDialog />
