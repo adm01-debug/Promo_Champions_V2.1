@@ -137,6 +137,17 @@ export const closerGroupedItems: MenuGroup[] = [
 
 export const gestaoGroupedItems: MenuGroup[] = [
   {
+    label: "Dashboard", icon: LayoutDashboard,
+    items: [
+      { title: "Visão Geral", url: "/", icon: LayoutDashboard },
+      { title: "Performance", url: "/dashboard/performance", icon: Gauge },
+      { title: "Análises", url: "/dashboard/analises", icon: BarChart3 },
+      { title: "Competição", url: "/dashboard/competicao", icon: Trophy },
+      { title: "Inteligência", url: "/dashboard/inteligencia", icon: Zap },
+      { title: "Engajamento", url: "/dashboard/engajamento", icon: HeartPulse },
+    ],
+  },
+  {
     label: "Análises", icon: Gauge,
     items: [
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
