@@ -154,11 +154,13 @@ export default function Cadencias() {
               </Card>
             </div>
 
+            <CadenceFunnel />
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Today's Tasks + Metrics */}
               <div className="space-y-6">
                 <TodaysCadenceTasks />
-                <CadenceMetricsPanel />
+                <CadenceReportPanel />
               </div>
 
               {/* Cadences List */}
