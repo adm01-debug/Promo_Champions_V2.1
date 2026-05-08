@@ -1,6 +1,6 @@
 import { MoodTrackerWidget } from "@/components/engagement/MoodTrackerWidget";
 import { PulseSurveyWidget } from "@/components/engagement/PulseSurveyWidget";
-import { DailyQuizWidget } from "@/components/engagement/DailyQuizWidget";
+import { DailyQuizWidget } from "@/components/gamification/DailyQuizWidget";
 
 export const EngagementModule = () => {
   return (
