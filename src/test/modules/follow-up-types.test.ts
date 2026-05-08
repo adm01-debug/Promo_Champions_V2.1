@@ -245,7 +245,7 @@ describe('Follow-up Types Module', () => {
     });
 
     it('should accept optional last_activity', () => {
-      const lead = createLead({ last_activity: '2025-01-15T10:00:00Z' });
+      const lead = createLead({ last_activity: { notes: 'Ligação feita', type: 'call', created_at: '2025-01-15T10:00:00Z' } });
       expect(lead.last_activity).toBeDefined();
     });
 
