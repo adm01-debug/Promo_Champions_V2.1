@@ -93,7 +93,7 @@ export function AppRoutes() {
                 <Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
                     {/* ─── Dashboards ────────────────────────────── */}
-                    <Route path="/" element={<Index />} />
+                    <Route path="/" element={<Navigate to="/dashboard/visao-geral" replace />} />
                     <Route path="/dashboard" element={<Index />} />
                     <Route path="/dashboard/:section" element={<Index />} />
                     <Route path="/dashboard/*" element={<NotFound />} />
