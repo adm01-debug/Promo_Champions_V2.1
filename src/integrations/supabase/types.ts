@@ -16082,7 +16082,7 @@ export type Database = {
         | "approved"
         | "rejected"
       task_difficulty: "easy" | "medium" | "hard" | "epic"
-      task_priority: "high" | "medium" | "low"
+      task_priority: "high" | "medium" | "low" | "urgent"
       task_status: "pending" | "in_progress" | "completed" | "cancelled"
       task_type:
         | "call"
@@ -16091,6 +16091,7 @@ export type Database = {
         | "email"
         | "proposal"
         | "other"
+        | "discount"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -16280,9 +16281,17 @@ export const Constants = {
         "rejected",
       ],
       task_difficulty: ["easy", "medium", "hard", "epic"],
-      task_priority: ["high", "medium", "low"],
+      task_priority: ["high", "medium", "low", "urgent"],
       task_status: ["pending", "in_progress", "completed", "cancelled"],
-      task_type: ["call", "meeting", "follow_up", "email", "proposal", "other"],
+      task_type: [
+        "call",
+        "meeting",
+        "follow_up",
+        "email",
+        "proposal",
+        "other",
+        "discount",
+      ],
     },
   },
 } as const
