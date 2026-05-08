@@ -116,6 +116,25 @@ const change = (cur: number, prev: number): number => {
 };
 
 export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string | null) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-kpis-period-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["dashboard-kpis-period"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["dashboard-kpis-period", period, salespersonId ?? "all"],
     queryFn: async (): Promise<KPIPeriodResult> => {
