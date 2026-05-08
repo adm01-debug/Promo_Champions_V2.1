@@ -5,13 +5,6 @@ import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSucce
 import { useToast } from "@/hooks/use-toast";
 import "@testing-library/jest-dom";
 
-// Standard jsPDF mock
-const mockJsPDF = {
-  text: vi.fn(),
-  save: vi.fn(),
-  autoTable: vi.fn(),
-};
-
 // Mock the hooks
 vi.mock("@/hooks/customer-success/useCustomerSuccess360", () => ({
   useCustomerSuccess360: vi.fn(),
@@ -35,8 +28,14 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 
 // Proper jsPDF mock for Vitest
 vi.mock("jspdf", () => {
-  const jsPDF = vi.fn().mockImplementation(() => mockJsPDF);
-  return { jsPDF };
+  const mockInstance = {
+    text: vi.fn(),
+    save: vi.fn(),
+    autoTable: vi.fn(),
+  };
+  return { 
+    jsPDF: vi.fn().mockImplementation(() => mockInstance)
+  };
 });
 
 vi.mock("papaparse", () => ({
@@ -125,7 +124,7 @@ describe("CustomerSuccess360Hub", () => {
     expect(screen.getByText("Ops! Algo deu errado")).toBeInTheDocument();
     expect(screen.getByText("Network Error")).toBeInTheDocument();
     
-    const retryButton = screen.getByText(/Tentar novamente/i);
+    const retryButton = screen.getByRole("button", { name: /Tentar novamente/i });
     fireEvent.click(retryButton);
     expect(refetch).toHaveBeenCalled();
   });
@@ -168,7 +167,7 @@ describe("CustomerSuccess360Hub", () => {
 
     render(<CustomerSuccess360Hub />);
     
-    const exportButton = screen.getByText("PDF");
+    const exportButton = screen.getByRole("button", { name: /PDF/i });
     fireEvent.click(exportButton);
     
     const { jsPDF } = require("jspdf");
@@ -189,11 +188,8 @@ describe("CustomerSuccess360Hub", () => {
     fireEvent.click(ordersTab);
 
     // Find 'Ver Detalhes' button
-    // The previous error showed "Unable to find an element with the text: /Ver Detalhes/i"
-    // Let's use a more flexible matcher or search by all text contents
-    const detailButton = screen.getAllByRole("button").find(btn => btn.textContent?.includes("Ver Detalhes"));
-    if (!detailButton) throw new Error("Could not find Ver Detalhes button");
-    fireEvent.click(detailButton);
+    const detailButtons = screen.getAllByRole("button", { name: /Ver Detalhes/i });
+    fireEvent.click(detailButtons[0]);
 
     // Modal should be open
     await waitFor(() => {
@@ -221,9 +217,8 @@ describe("CustomerSuccess360Hub", () => {
     
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
     
-    const detailButton = screen.getAllByRole("button").find(btn => btn.textContent?.includes("Ver Detalhes"));
-    if (!detailButton) throw new Error("Could not find Ver Detalhes button");
-    fireEvent.click(detailButton);
+    const detailButtons = screen.getAllByRole("button", { name: /Ver Detalhes/i });
+    fireEvent.click(detailButtons[0]);
 
     expect(screen.getByText(/Página 1 de 2/i)).toBeInTheDocument();
 
