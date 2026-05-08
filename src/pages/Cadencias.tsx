@@ -26,6 +26,7 @@ import { CadenceFunnelConfig } from "@/components/sales/cadence/CadenceFunnelCon
 import { LeadDetailedAuditLogs } from "@/components/sales/cadence/LeadDetailedAuditLogs";
 import { CadenceAlertConfig } from "@/components/sales/cadence/CadenceAlertConfig";
 import { CadenceOutcomeConfig } from "@/components/sales/cadence/CadenceOutcomeConfig";
+import { RuleAuditLogs } from "@/components/sales/cadence/RuleAuditLogs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
@@ -110,6 +111,10 @@ export default function Cadencias() {
               <TabsTrigger value="audit" className="data-[state=active]:bg-background">
                 <Search className="h-4 w-4 mr-2" />
                 Auditoria por Lead
+              </TabsTrigger>
+              <TabsTrigger value="rule-audit" className="data-[state=active]:bg-background">
+                <Zap className="h-4 w-4 mr-2" />
+                Auditoria de Regras
               </TabsTrigger>
             </TabsList>
 
@@ -308,6 +313,10 @@ export default function Cadencias() {
                 )}
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="rule-audit" className="animate-in fade-in-50 duration-500">
+            <RuleAuditLogs />
           </TabsContent>
 
           <TabsContent value="templates" className="animate-in fade-in-50 duration-500">

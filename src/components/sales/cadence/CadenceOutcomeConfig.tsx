@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Phone, ArrowRight, Save, Plus, Trash2, GitBranch, Zap } from "lucide-react";
+import { Phone, ArrowRight, Save, Plus, Trash2, GitBranch, Zap, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -32,12 +32,21 @@ export function CadenceOutcomeConfig() {
     to_stage: "new",
     next_action: "retry",
     retry_delay_hours: 4,
-    max_retries: 3
+    max_retries: 3,
+    push_template_id: null,
+    email_template_id: null
   });
+  const [alertTemplates, setAlertTemplates] = useState<any[]>([]);
 
   useEffect(() => {
     fetchRules();
+    fetchAlertTemplates();
   }, []);
+
+  const fetchAlertTemplates = async () => {
+    const { data } = await supabase.from("cadence_alert_templates").select("id, name, type");
+    setAlertTemplates(data || []);
+  };
 
   const fetchRules = async () => {
     const { data, error } = await supabase
@@ -145,6 +154,41 @@ export function CadenceOutcomeConfig() {
                 </div>
               )}
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-primary/10">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase flex items-center gap-1">
+                  <GitBranch className="h-3 w-3" /> Push Alerta (Opcional)
+                </Label>
+                <Select value={formData.push_template_id || "none"} onValueChange={v => setFormData({ ...formData, push_template_id: v === "none" ? null : v })}>
+                  <SelectTrigger className="h-8 text-xs bg-background">
+                    <SelectValue placeholder="Sem alerta push" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhum</SelectItem>
+                    {alertTemplates.filter(t => t.type === 'push').map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase flex items-center gap-1">
+                  <GitBranch className="h-3 w-3" /> Email Alerta (Opcional)
+                </Label>
+                <Select value={formData.email_template_id || "none"} onValueChange={v => setFormData({ ...formData, email_template_id: v === "none" ? null : v })}>
+                  <SelectTrigger className="h-8 text-xs bg-background">
+                    <SelectValue placeholder="Sem alerta email" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhum</SelectItem>
+                    {alertTemplates.filter(t => t.type === 'email').map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+            </div>
+          </div>
             <div className="flex justify-end gap-2">
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setIsAdding(false)}>
                 Cancelar
@@ -177,6 +221,15 @@ export function CadenceOutcomeConfig() {
                     {rule.next_action === 'retry' ? `Tentar em ${rule.retry_delay_hours}h (Max ${rule.max_retries})` : rule.next_action}
                   </span>
                 </div>
+                {(rule.push_template_id || rule.email_template_id) && (
+                  <>
+                    <div className="h-3 w-[1px] bg-border/40" />
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-3 w-3 text-status-warning" />
+                      <span className="text-[10px] text-muted-foreground">Alertas Ativos</span>
+                    </div>
+                  </>
+                )}
               </div>
               <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteRule(rule.id)}>
                 <Trash2 className="h-3 w-3" />

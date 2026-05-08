@@ -1459,9 +1459,12 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
+          days_of_week: string[] | null
+          end_time: string | null
           id: string
           is_default: boolean | null
           name: string
+          start_time: string | null
           subject: string | null
           type: string
           updated_at: string | null
@@ -1469,9 +1472,12 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string | null
+          days_of_week?: string[] | null
+          end_time?: string | null
           id?: string
           is_default?: boolean | null
           name: string
+          start_time?: string | null
           subject?: string | null
           type: string
           updated_at?: string | null
@@ -1479,9 +1485,12 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string | null
+          days_of_week?: string[] | null
+          end_time?: string | null
           id?: string
           is_default?: boolean | null
           name?: string
+          start_time?: string | null
           subject?: string | null
           type?: string
           updated_at?: string | null
@@ -1606,38 +1615,59 @@ export type Database = {
       cadence_outcome_rules: {
         Row: {
           created_at: string | null
+          email_template_id: string | null
           fallback_action: string | null
           id: string
           max_retries: number | null
           next_action: string | null
           outcome: string
+          push_template_id: string | null
           retry_delay_hours: number | null
           to_stage: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          email_template_id?: string | null
           fallback_action?: string | null
           id?: string
           max_retries?: number | null
           next_action?: string | null
           outcome: string
+          push_template_id?: string | null
           retry_delay_hours?: number | null
           to_stage: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          email_template_id?: string | null
           fallback_action?: string | null
           id?: string
           max_retries?: number | null
           next_action?: string | null
           outcome?: string
+          push_template_id?: string | null
           retry_delay_hours?: number | null
           to_stage?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cadence_outcome_rules_email_template_id_fkey"
+            columns: ["email_template_id"]
+            isOneToOne: false
+            referencedRelation: "cadence_alert_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cadence_outcome_rules_push_template_id_fkey"
+            columns: ["push_template_id"]
+            isOneToOne: false
+            referencedRelation: "cadence_alert_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cadence_steps: {
         Row: {
@@ -6515,6 +6545,7 @@ export type Database = {
           event_type: string
           id: string
           lead_id: string | null
+          rule_applied: Json | null
         }
         Insert: {
           created_at?: string
@@ -6522,6 +6553,7 @@ export type Database = {
           event_type: string
           id?: string
           lead_id?: string | null
+          rule_applied?: Json | null
         }
         Update: {
           created_at?: string
@@ -6529,6 +6561,7 @@ export type Database = {
           event_type?: string
           id?: string
           lead_id?: string | null
+          rule_applied?: Json | null
         }
         Relationships: []
       }

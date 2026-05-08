@@ -170,6 +170,37 @@ export function CadenceTemplateManager() {
                   />
                 </div>
 
+                <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold uppercase flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Pré-visualização (Simulação com Variáveis)
+                    </Label>
+                    <Badge variant="outline" className="text-[10px] bg-background">Preview Real</Badge>
+                  </div>
+                  <div className="p-3 bg-background rounded-md border border-border/40 min-h-[80px]">
+                    <div className="text-xs font-semibold mb-2 flex items-center gap-2">
+                      {formData.type === 'whatsapp' && <MessageSquare className="h-3 w-3 text-green-500" />}
+                      {formData.type === 'email' && <Mail className="h-3 w-3 text-blue-500" />}
+                      {formData.type === 'call' && <Phone className="h-3 w-3 text-orange-500" />}
+                      Visualização Final:
+                    </div>
+                    <p className="text-xs italic whitespace-pre-wrap">
+                      {formData.content ? formData.content
+                        .replace(/{{singu_lead_name}}/g, "Maria Oliveira")
+                        .replace(/{{singu_last_purchase}}/g, "Ontem")
+                        .replace(/{{singu_total_spent}}/g, "R$ 450,00")
+                        .replace(/{{singu_preferred_service}}/g, "Manicure & Pedicure")
+                        .replace(/{{singu_lead_source}}/g, "Instagram Ads")
+                        : "O conteúdo aparecerá aqui..."}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] text-muted-foreground">Variáveis validadas: {(formData.content?.match(/{{.*?}}/g) || []).length} encontradas</span>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between p-3 border rounded-lg bg-background">
                   <div className="space-y-0.5">
                     <Label>Exigir Aprovação Humana</Label>
