@@ -31,15 +31,9 @@ import {
   ShoppingBag,
   Users,
   TrendingUp,
-  BarChart3,
-  Trophy,
   Zap,
-  Heart,
-  Rocket,
-  Plus,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
 
@@ -56,6 +50,13 @@ const Index = () => {
   const navigate = useNavigate();
   useDashboardRedirect();
 
+  const { data: kpis, isLoading } = useDashboardKPIs();
+  const { data: goalsData } = useGoalsDashboard();
+  const { salesperson } = useAuth();
+  const priorities = useDashboardPriorities();
+  
+  useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
+
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === "visao-geral");
   
@@ -65,14 +66,6 @@ const Index = () => {
 
   const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
 
-  const { theme } = useDashboardTheme();
-  const { data: kpis, isLoading } = useDashboardKPIs();
-  const { data: goalsData } = useGoalsDashboard();
-  const { salesperson } = useAuth();
-  const priorities = useDashboardPriorities();
-  
-  useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
-
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
@@ -81,10 +74,6 @@ const Index = () => {
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
   const allEmpty = !hasRevenue && !hasSales && !hasClients && !hasConversion;
-
-  if (isLoading) {
-    return <DashboardLoadingSkeleton />;
-  }
 
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
@@ -98,21 +87,17 @@ const Index = () => {
         <OnboardingChecklist />
         <DashboardHeader />
         
-        {/* Priority Hints based on role */}
-        <div className="flex flex-col gap-3">
-          <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-1.5 rounded-full bg-current/10">
-                <Zap className="h-4 w-4" />
-              </div>
-              <p className="text-sm font-medium">{priorities.roleHint}</p>
-            </div>
-          </motion.div>
-        </div>
+        {/* Priority Hint based on role */}
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center gap-3"
+        >
+          <div className="p-1.5 rounded-full bg-current/10">
+            <Zap className="h-4 w-4" />
+          </div>
+          <p className="text-sm font-medium">{priorities.roleHint}</p>
+        </motion.div>
 
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
@@ -187,17 +172,17 @@ const Index = () => {
             <Tabs 
               value={activeTab} 
               onValueChange={(value) => {
-                const section = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
-                navigate(`/dashboard/${section}`);
+                const sectionKey = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
+                navigate(`/dashboard/${sectionKey}`);
               }}
               className="w-full"
             >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
                   <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
