@@ -41,10 +41,10 @@ export const itemVariants: Variants = {
 export const PageTransition: FC<PageTransitionProps> = ({ children, className }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, y: -6, filter: 'blur(2px)' }}
-      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 0, scale: 0.99, filter: 'blur(8px)' }}
+      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+      exit={{ opacity: 0, scale: 1.01, filter: 'blur(4px)' }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       style={{ willChange: 'opacity, transform, filter' }}
       className={cn(className)}
     >
