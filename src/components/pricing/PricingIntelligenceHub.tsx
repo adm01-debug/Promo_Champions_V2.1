@@ -167,8 +167,8 @@ export function PricingIntelligenceHub() {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(v: number, name) =>
-                  name === "revenue" ? fmtCurrency(v) : `${v} deals`
+                formatter={(v: any, name: any) =>
+                  name === "revenue" ? fmtCurrency(Number(v)) : `${v} deals`
                 }
               />
               <Bar dataKey="count" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
