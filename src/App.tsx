@@ -49,9 +49,11 @@ const App = () => {
                 <KeyboardShortcutsProvider>
                   <AuthProvider>
                     <I18nProvider>
-                      <CommandPalette />
-                      <AppRoutes />
-                      <LGPDConsentBanner />
+                      <DashboardThemeProvider>
+                        <CommandPalette />
+                        <AppRoutes />
+                        <LGPDConsentBanner />
+                      </DashboardThemeProvider>
                     </I18nProvider>
                   </AuthProvider>
                 </KeyboardShortcutsProvider>
