@@ -24,10 +24,12 @@ const actionIcons: Record<string, any> = {
 
 const FollowUpAudit = () => {
   const [searchLead, setSearchLead] = useState("");
+  const [searchSalesperson, setSearchSalesperson] = useState("");
   const [filterAction, setFilterAction] = useState("all");
+  const [dateRange, setDateRange] = useState({ from: "", to: "" });
 
   const { data: logs = [], isLoading } = useQuery({
-    queryKey: ["follow-up-audit", searchLead, filterAction],
+    queryKey: ["follow-up-audit", searchLead, searchSalesperson, filterAction, dateRange],
     queryFn: async () => {
       let query = supabase
         .from("follow_up_audit_view" as any)
@@ -37,8 +39,17 @@ const FollowUpAudit = () => {
       if (searchLead) {
         query = query.ilike("lead_name", `%${searchLead}%`);
       }
+      if (searchSalesperson) {
+        query = query.ilike("user_name", `%${searchSalesperson}%`);
+      }
       if (filterAction !== "all") {
         query = query.eq("action_type", filterAction);
+      }
+      if (dateRange.from) {
+        query = query.gte("created_at", `${dateRange.from}T00:00:00`);
+      }
+      if (dateRange.to) {
+        query = query.lte("created_at", `${dateRange.to}T23:59:59`);
       }
 
       const { data, error } = await query.limit(100);
@@ -47,23 +58,28 @@ const FollowUpAudit = () => {
     },
   });
 
-  const handleRetry = (log: any) => {
+  const handleRetry = async (log: any) => {
     if (log.action_type === 'whatsapp_sent') {
-      const details = log.details;
-      // We don't have the full message here usually unless we store it, 
-      // but let's assume we can trigger a generic one or we stored it in details.
       toast.info("Re-enviando WhatsApp...");
-      // In a real app, we'd fetch the lead and template again or use stored data.
-      window.open(`https://wa.me/?text=Olá! Gostaríamos de retomar nosso contato.`, '_blank');
       
-      // Update retry count
-      supabase
+      const details = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+      const message = details?.message_preview || "Olá! Gostaríamos de retomar nosso contato.";
+      
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+      
+      // Update retry count and status in audit logs
+      const { error } = await supabase
         .from('follow_up_audit_logs')
-        .update({ retry_count: (log.retry_count || 0) + 1 })
-        .eq('id', log.id)
-        .then(() => {
-          // Invalidate
-        });
+        .update({ 
+          retry_count: (log.retry_count || 0) + 1,
+          status: 'sent',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', log.id);
+        
+      if (!error) {
+        toast.success("Status atualizado e retentativa registrada.");
+      }
     }
   };
 
