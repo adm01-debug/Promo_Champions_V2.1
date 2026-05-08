@@ -28,6 +28,7 @@ export function CadenceAlertConfig() {
     content: "",
     start_time: "09:00",
     end_time: "18:00",
+    timezone: "America/Sao_Paulo",
     days_of_week: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
   });
 
@@ -116,6 +117,7 @@ export function CadenceAlertConfig() {
                 content: "",
                 start_time: "09:00",
                 end_time: "18:00",
+                timezone: "America/Sao_Paulo",
                 days_of_week: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
               });
             }}>
@@ -171,6 +173,21 @@ export function CadenceAlertConfig() {
                   className="h-8 text-xs"
                 />
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">Fuso Horário (Vendedor)</Label>
+              <Select value={formData.timezone} onValueChange={v => setFormData({ ...formData, timezone: v })}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="America/Sao_Paulo">Brasília (GMT-3)</SelectItem>
+                  <SelectItem value="America/Manaus">Manaus (GMT-4)</SelectItem>
+                  <SelectItem value="America/New_York">New York (GMT-5)</SelectItem>
+                  <SelectItem value="Europe/London">London (GMT+0)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {formData.type === "email" && (
