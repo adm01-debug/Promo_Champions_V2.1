@@ -16,11 +16,14 @@ const periodLabels: Record<Period, string> = {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-primary/20 bg-popover/95 px-4 py-3 shadow-xl backdrop-blur-md">
-      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-base font-bold text-foreground font-display">
-        R$ {payload[0].value.toLocaleString("pt-BR")}
-      </p>
+    <div className="rounded-lg border border-white/10 bg-black/80 backdrop-blur-xl px-4 py-3 shadow-2xl border-l-4 border-l-primary">
+      <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">{label}</p>
+      <div className="flex items-center gap-2">
+        <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+        <p className="text-lg font-mono font-black text-primary tracking-tighter tabular-nums">
+          R$ {payload[0].value.toLocaleString("pt-BR")}
+        </p>
+      </div>
     </div>
   );
 };
