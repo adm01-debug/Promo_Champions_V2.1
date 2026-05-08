@@ -394,81 +394,113 @@ export const FuturisticSpeedometerDashboard = () => {
         </div>
       </div>
 
-      {/* Speedometers grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Speedometer
-          label="Faturamento"
-          value={revenue}
-          max={goalAmount}
-          formatValue={fmtBRL}
-          accent="primary"
-          icon={DollarSign}
-          delta={kpis?.changes.revenue}
-        />
-        <Speedometer
-          label="Vendas"
-          value={sales}
-          max={salesMax}
-          accent="success"
-          icon={Zap}
-          delta={kpis?.changes.sales}
-        />
-        <Speedometer
-          label="Conversão"
-          value={conversion}
-          max={100}
-          formatValue={(v) => `${v.toFixed(1)}%`}
-          accent="warning"
-          icon={Target}
-          delta={kpis?.changes.conversion}
-        />
-        <Speedometer
-          label="Ticket Médio"
-          value={ticket}
-          max={ticketMax}
-          formatValue={fmtBRL}
-          accent="destructive"
-          icon={Activity}
-          delta={kpis?.changes.avgTicket}
-        />
-      </div>
-
-      {/* Comparative strip */}
-      <div className="mt-5 rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 backdrop-blur-xl p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
-            Comparativo vs {PERIOD_LABELS[period].comparison}
+      {/* Refreshing indicator */}
+      {kpisFetching && !kpisLoading && (
+        <div className="absolute top-0 right-0 -mt-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 backdrop-blur z-10">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] font-mono uppercase tracking-wider text-primary font-bold">
+            Atualizando
           </span>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { label: "Faturamento", curr: fmtBRL(revenue), prev: fmtBRL(prevRevenue), delta: kpis?.changes.revenue ?? 0 },
-            { label: "Vendas", curr: String(sales), prev: String(prevSales), delta: kpis?.changes.sales ?? 0 },
-            { label: "Conversão", curr: `${conversion.toFixed(1)}%`, prev: `${(kpis?.previous.conversionRate ?? 0).toFixed(1)}%`, delta: kpis?.changes.conversion ?? 0 },
-            { label: "Ticket", curr: fmtBRL(ticket), prev: fmtBRL(prevTicket), delta: kpis?.changes.avgTicket ?? 0 },
-          ].map((row) => (
-            <div key={row.label} className="space-y-1">
-              <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">{row.label}</div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono font-bold text-sm tabular-nums">{row.curr}</span>
-                <span className="text-[10px] text-muted-foreground/70 font-mono">← {row.prev}</span>
-              </div>
-              <div
-                className={cn(
-                  "text-[10px] font-mono font-bold flex items-center gap-1",
-                  row.delta >= 0 ? "text-success" : "text-destructive"
-                )}
-              >
-                {row.delta >= 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                {row.delta >= 0 ? "+" : ""}
-                {row.delta.toFixed(1)}%
-              </div>
-            </div>
+      )}
+
+      {/* Speedometers grid */}
+      {kpisLoading || !kpis ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SpeedometerSkeleton key={i} />
           ))}
         </div>
-      </div>
+      ) : (
+        <div
+          className={cn(
+            "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity duration-300",
+            kpisFetching && "opacity-60"
+          )}
+        >
+          <Speedometer
+            label="Faturamento"
+            value={revenue}
+            max={goalAmount}
+            formatValue={fmtBRL}
+            accent="primary"
+            icon={DollarSign}
+            delta={kpis?.changes.revenue}
+          />
+          <Speedometer
+            label="Vendas"
+            value={sales}
+            max={salesMax}
+            accent="success"
+            icon={Zap}
+            delta={kpis?.changes.sales}
+          />
+          <Speedometer
+            label="Conversão"
+            value={conversion}
+            max={100}
+            formatValue={(v) => `${v.toFixed(1)}%`}
+            accent="warning"
+            icon={Target}
+            delta={kpis?.changes.conversion}
+          />
+          <Speedometer
+            label="Ticket Médio"
+            value={ticket}
+            max={ticketMax}
+            formatValue={fmtBRL}
+            accent="destructive"
+            icon={Activity}
+            delta={kpis?.changes.avgTicket}
+          />
+        </div>
+      )}
+
+      {/* Comparative strip */}
+      {kpisLoading || !kpis ? (
+        <ComparativeStripSkeleton className="mt-5" />
+      ) : (
+        <div
+          className={cn(
+            "mt-5 rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 backdrop-blur-xl p-4 transition-opacity duration-300",
+            kpisFetching && "opacity-60"
+          )}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+              Comparativo vs {PERIOD_LABELS[period].comparison}
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: "Faturamento", curr: fmtBRL(revenue), prev: fmtBRL(prevRevenue), delta: kpis?.changes.revenue ?? 0 },
+              { label: "Vendas", curr: String(sales), prev: String(prevSales), delta: kpis?.changes.sales ?? 0 },
+              { label: "Conversão", curr: `${conversion.toFixed(1)}%`, prev: `${(kpis?.previous.conversionRate ?? 0).toFixed(1)}%`, delta: kpis?.changes.conversion ?? 0 },
+              { label: "Ticket", curr: fmtBRL(ticket), prev: fmtBRL(prevTicket), delta: kpis?.changes.avgTicket ?? 0 },
+            ].map((row) => (
+              <div key={row.label} className="space-y-1">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">{row.label}</div>
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono font-bold text-sm tabular-nums">{row.curr}</span>
+                  <span className="text-[10px] text-muted-foreground/70 font-mono">← {row.prev}</span>
+                </div>
+                <div
+                  className={cn(
+                    "text-[10px] font-mono font-bold flex items-center gap-1",
+                    row.delta >= 0 ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {row.delta >= 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                  {row.delta >= 0 ? "+" : ""}
+                  {row.delta.toFixed(1)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </motion.section>
   );
 };
