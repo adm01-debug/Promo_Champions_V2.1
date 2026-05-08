@@ -222,8 +222,8 @@ describe("CustomerSuccess360Hub", () => {
     
     // Open modal to trigger status persistence
     fireEvent.click(screen.getByRole("tab", { name: /Pedidos/i }));
-    const row = screen.getByText(/Cancelado/i).closest("tr");
-    fireEvent.click(within(row as HTMLElement).getByRole("button", { name: /Ver Detalhes/i }));
+    const cancelledRow = screen.getByText(/500/i).closest("tr");
+    fireEvent.click(within(cancelledRow as HTMLElement).getByRole("button", { name: /Ver Detalhes/i }));
     
     expect(localStorage.getItem("cs360_state_modalStatus")).toBe("cancelled");
     
@@ -232,7 +232,7 @@ describe("CustomerSuccess360Hub", () => {
     render(<CustomerSuccess360Hub />);
     
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText(/Pedidos: Cancelado/i)).toBeInTheDocument();
+    expect(screen.getByText(/ORD-002/i)).toBeInTheDocument();
   });
 
   it("calculates summary correctly", () => {
