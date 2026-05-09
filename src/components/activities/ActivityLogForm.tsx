@@ -390,38 +390,61 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               />
             </div>
 
-            {/* Notes */}
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
-                    Observações
-                    {selectedActivityType === "whatsapp" && selectedClientId && (
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-6 text-[10px] gap-1 text-primary hover:text-primary-glow"
-                        onClick={handleOpenWhatsApp}
-                      >
-                        <MessageCircle className="h-3 w-3" />
-                        Enviar no WhatsApp
-                      </Button>
-                    )}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={selectedActivityType === "whatsapp" ? "Escreva a mensagem para enviar..." : "Detalhes da atividade..."}
-                      className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            {/* Notes & Templates */}
+            <div className="space-y-3">
+              {templates[selectedActivityType].length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {templates[selectedActivityType].map((tmpl, idx) => (
+                    <Button
+                      key={idx}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-[10px] px-2 py-0 border-primary/20 hover:border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary-foreground/80 flex items-center gap-1.5"
+                      onClick={() => applyTemplate(tmpl.text)}
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      {tmpl.label}
+                    </Button>
+                  ))}
+                </div>
               )}
-            />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="h-3 w-3 text-primary" />
+                        Observações
+                      </div>
+                      {selectedActivityType === "whatsapp" && selectedClientId && (
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-[10px] gap-1 text-primary hover:text-primary-glow"
+                          onClick={handleOpenWhatsApp}
+                        >
+                          <MessageCircle className="h-3 w-3" />
+                          Enviar no WhatsApp
+                        </Button>
+                      )}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder={selectedActivityType === "whatsapp" ? "Escreva a mensagem para enviar..." : "Detalhes da atividade..."}
+                        className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button 
               variant="glow"
