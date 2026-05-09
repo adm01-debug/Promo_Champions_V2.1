@@ -260,16 +260,60 @@ export default function SDRDashboard() {
 
             {/* Dialer & Power Mode */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="space-y-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="lg:col-span-2">
-                <DialerQueueCard />
+              <div className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary animate-pulse" />
+                <h2 className="text-lg font-bold gradient-text">Power Dialer</h2>
               </div>
-              <div>
-                <CurrentCallCard />
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-4">
+                  {queues && queues.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {queues.map((queue) => (
+                        <DialerQueueCard 
+                          key={queue.id}
+                          queue={queue}
+                          isActive={activeQueueId === queue.id}
+                          onSelect={() => setActiveQueueId(queue.id)}
+                          onRebuild={() => rebuildQueue.mutate(queue.id)}
+                          onStart={() => handleStartQueue(queue.id)}
+                          rebuilding={rebuildQueue.isPending}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center glass rounded-xl border border-dashed border-border/50">
+                      <p className="text-sm text-muted-foreground">Nenhuma fila de prospecção configurada.</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="relative">
+                  {currentItem ? (
+                    <CurrentCallCard 
+                      itemId={currentItem.item_id}
+                      saleId={currentItem.sale_id}
+                      score={currentItem.score}
+                      onSkip={async () => {
+                        if (activeQueueId) {
+                          const item = await nextItem.mutateAsync(activeQueueId);
+                          setCurrentItem(item ? { item_id: item.item_id, sale_id: item.sale_id, score: item.score } : null);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center p-8 glass rounded-xl border border-border/30 bg-muted/5 text-center">
+                      <Phone className="h-10 w-10 text-muted-foreground/30 mb-3" />
+                      <p className="text-sm font-medium text-muted-foreground">Nenhuma chamada ativa</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-1">Inicie uma fila para começar a prospecção acelerada</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
 
