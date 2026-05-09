@@ -671,6 +671,7 @@ export const FuturisticSpeedometerDashboard = () => {
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
   const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Persistence logic
   useEffect(() => {
@@ -703,6 +704,7 @@ export const FuturisticSpeedometerDashboard = () => {
       const { data: historyData } = await supabase
         .from("notifications")
         .select("*")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(20);
       
