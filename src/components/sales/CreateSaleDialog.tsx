@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles, Zap, Star } from "lucide-react";
 import { useCreateSale } from "@/hooks/useSalesData";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useProducts } from "@/hooks/useProducts";
 import { useClients } from "@/hooks/useClients";
+import { useProductRecommendations } from "@/hooks/useProductRecommendations";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Form,
   FormControl,
