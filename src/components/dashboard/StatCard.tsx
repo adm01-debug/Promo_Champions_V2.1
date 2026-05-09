@@ -106,6 +106,11 @@ export const StatCard = React.memo(({
             animate={{ top: ["0%", "100%", "0%"] }}
             transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           />
+          {/* Cyber-coordinates decoration */}
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-8 pointer-events-none opacity-10">
+            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LN: {Math.random().toFixed(4)}</span>
+            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LT: {Math.random().toFixed(4)}</span>
+          </div>
         </>
       )}
 
