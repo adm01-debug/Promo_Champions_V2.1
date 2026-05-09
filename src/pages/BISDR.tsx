@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap } from "lucide-react";
+import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap, Linkedin, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { BISDRCharts } from "@/components/bi/BISDRCharts";
 
@@ -68,20 +68,28 @@ const BISDR = () => {
             <BIFilterBar period={filters.period} onPeriodChange={filters.setPeriod} customRange={filters.customRange} onCustomRangeChange={filters.setCustomRange} onReset={filters.resetFilters} hasActiveFilters={filters.hasActiveFilters} isLoading={isLoading} onRefresh={() => refetch()} />
 
             <StaggeredContainer delay={0.1}>
-              <BIMetricsGrid cols={6}>
-                <BIMetricCard title="Leads Gerados" value={data?.totalLeadsGenerated || 0} icon={Users} variant="primary" comparison={{ previousPeriod: { value: data?.previousPeriod.totalLeads || 0, label: "Período Anterior" }, lastYear: { value: data?.sameLastYear.totalLeads || 0, label: "Mesmo Período Ano Anterior" } }} delay={0} />
-                <BIMetricCard title="Leads Qualificados" value={data?.qualifiedLeads || 0} icon={UserCheck} variant="success" comparison={{ previousPeriod: { value: data?.previousPeriod.qualifiedLeads || 0, label: "Período Anterior" } }} delay={1} />
-                <BIMetricCard title="Taxa de Qualificação" value={data?.qualificationRate || 0} icon={Percent} format="percent" delay={2} />
-                <BIMetricCard title="Tempo Médio Qualif." value={`${(data?.avgQualificationTime || 0).toFixed(1)}d`} icon={Clock} delay={3} />
-                <BIMetricCard title="Total Atividades" value={data?.totalActivities || 0} icon={Activity} variant="warning" comparison={{ previousPeriod: { value: data?.previousPeriod.totalActivities || 0, label: "Período Anterior" } }} delay={4} />
-                <BIMetricCard title="Ranking SDR" value={`#${data?.currentRank || "-"}`} icon={Trophy} variant={data && data.currentRank <= 3 ? "success" : "default"} subtitle={`de ${data?.totalSDRs || 0} SDRs`} delay={5} />
-              </BIMetricsGrid>
+              <div className="space-y-4">
+                <BIMetricsGrid cols={4}>
+                  <BIMetricCard title="Leads Gerados" value={data?.totalLeadsGenerated || 0} icon={Users} variant="primary" comparison={{ previousPeriod: { value: data?.previousPeriod.totalLeads || 0, label: "Período Anterior" } }} delay={0} />
+                  <BIMetricCard title="Leads Qualificados" value={data?.qualifiedLeads || 0} icon={UserCheck} variant="success" comparison={{ previousPeriod: { value: data?.previousPeriod.qualifiedLeads || 0, label: "Período Anterior" } }} delay={1} />
+                  <BIMetricCard title="Taxa de Qualificação" value={data?.qualificationRate || 0} icon={Percent} format="percent" delay={2} />
+                  <BIMetricCard title="Tempo Médio Qualif." value={`${(data?.avgQualificationTime || 0).toFixed(1)}d`} icon={Clock} delay={3} />
+                </BIMetricsGrid>
+                <BIMetricsGrid cols={4}>
+                  <BIMetricCard title="Taxa de Conexão" value={data?.connectRate || 0} icon={Zap} format="percent" variant="primary" delay={4} />
+                  <BIMetricCard title="Taxa de Agendamento" value={data?.bookingRate || 0} icon={Calendar} format="percent" variant="success" delay={5} />
+                  <BIMetricCard title="Total Atividades" value={data?.totalActivities || 0} icon={Activity} variant="warning" comparison={{ previousPeriod: { value: data?.previousPeriod.totalActivities || 0, label: "Período Anterior" } }} delay={6} />
+                  <BIMetricCard title="Ranking SDR" value={`#${data?.currentRank || "-"}`} icon={Trophy} variant={data && data.currentRank <= 3 ? "success" : "default"} subtitle={`de ${data?.totalSDRs || 0} SDRs`} delay={7} />
+                </BIMetricsGrid>
+              </div>
             </StaggeredContainer>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {[
                 { icon: Phone, value: data?.totalCalls || 0, label: "Ligações", color: "blue-500" },
                 { icon: Mail, value: data?.totalEmails || 0, label: "E-mails", color: "green-500" },
+                { icon: Linkedin, value: data?.totalLinkedIn || 0, label: "LinkedIn", color: "cyan-500" },
+                { icon: MessageCircle, value: data?.totalWhatsApp || 0, label: "WhatsApp", color: "emerald-500" },
                 { icon: Calendar, value: data?.totalMeetings || 0, label: "Reuniões", color: "purple-500" },
                 { icon: TrendingUp, value: (data?.avgActivitiesPerDay || 0).toFixed(1), label: "Média/dia", color: "orange-500" },
               ].map(({ icon: Icon, value, label, color }) => (

@@ -13,9 +13,13 @@ export interface BISDRData {
   totalActivities: number;
   activitiesByType: { type: string; count: number; successRate: number }[];
   avgActivitiesPerDay: number;
+  connectRate: number;
+  bookingRate: number;
   totalCalls: number;
   totalEmails: number;
   totalMeetings: number;
+  totalLinkedIn: number;
+  totalWhatsApp: number;
   pipelineValue: number;
   pipelineCount: number;
   pipelineByStage: { stage: string; count: number; value: number }[];
