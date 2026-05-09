@@ -232,7 +232,7 @@ const Speedometer = ({
             <TooltipTrigger asChild>
               <DialogTrigger asChild>
                 <div className="relative cursor-pointer hover:brightness-110 transition-all" style={{ width: s, height: s }}>
-              {theme === "cyber" && (
+              {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute inset-0 rounded-full blur-3xl pointer-events-none"
                   style={{ background: `radial-gradient(circle, ${colors.glow}, transparent 65%)` }}
