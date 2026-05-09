@@ -40,7 +40,7 @@ export const useAgendaEvents = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("agenda_events")
-        .select("*")
+        .select("*, client:clients(name), sale:sales(product_name)")
         .order("scheduled_at", { ascending: true });
       if (error) throw error;
       return (data || []) as AgendaEvent[];
