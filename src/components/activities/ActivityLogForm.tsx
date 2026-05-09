@@ -37,11 +37,14 @@ const outcomes: { value: ActivityOutcome; label: string; color: string }[] = [
   { value: "callback", label: "Retornar", color: "bg-status-purple" },
   { value: "not_interested", label: "Sem Interesse", color: "bg-muted-foreground" },
   { value: "qualified", label: "Qualificado", color: "bg-primary" },
+  { value: "bad_timing", label: "Momento Ruim", color: "bg-amber-500" },
+  { value: "wrong_person", label: "Pessoa Errada", color: "bg-red-500" },
+  { value: "unsubscribed", label: "Descadastrou", color: "bg-gray-500" },
 ];
 
 const activitySchema = z.object({
   activity_type: z.enum(["call", "email", "meeting", "linkedin", "whatsapp", "note", "other"]),
-  outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified"]),
+  outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified", "bad_timing", "wrong_person", "unsubscribed"]),
   salesperson_id: z.string().optional(),
   client_id: z.string().optional(),
   contact_name: z.string().max(100, "Nome do contato deve ter no máximo 100 caracteres").optional(),
