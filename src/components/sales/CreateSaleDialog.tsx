@@ -44,8 +44,6 @@ export const CreateSaleDialog = () => {
   const { data: salespeople } = useSalespeople();
   const { data: products } = useProducts();
   const { data: clients } = useClients();
-  const selectedProductId = form.watch("product_id");
-  const { data: recommendations, isLoading: loadingRecs } = useProductRecommendations(selectedProductId);
 
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
@@ -59,6 +57,9 @@ export const CreateSaleDialog = () => {
       source: "other",
     },
   });
+
+  const selectedProductId = form.watch("product_id");
+  const { data: recommendations, isLoading: loadingRecs } = useProductRecommendations(selectedProductId);
 
   const onSubmit = (data: SaleFormData) => {
     createSale.mutate(
