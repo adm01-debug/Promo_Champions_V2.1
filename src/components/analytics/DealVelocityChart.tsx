@@ -2,8 +2,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDealVelocity } from '@/hooks/useDealVelocity';
-import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity, Maximize2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface DealVelocityChartProps {
   salespersonId?: string;
