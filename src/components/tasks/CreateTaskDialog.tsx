@@ -45,8 +45,18 @@ const taskSchema = z.object({
 
 type TaskFormData = z.infer<typeof taskSchema>;
 
-export function CreateTaskDialog() {
-  const [open, setOpen] = useState(false);
+interface CreateTaskDialogProps {
+  defaultSaleId?: string;
+  defaultClientId?: string;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open: controlledOpen, onOpenChange }: CreateTaskDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
 
   const createTask = useCreateTask();
   const { data: salespeople } = useSalespeople();
@@ -59,8 +69,8 @@ export function CreateTaskDialog() {
       title: '',
       description: '',
       salesperson_id: '',
-      client_id: '',
-      sale_id: '',
+      client_id: defaultClientId || '',
+      sale_id: defaultSaleId || '',
       priority: 'medium',
       task_type: 'other',
       due_date: new Date().toISOString().split('T')[0],
