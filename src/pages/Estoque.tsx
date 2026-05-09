@@ -16,6 +16,7 @@ import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 function StockStatusBadge({ current, min, reorder }: { current: number; min: number; reorder: number }) {
   if (current <= min) return <Badge variant="destructive" className="font-black uppercase tracking-widest text-[10px]">CRITICAL</Badge>;
