@@ -11056,6 +11056,7 @@ export type Database = {
           amount: number
           broadcast_sent_at: string | null
           category: string
+          client_id: string | null
           client_name: string
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
@@ -11064,6 +11065,7 @@ export type Database = {
             | null
           id: string
           pipeline_id: string | null
+          product_id: string | null
           product_name: string
           salesperson_id: string | null
           script_variant: string | null
@@ -11076,6 +11078,7 @@ export type Database = {
           amount: number
           broadcast_sent_at?: string | null
           category?: string
+          client_id?: string | null
           client_name: string
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
@@ -11084,6 +11087,7 @@ export type Database = {
             | null
           id?: string
           pipeline_id?: string | null
+          product_id?: string | null
           product_name: string
           salesperson_id?: string | null
           script_variant?: string | null
@@ -11096,6 +11100,7 @@ export type Database = {
           amount?: number
           broadcast_sent_at?: string | null
           category?: string
+          client_id?: string | null
           client_name?: string
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
@@ -11104,6 +11109,7 @@ export type Database = {
             | null
           id?: string
           pipeline_id?: string | null
+          product_id?: string | null
           product_name?: string
           salesperson_id?: string | null
           script_variant?: string | null
@@ -11120,10 +11126,31 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sales_pipeline_id_fkey"
             columns: ["pipeline_id"]
             isOneToOne: false
             referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
           {
@@ -13472,6 +13499,7 @@ export type Database = {
       }
       tasks: {
         Row: {
+          client_id: string | null
           completed_at: string | null
           created_at: string
           description: string | null
@@ -13488,6 +13516,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          client_id?: string | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
@@ -13504,6 +13533,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          client_id?: string | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
@@ -13520,6 +13550,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tasks_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "tasks_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_sale_id_fkey"
             columns: ["sale_id"]
