@@ -15,6 +15,7 @@ import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { 
