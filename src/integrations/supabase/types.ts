@@ -431,6 +431,7 @@ export type Database = {
       activities: {
         Row: {
           activity_type: Database["public"]["Enums"]["activity_type"]
+          client_id: string | null
           contact_name: string | null
           created_at: string
           duration_minutes: number | null
@@ -442,6 +443,7 @@ export type Database = {
         }
         Insert: {
           activity_type: Database["public"]["Enums"]["activity_type"]
+          client_id?: string | null
           contact_name?: string | null
           created_at?: string
           duration_minutes?: number | null
@@ -453,6 +455,7 @@ export type Database = {
         }
         Update: {
           activity_type?: Database["public"]["Enums"]["activity_type"]
+          client_id?: string | null
           contact_name?: string | null
           created_at?: string
           duration_minutes?: number | null
@@ -463,6 +466,20 @@ export type Database = {
           salesperson_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "activities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "activities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "activities_sale_id_fkey"
             columns: ["sale_id"]
@@ -8915,6 +8932,7 @@ export type Database = {
           category: string
           created_at: string
           id: string
+          min_stock_level: number | null
           name: string
           price: number
           rating: number
@@ -8928,6 +8946,7 @@ export type Database = {
           category?: string
           created_at?: string
           id?: string
+          min_stock_level?: number | null
           name: string
           price?: number
           rating?: number
@@ -8941,6 +8960,7 @@ export type Database = {
           category?: string
           created_at?: string
           id?: string
+          min_stock_level?: number | null
           name?: string
           price?: number
           rating?: number
