@@ -27,7 +27,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, RaceArenaCareer, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -160,7 +160,8 @@ export function AppRoutes() {
                     {/* ─── Analytics & BI ────────────────────────── */}
                      <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
                      <Route path="/analytics/abc" element={<Manager><ABCAnalysisPage /></Manager>} />
-                    <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
+                     <Route path="/analytics/closing-time" element={<Manager><ClosingTimePage /></Manager>} />
+                     <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
                     <Route path="/bi-closer" element={<BICloser />} />

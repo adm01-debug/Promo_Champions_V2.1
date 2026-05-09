@@ -1,8 +1,10 @@
 import { FC, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Timer, TrendingDown, TrendingUp, Minus, Clock } from 'lucide-react';
+import { Timer, TrendingDown, TrendingUp, Minus, Clock, Maximize2 } from 'lucide-react';
 import { useClosingTime, ClosingTimeData } from '@/hooks/useClosingTime';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart, 
   Bar, 
@@ -36,6 +38,9 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
 
 export const ClosingTimeChart: FC = () => {
   const { data, isLoading } = useClosingTime();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/closing-time';
   
   const chartData: ClosingTimeData[] = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) {
@@ -89,11 +94,23 @@ export const ClosingTimeChart: FC = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Timer className="h-4 w-4 text-primary" />
-            Tempo Médio de Fechamento
+            <span className="gradient-text">Tempo Médio de Fechamento</span>
           </CardTitle>
-          <Badge variant="outline" className="text-xs">
-            {totalDeals} deals
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs bg-muted/50">
+              {totalDeals} deals
+            </Badge>
+            {!isDedicatedPage && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7 rounded-full hover:bg-primary/10 transition-colors"
+                onClick={() => navigate('/analytics/closing-time')}
+              >
+                <Maximize2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
