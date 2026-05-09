@@ -8,7 +8,7 @@ import {
   BarChart, Bar
 } from 'recharts';
 import {
-  Mail, Send, Activity, Clock, XCircle, CheckCircle, TrendingUp, Users, Eye, MousePointer2, Layout, BarChart
+  Mail, Send, Activity, Clock, XCircle, CheckCircle, TrendingUp, Users, Eye, MousePointer2, Layout, BarChart3 as BarChartIcon
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
