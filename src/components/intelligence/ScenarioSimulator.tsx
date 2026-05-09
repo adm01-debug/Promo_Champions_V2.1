@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,27 @@ import {
   AlertTriangle, 
   Zap,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  Target,
+  Users,
+  Brain,
+  LayoutDashboard
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export const ScenarioSimulator = () => {
   const [pipeline, setPipeline] = useState([70]);
   const [conversion, setConversion] = useState([25]);
   const [dealSize, setDealSize] = useState([15]);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [activeStrategy, setActiveStrategy] = useState<string | null>(null);
+
+  const strategies = [
+    { id: 'expansion', label: 'Aggressive Expansion', icon: Target, impact: '+22%', color: 'text-emerald-500' },
+    { id: 'efficiency', label: 'Sales Efficiency', icon: LayoutDashboard, impact: '+15%', color: 'text-blue-500' },
+    { id: 'retention', label: 'Retention Focus', icon: Users, impact: '+18%', color: 'text-purple-500' },
+  ];
 
   const calculateRevenue = () => {
     return (pipeline[0] * conversion[0] * dealSize[0] * 100).toLocaleString('pt-BR', {
@@ -27,9 +39,19 @@ export const ScenarioSimulator = () => {
     });
   };
 
-  const handleSimulate = () => {
+  const handleSimulate = (strategyId?: string) => {
     setIsSimulating(true);
-    setTimeout(() => setIsSimulating(false), 1500);
+    if (strategyId) setActiveStrategy(strategyId);
+    setTimeout(() => {
+      setIsSimulating(false);
+      if (strategyId === 'expansion') {
+        setPipeline([pipeline[0] * 1.2]);
+        setConversion([conversion[0] * 0.95]); // volume reduces quality slightly
+        setDealSize([dealSize[0] * 1.1]);
+      } else if (strategyId === 'efficiency') {
+        setConversion([conversion[0] * 1.15]);
+      }
+    }, 1500);
   };
 
   return (
@@ -143,26 +165,52 @@ export const ScenarioSimulator = () => {
           </AnimatePresence>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-1 gap-4 pt-2">
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="sm" 
-            className="h-9 text-[10px] font-bold uppercase tracking-widest gap-2"
+            className="h-8 text-[9px] font-bold uppercase tracking-widest gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => {
               setPipeline([70]);
               setConversion([25]);
               setDealSize([15]);
+              setActiveStrategy(null);
             }}
           >
-            <RotateCcw className="size-3" /> Reset
+            <RotateCcw className="size-3" /> Reset Scenarios
           </Button>
-          <Button 
-            size="sm" 
-            className="h-9 text-[10px] font-bold uppercase tracking-widest gap-2 bg-primary hover:bg-primary/90"
-            onClick={handleSimulate}
-          >
-            <Zap className="size-3" /> One-Click Strategy
-          </Button>
+          <div className="flex flex-col gap-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+              <Brain className="size-3" /> Select Strategy Play
+            </p>
+            <div className="grid grid-cols-1 gap-2">
+              {strategies.map((strat) => (
+                <Button 
+                  key={strat.id}
+                  variant="outline"
+                  size="sm" 
+                  className={cn(
+                    "h-10 text-[10px] font-bold uppercase tracking-widest justify-between border-white/5 bg-white/5 hover:bg-white/10 transition-all",
+                    activeStrategy === strat.id && "border-primary/50 bg-primary/10"
+                  )}
+                  onClick={() => handleSimulate(strat.id)}
+                >
+                  <div className="flex items-center gap-2">
+                    <strat.icon className={cn("size-3", strat.color)} />
+                    {strat.label}
+                  </div>
+                  <Badge variant="outline" className="text-[9px] border-none bg-black/40 text-muted-foreground">{strat.impact} Impact</Badge>
+                </Button>
+              ))}
+            </div>
+            <Button 
+              size="sm" 
+              className="h-10 text-[10px] font-bold uppercase tracking-widest gap-2 bg-primary hover:bg-primary/90 mt-2"
+              onClick={() => handleSimulate()}
+            >
+              <Zap className="size-3" /> Custom Simulation
+            </Button>
+          </div>
         </div>
 
         <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10 flex gap-3">
