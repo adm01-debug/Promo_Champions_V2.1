@@ -4,7 +4,7 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CreateTaskForm } from "@/components/tasks/CreateTaskForm";
+import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 
 export default function KanbanClientes() {
   const [taskModal, setTaskModal] = useState<{ open: boolean; clientId?: string; clientName?: string }>({ open: false });
@@ -48,10 +48,9 @@ export default function KanbanClientes() {
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Create Task for {taskModal.clientName}</DialogTitle>
           </DialogHeader>
-          <CreateTaskForm 
-            clientId={taskModal.clientId} 
-            onSuccess={() => setTaskModal({ open: false })} 
-          />
+          <div className="py-4">
+             <CreateTaskDialog forceOpen />
+          </div>
         </DialogContent>
       </Dialog>
     </>

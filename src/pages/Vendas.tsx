@@ -267,65 +267,7 @@ const Vendas = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 {paginatedItems.map((sale, index) => (
-                  <div 
-                    key={sale.fullId || sale.id}
-                    className="group relative overflow-hidden bg-gradient-to-r from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-5 transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
-                    style={{ animationDelay: `${200 + index * 30}ms` }}
-                  >
-                    {/* Decoration */}
-                    <div className="absolute top-0 left-0 w-1 h-full bg-primary/40 group-hover:bg-primary transition-colors" />
-                    
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                      {/* Deal ID & Client */}
-                      <div className="flex items-center gap-4 min-w-[300px]">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-primary font-mono tracking-widest uppercase">#{sale.id}</span>
-                          <h3 className="font-display font-black text-lg uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
-                            {sale.cliente}
-                          </h3>
-                        </div>
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-accent/20 border border-white/5">
-                            <ShoppingCart className="h-4 w-4 text-muted-foreground/70" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest">Product / SKU</p>
-                            <p className="text-sm font-bold truncate">
-                              {sale.produto} <span className="text-[10px] font-mono text-muted-foreground ml-2 opacity-60">[{sale.sku || "NO-SKU"}]</span>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Status & Date */}
-                      <div className="flex items-center gap-8 min-w-[250px]">
-                        <div className="flex flex-col items-end">
-                          <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Status</span>
-                          <Badge variant="outline" className={cn("px-3 py-1 text-[10px] font-black uppercase tracking-widest", statusColors[sale.status] || statusColors.pending)}>
-                            {sale.statusLabel || sale.status}
-                          </Badge>
-                        </div>
-                        <div className="flex flex-col items-end min-w-[100px]">
-                          <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Created At</span>
-                          <span className="text-sm font-bold text-muted-foreground">{sale.data}</span>
-                        </div>
-                      </div>
-
-                      {/* Value Display */}
-                      <div className="flex items-center justify-end min-w-[180px]">
-                        <div className="flex flex-col items-end">
-                          <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Gross Volume</span>
-                          <span className="text-2xl font-display font-black tracking-tighter text-primary">
-                            R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <SaleHUDCard key={sale.fullId || sale.id} sale={sale} index={index} />
                 ))}
               </div>
               <TablePagination
