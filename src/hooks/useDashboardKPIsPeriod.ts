@@ -2,6 +2,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import {
+  startOfWeek,
+  endOfWeek,
+  subWeeks,
   startOfMonth,
   endOfMonth,
   subMonths,
@@ -13,8 +16,9 @@ import {
   subYears,
   format,
 } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-export type KPIPeriod = "current_month" | "last_month" | "quarter" | "year";
+export type KPIPeriod = "week" | "current_month" | "last_month" | "quarter" | "year";
 
 interface KPIData {
   totalRevenue: number;
@@ -39,6 +43,13 @@ export interface KPIPeriodResult {
 const getRanges = (period: KPIPeriod) => {
   const now = new Date();
   switch (period) {
+    case "week":
+      return {
+        curStart: startOfWeek(now, { locale: ptBR }),
+        curEnd: endOfWeek(now, { locale: ptBR }),
+        prevStart: startOfWeek(subWeeks(now, 1), { locale: ptBR }),
+        prevEnd: endOfWeek(subWeeks(now, 1), { locale: ptBR }),
+      };
     case "current_month":
       return {
         curStart: startOfMonth(now),
@@ -166,6 +177,7 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
 };
 
 export const PERIOD_LABELS: Record<KPIPeriod, { label: string; comparison: string }> = {
+  week: { label: "Semana Atual", comparison: "Semana Anterior" },
   current_month: { label: "Mês Atual", comparison: "Mês Anterior" },
   last_month: { label: "Último Mês", comparison: "Mês Anterior" },
   quarter: { label: "Trimestre", comparison: "Trimestre Anterior" },
