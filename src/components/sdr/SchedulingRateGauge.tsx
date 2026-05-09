@@ -64,7 +64,10 @@ export function SchedulingRateGauge({
   const strokeDashoffset = circumference - (gaugePercentage / 100) * circumference;
 
   return (
-    <Card className="relative overflow-hidden border-2 border-primary/20 bg-black/60 backdrop-blur-xl group">
+    <Card className={cn(
+      "relative overflow-hidden border-2 bg-black/60 backdrop-blur-xl group h-full",
+      variant === "success" ? "border-success/20" : variant === "warning" ? "border-warning/20" : "border-primary/20"
+    )}>
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-8 h-8 pointer-events-none">
         <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-primary/40" />
