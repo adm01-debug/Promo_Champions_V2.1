@@ -74,6 +74,18 @@ export default function CloserDashboard() {
               initial="hidden"
               animate="visible"
             >
+              <motion.div variants={itemVariants} className="lg:col-span-2">
+                <CloserStatCard
+                  title="Faturamento Total"
+                  value={formatCurrency(metrics?.current.closedValue ?? 0)}
+                  change={metrics?.changes.value}
+                  icon={DollarSign}
+                  variant="primary"
+                  subtitle="Vendas fechadas"
+                  hero
+                  highlight
+                />
+              </motion.div>
               <motion.div variants={itemVariants}>
                 <CloserStatCard
                   title="Vendas Fechadas"
@@ -82,16 +94,6 @@ export default function CloserDashboard() {
                   icon={CheckCircle}
                   variant="success"
                   subtitle={periodLabel}
-                />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <CloserStatCard
-                  title="Faturamento"
-                  value={formatCurrency(metrics?.current.closedValue ?? 0)}
-                  change={metrics?.changes.value}
-                  icon={DollarSign}
-                  variant="primary"
-                  subtitle="Vendas fechadas"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
