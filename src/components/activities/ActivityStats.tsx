@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useActivityStats } from "@/hooks/useActivities";
-import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity } from "lucide-react";
+import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity, Linkedin, MessageCircle, FileText } from "lucide-react";
 
 export function ActivityStats() {
   const { data: stats } = useActivityStats();
@@ -31,6 +31,24 @@ export function ActivityStats() {
       color: "text-accent"
     },
     { 
+      label: "LinkedIn", 
+      value: stats?.byType.linkedin ?? 0, 
+      icon: Linkedin,
+      color: "text-status-info"
+    },
+    { 
+      label: "WhatsApp", 
+      value: stats?.byType.whatsapp ?? 0, 
+      icon: MessageCircle,
+      color: "text-status-success"
+    },
+    { 
+      label: "Notas", 
+      value: stats?.byType.note ?? 0, 
+      icon: FileText,
+      color: "text-muted-foreground"
+    },
+    { 
       label: "Conectou", 
       value: stats?.connectedToday ?? 0, 
       icon: CheckCircle,
@@ -45,7 +63,7 @@ export function ActivityStats() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-3">
       {statItems.map((item, index) => {
         const Icon = item.icon;
         const isFirst = index === 0;

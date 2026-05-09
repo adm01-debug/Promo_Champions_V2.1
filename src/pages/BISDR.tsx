@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap } from "lucide-react";
+import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap, Linkedin, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { BISDRCharts } from "@/components/bi/BISDRCharts";
 
@@ -78,10 +78,12 @@ const BISDR = () => {
               </BIMetricsGrid>
             </StaggeredContainer>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {[
                 { icon: Phone, value: data?.totalCalls || 0, label: "Ligações", color: "blue-500" },
                 { icon: Mail, value: data?.totalEmails || 0, label: "E-mails", color: "green-500" },
+                { icon: Linkedin, value: data?.totalLinkedIn || 0, label: "LinkedIn", color: "cyan-500" },
+                { icon: MessageCircle, value: data?.totalWhatsApp || 0, label: "WhatsApp", color: "emerald-500" },
                 { icon: Calendar, value: data?.totalMeetings || 0, label: "Reuniões", color: "purple-500" },
                 { icon: TrendingUp, value: (data?.avgActivitiesPerDay || 0).toFixed(1), label: "Média/dia", color: "orange-500" },
               ].map(({ icon: Icon, value, label, color }) => (
