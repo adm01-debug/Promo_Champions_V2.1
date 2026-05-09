@@ -92,7 +92,7 @@ export function CommandPalette() {
     { id: "revenue-intelligence", label: "Revenue Intelligence", icon: TrendingUp, action: () => navigate("/revenue-intelligence"), group: "navigation", keywords: ["receita", "forecast", "vendas"] },
     { id: "conversational-intelligence", label: "Conversational Intelligence", icon: MessageSquare, action: () => navigate("/conversational-intelligence"), group: "navigation", keywords: ["transcrição", "análise de voz", "calls"] },
     { id: "deal-intelligence", label: "Deal Intelligence", icon: Briefcase, action: () => navigate("/deal-intelligence"), group: "navigation", keywords: ["oportunidades", "riscos", "pipeline"] },
-    { id: "predictive-intelligence", label: "Inteligência Preditiva", icon: Brain, icon: Brain, action: () => navigate("/inteligencia-preditiva"), group: "navigation", keywords: ["previsão", "machine learning"] },
+    { id: "predictive-intelligence", label: "Inteligência Preditiva", icon: Brain, action: () => navigate("/inteligencia-preditiva"), group: "navigation", keywords: ["previsão", "machine learning"] },
     { id: "dashboard-engagement", label: "Engajamento", icon: HeartPulse, action: () => navigate("/dashboard/engajamento"), group: "navigation", keywords: ["mood", "pulse", "feedback"] },
     { id: "pipeline", label: "Pipeline", icon: Zap, shortcut: "⌘P", action: () => navigate("/pipeline"), group: "navigation", keywords: ["funil", "kanban"] },
     { id: "vendas", label: "Vendas", icon: ShoppingCart, shortcut: "⌘V", action: () => navigate("/vendas"), group: "navigation", keywords: ["sales", "deals", "negócios"] },
