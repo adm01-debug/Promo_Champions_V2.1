@@ -357,6 +357,7 @@ const Clientes = () => {
               </div>
               
               <ActivityLogTrigger clientId={timelineClient?.id} />
+            </div>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto px-6 pb-6">
             {timelineClient && (
