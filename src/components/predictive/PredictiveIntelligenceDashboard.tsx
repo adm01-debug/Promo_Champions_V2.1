@@ -135,6 +135,9 @@ export function PredictiveIntelligenceDashboard() {
         />
       </div>
 
+      {/* SCENARIO PLANNER */}
+      <PredictiveScenarioPlanner />
+
       {/* TABS */}
       <Tabs defaultValue="forecast" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
