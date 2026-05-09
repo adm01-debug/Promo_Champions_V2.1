@@ -15,6 +15,8 @@ function saleEntityType(status?: string | null): SemanticEntityType {
 }
 export interface Sale {
   id: string;
+  client_id: string | null;
+  product_id: string | null;
   client_name: string;
   product_name: string;
   amount: number;
@@ -27,6 +29,8 @@ export interface Sale {
 }
 
 export interface CreateSaleInput {
+  client_id?: string;
+  product_id?: string;
   client_name: string;
   product_name: string;
   amount: number;
@@ -51,7 +55,11 @@ export const useSalesData = (searchTerm?: string) => {
     queryFn: async () => {
       let query = supabase
         .from("sales")
-        .select("*")
+        .select(`
+          *,
+          client:clients(name),
+          product:products(name)
+        `)
         .order("created_at", { ascending: false })
         .limit(100);
 
@@ -65,8 +73,8 @@ export const useSalesData = (searchTerm?: string) => {
       return (data || []).map((sale) => ({
         id: sale.id.substring(0, 8).toUpperCase(),
         fullId: sale.id,
-        cliente: sale.client_name,
-        produto: sale.product_name,
+        cliente: (sale as any).client?.name || sale.client_name,
+        produto: (sale as any).product?.name || sale.product_name,
         valor: Number(sale.amount),
         status: statusMap[sale.status] || sale.status,
         data: format(new Date(sale.created_at), "dd/MM/yyyy", { locale: ptBR }),
