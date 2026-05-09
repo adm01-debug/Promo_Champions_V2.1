@@ -1,7 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug } from "lucide-react";
+import { 
+  Settings, Users, Activity, FileText, Bell, Database, BarChart3, 
+  TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug, 
+  Wallet, Target, Webhook 
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
