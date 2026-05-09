@@ -13,6 +13,7 @@ import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard"
 // Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
+import { useSalesChartData } from "@/hooks/useSalesChartData";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
@@ -66,6 +67,7 @@ const Index = () => {
 
   const { data: kpis, isLoading } = useDashboardKPIsPeriod(period);
   const { data: goalsData } = useGoalsDashboard();
+  const { data: salesTrend } = useSalesChartData("30d");
   const { salesperson } = useAuth();
   const priorities = useDashboardPriorities();
   
@@ -152,7 +154,7 @@ const Index = () => {
                 <motion.div variants={itemVariants} className="md:col-span-3">
                   {hasRevenue ? (
                     <StatCard
-                      title="Receita Total"
+                      title="Faturamento Total"
                       value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
                       numericValue={kpis?.current.totalRevenue ?? 0}
                       change={kpis?.changes.revenue ?? 0}
@@ -160,6 +162,7 @@ const Index = () => {
                       icon={DollarSign}
                       variant="primary"
                       hero
+                      sparklineData={salesTrend?.map(d => d.value)}
                     />
                   ) : (
                     <DashboardEmptyState type="revenue" />
@@ -192,6 +195,7 @@ const Index = () => {
                         previousValue={kpis ? formatCurrency(kpis.previous.avgTicket) : undefined}
                         icon={Receipt}
                         variant="primary"
+                        sparklineData={[320, 450, 410, 580, 520, 610, 590]}
                       />
                     ) : (
                       <DashboardEmptyState type="revenue" />

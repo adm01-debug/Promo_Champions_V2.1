@@ -92,6 +92,23 @@ export const StatCard = React.memo(({
         heroStyles,
       )}>
       {/* Decorative cyber-elements */}
+      {hero && (
+        <>
+          <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none opacity-20">
+            <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-primary" />
+          </div>
+          <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none opacity-20">
+            <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-primary" />
+          </div>
+          {/* Scanning line for Hero */}
+          <motion.div 
+            className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+            animate={{ top: ["0%", "100%", "0%"] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          />
+        </>
+      )}
+
       {theme === "cyber" && (
         <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
           <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/20 group-hover:border-white/40 transition-colors" />
@@ -99,7 +116,7 @@ export const StatCard = React.memo(({
       )}
       
       {/* Ambient Glow for Hero */}
-      {hero && theme === "cyber" && (
+      {hero && (
         <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
       )}
 
@@ -114,12 +131,12 @@ export const StatCard = React.memo(({
             </p>
             <p className={cn(
               "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-[min(20vw,9rem)] sm:text-[min(15vw,24rem)] lg:text-[min(12vw,36rem)] 2xl:text-[min(10vw,48rem)] font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] animate-pulse-gentle transition-all duration-500",
+              hero && "text-5xl sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_80px_rgba(139,92,246,0.6)] animate-pulse-gentle transition-all duration-500",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4), 0 0 120px hsl(var(--primary) / 0.1)` : 
+              textShadow: hero ? `0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3)` : 
                           variant !== 'default' ? '0 0 12px currentColor' : 'none' 
             }}>
               {displayValue}
