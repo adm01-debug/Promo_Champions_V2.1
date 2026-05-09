@@ -242,15 +242,20 @@ const IntelligenceCockpit = () => {
             </Button>
           </Card>
 
-          <Card className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="size-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-500">
+          <div className="h-[350px]">
+            <RelationshipGraph />
+          </div>
+          
+          <Card className="p-4 bg-gradient-to-br from-primary to-blue-600 border-none relative overflow-hidden group/ask">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 group-hover/ask:scale-150 transition-transform duration-700" />
+            <div className="flex items-center gap-3 mb-2 relative z-10">
+              <div className="size-8 rounded-lg bg-white/20 flex items-center justify-center text-white">
                 <Brain className="size-4" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-tighter">Ask Anything AI</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Ask Anything AI</p>
             </div>
-            <p className="text-[11px] text-muted-foreground mb-3 leading-snug">Pergunte qualquer coisa sobre o seu negócio para a nossa inteligência.</p>
-            <Button size="sm" className="w-full h-8 text-[10px] font-bold uppercase tracking-widest bg-purple-500 hover:bg-purple-600 text-white border-none">Consultar Analista</Button>
+            <p className="text-[11px] text-white/80 mb-3 leading-snug relative z-10">Consulte qualquer KPI ou insight via linguagem natural.</p>
+            <Button size="sm" className="w-full h-8 text-[10px] font-bold uppercase tracking-widest bg-white text-primary hover:bg-white/90 border-none relative z-10">Consultar Analista</Button>
           </Card>
         </div>
       </div>
