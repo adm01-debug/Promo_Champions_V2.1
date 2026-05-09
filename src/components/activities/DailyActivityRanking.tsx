@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Crown, Medal, Award, Trophy, Flame, Search, Filter } from "lucide-react";
+import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface DailyActivityRankingProps {
   data: ActivityGoalProgress[];
@@ -134,9 +135,9 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                 return (
                   <div
                     key={sp.salesperson_id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 group animate-fade-in ${getRankStyle(rank)} ${
-                      hasCompletedGoal ? 'ring-1 ring-status-success/40 shadow-md shadow-status-success/10' : ''
-                    } ${isTopThree ? 'hover-lift' : 'hover:bg-muted/50'}`}
+                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-500 group animate-fade-in glass-morphism ${getRankStyle(rank)} ${
+                      hasCompletedGoal ? 'ring-2 ring-status-success/50 shadow-glow-success/10 scale-[1.02]' : ''
+                    } ${isTopThree ? 'hover:scale-[1.03] hover:shadow-xl' : 'hover:bg-white/5'}`}
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     {/* Rank */}
@@ -161,8 +162,8 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className={`font-display font-semibold text-sm truncate transition-colors ${
-                          rank === 1 ? 'gradient-text' : 'group-hover:text-primary'
+                        <span className={`font-display font-black text-sm truncate transition-all duration-300 ${
+                          rank === 1 ? 'gradient-text scale-110' : 'group-hover:text-primary'
                         }`}>
                           {sp.salesperson_name}
                         </span>
@@ -178,8 +179,8 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
 
                     {/* Progress */}
                     <div className="text-right flex-shrink-0">
-                      <div className={`text-lg font-display font-bold transition-all duration-300 ${
-                        sp.progress.overall >= 100 ? 'gradient-text scale-105' : 
+                      <div className={`text-xl font-display font-black transition-all duration-500 ${
+                        sp.progress.overall >= 100 ? 'text-rank-gold drop-shadow-glow scale-110' : 
                         sp.progress.overall >= 70 ? 'text-status-info' : 
                         sp.progress.overall >= 40 ? 'text-status-warning' : 
                         'text-status-error'
@@ -196,6 +197,7 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                   </div>
                 );
               })
+
             )}
           </div>
         </ScrollArea>

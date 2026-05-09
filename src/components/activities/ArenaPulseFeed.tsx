@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Zap, Trophy, TrendingUp, Star, Flame } from "lucide-react";
+import { Activity, Zap, Trophy, TrendingUp, Star, Flame, Target, MessageCircle } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ArenaPulseFeedProps {
   data: ActivityGoalProgress[];
@@ -68,7 +69,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
   }, [data]);
 
   return (
-    <Card variant="glass" className="overflow-hidden border-primary/20 shadow-glow-primary/5">
+    <Card variant="glass" className="overflow-hidden border-primary/20 shadow-glow-primary/5 group/feed">
       <CardHeader className="pb-3 border-b border-white/5 bg-primary/5">
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary animate-pulse" />
@@ -82,8 +83,8 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
               <div 
                 key={event.id} 
                 className={cn(
-                  "p-4 flex items-start gap-4 transition-colors hover:bg-white/5 animate-fade-in",
-                  idx === 0 && "bg-primary/5"
+                  "p-4 flex items-start gap-4 transition-all duration-300 hover:bg-primary/5 hover:translate-x-1 border-l-2 border-transparent hover:border-primary/40 animate-fade-in",
+                  idx === 0 && "bg-primary/5 border-l-primary"
                 )}
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
