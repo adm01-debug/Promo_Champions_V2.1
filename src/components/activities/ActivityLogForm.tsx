@@ -52,6 +52,11 @@ const activitySchema = z.object({
     z.number().min(1, "Duração mínima é 1 minuto").max(480, "Duração máxima é 8 horas").optional()
   ),
   notes: z.string().max(1000, "Observações devem ter no máximo 1000 caracteres").optional(),
+  // MQL Qualification Fields
+  pain_points: z.string().optional(),
+  budget_range: z.string().optional(),
+  timeline: z.string().optional(),
+  decision_criteria: z.string().optional(),
 });
 
 type ActivityFormData = z.infer<typeof activitySchema>;
