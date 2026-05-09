@@ -42,26 +42,36 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
+              <div className="absolute -top-1 -left-1 bg-primary px-1.5 py-0.5 rounded-md text-[8px] font-black text-white shadow-lg border border-white/20 z-20">
+                LVL {Math.floor(data.progress.overall / 10) + 1}
+              </div>
               {isWinner && (
-                <div className="absolute -bottom-1 -right-1 bg-rank-gold rounded-full p-1.5 shadow-lg animate-bounce">
+                <div className="absolute -bottom-1 -right-1 bg-rank-gold rounded-full p-1.5 shadow-lg animate-bounce z-20">
                   <Trophy className="h-4 w-4 text-white" />
                 </div>
               )}
             </div>
-            <div>
-              <h3 className="text-xl font-display font-black tracking-tight group-hover:gradient-text transition-all">
+            <div className="space-y-1">
+              <h3 className="text-xl font-display font-black tracking-tight group-hover:gradient-text transition-all leading-none">
                 {data.salesperson_name}
               </h3>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest bg-white/5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest bg-white/5 h-4">
                   {data.role}
                 </Badge>
                 {isHighPerformer && (
                   <div className="flex items-center gap-1 text-rank-gold">
                     <Flame className="h-3 w-3 animate-pulse" />
-                    <span className="text-[9px] font-black uppercase tracking-tighter">On Fire</span>
+                    <span className="text-[8px] font-black uppercase tracking-tighter">On Fire</span>
                   </div>
                 )}
+              </div>
+              {/* XP Bar Micro-component */}
+              <div className="w-24 h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
+                <div 
+                  className="h-full bg-primary/60 animate-shimmer" 
+                  style={{ width: `${(data.progress.overall % 10) * 10}%` }} 
+                />
               </div>
             </div>
           </div>
