@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar, Zap } from "lucide-react";
+import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar, Zap, Cpu, Sparkles, MousePointer2, Crown } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
@@ -29,12 +29,15 @@ import { ArenaAITips } from "@/components/activities/ArenaAITips";
 import { AchievementBadgeDisplay } from "@/components/activities/AchievementBadgeDisplay";
 import { ArenaStatusBadge } from "@/components/arena/ArenaStatusBadge";
 import { EnhancedActivityCard } from "@/components/arena/EnhancedActivityCard";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
   const { data: salespeople } = useSalespeople();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { celebrate, resetCelebration } = useCelebration();
+  const { toast } = useToast();
 
   const editingSalesperson = salespeople?.find(sp => sp.id === editingId);
 
@@ -239,8 +242,10 @@ export default function MetasAtividades() {
                             </span>
                           </div>
                         </div>
-                        <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center shadow-glow-primary/20 animate-float">
-                          <Flame className="h-7 w-7 text-primary" />
+                        <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow flex items-center justify-center p-1 relative shadow-glow-primary/10">
+                          <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">12/10</span>
+                          </div>
                         </div>
                       </div>
                     </div>
