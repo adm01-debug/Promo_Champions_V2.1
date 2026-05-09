@@ -1511,6 +1511,9 @@ export const FuturisticSpeedometerDashboard = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <DashboardSection title="Infraestrutura de Comunicação" description="Monitoramento de integridade e logs de entrega de notificações">
+        <IntegrationStatusPanel />
+      </DashboardSection>
     </motion.section>
   );
 };
