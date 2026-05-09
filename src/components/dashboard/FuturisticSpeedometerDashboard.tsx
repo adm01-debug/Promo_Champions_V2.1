@@ -822,6 +822,60 @@ export const FuturisticSpeedometerDashboard = () => {
                     ))}
                   </div>
                 </div>
+
+                <div className="space-y-3 pt-3 border-t border-primary/10">
+                  <h5 className="font-mono text-[9px] font-bold uppercase tracking-widest text-primary/80">Thresholds & Alerts</h5>
+                  
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                      <span>Threshold Oportunidades</span>
+                      <span className="text-primary">{oppThreshold}%</span>
+                    </div>
+                    <Slider 
+                      value={[oppThreshold]} 
+                      min={1} max={50} step={1} 
+                      onValueChange={(v) => {
+                        setOppThreshold(v[0]);
+                        saveSettings({ oppThreshold: v[0] });
+                      }} 
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                      <span>Threshold Retenção</span>
+                      <span className="text-primary">{retThreshold}%</span>
+                    </div>
+                    <Slider 
+                      value={[retThreshold]} 
+                      min={1} max={50} step={1} 
+                      onValueChange={(v) => {
+                        setRetThreshold(v[0]);
+                        saveSettings({ retThreshold: v[0] });
+                      }} 
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[8px] font-mono uppercase text-muted-foreground">Frequência de Alerta</label>
+                    <Select 
+                      value={alertFrequency} 
+                      onValueChange={(v: any) => {
+                        setAlertFrequency(v);
+                        saveSettings({ alertFrequency: v });
+                      }}
+                    >
+                      <SelectTrigger className="h-6 text-[9px] bg-background/40 border-border/40 font-mono">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover/95 backdrop-blur-xl">
+                        <SelectItem value="realtime"><span className="text-[10px] font-mono">Real-time</span></SelectItem>
+                        <SelectItem value="daily"><span className="text-[10px] font-mono">Daily</span></SelectItem>
+                        <SelectItem value="weekly"><span className="text-[10px] font-mono">Weekly</span></SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
