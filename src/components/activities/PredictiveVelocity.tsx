@@ -14,9 +14,17 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
     ? withGoals.reduce((sum, p) => sum + p.progress.overall, 0) / withGoals.length
     : 0;
 
-  // Simple heuristic for estimation
-  const hoursRemaining = 18 - new Date().getHours(); // Assuming 18:00 is end of day
-  const isOnTrack = avgProgress >= 70 || (avgProgress >= 40 && hoursRemaining > 4);
+  // Advanced heuristic for estimation
+  const now = new Date();
+  const currentHour = now.getHours();
+  const startHour = 8;
+  const endHour = 18;
+  const hoursElapsed = Math.max(0.5, currentHour - startHour);
+  const hoursRemaining = Math.max(0, endHour - currentHour);
+  
+  const velocityPerHour = avgProgress / hoursElapsed;
+  const projectedFinal = avgProgress + (velocityPerHour * hoursRemaining);
+  const isOnTrack = projectedFinal >= 100;
 
   return (
     <Card variant="glass" className="overflow-hidden border-primary/20 bg-primary/5 group/velocity hover:shadow-glow-primary/10 transition-all duration-500">
