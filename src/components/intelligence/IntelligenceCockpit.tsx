@@ -22,6 +22,7 @@ import { useState } from "react";
 import { ExecutiveSummaryReport } from "./ExecutiveSummaryReport";
 import { ScenarioSimulator } from "./ScenarioSimulator";
 import { RelationshipGraph } from "./RelationshipGraph";
+import { IntelligenceCommandBar } from "./IntelligenceCommandBar";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
