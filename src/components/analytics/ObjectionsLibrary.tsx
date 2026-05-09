@@ -71,7 +71,50 @@ export function ObjectionsLibrary() {
     toast.success('Resposta copiada!');
   };
 
-  const handleAddObjection = () => {
+  const handleAddTag = () => {
+    if (!tagInput.trim()) return;
+    if (newObjection.tags.includes(tagInput.trim())) {
+      setTagInput('');
+      return;
+    }
+    setNewObjection({ ...newObjection, tags: [...newObjection.tags, tagInput.trim()] });
+    setTagInput('');
+  };
+
+  const removeTag = (tag: string) => {
+    setNewObjection({ ...newObjection, tags: newObjection.tags.filter(t => t !== tag) });
+  };
+
+  const handleEdit = (obj: any) => {
+    setEditingObjection(obj);
+    setNewObjection({
+      objection: obj.objection,
+      response: obj.response,
+      category: obj.category,
+      tags: obj.tags || [],
+      effectiveness_score: obj.effectiveness_score || 5
+    });
+    setIsAddDialogOpen(true);
+  };
+
+  const handleSave = () => {
+    if (!newObjection.objection.trim() || !newObjection.response.trim()) {
+      toast.error('Preencha todos os campos');
+      return;
+    }
+
+    if (editingObjection) {
+      updateObjection.mutate({ id: editingObjection.id, ...newObjection }, {
+        onSuccess: () => {
+          setEditingObjection(null);
+          setNewObjection({ objection: '', response: '', category: 'general', tags: [], effectiveness_score: 5 });
+          setIsAddDialogOpen(false);
+        }
+      });
+    } else {
+      handleAddObjection();
+    }
+  };
     if (!newObjection.objection.trim() || !newObjection.response.trim()) {
       toast.error('Preencha todos os campos');
       return;
