@@ -430,6 +430,20 @@ const Speedometer = ({
               </div>
             )}
 
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <Target className="h-3 w-3" /> KPIs no Período Selecionado
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={handleExportCSV}>
+                  <Download className="h-3 w-3" /> CSV
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={() => window.print()}>
+                  <FileTextIcon className="h-3 w-3" /> PDF/Print
+                </Button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Atual</span>
