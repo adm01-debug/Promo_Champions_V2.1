@@ -881,7 +881,6 @@ export const FuturisticSpeedometerDashboard = () => {
               <span className="inline-block w-1 h-1 rounded-full bg-success animate-pulse" />
               <span className="text-[9px] text-success/80">Sincronizado: {new Date().toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</span>
             </p>
-            </p>
           </div>
         </div>
 
