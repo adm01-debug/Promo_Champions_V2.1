@@ -7,6 +7,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Building2, Mail, Phone, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useCountUp } from '@/hooks/useCountUp';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Client {
   id: string;
