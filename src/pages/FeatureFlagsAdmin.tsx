@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+import { useFeatureFlags, useFeatureFlag } from "@/hooks/useFeatureFlags";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
