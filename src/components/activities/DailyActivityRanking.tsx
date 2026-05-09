@@ -253,7 +253,29 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
 
             )}
           </div>
+          {activeReactions.map(reaction => (
+            <div
+              key={reaction.id}
+              className="fixed pointer-events-none z-[9999] animate-float-up opacity-0"
+              style={{
+                left: reaction.x - 10,
+                top: reaction.y - 20,
+              }}
+            >
+              <span className="text-2xl filter drop-shadow-glow">{reaction.emoji}</span>
+            </div>
+          ))}
         </ScrollArea>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes float-up {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-20px) scale(1.2) rotate(10deg); }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+          }
+          .animate-float-up {
+            animation: float-up 1s ease-out forwards;
+          }
+        `}} />
       </CardContent>
     </Card>
   );
