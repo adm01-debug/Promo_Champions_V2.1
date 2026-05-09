@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
 import { toast } from 'sonner';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Maximize2 } from 'lucide-react';
 
 const COLORS = {
   A: 'hsl(var(--status-success))',
