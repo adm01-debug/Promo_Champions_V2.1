@@ -225,7 +225,7 @@ export default function MetasAtividades() {
                   <ArenaStatusBadge status="online" label="Arena de Operações Live" />
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 animate-pulse">
                     <Cpu className="h-3 w-3 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Sincronização Neural v13.0</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Sincronização Neural v14.0</span>
                   </div>
                 </div>
 
@@ -234,7 +234,7 @@ export default function MetasAtividades() {
                       Arena de Atividades
                       <div className="hidden sm:flex items-center justify-center h-20 w-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow p-1 relative shadow-glow-primary/20">
                         <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">13/10</span>
+                          <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">14/10</span>
                         </div>
                       </div>
                     </h1>
@@ -324,7 +324,7 @@ export default function MetasAtividades() {
                             onMouseEnter={(e) => handleStatInteraction(e, "trophy")}
                           >
                             <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
-                              <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">13/10</span>
+                              <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">14/10</span>
                             </div>
                           </div>
                       </div>

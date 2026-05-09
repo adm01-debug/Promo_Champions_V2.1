@@ -156,11 +156,27 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                 return (
                   <div
                     key={sp.salesperson_id}
-                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-500 group animate-fade-in glass-morphism ${getRankStyle(rank)} ${
+                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-700 group animate-fade-in glass-morphism relative overflow-hidden ${getRankStyle(rank)} ${
                       hasCompletedGoal ? 'ring-2 ring-status-success/50 shadow-glow-success/10 scale-[1.02]' : ''
                     } ${isTopThree ? 'hover:scale-[1.03] hover:shadow-xl' : 'hover:bg-white/5'}`}
-                    style={{ animationDelay: `${index * 50}ms` }}
+                    style={{ 
+                      animationDelay: `${index * 50}ms`,
+                      transformStyle: 'preserve-3d',
+                      perspective: '1000px'
+                    }}
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
+                      const y = ((e.clientY - rect.top) / rect.height - 0.5) * -10;
+                      e.currentTarget.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) scale3d(1.02, 1.02, 1.02)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    }}
                   >
+                    {isTopThree && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    )}
                     {/* Rank */}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${
                       isTopThree ? 'bg-background/80 shadow-md' : 'bg-muted/50'
