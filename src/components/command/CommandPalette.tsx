@@ -15,7 +15,7 @@ import {
   BarChart3, Settings, Trophy, Calendar,
   Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
   Clock, Brain, Flame, Radar, Shield, Globe, Sparkles, Loader2,
-  Gauge, HeartPulse,
+  Gauge, HeartPulse, LineChart, MessageSquare, Briefcase, TrendingUp,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSemanticSearch } from "@/hooks/semantic/useSemanticSearch";
