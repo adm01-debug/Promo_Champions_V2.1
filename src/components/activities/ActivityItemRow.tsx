@@ -1,8 +1,8 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { formatDistanceToNow, differenceInMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
 import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
