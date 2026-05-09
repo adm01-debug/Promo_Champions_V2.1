@@ -103,10 +103,10 @@ const SDRStatCardInner = function SDRStatCard({
               </div>
               <div className="flex items-baseline gap-2">
                 <span className={cn(
-                  "text-2xl font-bold font-display transition-transform group-hover:scale-105",
+                  "text-2xl font-bold font-display transition-transform group-hover:scale-105 tabular-nums",
                   variant === "primary" ? "gradient-text" : "text-foreground"
                 )}>
-                  {value}
+                  {displayValue}
                 </span>
                 {change !== undefined && (
                   <span className={cn(
