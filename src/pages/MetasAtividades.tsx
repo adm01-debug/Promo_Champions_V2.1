@@ -25,6 +25,8 @@ import { ArenaPulseFeed } from "@/components/activities/ArenaPulseFeed";
 import { ActivityVersusDuel } from "@/components/activities/ActivityVersusDuel";
 import { PredictiveVelocity } from "@/components/activities/PredictiveVelocity";
 import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
+import { ArenaAITips } from "@/components/activities/ArenaAITips";
+import { AchievementBadgeDisplay } from "@/components/activities/AchievementBadgeDisplay";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
