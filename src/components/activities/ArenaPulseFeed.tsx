@@ -26,7 +26,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
     const newEvents: PulseEvent[] = [];
     
     // Derive events from progress data
-    data.forEach(sp => {
+    data.forEach((sp, index) => {
       if (sp.progress.overall >= 100) {
         newEvents.push({
           id: `victory-${sp.salesperson_id}`,
