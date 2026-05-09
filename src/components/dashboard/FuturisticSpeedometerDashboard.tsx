@@ -534,18 +534,18 @@ const Speedometer = ({
               </div>
             </div>
 
-            {drilldownData && drilldownData.length > 0 ? (
+            {displayData && displayData.length > 0 ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    <TrendingUp className="h-3 w-3" /> Histórico de Composição
+                    <TrendingUp className="h-3 w-3" /> Histórico de Composição ({PERIOD_OPTIONS.find(p => p.value === drilldownPeriod)?.label})
                   </div>
                   <Badge variant="outline" className="text-[10px] font-mono">Real-time Data</Badge>
                 </div>
                 
                 <div className="h-[200px] w-full bg-card/50 rounded-xl p-4 border border-border/20">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={drilldownData}>
+                    <BarChart data={displayData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
                       <XAxis 
                         dataKey="name" 
