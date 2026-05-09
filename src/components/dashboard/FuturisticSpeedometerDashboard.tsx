@@ -376,6 +376,8 @@ const Speedometer = ({
         >
           max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
         </div>
+            </div>
+          </div>
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
