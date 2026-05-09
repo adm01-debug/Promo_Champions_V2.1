@@ -2,6 +2,8 @@ import { Helmet } from "react-helmet-async";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { ActivityList } from "@/components/activities/ActivityList";
 import { ActivityStats } from "@/components/activities/ActivityStats";
+import { ActivityEffectiveness } from "@/components/activities/ActivityEffectiveness";
+import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
 import { ClipboardList } from "lucide-react";
 import { useActivities } from "@/hooks/useActivities";
 import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
