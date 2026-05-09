@@ -5,8 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Users, Flame, Thermometer, Snowflake, Clock, Package } from "lucide-react";
+import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2, Linkedin, Building2, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 export function RecentProspects() {
   const { data: prospects } = useQuery({
