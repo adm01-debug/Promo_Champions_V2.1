@@ -2173,3 +2173,11 @@
   [style*="race-fireworks-burst"],
   [style*="race-broadcast-slide-in"] { animation: none !important; }
 }
+
+/* Hide Lovable badge */
+#lovable-badge,
+#lovable-badge-v2,
+[id^="lovable-badge"],
+a[href*="lovable.dev"][target="_blank"] {
+  display: none !important;
+}
