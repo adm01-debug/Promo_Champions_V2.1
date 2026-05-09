@@ -34,4 +34,6 @@ export const outcomeOptions = [
   { label: "Agendou", value: "scheduled" }, { label: "Caixa Postal", value: "voicemail" },
   { label: "Ocupado", value: "busy" }, { label: "Retornar", value: "callback" },
   { label: "Sem Interesse", value: "not_interested" }, { label: "Qualificado", value: "qualified" },
+  { label: "Momento Ruim", value: "bad_timing" }, { label: "Pessoa Errada", value: "wrong_person" },
+  { label: "Descadastrou", value: "unsubscribed" },
 ];
