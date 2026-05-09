@@ -26,6 +26,9 @@ const EvolutionChartComponent: FC = () => {
   const [period, setPeriod] = useState(30);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { chartData, salespeople, isLoading } = useEvolutionCurves(period, selectedIds);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/evolution';
 
   const togglePerson = (id: string) => {
     setSelectedIds(prev =>
