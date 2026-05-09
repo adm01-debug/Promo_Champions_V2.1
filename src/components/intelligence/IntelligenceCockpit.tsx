@@ -148,7 +148,7 @@ const IntelligenceCockpit = () => {
             </div>
           </Card>
         ))}
-      </div>
+      </motion.div>
 
       {/* Unified Insights & Strategic Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
