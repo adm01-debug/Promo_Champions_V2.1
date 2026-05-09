@@ -326,7 +326,8 @@ const Speedometer = ({
                 </circle>
               </svg>
             </div>
-          </TooltipTrigger>
+          </DialogTrigger>
+        </TooltipTrigger>
           <TooltipContent className="bg-popover/95 backdrop-blur-xl border-primary/20 p-3 shadow-2xl">
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
