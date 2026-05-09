@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { LucideIcon, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { LucideIcon, TrendingUp, TrendingDown, Sparkles, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -12,39 +12,45 @@ interface CloserStatCardProps {
   variant?: "default" | "primary" | "success" | "warning" | "danger";
   subtitle?: string;
   highlight?: boolean;
+  hero?: boolean;
 }
 
 const getVariantStyles = (variant: string) => {
   switch (variant) {
     case "primary":
       return {
-        border: "border-l-4 border-l-primary",
-        iconBg: "bg-primary/15",
-        iconColor: "text-primary",
+        border: "border-primary/30",
+        glow: "rgba(14, 165, 233, 0.2)",
+        text: "text-primary",
+        bg: "bg-primary/10",
       };
     case "success":
       return {
-        border: "border-l-4 border-l-success",
-        iconBg: "bg-success/15",
-        iconColor: "text-success",
+        border: "border-success/30",
+        glow: "rgba(34, 197, 94, 0.2)",
+        text: "text-success",
+        bg: "bg-success/10",
       };
     case "warning":
       return {
-        border: "border-l-4 border-l-warning",
-        iconBg: "bg-warning/15",
-        iconColor: "text-warning",
+        border: "border-warning/30",
+        glow: "rgba(234, 179, 8, 0.2)",
+        text: "text-warning",
+        bg: "bg-warning/10",
       };
     case "danger":
       return {
-        border: "border-l-4 border-l-destructive",
-        iconBg: "bg-destructive/15",
-        iconColor: "text-destructive",
+        border: "border-destructive/30",
+        glow: "rgba(239, 68, 68, 0.2)",
+        text: "text-destructive",
+        bg: "bg-destructive/10",
       };
     default:
       return {
-        border: "border-l-4 border-l-muted-foreground/30",
-        iconBg: "bg-muted/50",
-        iconColor: "text-muted-foreground",
+        border: "border-white/10",
+        glow: "rgba(255, 255, 255, 0.05)",
+        text: "text-foreground",
+        bg: "bg-white/5",
       };
   }
 };
@@ -56,69 +62,101 @@ const CloserStatCardInner = function CloserStatCard({
   icon: Icon,
   variant = "default",
   subtitle,
-  highlight = false
+  highlight = false,
+  hero = false,
 }: CloserStatCardProps) {
   const isPositive = (change ?? 0) >= 0;
-  const hasSignificantChange = Math.abs(change ?? 0) >= 10;
   const styles = getVariantStyles(variant);
 
   return (
     <motion.div
-      whileHover={{ 
-        scale: 1.02,
-        y: -4,
-        boxShadow: "0 20px 40px -15px hsl(var(--primary) / 0.15)",
-      }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="h-full"
     >
       <Card className={cn(
-        "glass overflow-hidden group cursor-pointer border-border/40",
+        "relative overflow-hidden transition-all duration-300 bg-black/40 backdrop-blur-md border border-white/5 group h-full",
         styles.border,
-        highlight && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
+        hero && "md:col-span-2 border-primary/20 bg-primary/[0.02] shadow-[0_0_30px_rgba(14,165,233,0.05)]",
+        highlight && "ring-1 ring-primary/30"
       )}>
-        <CardContent className="p-4">
+        {/* Decorative elements for Hero */}
+        {hero && (
+          <>
+            <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none opacity-20">
+              <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-primary" />
+            </div>
+            <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none opacity-20">
+              <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-primary" />
+            </div>
+            <motion.div 
+              className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+              animate={{ top: ["0%", "100%", "0%"] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            />
+          </>
+        )}
+
+        {/* Cyber bits */}
+        <div className="absolute top-2 right-2 flex gap-1 pointer-events-none opacity-20">
+          <div className="w-1 h-1 bg-current rounded-full" />
+          <div className="w-1 h-1 bg-current rounded-full opacity-50" />
+          <div className="w-1 h-1 bg-current rounded-full opacity-25" />
+        </div>
+
+        <CardContent className={cn("p-5 relative z-10", hero && "sm:p-8")}>
           <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider font-display">
+            <div className="space-y-3 flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {title}
                 </p>
-                {highlight && (
-                  <Sparkles className="h-3 w-3 text-primary animate-pulse" />
-                )}
+                {highlight && <Zap className="h-3 w-3 text-primary animate-pulse" />}
               </div>
-              <div className="flex items-baseline gap-2">
+              
+              <div className="flex flex-col gap-1">
                 <span className={cn(
-                  "text-2xl font-bold font-display transition-transform group-hover:scale-105",
-                  variant === "primary" ? "gradient-text" : "text-foreground"
-                )}>
+                  "font-mono font-black tracking-tighter tabular-nums leading-none",
+                  hero ? "text-4xl sm:text-6xl md:text-7xl lg:text-8xl" : "text-2xl sm:text-3xl",
+                  styles.text,
+                  hero && "bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary"
+                )} style={{ 
+                  textShadow: `0 0 20px ${styles.glow}`
+                }}>
                   {value}
                 </span>
+                
                 {change !== undefined && (
-                  <span className={cn(
-                    "flex items-center text-xs font-medium px-1.5 py-0.5 rounded-md border transition-all group-hover:scale-105 shadow-sm",
-                    isPositive 
-                      ? "text-success bg-success/15 border-success/30 shadow-success/10" 
-                      : "text-destructive bg-destructive/15 border-destructive/30 shadow-destructive/10",
-                    hasSignificantChange && isPositive && "animate-pulse"
-                  )}>
-                    {isPositive ? <TrendingUp className="h-3 w-3 mr-0.5" /> : <TrendingDown className="h-3 w-3 mr-0.5" />}
-                    {Math.abs(change).toFixed(1)}%
-                  </span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={cn(
+                      "flex items-center text-[10px] font-mono font-black px-1.5 py-0.5 rounded border",
+                      isPositive 
+                        ? "text-success bg-success/10 border-success/30" 
+                        : "text-destructive bg-destructive/10 border-destructive/30"
+                    )}>
+                      {isPositive ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                      {Math.abs(change).toFixed(1)}%
+                    </span>
+                    {subtitle && (
+                      <span className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-widest">
+                        {subtitle}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
-              {subtitle && (
-                <p className="text-[11px] text-muted-foreground font-medium glass px-2 py-1 rounded-md inline-block shadow-sm">
-                  {subtitle}
-                </p>
-              )}
             </div>
+
             <div className={cn(
-              "h-12 w-12 rounded-xl flex items-center justify-center shadow-lg transition-all group-hover:scale-110",
-              styles.iconBg
+              "p-3 rounded-xl border transition-all duration-300 group-hover:scale-110",
+              styles.bg,
+              styles.border,
+              hero && "p-4 rounded-2xl"
             )}>
-              <Icon className={cn("h-5 w-5 transition-all group-hover:scale-110", styles.iconColor)} />
+              <Icon className={cn(
+                "h-5 w-5",
+                styles.text,
+                hero && "h-8 w-8"
+              )} />
             </div>
           </div>
         </CardContent>
