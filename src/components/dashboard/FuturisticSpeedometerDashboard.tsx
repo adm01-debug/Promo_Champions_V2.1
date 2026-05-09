@@ -1383,6 +1383,16 @@ export const FuturisticSpeedometerDashboard = () => {
                 <DialogDescription className="text-[10px] font-mono uppercase text-muted-foreground">Logs de Telemetria & Thresholds</DialogDescription>
               </div>
             </div>
+            {alertHistory.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-[9px] font-mono uppercase text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5"
+                onClick={clearAlertHistory}
+              >
+                Limpar Logs
+              </Button>
+            )}
           </DialogHeader>
           <ScrollArea className="max-h-[400px]">
             <div className="p-4 space-y-4">
