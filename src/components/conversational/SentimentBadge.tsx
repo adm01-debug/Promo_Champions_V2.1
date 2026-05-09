@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { SENTIMENT_LABELS, type SentimentLabel } from "./sentimentHelpers";
-import { Smile, Frown, Meh, SmilePlus, FrownPlus } from "lucide-react";
+import { Smile, Frown, Meh } from "lucide-react";
 
 interface Props {
   sentiment: SentimentLabel | string | null | undefined;
@@ -16,11 +16,9 @@ const variantFor = (s: string): "default" | "secondary" | "destructive" | "outli
 const IconFor = ({ sentiment, className }: { sentiment: string; className?: string }) => {
   switch (sentiment) {
     case "very_positive":
-      return <SmilePlus className={className} />;
     case "positive":
       return <Smile className={className} />;
     case "very_negative":
-      return <FrownPlus className={className} />;
     case "negative":
       return <Frown className={className} />;
     default:
