@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, AlertTriangle } from "lucide-react";
 import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
 import { tierBadgeClass, tierLabel, dmuRoleLabel, type CoverageTier, type DMURole } from "./committeeHelpers";
 
-export function WeakCoverageDealsTable() {
+export function WeakCoverageDealsTable({ onSelectDeal }: { onSelectDeal?: (saleId: string) => void }) {
   const { data, isLoading } = useWeakCoverageDeals();
 
   return (
@@ -26,7 +27,14 @@ export function WeakCoverageDealsTable() {
         ) : (
           <div className="space-y-2">
             {data.map((row: any) => (
-              <div key={row.id} className="flex items-center gap-3 p-3 rounded-lg glass border border-border/30">
+              <div 
+                key={row.id} 
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg glass border transition-all cursor-pointer",
+                  "border-border/30 hover:border-primary/50"
+                )}
+                onClick={() => onSelectDeal?.(row.sale_id)}
+              >
                 <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center bg-muted">
                   <span className="font-display font-bold text-sm tabular-nums">{row.coverage_score}</span>
                 </div>
