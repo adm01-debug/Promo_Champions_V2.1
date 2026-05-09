@@ -10,7 +10,7 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
-import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+// Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
