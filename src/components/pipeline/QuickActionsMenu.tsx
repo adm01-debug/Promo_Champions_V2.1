@@ -186,7 +186,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
         open={taskDialogOpen} 
         onOpenChange={setTaskDialogOpen}
         defaultSaleId={deal.id}
-        defaultClientId={deal.client_id}
+        defaultClientId={deal.client_id || undefined}
         trigger={<span className="hidden" />}
       />
     </DropdownMenu>
