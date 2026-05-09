@@ -80,6 +80,7 @@ interface QuickActionsMenuProps {
 export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => {
   const queryClient = useQueryClient();
   const [executing, setExecuting] = useState(false);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
 
   const executeMacro = useMutation({
     mutationFn: async (macro: MacroConfig) => {
