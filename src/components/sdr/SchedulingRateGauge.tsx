@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { CalendarCheck, TrendingUp, TrendingDown, Sparkles, Users, ArrowRight, Zap, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface SchedulingRateGaugeProps {
   rate: number;
