@@ -23,7 +23,8 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState("");
   const [newDesc, setNewDesc] = useState("");
 
-  const { flags, isLoading } = useFeatureFlags();
+  const { flags, isLoading, isEnabled } = useFeatureFlags();
+  const testFlag = useFeatureFlag("experimental_ui");
 
   const toggleMutation = useMutation({
     mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
