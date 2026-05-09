@@ -83,8 +83,8 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
               <div 
                 key={event.id} 
                 className={cn(
-                  "p-4 flex items-start gap-4 transition-colors hover:bg-white/5 animate-fade-in",
-                  idx === 0 && "bg-primary/5"
+                  "p-4 flex items-start gap-4 transition-all duration-300 hover:bg-primary/5 hover:translate-x-1 border-l-2 border-transparent hover:border-primary/40 animate-fade-in",
+                  idx === 0 && "bg-primary/5 border-l-primary"
                 )}
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
