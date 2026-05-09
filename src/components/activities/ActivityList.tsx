@@ -6,7 +6,7 @@ import { useRecentActivities, ActivityType, ActivityOutcome } from "@/hooks/useA
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, CalendarIcon, X, ClipboardList, Filter } from "lucide-react";
+import { Search, CalendarIcon, X, ClipboardList, Filter, Download, FileJson, FileText as PdfIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePagination } from "@/hooks/usePagination";
@@ -17,10 +17,12 @@ import Fuse from "fuse.js";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip as TooltipProvider } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { activityLabels, outcomeLabels, activityTypeOptions, outcomeOptions } from "./activityConstants";
 import { ActivityStatsCharts } from "./ActivityStatsCharts";
 import { ActivityItemRow } from "./ActivityItemRow";
+import { exportActivitiesToCSV, exportActivitiesToPDF } from "./exportUtils";
 
 const sortOptions: SortOption[] = [
   { label: "Mais recente", value: "date_desc", direction: "desc" },
@@ -116,15 +118,36 @@ function _ActivityList({ limit = 100, showHeader = true, showPagination = true, 
                 </Badge>
               )}
             </div>
-            {showFilters && (
-              <FilterPopover sortOptions={sortOptions} currentSort={sortBy} onSortChange={setSortBy}
-                filterOptions={[
-                  { label: "Tipo", options: activityTypeOptions, value: typeFilter, onChange: setTypeFilter },
-                  { label: "Resultado", options: outcomeOptions, value: outcomeFilter, onChange: setOutcomeFilter },
-                  { label: "Vendedor", options: salespersonOptions, value: salespersonFilter, onChange: setSalespersonFilter },
-                ]}
-              />
-            )}
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 gap-2">
+                    <Download className="h-4 w-4" />
+                    Exportar
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => exportActivitiesToCSV(filteredAndSortedActivities)}>
+                    <FileJson className="mr-2 h-4 w-4" />
+                    CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportActivitiesToPDF(filteredAndSortedActivities)}>
+                    <PdfIcon className="mr-2 h-4 w-4" />
+                    PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {showFilters && (
+                <FilterPopover sortOptions={sortOptions} currentSort={sortBy} onSortChange={setSortBy}
+                  filterOptions={[
+                    { label: "Tipo", options: activityTypeOptions, value: typeFilter, onChange: setTypeFilter },
+                    { label: "Resultado", options: outcomeOptions, value: outcomeFilter, onChange: setOutcomeFilter },
+                    { label: "Vendedor", options: salespersonOptions, value: salespersonFilter, onChange: setSalespersonFilter },
+                  ]}
+                />
+              )}
+            </div>
           </div>
           {showFilters && (
             <div className="mt-3 flex flex-col sm:flex-row gap-3">

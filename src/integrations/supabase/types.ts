@@ -436,8 +436,11 @@ export type Database = {
           created_at: string
           duration_minutes: number | null
           id: string
+          lead_status: string | null
+          mql_qualified_at: string | null
           notes: string | null
           outcome: Database["public"]["Enums"]["activity_outcome"]
+          qualification_score: number | null
           sale_id: string | null
           salesperson_id: string | null
         }
@@ -448,8 +451,11 @@ export type Database = {
           created_at?: string
           duration_minutes?: number | null
           id?: string
+          lead_status?: string | null
+          mql_qualified_at?: string | null
           notes?: string | null
           outcome: Database["public"]["Enums"]["activity_outcome"]
+          qualification_score?: number | null
           sale_id?: string | null
           salesperson_id?: string | null
         }
@@ -460,8 +466,11 @@ export type Database = {
           created_at?: string
           duration_minutes?: number | null
           id?: string
+          lead_status?: string | null
+          mql_qualified_at?: string | null
           notes?: string | null
           outcome?: Database["public"]["Enums"]["activity_outcome"]
+          qualification_score?: number | null
           sale_id?: string | null
           salesperson_id?: string | null
         }
@@ -499,6 +508,44 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_audit_logs: {
+        Row: {
+          action: string
+          activity_id: string
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+        }
+        Insert: {
+          action: string
+          activity_id: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Update: {
+          action?: string
+          activity_id?: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_audit_logs_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
             referencedColumns: ["id"]
           },
         ]
@@ -12090,6 +12137,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sdr_alert_configs: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          metric_type: string
+          threshold_value: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          metric_type: string
+          threshold_value: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          metric_type?: string
+          threshold_value?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       sdr_alert_history: {
         Row: {

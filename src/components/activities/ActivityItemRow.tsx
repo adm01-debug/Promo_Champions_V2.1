@@ -1,9 +1,11 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, ChevronDown, ChevronUp } from "lucide-react";
-import { formatDistanceToNow, differenceInMinutes } from "date-fns";
+import { Clock, ChevronDown, ChevronUp, History, User, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { formatDistanceToNow, differenceInMinutes, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
 import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
@@ -24,10 +26,25 @@ interface ActivityItemRowProps {
 
 const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps) {
   const [expanded, setExpanded] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loadingAudit, setLoadingAudit] = useState(false);
+  
   const Icon = activityIcons[activity.activity_type];
   const outcomeStyle = outcomeLabels[activity.outcome];
   
   const isVeryRecent = differenceInMinutes(new Date(), new Date(activity.created_at)) < 5;
+
+  const fetchAuditLogs = async () => {
+    setLoadingAudit(true);
+    const { data, error } = await supabase
+      .from('activity_audit_logs')
+      .select('*')
+      .eq('activity_id', activity.id)
+      .order('created_at', { ascending: false });
+    
+    if (!error && data) setAuditLogs(data);
+    setLoadingAudit(false);
+  };
 
   const isSuccess = activity.outcome === 'scheduled' || activity.outcome === 'qualified';
   
@@ -55,6 +72,49 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
             <span className="text-sm font-display font-bold group-hover:text-primary transition-colors">{activityLabels[activity.activity_type]}</span>
             <Badge variant="outline" className={`text-[10px] font-bold border ${outcomeStyle.color}`}>{outcomeStyle.label}</Badge>
             {isVeryRecent && <Badge variant="secondary" className="text-[8px] h-4 bg-status-success/10 text-status-success border-none animate-pulse">NOVO</Badge>}
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <button onClick={fetchAuditLogs} className="p-1 rounded-md hover:bg-muted/50 transition-colors">
+                  <History className="h-3 w-3 text-muted-foreground hover:text-primary" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0 glass border-border/40" align="start">
+                <div className="p-3 border-b border-border/40">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <History className="h-3 w-3 text-primary" />
+                    Histórico de Alterações
+                  </h4>
+                </div>
+                <div className="max-h-60 overflow-y-auto p-2 space-y-2">
+                  {loadingAudit ? (
+                    <div className="text-[10px] text-center py-4 text-muted-foreground">Carregando histórico...</div>
+                  ) : auditLogs.length === 0 ? (
+                    <div className="text-[10px] text-center py-4 text-muted-foreground">Nenhuma alteração registrada</div>
+                  ) : (
+                    auditLogs.map((log) => (
+                      <div key={log.id} className="p-2 rounded bg-muted/30 border border-border/20 text-[10px] space-y-1">
+                        <div className="flex justify-between items-center text-muted-foreground">
+                          <span className="flex items-center gap-1 font-bold">
+                            <User className="h-2 w-2" />
+                            {log.action}
+                          </span>
+                          <span>{format(new Date(log.created_at), "dd/MM HH:mm")}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 mt-1">
+                          <div className="p-1 rounded bg-red-500/5 border border-red-500/10 line-clamp-1 opacity-70">
+                            {JSON.stringify(log.old_data?.outcome || log.old_data?.notes)}
+                          </div>
+                          <div className="p-1 rounded bg-green-500/5 border border-green-500/10 line-clamp-1">
+                            {JSON.stringify(log.new_data?.outcome || log.new_data?.notes)}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           {activity.contact_name && <p className="text-xs text-muted-foreground mt-0.5 font-medium">{activity.contact_name}</p>}
         </div>
