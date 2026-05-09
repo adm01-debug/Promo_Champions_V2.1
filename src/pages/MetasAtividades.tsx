@@ -233,54 +233,66 @@ export default function MetasAtividades() {
           </TabsList>
 
           <TabsContent value="progress" className="animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Ranking */}
-              <div className="animate-fade-in-up stagger-1">
-                {isLoading ? (
-                  <Skeleton className="h-[450px] w-full rounded-xl" />
-                ) : (
-                  <DailyActivityRanking data={progressData || []} />
-                )}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+              {/* Left Column: Live Intelligence */}
+              <div className="xl:col-span-1 space-y-6 animate-fade-in-up stagger-1">
+                <ArenaPulseFeed data={progressData || []} />
+                <PredictiveVelocity data={progressData || []} />
+                <ActivityVersusDuel data={progressData || []} />
               </div>
 
-              {/* Progress Cards Grid */}
-              <div className="lg:col-span-2 animate-fade-in-up stagger-2">
-                <Card variant="glass">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <div className="icon-container-primary p-1.5 rounded-lg">
-                        <Target className="h-4 w-4" />
-                      </div>
-                      Progresso por Vendedor
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              {/* Center Column: Ranking & Main Progress */}
+              <div className="xl:col-span-3 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Ranking */}
+                  <div className="lg:col-span-1 animate-fade-in-up stagger-2">
                     {isLoading ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {[...Array(4)].map((_, i) => (
-                          <Skeleton key={i} className="h-64 w-full rounded-xl" />
-                        ))}
-                      </div>
-                    ) : progressData && progressData.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {progressData.map((sp, index) => (
-                          <div key={sp.salesperson_id} className={cn("animate-fade-in-up", `stagger-${index + 1}`)}>
-                            <ActivityGoalCard
-                              data={sp}
-                              onEdit={setEditingId}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <Skeleton className="h-[600px] w-full rounded-3xl" />
                     ) : (
-                      <div className="empty-state">
-                        <Users className="empty-state-icon" />
-                        <p className="empty-state-title">Nenhum vendedor encontrado</p>
-                        <p className="empty-state-description">Adicione vendedores para ver o progresso de atividades.</p>
-                      </div>
+                      <DailyActivityRanking data={progressData || []} />
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+
+                  {/* Progress Cards Grid */}
+                  <div className="lg:col-span-2 animate-fade-in-up stagger-3">
+                    <Card variant="glass" className="rounded-3xl border-border/40 overflow-hidden">
+                      <CardHeader className="pb-4 bg-muted/20 border-b border-border/10">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
+                          <div className="icon-container-primary p-2 rounded-xl bg-primary/10 border border-primary/20">
+                            <Target className="h-4 w-4 text-primary" />
+                          </div>
+                          Grid de Performance Individual
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        {isLoading ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[...Array(4)].map((_, i) => (
+                              <Skeleton key={i} className="h-64 w-full rounded-2xl" />
+                            ))}
+                          </div>
+                        ) : progressData && progressData.length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {progressData.map((sp, index) => (
+                              <div key={sp.salesperson_id} className={cn("animate-fade-in-up", `stagger-${index + 1}`)}>
+                                <ActivityGoalCard
+                                  data={sp}
+                                  onEdit={setEditingId}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="empty-state">
+                            <Users className="empty-state-icon" />
+                            <p className="empty-state-title">Nenhum piloto na pista</p>
+                            <p className="empty-state-description">Configure os pilotos para iniciar a monitoração na arena.</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
