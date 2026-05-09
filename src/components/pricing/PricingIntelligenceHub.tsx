@@ -150,6 +150,9 @@ export function PricingIntelligenceHub() {
         />
       </div>
 
+      {/* Simulator */}
+      <DiscountOptimizer />
+
       {/* Distribution chart */}
       <Card>
         <CardHeader>
