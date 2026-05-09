@@ -141,7 +141,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel className="text-xs font-medium text-muted-foreground">Tipo de Atividade</FormLabel>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                     {activityTypes.map(type => {
                       const Icon = type.icon;
                       return (
@@ -173,7 +173,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel className="text-xs font-medium text-muted-foreground">Resultado</FormLabel>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-1.5">
                     {outcomes.map(o => (
                       <button
                         key={o.value}
@@ -317,7 +317,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
             )}
 
             {/* Contact Name & Duration */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="contact_name"
