@@ -165,18 +165,19 @@ export const ScenarioSimulator = () => {
           </AnimatePresence>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-1 gap-4 pt-2">
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="sm" 
-            className="h-9 text-[10px] font-bold uppercase tracking-widest gap-2"
+            className="h-8 text-[9px] font-bold uppercase tracking-widest gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => {
               setPipeline([70]);
               setConversion([25]);
               setDealSize([15]);
+              setActiveStrategy(null);
             }}
           >
-            <RotateCcw className="size-3" /> Reset
+            <RotateCcw className="size-3" /> Reset Scenarios
           </Button>
           <div className="flex flex-col gap-2">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
