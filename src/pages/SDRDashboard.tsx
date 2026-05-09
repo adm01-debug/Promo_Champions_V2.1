@@ -257,6 +257,8 @@ export default function SDRDashboard() {
               <RecentProspects />
               <LeadSLAMonitor />
             </motion.div>
+            </>
+            )}
           </div>
         </div>
       </PageTransition>
