@@ -284,18 +284,26 @@ export default function Estoque() {
                                         </span>
                                       </div>
                                     </div>
-                                    <div className="h-1.5 w-full bg-muted/20 rounded-full overflow-hidden">
+                                    <div className="h-2 w-full bg-muted/20 rounded-full overflow-hidden relative">
                                       <motion.div 
                                         initial={{ width: 0 }}
                                         animate={{ width: `${pct}%` }}
                                         transition={{ duration: 1, ease: "easeOut" }}
                                         className={cn(
-                                          "h-full rounded-full transition-all duration-500",
-                                          pct <= 20 ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" : 
-                                          pct <= 40 ? "bg-amber-500" : 
-                                          "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                                          "h-full rounded-full transition-all duration-500 relative z-10",
+                                          pct <= 20 ? "bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.5)]" : 
+                                          pct <= 40 ? "bg-gradient-to-r from-amber-600 to-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.3)]" : 
+                                          "bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.4)]"
                                         )}
                                       />
+                                      {/* Reorder Point Indicator */}
+                                      {item.reorder_point && item.max_stock_level && (
+                                        <div 
+                                          className="absolute top-0 bottom-0 w-0.5 bg-white/20 z-20"
+                                          style={{ left: `${(item.reorder_point / item.max_stock_level) * 100}%` }}
+                                          title={`Reorder Point: ${item.reorder_point}`}
+                                        />
+                                      )}
                                     </div>
                                   </div>
                                 </td>
