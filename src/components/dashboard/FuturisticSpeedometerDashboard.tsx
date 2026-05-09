@@ -246,11 +246,12 @@ const Speedometer = ({
       </div>
 
       <Dialog open={isDrilldownOpen} onOpenChange={setIsDrilldownOpen}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DialogTrigger asChild>
-                <div className="relative cursor-pointer hover:brightness-110 transition-all" style={{ width: s, height: s }}>
+        <DialogTrigger asChild>
+          <div className="relative cursor-pointer hover:brightness-110 transition-all flex flex-col items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="relative" style={{ width: s, height: s }}>
               {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute inset-0 rounded-full blur-3xl pointer-events-none"
