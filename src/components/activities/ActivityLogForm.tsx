@@ -121,13 +121,17 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   };
 
   const handleOpenWhatsApp = () => {
-// ... keep existing code
+    const phone = selectedClient?.phone;
+    if (!phone) {
+      toast.error("Cliente sem telefone cadastrado");
+      return;
+    }
+    const cleanPhone = phone.replace(/\D/g, "");
     const text = encodeURIComponent(form.getValues("notes") || "Olá, tudo bem?");
     window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
   };
 
   const handleSubmit = (data: ActivityFormData) => {
-// ... keep existing code
     createActivity.mutate({
       sale_id: saleId || undefined,
       client_id: data.client_id || undefined,
