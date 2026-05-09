@@ -61,20 +61,37 @@ export const usePeriodTrend = (period: KPIPeriod) => {
 
       const completed = (data ?? []).filter((r) => r.status === "completed");
 
-      const buckets: { start: Date; end: Date; label: string; fullLabel: string }[] =
-        granularity === "month"
-          ? eachMonthOfInterval({ start, end }).map((d) => ({
-              start: startOfMonth(d),
-              end: endOfMonth(d),
-              label: format(d, "MMM", { locale: ptBR }),
-              fullLabel: format(d, "MMMM yyyy", { locale: ptBR }),
-            }))
-          : eachWeekOfInterval({ start, end }, { weekStartsOn: 1 }).map((d, i) => ({
-              start: startOfWeek(d, { weekStartsOn: 1 }),
-              end: endOfWeek(d, { weekStartsOn: 1 }),
-              label: `S${i + 1}`,
-              fullLabel: `Semana ${i + 1} • ${format(d, "dd/MM", { locale: ptBR })}`,
-            }));
+      let buckets: { start: Date; end: Date; label: string; fullLabel: string }[] = [];
+      
+      if (granularity === "month") {
+        buckets = eachMonthOfInterval({ start, end }).map((d) => ({
+          start: startOfMonth(d),
+          end: endOfMonth(d),
+          label: format(d, "MMM", { locale: ptBR }),
+          fullLabel: format(d, "MMMM yyyy", { locale: ptBR }),
+        }));
+      } else if (granularity === "week") {
+        buckets = eachWeekOfInterval({ start, end }, { weekStartsOn: 1 }).map((d, i) => ({
+          start: startOfWeek(d, { weekStartsOn: 1 }),
+          end: endOfWeek(d, { weekStartsOn: 1 }),
+          label: `S${i + 1}`,
+          fullLabel: `Semana ${i + 1} • ${format(d, "dd/MM", { locale: ptBR })}`,
+        }));
+      } else {
+        // day granularity
+        const days = [];
+        let curr = start;
+        while (curr <= end) {
+          days.push(new Date(curr));
+          curr = new Date(curr.getTime() + 24 * 60 * 60 * 1000);
+        }
+        buckets = days.map(d => ({
+          start: startOfDay(d),
+          end: endOfDay(d),
+          label: format(d, "EEE", { locale: ptBR }),
+          fullLabel: format(d, "dd 'de' MMMM", { locale: ptBR }),
+        }));
+      }
 
       return buckets.map((b) => {
         const inBucket = completed.filter((r) =>
