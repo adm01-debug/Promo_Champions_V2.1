@@ -191,20 +191,43 @@ export default function MetasAtividades() {
                   <span className="text-xs font-black uppercase tracking-widest">Testar Vitória</span>
                 </Button>
                 
-                <div className="px-10 py-6 rounded-[2.5rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/20 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[220px] transition-all duration-500 hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10 opacity-50" />
-                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                    <TrendingUp className="w-16 h-16 text-primary" />
-                  </div>
-                  
-                  <span className="text-[12px] font-black uppercase tracking-[0.3em] text-primary leading-none mb-3 relative z-10 italic">Performance Global</span>
-                  <div className="flex items-center gap-4 relative z-10">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-status-success/30 border border-status-success/50 shadow-glow-success/30 animate-pulse">
-                      <Flame className="h-6 w-6 text-status-success" />
+                <div className="flex flex-col items-end gap-2 group/boss-bar">
+                  <div className="px-10 py-6 rounded-[2.5rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/20 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[280px] transition-all duration-500 hover:scale-[1.02]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/10 opacity-50" />
+                    <div className="absolute inset-x-0 bottom-0 h-1 bg-white/5 overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary via-accent to-primary animate-shimmer"
+                        style={{ width: `${avgProgress}%` }}
+                      />
                     </div>
-                    <span className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow">
-                      {avgProgress.toFixed(0)}%
-                    </span>
+                    
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                      <TrendingUp className="w-16 h-16 text-primary group-hover/boss-bar:scale-125 transition-transform duration-700" />
+                    </div>
+                    
+                    <div className="flex flex-col items-end relative z-10">
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/80 leading-none mb-3 italic flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                        Arena Boss Bar
+                      </span>
+                      <div className="flex items-center gap-5">
+                        <div className="flex flex-col items-end">
+                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Ritmo Coletivo</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow">
+                              {avgProgress.toFixed(0)}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center shadow-glow-primary/20 animate-float">
+                          <Flame className="h-7 w-7 text-primary" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-background/40 backdrop-blur-xl border border-white/10 text-[9px] font-black uppercase tracking-widest text-muted-foreground shadow-lg">
+                    <span className="text-primary animate-pulse">● Live</span>
+                    <span>Meta Diária: {completed}/{withGoals.length} Concluídas</span>
                   </div>
                 </div>
               </div>
