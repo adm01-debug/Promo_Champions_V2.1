@@ -24,6 +24,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { ArenaPulseFeed } from "@/components/activities/ArenaPulseFeed";
 import { ActivityVersusDuel } from "@/components/activities/ActivityVersusDuel";
 import { PredictiveVelocity } from "@/components/activities/PredictiveVelocity";
+import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
