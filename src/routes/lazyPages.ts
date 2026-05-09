@@ -102,6 +102,7 @@ export const ClosingTimePage = lazy(() => import("@/pages/ClosingTimePage"));
 export const DealVelocityPage = lazy(() => import("@/pages/DealVelocityPage"));
 export const EvolutionCurvesPage = lazy(() => import("@/pages/EvolutionCurvesPage"));
 export const ObjectionsLibraryPage = lazy(() => import("@/pages/ObjectionsLibraryPage"));
+export const Intelligence = lazy(() => import("@/pages/Intelligence"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
