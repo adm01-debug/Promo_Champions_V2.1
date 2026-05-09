@@ -5,7 +5,7 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw } from "lucide-react";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileJson, FileText as FileTextIcon } from "lucide-react";
 import {
   Select,
   SelectContent,
