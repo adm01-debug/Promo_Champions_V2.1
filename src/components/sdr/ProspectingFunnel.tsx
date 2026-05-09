@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Filter, TrendingDown, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCountUp } from "@/hooks/useCountUp";
+import { motion } from "framer-motion";
 
 export function ProspectingFunnel() {
   const { data: funnel, isLoading } = useProspectingFunnel();
