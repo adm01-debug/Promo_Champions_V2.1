@@ -56,17 +56,24 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-background/50 border border-white/5 space-y-3 relative overflow-hidden">
+        <div className="p-4 rounded-2xl bg-background/50 border border-white/5 space-y-3 relative overflow-hidden group/guideline">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+          
+          {/* Tactical Overlay */}
+          <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/guideline:opacity-30 transition-opacity">
+            <TrendingUp className="h-12 w-12 text-primary" />
+          </div>
+
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-2">
               <Clock className="h-3 w-3 text-muted-foreground" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">E.T.A (Meta 100%)</span>
             </div>
-            <span className="text-xs font-black text-primary">
-              {projectedFinal >= 100 ? "~17:30" : "Pós-Expediente"}
-            </span>
+            <Badge variant="outline" className={cn("text-[10px] font-black border-none px-2 py-0.5 rounded-md", isOnTrack ? "bg-status-success/20 text-status-success" : "bg-status-warning/20 text-status-warning animate-pulse")}>
+              {projectedFinal >= 100 ? "~17:30" : "RITMO INSUFICIENTE"}
+            </Badge>
           </div>
+
           <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden relative z-10 border border-white/5 shadow-inner">
             <div 
               className={cn("h-full transition-all duration-1000 relative overflow-hidden", isOnTrack ? "bg-status-success" : "bg-status-warning")}
@@ -74,19 +81,32 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
             </div>
+            {/* Hour Markers */}
+            <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/10" />
+            <div className="absolute top-0 left-2/4 w-[1px] h-full bg-white/10" />
+            <div className="absolute top-0 left-3/4 w-[1px] h-full bg-white/10" />
           </div>
+
           <div className="space-y-2 pt-2 relative z-10">
-            <div className="flex items-center gap-2">
-              <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-glow-primary", isOnTrack ? "bg-status-success" : "bg-status-warning")} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-foreground flex items-center gap-2">
-                Diretriz Estratégica <Zap className="h-2.5 w-2.5 text-primary" />
-              </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-glow-primary", isOnTrack ? "bg-status-success" : "bg-status-warning")} />
+                <span className="text-[10px] font-black uppercase tracking-widest text-foreground flex items-center gap-2">
+                  Diretriz Tática <Zap className="h-2.5 w-2.5 text-primary" />
+                </span>
+              </div>
+              <span className="text-[8px] font-black text-muted-foreground/40 uppercase">Arena Intel v12.0</span>
             </div>
-            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed border-l-2 border-primary/20 pl-3 italic bg-primary/5 py-2 rounded-r-lg">
-              {isOnTrack 
-                ? "Ritmo excelente! Foque em QUALIDADE e ticket médio. O volume está estabilizado."
-                : "Aceleração necessária: Aumentar taxa de prospecção em 15% para atingir a meta no horário."}
-            </p>
+            <div className={cn(
+              "p-3 rounded-xl border transition-all duration-500",
+              isOnTrack ? "bg-status-success/5 border-status-success/20" : "bg-status-warning/5 border-status-warning/20"
+            )}>
+              <p className="text-xs font-bold leading-relaxed italic text-foreground/90">
+                {isOnTrack 
+                  ? "✓ Volume Ótimo: Foque em QUALIDADE e ticket médio. O sistema prevê batimento de meta antes das 18h."
+                  : "⚠ Alerta de Volume: Aceleração crítica necessária. O sistema sugere aumentar a taxa de prospecção em 15% nos próximos 45min."}
+              </p>
+            </div>
           </div>
         </div>
         
