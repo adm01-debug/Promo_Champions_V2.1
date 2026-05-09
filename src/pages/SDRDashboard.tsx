@@ -53,7 +53,30 @@ export default function SDRDashboard() {
       <PageTransition>
         <div className="min-h-screen bg-background">
           <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-            {/* Header */}
+            {hasNoData ? (
+              <div className="flex flex-col gap-8">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                      <h1 className="text-page-title gradient-text">Dashboard SDR</h1>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Inicie sua jornada de prospecção
+                      </p>
+                    </div>
+                    <PeriodFilterButtons value={period} onChange={setPeriod} />
+                  </div>
+                </motion.div>
+                
+                <div className="h-[60vh] min-h-[400px]">
+                  <DashboardEmptyState type="conversion" hero />
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
