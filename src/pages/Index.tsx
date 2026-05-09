@@ -165,7 +165,7 @@ const Index = () => {
                       sparklineData={salesTrend?.map(d => d.value)}
                     />
                   ) : (
-                    <DashboardEmptyState type="revenue" />
+                    <DashboardEmptyState type="revenue" hero />
                   )}
                 </motion.div>
                 
