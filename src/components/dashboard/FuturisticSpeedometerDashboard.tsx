@@ -101,6 +101,7 @@ const Speedometer = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSize, setCurrentSize] = useState(size);
   const [isDrilldownOpen, setIsDrilldownOpen] = useState(false);
+  const [drilldownPeriod, setDrilldownPeriod] = useState<KPIPeriod>("current_month");
   
   const colors = accentMap[accent];
   const range = max - min;
@@ -108,6 +109,23 @@ const Speedometer = ({
 
   const statusLabel = animatedPct >= 0.8 ? "Excelente" : animatedPct >= 0.5 ? "Bom" : animatedPct >= 0.3 ? "Atenção" : "Crítico";
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
+
+  const handleExportCSV = () => {
+    if (!drilldownData.length) return;
+    const headers = ["Period", "Value"];
+    const rows = drilldownData.map(d => [d.name, d.value]);
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `drilldown_${label.toLowerCase()}_${drilldownPeriod}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
 
   const s = currentSize;
