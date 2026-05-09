@@ -103,11 +103,15 @@ export default function MetasAtividades() {
       skeleton={<MetasAtividadesLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background relative overflow-hidden">
-        {/* Background Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent/10 blur-[100px] rounded-full animate-float pointer-events-none" />
+      <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/30">
+        {/* Background Decorative Elements - Advanced Arena DNA */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[150px] rounded-full animate-pulse pointer-events-none" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-accent/15 blur-[120px] rounded-full animate-float pointer-events-none" />
+        
+        {/* Scanning Line Effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
 
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
           {/* Header Section with Holographic Title */}
