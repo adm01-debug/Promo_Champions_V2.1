@@ -166,7 +166,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                 </div>
                 <div>
                   <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">Leads Flow</p>
-                  <p className="text-xl font-mono font-black text-foreground">{leads}</p>
+                  <p className="text-xl font-mono font-black text-foreground tabular-nums">{animatedLeads}</p>
                 </div>
               </div>
               
@@ -176,7 +176,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                 </div>
                 <div>
                   <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">Confirmed</p>
-                  <p className="text-xl font-mono font-black text-foreground">{meetings}</p>
+                  <p className="text-xl font-mono font-black text-foreground tabular-nums">{animatedMeetings}</p>
                 </div>
               </div>
             </div>
