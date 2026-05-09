@@ -41,12 +41,12 @@ export interface CreateSaleInput {
 }
 
 const statusMap: Record<string, string> = {
-  pending: "pending",
-  qualified: "qualified",
-  proposal: "proposal",
-  negotiation: "negotiation",
-  completed: "completed",
-  lost: "lost",
+  pending: "Pendente",
+  qualified: "Qualificada",
+  proposal: "Proposta",
+  negotiation: "Negociação",
+  completed: "Concluída",
+  lost: "Perdida",
 };
 
 export const useSalesData = (searchTerm?: string) => {
@@ -58,7 +58,7 @@ export const useSalesData = (searchTerm?: string) => {
         .select(`
           *,
           client:clients(name),
-          product:products(name)
+          product:products(id, name, price, sku)
         `)
         .order("created_at", { ascending: false })
         .limit(100);
@@ -76,8 +76,13 @@ export const useSalesData = (searchTerm?: string) => {
         cliente: (sale as any).client?.name || sale.client_name,
         produto: (sale as any).product?.name || sale.product_name,
         valor: Number(sale.amount),
-        status: statusMap[sale.status] || sale.status,
+        status: sale.status,
+        statusLabel: statusMap[sale.status] || sale.status,
         data: format(new Date(sale.created_at), "dd/MM/yyyy", { locale: ptBR }),
+        client_id: sale.client_id,
+        product_id: sale.product_id,
+        salesperson_id: sale.salesperson_id,
+        sku: sale.sku || (sale as any).product?.sku,
       }));
     },
   });

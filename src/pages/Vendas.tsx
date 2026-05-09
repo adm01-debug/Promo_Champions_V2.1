@@ -187,19 +187,21 @@ const Vendas = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedItems.map((sale, index) => (
                       <tr 
-                        key={sale.id} 
+                        key={sale.fullId || sale.id} 
                         className="border-b border-border/30 hover:bg-muted/30 transition-colors"
                         style={{ animationDelay: `${300 + index * 50}ms` }}
                       >
                         <td className="p-4 text-sm font-mono text-primary">{sale.id}</td>
                         <td className="p-4 text-sm">{sale.cliente}</td>
-                        <td className="p-4 text-sm text-muted-foreground">{sale.produto}</td>
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {sale.produto}
+                          {sale.sku && <span className="block text-[10px] opacity-50">SKU: {sale.sku}</span>}
+                        </td>
                         <td className="p-4 text-sm font-semibold">R$ {sale.valor.toLocaleString("pt-BR")}</td>
                         <td className="p-4">
                           <Badge variant="outline" className={statusColors[sale.status] || statusColors.pending}>
-                            {statusOptions.find(o => o.value === sale.status)?.label || sale.status}
+                            {sale.statusLabel || sale.status}
                           </Badge>
                         </td>
                         <td className="p-4 text-sm text-muted-foreground">{sale.data}</td>
