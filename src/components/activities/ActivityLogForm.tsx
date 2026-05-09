@@ -138,13 +138,27 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   };
 
   const handleSubmit = (data: ActivityFormData) => {
+    // Merge qualification fields into notes if they exist
+    let finalNotes = data.notes || "";
+    if (data.outcome === "qualified") {
+      const qualData = [];
+      if (data.pain_points) qualData.push(`Dores: ${data.pain_points}`);
+      if (data.budget_range) qualData.push(`Budget: ${data.budget_range}`);
+      if (data.timeline) qualData.push(`Timeline: ${data.timeline}`);
+      if (data.decision_criteria) qualData.push(`Critérios: ${data.decision_criteria}`);
+      
+      if (qualData.length > 0) {
+        finalNotes = `[QUALIFICAÇÃO MQL]\n${qualData.join("\n")}\n\n---\n${finalNotes}`;
+      }
+    }
+
     createActivity.mutate({
       sale_id: saleId || undefined,
       client_id: data.client_id || undefined,
       salesperson_id: data.salesperson_id || undefined,
       activity_type: data.activity_type,
       outcome: data.outcome,
-      notes: data.notes || undefined,
+      notes: finalNotes || undefined,
       duration_minutes: data.duration_minutes,
       contact_name: data.contact_name || undefined,
     }, {
@@ -154,6 +168,10 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
           notes: "",
           duration_minutes: undefined,
           contact_name: "",
+          pain_points: "",
+          budget_range: "",
+          timeline: "",
+          decision_criteria: "",
         });
         onSuccess?.();
       }
