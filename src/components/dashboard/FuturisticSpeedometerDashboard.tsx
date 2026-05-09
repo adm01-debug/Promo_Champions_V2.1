@@ -1412,11 +1412,11 @@ export const FuturisticSpeedometerDashboard = () => {
                       <div className={cn(
                         "mt-1 p-1.5 rounded-md border shrink-0",
                         alert.priority === 'high' ? "bg-destructive/10 border-destructive/30 text-destructive" :
-                        alert.priority === 'high' ? "bg-warning/10 border-warning/30 text-warning" :
+                        alert.priority === 'medium' ? "bg-warning/10 border-warning/30 text-warning" :
                         "bg-primary/10 border-primary/30 text-primary"
                       )}>
                         {alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
-                         alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
+                         alert.priority === 'medium' ? <AlertTriangle className="h-3 w-3" /> :
                          <Info className="h-3 w-3" />}
                       </div>
                       <div className="flex-1 min-w-0">
