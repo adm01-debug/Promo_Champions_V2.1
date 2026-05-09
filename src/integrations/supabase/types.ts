@@ -16576,6 +16576,7 @@ export type Database = {
         | "linkedin"
         | "whatsapp"
         | "other"
+        | "note"
       app_role: "admin" | "manager" | "salesperson"
       cadence_type: "prospecting" | "quote_followup"
       cs_survey_type: "csat" | "ces"
@@ -16777,6 +16778,7 @@ export const Constants = {
         "linkedin",
         "whatsapp",
         "other",
+        "note",
       ],
       app_role: ["admin", "manager", "salesperson"],
       cadence_type: ["prospecting", "quote_followup"],
