@@ -3,6 +3,7 @@ import { ShoppingCart, Search, Loader2 } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
