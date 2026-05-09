@@ -117,9 +117,9 @@ const Speedometer = ({
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
 
   const handleExportCSV = () => {
-    if (!drilldownData.length) return;
+    if (!displayData.length) return;
     const headers = ["Period", "Value"];
-    const rows = drilldownData.map(d => [d.name, d.value]);
+    const rows = displayData.map(d => [d.name, d.value]);
     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -133,7 +133,7 @@ const Speedometer = ({
   };
 
   const handleExportPDF = () => {
-    if (!drilldownData.length) return;
+    if (!displayData.length) return;
     const doc = new jsPDF();
     
     // Header
@@ -151,15 +151,16 @@ const Speedometer = ({
     doc.setTextColor(50);
     doc.text("Resumo de Performance", 14, 50);
     doc.setFontSize(11);
-    doc.text(`Valor Atual: ${formatValue ? formatValue(value) : value}`, 14, 58);
-    doc.text(`Meta: ${formatValue ? formatValue(max) : max}`, 14, 64);
+    const summaryVal = displayData.reduce((acc, curr) => acc + curr.value, 0);
+    doc.text(`Valor Acumulado no Período: ${formatValue ? formatValue(summaryVal) : summaryVal}`, 14, 58);
+    doc.text(`Meta (Max): ${formatValue ? formatValue(max) : max}`, 14, 64);
     doc.text(`Eficiência: ${percentStr}`, 14, 70);
 
     // Table
     autoTable(doc, {
       startY: 80,
       head: [["Período", "Valor"]],
-      body: drilldownData.map(d => [d.name, d.value]),
+      body: displayData.map(d => [d.name, d.value]),
       theme: 'grid',
       headStyles: { fillColor: accentMap[accent].stroke },
     });
