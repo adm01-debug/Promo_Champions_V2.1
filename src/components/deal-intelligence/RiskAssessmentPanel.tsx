@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Activity, MessageSquare, TrendingDown, TrendingUp, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { DealRiskMeter } from "./DealRiskMeter";
 import { useDealHealthBatch } from "@/hooks/deal-intelligence/useDealHealth";
 import { Skeleton } from "@/components/ui/skeleton";
