@@ -24,6 +24,7 @@ import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
 import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
 import { PipelinePulseHub } from "@/components/pipeline-pulse/PipelinePulseHub";
 import { BriefingHub } from "@/components/executive-briefing/BriefingHub";
+import { PipelineStrategicReview } from "@/components/intelligence/PipelineStrategicReview";
 
 
 export const RevenueIntelligenceHub: FC = () => {
