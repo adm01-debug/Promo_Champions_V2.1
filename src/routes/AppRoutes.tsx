@@ -164,6 +164,7 @@ export function AppRoutes() {
                      <Route path="/analytics/deal-velocity" element={<Manager><DealVelocityPage /></Manager>} />
                      <Route path="/analytics/evolution" element={<Manager><EvolutionCurvesPage /></Manager>} />
                      <Route path="/analytics/objections" element={<Manager><ObjectionsLibraryPage /></Manager>} />
+                     <Route path="/analytics/win-loss" element={<Manager><WinLossAnalysisPage /></Manager>} />
                      <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
