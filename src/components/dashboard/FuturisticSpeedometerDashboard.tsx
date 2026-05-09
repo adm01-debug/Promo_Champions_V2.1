@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileJson, FileText as FileTextIcon, Bell, History, Smartphone, Mail, Layout, CheckCircle2, AlertTriangle, Info } from "lucide-react";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileText as FileTextIcon, Bell, History, Smartphone, Mail, Layout, AlertTriangle, Info } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -54,7 +54,7 @@ import {
   Cell
 } from "recharts";
 import { cn } from "@/lib/utils";
-import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
+import { SpeedometerSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
