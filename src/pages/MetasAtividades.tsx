@@ -126,13 +126,12 @@ export default function MetasAtividades() {
                 </div>
 
                 <div className="relative">
-                  <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-2xl">
+                  <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02]">
                     Arena de Atividades
                   </h1>
-                  {/* Decorative underline */}
-                  <div className="h-1.5 w-32 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-2" />
+                  <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
                 </div>
-                
+
                 <p className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
                   <div className="p-2 rounded-lg bg-muted/50 border border-border/50">
                     <Calendar className="h-5 w-5 text-primary/70" />
@@ -237,7 +236,7 @@ export default function MetasAtividades() {
 
         {/* Tabs: Progress + Achievements */}
         <Tabs defaultValue="progress" className="animate-fade-in-up stagger-5">
-          <TabsList className="mb-4 bg-muted/30 p-1 rounded-xl">
+          <TabsList className="mb-8 bg-white/5 p-1.5 rounded-2xl border border-white/10 w-fit backdrop-blur-xl">
             <TabsTrigger value="progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Target className="h-4 w-4" />
               Progresso Diário
