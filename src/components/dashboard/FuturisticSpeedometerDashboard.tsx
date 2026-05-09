@@ -855,10 +855,60 @@ export const FuturisticSpeedometerDashboard = () => {
         </div>
       ) : (
         <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity duration-300", kpisFetching && "opacity-60")}>
-          <Speedometer label="Faturamento" value={revenue} min={minVal} max={goalAmount} formatValue={fmtBRL} accent="primary" icon={DollarSign} delta={kpis?.changes.revenue} ticksCount={ticksCount} unit={customUnit || "BRL"} />
-          <Speedometer label="Vendas" value={sales} min={minVal} max={salesMax} accent="success" icon={Zap} delta={kpis?.changes.sales} ticksCount={ticksCount} unit={customUnit || "vendas"} />
-          <Speedometer label="Conversão" value={conversion} min={minVal} max={conversionMax} formatValue={(v) => `${v.toFixed(1)}%`} accent="warning" icon={Target} delta={kpis?.changes.conversion} ticksCount={ticksCount} unit={customUnit || "%"} />
-          <Speedometer label="Ticket Médio" value={ticket} min={minVal} max={ticketMax} formatValue={fmtBRL} accent="destructive" icon={Activity} delta={kpis?.changes.avgTicket} ticksCount={ticksCount} unit={customUnit || "BRL"} />
+          <Speedometer 
+            label="Faturamento" 
+            value={revenue} 
+            min={minVal} 
+            max={goalAmount} 
+            formatValue={fmtBRL} 
+            accent="primary" 
+            icon={DollarSign} 
+            delta={kpis?.changes.revenue} 
+            ticksCount={ticksCount} 
+            unit={customUnit || "BRL"}
+            drilldownData={mockRevenueHistory}
+            explanation={`Faturamento total acumulado no período ${PERIOD_OPTIONS.find(o => o.value === period)?.label}. Baseado em pedidos confirmados e faturados.`}
+          />
+          <Speedometer 
+            label="Vendas" 
+            value={sales} 
+            min={minVal} 
+            max={salesMax} 
+            accent="success" 
+            icon={Zap} 
+            delta={kpis?.changes.sales} 
+            ticksCount={ticksCount} 
+            unit={customUnit || "vendas"}
+            drilldownData={mockSalesHistory}
+            explanation="Volume total de transações aprovadas. Reflete a eficácia operacional do time de vendas no fechamento de negócios."
+          />
+          <Speedometer 
+            label="Conversão" 
+            value={conversion} 
+            min={minVal} 
+            max={conversionMax} 
+            formatValue={(v) => `${v.toFixed(1)}%`} 
+            accent="warning" 
+            icon={Target} 
+            delta={kpis?.changes.conversion} 
+            ticksCount={ticksCount} 
+            unit={customUnit || "%"}
+            explanation="Razão entre oportunidades geradas e vendas concluídas. Indica a qualidade da qualificação e a eficiência do pitch de vendas."
+          />
+          <Speedometer 
+            label="Ticket Médio" 
+            value={ticket} 
+            min={minVal} 
+            max={ticketMax} 
+            formatValue={fmtBRL} 
+            accent="destructive" 
+            icon={Activity} 
+            delta={kpis?.changes.avgTicket} 
+            ticksCount={ticksCount} 
+            unit={customUnit || "BRL"}
+            explanation="Valor médio por venda realizada. Estratégias de upsell e cross-sell impactam diretamente este indicador."
+          />
+
         </div>
       )}
 
