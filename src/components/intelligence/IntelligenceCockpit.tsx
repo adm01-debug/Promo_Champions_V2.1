@@ -25,6 +25,7 @@ import { RelationshipGraph } from "./RelationshipGraph";
 import { IntelligenceCommandBar } from "./IntelligenceCommandBar";
 import { ActivityPulse } from "./ActivityPulse";
 import { HealthGauge } from "./HealthGauge";
+import { PerformanceTrends } from "./PerformanceTrends";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
