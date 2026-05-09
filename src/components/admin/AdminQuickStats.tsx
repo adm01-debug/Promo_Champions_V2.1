@@ -1,3 +1,6 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Users, UserCog, Lock, Bell, Wallet, ShieldCheck, Activity, LineChart } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
 
