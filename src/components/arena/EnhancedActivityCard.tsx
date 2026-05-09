@@ -43,8 +43,9 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -top-1 -left-1 bg-primary px-1.5 py-0.5 rounded-md text-[8px] font-black text-white shadow-lg border border-white/20 z-20">
-                LVL {Math.floor(data.progress.overall / 10) + 1}
+              <div className="absolute -top-1 -left-1 bg-primary px-2 py-0.5 rounded-md text-[9px] font-black text-white shadow-glow-primary/50 border border-white/20 z-20 flex items-center gap-1 group-hover:scale-110 transition-transform">
+                <span className="opacity-70 text-[7px]">LVL</span>
+                {Math.floor(data.progress.overall / 10) + 1}
               </div>
               {isWinner && (
                 <div className="absolute -bottom-1 -right-1 bg-rank-gold rounded-full p-1.5 shadow-lg animate-bounce z-20">
@@ -67,12 +68,20 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
                   </div>
                 )}
               </div>
-              {/* XP Bar Micro-component */}
-              <div className="w-24 h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
-                <div 
-                  className="h-full bg-primary/60 animate-shimmer" 
-                  style={{ width: `${(data.progress.overall % 10) * 10}%` }} 
-                />
+              {/* XP Bar Micro-component - Leveling Strategy */}
+              <div className="flex flex-col gap-1 mt-2">
+                <div className="flex justify-between items-center w-24">
+                  <span className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">XP Progress</span>
+                  <span className="text-[7px] font-black text-primary">{((data.progress.overall % 10) * 10).toFixed(0)}%</span>
+                </div>
+                <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-primary/40 to-primary animate-shimmer relative" 
+                    style={{ width: `${(data.progress.overall % 10) * 10}%` }} 
+                  >
+                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

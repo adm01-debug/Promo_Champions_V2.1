@@ -112,6 +112,20 @@ export default function MetasAtividades() {
       .arena-scrollbar::-webkit-scrollbar-thumb:hover {
         background: rgba(var(--primary), 0.5);
       }
+
+      @keyframes scan {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(1000%); }
+      }
+      .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, rgba(var(--primary), 0.1), transparent);
+        animation: scan 8s linear infinite;
+        pointer-events: none;
+        z-index: 40;
+      }
     `}} />
     <>
     <Helmet>
@@ -130,8 +144,10 @@ export default function MetasAtividades() {
         <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[150px] rounded-full animate-pulse pointer-events-none" />
         <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-accent/15 blur-[120px] rounded-full animate-float pointer-events-none" />
         
-        {/* Scanning Line Effect */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
+        {/* Scanning Line Effect - Improved */}
+        <div className="scan-line" />
+        <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
+
 
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
           {/* Header Section with Holographic Title */}
@@ -318,9 +334,9 @@ export default function MetasAtividades() {
                             ))}
                           </div>
                         ) : progressData && progressData.length > 0 ? (
-                          <div className="flex xl:grid xl:grid-cols-2 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory xl:overflow-visible arena-scrollbar">
+                          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
                             {progressData.map((sp, index) => (
-                              <div key={sp.salesperson_id} className={cn("animate-fade-in-up flex-shrink-0 w-[300px] sm:w-[400px] xl:w-auto snap-center", `stagger-${index + 1}`)}>
+                              <div key={sp.salesperson_id} className={cn("animate-fade-in-up w-full", `stagger-${index + 1}`)}>
                                 <EnhancedActivityCard
                                   data={sp}
                                 />
