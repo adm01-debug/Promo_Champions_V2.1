@@ -39,19 +39,19 @@ const EmojiParticles = ({ x, y, emoji }: { x: number, y: number, emoji: string }
       className="fixed pointer-events-none z-[9999]"
       style={{ left: x, top: y }}
     >
-      {[...Array(8)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
           initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
           animate={{ 
             scale: [0, 1.5, 0],
-            x: (Math.random() - 0.5) * 200,
-            y: (Math.random() - 0.5) * 200,
+            x: (Math.random() - 0.5) * 250,
+            y: (Math.random() - 0.5) * 250,
             opacity: [1, 1, 0],
-            rotate: Math.random() * 360
+            rotate: Math.random() * 720
           }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="absolute text-2xl"
+          transition={{ duration: 0.8 + Math.random() * 0.4, ease: "easeOut" }}
+          className="absolute text-3xl drop-shadow-glow"
         >
           {emoji}
         </motion.div>
@@ -225,7 +225,7 @@ export default function MetasAtividades() {
                   <ArenaStatusBadge status="online" label="Arena de Operações Live" />
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 animate-pulse">
                     <Cpu className="h-3 w-3 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Sincronização Neural v12.0</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Sincronização Neural v13.0</span>
                   </div>
                 </div>
 
@@ -234,7 +234,7 @@ export default function MetasAtividades() {
                       Arena de Atividades
                       <div className="hidden sm:flex items-center justify-center h-20 w-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow p-1 relative shadow-glow-primary/20">
                         <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">12/10</span>
+                          <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">13/10</span>
                         </div>
                       </div>
                     </h1>
@@ -304,22 +304,29 @@ export default function MetasAtividades() {
                         Arena Boss Bar
                       </span>
                       <div className="flex items-center gap-5">
-                        <div className="flex flex-col items-end">
-                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Ritmo Coletivo</span>
-                          <div className="flex items-center gap-2">
-                            <span 
-                              className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow cursor-pointer hover:scale-110 transition-transform"
-                              onClick={(e) => handleStatInteraction(e, "ritmo")}
-                            >
-                              {avgProgress.toFixed(0)}%
-                            </span>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Ritmo Coletivo</span>
+                            <div className="flex items-center gap-2">
+                              <span 
+                                className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow cursor-pointer hover:scale-110 transition-transform select-none active:scale-95"
+                                onClick={(e) => handleStatInteraction(e, "ritmo")}
+                                onMouseEnter={(e) => {
+                                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                  handleStatInteraction({ clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 } as any, "ritmo");
+                                }}
+                              >
+                                {avgProgress.toFixed(0)}%
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow flex items-center justify-center p-1 relative shadow-glow-primary/10">
-                          <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">12/10</span>
+                          <div 
+                            className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow flex items-center justify-center p-1 relative shadow-glow-primary/10 cursor-help"
+                            onMouseEnter={(e) => handleStatInteraction(e, "trophy")}
+                          >
+                            <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
+                              <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">13/10</span>
+                            </div>
                           </div>
-                        </div>
                       </div>
                     </div>
                   </div>

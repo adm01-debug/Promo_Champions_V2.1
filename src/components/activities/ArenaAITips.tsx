@@ -79,7 +79,7 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     <div className="space-y-4 animate-fade-in-up">
       <div className="flex items-center gap-2 px-1">
         <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">AI Strategy Copilot</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">AI Strategy Copilot v13.0</h3>
       </div>
       
       {tips.map(tip => (
