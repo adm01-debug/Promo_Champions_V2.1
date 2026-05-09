@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { useCreateSale } from "@/hooks/useSalesData";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useProducts } from "@/hooks/useProducts";
+import { useClients } from "@/hooks/useClients";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -57,7 +58,9 @@ export const CreateSaleDialog = () => {
   const onSubmit = (data: SaleFormData) => {
     createSale.mutate(
       {
+        client_id: data.client_id || undefined,
         client_name: data.client_name,
+        product_id: data.product_id || undefined,
         product_name: data.product_name,
         amount: parseFloat(data.amount),
         salesperson_id: data.salesperson_id || undefined,
