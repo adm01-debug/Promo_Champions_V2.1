@@ -116,6 +116,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   });
 
   const selectedActivityType = form.watch("activity_type");
+  const selectedOutcome = form.watch("outcome");
   const selectedClientId = form.watch("client_id");
   const selectedClient = clients?.find(c => c.id === selectedClientId);
 
