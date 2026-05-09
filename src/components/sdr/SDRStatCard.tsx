@@ -3,6 +3,7 @@ import { LucideIcon, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface SDRStatCardProps {
   title: string;
