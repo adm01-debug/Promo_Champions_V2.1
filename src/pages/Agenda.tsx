@@ -60,7 +60,12 @@ function NewEventDialog() {
   const [eventType, setEventType] = useState<AgendaEventType>("reminder");
   const [priority, setPriority] = useState<AgendaEventPriority>("medium");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [clientId, setClientId] = useState<string>("none");
+  const [saleId, setSaleId] = useState<string>("none");
+  
   const create = useCreateAgendaEvent();
+  const { data: clients } = useClients();
+  const { data: sales } = useSalesData();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +77,8 @@ function NewEventDialog() {
         event_type: eventType,
         priority,
         scheduled_at: new Date(scheduledAt).toISOString(),
+        client_id: clientId !== "none" ? clientId : undefined,
+        sale_id: saleId !== "none" ? saleId : undefined,
       },
       {
         onSuccess: () => {
@@ -81,6 +88,8 @@ function NewEventDialog() {
           setEventType("reminder");
           setPriority("medium");
           setScheduledAt("");
+          setClientId("none");
+          setSaleId("none");
         },
       },
     );
