@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { 
   Calculator, 
   TrendingUp, 
@@ -20,13 +22,16 @@ import {
 export const PredictiveScenarioPlanner = () => {
   const [hiring, setHiring] = useState([2]);
   const [conversionBoost, setConversionBoost] = useState([5]);
+  const [churnReduction, setChurnReduction] = useState([2]);
   
   const baseRevenue = 2500000;
   const repProductivity = 150000;
   const hiringImpact = hiring[0] * repProductivity;
   const conversionImpact = baseRevenue * (conversionBoost[0] / 100);
+  const churnImpact = baseRevenue * (churnReduction[0] / 100);
   
-  const projectedRevenue = baseRevenue + hiringImpact + conversionImpact;
+  const projectedRevenue = baseRevenue + hiringImpact + conversionImpact + churnImpact;
+
 
   return (
     <Card className="glass border-primary/20 shadow-2xl overflow-hidden">
@@ -78,6 +83,23 @@ export const PredictiveScenarioPlanner = () => {
                 className="py-2"
               />
             </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-bold flex items-center gap-2">
+                  Redução de Churn (CS Intelligence)
+                  <Info className="size-3 text-muted-foreground" />
+                </label>
+                <Badge variant="secondary" className="text-lg">-{churnReduction[0]}%</Badge>
+              </div>
+              <Slider 
+                value={churnReduction} 
+                onValueChange={setChurnReduction} 
+                max={10} 
+                step={0.5}
+                className="py-2"
+              />
+            </div>
           </div>
 
           <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10 flex flex-col justify-center items-center text-center space-y-4">
@@ -87,7 +109,7 @@ export const PredictiveScenarioPlanner = () => {
             </div>
             <div className="flex items-center gap-2 text-success font-bold">
               <TrendingUp className="size-4" />
-              +R$ {((hiringImpact + conversionImpact) / 1000).toFixed(0)}k de incremento
+              +R$ {((hiringImpact + conversionImpact + churnImpact) / 1000).toFixed(0)}k de incremento
             </div>
             <div className="grid grid-cols-2 gap-3 w-full mt-4">
               <div className="bg-background/50 p-3 rounded-xl border border-border/50">
