@@ -178,9 +178,13 @@ export default function MetasAtividades() {
                 </div>
 
                 <div className="relative">
-                  <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02]">
-                    Arena de Atividades
-                  </h1>
+                    <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02] flex items-center gap-4">
+                      Arena de Atividades
+                      <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary/20 border border-primary/30 backdrop-blur-md animate-pulse">
+                        <Zap className="h-6 w-6 text-primary fill-primary" />
+                        <span className="text-xl font-black text-primary tracking-widest italic">10/10</span>
+                      </div>
+                    </h1>
                   <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
                 </div>
                 
