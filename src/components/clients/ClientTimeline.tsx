@@ -85,17 +85,30 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
       const { data: activities, error: actError } = await supabase
         .from('activities')
         .select('*')
-        .in('sale_id', saleIds)
+        .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
         .order('created_at', { ascending: false })
         .limit(100);
 
       if (actError) throw actError;
 
+      const timelineEvents: TimelineEvent[] = [];
+
+      (interactions || []).forEach(int => {
+        timelineEvents.push({
+          id: int.id,
+          type: int.type,
+          description: int.content || activityLabels[int.type] || int.type,
+          date: new Date(int.created_at),
+          outcome: int.metadata?.outcome,
+          notes: int.content || undefined,
+        });
+      });
+
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      return (activities || []).map(act => {
+      allActivities.forEach(act => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
-        return {
+        timelineEvents.push({
           id: act.id,
           type: act.activity_type,
           description: act.notes || activityLabels[act.activity_type] || act.activity_type,
@@ -105,8 +118,10 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           notes: act.notes || undefined,
           durationMinutes: act.duration_minutes || undefined,
           relatedDeal: sale ? { id: sale.id, name: sale.product_name, status: sale.status } : undefined,
-        };
+        });
       });
+
+      return timelineEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
     },
     enabled: !!clientId && !!clientName,
     staleTime: 1000 * 60 * 5,
