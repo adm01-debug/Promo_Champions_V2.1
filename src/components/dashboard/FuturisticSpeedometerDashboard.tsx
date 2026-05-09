@@ -70,6 +70,8 @@ interface SpeedometerProps {
   delta?: number;
   size?: number;
   ticksCount?: number;
+  drilldownData?: any[];
+  explanation?: string;
 }
 
 const accentMap = {
