@@ -38,8 +38,13 @@ export function ProspectingFunnel() {
   const maxCount = Math.max(...(funnel?.map(s => s.count) || [1]));
   const totalLeads = funnel?.[0]?.count || 0;
 
+  const totalConversion = funnel && funnel.length > 1 && funnel[0].count > 0
+    ? (funnel[funnel.length - 1].count / funnel[0].count) * 100
+    : 0;
+  const animatedTotalConversion = useCountUp(totalConversion, { duration: 1400, decimals: 1 });
+
   return (
-    <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
+    <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in group">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group">
