@@ -65,7 +65,8 @@ export const CreateSaleDialog = () => {
         amount: parseFloat(data.amount),
         salesperson_id: data.salesperson_id || undefined,
         source: data.source,
-        status: "pending", // Default status
+        status: "pending",
+        sku: products?.find(p => p.id === data.product_id || p.name === data.product_name)?.sku
       },
       {
         onSuccess: () => {

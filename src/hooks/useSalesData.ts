@@ -38,6 +38,7 @@ export interface CreateSaleInput {
   category?: string;
   source?: string;
   salesperson_id?: string;
+  sku?: string;
 }
 
 const statusMap: Record<string, string> = {
