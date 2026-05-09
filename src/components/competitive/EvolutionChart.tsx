@@ -50,23 +50,35 @@ const EvolutionChartComponent: FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-base flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            Evolução Comparativa
+            <span className="gradient-text">Evolução Comparativa</span>
           </CardTitle>
-          <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5">
-            {periodOptions.map(p => (
-              <button
-                key={p.value}
-                onClick={() => setPeriod(p.value)}
-                className={cn(
-                  'px-2.5 py-1 text-xs rounded-md font-medium transition-all',
-                  period === p.value
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
+          <div className="flex items-center gap-2">
+            {!isDedicatedPage && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7 rounded-full hover:bg-primary/10 transition-colors"
+                onClick={() => navigate('/analytics/evolution')}
               >
-                {p.label}
-              </button>
-            ))}
+                <Maximize2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            <div className="flex gap-1 bg-muted/50 rounded-lg p-0.5">
+              {periodOptions.map(p => (
+                <button
+                  key={p.value}
+                  onClick={() => setPeriod(p.value)}
+                  className={cn(
+                    'px-2.5 py-1 text-xs rounded-md font-medium transition-all',
+                    period === p.value
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
