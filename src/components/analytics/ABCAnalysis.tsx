@@ -2,8 +2,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/useABCAnalysis';
-import { Package, Users, Layers } from 'lucide-react';
+import { Package, Users, Layers, Download, Filter, MousePointer2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
+import { toast } from 'sonner';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Maximize2 } from 'lucide-react';
 
 const COLORS = {
   A: 'hsl(var(--status-success))',
@@ -13,6 +18,9 @@ const COLORS = {
 
 export function ABCAnalysis() {
   const { data, isLoading } = useABCAnalysis();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/abc';
 
   if (isLoading) {
     return (
@@ -27,13 +35,62 @@ export function ABCAnalysis() {
     );
   }
 
+  const handleExport = (type: 'products' | 'clients') => {
+    const items = type === 'products' ? data?.products : data?.clients;
+    if (!items || items.length === 0) {
+      toast.error('Nenhum dado disponível para exportação');
+      return;
+    }
+
+    const exportData = items.map(item => ({
+      Nome: item.name,
+      Receita: item.revenue,
+      Percentual: `${item.percentage.toFixed(2)}%`,
+      Acumulado: `${item.cumulativePercentage.toFixed(2)}%`,
+      Classe: item.classification
+    }));
+
+    exportToCSV(exportData, `analise_abc_${type}_${new Date().toISOString().split('T')[0]}`);
+    toast.success(`Exportação de ${type === 'products' ? 'produtos' : 'clientes'} concluída`);
+  };
+
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex items-center gap-2 mb-2 group/header">
-        <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110 group-hover/header:shadow-primary/40">
-          <Layers className="h-5 w-5 text-primary-foreground" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 group/header">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110 group-hover/header:shadow-primary/40">
+            <Layers className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-lg font-display font-semibold gradient-text">Análise ABC</span>
         </div>
-        <span className="text-lg font-display font-semibold gradient-text">Análise ABC</span>
+        
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="glass gap-2 border-border/50 hover:bg-primary/10 transition-all duration-300">
+            <Filter className="h-4 w-4" />
+            Filtros
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="glass gap-2 border-border/50 hover:bg-primary/10 transition-all duration-300"
+            onClick={() => handleExport('products')}
+          >
+            <Download className="h-4 w-4" />
+            Exportar
+          </Button>
+
+          {!isDedicatedPage && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="glass gap-2 border-border/50 hover:bg-primary/10 transition-all duration-300"
+              onClick={() => navigate('/analytics/abc')}
+            >
+              <Maximize2 className="h-4 w-4" />
+              Ver Completo
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Summary Cards */}
