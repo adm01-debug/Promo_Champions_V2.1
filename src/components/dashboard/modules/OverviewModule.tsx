@@ -3,6 +3,7 @@ import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
 import { GoalProgress } from "@/components/dashboard/GoalProgress";
 import { DailyMissionsPanel } from "@/components/dashboard/DailyMissionsPanel";
+import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 
 interface OverviewModuleProps {
