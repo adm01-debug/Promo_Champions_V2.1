@@ -18,6 +18,9 @@ const COLORS = {
 
 export function ABCAnalysis() {
   const { data, isLoading } = useABCAnalysis();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/abc';
 
   if (isLoading) {
     return (
