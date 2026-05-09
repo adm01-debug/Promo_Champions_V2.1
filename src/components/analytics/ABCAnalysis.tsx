@@ -78,6 +78,18 @@ export function ABCAnalysis() {
             <Download className="h-4 w-4" />
             Exportar
           </Button>
+
+          {!isDedicatedPage && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="glass gap-2 border-border/50 hover:bg-primary/10 transition-all duration-300"
+              onClick={() => navigate('/analytics/abc')}
+            >
+              <Maximize2 className="h-4 w-4" />
+              Ver Completo
+            </Button>
+          )}
         </div>
       </div>
 
