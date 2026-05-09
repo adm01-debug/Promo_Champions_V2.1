@@ -3,6 +3,7 @@ import { LucideIcon, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface SDRStatCardProps {
   title: string;
@@ -61,6 +62,18 @@ const SDRStatCardInner = function SDRStatCard({
   const isPositive = (change ?? 0) >= 0;
   const hasSignificantChange = Math.abs(change ?? 0) >= 10;
   const styles = getVariantStyles(variant);
+  
+  const numericValue = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^\d.-]/g, ''));
+  const animatedValue = useCountUp(numericValue || 0, {
+    duration: 1400,
+    decimals: typeof value === 'string' && value.includes(".") ? 1 : 0
+  });
+
+  const displayValue = typeof value === 'string' && value.includes("%") 
+    ? `${animatedValue.toFixed(1)}%` 
+    : typeof value === 'number' 
+      ? animatedValue.toLocaleString('pt-BR') 
+      : value;
 
   return (
     <motion.div
@@ -90,10 +103,10 @@ const SDRStatCardInner = function SDRStatCard({
               </div>
               <div className="flex items-baseline gap-2">
                 <span className={cn(
-                  "text-2xl font-bold font-display transition-transform group-hover:scale-105",
+                  "text-2xl font-bold font-display transition-transform group-hover:scale-105 tabular-nums",
                   variant === "primary" ? "gradient-text" : "text-foreground"
                 )}>
-                  {value}
+                  {displayValue}
                 </span>
                 {change !== undefined && (
                   <span className={cn(

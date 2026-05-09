@@ -4,18 +4,34 @@ import { Badge } from "@/components/ui/badge";
 import { CalendarCheck, TrendingUp, TrendingDown, Sparkles, Users, ArrowRight, Zap, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface SchedulingRateGaugeProps {
   rate: number;
   change?: number;
   meetings: number;
   leads: number;
+  title?: string;
+  variant?: "primary" | "success" | "warning";
 }
 
-export function SchedulingRateGauge({ rate, change, meetings, leads }: SchedulingRateGaugeProps) {
+export function SchedulingRateGauge({ 
+  rate, 
+  change, 
+  meetings, 
+  leads,
+  title = "Target Conversion",
+  variant = "primary"
+}: SchedulingRateGaugeProps) {
   const isPositive = (change ?? 0) >= 0;
   
+  const animatedRate = useCountUp(rate, { duration: 1400, decimals: 1 });
+  const animatedMeetings = useCountUp(meetings, { duration: 1400 });
+  const animatedLeads = useCountUp(leads, { duration: 1400 });
+
   const getRateColor = (rate: number) => {
+    if (variant === "success") return "text-success";
+    if (variant === "warning") return "text-warning";
     if (rate >= 20) return "text-primary";
     if (rate >= 10) return "text-success";
     return "text-destructive";
@@ -48,7 +64,10 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
   const strokeDashoffset = circumference - (gaugePercentage / 100) * circumference;
 
   return (
-    <Card className="relative overflow-hidden border-2 border-primary/20 bg-black/60 backdrop-blur-xl group">
+    <Card className={cn(
+      "relative overflow-hidden border-2 bg-black/60 backdrop-blur-xl group h-full",
+      variant === "success" ? "border-success/20" : variant === "warning" ? "border-warning/20" : "border-primary/20"
+    )}>
       {/* Decorative corners */}
       <div className="absolute top-0 left-0 w-8 h-8 pointer-events-none">
         <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-primary/40" />
@@ -81,7 +100,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
               )}
             </div>
             <div>
-              <h2 className="text-xl font-mono font-black uppercase tracking-widest text-primary">Target Conversion</h2>
+              <h2 className={cn("text-xl font-mono font-black uppercase tracking-widest", getRateColor(rate))}>{title}</h2>
               <p className="text-[10px] font-mono font-bold text-muted-foreground tracking-[0.2em] uppercase">SDR Operational Telemetry</p>
             </div>
           </div>
@@ -127,7 +146,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                   "text-4xl font-mono font-black tracking-tighter tabular-nums",
                   getRateColor(rate)
                 )}>
-                  {rate.toFixed(1)}%
+                  {animatedRate.toFixed(1)}%
                 </span>
                 {change !== undefined && (
                   <span className={cn(
@@ -161,7 +180,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                 </div>
                 <div>
                   <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">Leads Flow</p>
-                  <p className="text-xl font-mono font-black text-foreground">{leads}</p>
+                  <p className="text-xl font-mono font-black text-foreground tabular-nums">{animatedLeads}</p>
                 </div>
               </div>
               
@@ -171,7 +190,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                 </div>
                 <div>
                   <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">Confirmed</p>
-                  <p className="text-xl font-mono font-black text-foreground">{meetings}</p>
+                  <p className="text-xl font-mono font-black text-foreground tabular-nums">{animatedMeetings}</p>
                 </div>
               </div>
             </div>

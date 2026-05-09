@@ -15,6 +15,7 @@ import { LeadSLAMonitor } from "@/components/analytics/LeadSLAMonitor";
 import { PeriodFilterButtons } from "@/components/vendedores/PeriodFilter";
 import { SDRDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { 
@@ -35,6 +36,8 @@ export default function SDRDashboard() {
   const { data: metrics, isLoading } = useSDRMetrics(period);
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
+  
+  const hasNoData = !isLoading && (!metrics || metrics.current.totalLeads === 0);
 
   return (
     <>
@@ -50,7 +53,30 @@ export default function SDRDashboard() {
       <PageTransition>
         <div className="min-h-screen bg-background">
           <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8">
-            {/* Header */}
+            {hasNoData ? (
+              <div className="flex flex-col gap-8">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                      <h1 className="text-page-title gradient-text">Dashboard SDR</h1>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Inicie sua jornada de prospecção
+                      </p>
+                    </div>
+                    <PeriodFilterButtons value={period} onChange={setPeriod} />
+                  </div>
+                </motion.div>
+                
+                <div className="h-[60vh] min-h-[400px]">
+                  <DashboardEmptyState type="conversion" hero />
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -73,20 +99,35 @@ export default function SDRDashboard() {
               </div>
             </motion.div>
 
-            {/* Scheduling Rate KPI - Destacado */}
+            {/* Hero Metrics - Gauges Row */}
             <motion.div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-xl blur-xl opacity-70" />
-                <div className="relative">
+                <div className="relative h-full">
                   <SchedulingRateGauge
                     rate={metrics?.current.schedulingRate ?? 0}
                     change={metrics?.changes.schedulingRate}
                     meetings={metrics?.current.meetingsScheduled ?? 0}
                     leads={metrics?.current.totalLeads ?? 0}
+                  />
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-success/30 via-success/10 to-success/30 rounded-xl blur-xl opacity-70" />
+                <div className="relative h-full">
+                  <SchedulingRateGauge
+                    rate={(metrics?.current.qualifiedLeads ?? 0) / (metrics?.current.totalLeads || 1) * 100}
+                    change={metrics?.changes.qualified}
+                    meetings={metrics?.current.qualifiedLeads ?? 0}
+                    leads={metrics?.current.totalLeads ?? 0}
+                    title="Qualification Efficiency"
+                    variant="success"
                   />
                 </div>
               </div>
@@ -231,6 +272,8 @@ export default function SDRDashboard() {
               <RecentProspects />
               <LeadSLAMonitor />
             </motion.div>
+            </>
+            )}
           </div>
         </div>
       </PageTransition>
