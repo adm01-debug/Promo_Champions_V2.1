@@ -712,63 +712,6 @@ export const FuturisticSpeedometerDashboard = () => {
     loadSettings();
   }, [user?.id]);
 
-  // Monitor KPIs and Trigger Alerts
-  useEffect(() => {
-    if (!kpis || !user?.id || alertFrequency !== "realtime") return;
-
-    const checkThresholds = async () => {
-      const currentOpp = kpis.current.conversionRate; // Using conversion as a proxy for Opp performance
-      const currentRet = 85; // Mocking retention for this demo context
-      
-      const newAlerts = [];
-
-      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
-        newAlerts.push({
-          title: "Meta de Oportunidades Atingida!",
-          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
-          type: "goal_achieved",
-          priority: "high",
-          metadata: { threshold: oppThreshold, actual: currentOpp }
-        });
-        setNotifiedEvents(prev => new Set(prev).add(`opp_${oppThreshold}`));
-      }
-
-      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
-        newAlerts.push({
-          title: "Alerta de Retenção",
-          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
-          type: "threshold_reached",
-          priority: "high",
-          metadata: { threshold: retThreshold, actual: currentRet }
-        });
-        setNotifiedEvents(prev => new Set(prev).add(`ret_${retThreshold}`));
-      }
-
-      for (const alertData of newAlerts) {
-        const { data, error } = await supabase
-          .from("notifications")
-          .insert({ ...alertData, user_id: user.id })
-          .select()
-          .single();
-
-        if (data) {
-          if (alertChannels.includes("toast")) {
-            toast[data.priority === 'high' ? 'success' : 'warning'](data.title, {
-              description: data.message,
-              icon: <Bell className="h-4 w-4" />
-            });
-          }
-          if (alertChannels.includes("hud")) {
-            setActiveHudAlert(data);
-            setTimeout(() => setActiveHudAlert(null), 8000);
-          }
-          setAlertHistory(prev => [data, ...prev].slice(0, 20));
-        }
-      }
-    };
-
-    checkThresholds();
-  }, [kpis, oppThreshold, retThreshold, alertFrequency, user?.id]);
 
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
@@ -935,6 +878,7 @@ export const FuturisticSpeedometerDashboard = () => {
 
     checkThresholds();
   }, [kpis, oppThreshold, retThreshold, alertFrequency, user?.id, alertChannels, notifiedEvents]);
+
 
 
   const { data: goals } = useGoalsDashboard();
@@ -1521,12 +1465,12 @@ export const FuturisticSpeedometerDashboard = () => {
                     <div className="flex gap-3">
                       <div className={cn(
                         "mt-1 p-1.5 rounded-md border shrink-0",
-                        alert.severity === 'critical' ? "bg-destructive/10 border-destructive/30 text-destructive" :
-                        alert.severity === 'warning' ? "bg-warning/10 border-warning/30 text-warning" :
+                        alert.priority === 'high' ? "bg-destructive/10 border-destructive/30 text-destructive" :
+                        alert.priority === 'high' ? "bg-warning/10 border-warning/30 text-warning" :
                         "bg-primary/10 border-primary/30 text-primary"
                       )}>
-                        {alert.severity === 'critical' ? <AlertTriangle className="h-3 w-3" /> :
-                         alert.severity === 'warning' ? <AlertTriangle className="h-3 w-3" /> :
+                        {alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
+                         alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
                          <Info className="h-3 w-3" />}
                       </div>
                       <div className="flex-1 min-w-0">
