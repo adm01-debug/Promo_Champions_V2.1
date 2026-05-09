@@ -273,4 +273,8 @@ const IntelligenceCockpit = () => {
         <StrategicRecommendations />
       </motion.div>
 
+    </div>
+  );
+};
+
 export default IntelligenceCockpit;
