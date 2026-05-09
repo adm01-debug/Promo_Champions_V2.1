@@ -132,7 +132,7 @@ export function SchedulingRateGauge({ rate, change, meetings, leads }: Schedulin
                   "text-4xl font-mono font-black tracking-tighter tabular-nums",
                   getRateColor(rate)
                 )}>
-                  {rate.toFixed(1)}%
+                  {animatedRate.toFixed(1)}%
                 </span>
                 {change !== undefined && (
                   <span className={cn(
