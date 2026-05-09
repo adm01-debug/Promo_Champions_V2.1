@@ -209,7 +209,7 @@ export const IntegrationStatusPanel = () => {
                   variant="ghost" 
                   size="sm" 
                   className="w-full h-7 text-[9px] font-mono uppercase tracking-widest border border-white/5 hover:bg-primary/10 hover:text-primary"
-                  onClick={integration.type === "email" ? testEmail : undefined}
+                  onClick={() => testIntegration(integration.type)}
                 >
                   Testar {integration.type}
                 </Button>
