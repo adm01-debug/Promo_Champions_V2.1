@@ -31,6 +31,34 @@ import { ArenaStatusBadge } from "@/components/arena/ArenaStatusBadge";
 import { EnhancedActivityCard } from "@/components/arena/EnhancedActivityCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
+
+const EmojiParticles = ({ x, y, emoji }: { x: number, y: number, emoji: string }) => {
+  return (
+    <div 
+      className="fixed pointer-events-none z-[9999]"
+      style={{ left: x, top: y }}
+    >
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
+          animate={{ 
+            scale: [0, 1.5, 0],
+            x: (Math.random() - 0.5) * 200,
+            y: (Math.random() - 0.5) * 200,
+            opacity: [1, 1, 0],
+            rotate: Math.random() * 360
+          }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="absolute text-2xl"
+        >
+          {emoji}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -46,7 +74,6 @@ export default function MetasAtividades() {
     setEmojiEffect({ x: e.clientX, y: e.clientY, emoji });
     setTimeout(() => setEmojiEffect(null), 1000);
   };
-  const { toast } = useToast();
 
   const editingSalesperson = salespeople?.find(sp => sp.id === editingId);
 
