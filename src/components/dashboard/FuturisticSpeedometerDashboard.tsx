@@ -651,6 +651,8 @@ export const FuturisticSpeedometerDashboard = () => {
     return window.localStorage.getItem(SALESPERSON_STORAGE_KEY) || ME;
   });
 
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+
   // Settings state
   const [ticksCount, setTicksCount] = useState(33);
   const [gaugeMode, setGaugeMode] = useState<"standard" | "compact" | "kilo">("standard");
