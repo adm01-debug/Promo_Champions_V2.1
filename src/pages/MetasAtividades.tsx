@@ -168,9 +168,28 @@ export default function MetasAtividades() {
                     <span className="text-4xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-glow">
                       {avgProgress.toFixed(0)}%
                     </span>
-                  </div>
+            </div>
+            {/* Global Arena Boss Bar */}
+            <div className="mt-8 space-y-2">
+              <div className="flex justify-between items-end">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/70">Objetivo Coletivo da Arena</span>
+                </div>
+                <span className="text-xs font-black text-primary italic">Status: Em Operação Nomimal</span>
+              </div>
+              <div className="h-3 w-full bg-muted/20 rounded-full overflow-hidden border border-white/5 relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div 
+                  className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-1000 ease-spring shadow-glow-primary relative" 
+                  style={{ width: `${avgProgress}%` }}
+                >
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
             </div>
           </div>
 
