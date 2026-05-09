@@ -102,6 +102,11 @@ const FeatureFlagsAdmin = () => {
             <div>
               <h1 className="text-page-title font-display">Feature Flags</h1>
               <p className="text-sm text-muted-foreground mt-1">Controle de funcionalidades com rollout progressivo</p>
+              {testFlag && (
+                <Badge variant="outline" className="mt-2 bg-primary/10 border-primary/20 text-primary animate-pulse">
+                  Modo Experimental Ativado
+                </Badge>
+              )}
             </div>
             <Button onClick={() => setShowAdd(!showAdd)} size="sm" className="gap-2">
               <Plus className="h-4 w-4" /> Nova Flag
