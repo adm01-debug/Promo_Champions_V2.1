@@ -17,6 +17,7 @@ import {
   LayoutDashboard
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export const ScenarioSimulator = () => {
   const [pipeline, setPipeline] = useState([70]);
