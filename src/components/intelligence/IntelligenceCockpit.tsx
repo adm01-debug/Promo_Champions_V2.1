@@ -237,28 +237,9 @@ const IntelligenceCockpit = () => {
 
         <div className="space-y-4">
           <Card className="p-6 border-border/40 bg-card/50">
-            <h3 className="font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-xs text-muted-foreground">
-              <AlertCircle className="size-4 text-destructive" />
-              Prioridades do Gestor (AI)
-            </h3>
-            <div className="space-y-4">
-              {[
-                { label: "Deal Stalled", desc: "Acme Corp parado há 12 dias", color: "text-amber-500", bg: "bg-amber-500/10" },
-                { label: "Risco de Churn", desc: "Cliente 'Global Tech' reduziu uso em 30%", color: "text-rose-500", bg: "bg-rose-500/10" },
-                { label: "Pipeline Gap", desc: "Necessário +R$ 400k para atingir meta", color: "text-blue-500", bg: "bg-blue-500/10" },
-                { label: "Coaching Ops", desc: "SDR João com 15% win-rate em calls", color: "text-purple-500", bg: "bg-purple-500/10" }
-              ].map((alert, i) => (
-                <div key={i} className="flex gap-3 p-3 rounded-xl hover:bg-secondary/30 transition-all border border-transparent hover:border-border/40 group cursor-pointer">
-                  <div className={`w-1 rounded-full ${alert.color.replace('text', 'bg')} transition-all group-hover:w-1.5`} />
-                  <div>
-                    <p className={`text-[10px] font-black uppercase ${alert.color}`}>{alert.label}</p>
-                    <p className="text-xs font-medium text-foreground mt-0.5">{alert.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest h-9">
-              Abrir Central de Alertas
+            <ActivityPulse />
+            <Button variant="outline" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest h-9 border-white/5 bg-white/5 hover:bg-white/10">
+              Ver Histórico Completo
             </Button>
           </Card>
 
