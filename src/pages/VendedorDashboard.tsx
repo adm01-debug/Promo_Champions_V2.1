@@ -158,10 +158,10 @@ const VendedorDashboard = () => {
   const pendingSales = currentSales.filter(s => s.status === "pending" || s.status === "negotiation");
   const pipelineValue = pendingSales.reduce((sum, s) => sum + Number(s.amount), 0);
 
-  const animatedRevenue = useCountUp({ end: totalRevenue, duration: 1.4 });
-  const animatedCommission = useCountUp({ end: commission, duration: 1.4 });
-  const animatedPipeline = useCountUp({ end: pipelineValue, duration: 1.4 });
-  const animatedGoal = useCountUp({ end: goal, duration: 1.4 });
+  const animatedRevenue = useCountUp(totalRevenue, { duration: 1400 });
+  const animatedCommission = useCountUp(commission, { duration: 1400 });
+  const animatedPipeline = useCountUp(pipelineValue, { duration: 1400 });
+  const animatedGoal = useCountUp(goal, { duration: 1400 });
 
   const salesByDay: Record<string, number> = {};
   completedSales.forEach(sale => { const day = format(parseISO(sale.created_at), "dd/MM"); salesByDay[day] = (salesByDay[day] || 0) + Number(sale.amount); });
