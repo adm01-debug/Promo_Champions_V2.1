@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Activity, Users } from "lucide-react";
+import { TrendingUp, Activity, Users, Zap } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell,
@@ -13,15 +13,17 @@ interface LeadsByDay { day: string; generated: number; qualified: number; }
 interface ActivitiesByDay { day: string; count: number; }
 interface FunnelStage { stage: string; count: number; percentage: number; }
 interface LeadSource { source: string; count: number; }
+interface OutcomeByChannel { channel: string; connections: number; scheduling: number; qualification: number; total: number; }
 
 interface BISDRChartsProps {
   leadsByDay?: LeadsByDay[];
   activitiesByDay?: ActivitiesByDay[];
   conversionFunnel?: FunnelStage[];
   leadsBySource?: LeadSource[];
+  outcomesByChannel?: OutcomeByChannel[];
 }
 
-export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activitiesByDay, conversionFunnel, leadsBySource }: BISDRChartsProps) {
+export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activitiesByDay, conversionFunnel, leadsBySource, outcomesByChannel }: BISDRChartsProps) {
   const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" };
 
   return (
@@ -114,6 +116,34 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
           </CardContent>
         </Card>
       </div>
+
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="text-lg font-display flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-primary">
+              <Zap className="h-4 w-4 text-white" />
+            </div>
+            Efetividade por Canal & Desfecho
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {outcomesByChannel && outcomesByChannel.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={outcomesByChannel} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis dataKey="channel" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="connections" name="Conectou" fill="hsl(var(--primary))" stackId="a" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="scheduling" name="Agendou" fill="hsl(var(--success))" stackId="a" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="qualification" name="Qualificou" fill="hsl(var(--chart-4))" stackId="a" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Sem dados de efetividade</div>
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 });

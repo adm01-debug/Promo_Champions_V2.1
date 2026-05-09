@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Sparkles, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
@@ -52,6 +53,11 @@ const activitySchema = z.object({
     z.number().min(1, "Duração mínima é 1 minuto").max(480, "Duração máxima é 8 horas").optional()
   ),
   notes: z.string().max(1000, "Observações devem ter no máximo 1000 caracteres").optional(),
+  // MQL Qualification Fields
+  pain_points: z.string().optional(),
+  budget_range: z.string().optional(),
+  timeline: z.string().optional(),
+  decision_criteria: z.string().optional(),
 });
 
 type ActivityFormData = z.infer<typeof activitySchema>;
@@ -70,6 +76,33 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   const [salespersonOpen, setSalespersonOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
 
+  const templates: Record<ActivityType, { label: string; text: string }[]> = {
+    call: [
+      { label: "Caixa Postal", text: "Deixado recado na caixa postal. Agendado novo follow-up." },
+      { label: "Qualificação BANT", text: "Budget: \nAuthority: \nNeed: \nTimeline: " },
+      { label: "Conexão Sucedida", text: "Conversamos sobre [DOR]. Demonstrou interesse em [PRODUTO]." }
+    ],
+    email: [
+      { label: "Follow-up #1", text: "Olá [NOME], estou acompanhando nosso último contato sobre [ASSUNTO]..." },
+      { label: "Cold Outreach", text: "Vi que você atua com [SETOR] e gostaria de compartilhar como ajudamos..." }
+    ],
+    linkedin: [
+      { label: "Pedido Conexão", text: "Olá [NOME], acompanho seu trabalho em [EMPRESA] e gostaria de conectar." },
+      { label: "Mensagem InMail", text: "Notei seu interesse em [ASSUNTO] e acredito que podemos colaborar..." }
+    ],
+    whatsapp: [
+      { label: "Confirmar Reunião", text: "Oi [NOME], passando para confirmar nossa reunião hoje às [HORA]. Podemos manter?" },
+      { label: "Follow-up Rápido", text: "Conseguiu dar uma olhada no material que te enviei por e-mail?" }
+    ],
+    meeting: [
+      { label: "Ata de Reunião", text: "Participantes: \nPrincipais pontos: \nPróximos passos: " }
+    ],
+    note: [
+      { label: "Insight ICP", text: "Cliente se encaixa perfeitamente no perfil de [SEGMENTO] devido a [RAZÃO]." }
+    ],
+    other: []
+  };
+
   const form = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
     defaultValues: {
@@ -84,8 +117,15 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   });
 
   const selectedActivityType = form.watch("activity_type");
+  const selectedOutcome = form.watch("outcome");
   const selectedClientId = form.watch("client_id");
   const selectedClient = clients?.find(c => c.id === selectedClientId);
+
+  const applyTemplate = (text: string) => {
+    const currentNotes = form.getValues("notes");
+    form.setValue("notes", currentNotes ? `${currentNotes}\n\n${text}` : text);
+    toast.success("Template aplicado!");
+  };
 
   const handleOpenWhatsApp = () => {
     const phone = selectedClient?.phone;
@@ -99,13 +139,27 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   };
 
   const handleSubmit = (data: ActivityFormData) => {
+    // Merge qualification fields into notes if they exist
+    let finalNotes = data.notes || "";
+    if (data.outcome === "qualified") {
+      const qualData = [];
+      if (data.pain_points) qualData.push(`Dores: ${data.pain_points}`);
+      if (data.budget_range) qualData.push(`Budget: ${data.budget_range}`);
+      if (data.timeline) qualData.push(`Timeline: ${data.timeline}`);
+      if (data.decision_criteria) qualData.push(`Critérios: ${data.decision_criteria}`);
+      
+      if (qualData.length > 0) {
+        finalNotes = `[QUALIFICAÇÃO MQL]\n${qualData.join("\n")}\n\n---\n${finalNotes}`;
+      }
+    }
+
     createActivity.mutate({
       sale_id: saleId || undefined,
       client_id: data.client_id || undefined,
       salesperson_id: data.salesperson_id || undefined,
       activity_type: data.activity_type,
       outcome: data.outcome,
-      notes: data.notes || undefined,
+      notes: finalNotes || undefined,
       duration_minutes: data.duration_minutes,
       contact_name: data.contact_name || undefined,
     }, {
@@ -115,6 +169,10 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
           notes: "",
           duration_minutes: undefined,
           contact_name: "",
+          pain_points: "",
+          budget_range: "",
+          timeline: "",
+          decision_criteria: "",
         });
         onSuccess?.();
       }
@@ -165,6 +223,71 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
                 </FormItem>
               )}
             />
+
+            {/* Qualification MQL Fields */}
+            {selectedOutcome === "qualified" && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-3 overflow-hidden"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-primary">Qualificação de Lead (MQL)</h3>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="pain_points"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Dores / Desafios</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: Baixa conversão" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="budget_range"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Budget Estimado</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: R$ 10k-50k" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="timeline"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Timeline</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: 3 meses" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="decision_criteria"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Critérios de Decisão</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: Preço, ROI" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+            )}
 
             {/* Outcome */}
             <FormField
@@ -357,38 +480,61 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               />
             </div>
 
-            {/* Notes */}
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
-                    Observações
-                    {selectedActivityType === "whatsapp" && selectedClientId && (
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-6 text-[10px] gap-1 text-primary hover:text-primary-glow"
-                        onClick={handleOpenWhatsApp}
-                      >
-                        <MessageCircle className="h-3 w-3" />
-                        Enviar no WhatsApp
-                      </Button>
-                    )}
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder={selectedActivityType === "whatsapp" ? "Escreva a mensagem para enviar..." : "Detalhes da atividade..."}
-                      className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            {/* Notes & Templates */}
+            <div className="space-y-3">
+              {templates[selectedActivityType].length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {templates[selectedActivityType].map((tmpl, idx) => (
+                    <Button
+                      key={idx}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-[10px] px-2 py-0 border-primary/20 hover:border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary-foreground/80 flex items-center gap-1.5"
+                      onClick={() => applyTemplate(tmpl.text)}
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      {tmpl.label}
+                    </Button>
+                  ))}
+                </div>
               )}
-            />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="h-3 w-3 text-primary" />
+                        Observações
+                      </div>
+                      {selectedActivityType === "whatsapp" && selectedClientId && (
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-[10px] gap-1 text-primary hover:text-primary-glow"
+                          onClick={handleOpenWhatsApp}
+                        >
+                          <MessageCircle className="h-3 w-3" />
+                          Enviar no WhatsApp
+                        </Button>
+                      )}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder={selectedActivityType === "whatsapp" ? "Escreva a mensagem para enviar..." : "Detalhes da atividade..."}
+                        className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button 
               variant="glow"

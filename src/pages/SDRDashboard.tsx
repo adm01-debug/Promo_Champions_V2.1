@@ -18,6 +18,8 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { DialerQueueCard } from "@/components/dialer/DialerQueueCard";
+import { CurrentCallCard } from "@/components/dialer/CurrentCallCard";
 import { 
   Users, 
   UserCheck, 
@@ -28,12 +30,39 @@ import {
   Phone,
   Snowflake,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from "lucide-react";
+
+import { useDialerQueues, useRebuildQueue, useNextItem } from "@/hooks/dialer/usePowerDialer";
+import { toast } from "sonner";
 
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const { data: metrics, isLoading } = useSDRMetrics(period);
+  
+  // Dialer State
+  const [activeQueueId, setActiveQueueId] = useState<string | null>(null);
+  const [currentItem, setCurrentItem] = useState<{ item_id: string; sale_id: string; score: number } | null>(null);
+  
+  const { data: queues } = useDialerQueues();
+  const rebuildQueue = useRebuildQueue();
+  const nextItem = useNextItem();
+
+  const handleStartQueue = async (queueId: string) => {
+    setActiveQueueId(queueId);
+    try {
+      const item = await nextItem.mutateAsync(queueId);
+      if (item) {
+        setCurrentItem({ item_id: item.item_id, sale_id: item.sale_id, score: item.score });
+        toast.success("Modo Power Dialer Ativado!");
+      } else {
+        toast.info("Fila vazia. Adicione leads ou reconstrua a fila.");
+      }
+    } catch (err) {
+      toast.error("Erro ao iniciar fila");
+    }
+  };
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
   
@@ -229,12 +258,71 @@ export default function SDRDashboard() {
               />
             </motion.div>
 
+            {/* Dialer & Power Mode */}
+            <motion.div 
+              className="space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <div className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary animate-pulse" />
+                <h2 className="text-lg font-bold gradient-text">Power Dialer</h2>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-4">
+                  {queues && queues.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {queues.map((queue) => (
+                        <DialerQueueCard 
+                          key={queue.id}
+                          queue={queue}
+                          isActive={activeQueueId === queue.id}
+                          onSelect={() => setActiveQueueId(queue.id)}
+                          onRebuild={() => rebuildQueue.mutate(queue.id)}
+                          onStart={() => handleStartQueue(queue.id)}
+                          rebuilding={rebuildQueue.isPending}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center glass rounded-xl border border-dashed border-border/50">
+                      <p className="text-sm text-muted-foreground">Nenhuma fila de prospecção configurada.</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="relative">
+                  {currentItem ? (
+                    <CurrentCallCard 
+                      itemId={currentItem.item_id}
+                      saleId={currentItem.sale_id}
+                      score={currentItem.score}
+                      onSkip={async () => {
+                        if (activeQueueId) {
+                          const item = await nextItem.mutateAsync(activeQueueId);
+                          setCurrentItem(item ? { item_id: item.item_id, sale_id: item.sale_id, score: item.score } : null);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center p-8 glass rounded-xl border border-border/30 bg-muted/5 text-center">
+                      <Phone className="h-10 w-10 text-muted-foreground/30 mb-3" />
+                      <p className="text-sm font-medium text-muted-foreground">Nenhuma chamada ativa</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-1">Inicie uma fila para começar a prospecção acelerada</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
             {/* Main Grid */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-2 gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.5, delay: 0.45 }}
             >
               <ProspectingFunnel />
               <LeadTemperatureChart />
