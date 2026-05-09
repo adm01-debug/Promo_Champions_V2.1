@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flame, Clock, Activity, ChevronDown, Sparkles } from "lucide-react";
+import { Flame, Clock, Activity, ChevronDown, Sparkles, Lightbulb } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AtRiskDeal } from "@/hooks/useAtRiskDeals";
 
@@ -62,7 +62,20 @@ export const DealRow = React.memo(function DealRow({ deal, onAnalyze, isAnalyzin
               <Badge key={idx} variant="outline" className="text-xs bg-muted/30 border-border/50 shadow-sm animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>{factor}</Badge>
             ))}
           </div>
-          <div className="flex items-center justify-between text-sm">
+
+          {deal.suggestedAction && (
+            <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3 animate-fade-in shadow-inner">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Lightbulb className="h-4 w-4 text-primary animate-pulse" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary">Ação Sugerida</p>
+                <p className="text-xs font-bold">{deal.suggestedAction}</p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between text-sm pt-1">
             <span className="text-muted-foreground">Vendedor: <span className="text-foreground font-medium">{deal.salespersonName}</span></span>
             <Button size="sm" variant="glow" className="shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleAnalyze(); }} disabled={isAnalyzing}>
               <Sparkles className={`h-4 w-4 mr-1 ${isAnalyzing ? "animate-pulse text-primary-foreground" : ""}`} />Analisar com IA
