@@ -85,6 +85,7 @@ export const sdrGroupedItems: MenuGroup[] = [
   {
     label: "Análises", icon: Gauge,
     items: [
+      { title: "Competências", url: "/competencias", icon: Brain },
       { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
