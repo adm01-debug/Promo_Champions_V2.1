@@ -13,6 +13,8 @@ export interface Product {
   status: string;
   rating: number;
   sales_count: number;
+  sku?: string;
+  stock_quantity?: number;
   created_at: string;
   updated_at: string;
 }
