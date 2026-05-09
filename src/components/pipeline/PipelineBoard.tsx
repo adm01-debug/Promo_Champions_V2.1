@@ -237,17 +237,17 @@ export const PipelineBoard = () => {
         
         <div className="flex gap-12 relative z-10">
           <div className="flex flex-col">
-            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Active Commands</span>
+            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Comandos Ativos</span>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-display font-black tracking-tighter">{totalDeals}</span>
-              <span className="text-[10px] font-bold text-emerald-500 uppercase">Deployed</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase">Implementados</span>
             </div>
           </div>
           
           <div className="hidden sm:flex items-center">
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Pipeline Liquidity</span>
+              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Liquidez do Pipeline</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-display font-black tracking-tighter gradient-text">
                   {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(totalValue)}
@@ -268,7 +268,7 @@ export const PipelineBoard = () => {
               disabled={calculateScores.isPending}
             >
               <Zap className={cn("h-3.5 w-3.5 mr-2", calculateScores.isPending ? "animate-pulse" : "fill-current")} />
-              Analyze Leads
+              Analisar Leads
             </Button>
           )}
           <Button
@@ -279,7 +279,7 @@ export const PipelineBoard = () => {
             disabled={isRefetching}
           >
             <RefreshCw className={cn("h-3.5 w-3.5 mr-2", isRefetching ? "animate-spin" : "")} />
-            Sync
+            Sincronizar
           </Button>
         </div>
       </div>
