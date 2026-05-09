@@ -187,6 +187,7 @@ const Vendas = () => {
                     </tr>
                   </thead>
                   <tbody>
+                    {paginatedItems.map((sale, index) => (
                       <tr 
                         key={sale.fullId || sale.id} 
                         className="border-b border-border/30 hover:bg-muted/30 transition-colors"
