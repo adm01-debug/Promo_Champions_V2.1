@@ -21,6 +21,9 @@ import { MetasAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadi
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { ArenaPulseFeed } from "@/components/activities/ArenaPulseFeed";
+import { ActivityVersusDuel } from "@/components/activities/ActivityVersusDuel";
+import { PredictiveVelocity } from "@/components/activities/PredictiveVelocity";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
