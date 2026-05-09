@@ -14,12 +14,12 @@ import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 const statusColors: Record<string, string> = {
-  concluída: "bg-status-success/20 text-status-success border-status-success/30",
-  pendente: "bg-warning/20 text-warning border-warning/30",
-  cancelada: "bg-destructive/20 text-destructive border-destructive/30",
-  qualificada: "bg-primary/20 text-primary border-primary/30",
-  proposta: "bg-secondary/20 text-secondary border-secondary/30",
-  negociação: "bg-accent/20 text-accent border-accent/30",
+  completed: "bg-status-success/20 text-status-success border-status-success/30",
+  pending: "bg-warning/20 text-warning border-warning/30",
+  lost: "bg-destructive/20 text-destructive border-destructive/30",
+  qualified: "bg-primary/20 text-primary border-primary/30",
+  proposal: "bg-secondary/20 text-secondary border-secondary/30",
+  negotiation: "bg-accent/20 text-accent border-accent/30",
 };
 
 const sortOptions: SortOption[] = [
@@ -31,9 +31,12 @@ const sortOptions: SortOption[] = [
 ];
 
 const statusOptions = [
-  { label: "Concluída", value: "concluída" },
-  { label: "Pendente", value: "pendente" },
-  { label: "Cancelada", value: "cancelada" },
+  { label: "Pendente", value: "pending" },
+  { label: "Qualificada", value: "qualified" },
+  { label: "Proposta", value: "proposal" },
+  { label: "Negociação", value: "negotiation" },
+  { label: "Concluída", value: "completed" },
+  { label: "Perdida", value: "lost" },
 ];
 
 const Vendas = () => {

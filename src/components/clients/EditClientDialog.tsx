@@ -73,7 +73,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         phone: client.phone || "",
         company: client.company || "",
         total_value: client.total_value?.toString() || "0",
-        lead_source: client.lead_source || "",
+        lead_source: (client as any).lead_source || "",
       });
     }
   }, [client, form]);
