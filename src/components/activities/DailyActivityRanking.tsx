@@ -186,7 +186,12 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                       }`}>
                         {sp.progress.overall.toFixed(0)}%
                       </div>
-                      <div className="text-[10px] text-muted-foreground font-medium">progresso</div>
+                      <div className="flex items-center justify-end gap-1">
+                        <div className="h-1 w-8 bg-muted/30 rounded-full overflow-hidden">
+                           <div className="h-full bg-primary" style={{ width: `${sp.progress.overall}%` }} />
+                        </div>
+                        <span className="text-[8px] text-muted-foreground font-black uppercase tracking-tighter">progresso</span>
+                      </div>
                     </div>
                   </div>
                 );
