@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useObjectionsLibrary, useAddObjection, useUpdateObjection, useIncrementObjectionUsage, useDeleteObjection } from '@/hooks/useObjectionsLibrary';
-import { BookOpen, Plus, Copy, Trash2, Search, ThumbsUp, MessageSquare, CheckCircle2, Sparkles, Tag, Star, Edit3, X, Filter, BarChart3, TrendingUp, Maximize2 } from 'lucide-react';
+import { BookOpen, Plus, Copy, Trash2, Search, ThumbsUp, MessageSquare, CheckCircle2, Sparkles, Tag, Star, Edit3, X, Filter, BarChart3, TrendingUp, Maximize2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Slider } from '@/components/ui/slider';
