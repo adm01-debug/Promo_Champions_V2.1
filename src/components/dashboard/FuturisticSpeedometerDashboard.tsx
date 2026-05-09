@@ -669,6 +669,7 @@ export const FuturisticSpeedometerDashboard = () => {
   const [alertEvents, setAlertEvents] = useState<string[]>(["threshold_reached"]);
   const [alertHistory, setAlertHistory] = useState<any[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
+  const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
 
 
   // Persistence logic
