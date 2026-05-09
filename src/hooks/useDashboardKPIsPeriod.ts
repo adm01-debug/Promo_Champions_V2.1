@@ -18,7 +18,7 @@ import {
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export type KPIPeriod = "week" | "current_month" | "last_month" | "quarter" | "year";
+export type KPIPeriod = "week" | "current_month" | "last_month" | "quarter";
 
 interface KPIData {
   totalRevenue: number;
@@ -72,13 +72,6 @@ const getRanges = (period: KPIPeriod) => {
         curEnd: endOfQuarter(now),
         prevStart: startOfQuarter(subQuarters(now, 1)),
         prevEnd: endOfQuarter(subQuarters(now, 1)),
-      };
-    case "year":
-      return {
-        curStart: startOfYear(now),
-        curEnd: endOfYear(now),
-        prevStart: startOfYear(subYears(now, 1)),
-        prevEnd: endOfYear(subYears(now, 1)),
       };
   }
 };
@@ -177,9 +170,7 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
 };
 
 export const PERIOD_LABELS: Record<KPIPeriod, { label: string; comparison: string }> = {
-  week: { label: "Semana Atual", comparison: "Semana Anterior" },
-  current_month: { label: "Mês Atual", comparison: "Mês Anterior" },
-  last_month: { label: "Último Mês", comparison: "Mês Anterior" },
+  week: { label: "Semana", comparison: "Semana Anterior" },
+  current_month: { label: "Mês", comparison: "Mês Anterior" },
   quarter: { label: "Trimestre", comparison: "Trimestre Anterior" },
-  year: { label: "Ano", comparison: "Ano Anterior" },
 };
