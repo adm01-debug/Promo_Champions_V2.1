@@ -99,6 +99,7 @@ export const ABCAnalysisPage = lazy(() => import("@/pages/ABCAnalysisPage"));
 export const ClosingTimePage = lazy(() => import("@/pages/ClosingTimePage"));
 export const DealVelocityPage = lazy(() => import("@/pages/DealVelocityPage"));
 export const EvolutionCurvesPage = lazy(() => import("@/pages/EvolutionCurvesPage"));
+export const ObjectionsLibraryPage = lazy(() => import("@/pages/ObjectionsLibraryPage"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
