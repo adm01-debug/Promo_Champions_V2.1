@@ -277,9 +277,7 @@ const Clientes = () => {
                       <div className="space-y-0.5">
                         <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Total Lifecycle</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="font-display font-black text-xl text-primary tracking-tighter">
-                            R$ {Number(client.total_value).toLocaleString("pt-BR", { notation: 'compact' })}
-                          </span>
+                          <TotalValueDisplay value={Number(client.total_value)} />
                           <span className="text-[9px] font-bold text-emerald-500 uppercase">Valued</span>
                         </div>
                       </div>
