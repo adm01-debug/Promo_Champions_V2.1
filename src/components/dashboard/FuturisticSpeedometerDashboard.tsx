@@ -293,23 +293,6 @@ const Speedometer = ({
                   <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
                 </circle>
               </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <div
-                  className={cn("font-mono font-black tabular-nums tracking-tighter leading-none transition-all duration-300", colors.text)}
-                  style={{
-                    fontSize: s * 0.32,
-                    textShadow: theme === "cyber" ? `0 0 40px ${colors.glow}, 0 0 80px ${colors.glow}, 0 0 120px ${colors.glow}` : "none",
-                  }}
-                >
-                  {displayValue}
-                </div>
-                <div 
-                  className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em] mt-1"
-                  style={{ fontSize: Math.max(7, s * 0.035) }}
-                >
-                  max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
-                </div>
-              </div>
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-popover/95 backdrop-blur-xl border-primary/20 p-3 shadow-2xl">
@@ -340,6 +323,24 @@ const Speedometer = ({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+      <div className="mt-4 flex flex-col items-center gap-1 w-full">
+        <div
+          className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
+          style={{
+            fontSize: Math.max(22, s * 0.16),
+            textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
+          }}
+        >
+          {displayValue}
+        </div>
+        <div
+          className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
+          style={{ fontSize: Math.max(8, s * 0.04) }}
+        >
+          max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+        </div>
+      </div>
     </motion.div>
   );
 };
