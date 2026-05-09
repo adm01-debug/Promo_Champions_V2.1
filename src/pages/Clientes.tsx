@@ -24,6 +24,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
 import { useCountUp } from "@/hooks/useCountUp";
+import { useClientPredictions } from "@/hooks/useClientPredictions";
+import { Sparkles, Zap, TrendingUp, Clock, ShieldAlert, BrainCircuit } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
