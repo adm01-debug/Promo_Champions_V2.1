@@ -389,13 +389,31 @@ const Speedometer = ({
               <div>
                 <DialogTitle className="text-xl font-display font-bold">{label}</DialogTitle>
                 <DialogDescription className="text-sm font-medium mt-0.5">
-                  Análise Detalhada de Performance e Origem dos Dados
+                  Análise Detalhada e Origem dos Dados
                 </DialogDescription>
               </div>
             </div>
-            <Badge variant="outline" className={cn("px-3 py-1 font-mono uppercase tracking-wider border-current/20", statusColor, "bg-current/10")}>
-              Status: {statusLabel}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 p-1 bg-muted/40 rounded-lg border border-border/40">
+                {PERIOD_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setDrilldownPeriod(opt.value)}
+                    className={cn(
+                      "px-2 py-1 text-[9px] font-mono uppercase tracking-wider rounded transition-all",
+                      drilldownPeriod === opt.value 
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                    )}
+                  >
+                    {opt.label.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+              <Badge variant="outline" className={cn("px-3 py-1 font-mono uppercase tracking-wider border-current/20", statusColor, "bg-current/10")}>
+                {statusLabel}
+              </Badge>
+            </div>
           </div>
         </DialogHeader>
 
