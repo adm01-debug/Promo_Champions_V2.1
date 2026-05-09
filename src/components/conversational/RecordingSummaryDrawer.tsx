@@ -94,7 +94,12 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
               objections={(rec.objections_summary as Objection[]) ?? []}
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
-            <SentimentTimelineChart recordingId={rec.id} moments={moments ?? []} />
+            <IntentTracker recordingId={rec.id} intents={derivedIntents} />
+            <SentimentTimelineChart 
+              recordingId={rec.id} 
+              moments={moments ?? []} 
+              intents={derivedIntents} 
+            />
             <ConversationMetricsCard recordingId={rec.id} />
             <QuestionQualityCard recordingId={rec.id} />
             <ObjectionHandlingCard recordingId={rec.id} />
