@@ -22,12 +22,14 @@ import {
 } from "./sentimentHelpers";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { severityHexColor, type CriticalMoment } from "./criticalMomentsHelpers";
+import type { Intent } from "./IntentTracker";
 
 interface Props {
   recordingId: string;
   currentTime?: number;
   onSeek?: (sec: number) => void;
   moments?: CriticalMoment[];
+  intents?: Intent[];
 }
 
 const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
