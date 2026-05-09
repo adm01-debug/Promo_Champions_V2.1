@@ -94,11 +94,23 @@ export const ClosingTimeChart: FC = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Timer className="h-4 w-4 text-primary" />
-            Tempo Médio de Fechamento
+            <span className="gradient-text">Tempo Médio de Fechamento</span>
           </CardTitle>
-          <Badge variant="outline" className="text-xs">
-            {totalDeals} deals
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs bg-muted/50">
+              {totalDeals} deals
+            </Badge>
+            {!isDedicatedPage && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7 rounded-full hover:bg-primary/10 transition-colors"
+                onClick={() => navigate('/analytics/closing-time')}
+              >
+                <Maximize2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
