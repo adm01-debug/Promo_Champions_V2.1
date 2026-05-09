@@ -80,9 +80,9 @@ const Clientes = () => {
         case "name_desc":
           return b.name.localeCompare(a.name);
         case "value_desc":
-          return Number(b.total_value) - Number(a.total_value);
+          return Number(b.total_value || 0) - Number(a.total_value || 0);
         case "value_asc":
-          return Number(a.total_value) - Number(b.total_value);
+          return Number(a.total_value || 0) - Number(b.total_value || 0);
         case "date_desc":
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case "date_asc":
@@ -278,7 +278,7 @@ const Clientes = () => {
                       <div className="space-y-0.5">
                         <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Total Lifecycle</span>
                         <div className="flex items-baseline gap-1">
-                          <TotalValueDisplay value={Number(client.total_value)} />
+                          <TotalValueDisplay value={Number(client.total_value || 0)} />
                           <span className="text-[9px] font-bold text-emerald-500 uppercase">Valued</span>
                         </div>
                       </div>
