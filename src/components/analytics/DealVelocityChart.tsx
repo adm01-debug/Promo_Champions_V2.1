@@ -79,9 +79,19 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
               </Badge>
             )}
             {hasData && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-muted/50 border-border/30">
                 {totalDeals} deals analisados
               </Badge>
+            )}
+            {!isDedicatedPage && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-full hover:bg-primary/10 transition-colors"
+                onClick={() => navigate('/analytics/deal-velocity')}
+              >
+                <Maximize2 className="h-4 w-4" />
+              </Button>
             )}
           </div>
         </div>
