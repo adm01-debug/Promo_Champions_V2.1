@@ -17,8 +17,17 @@ import { WinLossInsightsPanel } from "@/components/deal-intelligence/winloss/Win
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
 import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
+import { RelationshipHealthGraph } from "@/components/deal-intelligence/committee/RelationshipHealthGraph";
+import { useState } from "react";
+import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
 
 export default function DealIntelligence() {
+  const { data: weakDeals } = useWeakCoverageDeals();
+  const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
+  
+  // Use first weak deal as default for the graph if none selected
+  const displaySaleId = selectedSaleId || weakDeals?.[0]?.sale_id;
+
   return (
     <>
       <Helmet>
@@ -77,8 +86,15 @@ export default function DealIntelligence() {
                 <StalledDealsTable />
               </TabsContent>
               <TabsContent value="committee" className="mt-4 space-y-4">
-                <CommitteeInsightsPanel />
-                <WeakCoverageDealsTable />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div className="lg:col-span-1">
+                    <CommitteeInsightsPanel />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <RelationshipHealthGraph saleId={displaySaleId} />
+                  </div>
+                </div>
+                <WeakCoverageDealsTable onSelectDeal={(id) => setSelectedSaleId(id)} />
               </TabsContent>
               <TabsContent value="velocity" className="mt-4 space-y-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
