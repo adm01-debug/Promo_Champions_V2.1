@@ -158,6 +158,11 @@ const VendedorDashboard = () => {
   const pendingSales = currentSales.filter(s => s.status === "pending" || s.status === "negotiation");
   const pipelineValue = pendingSales.reduce((sum, s) => sum + Number(s.amount), 0);
 
+  const animatedRevenue = useCountUp({ end: totalRevenue, duration: 1.4 });
+  const animatedCommission = useCountUp({ end: commission, duration: 1.4 });
+  const animatedPipeline = useCountUp({ end: pipelineValue, duration: 1.4 });
+  const animatedGoal = useCountUp({ end: goal, duration: 1.4 });
+
   const salesByDay: Record<string, number> = {};
   completedSales.forEach(sale => { const day = format(parseISO(sale.created_at), "dd/MM"); salesByDay[day] = (salesByDay[day] || 0) + Number(sale.amount); });
   const chartData = Object.entries(salesByDay).map(([day, value]) => ({ day, value }));
@@ -184,14 +189,28 @@ const VendedorDashboard = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { title: "Faturamento", value: `R$ ${totalRevenue.toLocaleString("pt-BR")}`, change: Number(revenueChange.toFixed(1)), icon: DollarSign, variant: "primary" as const, delay: "100ms" },
-                { title: "Meta", value: `R$ ${goal.toLocaleString("pt-BR")}`, icon: Target, variant: "default" as const, delay: "150ms" },
-                { title: "Comissão", value: `R$ ${commission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, icon: TrendingUp, variant: "success" as const, delay: "200ms" },
-                { title: "Pipeline", value: `R$ ${pipelineValue.toLocaleString("pt-BR")}`, icon: ShoppingBag, variant: "default" as const, delay: "250ms" },
+                { title: "Faturamento Mensal", value: animatedRevenue.toLocaleString("pt-BR"), numericValue: totalRevenue, change: Number(revenueChange.toFixed(1)), icon: DollarSign, variant: "primary" as const, delay: "100ms", isHero: true },
+                { title: "Comissão Estimada", value: `R$ ${animatedCommission.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, icon: TrendingUp, variant: "success" as const, delay: "200ms" },
+                { title: "Meta Individual", value: `R$ ${animatedGoal.toLocaleString("pt-BR")}`, icon: Target, variant: "default" as const, delay: "150ms" },
+                { title: "Pipeline Ativo", value: `R$ ${animatedPipeline.toLocaleString("pt-BR")}`, icon: ShoppingBag, variant: "default" as const, delay: "250ms" },
               ].map((stat) => (
-                <div key={stat.title} className="opacity-0 animate-fade-in-up" style={{ animationDelay: stat.delay }}>
-                  <StatCard title={stat.title} value={stat.value} change={stat.change} icon={stat.icon} variant={stat.variant} />
-                </div>
+                <motion.div 
+                  key={stat.title} 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: parseInt(stat.delay) / 1000 }}
+                  className={cn(stat.isHero ? "sm:col-span-2 lg:col-span-2" : "")}
+                >
+                  <StatCard 
+                    title={stat.title} 
+                    value={stat.value} 
+                    numericValue={stat.numericValue}
+                    change={stat.change} 
+                    icon={stat.icon} 
+                    variant={stat.variant} 
+                    isHero={stat.isHero}
+                  />
+                </motion.div>
               ))}
             </div>
 
