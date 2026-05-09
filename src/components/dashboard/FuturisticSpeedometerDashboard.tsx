@@ -92,16 +92,23 @@ const Speedometer = ({
   icon: Icon, 
   delta, 
   size = 280, 
-  ticksCount = 33 
+  ticksCount = 33,
+  drilldownData = [],
+  explanation = ""
 }: SpeedometerProps) => {
   const { theme } = useDashboardTheme();
   const [animatedValue, setAnimatedValue] = useState(min);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSize, setCurrentSize] = useState(size);
+  const [isDrilldownOpen, setIsDrilldownOpen] = useState(false);
   
   const colors = accentMap[accent];
   const range = max - min;
   const animatedPct = Math.min(1, Math.max(0, range > 0 ? (animatedValue - min) / range : 0));
+
+  const statusLabel = animatedPct >= 0.8 ? "Excelente" : animatedPct >= 0.5 ? "Bom" : animatedPct >= 0.3 ? "Atenção" : "Crítico";
+  const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
+
 
   useEffect(() => {
     if (!containerRef.current) return;
