@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -13,7 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Sparkles, TrendingUp, AlertTriangle } from "lucide-react";
 import { useSentimentTimeline, useAnalyzeSentiment } from "@/hooks/conversational/useSentimentTimeline";
 import {
   detectShifts,
@@ -23,6 +23,9 @@ import {
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { severityHexColor, type CriticalMoment } from "./criticalMomentsHelpers";
 import type { Intent } from "./IntentTracker";
+import { Badge } from "@/components/ui/badge";
+import { BattleCardSuggestion } from "./BattleCardSuggestion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   recordingId: string;
@@ -51,12 +54,19 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
 export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments, intents = [] }: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
+  const [selectedShift, setSelectedShift] = useState<{ start_sec: number, text?: string } | null>(null);
 
   const shifts = useMemo(() => (timeline ? detectShifts(timeline) : []), [timeline]);
 
   const handleClick = (e: any) => {
     const seg = e?.activePayload?.[0]?.payload;
-    if (seg && onSeek) onSeek(seg.start_sec);
+    if (seg) {
+      if (onSeek) onSeek(seg.start_sec);
+      const shift = shifts.find(s => Math.abs(s.start_sec - seg.start_sec) < 5);
+      if (shift) {
+        setSelectedShift({ start_sec: shift.start_sec, text: seg.excerpt });
+      }
+    }
   };
 
   return (
@@ -151,10 +161,33 @@ export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, momen
             </AreaChart>
           </ResponsiveContainer>
         )}
-        {shifts.length > 0 && (
-          <div className="mt-2 text-[11px] text-muted-foreground">
-            {shifts.length} virada{shifts.length === 1 ? "" : "s"} detectada
-            {shifts.length === 1 ? "" : "s"}. Clique no gráfico para ouvir.
+        <AnimatePresence>
+          {selectedShift && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="size-4 text-destructive" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-destructive">Sentimento Shift Detectado</span>
+              </div>
+              <p className="text-xs italic text-muted-foreground mb-3 leading-relaxed">
+                "{selectedShift.text || "Ponto de inflexão na conversa detectado. Possível sinal de atrito ou mudança de interesse."}"
+              </p>
+              
+              <BattleCardSuggestion battleCardId="mock-id" competitorName="Concorrente Direto" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {shifts.length > 0 && !selectedShift && (
+          <div className="mt-2 text-[11px] text-muted-foreground flex items-center gap-2">
+            <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 border-primary/30 text-primary">
+              {shifts.length}
+            </Badge>
+            Virada{shifts.length === 1 ? "" : "s"} de sentimento detectada{shifts.length === 1 ? "" : "s"}. Clique para analisar.
           </div>
         )}
       </CardContent>
