@@ -236,8 +236,6 @@ const IntelligenceCockpit = () => {
               </div>
             </div>
           </Card>
-          
-          <ScenarioSimulator />
         </div>
 
         <div className="space-y-4">
