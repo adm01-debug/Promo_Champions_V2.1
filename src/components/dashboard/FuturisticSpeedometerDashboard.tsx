@@ -717,6 +717,7 @@ export const FuturisticSpeedometerDashboard = () => {
 
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
+    setIsSyncing(true);
     
     const currentSettings = { 
       ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale,
@@ -724,12 +725,33 @@ export const FuturisticSpeedometerDashboard = () => {
     };
     const newSettings = { ...currentSettings, ...updates };
     
-    await supabase.from("user_app_settings").upsert({
+    const { error } = await supabase.from("user_app_settings").upsert({
       user_id: user.id,
       key: "speedometer_settings",
       value: newSettings,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id, key' });
+
+    if (error) {
+      toast.error("Erro ao sincronizar configurações");
+    } else {
+      setTimeout(() => setIsSyncing(false), 800);
+    }
+  };
+
+  const clearAlertHistory = async () => {
+    if (!user?.id) return;
+    const { error } = await supabase
+      .from("notifications")
+      .delete()
+      .eq("user_id", user.id);
+    
+    if (error) {
+      toast.error("Erro ao limpar histórico");
+    } else {
+      setAlertHistory([]);
+      toast.success("Histórico limpo com sucesso");
+    }
   };
 
   const testAlert = async () => {
