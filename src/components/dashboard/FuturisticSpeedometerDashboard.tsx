@@ -503,10 +503,8 @@ const Speedometer = ({
           </div>
         </ScrollArea>
       </DialogContent>
-    </Dialog>
-          </TooltipContent>
-        </Tooltip>
       </TooltipProvider>
+    </Dialog>
 
       <div className="mt-4 flex flex-col items-center gap-1 w-full">
         <div
