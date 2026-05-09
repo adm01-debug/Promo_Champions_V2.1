@@ -129,7 +129,6 @@ const Speedometer = ({
     return () => observer.disconnect();
   }, [size]);
 
-  const s = currentSize;
   const cx = s / 2;
   const cy = s / 2;
   const outerRadius = s / 2 - 8;
