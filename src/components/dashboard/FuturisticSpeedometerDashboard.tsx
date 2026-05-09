@@ -558,6 +558,12 @@ export const FuturisticSpeedometerDashboard = () => {
   const [customUnit, setCustomUnit] = useState("");
   const [autoScale, setAutoScale] = useState(true);
 
+  // New Alert Settings
+  const [oppThreshold, setOppThreshold] = useState(10);
+  const [retThreshold, setRetThreshold] = useState(5);
+  const [alertFrequency, setAlertFrequency] = useState<"daily" | "weekly" | "realtime">("daily");
+
+
   // Persistence logic
   useEffect(() => {
     if (!user?.id) return;
