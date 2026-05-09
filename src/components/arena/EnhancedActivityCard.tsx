@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ interface EnhancedActivityCardProps {
 }
 
 export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data, className }) => {
+  const [reactions, setReactions] = useState(Math.floor(Math.random() * 12));
   const isWinner = data.progress.overall >= 100;
   const isHighPerformer = data.progress.overall >= 80;
 
@@ -76,15 +77,38 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
             </div>
           </div>
           
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end">
             <div className={cn(
               "text-3xl font-display font-black tracking-tighter leading-none mb-1",
               isWinner ? "text-rank-gold drop-shadow-glow" : "text-primary"
             )}>
               {data.progress.overall.toFixed(0)}%
             </div>
-            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Progresso Meta</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Progresso Meta</span>
+              {reactions > 0 && (
+                <Badge variant="secondary" className="h-4 px-1.5 text-[8px] bg-primary/10 text-primary border-none font-black animate-in fade-in zoom-in">
+                  <Zap className="h-2.5 w-2.5 mr-1" /> {reactions}
+                </Badge>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* Floating Reactions Bar - Step 9 */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 z-30">
+          <button 
+            onClick={(e) => { e.stopPropagation(); setReactions(r => r + 1); }}
+            className="p-2 rounded-xl bg-primary/20 backdrop-blur-md border border-primary/30 hover:bg-primary/40 transition-colors shadow-lg"
+          >
+            <Flame className="h-4 w-4 text-primary animate-pulse" />
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); setReactions(r => r + 1); }}
+            className="p-2 rounded-xl bg-rank-gold/20 backdrop-blur-md border border-rank-gold/30 hover:bg-rank-gold/40 transition-colors shadow-lg"
+          >
+            <Zap className="h-4 w-4 text-rank-gold" />
+          </button>
         </div>
 
         {/* Dynamic Progress Bar */}
