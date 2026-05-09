@@ -126,6 +126,13 @@ export default function MetasAtividades() {
         pointer-events: none;
         z-index: 40;
       }
+      
+      .magnetic-hover {
+        transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .magnetic-hover:hover {
+        transform: translate(var(--mx, 0px), var(--my, 0px)) scale(1.02);
+      }
     `}} />
     <>
     <Helmet>
