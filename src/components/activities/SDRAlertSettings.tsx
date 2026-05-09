@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bell, ShieldAlert, TrendingDown, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export function SDRAlertSettings() {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [configs, setConfigs] = useState({
     rejection_rate: { active: true, threshold: 40 },
