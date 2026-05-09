@@ -72,9 +72,26 @@ export const ActivityHeatmap: React.FC = () => {
                       )}
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent className="glass border-primary/20 p-2 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-tighter text-primary">{day.date}</p>
-                    <p className="text-[9px] text-muted-foreground font-bold mt-1">Densidade Operacional: <span className="text-foreground">{day.intensity * 25}%</span></p>
+                  <TooltipContent className="glass border-primary/20 p-3 shadow-2xl min-w-[140px]">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center gap-4">
+                        <p className="text-[10px] font-black uppercase tracking-tighter text-primary">{day.date}</p>
+                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.intensity * 25}%</Badge>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <span>Conexões</span>
+                          <span className="text-foreground">{(day.intensity * 12 + 5)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <span>Deals</span>
+                          <span className="text-foreground">{Math.floor(day.intensity * 1.5)}</span>
+                        </div>
+                      </div>
+                      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-1">
+                        <div className="h-full bg-primary" style={{ width: `${day.intensity * 25}%` }} />
+                      </div>
+                    </div>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
