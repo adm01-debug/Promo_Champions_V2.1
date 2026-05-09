@@ -203,6 +203,8 @@ export function AppRoutes() {
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
+                    <Route path="/gamificacao/badges" element={<BadgesGalleryPage />} />
+                    <Route path="/perfil-gamer" element={<GamifiedProfilePage />} />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/race-arena" element={<RaceTransitionWrapper><RaceArena /></RaceTransitionWrapper>} />
                     <Route path="/race-arena/closer" element={<RaceTransitionWrapper><RaceArenaCloser /></RaceTransitionWrapper>} />
