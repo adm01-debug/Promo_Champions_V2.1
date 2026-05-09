@@ -240,6 +240,7 @@ export default function MetasAtividades() {
                 <ArenaPulseFeed data={progressData || []} />
                 <PredictiveVelocity data={progressData || []} />
                 <ActivityVersusDuel data={progressData || []} />
+                <ActivityHeatmap />
               </div>
 
               {/* Center Column: Ranking & Main Progress */}
