@@ -99,11 +99,10 @@ const IntelligenceCockpit = () => {
             </p>
           </div>
           
-          <Card className="p-6 border-white/5 bg-white/5 backdrop-blur-xl flex flex-col items-center justify-center gap-2 relative group/health">
+          <Card className="p-6 border-white/5 bg-white/5 backdrop-blur-xl flex flex-col items-center justify-center gap-4 relative group/health min-h-[180px]">
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/health:opacity-100 transition-opacity rounded-xl" />
-            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Business Health</p>
-            <div className="text-5xl font-black text-white tracking-tighter">88<span className="text-primary text-xl">/100</span></div>
-            <div className="flex items-center gap-1 text-emerald-500 font-bold text-[10px] uppercase">
+            <HealthGauge value={88} />
+            <div className="flex items-center gap-1 text-emerald-500 font-bold text-[10px] uppercase tracking-widest">
               <ArrowUpRight className="size-3" /> +4.2% Growth
             </div>
           </Card>
