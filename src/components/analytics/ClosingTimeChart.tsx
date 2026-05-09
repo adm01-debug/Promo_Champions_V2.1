@@ -38,6 +38,9 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
 
 export const ClosingTimeChart: FC = () => {
   const { data, isLoading } = useClosingTime();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/closing-time';
   
   const chartData: ClosingTimeData[] = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) {
