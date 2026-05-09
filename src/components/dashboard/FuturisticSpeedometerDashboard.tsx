@@ -612,10 +612,20 @@ const Speedometer = ({
             
             <Separator className="bg-border/20" />
             
-            <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/10 rounded-xl">
-              <Zap className="h-4 w-4 text-primary animate-pulse" />
-              <p className="text-xs text-primary font-medium">
-                Insight IA: {animatedPct < 0.5 ? "Acelere as atividades de topo de funil para normalizar este indicador." : "Performance saudável. Mantenha a cadência atual para atingir o benchmark."}
+            <div className={cn(
+              "flex items-center gap-2 p-3 border rounded-xl transition-all duration-500",
+              animatedPct < 0.3 ? "bg-destructive/5 border-destructive/20 text-destructive" :
+              animatedPct < 0.6 ? "bg-warning/5 border-warning/20 text-warning" :
+              "bg-success/5 border-success/20 text-success"
+            )}>
+              <Zap className={cn("h-4 w-4", animatedPct < 0.3 ? "animate-pulse" : "")} />
+              <p className="text-[10px] font-mono uppercase tracking-tight font-bold">
+                IA Insight :: {
+                  animatedPct < 0.3 ? "ALERTA CRÍTICO: Volume insuficiente para atingir meta. Recomenda-se urgência em novas leads." :
+                  animatedPct < 0.6 ? "ATENÇÃO: Performance moderada. Ajuste o funil para garantir o benchmark do período." :
+                  animatedPct < 0.9 ? "ESTÁVEL: Mantendo ritmo ideal. Oportunidade de upsell identificada na base atual." :
+                  "EXCELÊNCIA: Performance acima do benchmark. Considere aumentar os targets para o próximo período."
+                }
               </p>
             </div>
           </div>
