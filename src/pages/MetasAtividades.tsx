@@ -114,17 +114,26 @@ export default function MetasAtividades() {
       }
 
       @keyframes scan {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(1000%); }
+        0% { transform: translateY(-100%); opacity: 0; }
+        10% { opacity: 0.5; }
+        90% { opacity: 0.5; }
+        100% { transform: translateY(1200%); opacity: 0; }
+      }
+      @keyframes pulse-grid {
+        0%, 100% { opacity: 0.1; }
+        50% { opacity: 0.2; }
       }
       .scan-line {
         position: absolute;
         width: 100%;
-        height: 100px;
-        background: linear-gradient(to bottom, transparent, rgba(var(--primary), 0.1), transparent);
-        animation: scan 8s linear infinite;
+        height: 150px;
+        background: linear-gradient(to bottom, transparent, rgba(var(--primary), 0.15), transparent);
+        animation: scan 10s linear infinite;
         pointer-events: none;
         z-index: 40;
+      }
+      .grid-pulse {
+        animation: pulse-grid 4s ease-in-out infinite;
       }
       
       .magnetic-hover {
