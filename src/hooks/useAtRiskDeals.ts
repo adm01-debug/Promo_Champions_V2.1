@@ -16,6 +16,7 @@ export interface AtRiskDeal {
   riskScore: number;
   riskFactors: string[];
   aiAnalysis?: string;
+  suggestedAction?: string;
 }
 
 export interface AtRiskAnalysis {
@@ -38,7 +39,8 @@ export function useAtRiskDeals() {
         .from('sales')
         .select(`
           *,
-          salespeople (name)
+          salespeople (name),
+          products (price, category)
         `)
         .not('status', 'eq', 'completed')
         .not('status', 'eq', 'lost');
@@ -71,34 +73,47 @@ export function useAtRiskDeals() {
         // Calculate risk factors
         const riskFactors: string[] = [];
         let riskScore = 0;
+        let suggestedAction = "";
 
-        // No activity in 48+ hours
+        // 1. Inactivity
         if (hoursSinceLastActivity >= 48) {
           riskFactors.push(`${Math.floor(hoursSinceLastActivity / 24)} dias sem atividade`);
-          riskScore += Math.min(40, Math.floor(hoursSinceLastActivity / 24) * 5);
+          riskScore += Math.min(40, Math.floor(hoursSinceLastActivity / 24) * 8);
+          suggestedAction = "Realizar follow-up imediato.";
         }
 
-        // Deal stagnant (no stage change)
+        // 2. Stagnation
         if (daysSinceLastUpdate >= 7) {
           riskFactors.push(`${daysSinceLastUpdate} dias no mesmo estágio`);
-          riskScore += Math.min(30, daysSinceLastUpdate * 2);
+          riskScore += Math.min(30, daysSinceLastUpdate * 3);
+          if (!suggestedAction) suggestedAction = "Revisar estágio do funil.";
         }
 
-        // Low activity count
-        if (dealActivities.length < 3) {
-          riskFactors.push(`Poucas atividades (${dealActivities.length})`);
+        // 3. Low Engagement
+        if (dealActivities.length < 2 && daysSinceLastUpdate >= 3) {
+          riskFactors.push(`Baixo engajamento (apenas ${dealActivities.length} interações)`);
+          riskScore += 25;
+          if (!suggestedAction) suggestedAction = "Iniciar cadência de reativação.";
+        }
+
+        // 4. Value Anomaly
+        const productPrice = (sale as any).products?.price || 0;
+        if (productPrice > 0 && sale.amount > productPrice * 2.5) {
+          riskFactors.push('Valor do deal atípico (muito superior ao preço de lista)');
           riskScore += 15;
+          if (!suggestedAction) suggestedAction = "Verificar se o valor está correto.";
         }
 
-        // High value deal with low engagement
-        if (sale.amount > 10000 && dealActivities.length < 5) {
-          riskFactors.push('Deal de alto valor com baixo engajamento');
-          riskScore += 20;
+        // 5. High Value + High Inactivity
+        if (sale.amount > 5000 && hoursSinceLastActivity > 72) {
+          riskFactors.push('Deal prioritário abandonado');
+          riskScore += 30;
+          suggestedAction = "ESCALAR: Deal prioritário sem contato há 3+ dias.";
         }
 
         // Determine risk level
         let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-        if (riskScore >= 70) riskLevel = 'critical';
+        if (riskScore >= 80) riskLevel = 'critical';
         else if (riskScore >= 50) riskLevel = 'high';
         else if (riskScore >= 30) riskLevel = 'medium';
 
@@ -110,13 +125,14 @@ export function useAtRiskDeals() {
             productName: sale.product_name,
             amount: sale.amount,
             stage: sale.status,
-            salespersonName: sale.salespeople?.name || 'Não atribuído',
+            salespersonName: (sale as any).salespeople?.name || 'Não atribuído',
             hoursSinceLastActivity,
             daysSinceLastUpdate,
             activityCount: dealActivities.length,
             riskLevel,
             riskScore,
             riskFactors,
+            suggestedAction: suggestedAction || "Agendar próxima ação."
           });
         }
       });
