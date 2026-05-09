@@ -132,83 +132,87 @@ const IntelligenceCockpit = () => {
 
       {/* Unified Insights & Strategic Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 p-6 border-border/40 bg-gradient-to-br from-card to-primary/5">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="font-bold flex items-center gap-2 text-lg">
-              <Zap className="w-5 h-5 text-primary" />
-              Strategic Pulse
-            </h3>
-            <div className="flex gap-2">
-              <Badge variant="outline" className="bg-background/50">Real-time Analysis</Badge>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="h-7 text-[10px] font-bold uppercase tracking-widest bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
-                onClick={() => setReportOpen(true)}
-              >
-                Gerar CEO Summary
-              </Button>
-              <Button size="sm" variant="outline" className="h-7 text-[10px] font-bold uppercase tracking-widest">Export QBR</Button>
-            </div>
-          </div>
-          
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-3">
-                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Target className="w-3.5 h-3.5 text-primary" /> Meta do Quarter
-                  </span>
-                  <span className="text-foreground">82%</span>
-                </div>
-                <Progress value={82} className="h-2 bg-primary/10" />
-                <p className="text-[10px] text-muted-foreground italic">Faltam R$ 420k para o Target</p>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5 text-blue-500" /> Market Sentiment
-                  </span>
-                  <span className="text-foreground">Saudável (74)</span>
-                </div>
-                <Progress value={74} className="h-2 bg-blue-500/10" />
-                <p className="text-[10px] text-muted-foreground italic">Baseado em 142 reuniões IA</p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Timer className="w-3.5 h-3.5 text-amber-500" /> Sales Cycle
-                  </span>
-                  <span className="text-foreground">18.4 dias</span>
-                </div>
-                <div className="h-2 w-full bg-amber-500/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500 w-[65%]" />
-                </div>
-                <p className="text-[10px] text-muted-foreground italic">Redução de 2.1d vs. Mês Anterior</p>
-              </div>
-            </div>
-
-            <div className="rounded-2xl bg-primary/5 p-5 border border-primary/10 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
-                <Brain className="size-12" />
-              </div>
-              <h4 className="text-sm font-bold mb-3 flex items-center gap-2 text-primary uppercase tracking-widest">
-                <Sparkles className="w-4 h-4" />
-                AI Strategic Insight
-              </h4>
-              <p className="text-sm text-card-foreground leading-relaxed">
-                A performance atual projeta um fechamento de <span className="font-black text-primary underline decoration-2 underline-offset-4">R$ 2.48M</span>. O <span className="font-bold">Deal Intelligence</span> identificou uma concentração de 42% da receita em apenas 3 grandes contas (Risco de Concentração). O módulo <span className="font-bold">Conversational</span> alerta para um aumento de menções ao concorrente <span className="italic">"NexGen"</span> em reuniões de descoberta.
-              </p>
-              <div className="mt-4 flex gap-4">
-                <Button variant="link" className="p-0 h-auto text-xs font-bold text-primary group/link">
-                  Explorar Forecast Detalhado <ChevronRight className="size-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="p-6 border-border/40 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+            <div className="flex items-center justify-between mb-8 relative z-10">
+              <h3 className="font-bold flex items-center gap-2 text-lg uppercase italic tracking-tighter">
+                <Zap className="w-5 h-5 text-primary" />
+                Strategic <span className="text-primary">Pulse</span>
+              </h3>
+              <div className="flex gap-2">
+                <Badge variant="outline" className="bg-background/50 text-[10px]">Real-time Analysis</Badge>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-7 text-[10px] font-bold uppercase tracking-widest bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+                  onClick={() => setReportOpen(true)}
+                >
+                  Gerar CEO Summary
                 </Button>
               </div>
             </div>
-          </div>
-        </Card>
+            
+            <div className="space-y-8 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Target className="w-3.5 h-3.5 text-primary" /> Meta Quarter
+                    </span>
+                    <span className="text-foreground">82%</span>
+                  </div>
+                  <Progress value={82} className="h-1.5 bg-primary/10" />
+                  <p className="text-[9px] text-muted-foreground font-medium">Gap: R$ 420k</p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5 text-blue-500" /> Market Sent.
+                    </span>
+                    <span className="text-foreground">74/100</span>
+                  </div>
+                  <Progress value={74} className="h-1.5 bg-blue-500/10" />
+                  <p className="text-[9px] text-muted-foreground font-medium">142 Sources AI Analyzed</p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Timer className="w-3.5 h-3.5 text-amber-500" /> Sales Velocity
+                    </span>
+                    <span className="text-foreground">18.4d</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-amber-500/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-500 w-[65%]" />
+                  </div>
+                  <p className="text-[9px] text-muted-foreground font-medium">-2.1d vs Last Month</p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-black/40 p-5 border border-primary/10 relative overflow-hidden group/insight">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/insight:rotate-12 transition-transform">
+                  <Brain className="size-12" />
+                </div>
+                <h4 className="text-[10px] font-black mb-3 flex items-center gap-2 text-primary uppercase tracking-[0.2em]">
+                  <Sparkles className="w-4 h-4" />
+                  AI Strategic Insight
+                </h4>
+                <p className="text-sm text-card-foreground leading-relaxed font-medium">
+                  Forecast atual projeta <span className="font-black text-primary underline decoration-2 underline-offset-4">R$ 2.48M</span>. O <span className="font-bold">Deal Intelligence</span> identificou concentração crítica (42%) em 3 contas. Módulo <span className="font-bold">Conversational</span> alerta para aumento de 22% em menções competitivas.
+                </p>
+                <div className="mt-4 flex gap-4">
+                  <Button variant="link" className="p-0 h-auto text-[10px] font-bold text-primary group/link uppercase tracking-widest">
+                    Explorar Forecast Detalhado <ChevronRight className="size-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+          
+          <ScenarioSimulator />
+        </div>
 
         <div className="space-y-4">
           <Card className="p-6 border-border/40 bg-card/50">
