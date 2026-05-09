@@ -152,6 +152,9 @@ const Vendas = () => {
     // Apply status filter
     if (statusFilter) {
       filtered = filtered.filter(s => s.status === statusFilter);
+    } else {
+      // Por padrão, remover vendas "lost" da visualização principal a menos que filtrado explicitamente
+      filtered = filtered.filter(s => s.status !== "lost");
     }
     
     // Apply sorting
