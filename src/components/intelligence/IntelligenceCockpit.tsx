@@ -155,6 +155,10 @@ const IntelligenceCockpit = () => {
       {/* Unified Insights & Strategic Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PerformanceTrends />
+            <ScenarioSimulator />
+          </div>
           <Card className="p-6 border-border/40 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             <div className="flex items-center justify-between mb-8 relative z-10">
