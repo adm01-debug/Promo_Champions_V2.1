@@ -100,6 +100,7 @@ export const CreateProductDialog = () => {
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="sku"
@@ -159,6 +160,7 @@ export const CreateProductDialog = () => {
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="stock_quantity"

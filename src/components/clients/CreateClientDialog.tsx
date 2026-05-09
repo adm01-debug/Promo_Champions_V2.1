@@ -148,6 +148,7 @@ export const CreateClientDialog = () => {
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="lead_source"

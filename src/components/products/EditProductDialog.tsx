@@ -110,6 +110,7 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="sku"
@@ -169,6 +170,7 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="stock_quantity"

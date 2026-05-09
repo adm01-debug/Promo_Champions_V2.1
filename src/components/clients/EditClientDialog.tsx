@@ -195,6 +195,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
                   <FormMessage />
                 </FormItem>
               )}
+            />
             <FormField
               control={form.control}
               name="lead_source"
