@@ -73,6 +73,7 @@ export const RevenueIntelligenceHub: FC = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="briefing">✨ Briefing</TabsTrigger>
+          <TabsTrigger value="revisao-ai">🤖 Revisão AI</TabsTrigger>
           <TabsTrigger value="comando">⚡ Comando</TabsTrigger>
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
