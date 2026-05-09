@@ -22,6 +22,7 @@ import { ClientTimeline } from "@/components/clients/ClientTimeline";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
+import { useCountUp } from "@/hooks/useCountUp";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
