@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
@@ -11,6 +11,7 @@ import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBann
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
 import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,10 +28,19 @@ import {
   TrendingUp,
   Zap,
   Receipt,
+  Calendar,
+  ChevronDown,
 } from "lucide-react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 // Lazy-loaded modules for better performance
 const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
