@@ -844,7 +844,7 @@ export const FuturisticSpeedometerDashboard = () => {
     const checkThresholds = async () => {
       const currentOpp = kpis.current.conversionRate;
       // Calculate a realistic but deterministic "Retention" based on sales volume and conversion
-      const currentRet = Math.min(100, Math.max(0, 85 + (kpis.current.sales / 100) - (currentOpp / 5)));
+      const currentRet = Math.min(100, Math.max(0, 85 + (kpis.current.totalSales / 100) - (currentOpp / 5)));
       
       const newAlerts = [];
 
