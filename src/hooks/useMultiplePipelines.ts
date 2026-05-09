@@ -62,6 +62,7 @@ export const usePipelineStages = (pipelineId: string | null) => {
 
 export interface PipelineDeal {
   id: string;
+  client_id: string | null;
   client_name: string;
   product_name: string;
   amount: number;

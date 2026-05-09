@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Zap, UserCheck, Send, Phone, Star, ChevronDown } from "lucide-react";
+import { Zap, UserCheck, Send, Phone, Star, ChevronDown, PlusCircle } from "lucide-react";
+import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -79,6 +80,7 @@ interface QuickActionsMenuProps {
 export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => {
   const queryClient = useQueryClient();
   const [executing, setExecuting] = useState(false);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
 
   const executeMacro = useMutation({
     mutationFn: async (macro: MacroConfig) => {
@@ -164,7 +166,29 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
             </DropdownMenuItem>
           );
         })}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            setTaskDialogOpen(true);
+          }}
+          className="flex items-start gap-2 py-2 cursor-pointer"
+        >
+          <PlusCircle className="h-4 w-4 mt-0.5 shrink-0 text-muted-foreground" />
+          <div>
+            <p className="text-xs font-medium">Personalizar Tarefa</p>
+            <p className="text-[10px] text-muted-foreground">Abrir formulário completo de tarefa</p>
+          </div>
+        </DropdownMenuItem>
       </DropdownMenuContent>
+      
+      <CreateTaskDialog 
+        open={taskDialogOpen} 
+        onOpenChange={setTaskDialogOpen}
+        defaultSaleId={deal.id}
+        defaultClientId={deal.client_id || undefined}
+        trigger={<span className="hidden" />}
+      />
     </DropdownMenu>
   );
 });

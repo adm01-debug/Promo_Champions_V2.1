@@ -9,8 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarClock, Plus, CheckCircle2, Trash2, Phone, Users, Bell, ListChecks, Repeat } from "lucide-react";
+import { CalendarClock, Plus, CheckCircle2, Trash2, Phone, Users, Bell, ListChecks, Repeat, ShoppingCart } from "lucide-react";
 import { useAgendaEvents, useCreateAgendaEvent, useCompleteAgendaEvent, useDeleteAgendaEvent, type AgendaEvent, type AgendaEventType, type AgendaEventPriority, type AgendaEventStatus } from "@/hooks/useAgendaEvents";
+import { useClients } from "@/hooks/useClients";
+import { useSalesData } from "@/hooks/useSalesData";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -58,7 +60,12 @@ function NewEventDialog() {
   const [eventType, setEventType] = useState<AgendaEventType>("reminder");
   const [priority, setPriority] = useState<AgendaEventPriority>("medium");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [clientId, setClientId] = useState<string>("none");
+  const [saleId, setSaleId] = useState<string>("none");
+  
   const create = useCreateAgendaEvent();
+  const { data: clients } = useClients();
+  const { data: sales } = useSalesData();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +77,8 @@ function NewEventDialog() {
         event_type: eventType,
         priority,
         scheduled_at: new Date(scheduledAt).toISOString(),
+        client_id: clientId !== "none" ? clientId : undefined,
+        sale_id: saleId !== "none" ? saleId : undefined,
       },
       {
         onSuccess: () => {
@@ -79,6 +88,8 @@ function NewEventDialog() {
           setEventType("reminder");
           setPriority("medium");
           setScheduledAt("");
+          setClientId("none");
+          setSaleId("none");
         },
       },
     );
@@ -126,6 +137,36 @@ function NewEventDialog() {
               </Select>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Vincular Cliente</Label>
+              <Select value={clientId} onValueChange={setClientId}>
+                <SelectTrigger className="text-xs">
+                  <SelectValue placeholder="Cliente" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  {clients?.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Vincular Deal / Venda</Label>
+              <Select value={saleId} onValueChange={setSaleId}>
+                <SelectTrigger className="text-xs">
+                  <SelectValue placeholder="Deal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  {sales?.map((s) => (
+                    <SelectItem key={s.fullId} value={s.fullId}>{s.cliente} - {s.produto}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div>
             <Label htmlFor="ev-when">Data e hora</Label>
             <Input id="ev-when" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} required />
@@ -153,6 +194,21 @@ function EventCard({ event }: { event: AgendaEvent }) {
               <Badge variant={priorityVariant[event.priority]}>{priorityLabel[event.priority]}</Badge>
             </div>
             {event.description && <p className="text-sm text-muted-foreground mt-1">{event.description}</p>}
+            
+            {(event as any).client?.name && (
+              <div className="flex items-center gap-1 mt-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+                <Users className="h-3 w-3" />
+                {(event as any).client.name}
+              </div>
+            )}
+
+            {(event as any).sale?.product_name && (
+              <div className="flex items-center gap-1 mt-1 text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
+                <ShoppingCart className="h-3 w-3" />
+                {(event as any).sale.product_name}
+              </div>
+            )}
+
             <p className="text-xs text-muted-foreground mt-2">
               {typeLabel[event.event_type]} · {format(new Date(event.scheduled_at), "dd MMM yyyy 'às' HH:mm", { locale: ptBR })}
             </p>

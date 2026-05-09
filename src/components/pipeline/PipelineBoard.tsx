@@ -66,6 +66,7 @@ export const PipelineBoard = () => {
     for (const [stageName, deals] of Object.entries(multiDealsByStage)) {
       result[stageName] = deals.map(d => ({
         id: d.id,
+        client_id: d.client_id,
         client_name: d.client_name,
         product_name: d.product_name,
         amount: d.amount,
