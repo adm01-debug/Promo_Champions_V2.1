@@ -78,7 +78,7 @@ export function ObjectionsLibrary() {
     }
     addObjection.mutate(newObjection, {
       onSuccess: () => {
-        setNewObjection({ objection: '', response: '', category: 'general' });
+        setNewObjection({ objection: '', response: '', category: 'general', tags: [], effectiveness_score: 5 });
         setIsAddDialogOpen(false);
       }
     });
