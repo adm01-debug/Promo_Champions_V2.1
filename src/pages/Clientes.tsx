@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import { Users, Search, Mail, Phone, Pencil, Trash2, History, BarChart3 } from "lucide-react";
+import { Users, Search, Mail, Phone, Pencil, Trash2, History, BarChart3, Plus } from "lucide-react";
+import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +20,7 @@ import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 import { ClientTimeline } from "@/components/clients/ClientTimeline";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -338,16 +339,31 @@ const Clientes = () => {
 
       {/* Timeline Dialog */}
       <Dialog open={!!timelineClient} onOpenChange={(open) => !open && setTimelineClient(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <History className="h-5 w-5 text-primary" />
-              Timeline — {timelineClient?.name}
-            </DialogTitle>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl flex flex-col p-0">
+          <DialogHeader className="p-6 pb-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10 ring-1 ring-primary/20">
+                  <History className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">
+                    Timeline — {timelineClient?.name}
+                  </DialogTitle>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Tactical Operations Log
+                  </p>
+                </div>
+              </div>
+              
+              <ActivityLogTrigger clientId={timelineClient?.id} />
+            </div>
           </DialogHeader>
-          {timelineClient && (
-            <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
-          )}
+          <div className="flex-1 overflow-hidden px-6 pb-6">
+            {timelineClient && (
+              <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -375,6 +391,30 @@ const Clientes = () => {
     </PageTransition>
     </SkeletonTransition>
   </>
+  );
+};
+
+const ActivityLogTrigger = ({ clientId }: { clientId?: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button 
+          className="h-9 px-4 rounded-xl bg-primary text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+        >
+          <Plus className="h-4 w-4 mr-2" />Log Activity
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
+         <DialogHeader>
+          <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Register Client Interaction</DialogTitle>
+        </DialogHeader>
+        <ActivityLogForm 
+          clientId={clientId} 
+          onSuccess={() => setOpen(false)}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 

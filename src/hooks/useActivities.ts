@@ -167,6 +167,7 @@ export const useCreateActivity = () => {
       notes?: string;
       duration_minutes?: number;
       sale_id?: string;
+      client_id?: string;
       salesperson_id?: string;
     }) => {
       const { data, error } = await supabase

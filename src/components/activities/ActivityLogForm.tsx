@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
+import { useClients } from "@/hooks/useClients";
 import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus } from "lucide-react";
 
 const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[] = [
@@ -35,6 +36,7 @@ const activitySchema = z.object({
   activity_type: z.enum(["call", "email", "meeting", "linkedin", "whatsapp", "other"]),
   outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified"]),
   salesperson_id: z.string().optional(),
+  client_id: z.string().optional(),
   contact_name: z.string().max(100, "Nome do contato deve ter no máximo 100 caracteres").optional(),
   duration_minutes: z.string().optional().transform(val => val ? parseInt(val) : undefined).pipe(
     z.number().min(1, "Duração mínima é 1 minuto").max(480, "Duração máxima é 8 horas").optional()
@@ -46,11 +48,13 @@ type ActivityFormData = z.infer<typeof activitySchema>;
 
 interface ActivityLogFormProps {
   saleId?: string;
+  clientId?: string;
   onSuccess?: () => void;
 }
 
-export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
+export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogFormProps) {
   const { data: salespeople } = useSalespeople();
+  const { data: clients } = useClients();
   const createActivity = useCreateActivity();
 
   const form = useForm<ActivityFormData>({
@@ -59,6 +63,7 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
       activity_type: "call",
       outcome: "connected",
       salesperson_id: "",
+      client_id: clientId || "",
       contact_name: "",
       duration_minutes: undefined,
       notes: "",
@@ -68,6 +73,7 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
   const handleSubmit = (data: ActivityFormData) => {
     createActivity.mutate({
       sale_id: saleId || undefined,
+      client_id: data.client_id || undefined,
       salesperson_id: data.salesperson_id || undefined,
       activity_type: data.activity_type,
       outcome: data.outcome,
@@ -180,6 +186,34 @@ export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
                 </FormItem>
               )}
             />
+
+            {/* Client */}
+            {!saleId && !clientId && (
+              <FormField
+                control={form.control}
+                name="client_id"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Cliente</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="h-9 text-xs bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors">
+                          <SelectValue placeholder="Selecione o cliente" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="glass border-border/50">
+                        {clients?.map(c => (
+                          <SelectItem key={c.id} value={c.id} className="text-xs">
+                            {c.name} {c.company ? `(${c.company})` : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Contact Name & Duration */}
             <div className="grid grid-cols-2 gap-3">

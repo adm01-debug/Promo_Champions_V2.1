@@ -2,8 +2,21 @@ import { Helmet } from 'react-helmet-async';
 import { ClientKanban } from '@/components/clients/ClientKanban';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 
 export default function KanbanClientes() {
+  const [taskModal, setTaskModal] = useState<{ open: boolean; clientId?: string; clientName?: string }>({ open: false });
+
+  useEffect(() => {
+    const handleCreateTask = (e: any) => {
+      setTaskModal({ open: true, clientId: e.detail.clientId, clientName: e.detail.clientName });
+    };
+    window.addEventListener('create-task-modal', handleCreateTask);
+    return () => window.removeEventListener('create-task-modal', handleCreateTask);
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -29,6 +42,21 @@ export default function KanbanClientes() {
           </motion.div>
         </div>
       </PageTransition>
+
+      <Dialog open={taskModal.open} onOpenChange={(open) => setTaskModal(prev => ({ ...prev, open }))}>
+        <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Create Task for {taskModal.clientName}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <CreateTaskDialog 
+              defaultClientId={taskModal.clientId} 
+              open={taskModal.open} 
+              onOpenChange={(open) => setTaskModal(prev => ({ ...prev, open }))}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
