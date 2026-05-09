@@ -25,6 +25,7 @@ export interface ActivityStats {
   byType: Record<ActivityType, number>;
   byOutcome: Record<ActivityOutcome, number>;
   avgDuration: number;
+  byTypeOutcome: Record<ActivityType, Record<ActivityOutcome, number>>;
   // Today stats for ActivityStats component
   totalToday: number;
   callsToday: number;
@@ -103,6 +104,16 @@ export const useActivityStats = (salespersonId?: string) => {
         busy: 0, callback: 0, not_interested: 0, qualified: 0
       };
       
+      const byTypeOutcome: Record<ActivityType, Record<ActivityOutcome, number>> = {
+        call: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        email: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        meeting: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        linkedin: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        whatsapp: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        note: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        other: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+      };
+      
       let totalDuration = 0;
       let durationCount = 0;
       
@@ -112,6 +123,9 @@ export const useActivityStats = (salespersonId?: string) => {
         }
         if (a.outcome in byOutcome) {
           byOutcome[a.outcome]++;
+        }
+        if (a.activity_type in byTypeOutcome && a.outcome in byTypeOutcome[a.activity_type]) {
+          byTypeOutcome[a.activity_type][a.outcome]++;
         }
         if (a.duration_minutes) {
           totalDuration += a.duration_minutes;
@@ -141,6 +155,7 @@ export const useActivityStats = (salespersonId?: string) => {
         total: activities.length,
         byType,
         byOutcome,
+        byTypeOutcome,
         avgDuration: durationCount > 0 ? totalDuration / durationCount : 0,
         totalToday: todayActivities.length,
         callsToday: todayByType.call,
