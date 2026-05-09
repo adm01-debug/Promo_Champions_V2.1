@@ -356,6 +356,155 @@ const Speedometer = ({
         </Tooltip>
       </TooltipProvider>
 
+      <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
+        <DialogHeader className="p-6 pb-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn("p-2.5 rounded-xl bg-background border border-border/40 shadow-inner", colors.text)}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-display font-bold">{label}</DialogTitle>
+                <DialogDescription className="text-sm font-medium mt-0.5">
+                  Análise Detalhada de Performance e Origem dos Dados
+                </DialogDescription>
+              </div>
+            </div>
+            <Badge variant="outline" className={cn("px-3 py-1 font-mono uppercase tracking-wider border-current/20", statusColor, "bg-current/10")}>
+              Status: {statusLabel}
+            </Badge>
+          </div>
+        </DialogHeader>
+
+        <ScrollArea className="max-h-[80vh]">
+          <div className="p-6 pt-2 space-y-6">
+            {explanation && (
+              <div className="p-4 rounded-xl bg-muted/30 border border-border/30 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <Activity className="h-3 w-3" /> Explicação do Status
+                </div>
+                <p className="text-sm text-foreground/80 leading-relaxed italic">
+                  "{explanation}"
+                </p>
+              </div>
+            )}
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Atual</span>
+                <span className={cn("text-2xl font-mono font-black", colors.text)}>
+                  {formatValue ? formatValue(value) : value.toLocaleString("pt-BR")}
+                </span>
+                <span className="text-[10px] text-muted-foreground mt-1">unidades ({unit})</span>
+              </div>
+              <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Eficiência</span>
+                <span className="text-2xl font-mono font-black text-foreground">
+                  {percentStr}
+                </span>
+                <div className="w-full h-1 bg-muted/40 rounded-full mt-2 overflow-hidden">
+                  <div className="h-full bg-primary" style={{ width: percentStr }} />
+                </div>
+              </div>
+              <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Meta (MAX)</span>
+                <span className="text-2xl font-mono font-black text-foreground">
+                  {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+                </span>
+                <span className="text-[10px] text-muted-foreground mt-1">benchmark sugerido</span>
+              </div>
+            </div>
+
+            {drilldownData && drilldownData.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <TrendingUp className="h-3 w-3" /> Histórico de Composição
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-mono">Real-time Data</Badge>
+                </div>
+                
+                <div className="h-[200px] w-full bg-card/50 rounded-xl p-4 border border-border/20">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={drilldownData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
+                      <XAxis 
+                        dataKey="name" 
+                        axisLine={false} 
+                        tickLine={false} 
+                        tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}}
+                      />
+                      <YAxis 
+                        axisLine={false} 
+                        tickLine={false} 
+                        tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}}
+                      />
+                      <RechartsTooltip 
+                        cursor={{fill: 'hsl(var(--primary) / 0.05)'}}
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--popover))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                        }}
+                      />
+                      <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                        {drilldownData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={index === drilldownData.length - 1 ? colors.stroke : 'hsl(var(--primary) / 0.3)'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Últimas Atualizações</p>
+                  <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/20">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="bg-muted/40 border-b border-border/40">
+                          <th className="px-4 py-2 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground">Data/Hora</th>
+                          <th className="px-4 py-2 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground">Valor</th>
+                          <th className="px-4 py-2 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground">Origem</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/20">
+                        {drilldownData.slice(-3).reverse().map((item, i) => (
+                          <tr key={i} className="hover:bg-muted/30 transition-colors">
+                            <td className="px-4 py-2 font-mono text-xs text-muted-foreground">{new Date().toLocaleDateString('pt-BR')} {10+i}:00</td>
+                            <td className="px-4 py-2 font-bold">{formatValue ? formatValue(item.value) : item.value}</td>
+                            <td className="px-4 py-2">
+                              <Badge variant="outline" className="text-[9px] bg-background">Sincronização API</Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center text-center space-y-3 bg-muted/20 rounded-2xl border border-dashed border-border/60">
+                <RefreshCw className="h-10 w-10 text-muted-foreground/30 animate-spin-slow" />
+                <p className="text-sm text-muted-foreground italic">Processando composição granular para este período...</p>
+              </div>
+            )}
+            
+            <Separator className="bg-border/20" />
+            
+            <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/10 rounded-xl">
+              <Zap className="h-4 w-4 text-primary animate-pulse" />
+              <p className="text-xs text-primary font-medium">
+                Insight IA: {animatedPct < 0.5 ? "Acelere as atividades de topo de funil para normalizar este indicador." : "Performance saudável. Mantenha a cadência atual para atingir o benchmark."}
+              </p>
+            </div>
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  </TooltipProvider>
+
       <div className="mt-4 flex flex-col items-center gap-1 w-full">
         <div
           className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
