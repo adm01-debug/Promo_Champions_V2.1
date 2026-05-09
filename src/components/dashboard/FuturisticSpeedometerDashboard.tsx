@@ -1515,7 +1515,7 @@ export const FuturisticSpeedometerDashboard = () => {
       <DashboardSection 
         title="Infraestrutura de Comunicação" 
         icon={<Settings2 className="h-4 w-4" />}
-        teaser="Verificar status de entrega e logs de e-mail/push"
+        teaser="Verificar status de entrega e logs de e-mail/push em tempo real"
       >
         <IntegrationStatusPanel />
       </DashboardSection>
