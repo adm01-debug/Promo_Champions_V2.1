@@ -181,7 +181,22 @@ export function ClientKanban() {
                             <span className="text-[11px] font-black text-primary/80 tracking-tighter">
                               {formatValue(entry.clients?.total_value || 0)}
                             </span>
-                            <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 rounded-md hover:bg-primary/20 hover:text-primary p-0"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const event = new CustomEvent('create-task-modal', { 
+                                    detail: { clientId: entry.client_id, clientName: entry.clients.name } 
+                                  });
+                                  window.dispatchEvent(event);
+                                }}
+                                title="Criar Tarefa"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
                               {entry.clients?.email && <Mail className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
                               {entry.clients?.phone && <Phone className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
                             </div>

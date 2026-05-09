@@ -14,6 +14,9 @@ import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
+import { Plus, History } from "lucide-react";
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
   pending: "bg-warning/20 text-warning border-warning/30",
@@ -39,6 +42,87 @@ const statusOptions = [
   { label: "Concluída", value: "completed" },
   { label: "Perdida", value: "lost" },
 ];
+
+const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
+  const [showLog, setShowLog] = useState(false);
+  return (
+    <div 
+      className="group relative overflow-hidden bg-gradient-to-r from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-5 transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
+      style={{ animationDelay: `${200 + index * 30}ms` }}
+    >
+      <div className="absolute top-0 left-0 w-1 h-full bg-primary/40 group-hover:bg-primary transition-colors" />
+      
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-center gap-4 min-w-[300px]">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-primary font-mono tracking-widest uppercase">#{sale.id}</span>
+            <h3 className="font-display font-black text-lg uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
+              {sale.cliente}
+            </h3>
+          </div>
+        </div>
+
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-accent/20 border border-white/5">
+              <ShoppingCart className="h-4 w-4 text-muted-foreground/70" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest">Product / SKU</p>
+              <p className="text-sm font-bold truncate">
+                {sale.produto} <span className="text-[10px] font-mono text-muted-foreground ml-2 opacity-60">[{sale.sku || "NO-SKU"}]</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-8 min-w-[250px]">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Status</span>
+            <Badge variant="outline" className={cn("px-3 py-1 text-[10px] font-black uppercase tracking-widest", statusColors[sale.status] || statusColors.pending)}>
+              {sale.statusLabel || sale.status}
+            </Badge>
+          </div>
+          <div className="flex flex-col items-end min-w-[100px]">
+            <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Created At</span>
+            <span className="text-sm font-bold text-muted-foreground">{sale.data}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end min-w-[180px] gap-4">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Gross Volume</span>
+            <span className="text-2xl font-display font-black tracking-tighter text-primary">
+              R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
+            onClick={() => setShowLog(true)}
+            title="Registrar Atividade"
+          >
+            <History className="h-4 w-4 text-primary" />
+          </Button>
+        </div>
+      </div>
+
+      <Dialog open={showLog} onOpenChange={setShowLog}>
+        <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Log Tactical Activity</DialogTitle>
+          </DialogHeader>
+          <ActivityLogForm 
+            saleId={sale.fullId} 
+            clientId={sale.client_id}
+            onSuccess={() => setShowLog(false)} 
+          />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
 
 const Vendas = () => {
   const [searchTerm, setSearchTerm] = useState("");
