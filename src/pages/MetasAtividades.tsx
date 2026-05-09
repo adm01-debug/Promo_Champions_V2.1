@@ -262,11 +262,11 @@ export default function MetasAtividades() {
                 key={index} 
                 variant="glass"
                 className={cn(
-                  "animate-fade-in-up hover:shadow-glow-primary/10 transition-all duration-700 overflow-hidden relative group border-white/10 card-elevated rounded-[2.5rem] hover:-translate-y-2",
+                  "animate-fade-in-up hover:shadow-glow-primary/20 transition-all duration-700 overflow-hidden relative group border-white/10 card-elevated rounded-[2.5rem] hover:-translate-y-2 bg-background/20 backdrop-blur-2xl",
                   `stagger-${index + 1}`
                 )}
               >
-                <div className={cn("absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -mr-16 -mt-16 transition-all opacity-20 group-hover:opacity-40 group-hover:scale-150 duration-700", stat.bgColor)} />
+                <div className={cn("absolute -top-12 -right-12 w-32 h-32 blur-3xl rounded-full transition-all opacity-10 group-hover:opacity-30 group-hover:scale-150 duration-700", stat.bgColor)} />
                 <CardContent className="p-8 relative z-10">
                   <div className="flex items-center justify-between mb-6">
                     <div className={cn("p-4 rounded-2xl shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6", stat.bgColor)}>
