@@ -18,6 +18,8 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { DialerQueueCard } from "@/components/dialer/DialerQueueCard";
+import { CurrentCallCard } from "@/components/dialer/CurrentCallCard";
 import { 
   Users, 
   UserCheck, 
@@ -28,7 +30,8 @@ import {
   Phone,
   Snowflake,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from "lucide-react";
 
 export default function SDRDashboard() {
