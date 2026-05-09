@@ -200,16 +200,28 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                       </div>
                       <div className="flex items-center gap-1">
                         <TooltipProvider>
-                          <Tooltip>
+                          <Tooltip delayDuration={0}>
                             <TooltipTrigger asChild>
-                              <div className="p-1.5 rounded-lg bg-background/50 border border-white/10 hover:border-primary/50 transition-colors cursor-help group/reaction">
+                              <div className="p-1.5 rounded-lg bg-background/50 border border-white/10 hover:border-primary/50 transition-colors cursor-help group/reaction relative overflow-hidden">
                                 <MessageCircle className="h-3.5 w-3.5 text-muted-foreground group-hover/reaction:text-primary transition-colors" />
+                                {localReactions[sp.salesperson_id] && localReactions[sp.salesperson_id].length > 0 && (
+                                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse shadow-glow-primary" />
+                                )}
                               </div>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="flex gap-2 p-1 bg-background/95 backdrop-blur-xl border-primary/20">
-                              {['🔥', '👏', '🚀', '🎯'].map(emoji => (
-                                <button key={emoji} className="p-1.5 hover:bg-primary/20 rounded-md transition-colors text-sm">
-                                  {emoji}
+                            <TooltipContent side="top" className="flex gap-2 p-1 bg-background/95 backdrop-blur-xl border-primary/20 shadow-2xl animate-in zoom-in">
+                              {[
+                                { e: '🔥', icon: Flame, color: 'text-orange-500' },
+                                { e: '🚀', icon: Zap, color: 'text-primary' },
+                                { e: '👏', icon: ThumbsUp, color: 'text-blue-500' },
+                                { e: '🎉', icon: PartyPopper, color: 'text-pink-500' }
+                              ].map(({ e, icon: Icon, color }) => (
+                                <button 
+                                  key={e} 
+                                  onClick={(ev) => handleReaction(sp.salesperson_id, e, ev)}
+                                  className="p-2 hover:bg-white/10 rounded-lg transition-all hover:scale-125 group/btn active:scale-95"
+                                >
+                                  <span className="text-lg leading-none filter drop-shadow-md">{e}</span>
                                 </button>
                               ))}
                             </TooltipContent>
