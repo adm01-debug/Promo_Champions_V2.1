@@ -107,7 +107,7 @@ export const ActivityHeatmap: React.FC = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center gap-4">
                         <p className="text-[10px] font-black uppercase tracking-tighter text-primary">{day.date}</p>
-                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.intensity * 25}%</Badge>
+                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.count} Atividades</Badge>
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
