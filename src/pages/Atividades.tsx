@@ -51,7 +51,11 @@ export default function Atividades() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            <ActivityLogForm />
+            <div className="space-y-6">
+              <ActivityLogForm />
+              <ActivityEffectiveness />
+              <ActivityHeatmap />
+            </div>
           </div>
           <div className="lg:col-span-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
             <ActivityList limit={20} />
