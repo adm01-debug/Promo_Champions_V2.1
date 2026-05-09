@@ -137,6 +137,17 @@ export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, momen
                     strokeDasharray="3 2"
                   />
                 ))}
+              {intents.map((intent, i) => (
+                <ReferenceDot
+                  key={`intent-${i}`}
+                  x={intent.timestamp_sec}
+                  y={0.5} // High up to avoid clashing with sentiment
+                  r={4}
+                  fill="hsl(var(--primary))"
+                  stroke="hsl(var(--background))"
+                  strokeWidth={1}
+                />
+              ))}
             </AreaChart>
           </ResponsiveContainer>
         )}
