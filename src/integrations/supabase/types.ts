@@ -7644,6 +7644,7 @@ export type Database = {
           id: string
           objection: string
           response: string
+          tags: string[] | null
           updated_at: string
           usage_count: number | null
         }
@@ -7655,6 +7656,7 @@ export type Database = {
           id?: string
           objection: string
           response: string
+          tags?: string[] | null
           updated_at?: string
           usage_count?: number | null
         }
@@ -7666,6 +7668,7 @@ export type Database = {
           id?: string
           objection?: string
           response?: string
+          tags?: string[] | null
           updated_at?: string
           usage_count?: number | null
         }
