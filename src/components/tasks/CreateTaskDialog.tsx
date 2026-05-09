@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateTask, TaskPriority, TaskType } from '@/hooks/useTasks';
 import { useSalespeople } from '@/hooks/useSalespeople';
+import { useClients } from '@/hooks/useClients';
+import { useSalesData } from '@/hooks/useSalesData';
 import {
   Dialog,
   DialogContent,
@@ -48,6 +50,8 @@ export function CreateTaskDialog() {
 
   const createTask = useCreateTask();
   const { data: salespeople } = useSalespeople();
+  const { data: clients } = useClients();
+  const { data: sales } = useSalesData();
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
@@ -277,8 +281,12 @@ export function CreateTaskDialog() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* Clients list will be populated by a hook if we add it here */}
                         <SelectItem value="none">Nenhum</SelectItem>
+                        {clients?.map((client) => (
+                          <SelectItem key={client.id} value={client.id}>
+                            {client.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -300,6 +308,11 @@ export function CreateTaskDialog() {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="none">Nenhum</SelectItem>
+                        {sales?.map((sale) => (
+                          <SelectItem key={sale.fullId || sale.id} value={sale.fullId || sale.id}>
+                            {sale.cliente} - {sale.produto}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
