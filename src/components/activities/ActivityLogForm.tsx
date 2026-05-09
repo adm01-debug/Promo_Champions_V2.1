@@ -236,22 +236,56 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
                 control={form.control}
                 name="client_id"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">Cliente</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="h-9 text-xs bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors">
-                          <SelectValue placeholder="Selecione o cliente" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="glass border-border/50">
-                        {clients?.map(c => (
-                          <SelectItem key={c.id} value={c.id} className="text-xs">
-                            {c.name} {c.company ? `(${c.company})` : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-xs font-medium text-muted-foreground mb-1">Cliente</FormLabel>
+                    <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between h-9 text-xs bg-muted/30 border-border/50 font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? clients?.find((c) => c.id === field.value)?.name
+                              : "Selecione o cliente"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                        <Command className="glass border-border/50">
+                          <CommandInput placeholder="Buscar cliente..." className="h-9 text-xs" />
+                          <CommandList>
+                            <CommandEmpty className="text-xs py-2 px-4">Nenhum cliente encontrado.</CommandEmpty>
+                            <CommandGroup>
+                              {clients?.map((c) => (
+                                <CommandItem
+                                  key={c.id}
+                                  value={c.name}
+                                  onSelect={() => {
+                                    form.setValue("client_id", c.id);
+                                    setClientOpen(false);
+                                  }}
+                                  className="text-xs"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      c.id === field.value ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {c.name} {c.company ? `(${c.company})` : ""}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
