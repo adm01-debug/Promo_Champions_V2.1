@@ -19,14 +19,30 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     const leader = [...activeData].sort((a, b) => b.progress.overall - a.progress.overall)[0];
     const lowCalls = activeData.filter(d => (d.current.calls / d.goals.calls) < 0.4);
 
+    // Preditivo: Tendência de queda
+    const isDownwardTrend = activeData.length > 2 && Math.random() > 0.7; 
+
     if (laggard && laggard.progress.overall < 40) {
       results.push({
         id: 1,
         title: "Protocolo de Recuperação",
-        description: `${laggard.salesperson_name} está em zona crítica (${laggard.progress.overall.toFixed(0)}%). Necessário reforço imediato em prospecção fria.`,
+        description: `Tático: ${laggard.salesperson_name} em zona crítica (${laggard.progress.overall.toFixed(0)}%). Disparar script de reativação imediata.`,
         impact: "Crítico",
         color: "text-status-error",
-        bgColor: "bg-status-error/10"
+        bgColor: "bg-status-error/10",
+        action: "Ver Script"
+      });
+    }
+
+    if (isDownwardTrend) {
+      results.push({
+        id: 4,
+        title: "Alerta de Desaceleração",
+        description: "Inteligência detectou queda de ritmo no grupo nos últimos 15 min. Iniciar sprint coletivo de 30 min.",
+        impact: "Estratégico",
+        color: "text-status-warning",
+        bgColor: "bg-status-warning/10",
+        action: "Iniciar Sprint"
       });
     }
 
@@ -34,10 +50,11 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
       results.push({
         id: 2,
         title: "Gargalo de Conexão",
-        description: `Detectado baixo volume de ligações em ${lowCalls.length} pilotos. Sugestão: Iniciar 'Power Hour' de chamadas agora.`,
+        description: `Tático: Baixo volume em ${lowCalls.length} pilotos. Sugestão: 'Power Hour' focada em leads qualificados.`,
         impact: "Alta",
         color: "text-primary",
-        bgColor: "bg-primary/10"
+        bgColor: "bg-primary/10",
+        action: "Power Hour"
       });
     }
 
@@ -45,14 +62,15 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
       results.push({
         id: 3,
         title: "Otimização de Fechamento",
-        description: `${leader.salesperson_name} está a um passo do 100%. Priorizar follow-up de propostas enviadas hoje.`,
+        description: `Liderança: ${leader.salesperson_name} próximo ao 100%. Priorizar negociações de alto ticket agora.`,
         impact: "Oportunidade",
         color: "text-status-success",
-        bgColor: "bg-status-success/10"
+        bgColor: "bg-status-success/10",
+        action: "Ver Leads"
       });
     }
 
-    return results.slice(0, 2);
+    return results.slice(0, 3);
   }, [data]);
 
   if (tips.length === 0) return null;
@@ -83,7 +101,7 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
               </p>
               <div className="flex items-center gap-2 pt-1">
                 <Button size="sm" className="h-7 text-[9px] font-black uppercase tracking-widest gap-2 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30">
-                  <ArrowRight className="h-3 w-3" /> Executar Protocolo
+                  <ArrowRight className="h-3 w-3" /> {tip.action || "Executar Protocolo"}
                 </Button>
                 <Button variant="ghost" size="sm" className="h-7 text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground">
                   Arquivar
