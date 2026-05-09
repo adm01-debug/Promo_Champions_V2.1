@@ -1,28 +1,30 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Users, Activity, FileText, Bell, Database, BarChart3, TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug } from "lucide-react";
+import { 
+  Settings, Users, Activity, FileText, Bell, Database, BarChart3, 
+  TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug, 
+  Wallet, Target, Webhook 
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
 
 const QUICK_LINKS = [
-  { to: "/admin/conexoes", icon: Plug, label: "Conexões", color: "text-primary" },
-  { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
-  { to: "/vendedores", icon: Users, label: "Vendedores", color: "text-chart-1" },
-  { to: "/times", icon: Activity, label: "Atribuições SDR", color: "text-chart-2" },
-  { to: "/portfolio", icon: FileText, label: "Portfólio", color: "text-chart-3" },
-  { to: "/notificacoes", icon: Bell, label: "Notificações", color: "text-warning" },
-  { to: "/bitrix24", icon: Database, label: "Bitrix24", color: "text-chart-4" },
-  { to: "/analytics", icon: BarChart3, label: "Analytics", color: "text-chart-5" },
-  { to: "/metas", icon: TrendingUp, label: "Metas", color: "text-primary" },
-  { to: "/playbooks", icon: FileText, label: "Playbooks", color: "text-chart-1" },
-  { to: "/fonte-leads", icon: TrendingUp, label: "Fonte Leads", color: "text-chart-2" },
-  { to: "/relatorio-atividades", icon: BarChart3, label: "Rel. Atividades", color: "text-chart-3" },
-  { to: "/icp", icon: TrendingUp, label: "ICP", color: "text-chart-4" },
-  { to: "/admin/webhooks-timeline", icon: Activity, label: "Timeline Webhooks", color: "text-chart-5" },
-  { to: "/admin/webhooks-alert-history", icon: History, label: "Histórico Alertas", color: "text-warning" },
-  { to: "/admin/webhooks-alert-settings", icon: SlidersHorizontal, label: "Limites Alertas", color: "text-primary" },
   { to: "/admin/comercial", icon: TrendingUp, label: "Gestão Comercial", color: "text-emerald-500" },
+  { to: "/admin/comissoes", icon: Wallet, label: "Comissões", color: "text-primary" },
+  { to: "/admin/telemetria", icon: Activity, label: "Telemetria", color: "text-chart-1" },
+  { to: "/admin/conexoes", icon: Plug, label: "Conexões", color: "text-chart-2" },
+  { to: "/times", icon: Activity, label: "Atribuições SDR", color: "text-chart-3" },
+  { to: "/metas", icon: Target, label: "Metas Atuais", color: "text-chart-4" },
+  { to: "/notificacoes", icon: Bell, label: "Notificações", color: "text-warning" },
+  { to: "/analytics", icon: BarChart3, label: "Analytics Vendas", color: "text-chart-5" },
+  { to: "/audit-logs", icon: FileText, label: "Audit Trail", color: "text-primary" },
+  { to: "/bitrix24", icon: Database, label: "Bitrix24", color: "text-chart-1" },
+  { to: "/playbooks", icon: FileText, label: "Playbooks", color: "text-chart-2" },
+  { to: "/icp", icon: TrendingUp, label: "ICP / Persona", color: "text-chart-3" },
+  { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
+  { to: "/admin/webhooks-timeline", icon: Webhook, label: "Webhooks", color: "text-chart-4" },
+  { to: "/usage-analytics", icon: BarChart3, label: "Uso / Acessos", color: "text-chart-5" },
 ];
 
 export function AdminQuickLinks() {
