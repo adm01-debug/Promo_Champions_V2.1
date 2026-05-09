@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar } from "lucide-react";
+import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar, Zap } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
