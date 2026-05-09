@@ -57,6 +57,7 @@ import { cn } from "@/lib/utils";
 import { SpeedometerSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { IntegrationStatusPanel } from "./IntegrationStatusPanel";
+import { DashboardSection } from "./DashboardSection";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "current_month", label: "Mês Atual" },
