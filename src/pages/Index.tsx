@@ -129,7 +129,7 @@ const Index = () => {
                   )}
                 </motion.div>
                 
-                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:col-span-3">
+                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3">
                   <motion.div variants={itemVariants}>
                     {hasSales ? (
                       <StatCard
@@ -144,6 +144,23 @@ const Index = () => {
                       <DashboardEmptyState type="sales" />
                     )}
                   </motion.div>
+                  
+                  <motion.div variants={itemVariants}>
+                    {kpis?.current.avgTicket ? (
+                      <StatCard
+                        title="Ticket Médio"
+                        value={formatCurrency(kpis?.current.avgTicket ?? 0)}
+                        numericValue={kpis?.current.avgTicket ?? 0}
+                        change={kpis?.changes.avgTicket ?? 0}
+                        previousValue={kpis ? formatCurrency(kpis.previous.avgTicket) : undefined}
+                        icon={Receipt}
+                        variant="primary"
+                      />
+                    ) : (
+                      <DashboardEmptyState type="revenue" />
+                    )}
+                  </motion.div>
+
                   <motion.div variants={itemVariants}>
                     {hasClients ? (
                       <StatCard
@@ -159,6 +176,7 @@ const Index = () => {
                       <DashboardEmptyState type="clients" />
                     )}
                   </motion.div>
+
                   <motion.div variants={itemVariants}>
                     {hasConversion ? (
                       <StatCard
