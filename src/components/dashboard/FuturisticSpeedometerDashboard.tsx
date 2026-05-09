@@ -526,9 +526,9 @@ const Speedometer = ({
                 </div>
               </div>
               <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Meta (MAX)</span>
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Meta ({drilldownPeriod === "year" ? "Anual" : "Sugerida"})</span>
                 <span className="text-2xl font-mono font-black text-foreground">
-                  {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+                  {formatValue ? formatValue(drilldownPeriod === "year" ? max * 10 : max) : (drilldownPeriod === "year" ? max * 10 : max).toLocaleString("pt-BR")}
                 </span>
                 <span className="text-[10px] text-muted-foreground mt-1">benchmark sugerido</span>
               </div>
