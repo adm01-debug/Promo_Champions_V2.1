@@ -65,7 +65,7 @@ export function ActivityStats() {
                   ? 'bg-gradient-to-br from-primary/30 to-accent/20 shadow-sm group-hover:shadow-md group-hover:shadow-primary/20' 
                   : 'bg-muted/50 group-hover:bg-muted/70'
               }`}>
-                <Icon className={`h-4 w-4 transition-transform duration-300 group-hover:scale-110 ${isFirst ? 'text-primary' : item.color}`} />
+                <Icon className={`h-4 w-4 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12 ${isFirst ? 'text-primary' : item.color}`} />
               </div>
               <div>
                 <p className={`text-lg font-display font-bold transition-colors ${isFirst ? 'gradient-text' : 'group-hover:text-primary'}`}>{item.value}</p>
