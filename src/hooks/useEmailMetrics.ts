@@ -38,6 +38,14 @@ interface SubjectPerformance {
   clickRate: number;
 }
 
+interface FunctionEmailStats {
+  function_name: string;
+  sent: number;
+  failed: number;
+  total: number;
+  successRate: number;
+}
+
 interface EmailMetricsData {
   totalSent: number;
   totalFailed: number;
@@ -48,12 +56,14 @@ interface EmailMetricsData {
   clickRate: number;
   dailyStats: DailyEmailStats[];
   bySubject: SubjectPerformance[];
+  byFunction: FunctionEmailStats[];
+  topRecipients: { email: string; count: number }[];
   recentLogs: EmailLog[];
 }
 
 export function useEmailMetrics(days: number = 30) {
   return useQuery({
-    queryKey: ['email-metrics-v2', days],
+    queryKey: ['email-metrics-v3', days],
     queryFn: async (): Promise<EmailMetricsData> => {
       const startDate = subDays(new Date(), days);
 
@@ -135,6 +145,37 @@ export function useEmailMetrics(days: number = 30) {
         .sort((a, b) => b.sent - a.sent)
         .slice(0, 10);
 
+      // By Function (Backward compatibility)
+      const functionMap = new Map<string, { sent: number; failed: number }>();
+      emailLogs.forEach(log => {
+        const stats = functionMap.get(log.function_name) || { sent: 0, failed: 0 };
+        if (log.status === 'sent') stats.sent++;
+        else if (log.status === 'failed') stats.failed++;
+        functionMap.set(log.function_name, stats);
+      });
+
+      const byFunction: FunctionEmailStats[] = Array.from(functionMap.entries())
+        .map(([function_name, stats]) => ({
+          function_name,
+          sent: stats.sent,
+          failed: stats.failed,
+          total: stats.sent + stats.failed,
+          successRate: (stats.sent + stats.failed) > 0 ? (stats.sent / (stats.sent + stats.failed)) * 100 : 100
+        }))
+        .sort((a, b) => b.total - a.total);
+
+      // Top Recipients (Backward compatibility)
+      const recipientMap = new Map<string, number>();
+      emailLogs.forEach(log => {
+        const count = recipientMap.get(log.recipient_email) || 0;
+        recipientMap.set(log.recipient_email, count + 1);
+      });
+
+      const topRecipients = Array.from(recipientMap.entries())
+        .map(([email, count]) => ({ email, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+
       return {
         totalSent,
         totalFailed,
@@ -145,6 +186,8 @@ export function useEmailMetrics(days: number = 30) {
         clickRate,
         dailyStats: Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date)),
         bySubject,
+        byFunction,
+        topRecipients,
         recentLogs: emailLogs.slice(0, 50),
       };
     },
