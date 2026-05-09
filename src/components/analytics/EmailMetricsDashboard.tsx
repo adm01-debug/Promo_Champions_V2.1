@@ -48,9 +48,9 @@ export function EmailMetricsDashboard() {
 
   const statCards = [
     { icon: Send, value: data?.totalSent || 0, label: "Enviados", gradient: "from-primary to-accent", border: "border-border/40", textClass: "gradient-text" },
+    { icon: Eye, value: `${data?.openRate.toFixed(1) || 0}%`, label: "Taxa Abertura", gradient: "", border: "border-status-info/30", textClass: "text-status-info", iconBg: "bg-status-info/20", iconColor: "text-status-info" },
+    { icon: MousePointer2, value: `${data?.clickRate.toFixed(1) || 0}%`, label: "Taxa Cliques", gradient: "", border: "border-status-success/30", textClass: "text-status-success", iconBg: "bg-status-success/20", iconColor: "text-status-success" },
     { icon: XCircle, value: data?.totalFailed || 0, label: "Falhas", gradient: "", border: "border-status-error/30", textClass: "text-status-error", iconBg: "bg-status-error/20", iconColor: "text-status-error" },
-    { icon: CheckCircle, value: `${data?.successRate.toFixed(1) || 100}%`, label: "Taxa Sucesso", gradient: "", border: "border-status-success/30", textClass: "text-status-success", iconBg: "bg-status-success/20", iconColor: "text-status-success" },
-    { icon: Activity, value: data?.byFunction.length || 0, label: "Funções Ativas", gradient: "", border: "border-status-info/30", textClass: "text-status-info", iconBg: "bg-status-info/20", iconColor: "text-status-info" },
   ];
 
   return (
