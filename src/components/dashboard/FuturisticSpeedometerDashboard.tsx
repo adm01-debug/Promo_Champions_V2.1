@@ -666,11 +666,11 @@ export const FuturisticSpeedometerDashboard = () => {
   const [retThreshold, setRetThreshold] = useState(75);
   const [alertFrequency, setAlertFrequency] = useState<"daily" | "weekly" | "realtime">("realtime");
   const [alertChannels, setAlertChannels] = useState<string[]>(["hud", "toast"]);
-  const [alertEvents, setAlertEvents] = useState<string[]>(["threshold_reached"]);
+  const [alertEvents, setAlertEvents] = useState<string[]>(["threshold_reached", "goal_achieved"]);
   const [alertHistory, setAlertHistory] = useState<any[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
-
+  const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
 
   // Persistence logic
   useEffect(() => {
@@ -712,6 +712,7 @@ export const FuturisticSpeedometerDashboard = () => {
     loadSettings();
   }, [user?.id]);
 
+
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
     
@@ -737,7 +738,7 @@ export const FuturisticSpeedometerDashboard = () => {
       title: "Teste de Alerta",
       message: "Este é um alerta de teste para validar suas configurações de threshold e canais.",
       type: "system",
-      severity: "info",
+      priority: "info",
       metadata: { threshold: 0, actual: 0 }
     };
 
@@ -812,6 +813,73 @@ export const FuturisticSpeedometerDashboard = () => {
   useEffect(() => {
     if (kpis) setLastUpdate(new Date());
   }, [kpis]);
+  // Monitor KPIs and Trigger Alerts
+  useEffect(() => {
+    if (!kpis || !user?.id || alertFrequency !== "realtime") return;
+
+    const checkThresholds = async () => {
+      const currentOpp = kpis.current.conversionRate;
+      const currentRet = 85; 
+      
+      const newAlerts = [];
+
+      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
+        newAlerts.push({
+          title: "Meta de Oportunidades Atingida!",
+          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
+          type: "goal_achieved",
+          priority: "high",
+          metadata: { threshold: oppThreshold, actual: currentOpp }
+        });
+        setNotifiedEvents(prev => {
+          const next = new Set(prev);
+          next.add(`opp_${oppThreshold}`);
+          return next;
+        });
+      }
+
+      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
+        newAlerts.push({
+          title: "Alerta de Retenção",
+          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
+          type: "threshold_reached",
+          priority: "high",
+          metadata: { threshold: retThreshold, actual: currentRet }
+        });
+        setNotifiedEvents(prev => {
+          const next = new Set(prev);
+          next.add(`ret_${retThreshold}`);
+          return next;
+        });
+      }
+
+      for (const alertData of newAlerts) {
+        const { data, error } = await supabase
+          .from("notifications")
+          .insert({ ...alertData, user_id: user.id })
+          .select()
+          .single();
+
+        if (data) {
+          if (alertChannels.includes("toast")) {
+            toast[data.priority === 'high' ? 'warning' : 'info'](data.title, {
+              description: data.message,
+              icon: <Bell className="h-4 w-4" />
+            });
+          }
+          if (alertChannels.includes("hud")) {
+            setActiveHudAlert(data);
+            setTimeout(() => setActiveHudAlert(null), 8000);
+          }
+          setAlertHistory(prev => [data, ...prev].slice(0, 20));
+        }
+      }
+    };
+
+    checkThresholds();
+  }, [kpis, oppThreshold, retThreshold, alertFrequency, user?.id, alertChannels, notifiedEvents]);
+
+
 
   const { data: goals } = useGoalsDashboard();
 
@@ -1109,104 +1177,6 @@ export const FuturisticSpeedometerDashboard = () => {
                   </div>
                 </div>
 
-                <div className="space-y-4 pt-3 border-t border-primary/10">
-                  <h5 className="font-mono text-[9px] font-bold uppercase tracking-widest text-primary/80">Thresholds & Alerts</h5>
-                  
-                  <div className="space-y-3">
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
-                        <span>Threshold Oportunidades</span>
-                        <span className="text-primary font-bold">{oppThreshold}%</span>
-                      </div>
-                      <Slider 
-                        value={[oppThreshold]} 
-                        min={1} max={100} step={1} 
-                        onValueChange={(v) => {
-                          setOppThreshold(v[0]);
-                          saveSettings({ oppThreshold: v[0] });
-                        }} 
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
-                        <span>Threshold Retenção</span>
-                        <span className="text-primary font-bold">{retThreshold}%</span>
-                      </div>
-                      <Slider 
-                        value={[retThreshold]} 
-                        min={1} max={100} step={1} 
-                        onValueChange={(v) => {
-                          setRetThreshold(v[0]);
-                          saveSettings({ retThreshold: v[0] });
-                        }} 
-                      />
-                    </div>
-                  </div>
-
-                  <Separator className="bg-primary/5" />
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-1.5">
-                      <Layout className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-[8px] font-mono uppercase text-muted-foreground">Canais de Alerta</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {[
-                        { id: "hud", icon: Layout, label: "HUD" },
-                        { id: "toast", icon: Bell, label: "Toast" },
-                        { id: "email", icon: Mail, label: "Email" },
-                        { id: "push", icon: Smartphone, label: "Push" }
-                      ].map((channel) => (
-                        <Button
-                          key={channel.id}
-                          variant="outline"
-                          size="sm"
-                          className={cn(
-                            "h-5 px-1.5 text-[7px] font-mono uppercase gap-1 bg-background/20",
-                            alertChannels.includes(channel.id) 
-                              ? "border-primary/50 text-primary bg-primary/10" 
-                              : "border-border/20 text-muted-foreground opacity-50"
-                          )}
-                          onClick={() => {
-                            const newChannels = alertChannels.includes(channel.id)
-                              ? alertChannels.filter(c => c !== channel.id)
-                              : [...alertChannels, channel.id];
-                            setAlertChannels(newChannels);
-                            saveSettings({ alertChannels: newChannels });
-                            toast.success(`Canal ${channel.label} ${alertChannels.includes(channel.id) ? 'desativado' : 'ativado'}`);
-                          }}
-                        >
-                          <channel.icon className="h-2 w-2.5" />
-                          {channel.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <History className="h-3 w-3 text-muted-foreground" />
-                      <label className="text-[8px] font-mono uppercase text-muted-foreground">Frequência</label>
-                    </div>
-                    <Select 
-                      value={alertFrequency} 
-                      onValueChange={(v: any) => {
-                        setAlertFrequency(v);
-                        saveSettings({ alertFrequency: v });
-                      }}
-                    >
-                      <SelectTrigger className="h-6 text-[9px] bg-background/40 border-border/40 font-mono">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover/95 backdrop-blur-xl border-primary/20">
-                        <SelectItem value="realtime"><span className="text-[10px] font-mono">Real-time</span></SelectItem>
-                        <SelectItem value="daily"><span className="text-[10px] font-mono">Daily</span></SelectItem>
-                        <SelectItem value="weekly"><span className="text-[10px] font-mono">Weekly</span></SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -1397,12 +1367,12 @@ export const FuturisticSpeedometerDashboard = () => {
                     <div className="flex gap-3">
                       <div className={cn(
                         "mt-1 p-1.5 rounded-md border shrink-0",
-                        alert.severity === 'critical' ? "bg-destructive/10 border-destructive/30 text-destructive" :
-                        alert.severity === 'warning' ? "bg-warning/10 border-warning/30 text-warning" :
+                        alert.priority === 'high' ? "bg-destructive/10 border-destructive/30 text-destructive" :
+                        alert.priority === 'high' ? "bg-warning/10 border-warning/30 text-warning" :
                         "bg-primary/10 border-primary/30 text-primary"
                       )}>
-                        {alert.severity === 'critical' ? <AlertTriangle className="h-3 w-3" /> :
-                         alert.severity === 'warning' ? <AlertTriangle className="h-3 w-3" /> :
+                        {alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
+                         alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
                          <Info className="h-3 w-3" />}
                       </div>
                       <div className="flex-1 min-w-0">
