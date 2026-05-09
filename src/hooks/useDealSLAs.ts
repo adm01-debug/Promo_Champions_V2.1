@@ -12,10 +12,12 @@ export interface SLAConfig {
 }
 
 export const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
-  { stage: "lead", maxHours: 48, escalationHours: 24, label: "Lead" },
-  { stage: "qualified", maxHours: 72, escalationHours: 48, label: "Qualificado" },
-  { stage: "proposal", maxHours: 120, escalationHours: 96, label: "Proposta" },
-  { stage: "negotiation", maxHours: 168, escalationHours: 120, label: "Negociação" },
+  { stage: "lead", maxHours: 4, escalationHours: 2, label: "Lead" },
+  { stage: "qualified", maxHours: 24, escalationHours: 8, label: "Qualificado" },
+  { stage: "proposal", maxHours: 48, escalationHours: 24, label: "Proposta" },
+  { stage: "negotiation", maxHours: 72, escalationHours: 48, label: "Negociação" },
+  { stage: "won", maxHours: 120, escalationHours: 72, label: "Ganho" },
+  { stage: "lost", maxHours: 240, escalationHours: 120, label: "Perdido" },
 ];
 
 export interface DealSLAStatus {
@@ -50,7 +52,7 @@ export const useDealSLAs = () => {
       const { data, error } = await supabase
         .from("sales")
         .select("id, client_name, status, updated_at")
-        .neq("status", "closed");
+        .not("status", "in", '("closed")');
       if (error) throw error;
       return data || [];
     },
