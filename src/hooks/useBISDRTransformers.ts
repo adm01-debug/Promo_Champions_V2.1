@@ -35,7 +35,7 @@ interface TransformParams {
   activities: ActivityRecord[];
   previousActivities: { id: string }[];
   lastYearActivities: { id: string }[];
-  activityGoals: ActivityGoals | null;
+  activityGoals: any | null; // Changed to any to handle extended goals if needed
   allSDRs: { id: string; role: string }[];
   recentActivitiesData: { activity_type: string; contact_name: string | null; outcome: string; created_at: string }[];
   daysInPeriod: number;
@@ -77,6 +77,9 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   }));
 
   const avgActivitiesPerDay = activities.length / daysInPeriod;
+  const connectRate = activities.length > 0 ? (activities.filter(a => ["connected", "qualified", "scheduled"].includes(a.outcome)).length / activities.length) * 100 : 0;
+  const bookingRate = activities.length > 0 ? (activities.filter(a => a.outcome === "scheduled").length / activities.length) * 100 : 0;
+  
   const totalCalls = activities.filter(a => a.activity_type === "call").length;
   const totalEmails = activities.filter(a => a.activity_type === "email").length;
   const totalMeetings = activities.filter(a => a.activity_type === "meeting").length;
@@ -179,6 +182,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   return {
     totalLeadsGenerated, qualifiedLeads, qualificationRate, avgQualificationTime,
     totalActivities: activities.length, activitiesByType, avgActivitiesPerDay,
+    connectRate, bookingRate,
     totalCalls, totalEmails, totalMeetings, totalLinkedIn, totalWhatsApp,
     pipelineValue, pipelineCount: pipelineDeals.length, pipelineByStage,
     previousPeriod, sameLastYear,
