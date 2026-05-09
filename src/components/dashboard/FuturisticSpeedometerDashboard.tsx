@@ -110,13 +110,18 @@ const Speedometer = ({
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
 
 
+  const s = currentSize;
+  const isSmallScreen = s < 200;
+
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         if (width > 0) {
-          setCurrentSize(Math.min(width - 24, size));
+          // Optimization: throttle resize updates by avoiding unnecessary state changes
+          const newSize = Math.min(width - 24, size);
+          setCurrentSize((prev) => (Math.abs(prev - newSize) > 5 ? newSize : prev));
         }
       }
     });
@@ -124,7 +129,6 @@ const Speedometer = ({
     return () => observer.disconnect();
   }, [size]);
 
-  const s = currentSize;
   const cx = s / 2;
   const cy = s / 2;
   const outerRadius = s / 2 - 8;
@@ -228,7 +232,7 @@ const Speedometer = ({
             <TooltipTrigger asChild>
               <DialogTrigger asChild>
                 <div className="relative cursor-pointer hover:brightness-110 transition-all" style={{ width: s, height: s }}>
-              {theme === "cyber" && (
+              {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute inset-0 rounded-full blur-3xl pointer-events-none"
                   style={{ background: `radial-gradient(circle, ${colors.glow}, transparent 65%)` }}
@@ -236,7 +240,7 @@ const Speedometer = ({
                   transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
                 />
               )}
-              {theme === "cyber" && (
+              {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute inset-0 rounded-full opacity-70 pointer-events-none"
                   style={{
@@ -248,7 +252,7 @@ const Speedometer = ({
                   transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                 />
               )}
-              {theme === "cyber" && (
+              {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute rounded-full opacity-40 pointer-events-none"
                   style={{
@@ -558,6 +562,12 @@ export const FuturisticSpeedometerDashboard = () => {
   const [customUnit, setCustomUnit] = useState("");
   const [autoScale, setAutoScale] = useState(true);
 
+  // New Alert Settings
+  const [oppThreshold, setOppThreshold] = useState(10);
+  const [retThreshold, setRetThreshold] = useState(5);
+  const [alertFrequency, setAlertFrequency] = useState<"daily" | "weekly" | "realtime">("daily");
+
+
   // Persistence logic
   useEffect(() => {
     if (!user?.id) return;
@@ -578,6 +588,9 @@ export const FuturisticSpeedometerDashboard = () => {
         if (typeof s.customMax !== 'undefined') setCustomMax(s.customMax);
         if (typeof s.customUnit !== 'undefined') setCustomUnit(s.customUnit);
         if (typeof s.autoScale !== 'undefined') setAutoScale(s.autoScale);
+        if (typeof s.oppThreshold === 'number') setOppThreshold(s.oppThreshold);
+        if (typeof s.retThreshold === 'number') setRetThreshold(s.retThreshold);
+        if (s.alertFrequency) setAlertFrequency(s.alertFrequency);
       }
     };
     
@@ -587,7 +600,10 @@ export const FuturisticSpeedometerDashboard = () => {
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
     
-    const currentSettings = { ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale };
+    const currentSettings = { 
+      ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale,
+      oppThreshold, retThreshold, alertFrequency 
+    };
     const newSettings = { ...currentSettings, ...updates };
     
     await supabase.from("user_app_settings").upsert({
@@ -808,6 +824,60 @@ export const FuturisticSpeedometerDashboard = () => {
                         {m}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-3 border-t border-primary/10">
+                  <h5 className="font-mono text-[9px] font-bold uppercase tracking-widest text-primary/80">Thresholds & Alerts</h5>
+                  
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                      <span>Threshold Oportunidades</span>
+                      <span className="text-primary">{oppThreshold}%</span>
+                    </div>
+                    <Slider 
+                      value={[oppThreshold]} 
+                      min={1} max={50} step={1} 
+                      onValueChange={(v) => {
+                        setOppThreshold(v[0]);
+                        saveSettings({ oppThreshold: v[0] });
+                      }} 
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                      <span>Threshold Retenção</span>
+                      <span className="text-primary">{retThreshold}%</span>
+                    </div>
+                    <Slider 
+                      value={[retThreshold]} 
+                      min={1} max={50} step={1} 
+                      onValueChange={(v) => {
+                        setRetThreshold(v[0]);
+                        saveSettings({ retThreshold: v[0] });
+                      }} 
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[8px] font-mono uppercase text-muted-foreground">Frequência de Alerta</label>
+                    <Select 
+                      value={alertFrequency} 
+                      onValueChange={(v: any) => {
+                        setAlertFrequency(v);
+                        saveSettings({ alertFrequency: v });
+                      }}
+                    >
+                      <SelectTrigger className="h-6 text-[9px] bg-background/40 border-border/40 font-mono">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover/95 backdrop-blur-xl">
+                        <SelectItem value="realtime"><span className="text-[10px] font-mono">Real-time</span></SelectItem>
+                        <SelectItem value="daily"><span className="text-[10px] font-mono">Daily</span></SelectItem>
+                        <SelectItem value="weekly"><span className="text-[10px] font-mono">Weekly</span></SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
