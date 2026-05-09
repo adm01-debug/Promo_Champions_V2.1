@@ -15,6 +15,9 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { useStockForecast } from "@/hooks/useStockForecast";
+import { Sparkles, Zap, TrendingDown, Clock, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function StockStatusBadge({ current, min, reorder }: { current: number; min: number; reorder: number }) {
   if (current <= min) return <Badge variant="destructive" className="font-black uppercase tracking-widest text-[10px]">CRITICAL</Badge>;
