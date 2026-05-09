@@ -38,6 +38,15 @@ export default function MetasAtividades() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const { celebrate, resetCelebration } = useCelebration();
   const { toast } = useToast();
+  const [emojiEffect, setEmojiEffect] = useState<{ x: number; y: number; emoji: string } | null>(null);
+
+  const handleStatInteraction = (e: React.MouseEvent, type: string) => {
+    const emojis = type === "trophy" ? ["🏆", "✨", "⭐", "🎉"] : ["🔥", "⚡", "🚀", "💪"];
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    setEmojiEffect({ x: e.clientX, y: e.clientY, emoji });
+    setTimeout(() => setEmojiEffect(null), 1000);
+  };
+  const { toast } = useToast();
 
   const editingSalesperson = salespeople?.find(sp => sp.id === editingId);
 
@@ -167,6 +176,16 @@ export default function MetasAtividades() {
         <div className="scan-line" />
         <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
 
+        <AnimatePresence>
+          {emojiEffect && (
+            <EmojiParticles 
+              x={emojiEffect.x} 
+              y={emojiEffect.y} 
+              emoji={emojiEffect.emoji} 
+            />
+          )}
+        </AnimatePresence>
+
 
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
           {/* Header Section with Holographic Title v12.0 */}
@@ -261,7 +280,10 @@ export default function MetasAtividades() {
                         <div className="flex flex-col items-end">
                           <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Ritmo Coletivo</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow">
+                            <span 
+                              className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow cursor-pointer hover:scale-110 transition-transform"
+                              onClick={(e) => handleStatInteraction(e, "ritmo")}
+                            >
                               {avgProgress.toFixed(0)}%
                             </span>
                           </div>
