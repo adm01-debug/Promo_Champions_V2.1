@@ -112,6 +112,20 @@ export default function MetasAtividades() {
       .arena-scrollbar::-webkit-scrollbar-thumb:hover {
         background: rgba(var(--primary), 0.5);
       }
+
+      @keyframes scan {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(1000%); }
+      }
+      .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, rgba(var(--primary), 0.1), transparent);
+        animation: scan 8s linear infinite;
+        pointer-events: none;
+        z-index: 40;
+      }
     `}} />
     <>
     <Helmet>
