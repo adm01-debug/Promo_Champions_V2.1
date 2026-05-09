@@ -108,16 +108,12 @@ export default function MetasAtividades() {
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent/10 blur-[100px] rounded-full animate-float pointer-events-none" />
-        
+
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
           {/* Header Section with Holographic Title */}
-          <div className="animate-fade-in-up relative">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-8 rounded-[2rem] glass border border-white/10 shadow-2xl overflow-hidden group">
-              {/* Animated background lines for the header */}
-              <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer" />
-                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer-reverse" />
-              </div>
+          <div className="animate-fade-in-up relative group/arena-header">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-10 rounded-[3rem] glass border border-white/20 shadow-glow-primary/10 overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 opacity-50" />
               
               <div className="space-y-4 relative z-10">
                 <div className="flex flex-wrap items-center gap-3 mb-2">
@@ -126,11 +122,10 @@ export default function MetasAtividades() {
                 </div>
 
                 <div className="relative">
-                  <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-2xl">
+                  <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02]">
                     Arena de Atividades
                   </h1>
-                  {/* Decorative underline */}
-                  <div className="h-1.5 w-32 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-2" />
+                  <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
                 </div>
                 
                 <p className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
@@ -156,42 +151,23 @@ export default function MetasAtividades() {
                   <span className="text-xs font-black uppercase tracking-widest">Testar Vitória</span>
                 </Button>
                 
-                <div className="px-8 py-4 rounded-[2rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/10 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[180px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/5 opacity-50 pointer-events-none" />
-                  <div className="absolute top-0 right-0 p-2 opacity-10">
-                    <TrendingUp className="w-12 h-12 text-primary" />
+                <div className="px-10 py-6 rounded-[2.5rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/20 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[220px] transition-all duration-500 hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10 opacity-50" />
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <TrendingUp className="w-16 h-16 text-primary" />
                   </div>
                   
-                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 leading-none mb-2 relative z-10 italic">Pulse Global</span>
-                  <div className="flex items-center gap-3 relative z-10">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-status-success/20 border border-status-success/40 shadow-glow-success/20">
-                      <Flame className="h-5 w-5 text-status-success animate-pulse" />
+                  <span className="text-[12px] font-black uppercase tracking-[0.3em] text-primary leading-none mb-3 relative z-10 italic">Performance Global</span>
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-status-success/30 border border-status-success/50 shadow-glow-success/30 animate-pulse">
+                      <Flame className="h-6 w-6 text-status-success" />
                     </div>
-                    <span className="text-4xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-glow">
+                    <span className="text-5xl font-display font-black text-foreground leading-none tracking-tighter drop-shadow-glow">
                       {avgProgress.toFixed(0)}%
                     </span>
-            </div>
-            {/* Global Arena Boss Bar */}
-            <div className="mt-8 space-y-2">
-              <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/70">Objetivo Coletivo da Arena</span>
-                </div>
-                <span className="text-xs font-black text-primary italic">Status: Em Operação Nomimal</span>
-              </div>
-              <div className="h-3 w-full bg-muted/20 rounded-full overflow-hidden border border-white/5 relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div 
-                  className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-1000 ease-spring shadow-glow-primary relative" 
-                  style={{ width: `${avgProgress}%` }}
-                >
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
             </div>
           </div>
 
@@ -207,7 +183,7 @@ export default function MetasAtividades() {
                 key={index} 
                 variant="glass"
                 className={cn(
-                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated rounded-3xl",
+                  "animate-fade-in-up hover:shadow-glow-primary/10 transition-all duration-700 overflow-hidden relative group border-white/10 card-elevated rounded-[2.5rem] hover:-translate-y-2",
                   `stagger-${index + 1}`
                 )}
               >
@@ -222,9 +198,9 @@ export default function MetasAtividades() {
                     </Badge>
                   </div>
                   <div>
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <p className={cn("text-5xl font-display font-black tracking-tighter leading-none", stat.color)}>{stat.value}</p>
-                      {stat.trend.startsWith('+') && <span className="text-status-success text-xs font-bold animate-pulse">{stat.trend}</span>}
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <p className={cn("text-6xl font-display font-black tracking-tighter leading-none drop-shadow-glow", stat.color)}>{stat.value}</p>
+                      {stat.trend.startsWith('+') && <span className="text-status-success text-sm font-black animate-fire-pulse bg-status-success/20 px-2 py-0.5 rounded-full">{stat.trend}</span>}
                     </div>
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/90 mb-2">{stat.label}</p>
                     <p className="text-[10px] text-muted-foreground font-medium italic opacity-80 group-hover:opacity-100 transition-opacity">{stat.description}</p>
@@ -237,7 +213,7 @@ export default function MetasAtividades() {
 
         {/* Tabs: Progress + Achievements */}
         <Tabs defaultValue="progress" className="animate-fade-in-up stagger-5">
-          <TabsList className="mb-4 bg-muted/30 p-1 rounded-xl">
+          <TabsList className="mb-8 bg-white/5 p-1.5 rounded-2xl border border-white/10 w-fit backdrop-blur-xl">
             <TabsTrigger value="progress" className="gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Target className="h-4 w-4" />
               Progresso Diário
@@ -282,8 +258,8 @@ export default function MetasAtividades() {
 
                   {/* Progress Cards Grid */}
                   <div className="lg:col-span-2 animate-fade-in-up stagger-3">
-                    <Card variant="glass" className="rounded-3xl border-border/40 overflow-hidden">
-                      <CardHeader className="pb-4 bg-muted/20 border-b border-border/10">
+                    <Card variant="glass" className="rounded-[2.5rem] border-white/10 overflow-hidden shadow-2xl transition-all duration-500 hover:bg-background/30 group/grid">
+                      <CardHeader className="pb-6 bg-primary/5 border-b border-white/5">
                         <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
                           <div className="icon-container-primary p-2 rounded-xl bg-primary/10 border border-primary/20">
                             <Target className="h-4 w-4 text-primary" />
@@ -338,18 +314,14 @@ export default function MetasAtividades() {
         </Tabs>
       </div>
 
-      {/* Edit Dialog */}
-      {editingId && editingSalesperson && (
-        <ActivityGoalEditDialog
-          open={!!editingId}
-          onOpenChange={(open) => !open && setEditingId(null)}
-          salespersonId={editingId}
-          salespersonName={editingSalesperson.name}
-        />
-      )}
-    </div>
+      <ActivityGoalEditDialog
+        open={!!editingId}
+        onOpenChange={(open) => !open && setEditingId(null)}
+        salespersonId={editingId || ""}
+        salespersonName={editingSalesperson?.name || ""}
+      />
     </SkeletonTransition>
-  </>
+    </>
     </PageTransition>
   );
 }

@@ -124,10 +124,10 @@ export function ActivityGoalEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass border-border/40 p-0 overflow-hidden">
-        <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent p-6 pb-0">
+      <DialogContent className="sm:max-w-md glass border-white/10 p-0 overflow-hidden shadow-2xl">
+        <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-transparent p-8 pb-4">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3 text-xl font-display font-black uppercase tracking-tight italic">
+            <DialogTitle className="flex items-center gap-4 text-2xl font-display font-black uppercase tracking-tighter italic gradient-text">
               <div className="p-2 rounded-xl bg-primary shadow-lg">
                 <Target className="h-5 w-5 text-primary-foreground" />
               </div>

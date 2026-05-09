@@ -19,7 +19,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
   const isOnTrack = avgProgress >= 70 || (avgProgress >= 40 && hoursRemaining > 4);
 
   return (
-    <Card variant="glass" className="overflow-hidden border-primary/20 bg-primary/5">
+    <Card variant="glass" className="overflow-hidden border-primary/20 bg-primary/5 group/velocity hover:shadow-glow-primary/10 transition-all duration-500">
       <CardHeader className="pb-3">
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
           <Timer className="h-4 w-4 text-primary" />
@@ -31,15 +31,15 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Velocidade Atual</p>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-display font-black text-foreground">
+              <span className="text-3xl font-display font-black text-foreground gradient-text group-hover:scale-110 transition-transform inline-block">
                 {(avgProgress / Math.max(1, new Date().getHours() - 8)).toFixed(1)}%
               </span>
               <span className="text-[10px] text-muted-foreground">/ hora</span>
             </div>
           </div>
           <div className={cn(
-            "p-3 rounded-2xl",
-            isOnTrack ? "bg-status-success/10" : "bg-status-warning/10"
+            "p-3 rounded-2xl transition-all duration-500",
+            isOnTrack ? "bg-status-success/20 shadow-glow-success/20" : "bg-status-warning/20 shadow-glow-warning/20"
           )}>
             {isOnTrack ? (
               <TrendingUp className="h-6 w-6 text-status-success" />
@@ -59,9 +59,11 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
           </div>
           <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">
             <div 
-              className={cn("h-full transition-all duration-1000", isOnTrack ? "bg-status-success" : "bg-status-warning")}
+              className={cn("h-full transition-all duration-1000 relative overflow-hidden", isOnTrack ? "bg-status-success" : "bg-status-warning")}
               style={{ width: `${avgProgress}%` }}
-            />
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+            </div>
           </div>
           <p className="text-[9px] text-muted-foreground font-medium italic">
             {isOnTrack 

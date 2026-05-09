@@ -11,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  
+  Cell,
 } from "recharts";
 
 export function AchievementComparisonChart() {
@@ -54,14 +54,14 @@ export function AchievementComparisonChart() {
 
   const chartData = data.slice(0, 10).map((sp) => ({
     ...sp,
-    shortName: sp.name.split(" ")[0],
+    shortName: sp.name.split(" ")[0].toUpperCase(),
   }));
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+          <Users className="h-4 w-4 animate-pulse" />
           Conquistas por Vendedor
         </CardTitle>
       </CardHeader>
@@ -69,41 +69,57 @@ export function AchievementComparisonChart() {
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
               <XAxis
                 dataKey="shortName"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9, fontWeight: 900 }}
+                tickLine={false}
+                axisLine={false}
               />
               <YAxis
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9, fontWeight: 900 }}
+                tickLine={false}
+                axisLine={false}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                  backgroundColor: "rgba(0,0,0,0.8)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "16px",
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em"
                 }}
-                labelStyle={{ color: "hsl(var(--foreground))", fontWeight: "bold" }}
+                cursor={{ fill: "rgba(255,255,255,0.05)" }}
                 formatter={(value: any, name: any) => {
-                  const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
+                  const label = name === "dailyGoals" ? "Metas" : "Marcos";
                   return [value, label];
                 }}
               />
               <Legend
+                verticalAlign="top"
+                align="right"
+                height={36}
+                iconType="circle"
                 formatter={(value) => {
-                  if (value === "dailyGoals") return "Metas Batidas";
-                  if (value === "streakMilestones") return "Marcos de Sequência";
-                  return value;
+                  const label = value === "dailyGoals" ? "Metas" : "Marcos";
+                  return <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>;
                 }}
               />
-              <Bar dataKey="dailyGoals" stackId="a" fill="hsl(var(--rank-gold))" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="streakMilestones" stackId="a" fill="hsl(var(--status-warning))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="dailyGoals" stackId="a" fill="hsl(var(--rank-gold))" radius={[0, 0, 0, 0]} animationDuration={1500}>
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fillOpacity={0.8} />
+                ))}
+              </Bar>
+              <Bar dataKey="streakMilestones" stackId="a" fill="hsl(var(--status-warning))" radius={[8, 8, 0, 0]} animationDuration={1500}>
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fillOpacity={0.8} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

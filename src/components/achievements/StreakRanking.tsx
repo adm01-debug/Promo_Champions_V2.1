@@ -76,7 +76,7 @@ function _StreakRanking() {
   const hasAnyStreak = ranking?.some(r => r.bestStreak ?? 0 > 0);
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Flame className="h-5 w-5 text-status-warning" />
@@ -102,7 +102,7 @@ function _StreakRanking() {
               return (
                 <div
                   key={person.salesperson_id}
-                  className={`flex items-center gap-4 p-4 rounded-lg border transition-all hover:scale-[1.01] ${getRankStyle(rank)}`}
+                  className={`flex items-center gap-4 p-5 rounded-2xl border transition-all duration-500 hover:scale-[1.02] hover:shadow-xl glass-morphism ${getRankStyle(rank)}`}
                 >
                   {/* Rank */}
                   <div className="w-8 flex justify-center">

@@ -12,16 +12,16 @@ export const AchievementBadgeDisplay: React.FC = () => {
   ];
 
   return (
-    <Card variant="glass" className="border-border/40 bg-background/20 backdrop-blur-xl">
-      <CardContent className="p-4">
+    <Card variant="glass" className="border-border/40 bg-background/20 backdrop-blur-xl group/achievements hover:bg-background/40 transition-all duration-500">
+      <CardContent className="p-6">
         <div className="flex items-center justify-around gap-2">
           {badges.map(badge => (
             <TooltipProvider key={badge.id}>
               <Tooltip>
                 <TooltipTrigger>
-                  <div className={`p-2.5 rounded-full ${badge.bg} border border-white/5 transition-all hover:scale-125 hover:rotate-6 cursor-help relative group`}>
-                    <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 animate-ping pointer-events-none" />
-                    <badge.icon className={`h-5 w-5 ${badge.color} drop-shadow-sm`} />
+                  <div className={`p-3.5 rounded-2xl ${badge.bg} border border-white/10 transition-all duration-500 hover:scale-125 hover:-rotate-12 cursor-help relative group shadow-lg`}>
+                    <div className="absolute inset-0 bg-white/30 rounded-2xl opacity-0 group-hover:opacity-100 animate-ping pointer-events-none" />
+                    <badge.icon className={`h-6 w-6 ${badge.color} drop-shadow-glow`} />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent className="glass border-primary/20">

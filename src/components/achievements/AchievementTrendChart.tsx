@@ -72,25 +72,25 @@ export function AchievementTrendChart() {
   const totalMilestones = trends.reduce((sum, t) => sum + t.streakMilestones, 0);
 
   return (
-    <Card className="bg-card/50 backdrop-blur border-border/50">
+    <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">
       <CardHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+              <TrendingUp className="h-4 w-4 animate-pulse" />
               Evolução de Conquistas
             </CardTitle>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-rank-gold" />
+                <div className="w-2.5 h-2.5 rounded-full bg-rank-gold shadow-glow-gold" />
                 <span className="text-muted-foreground">
-                  Metas: <span className="font-bold text-foreground">{totalGoals}</span>
+                  Metas: <span className="text-foreground">{totalGoals}</span>
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-status-warning" />
+                <div className="w-2.5 h-2.5 rounded-full bg-status-warning shadow-glow-warning" />
                 <span className="text-muted-foreground">
-                  Marcos: <span className="font-bold text-foreground">{totalMilestones}</span>
+                  Marcos: <span className="text-foreground">{totalMilestones}</span>
                 </span>
               </div>
             </div>
@@ -99,14 +99,14 @@ export function AchievementTrendChart() {
             type="single"
             value={String(days)}
             onValueChange={(value) => value && setDays(Number(value))}
-            className="justify-start"
+            className="justify-start bg-white/5 p-1 rounded-xl w-fit border border-white/5"
           >
             {PERIOD_OPTIONS.map((option) => (
               <ToggleGroupItem
                 key={option.value}
                 value={option.value}
                 size="sm"
-                className="text-xs px-3"
+                className="text-[9px] font-black uppercase tracking-widest px-3 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg transition-all"
               >
                 {option.label}
               </ToggleGroupItem>
@@ -120,64 +120,75 @@ export function AchievementTrendChart() {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorGoals" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--rank-gold))" stopOpacity={0.5} />
+                  <stop offset="5%" stopColor="hsl(var(--rank-gold))" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="hsl(var(--rank-gold))" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorMilestones" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--status-warning))" stopOpacity={0.5} />
+                  <stop offset="5%" stopColor="hsl(var(--status-warning))" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="hsl(var(--status-warning))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
               <XAxis
                 dataKey="dateLabel"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 900 }}
+                tickLine={false}
+                axisLine={false}
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 900 }}
+                tickLine={false}
+                axisLine={false}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                  backgroundColor: "rgba(0,0,0,0.8)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "16px",
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em"
                 }}
-                labelStyle={{ color: "hsl(var(--foreground))", fontWeight: "bold" }}
+                itemStyle={{ padding: "2px 0" }}
+                cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 2 }}
                 formatter={(value: any, name: any) => {
                   const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
                   return [value, label];
                 }}
-                labelFormatter={(label) => `Data: ${label}`}
+                labelFormatter={(label) => `Ciclo: ${label}`}
               />
               <Legend
+                verticalAlign="top"
+                align="right"
+                height={36}
+                iconType="circle"
                 formatter={(value) => {
-                  if (value === "dailyGoals") return "Metas Batidas";
-                  if (value === "streakMilestones") return "Marcos de Sequência";
-                  return value;
+                  const label = value === "dailyGoals" ? "Metas" : "Marcos";
+                  return <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>;
                 }}
               />
               <Area
-                type="monotone"
+                type="step"
                 dataKey="dailyGoals"
                 stroke="hsl(var(--rank-gold))"
-                strokeWidth={2}
+                strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorGoals)"
+                animationDuration={1500}
               />
               <Area
-                type="monotone"
+                type="step"
                 dataKey="streakMilestones"
                 stroke="hsl(var(--status-warning))"
-                strokeWidth={2}
+                strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorMilestones)"
+                animationDuration={1500}
               />
             </AreaChart>
           </ResponsiveContainer>

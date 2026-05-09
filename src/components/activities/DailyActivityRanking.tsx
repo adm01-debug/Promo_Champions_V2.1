@@ -68,7 +68,7 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
   const completedCount = rankedData.filter(d => d.progress.overall >= 100).length;
 
   return (
-    <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
+    <Card variant="glass" className="border-border/40 bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500">
       <CardHeader className="pb-4 border-b border-border/10">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
