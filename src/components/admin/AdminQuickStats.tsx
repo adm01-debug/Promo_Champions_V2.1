@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserCog, Lock, Bell } from "lucide-react";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface AdminQuickStatsProps {
   stats: {
