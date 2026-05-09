@@ -34,41 +34,42 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
       </CardHeader>
       <CardContent className="p-6">
         <div className="flex items-center justify-between gap-4 relative">
-          {/* Duelist 1 */}
+          {/* Duelist 1 - The Challenger/Leader */}
           <div className="flex-1 text-center space-y-4">
             <div className="relative inline-block group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <Avatar className="h-16 w-16 border-2 border-background relative">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-primary via-accent to-primary rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <Avatar className="h-20 w-20 border-2 border-primary/50 relative shadow-glow-primary/20 transition-transform group-hover:scale-110">
                 <AvatarImage src={d1.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/20 text-primary">{d1.salesperson_name[0]}</AvatarFallback>
+                <AvatarFallback className="bg-primary/20 text-primary font-black text-xl">{d1.salesperson_name[0]}</AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1 bg-primary text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-lg">1º</div>
+              <div className="absolute -bottom-1 -right-1 bg-primary text-[10px] font-black px-2.5 py-1 rounded-md text-white shadow-glow-primary/40 border border-white/20 transform rotate-3">1º PLACE</div>
             </div>
             <div>
-              <p className="text-sm font-black truncate">{d1.salesperson_name.split(' ')[0]}</p>
-              <p className="text-[10px] font-bold text-primary">{d1.progress.overall.toFixed(0)}%</p>
+              <p className="text-sm font-black truncate tracking-tighter uppercase italic">{d1.salesperson_name.split(' ')[0]}</p>
+              <p className="text-lg font-display font-black text-primary drop-shadow-glow">{d1.progress.overall.toFixed(0)}%</p>
             </div>
           </div>
 
-          {/* VS */}
-          <div className="flex flex-col items-center justify-center space-y-2">
-            <div className="text-2xl font-display font-black italic text-muted-foreground/30 leading-none">VS</div>
-            <div className="h-20 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+          {/* VS Hologram */}
+          <div className="flex flex-col items-center justify-center relative px-4">
+            <div className="text-3xl font-display font-black italic text-muted-foreground/20 leading-none select-none">VS</div>
+            <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full scale-150 animate-pulse" />
+            <div className="h-16 w-[1px] bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
           </div>
 
-          {/* Duelist 2 */}
+          {/* Duelist 2 - The Defender */}
           <div className="flex-1 text-center space-y-4">
             <div className="relative inline-block group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-accent to-primary rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <Avatar className="h-16 w-16 border-2 border-background relative">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-accent via-primary to-accent rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <Avatar className="h-20 w-20 border-2 border-accent/50 relative shadow-glow-accent/20 transition-transform group-hover:scale-110">
                 <AvatarImage src={d2.avatar_url || undefined} />
-                <AvatarFallback className="bg-accent/20 text-accent">{d2.salesperson_name[0]}</AvatarFallback>
+                <AvatarFallback className="bg-accent/20 text-accent font-black text-xl">{d2.salesperson_name[0]}</AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1 bg-accent text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-lg">2º</div>
+              <div className="absolute -bottom-1 -right-1 bg-accent text-[10px] font-black px-2.5 py-1 rounded-md text-white shadow-glow-accent/40 border border-white/20 transform -rotate-3">2º PLACE</div>
             </div>
             <div>
-              <p className="text-sm font-black truncate">{d2.salesperson_name.split(' ')[0]}</p>
-              <p className="text-[10px] font-bold text-accent">{d2.progress.overall.toFixed(0)}%</p>
+              <p className="text-sm font-black truncate tracking-tighter uppercase italic">{d2.salesperson_name.split(' ')[0]}</p>
+              <p className="text-lg font-display font-black text-accent drop-shadow-glow">{d2.progress.overall.toFixed(0)}%</p>
             </div>
           </div>
         </div>
