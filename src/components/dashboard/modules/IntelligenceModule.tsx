@@ -1,4 +1,4 @@
-import { IntelligenceCockpit } from "@/components/intelligence/IntelligenceCockpit";
+import IntelligenceCockpit from "@/components/intelligence/IntelligenceCockpit";
 import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidget";
 import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
 import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
