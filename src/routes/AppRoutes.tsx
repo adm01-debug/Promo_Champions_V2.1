@@ -171,8 +171,9 @@ export function AppRoutes() {
                     <Route path="/bi-closer" element={<BICloser />} />
                     <Route path="/bi-gestor" element={<Manager><BIGestor /></Manager>} />
                     <Route path="/relatorio-atividades" element={<Manager><RelatorioAtividades /></Manager>} />
-                    <Route path="/relatorios-email" element={<RelatoriosEmail />} />
-                    <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
+                     <Route path="/relatorios-email" element={<RelatoriosEmail />} />
+                     <Route path="/analytics/emails" element={<Manager><EmailAnalyticsPage /></Manager>} />
+                     <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
                     <Route path="/relatorios-agendados" element={<Manager><ScheduledReports /></Manager>} />
                     <Route path="/relatorios-custom" element={<CustomReports />} />
                     <Route path="/relatorios-custom/:id" element={<CustomReports />} />
