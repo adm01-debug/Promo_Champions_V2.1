@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+import { useFeatureFlags, useFeatureFlag } from "@/hooks/useFeatureFlags";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,8 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState("");
   const [newDesc, setNewDesc] = useState("");
 
-  const { flags, isLoading } = useFeatureFlags();
+  const { flags, isLoading, isEnabled } = useFeatureFlags();
+  const testFlag = useFeatureFlag("experimental_ui");
 
   const toggleMutation = useMutation({
     mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
@@ -101,6 +102,11 @@ const FeatureFlagsAdmin = () => {
             <div>
               <h1 className="text-page-title font-display">Feature Flags</h1>
               <p className="text-sm text-muted-foreground mt-1">Controle de funcionalidades com rollout progressivo</p>
+              {testFlag && (
+                <Badge variant="outline" className="mt-2 bg-primary/10 border-primary/20 text-primary animate-pulse">
+                  Modo Experimental Ativado
+                </Badge>
+              )}
             </div>
             <Button onClick={() => setShowAdd(!showAdd)} size="sm" className="gap-2">
               <Plus className="h-4 w-4" /> Nova Flag

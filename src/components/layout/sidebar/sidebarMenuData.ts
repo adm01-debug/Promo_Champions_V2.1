@@ -85,6 +85,7 @@ export const sdrGroupedItems: MenuGroup[] = [
   {
     label: "Análises", icon: Gauge,
     items: [
+      { title: "Competências", url: "/competencias", icon: Brain },
       { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
@@ -122,6 +123,7 @@ export const closerGroupedItems: MenuGroup[] = [
   {
     label: "Análises", icon: Gauge,
     items: [
+      { title: "Competências", url: "/competencias", icon: Brain },
       { title: "BI Closer", url: "/bi-closer", icon: LineChart },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
@@ -150,6 +152,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
   {
     label: "Análises", icon: Gauge,
     items: [
+      { title: "Competências", url: "/competencias", icon: Brain },
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
