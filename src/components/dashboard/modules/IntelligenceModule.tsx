@@ -2,6 +2,9 @@ import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidge
 import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
 import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
 import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
+import { CompetencyRadar } from "@/components/analytics/CompetencyRadar";
+import { useCompetencyData } from "@/hooks/useCompetencyData";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const IntelligenceModule = () => {
   return (
