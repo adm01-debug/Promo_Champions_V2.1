@@ -266,11 +266,37 @@ export default function Estoque() {
                                 </td>
                                 <td className="p-4">
                                   <div className="space-y-2 min-w-[200px]">
-                                    <div className="flex items-baseline gap-2">
-                                      <span className="font-display font-black text-lg">{item.current_stock}</span>
-                                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">/ {item.max_stock_level}</span>
+                                    <div className="flex items-center justify-between gap-2">
+                                      <div className="flex items-baseline gap-1.5">
+                                        <span className="font-display font-black text-lg">{item.current_stock}</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">/ {item.max_stock_level}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        {pct < 20 ? (
+                                          <TrendingDown className="h-3 w-3 text-rose-500 animate-bounce" />
+                                        ) : pct > 80 ? (
+                                          <TrendingUp className="h-3 w-3 text-emerald-500" />
+                                        ) : (
+                                          <div className="h-1 w-1 rounded-full bg-primary/40" />
+                                        )}
+                                        <span className={cn("text-[10px] font-black uppercase tracking-tight", pct < 20 ? "text-rose-500" : pct > 80 ? "text-emerald-500" : "text-muted-foreground/60")}>
+                                          {Math.round(pct)}%
+                                        </span>
+                                      </div>
                                     </div>
-                                    <Progress value={pct} className="h-1 bg-muted/30" />
+                                    <div className="h-1.5 w-full bg-muted/20 rounded-full overflow-hidden">
+                                      <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${pct}%` }}
+                                        transition={{ duration: 1, ease: "easeOut" }}
+                                        className={cn(
+                                          "h-full rounded-full transition-all duration-500",
+                                          pct <= 20 ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" : 
+                                          pct <= 40 ? "bg-amber-500" : 
+                                          "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                                        )}
+                                      />
+                                    </div>
                                   </div>
                                 </td>
                                 <td className="p-4">
