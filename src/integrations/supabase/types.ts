@@ -11069,8 +11069,10 @@ export type Database = {
           product_name: string
           salesperson_id: string | null
           script_variant: string | null
+          sku: string | null
           source: string | null
           status: string
+          stock_reduced: boolean | null
           updated_at: string
         }
         Insert: {
@@ -11091,8 +11093,10 @@ export type Database = {
           product_name: string
           salesperson_id?: string | null
           script_variant?: string | null
+          sku?: string | null
           source?: string | null
           status?: string
+          stock_reduced?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -11113,8 +11117,10 @@ export type Database = {
           product_name?: string
           salesperson_id?: string | null
           script_variant?: string | null
+          sku?: string | null
           source?: string | null
           status?: string
+          stock_reduced?: boolean | null
           updated_at?: string
         }
         Relationships: [
