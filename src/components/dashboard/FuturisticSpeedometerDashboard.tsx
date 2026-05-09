@@ -504,6 +504,18 @@ const Speedometer = ({
       </DialogContent>
     </Dialog>
   </TooltipProvider>
+            
+            <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/10 rounded-xl">
+              <Zap className="h-4 w-4 text-primary animate-pulse" />
+              <p className="text-xs text-primary font-medium">
+                Insight IA: {animatedPct < 0.5 ? "Acelere as atividades de topo de funil para normalizar este indicador." : "Performance saudável. Mantenha a cadência atual para atingir o benchmark."}
+              </p>
+            </div>
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  </TooltipProvider>
 
       <div className="mt-4 flex flex-col items-center gap-1 w-full">
         <div
