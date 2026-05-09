@@ -15,14 +15,23 @@ interface SchedulingRateGaugeProps {
   variant?: "primary" | "success" | "warning";
 }
 
-export function SchedulingRateGauge({ rate, change, meetings, leads }: SchedulingRateGaugeProps) {
+export function SchedulingRateGauge({ 
+  rate, 
+  change, 
+  meetings, 
+  leads,
+  title = "Target Conversion",
+  variant = "primary"
+}: SchedulingRateGaugeProps) {
   const isPositive = (change ?? 0) >= 0;
   
   const animatedRate = useCountUp(rate, { duration: 1400, decimals: 1 });
   const animatedMeetings = useCountUp(meetings, { duration: 1400 });
   const animatedLeads = useCountUp(leads, { duration: 1400 });
-  
+
   const getRateColor = (rate: number) => {
+    if (variant === "success") return "text-success";
+    if (variant === "warning") return "text-warning";
     if (rate >= 20) return "text-primary";
     if (rate >= 10) return "text-success";
     return "text-destructive";
