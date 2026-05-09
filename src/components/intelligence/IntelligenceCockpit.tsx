@@ -11,7 +11,8 @@ import {
   Timer,
   ShieldCheck,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
