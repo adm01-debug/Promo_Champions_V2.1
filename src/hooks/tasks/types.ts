@@ -12,6 +12,7 @@ export interface TaskRecord {
   due_date: string;
   due_time: string | null;
   sale_id: string | null;
+  client_id: string | null;
   salesperson_id: string | null;
   completed_at: string | null;
   created_at: string;

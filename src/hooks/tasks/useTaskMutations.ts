@@ -16,6 +16,7 @@ export const useCreateTask = () => {
       due_date: string;
       due_time?: string;
       sale_id?: string;
+      client_id?: string;
       salesperson_id?: string;
     }) => {
       const { data, error } = await supabase
@@ -28,6 +29,7 @@ export const useCreateTask = () => {
           due_date: input.due_date,
           due_time: input.due_time || null,
           sale_id: input.sale_id || null,
+          client_id: input.client_id || null,
           salesperson_id: input.salesperson_id || null,
           status: 'pending',
         } as any)
@@ -64,6 +66,7 @@ export const useUpdateTask = () => {
       if (updates.due_date !== undefined) updateData.due_date = updates.due_date;
       if (updates.due_time !== undefined) updateData.due_time = updates.due_time;
       if (updates.sale_id !== undefined) updateData.sale_id = updates.sale_id;
+      if (updates.client_id !== undefined) updateData.client_id = updates.client_id;
       if (updates.salesperson_id !== undefined) updateData.salesperson_id = updates.salesperson_id;
       if (updates.completed_at !== undefined) updateData.completed_at = updates.completed_at;
 

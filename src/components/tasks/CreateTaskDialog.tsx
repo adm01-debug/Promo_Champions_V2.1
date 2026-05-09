@@ -33,6 +33,8 @@ const taskSchema = z.object({
     .max(1000, "Descrição deve ter no máximo 1000 caracteres")
     .optional(),
   salesperson_id: z.string().optional(),
+  client_id: z.string().optional(),
+  sale_id: z.string().optional(),
   priority: z.enum(["high", "medium", "low"]),
   task_type: z.enum(["call", "meeting", "follow_up", "email", "proposal", "other"]),
   due_date: z.string().min(1, "Data é obrigatória"),
@@ -53,6 +55,8 @@ export function CreateTaskDialog() {
       title: '',
       description: '',
       salesperson_id: '',
+      client_id: '',
+      sale_id: '',
       priority: 'medium',
       task_type: 'other',
       due_date: new Date().toISOString().split('T')[0],
@@ -65,6 +69,8 @@ export function CreateTaskDialog() {
       title: data.title,
       description: data.description || undefined,
       salesperson_id: data.salesperson_id || undefined,
+      client_id: data.client_id || undefined,
+      sale_id: data.sale_id || undefined,
       priority: data.priority as TaskPriority,
       task_type: data.task_type as TaskType,
       due_date: data.due_date,
@@ -84,6 +90,8 @@ export function CreateTaskDialog() {
         title: '',
         description: '',
         salesperson_id: '',
+        client_id: '',
+        sale_id: '',
         priority: 'medium',
         task_type: 'other',
         due_date: new Date().toISOString().split('T')[0],
@@ -254,6 +262,51 @@ export function CreateTaskDialog() {
                 </FormItem>
               )}
             />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="client_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cliente</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vincular cliente" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* Clients list will be populated by a hook if we add it here */}
+                        <SelectItem value="none">Nenhum</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sale_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Venda / Deal</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vincular venda" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">Nenhum</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
