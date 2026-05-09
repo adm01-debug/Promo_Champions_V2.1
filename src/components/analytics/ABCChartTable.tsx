@@ -183,7 +183,19 @@ export const ABCChartTable = React.memo(function ABCChartTable({ items, chartTit
                 </thead>
                 <tbody>
                   {items.map((item, i) => (
-                    <tr key={i} className="border-b border-border/30 hover:bg-primary/5 transition-all duration-300 cursor-pointer animate-fade-in group" style={{ animationDelay: `${i * 30}ms` }}>
+                    <tr 
+                      key={i} 
+                      className="border-b border-border/30 hover:bg-primary/5 transition-all duration-300 cursor-pointer animate-fade-in group" 
+                      style={{ animationDelay: `${i * 30}ms` }}
+                      onClick={() => toggleSelectItem(item.name)}
+                    >
+                      <td className="py-2.5 px-3" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox 
+                          checked={selectedItems.includes(item.name)} 
+                          onCheckedChange={() => toggleSelectItem(item.name)}
+                          className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                        />
+                      </td>
                       <td className="py-2.5 px-3 font-medium text-foreground transition-colors group-hover:text-primary">{item.name}</td>
                       <td className="text-right py-2.5 px-3 text-foreground">{formatCurrency(item.revenue)}</td>
                       <td className="text-right py-2.5 px-3 text-muted-foreground">{item.percentage.toFixed(1)}%</td>
