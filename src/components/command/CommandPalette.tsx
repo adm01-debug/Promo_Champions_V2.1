@@ -88,7 +88,7 @@ export function CommandPalette() {
     { id: "dashboard-performance", label: "Performance", icon: Gauge, action: () => navigate("/dashboard/performance"), group: "navigation", keywords: ["speedometer", "velocidade", "metas"] },
     { id: "dashboard-analytics", label: "Dashboard Analytics", icon: BarChart3, action: () => navigate("/dashboard/analises"), group: "navigation", keywords: ["análises", "gráficos", "data"] },
     { id: "dashboard-competition", label: "Competição", icon: Trophy, action: () => navigate("/dashboard/competicao"), group: "navigation", keywords: ["ranking", "arena", "leaderboard"] },
-    { id: "dashboard-intelligence", label: "Inteligência Hub", icon: Zap, action: () => navigate("/dashboard/inteligencia"), group: "navigation", keywords: ["ai", "insight", "preditivo"] },
+    { id: "dashboard-intelligence", label: "Inteligência Hub", icon: Zap, action: () => navigate("/inteligencia"), group: "navigation", keywords: ["ai", "insight", "preditivo"] },
     { id: "revenue-intelligence", label: "Revenue Intelligence", icon: TrendingUp, action: () => navigate("/revenue-intelligence"), group: "navigation", keywords: ["receita", "forecast", "vendas"] },
     { id: "conversational-intelligence", label: "Conversational Intelligence", icon: MessageSquare, action: () => navigate("/conversational-intelligence"), group: "navigation", keywords: ["transcrição", "análise de voz", "calls"] },
     { id: "deal-intelligence", label: "Deal Intelligence", icon: Briefcase, action: () => navigate("/deal-intelligence"), group: "navigation", keywords: ["oportunidades", "riscos", "pipeline"] },

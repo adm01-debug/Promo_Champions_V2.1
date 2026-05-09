@@ -15,9 +15,20 @@ import { LostStageBreakdown } from "@/components/deal-intelligence/winloss/LostS
 import { CompetitorAnalysisTable } from "@/components/deal-intelligence/winloss/CompetitorAnalysisTable";
 import { WinLossInsightsPanel } from "@/components/deal-intelligence/winloss/WinLossInsightsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy } from "lucide-react";
+import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
+import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
+import { RelationshipHealthGraph } from "@/components/deal-intelligence/committee/RelationshipHealthGraph";
+import { NextBestActionPanel } from "@/components/deal-intelligence/NextBestActionPanel";
+import { useState } from "react";
+import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
 
 export default function DealIntelligence() {
+  const { data: weakDeals } = useWeakCoverageDeals();
+  const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
+  
+  // Use first weak deal as default for the graph if none selected
+  const displaySaleId = selectedSaleId || weakDeals?.[0]?.sale_id;
+
   return (
     <>
       <Helmet>
@@ -50,6 +61,9 @@ export default function DealIntelligence() {
           >
             <Tabs defaultValue="health" className="w-full">
               <TabsList>
+                <TabsTrigger value="risk" className="gap-2">
+                  <AlertTriangle className="h-4 w-4" /> Análise de Risco
+                </TabsTrigger>
                 <TabsTrigger value="health" className="gap-2">
                   <Heart className="h-4 w-4" /> Saúde dos Deals
                 </TabsTrigger>
@@ -66,16 +80,29 @@ export default function DealIntelligence() {
                   <Trophy className="h-4 w-4" /> Win/Loss
                 </TabsTrigger>
               </TabsList>
+              <TabsContent value="risk" className="mt-4 space-y-4">
+                <RiskAssessmentPanel />
+              </TabsContent>
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
               </TabsContent>
               <TabsContent value="committee" className="mt-4 space-y-4">
-                <CommitteeInsightsPanel />
-                <WeakCoverageDealsTable />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div className="lg:col-span-1">
+                    <CommitteeInsightsPanel />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <RelationshipHealthGraph saleId={displaySaleId} />
+                  </div>
+                </div>
+                <WeakCoverageDealsTable onSelectDeal={(id) => setSelectedSaleId(id)} />
               </TabsContent>
               <TabsContent value="velocity" className="mt-4 space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                   <StuckDealsPanel />
+                  <NextBestActionPanel saleId={displaySaleId} />
+                </div>
+                <div className="mt-4">
                   <StageBottlenecksChart />
                 </div>
                 <StageBaselinesPanel />

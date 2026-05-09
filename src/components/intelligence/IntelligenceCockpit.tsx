@@ -18,9 +18,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { ExecutiveSummaryReport } from "./ExecutiveSummaryReport";
 
 const IntelligenceCockpit = () => {
   const navigate = useNavigate();
+  const [reportOpen, setReportOpen] = useState(false);
 
   const hubs = [
     {
@@ -63,6 +66,7 @@ const IntelligenceCockpit = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <ExecutiveSummaryReport isOpen={reportOpen} onClose={() => setReportOpen(false)} />
       {/* CEO Level Executive Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         <div className="lg:col-span-3 space-y-2">
@@ -134,6 +138,14 @@ const IntelligenceCockpit = () => {
             </h3>
             <div className="flex gap-2">
               <Badge variant="outline" className="bg-background/50">Real-time Analysis</Badge>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="h-7 text-[10px] font-bold uppercase tracking-widest bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+                onClick={() => setReportOpen(true)}
+              >
+                Gerar CEO Summary
+              </Button>
               <Button size="sm" variant="outline" className="h-7 text-[10px] font-bold uppercase tracking-widest">Export QBR</Button>
             </div>
           </div>
