@@ -11,10 +11,12 @@ export interface InactivityRule {
 }
 
 export const INACTIVITY_RULES: InactivityRule[] = [
-  { stage: "lead", maxDaysInactive: 3, label: "Lead" },
-  { stage: "qualified", maxDaysInactive: 5, label: "Qualificado" },
-  { stage: "proposal", maxDaysInactive: 7, label: "Proposta" },
-  { stage: "negotiation", maxDaysInactive: 10, label: "Negociação" },
+  { stage: "lead", maxDaysInactive: 2, label: "Lead" },
+  { stage: "qualified", maxDaysInactive: 3, label: "Qualificado" },
+  { stage: "proposal", maxDaysInactive: 5, label: "Proposta" },
+  { stage: "negotiation", maxDaysInactive: 7, label: "Negociação" },
+  { stage: "won", maxDaysInactive: 15, label: "Ganho" },
+  { stage: "lost", maxDaysInactive: 30, label: "Perdido" },
 ];
 
 export interface InactiveDeal {
@@ -34,7 +36,7 @@ export const useInactiveDeals = () => {
       const { data, error } = await supabase
         .from("sales")
         .select("id, client_name, status, updated_at, created_at")
-        .neq("status", "closed")
+        .not("status", "in", '("closed")')
         .order("updated_at", { ascending: true });
       if (error) throw error;
       return data || [];
