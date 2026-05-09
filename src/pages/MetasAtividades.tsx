@@ -180,24 +180,27 @@ export default function MetasAtividades() {
                 key={index} 
                 variant="glass"
                 className={cn(
-                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated",
+                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated rounded-3xl",
                   `stagger-${index + 1}`
                 )}
               >
-                <div className={cn("absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full -mr-12 -mt-12 transition-all opacity-10 group-hover:opacity-20", stat.bgColor)} />
-                <CardContent className="p-6 relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={cn("p-3 rounded-2xl shadow-inner transition-transform duration-500 group-hover:scale-110", stat.bgColor)}>
-                      <stat.icon className={cn("h-5 w-5", stat.color)} />
+                <div className={cn("absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -mr-16 -mt-16 transition-all opacity-20 group-hover:opacity-40 group-hover:scale-150 duration-700", stat.bgColor)} />
+                <CardContent className="p-8 relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={cn("p-4 rounded-2xl shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6", stat.bgColor)}>
+                      <stat.icon className={cn("h-6 w-6", stat.color)} />
                     </div>
-                    <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-none px-2", stat.bgColor, stat.color)}>
+                    <Badge variant="outline" className={cn("text-[10px] font-black uppercase tracking-widest border-none px-3 py-1 rounded-full shadow-sm", stat.bgColor, stat.color)}>
                       {stat.trend}
                     </Badge>
                   </div>
                   <div>
-                    <p className={cn("text-3xl font-display font-black tracking-tighter leading-none mb-1", stat.color)}>{stat.value}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/80 mb-1">{stat.label}</p>
-                    <p className="text-[9px] text-muted-foreground font-medium">{stat.description}</p>
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <p className={cn("text-5xl font-display font-black tracking-tighter leading-none", stat.color)}>{stat.value}</p>
+                      {stat.trend.startsWith('+') && <span className="text-status-success text-xs font-bold animate-pulse">{stat.trend}</span>}
+                    </div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/90 mb-2">{stat.label}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium italic opacity-80 group-hover:opacity-100 transition-opacity">{stat.description}</p>
                   </div>
                 </CardContent>
               </Card>
