@@ -7,3 +7,17 @@ export { TimeRangePicker, ComparisonPeriod, type TimeRange } from './TimeRangePi
 export { GoalProgressCard, GoalsSummary } from './GoalProgressCard';
 export { ClientInfoCard } from './ClientInfoCard';
 export { ActivityItem, ActivityList } from './ActivityItem';
+export { IntegrationStatusPanel } from './IntegrationStatusPanel';
+export { DashboardHeader } from './DashboardHeader';
+export { DashboardSection } from './DashboardSection';
+export { KPIGrid } from './KPIGrid';
+export { ActivityChart as SalesChart } from './ActivityChart';
+export { TrendsChartsPanel } from './TrendsChartsPanel';
+export { AlertsPanel } from './AlertsPanel';
+export { DailyMissionsPanel } from './DailyMissionsPanel';
+export { FuturisticRanking } from './FuturisticRanking';
+export { MyAssignedTasks } from './MyAssignedTasks';
+export { RecentDeals } from './RecentDeals';
+export { SalesForecast } from './SalesForecast';
+export { TopProducts } from './TopProducts';
+
