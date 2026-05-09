@@ -111,12 +111,12 @@ export const ActivityHeatmap: React.FC = () => {
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                          <span>Conexões</span>
-                          <span className="text-foreground">{(day.intensity * 12 + 5)}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                          <span>Deals</span>
-                          <span className="text-foreground">{Math.floor(day.intensity * 1.5)}</span>
+                           <span>Conexões</span>
+                           <span className="text-foreground">{day.connections}</span>
+                         </div>
+                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                           <span>Conversões</span>
+                           <span className="text-foreground">{day.deals}</span>
                         </div>
                       </div>
                       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-1">
