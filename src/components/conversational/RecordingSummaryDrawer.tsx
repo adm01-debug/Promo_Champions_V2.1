@@ -32,6 +32,24 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
   const rec = recordings?.find((r) => r.id === recordingId) ?? null;
   const { data: moments } = useCriticalMoments(rec?.id);
 
+  const derivedIntents: Intent[] = (rec?.objections_summary as Objection[] ?? []).map((o, idx) => ({
+    type: o.category === "preço" ? "objection" : "followup",
+    label: o.text,
+    confidence: 0.85,
+    timestamp_sec: 120 + idx * 45, // mock timestamp
+    excerpt: o.text
+  }));
+
+  if (rec?.key_topics?.includes("Competitor")) {
+    derivedIntents.push({
+      type: "comparison",
+      label: "Menção a Concorrente",
+      confidence: 0.92,
+      timestamp_sec: 300,
+      excerpt: "O cliente mencionou o concorrente principal ao falar sobre preço."
+    });
+  }
+
   return (
     <Sheet open={!!recordingId} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
