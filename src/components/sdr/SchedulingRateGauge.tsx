@@ -11,6 +11,8 @@ interface SchedulingRateGaugeProps {
   change?: number;
   meetings: number;
   leads: number;
+  title?: string;
+  variant?: "primary" | "success" | "warning";
 }
 
 export function SchedulingRateGauge({ rate, change, meetings, leads }: SchedulingRateGaugeProps) {
