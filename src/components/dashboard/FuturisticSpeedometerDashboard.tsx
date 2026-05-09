@@ -1171,7 +1171,7 @@ export const FuturisticSpeedometerDashboard = () => {
               <Users className="h-3.5 w-3.5 mr-1.5 text-primary shrink-0" />
               <SelectValue placeholder="Selecionar vendedor" />
             </SelectTrigger>
-            <SelectContent className="bg-popover/95 backdrop-blur-xl">
+            <SelectContent className="bg-popover/95 backdrop-blur-xl border-primary/20">
               <SelectItem value={ME}><span className="font-mono text-xs">Eu{currentUser?.name ? ` (${currentUser.name})` : ""}</span></SelectItem>
               <SelectItem value={ALL_SALESPEOPLE}><span className="font-mono text-xs">Toda Equipe</span></SelectItem>
               {salespeople.map((sp) => (
@@ -1185,22 +1185,29 @@ export const FuturisticSpeedometerDashboard = () => {
               <button
                 key={opt.value}
                 onClick={() => setPeriod(opt.value)}
-                className={cn("px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all", period === opt.value ? "bg-primary/20 text-primary border border-primary/30" : "text-muted-foreground hover:text-foreground hover:bg-background/80")}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all",
+                  period === opt.value 
+                    ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                )}
               >
                 {opt.label}
               </button>
             ))}
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30">
+
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
             </span>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live Telemetry</span>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">Última atualização</span>
-            <span className="text-[10px] font-mono font-bold text-foreground/80">{format(lastUpdate, "HH:mm:ss")}</span>
+
+          <div className="flex flex-col items-end pr-2 border-r border-border/40">
+            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest leading-none mb-1">Sincronização</span>
+            <span className="text-[10px] font-mono font-black text-primary animate-pulse">{format(lastUpdate, "HH:mm:ss")}</span>
           </div>
         </div>
       </div>
