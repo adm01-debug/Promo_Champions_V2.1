@@ -68,50 +68,62 @@ export const IntegrationStatusPanel = () => {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const { data: emailLogs, error: emailError } = await supabase
-        .from('email_logs' as any)
+      // Tenta buscar da nova tabela de logs unificada
+      const { data: unifiedLogs, error: unifiedError } = await supabase
+        .from('integration_logs' as any)
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+        .order('timestamp', { ascending: false })
+        .limit(30);
 
-      if (emailError) throw emailError;
+      if (unifiedError) {
+        console.warn("Unified logs table not accessible, falling back to email_logs", unifiedError);
+        // Fallback para email_logs se a tabela unificada falhar (compatibilidade)
+        const { data: emailLogs, error: emailError } = await supabase
+          .from('email_logs' as any)
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(20);
 
-      const formattedLogs: LogEntry[] = (emailLogs || []).map((log: any) => ({
-        id: log.id,
-        timestamp: log.created_at,
-        type: "email",
-        event: log.subject || "Email Notification",
-        status: log.status === 'sent' ? 'success' : 'error',
-        details: log.error_message || `Enviado para ${log.recipient_email}`,
-        recipient: log.recipient_email
+        if (emailError) throw emailError;
+
+        const formattedLogs: LogEntry[] = (emailLogs || []).map((log: any) => ({
+          id: log.id,
+          timestamp: log.created_at,
+          type: "email",
+          event: log.subject || "Email Notification",
+          status: log.status === 'sent' ? 'success' : 'error',
+          details: log.error_message || `Enviado para ${log.recipient_email}`,
+          recipient: log.recipient_email
+        }));
+
+        setLogs(formattedLogs);
+      } else {
+        const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log: any) => ({
+          id: log.id,
+          timestamp: log.timestamp,
+          type: log.integration_type,
+          event: log.event_type === 'config_check' ? `Diagnóstico: ${log.integration_type}` : log.event_type,
+          status: log.status === 'success' ? 'success' : 'error',
+          details: log.error_message || (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
+          recipient: log.recipient
+        }));
+        setLogs(formattedLogs);
+      }
+
+      // Atualiza status de infraestrutura baseado nos logs
+      const emailFails = logs.filter(l => l.type === 'email' && l.status === 'error').length;
+      const pushFails = logs.filter(l => l.type === 'push' && l.status === 'error').length;
+      
+      setIntegrations(prev => prev.map(i => {
+        if (i.type === 'email') return { ...i, errorCount: emailFails, status: emailFails > 5 ? 'error' : 'active' };
+        if (i.type === 'push') return { ...i, errorCount: pushFails, status: pushFails > 3 ? 'error' : 'active' };
+        return i;
       }));
-
-      // Add static/mock for push as there's no table yet
-      const pushLogs: LogEntry[] = [
-        {
-          id: 'p1',
-          timestamp: new Date().toISOString(),
-          type: 'push',
-          event: 'Teste de Conexão',
-          status: 'success',
-          details: 'Serviço de push respondendo normalmente'
-        }
-      ];
-
-      setLogs([...formattedLogs, ...pushLogs].sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      ));
-
-      // Update status counts
-      const fails = formattedLogs.filter(l => l.status === 'error').length;
-      setIntegrations(prev => prev.map(i => 
-        i.type === 'email' ? { ...i, errorCount: fails, status: fails > 5 ? 'error' : 'active' } : i
-      ));
 
       toast.success("Diagnóstico concluído com sucesso");
     } catch (error) {
       console.error("Error fetching logs:", error);
-      toast.error("Erro ao carregar logs reais");
+      toast.error("Erro ao carregar logs de integração");
     } finally {
       setLoading(false);
     }
