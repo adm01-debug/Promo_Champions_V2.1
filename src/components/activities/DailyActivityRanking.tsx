@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star } from "lucide-react";
+import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
@@ -160,7 +160,8 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                     </Avatar>
 
                     {/* Info */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className={`font-display font-black text-sm truncate transition-all duration-300 ${
                           rank === 1 ? 'gradient-text scale-110' : 'group-hover:text-primary'
@@ -174,6 +175,25 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                         <span className="flex items-center gap-0.5">📞 {sp.current.calls}/{sp.goals.calls}</span>
                         <span className="flex items-center gap-0.5">📧 {sp.current.emails}/{sp.goals.emails}</span>
                         <span className="flex items-center gap-0.5">📅 {sp.current.meetings}/{sp.goals.meetings}</span>
+                      </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="p-1.5 rounded-lg bg-background/50 border border-white/10 hover:border-primary/50 transition-colors cursor-help group/reaction">
+                                <MessageCircle className="h-3.5 w-3.5 text-muted-foreground group-hover/reaction:text-primary transition-colors" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="flex gap-2 p-1 bg-background/95 backdrop-blur-xl border-primary/20">
+                              {['🔥', '👏', '🚀', '🎯'].map(emoji => (
+                                <button key={emoji} className="p-1.5 hover:bg-primary/20 rounded-md transition-colors text-sm">
+                                  {emoji}
+                                </button>
+                              ))}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </div>
 

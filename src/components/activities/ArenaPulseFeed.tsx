@@ -170,6 +170,14 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
                         </Badge>
                       </div>
                     )}
+                    {event.type === 'stealth' && (
+                      <div className="mt-2 p-2 rounded-lg bg-background/40 border border-dashed border-white/10">
+                        <p className="text-[9px] font-medium text-muted-foreground flex items-center gap-2">
+                          <Zap className="h-3 w-3 text-primary" />
+                          Sugestão: Realize 5 ligações agora para quebrar o gelo.
+                        </p>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="self-center opacity-0 group-hover/item:opacity-100 transition-opacity">
