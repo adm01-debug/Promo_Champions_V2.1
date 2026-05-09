@@ -569,8 +569,8 @@ const Speedometer = ({
                         }}
                       />
                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                        {drilldownData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={index === drilldownData.length - 1 ? colors.stroke : 'hsl(var(--primary) / 0.3)'} />
+                        {displayData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={index === displayData.length - 1 ? colors.stroke : 'hsl(var(--primary) / 0.3)'} />
                         ))}
                       </Bar>
                     </BarChart>
