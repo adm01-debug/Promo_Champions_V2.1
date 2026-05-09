@@ -177,8 +177,8 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
 };
 
 export const PERIOD_LABELS: Record<KPIPeriod, { label: string; comparison: string }> = {
-  week: { label: "Semana Atual", comparison: "Semana Anterior" },
-  current_month: { label: "Mês Atual", comparison: "Mês Anterior" },
+  week: { label: "Semana", comparison: "Semana Anterior" },
+  current_month: { label: "Mês", comparison: "Mês Anterior" },
   last_month: { label: "Último Mês", comparison: "Mês Anterior" },
   quarter: { label: "Trimestre", comparison: "Trimestre Anterior" },
   year: { label: "Ano", comparison: "Ano Anterior" },

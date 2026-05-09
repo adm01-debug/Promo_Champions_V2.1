@@ -110,7 +110,7 @@ const Index = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="bg-black/40 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
                   <Calendar className="mr-2 h-4 w-4" />
-                  Period: {PERIOD_LABELS[period].label}
+                  PERÍODO: {PERIOD_LABELS[period].label}
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
