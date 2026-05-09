@@ -127,19 +127,54 @@ export const ABCChartTable = React.memo(function ABCChartTable({ items, chartTit
       </Card>
       <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
-              {tableIcon}
-            </div>
-            <span className="gradient-text">{tableTitle}</span>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group/title">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
+                {tableIcon}
+              </div>
+              <span className="gradient-text">{tableTitle}</span>
+            </CardTitle>
+
+            {selectedItems.length > 0 && (
+              <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline" className="glass gap-2 border-primary/30 hover:border-primary/60 transition-all duration-300">
+                      <MousePointer2 className="h-3.5 w-3.5 text-primary" />
+                      Ações ({selectedItems.length})
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="glass border-border/50 min-w-[180px]">
+                    <DropdownMenuLabel className="font-display">Ações em Massa</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleBulkAction('Adicionar Tag')} className="gap-2 cursor-pointer">
+                      <Tag className="h-4 w-4" /> Adicionar Tag
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleBulkAction('Enviar Mensagem')} className="gap-2 cursor-pointer">
+                      <MessageSquare className="h-4 w-4" /> Enviar Mensagem
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleBulkAction('Mover p/ Campanha')} className="gap-2 cursor-pointer">
+                      <Send className="h-4 w-4" /> Mover p/ Campanha
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {hasData ? (
-            <div className="max-h-[300px] overflow-y-auto rounded-xl">
+            <div className="max-h-[300px] overflow-y-auto rounded-xl scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
               <table className="w-full text-sm">
-                <thead className="sticky top-0 glass">
+                <thead className="sticky top-0 glass z-10">
                   <tr className="border-b border-border/50">
+                    <th className="py-3 px-3 text-left">
+                      <Checkbox 
+                        checked={selectedItems.length === items.length && items.length > 0} 
+                        onCheckedChange={toggleSelectAll}
+                        className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                      />
+                    </th>
                     <th className="text-left py-3 px-3 text-muted-foreground font-display font-medium">Nome</th>
                     <th className="text-right py-3 px-3 text-muted-foreground font-display font-medium">Receita</th>
                     <th className="text-right py-3 px-3 text-muted-foreground font-display font-medium">%</th>
