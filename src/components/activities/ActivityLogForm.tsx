@@ -63,6 +63,8 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   const { data: salespeople } = useSalespeople();
   const { data: clients } = useClients();
   const createActivity = useCreateActivity();
+  const [salespersonOpen, setSalespersonOpen] = useState(false);
+  const [clientOpen, setClientOpen] = useState(false);
 
   const form = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
