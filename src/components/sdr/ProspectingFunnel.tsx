@@ -7,6 +7,65 @@ import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { motion } from "framer-motion";
 
+function FunnelStage({ stage, maxCount, index, prevCount }: { stage: any, maxCount: number, index: number, prevCount?: number }) {
+  const animatedCount = useCountUp(stage.count, { duration: 1400 });
+  const conversionFromPrev = prevCount && prevCount > 0
+    ? ((stage.count / prevCount) * 100).toFixed(0)
+    : null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="space-y-1.5 group/stage cursor-pointer"
+    >
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <span className="font-display font-medium group-hover/stage:text-primary transition-colors">
+            {stage.stage}
+          </span>
+          {conversionFromPrev && (
+            <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+              <ArrowRight className="h-2.5 w-2.5" />
+              <span className="text-status-success font-medium">{conversionFromPrev}%</span>
+            </span>
+          )}
+        </div>
+        <span className="text-muted-foreground font-medium group-hover/stage:text-foreground/80 transition-colors tabular-nums">
+          {animatedCount}{" "}
+          <span className={cn(
+            "transition-colors",
+            index === 0 ? "text-primary" : "text-primary/70 group-hover/stage:text-primary"
+          )}>
+            ({stage.percentage.toFixed(0)}%)
+          </span>
+        </span>
+      </div>
+      <div className="h-8 bg-muted/20 rounded-lg overflow-hidden relative border border-border/30 shadow-inner group-hover/stage:border-primary/30 transition-all">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${(stage.count / maxCount) * 100}%` }}
+          transition={{ duration: 1.4, ease: "easeOutCubic" }}
+          className={cn(
+            "h-full rounded-lg transition-all flex items-center justify-center group-hover/stage:brightness-110",
+            stage.count === 0 && "opacity-30"
+          )}
+          style={{ 
+            backgroundColor: stage.color,
+            minWidth: stage.count > 0 ? "28px" : "0",
+            boxShadow: `0 0 20px ${stage.color}40, inset 0 1px 0 rgba(255,255,255,0.2)`
+          }}
+        >
+          <span className="text-[11px] font-bold text-primary-foreground drop-shadow-md font-display tabular-nums">
+            {animatedCount}
+          </span>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 export function ProspectingFunnel() {
   const { data: funnel, isLoading } = useProspectingFunnel();
 
