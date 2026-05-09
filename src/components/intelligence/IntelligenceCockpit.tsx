@@ -26,6 +26,7 @@ import { IntelligenceCommandBar } from "./IntelligenceCommandBar";
 import { ActivityPulse } from "./ActivityPulse";
 import { HealthGauge } from "./HealthGauge";
 import { PerformanceTrends } from "./PerformanceTrends";
+import { StrategicRecommendations } from "./StrategicRecommendations";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
