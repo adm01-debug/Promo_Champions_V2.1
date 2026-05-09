@@ -14,12 +14,12 @@ export const ActivityHeatmap: React.FC = () => {
 
   const getIntensityColor = (intensity: number) => {
     switch (intensity) {
-      case 0: return "bg-muted/20 border-border/10";
-      case 1: return "bg-primary/20 border-primary/10";
-      case 2: return "bg-primary/40 border-primary/20";
-      case 3: return "bg-primary/70 border-primary/30 shadow-sm shadow-primary/10";
-      case 4: return "bg-primary border-primary shadow-glow-primary/20 scale-105 z-10 animate-pulse";
-      default: return "bg-muted/20";
+      case 0: return "bg-white/5 border-white/5";
+      case 1: return "bg-primary/20 border-primary/20";
+      case 2: return "bg-primary/40 border-primary/40 shadow-sm";
+      case 3: return "bg-primary/70 border-primary/60 shadow-glow-primary/10";
+      case 4: return "bg-primary border-primary shadow-glow-primary animate-pulse scale-110 z-10";
+      default: return "bg-white/5";
     }
   };
 
@@ -73,9 +73,9 @@ export const ActivityHeatmap: React.FC = () => {
             <div className="flex items-center gap-1.5">
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Frio</span>
               <div className="flex gap-1">
-                <div className="w-2.5 h-2.5 rounded-sm bg-muted/20 border border-border/10" />
-                <div className="w-2.5 h-2.5 rounded-sm bg-primary/20 border border-primary/10" />
-                <div className="w-2.5 h-2.5 rounded-sm bg-primary/50 border border-primary/20" />
+                <div className="w-2.5 h-2.5 rounded-sm bg-white/5 border border-white/5" />
+                <div className="w-2.5 h-2.5 rounded-sm bg-primary/20 border border-primary/20" />
+                <div className="w-2.5 h-2.5 rounded-sm bg-primary/50 border border-primary/40" />
                 <div className="w-2.5 h-2.5 rounded-sm bg-primary border border-primary" />
               </div>
               <span className="text-[8px] font-black text-primary uppercase tracking-widest">Fogo</span>

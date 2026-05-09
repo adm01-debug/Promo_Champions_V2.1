@@ -25,8 +25,10 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
     <Card variant="glass" className="overflow-hidden border-accent/20 bg-accent/5 backdrop-blur-xl relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary animate-shimmer" />
       <CardHeader className="pb-2 text-center">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3">
-          <Swords className="h-5 w-5 text-accent animate-bounce-subtle" />
+        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3">
+          <div className="p-2 rounded-xl bg-accent/20 border border-accent/30 shadow-glow-accent/20 animate-pulse">
+            <Swords className="h-4 w-4 text-accent" />
+          </div>
           Duelo de Titãs
         </CardTitle>
       </CardHeader>
@@ -73,9 +75,14 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
 
         {/* Dynamic Gap Bar */}
         <div className="mt-8 space-y-2">
-          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest px-1">
-            <span className="text-primary flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Liderando</span>
-            <span className="text-muted-foreground">Gap: {(d1.progress.overall - d2.progress.overall).toFixed(1)}%</span>
+          <div className="flex justify-between text-[11px] font-black uppercase tracking-widest px-1">
+            <span className="text-primary flex items-center gap-1.5 drop-shadow-glow">
+              <TrendingUp className="h-3.5 w-3.5" /> Liderando
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground/60">GAP</span>
+              <span className="text-accent font-black">{(d1.progress.overall - d2.progress.overall).toFixed(1)}%</span>
+            </div>
           </div>
           <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden flex">
             <div 
