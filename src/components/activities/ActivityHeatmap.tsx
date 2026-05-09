@@ -5,13 +5,36 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+import { useActivities } from "@/hooks/useActivities";
+import { format, subDays, startOfDay, isSameDay } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 export const ActivityHeatmap: React.FC = () => {
-  // Mock data for the heatmap (35 days to fill a 7x5 grid better)
-  const days = Array.from({ length: 35 }, (_, i) => ({
-    day: i + 1,
-    intensity: Math.floor(Math.random() * 5), // 0 to 4
-    date: new Date(2024, 4, i + 1).toLocaleDateString('pt-BR')
-  }));
+  const { data: activities } = useActivities();
+
+  // Generate last 35 days
+  const last35Days = Array.from({ length: 35 }, (_, i) => {
+    const date = subDays(new Date(), 34 - i);
+    const dayActivities = activities?.filter(a => isSameDay(new Date(a.created_at), date)) || [];
+    
+    // Intensity logic: 0: 0, 1: 1-2, 2: 3-5, 3: 6-10, 4: >10
+    const count = dayActivities.length;
+    let intensity = 0;
+    if (count > 0 && count <= 2) intensity = 1;
+    else if (count > 2 && count <= 5) intensity = 2;
+    else if (count > 5 && count <= 10) intensity = 3;
+    else if (count > 10) intensity = 4;
+
+    return {
+      day: i + 1,
+      intensity,
+      count,
+      date: format(date, "dd/MM/yyyy"),
+      fullDate: date,
+      connections: dayActivities.filter(a => ['connected', 'scheduled', 'qualified'].includes(a.outcome)).length,
+      deals: dayActivities.filter(a => a.outcome === 'scheduled' || a.outcome === 'qualified').length
+    };
+  });
 
   const getIntensityColor = (intensity: number) => {
     switch (intensity) {
@@ -23,6 +46,13 @@ export const ActivityHeatmap: React.FC = () => {
       default: return "bg-white/5";
     }
   };
+
+  // Calculate streak (current consecutive days with activity)
+  let streak = 0;
+  for (let i = last35Days.length - 1; i >= 0; i--) {
+    if (last35Days[i].count > 0) streak++;
+    else if (i < last35Days.length - 1) break; // Only stop if it's not today (though usually today is the last index)
+  }
 
   return (
     <Card variant="glass" className="overflow-hidden border-border/20 bg-background/40 backdrop-blur-xl relative group/heatmap">
@@ -56,7 +86,7 @@ export const ActivityHeatmap: React.FC = () => {
             {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((d, i) => (
               <span key={i} className="text-[9px] font-black text-muted-foreground/40 mb-1">{d}</span>
             ))}
-            {days.map((day) => (
+            {last35Days.map((day) => (
               <TooltipProvider key={day.day}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -77,16 +107,16 @@ export const ActivityHeatmap: React.FC = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center gap-4">
                         <p className="text-[10px] font-black uppercase tracking-tighter text-primary">{day.date}</p>
-                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.intensity * 25}%</Badge>
+                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.count} Atividades</Badge>
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                          <span>Conexões</span>
-                          <span className="text-foreground">{(day.intensity * 12 + 5)}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                          <span>Deals</span>
-                          <span className="text-foreground">{Math.floor(day.intensity * 1.5)}</span>
+                           <span>Conexões</span>
+                           <span className="text-foreground">{day.connections}</span>
+                         </div>
+                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                           <span>Conversões</span>
+                           <span className="text-foreground">{day.deals}</span>
                         </div>
                       </div>
                       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-1">
@@ -111,7 +141,7 @@ export const ActivityHeatmap: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-success/10 border border-status-success/20 shadow-glow-success/5 animate-pulse">
                 <Flame className="h-3.5 w-3.5 text-status-success" />
-                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">Streak: 12 Dias</span>
+                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">Streak: {streak} Dias</span>
               </div>
             </div>
             
