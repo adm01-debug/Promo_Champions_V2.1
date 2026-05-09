@@ -1,10 +1,13 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDealStakeholders, type DealStakeholder } from "@/hooks/deal-intelligence/useDealStakeholders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Heart, Star, Shield, Zap, TrendingUp, TrendingDown } from "lucide-react";
+import { Users, Heart, Star, Shield, Zap, TrendingUp, TrendingDown, Eye, AlertCircle, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   saleId: string | null | undefined;
@@ -12,6 +15,7 @@ interface Props {
 
 export function RelationshipHealthGraph({ saleId }: Props) {
   const { data: stakeholders, isLoading } = useDealStakeholders(saleId);
+  const [selectedStakeholder, setSelectedStakeholder] = useState<DealStakeholder | null>(null);
 
   if (isLoading) {
     return (
@@ -129,10 +133,12 @@ export function RelationshipHealthGraph({ saleId }: Props) {
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: "spring", stiffness: 260, damping: 20, delay: i * 0.1 }}
                       className={cn(
-                        "relative p-2 rounded-full border-2 bg-card cursor-help shadow-lg",
+                        "relative p-2 rounded-full border-2 bg-card cursor-pointer shadow-lg transition-all",
+                        selectedStakeholder?.id === s.id ? "scale-125 z-50 ring-2 ring-primary ring-offset-2 ring-offset-background" : "hover:scale-110",
                         s.sentiment === 'positive' ? "border-emerald-500/50 shadow-emerald-500/10" : 
                         s.sentiment === 'negative' ? "border-destructive/50 shadow-destructive/10" : "border-amber-500/50 shadow-amber-500/10"
                       )}
+                      onClick={() => setSelectedStakeholder(selectedStakeholder?.id === s.id ? null : s)}
                     >
                       <StakeholderIcon role={s.dmu_role} className="h-5 w-5" />
                       
@@ -168,6 +174,61 @@ export function RelationshipHealthGraph({ saleId }: Props) {
             );
           })}
         </TooltipProvider>
+
+        {/* Stakeholder Details Overlay */}
+        <AnimatePresence>
+          {selectedStakeholder && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute right-4 top-4 bottom-4 w-64 glass p-4 rounded-xl border border-white/10 z-50 overflow-y-auto space-y-4 shadow-2xl"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-black uppercase italic tracking-tighter text-sm">{selectedStakeholder.name}</h4>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold">{selectedStakeholder.role_title || selectedStakeholder.dmu_role}</p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="size-6 h-auto" 
+                  onClick={() => setSelectedStakeholder(null)}
+                >
+                  <Users className="size-3" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-black/40 border border-white/5">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-2 flex items-center gap-1">
+                    <AlertCircle className="size-3" /> Blind Spot Analysis
+                  </p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Nenhuma interação direta via email nos últimos 12 dias. Risco de desalinhamento com {selectedStakeholder.name.split(' ')[0]}.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase">
+                    <span className="text-muted-foreground">Engajamento</span>
+                    <span>{selectedStakeholder.engagement_score}%</span>
+                  </div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary" 
+                      style={{ width: `${selectedStakeholder.engagement_score}%` }} 
+                    />
+                  </div>
+                </div>
+
+                <Button size="sm" className="w-full h-8 text-[10px] font-bold uppercase tracking-widest gap-2 bg-primary">
+                  <Search className="size-3" /> Ver Timeline
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Legend/Summary Overlay */}
         <div className="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-4">
