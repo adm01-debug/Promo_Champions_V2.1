@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileJson, FileText as FileTextIcon, Bell, History, Smartphone, Mail, Layout, CheckCircle2, AlertTriangle, Info } from "lucide-react";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileText as FileTextIcon, Bell, History, Smartphone, Mail, Layout, AlertTriangle, Info } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -54,7 +54,7 @@ import {
   Cell
 } from "recharts";
 import { cn } from "@/lib/utils";
-import { SpeedometerSkeleton, ComparativeStripSkeleton } from "./skeletons/SpeedometerSkeletons";
+import { SpeedometerSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
@@ -526,26 +526,26 @@ const Speedometer = ({
                 </div>
               </div>
               <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Meta (MAX)</span>
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Meta ({drilldownPeriod === "year" ? "Anual" : "Sugerida"})</span>
                 <span className="text-2xl font-mono font-black text-foreground">
-                  {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+                  {formatValue ? formatValue(drilldownPeriod === "year" ? max * 10 : max) : (drilldownPeriod === "year" ? max * 10 : max).toLocaleString("pt-BR")}
                 </span>
                 <span className="text-[10px] text-muted-foreground mt-1">benchmark sugerido</span>
               </div>
             </div>
 
-            {drilldownData && drilldownData.length > 0 ? (
+            {displayData && displayData.length > 0 ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    <TrendingUp className="h-3 w-3" /> Histórico de Composição
+                    <TrendingUp className="h-3 w-3" /> Histórico de Composição ({PERIOD_OPTIONS.find(p => p.value === drilldownPeriod)?.label})
                   </div>
                   <Badge variant="outline" className="text-[10px] font-mono">Real-time Data</Badge>
                 </div>
                 
                 <div className="h-[200px] w-full bg-card/50 rounded-xl p-4 border border-border/20">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={drilldownData}>
+                    <BarChart data={displayData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
                       <XAxis 
                         dataKey="name" 
@@ -569,8 +569,8 @@ const Speedometer = ({
                         }}
                       />
                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                        {drilldownData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={index === drilldownData.length - 1 ? colors.stroke : 'hsl(var(--primary) / 0.3)'} />
+                        {displayData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={index === displayData.length - 1 ? colors.stroke : 'hsl(var(--primary) / 0.3)'} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -589,7 +589,7 @@ const Speedometer = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/20">
-                        {drilldownData.slice(-3).reverse().map((item, i) => (
+                        {displayData.slice(-3).reverse().map((item, i) => (
                           <tr key={i} className="hover:bg-muted/30 transition-colors">
                             <td className="px-4 py-2 font-mono text-xs text-muted-foreground">{new Date().toLocaleDateString('pt-BR')} {10+i}:00</td>
                             <td className="px-4 py-2 font-bold">{formatValue ? formatValue(item.value) : item.value}</td>
@@ -753,8 +753,8 @@ export const FuturisticSpeedometerDashboard = () => {
     }
 
     if (alertChannels.includes("toast")) {
-      toast.info("Teste de Alerta", {
-        description: "As notificações estão funcionando corretamente!",
+      toast.info(data.title, {
+        description: data.message,
         icon: <Bell className="h-4 w-4" />
       });
     }
@@ -762,6 +762,20 @@ export const FuturisticSpeedometerDashboard = () => {
     if (alertChannels.includes("hud")) {
       setActiveHudAlert(data);
       setTimeout(() => setActiveHudAlert(null), 8000);
+    }
+
+    if (alertChannels.includes("email")) {
+      toast.success("E-mail Enviado", {
+        description: `Um alerta foi enviado para o e-mail: ${user.email}`,
+        icon: <Mail className="h-4 w-4" />
+      });
+    }
+
+    if (alertChannels.includes("push")) {
+      toast.success("Push Notification", {
+        description: "Alerta enviado para seus dispositivos sincronizados.",
+        icon: <Smartphone className="h-4 w-4" />
+      });
     }
 
     setAlertHistory(prev => [data, ...prev].slice(0, 20));
@@ -876,8 +890,10 @@ export const FuturisticSpeedometerDashboard = () => {
             <h2 className="font-display text-lg font-bold tracking-tight text-primary" style={{ textShadow: "0 0 10px hsl(var(--primary) / 0.6), 0 0 22px hsl(var(--primary) / 0.35)" }}>
               Performance HUD
             </h2>
-            <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
-              Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
+            <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider flex items-center gap-2">
+              <span className="opacity-70">Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}</span>
+              <span className="inline-block w-1 h-1 rounded-full bg-success animate-pulse" />
+              <span className="text-[9px] text-success/80">Sincronizado: {new Date().toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</span>
             </p>
           </div>
         </div>
