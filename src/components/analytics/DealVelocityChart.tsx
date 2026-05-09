@@ -29,6 +29,9 @@ function ChangeIndicator({ change, inverted = false }: { change?: number; invert
 
 export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
   const { data, isLoading } = useDealVelocity(salespersonId);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/deal-velocity';
 
   if (isLoading) {
     return (
