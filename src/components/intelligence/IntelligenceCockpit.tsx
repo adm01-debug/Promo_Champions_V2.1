@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ExecutiveSummaryReport } from "./ExecutiveSummaryReport";
 import { ScenarioSimulator } from "./ScenarioSimulator";
+import { RelationshipGraph } from "./RelationshipGraph";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
