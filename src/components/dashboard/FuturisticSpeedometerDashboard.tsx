@@ -252,7 +252,7 @@ const Speedometer = ({
                   transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                 />
               )}
-              {theme === "cyber" && (
+              {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute rounded-full opacity-40 pointer-events-none"
                   style={{
