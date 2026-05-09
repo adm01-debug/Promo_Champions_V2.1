@@ -102,7 +102,7 @@ function _StreakRanking() {
               return (
                 <div
                   key={person.salesperson_id}
-                  className={`flex items-center gap-4 p-4 rounded-lg border transition-all hover:scale-[1.01] ${getRankStyle(rank)}`}
+                  className={`flex items-center gap-4 p-5 rounded-2xl border transition-all duration-500 hover:scale-[1.02] hover:shadow-xl glass-morphism ${getRankStyle(rank)}`}
                 >
                   {/* Rank */}
                   <div className="w-8 flex justify-center">
