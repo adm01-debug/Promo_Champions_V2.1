@@ -35,6 +35,8 @@ export default function SDRDashboard() {
   const { data: metrics, isLoading } = useSDRMetrics(period);
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
+  
+  const hasNoData = !isLoading && (!metrics || metrics.current.totalLeads === 0);
 
   return (
     <>
