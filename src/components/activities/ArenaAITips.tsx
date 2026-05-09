@@ -81,9 +81,14 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
               <p className="text-xs font-medium leading-relaxed text-foreground/80">
                 {tip.description}
               </p>
-              <Button variant="ghost" size="sm" className="h-6 p-0 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-transparent group-hover:gap-2 transition-all">
-                Executar Agora <ArrowRight className="h-3 w-3" />
-              </Button>
+              <div className="flex items-center gap-2 pt-1">
+                <Button size="sm" className="h-7 text-[9px] font-black uppercase tracking-widest gap-2 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30">
+                  <ArrowRight className="h-3 w-3" /> Executar Protocolo
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                  Arquivar
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
