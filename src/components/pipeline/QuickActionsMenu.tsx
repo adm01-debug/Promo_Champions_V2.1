@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Zap, UserCheck, Send, Phone, Star, ChevronDown } from "lucide-react";
+import { Zap, UserCheck, Send, Phone, Star, ChevronDown, PlusCircle } from "lucide-react";
+import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
