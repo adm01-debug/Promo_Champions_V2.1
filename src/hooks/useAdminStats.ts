@@ -20,8 +20,8 @@ export function useAdminStats() {
         { data: recentSecurityAlerts },
         { data: recentSDRAlerts },
         { data: userRoles },
-        { data: totalRevenue },
-        { data: pendingApprovals },
+        { data: revenueData },
+        { count: pendingApprovals },
         { data: bitrixLogs },
         { data: circuitEvents }
       ] = await Promise.all([
@@ -34,7 +34,7 @@ export function useAdminStats() {
         supabase.from("security_alert_history").select("*").order("created_at", { ascending: false }).limit(5),
         supabase.from("sdr_alert_history").select("*").order("created_at", { ascending: false }).limit(5),
         supabase.from("user_roles").select("role"),
-        supabase.rpc("get_total_revenue_current_month"),
+        supabase.from("sales").select("amount").eq("status", "completed"),
         supabase.from("commercial_approval_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("bitrix24_sync_logs").select("status, created_at").order("created_at", { ascending: false }).limit(1),
         supabase.from("circuit_breaker_events").select("circuit_name, new_state, created_at").order("created_at", { ascending: false }).limit(10)
@@ -47,6 +47,7 @@ export function useAdminStats() {
         }
       });
 
+      const totalRevenue = revenueData?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
       const openCircuits = circuitEvents?.filter(e => e.new_state === "OPEN") || [];
       const queryMetrics = getQueryMetrics();
 
@@ -60,7 +61,7 @@ export function useAdminStats() {
         recentSecurityAlerts: recentSecurityAlerts || [],
         recentSDRAlerts: recentSDRAlerts || [],
         roleDistribution,
-        totalRevenue: Number(totalRevenue || 0),
+        totalRevenue,
         pendingApprovals: pendingApprovals || 0,
         edgeStatus: {
           bitrixLastSync: bitrixLogs?.[0] || null,

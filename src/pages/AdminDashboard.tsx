@@ -23,10 +23,10 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 
 function AdminDashboardContent() {
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useAdminStats();
-  const { data: edgeStatus, isLoading: edgeLoading } = useEdgeFunctionsStatus();
-  const queryMetrics = getQueryMetrics();
+  const edgeStatus = stats?.edgeStatus;
+  const queryMetrics = stats?.queryMetrics;
 
-  if (statsLoading || edgeLoading) {
+  if (statsLoading) {
     return (
       <>
         <Helmet>
@@ -73,7 +73,7 @@ function AdminDashboardContent() {
           recentSecurityAlerts={stats?.recentSecurityAlerts ?? []}
           recentSDRAlerts={stats?.recentSDRAlerts ?? []}
         />
-        <AdminSystemStatus edgeStatus={edgeStatus} queryMetrics={queryMetrics} />
+        <AdminSystemStatus edgeStatus={edgeStatus} queryMetrics={queryMetrics || { totalQueries: 0, avgDuration: 0, slowQueries: 0 }} />
       </div>
 
       <AdminQuickLinks />
