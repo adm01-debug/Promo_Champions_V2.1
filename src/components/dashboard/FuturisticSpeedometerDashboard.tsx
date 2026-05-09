@@ -132,6 +132,41 @@ const Speedometer = ({
     document.body.removeChild(link);
   };
 
+  const handleExportPDF = () => {
+    if (!drilldownData.length) return;
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setTextColor(accentMap[accent].stroke);
+    doc.text(`Relatório de Drill-down: ${label}`, 14, 22);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Período: ${PERIOD_OPTIONS.find(p => p.value === drilldownPeriod)?.label}`, 14, 32);
+    doc.text(`Data de Geração: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, 14, 38);
+
+    // Summary
+    doc.setFontSize(14);
+    doc.setTextColor(50);
+    doc.text("Resumo de Performance", 14, 50);
+    doc.setFontSize(11);
+    doc.text(`Valor Atual: ${formatValue ? formatValue(value) : value}`, 14, 58);
+    doc.text(`Meta: ${formatValue ? formatValue(max) : max}`, 14, 64);
+    doc.text(`Eficiência: ${percentStr}`, 14, 70);
+
+    // Table
+    autoTable(doc, {
+      startY: 80,
+      head: [["Período", "Valor"]],
+      body: drilldownData.map(d => [d.name, d.value]),
+      theme: 'grid',
+      headStyles: { fillColor: accentMap[accent].stroke },
+    });
+
+    doc.save(`drilldown_${label.toLowerCase()}_${drilldownPeriod}.pdf`);
+  };
+
 
 
   const s = currentSize;
