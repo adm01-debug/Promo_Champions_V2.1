@@ -7,19 +7,37 @@ import { useCompetencyData } from "@/hooks/useCompetencyData";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const IntelligenceModule = () => {
+  const { salesperson } = useAuth();
+  const { data: competencyData } = useCompetencyData(salesperson?.id);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
-        <MicroGoalsWidget />
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <CompetencyRadar 
+            data={competencyData} 
+            compact 
+            showDetails={false}
+            className="h-full glass border-border/40"
+          />
+        </div>
+        <div className="lg:col-span-4 grid grid-cols-1 gap-6">
+          <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
+            <MicroGoalsWidget />
+          </div>
+          <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
+            <VelocityScoreWidget />
+          </div>
+        </div>
       </div>
-      <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
-        <VelocityScoreWidget />
-      </div>
-      <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
-        <ActivityQualityWidget />
-      </div>
-      <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
-        <SelfBenchmarkWidget />
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
+          <ActivityQualityWidget />
+        </div>
+        <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
+          <SelfBenchmarkWidget />
+        </div>
       </div>
     </div>
   );
