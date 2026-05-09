@@ -74,8 +74,8 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
           </div>
         </div>
 
-        {/* Dynamic Gap Bar */}
-        <div className="mt-8 space-y-2">
+        {/* Dynamic Gap Bar & Prediction */}
+        <div className="mt-8 space-y-4">
           <div className="flex justify-between text-[11px] font-black uppercase tracking-widest px-1">
             <span className="text-primary flex items-center gap-1.5 drop-shadow-glow">
               <TrendingUp className="h-3.5 w-3.5" /> Liderando
@@ -85,17 +85,36 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
               <span className="text-accent font-black">{(d1.progress.overall - d2.progress.overall).toFixed(1)}%</span>
             </div>
           </div>
-          <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden flex">
+          <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden flex shadow-inner border border-white/5">
             <div 
-              className="h-full bg-primary transition-all duration-1000 ease-out" 
+              className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-1000 ease-out relative" 
               style={{ width: `${(d1.progress.overall / (d1.progress.overall + d2.progress.overall)) * 100}%` }}
-            />
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            </div>
             <div 
-              className="h-full bg-accent transition-all duration-1000 ease-out" 
+              className="h-full bg-gradient-to-l from-accent to-accent/80 transition-all duration-1000 ease-out relative" 
               style={{ width: `${(d2.progress.overall / (d1.progress.overall + d2.progress.overall)) * 100}%` }}
-            />
+            >
+              <div className="absolute inset-0 bg-white/10 animate-pulse" />
+            </div>
+          </div>
+          
+          {/* Prediction Tactical Card */}
+          <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3 group-hover:bg-white/10 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center border border-accent/30 shadow-glow-accent/20">
+              <TrendingDown className="h-4 w-4 text-accent animate-bounce" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Projeção Arena Predictor</p>
+              <p className="text-[10px] font-black text-foreground">
+                <span className="text-accent">{d2.salesperson_name.split(' ')[0]}</span> precisa de <span className="text-primary">+{((d1.progress.overall - d2.progress.overall) * 1.5).toFixed(0)} calls</span> para virar o jogo nas próximas 2h.
+              </p>
+            </div>
           </div>
         </div>
+      </CardContent>
+    </Card>
       </CardContent>
     </Card>
   );
