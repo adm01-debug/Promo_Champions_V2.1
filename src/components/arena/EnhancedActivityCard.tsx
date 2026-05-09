@@ -43,8 +43,9 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -top-1 -left-1 bg-primary px-1.5 py-0.5 rounded-md text-[8px] font-black text-white shadow-lg border border-white/20 z-20">
-                LVL {Math.floor(data.progress.overall / 10) + 1}
+              <div className="absolute -top-1 -left-1 bg-primary px-2 py-0.5 rounded-md text-[9px] font-black text-white shadow-glow-primary/50 border border-white/20 z-20 flex items-center gap-1 group-hover:scale-110 transition-transform">
+                <span className="opacity-70 text-[7px]">LVL</span>
+                {Math.floor(data.progress.overall / 10) + 1}
               </div>
               {isWinner && (
                 <div className="absolute -bottom-1 -right-1 bg-rank-gold rounded-full p-1.5 shadow-lg animate-bounce z-20">
