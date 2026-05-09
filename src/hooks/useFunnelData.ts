@@ -86,7 +86,7 @@ export const useFunnelData = (timeframe: number = 30) => {
         return result;
       });
 
-      const wonSales = (sales || []).filter(s => s.status === 'completed');
+      const wonSales = (sales || []).filter(s => s.status === 'completed' || s.status === 'won');
       const overallConversion = totalDeals > 0
         ? (wonSales.length / totalDeals) * 100
         : 0;
