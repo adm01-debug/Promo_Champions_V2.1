@@ -481,8 +481,8 @@ const Speedometer = ({
                 <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={handleExportCSV}>
                   <Download className="h-3 w-3" /> CSV
                 </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={() => window.print()}>
-                  <FileTextIcon className="h-3 w-3" /> PDF/Print
+                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={handleExportPDF}>
+                  <FileTextIcon className="h-3 w-3" /> PDF
                 </Button>
               </div>
             </div>
