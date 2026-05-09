@@ -1,9 +1,11 @@
 import React, { FC, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEvolutionCurves } from '@/hooks/useEvolutionCurves';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const COLORS = [
   'hsl(262, 83%, 58%)',  // primary
