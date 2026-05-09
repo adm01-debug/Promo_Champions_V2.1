@@ -34,9 +34,35 @@ import {
   Zap
 } from "lucide-react";
 
+import { useDialerQueues, useRebuildQueue, useNextItem } from "@/hooks/dialer/usePowerDialer";
+import { toast } from "sonner";
+
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const { data: metrics, isLoading } = useSDRMetrics(period);
+  
+  // Dialer State
+  const [activeQueueId, setActiveQueueId] = useState<string | null>(null);
+  const [currentItem, setCurrentItem] = useState<{ item_id: string; sale_id: string; score: number } | null>(null);
+  
+  const { data: queues } = useDialerQueues();
+  const rebuildQueue = useRebuildQueue();
+  const nextItem = useNextItem();
+
+  const handleStartQueue = async (queueId: string) => {
+    setActiveQueueId(queueId);
+    try {
+      const item = await nextItem.mutateAsync(queueId);
+      if (item) {
+        setCurrentItem({ item_id: item.item_id, sale_id: item.sale_id, score: item.score });
+        toast.success("Modo Power Dialer Ativado!");
+      } else {
+        toast.info("Fila vazia. Adicione leads ou reconstrua a fila.");
+      }
+    } catch (err) {
+      toast.error("Erro ao iniciar fila");
+    }
+  };
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
   
