@@ -113,6 +113,9 @@ export function EmailMetricsDashboard() {
             <TabsTrigger value="functions" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
               <Activity className="h-4 w-4" />Por Função
             </TabsTrigger>
+            <TabsTrigger value="subjects" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
+              <Layout className="h-4 w-4" />Assuntos A/B
+            </TabsTrigger>
             <TabsTrigger value="logs" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
               <Clock className="h-4 w-4" />Histórico
             </TabsTrigger>
