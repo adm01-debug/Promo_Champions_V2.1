@@ -198,8 +198,8 @@ const Vendas = () => {
                         <td className="p-4 text-sm text-muted-foreground">{sale.produto}</td>
                         <td className="p-4 text-sm font-semibold">R$ {sale.valor.toLocaleString("pt-BR")}</td>
                         <td className="p-4">
-                          <Badge variant="outline" className={statusColors[sale.status] || statusColors.pendente}>
-                            {sale.status}
+                          <Badge variant="outline" className={statusColors[sale.status] || statusColors.pending}>
+                            {statusOptions.find(o => o.value === sale.status)?.label || sale.status}
                           </Badge>
                         </td>
                         <td className="p-4 text-sm text-muted-foreground">{sale.data}</td>

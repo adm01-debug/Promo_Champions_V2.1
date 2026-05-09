@@ -246,7 +246,7 @@ const Clientes = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
-                          {client.company || "INDEPENDENT OPERATIVE"}
+                          {client.company || "OPERATIVA INDEPENDENTE"} • {client.lead_source || "FONTE DIRETA"}
                         </p>
                         <ICPBadge icpData={icpMap.get(client.id)} size="sm" />
                       </div>
