@@ -13,7 +13,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { toast } from "sonner";
 
 export function RecentProspects() {
-  const { data: prospects } = useQuery({
+  const { mutate: enrich, isPending: isEnriching } = useLeadEnrichment();
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
+
+  const { data: prospects, refetch } = useQuery({
     queryKey: ["recent-prospects"],
     queryFn: async () => {
       const { data: sales } = await supabase
@@ -38,6 +41,17 @@ export function RecentProspects() {
       }));
     },
   });
+
+  const handleEnrich = (id: string, clientName: string) => {
+    setEnrichingId(id);
+    enrich({ leadId: id, companyName: clientName }, {
+      onSuccess: () => {
+        setEnrichingId(null);
+        refetch();
+      },
+      onError: () => setEnrichingId(null)
+    });
+  };
 
   const getTemperature = (score: number) => {
     if (score >= 75) return { label: "Quente", color: "text-status-error", bgColor: "bg-status-error/10", borderColor: "border-status-error/30", icon: Flame, glowClass: "hover-glow-error" };
