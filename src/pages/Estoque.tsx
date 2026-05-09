@@ -307,8 +307,12 @@ export default function Estoque() {
                                     </div>
                                   </div>
                                 </td>
-                                <td className="p-4">
+                                <td className="p-4 flex items-center gap-3">
                                   <StockStatusBadge current={item.current_stock} min={item.min_stock_level} reorder={item.reorder_point} />
+                                  <div className="flex flex-col">
+                                    <span className="text-[9px] font-black text-muted-foreground/40 uppercase leading-none">Min: {item.min_stock_level}</span>
+                                    <span className="text-[9px] font-black text-primary/40 uppercase leading-none mt-1">Reorder: {item.reorder_point}</span>
+                                  </div>
                                 </td>
                                 <td className="p-4 text-right">
                                   <span className="text-[10px] font-black text-muted-foreground uppercase tabular-nums">
