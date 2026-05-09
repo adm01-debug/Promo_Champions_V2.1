@@ -788,6 +788,11 @@ export const FuturisticSpeedometerDashboard = () => {
   }, [salespersonFilter, salespeople, currentUser?.name]);
 
   const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching } = useDashboardKPIsPeriod(period, resolvedSalespersonId);
+  
+  useEffect(() => {
+    if (kpis) setLastUpdate(new Date());
+  }, [kpis]);
+
   const { data: goals } = useGoalsDashboard();
 
   const revenue = kpis?.current.totalRevenue ?? 0;
