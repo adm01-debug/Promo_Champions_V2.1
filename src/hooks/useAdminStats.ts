@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { startOfDay, subDays } from "date-fns";
 
+import { getQueryMetrics } from "@/hooks/useQueryPerformance";
+
 export function useAdminStats() {
   return useQuery({
     queryKey: ["admin-stats"],
@@ -17,7 +19,11 @@ export function useAdminStats() {
         { data: recentAccessDenied },
         { data: recentSecurityAlerts },
         { data: recentSDRAlerts },
-        { data: userRoles }
+        { data: userRoles },
+        { data: totalRevenue },
+        { data: pendingApprovals },
+        { data: bitrixLogs },
+        { data: circuitEvents }
       ] = await Promise.all([
         supabase.from("user_roles").select("*", { count: "exact", head: true }),
         supabase.from("salespeople").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -27,7 +33,11 @@ export function useAdminStats() {
         supabase.from("access_denied_logs").select("*").order("created_at", { ascending: false }).limit(5),
         supabase.from("security_alert_history").select("*").order("created_at", { ascending: false }).limit(5),
         supabase.from("sdr_alert_history").select("*").order("created_at", { ascending: false }).limit(5),
-        supabase.from("user_roles").select("role")
+        supabase.from("user_roles").select("role"),
+        supabase.rpc("get_total_revenue_current_month"),
+        supabase.from("commercial_approval_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("bitrix24_sync_logs").select("status, created_at").order("created_at", { ascending: false }).limit(1),
+        supabase.from("circuit_breaker_events").select("circuit_name, new_state, created_at").order("created_at", { ascending: false }).limit(10)
       ]);
 
       const roleDistribution = { admin: 0, manager: 0, salesperson: 0 };
@@ -36,6 +46,9 @@ export function useAdminStats() {
           roleDistribution[r.role as keyof typeof roleDistribution]++;
         }
       });
+
+      const openCircuits = circuitEvents?.filter(e => e.new_state === "OPEN") || [];
+      const queryMetrics = getQueryMetrics();
 
       return {
         totalUsers: totalUsers || 0,
@@ -46,37 +59,22 @@ export function useAdminStats() {
         recentAccessDenied: recentAccessDenied || [],
         recentSecurityAlerts: recentSecurityAlerts || [],
         recentSDRAlerts: recentSDRAlerts || [],
-        roleDistribution
-      };
-    },
-    staleTime: 60000,
-  });
-}
-
-export function useEdgeFunctionsStatus() {
-  return useQuery({
-    queryKey: ["edge-functions-status"],
-    queryFn: async () => {
-      const { data: bitrixLogs } = await supabase
-        .from("bitrix24_sync_logs")
-        .select("status, created_at")
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      const { data: circuitEvents } = await supabase
-        .from("circuit_breaker_events")
-        .select("circuit_name, new_state, created_at")
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      const openCircuits = circuitEvents?.filter(e => e.new_state === "OPEN") || [];
-
-      return {
-        bitrixLastSync: bitrixLogs?.[0] || null,
-        openCircuits,
-        circuitEvents: circuitEvents || []
+        roleDistribution,
+        totalRevenue: Number(totalRevenue || 0),
+        pendingApprovals: pendingApprovals || 0,
+        edgeStatus: {
+          bitrixLastSync: bitrixLogs?.[0] || null,
+          openCircuits,
+          circuitEvents: circuitEvents || []
+        },
+        queryMetrics
       };
     },
     staleTime: 30000,
   });
+}
+
+/** @deprecated Use useAdminStats instead, edgeStatus is now part of the main stats query */
+export function useEdgeFunctionsStatus() {
+  return { data: undefined, isLoading: false };
 }
