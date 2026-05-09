@@ -19,6 +19,7 @@ import { QuestionQualityCard } from "./questions/QuestionQualityCard";
 import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
 import { CoachingScorecardCard } from "./coaching/CoachingScorecardCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IntentTracker, type Intent } from "./IntentTracker";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
 interface Props {
