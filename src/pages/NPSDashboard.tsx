@@ -11,6 +11,7 @@ import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
+import { useCountUp } from "@/hooks/useCountUp";
 
 const NPSGauge = React.memo(({ nps }: { nps: number }) => {
   const color = nps >= 50 ? "text-green-500" : nps >= 0 ? "text-yellow-500" : "text-destructive";
