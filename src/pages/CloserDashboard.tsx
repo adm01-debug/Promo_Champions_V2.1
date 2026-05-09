@@ -142,6 +142,23 @@ export default function CloserDashboard() {
               </motion.div>
             </motion.div>
 
+            {/* Pendências Rápidas */}
+            <motion.div
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
+            >
+              <CloserStatCard
+                title="Orçamentos Pendentes"
+                value={metrics?.current.inProposal ?? 0}
+                icon={FileText}
+                variant="danger"
+                subtitle="Ação necessária"
+                highlight
+              />
+            </motion.div>
+
             {/* Main Grid */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-2 gap-6"

@@ -114,16 +114,22 @@ const CloserStatCardInner = function CloserStatCard({
               </div>
               
               <div className="flex flex-col gap-1">
-                <span className={cn(
-                  "font-mono font-black tracking-tighter tabular-nums leading-none",
-                  hero ? "text-4xl sm:text-6xl md:text-7xl lg:text-8xl" : "text-2xl sm:text-3xl",
-                  styles.text,
-                  hero && "bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary"
-                )} style={{ 
-                  textShadow: `0 0 20px ${styles.glow}`
-                }}>
+                <motion.span 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className={cn(
+                    "font-mono font-black tracking-tighter tabular-nums leading-none",
+                    hero ? "text-5xl sm:text-7xl md:text-8xl" : "text-2xl sm:text-3xl",
+                    styles.text,
+                    hero && "bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary"
+                  )} 
+                  style={{ 
+                    textShadow: `0 0 25px ${styles.glow}`
+                  }}
+                >
                   {value}
-                </span>
+                </motion.span>
                 
                 {change !== undefined && (
                   <div className="flex items-center gap-2 mt-2">

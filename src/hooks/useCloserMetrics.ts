@@ -137,10 +137,17 @@ export function useCloserPipeline() {
         .in("salesperson_id", closerIds)
         .in("status", ["proposal", "negotiation", "completed"]);
 
+      const { data: pendingBudgets } = await supabase
+        .from("sales")
+        .select("amount")
+        .in("salesperson_id", closerIds)
+        .eq("status", "pending");
+
       const pipeline = {
         proposal: { count: 0, value: 0 },
         negotiation: { count: 0, value: 0 },
         completed: { count: 0, value: 0 },
+        pending: { count: pendingBudgets?.length || 0, value: pendingBudgets?.reduce((sum, b) => sum + Number(b.amount), 0) || 0 }
       };
 
       sales?.forEach(sale => {
@@ -152,6 +159,7 @@ export function useCloserPipeline() {
       });
 
       return [
+        { stage: "Orçamentos Pendentes", ...pipeline.pending, color: "#94a3b8" },
         { stage: "Proposta", ...pipeline.proposal, color: "#8b5cf6" },
         { stage: "Negociação", ...pipeline.negotiation, color: "#f59e0b" },
         { stage: "Fechados", ...pipeline.completed, color: "#22c55e" },
