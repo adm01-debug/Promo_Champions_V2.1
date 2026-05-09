@@ -124,9 +124,20 @@ export const PredictiveScenarioPlanner = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-xl text-xs text-muted-foreground italic">
-          <Calendar className="size-4 text-primary" />
-          Previsão baseada em elasticidade histórica e tempo médio de ramp-up (3.2 meses).
+        <div className="flex flex-col md:flex-row items-center gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground italic flex-1">
+            <Calendar className="size-4 text-primary shrink-0" />
+            Previsão baseada em elasticidade histórica, tempo médio de ramp-up e análise de churn preventivo.
+          </div>
+          <Button 
+            size="sm" 
+            className="gap-2 font-bold uppercase tracking-widest text-[10px] bg-primary hover:bg-primary/90"
+            onClick={() => {
+              toast.success("Estratégia aplicada! Workflows de automação criados para atingir as metas simuladas.");
+            }}
+          >
+            <Zap className="h-3 w-3 fill-current" /> One-Click Strategy: Aplicar Plano
+          </Button>
         </div>
       </CardContent>
     </Card>
