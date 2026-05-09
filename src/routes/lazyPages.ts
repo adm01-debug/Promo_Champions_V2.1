@@ -74,6 +74,7 @@ export const BISDR = lazy(() => import("@/pages/BISDR"));
 export const BICloser = lazy(() => import("@/pages/BICloser"));
 export const RelatorioAtividades = lazy(() => import("@/pages/RelatorioAtividades"));
 export const RelatoriosEmail = lazy(() => import("@/pages/RelatoriosEmail"));
+export const EmailAnalyticsPage = lazy(() => import("@/pages/EmailAnalyticsPage"));
 export const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
 export const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
 export const CustomReports = lazy(() => import("@/pages/CustomReports"));
@@ -95,9 +96,12 @@ export const CoachingInteligente = lazy(() => import("@/pages/CoachingInteligent
 export const RevOpsHub = lazy(() => import("@/pages/RevOpsHub"));
 export const DealIntelligence = lazy(() => import("@/pages/DealIntelligence"));
 export const WinLossIntelligence = lazy(() => import("@/pages/WinLossIntelligence"));
+export const WinLossAnalysisPage = lazy(() => import("@/pages/WinLossAnalysisPage"));
 export const ABCAnalysisPage = lazy(() => import("@/pages/ABCAnalysisPage"));
 export const ClosingTimePage = lazy(() => import("@/pages/ClosingTimePage"));
 export const DealVelocityPage = lazy(() => import("@/pages/DealVelocityPage"));
+export const EvolutionCurvesPage = lazy(() => import("@/pages/EvolutionCurvesPage"));
+export const ObjectionsLibraryPage = lazy(() => import("@/pages/ObjectionsLibraryPage"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazy(() => import("@/pages/RankingCompetitivo"));
@@ -105,6 +109,8 @@ export const ArenaCompetitiva = lazy(() => import("@/pages/ArenaCompetitiva"));
 export const RaceArena = lazy(() => import("@/pages/RaceArenaHub"));
 export const RaceArenaCloser = lazy(() => import("@/pages/RaceArenaCloser"));
 export const RaceArenaSDR = lazy(() => import("@/pages/RaceArenaSDR"));
+export const GamifiedProfilePage = lazy(() => import("@/pages/GamifiedProfilePage"));
+export const BadgesGalleryPage = lazy(() => import("@/pages/BadgesGalleryPage"));
 export const RaceArenaAdmin = lazy(() => import("@/pages/admin/RaceArenaAdmin"));
 export const RaceArenaTV = lazy(() => import("@/pages/RaceArenaTV"));
 export const RaceArenaGarage = lazy(() => import("@/pages/RaceArenaGarage"));

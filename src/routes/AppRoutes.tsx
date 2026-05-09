@@ -27,7 +27,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage, DealVelocityPage,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage, DealVelocityPage, EvolutionCurvesPage, ObjectionsLibraryPage, WinLossAnalysisPage, EmailAnalyticsPage, GamifiedProfilePage, BadgesGalleryPage,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, RaceArenaCareer, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -162,14 +162,18 @@ export function AppRoutes() {
                      <Route path="/analytics/abc" element={<Manager><ABCAnalysisPage /></Manager>} />
                      <Route path="/analytics/closing-time" element={<Manager><ClosingTimePage /></Manager>} />
                      <Route path="/analytics/deal-velocity" element={<Manager><DealVelocityPage /></Manager>} />
+                     <Route path="/analytics/evolution" element={<Manager><EvolutionCurvesPage /></Manager>} />
+                     <Route path="/analytics/objections" element={<Manager><ObjectionsLibraryPage /></Manager>} />
+                     <Route path="/analytics/win-loss" element={<Manager><WinLossAnalysisPage /></Manager>} />
                      <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
                     <Route path="/bi-closer" element={<BICloser />} />
                     <Route path="/bi-gestor" element={<Manager><BIGestor /></Manager>} />
                     <Route path="/relatorio-atividades" element={<Manager><RelatorioAtividades /></Manager>} />
-                    <Route path="/relatorios-email" element={<RelatoriosEmail />} />
-                    <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
+                     <Route path="/relatorios-email" element={<RelatoriosEmail />} />
+                     <Route path="/analytics/emails" element={<Manager><EmailAnalyticsPage /></Manager>} />
+                     <Route path="/relatorios-executivos" element={<Manager><RelatoriosExecutivos /></Manager>} />
                     <Route path="/relatorios-agendados" element={<Manager><ScheduledReports /></Manager>} />
                     <Route path="/relatorios-custom" element={<CustomReports />} />
                     <Route path="/relatorios-custom/:id" element={<CustomReports />} />
@@ -199,6 +203,8 @@ export function AppRoutes() {
 
                     {/* ─── Gamificação & Social ──────────────────── */}
                     <Route path="/ranking" element={<RankingCompetitivo />} />
+                    <Route path="/gamificacao/badges" element={<BadgesGalleryPage />} />
+                    <Route path="/perfil-gamer" element={<GamifiedProfilePage />} />
                     <Route path="/arena" element={<ArenaCompetitiva />} />
                     <Route path="/race-arena" element={<RaceTransitionWrapper><RaceArena /></RaceTransitionWrapper>} />
                     <Route path="/race-arena/closer" element={<RaceTransitionWrapper><RaceArenaCloser /></RaceTransitionWrapper>} />

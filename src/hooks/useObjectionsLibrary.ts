@@ -9,6 +9,7 @@ interface Objection {
   category: string;
   effectiveness_score: number | null;
   usage_count: number | null;
+  tags: string[] | null;
   created_by: string | null;
   created_at: string;
 }
@@ -17,6 +18,8 @@ interface NewObjection {
   objection: string;
   response: string;
   category: string;
+  tags?: string[];
+  effectiveness_score?: number;
   created_by?: string;
 }
 
@@ -62,6 +65,31 @@ export function useAddObjection() {
     },
     onError: () => {
       toast.error('Erro ao adicionar objeção');
+    }
+  });
+}
+
+export function useUpdateObjection() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<Objection> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('objections_library')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['objections-library'] });
+      toast.success('Objeção atualizada!');
+    },
+    onError: () => {
+      toast.error('Erro ao atualizar objeção');
     }
   });
 }

@@ -8,7 +8,7 @@ import {
   BarChart, Bar
 } from 'recharts';
 import {
-  Mail, Send, Activity, Clock, XCircle, CheckCircle, TrendingUp, Users
+  Mail, Send, Activity, Clock, XCircle, CheckCircle, TrendingUp, Users, Eye, MousePointer2, Layout, BarChart3 as BarChartIcon
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -48,9 +48,9 @@ export function EmailMetricsDashboard() {
 
   const statCards = [
     { icon: Send, value: data?.totalSent || 0, label: "Enviados", gradient: "from-primary to-accent", border: "border-border/40", textClass: "gradient-text" },
+    { icon: Eye, value: `${data?.openRate.toFixed(1) || 0}%`, label: "Taxa Abertura", gradient: "", border: "border-status-info/30", textClass: "text-status-info", iconBg: "bg-status-info/20", iconColor: "text-status-info" },
+    { icon: MousePointer2, value: `${data?.clickRate.toFixed(1) || 0}%`, label: "Taxa Cliques", gradient: "", border: "border-status-success/30", textClass: "text-status-success", iconBg: "bg-status-success/20", iconColor: "text-status-success" },
     { icon: XCircle, value: data?.totalFailed || 0, label: "Falhas", gradient: "", border: "border-status-error/30", textClass: "text-status-error", iconBg: "bg-status-error/20", iconColor: "text-status-error" },
-    { icon: CheckCircle, value: `${data?.successRate.toFixed(1) || 100}%`, label: "Taxa Sucesso", gradient: "", border: "border-status-success/30", textClass: "text-status-success", iconBg: "bg-status-success/20", iconColor: "text-status-success" },
-    { icon: Activity, value: data?.byFunction.length || 0, label: "Funções Ativas", gradient: "", border: "border-status-info/30", textClass: "text-status-info", iconBg: "bg-status-info/20", iconColor: "text-status-info" },
   ];
 
   return (
@@ -112,6 +112,9 @@ export function EmailMetricsDashboard() {
             </TabsTrigger>
             <TabsTrigger value="functions" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
               <Activity className="h-4 w-4" />Por Função
+            </TabsTrigger>
+            <TabsTrigger value="subjects" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
+              <Layout className="h-4 w-4" />Assuntos A/B
             </TabsTrigger>
             <TabsTrigger value="logs" className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground">
               <Clock className="h-4 w-4" />Histórico
@@ -207,6 +210,45 @@ export function EmailMetricsDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="subjects" className="animate-fade-in">
+            <Card variant="elevated" className="glass border-border/40 dark:border-glow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Layout className="h-4 w-4 text-primary-foreground" /></div>
+                  <span className="gradient-text">Performance por Assunto (A/B)</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {data?.bySubject.map((s, i) => (
+                      <div key={i} className="glass rounded-xl p-4 border border-border/30 hover:border-primary/40 transition-all hover-lift group">
+                        <div className="mb-3">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">Assunto</p>
+                          <p className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">"{s.subject}"</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase">Abertura</p>
+                            <p className="text-sm font-bold text-status-info">{s.openRate.toFixed(1)}%</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase">Cliques</p>
+                            <p className="text-sm font-bold text-status-success">{s.clickRate.toFixed(1)}%</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-border/20 flex justify-between text-[10px] text-muted-foreground">
+                          <span>{s.sent} enviados</span>
+                          <span>{s.opens} abertos</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="logs" className="animate-fade-in">
