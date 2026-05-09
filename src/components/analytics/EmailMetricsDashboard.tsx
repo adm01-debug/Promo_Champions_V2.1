@@ -212,6 +212,45 @@ export function EmailMetricsDashboard() {
             </div>
           </TabsContent>
 
+          <TabsContent value="subjects" className="animate-fade-in">
+            <Card variant="elevated" className="glass border-border/40 dark:border-glow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md"><Layout className="h-4 w-4 text-primary-foreground" /></div>
+                  <span className="gradient-text">Performance por Assunto (A/B)</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {data?.bySubject.map((s, i) => (
+                      <div key={i} className="glass rounded-xl p-4 border border-border/30 hover:border-primary/40 transition-all hover-lift group">
+                        <div className="mb-3">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">Assunto</p>
+                          <p className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">"{s.subject}"</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase">Abertura</p>
+                            <p className="text-sm font-bold text-status-info">{s.openRate.toFixed(1)}%</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase">Cliques</p>
+                            <p className="text-sm font-bold text-status-success">{s.clickRate.toFixed(1)}%</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-border/20 flex justify-between text-[10px] text-muted-foreground">
+                          <span>{s.sent} enviados</span>
+                          <span>{s.opens} abertos</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="logs" className="animate-fade-in">
             <EmailLogsTab recentLogs={data?.recentLogs} />
           </TabsContent>
