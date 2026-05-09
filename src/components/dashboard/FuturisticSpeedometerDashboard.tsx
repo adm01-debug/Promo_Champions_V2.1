@@ -376,10 +376,30 @@ const Speedometer = ({
         >
           max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
         </div>
+                  </div>
+                </TooltipTrigger>
+              </Tooltip>
+            </TooltipProvider>
+
+            <div className="mt-4 flex flex-col items-center gap-1 w-full pointer-events-none">
+              <div
+                className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
+                style={{
+                  fontSize: Math.max(22, s * 0.16),
+                  textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
+                }}
+              >
+                {displayValue}
+              </div>
+              <div
+                className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
+                style={{ fontSize: Math.max(8, s * 0.04) }}
+              >
+                max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+              </div>
             </div>
           </div>
-        </div>
-      </DialogTrigger>
+        </DialogTrigger>
       <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
 
 
