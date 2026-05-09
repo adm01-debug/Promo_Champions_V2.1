@@ -110,6 +110,7 @@ const Speedometer = ({
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
 
 
+  const s = currentSize;
   const isSmallScreen = s < 200;
 
   useEffect(() => {
