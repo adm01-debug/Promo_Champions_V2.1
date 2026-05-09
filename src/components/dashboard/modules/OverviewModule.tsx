@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
 import { GoalProgress } from "@/components/dashboard/GoalProgress";
+import { DailyMissionsPanel } from "@/components/dashboard/DailyMissionsPanel";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 
 interface OverviewModuleProps {
