@@ -181,4 +181,5 @@ export const PERIOD_LABELS: Record<KPIPeriod, { label: string; comparison: strin
   current_month: { label: "Mês", comparison: "Mês Anterior" },
   last_month: { label: "Último Mês", comparison: "Mês Anterior" },
   quarter: { label: "Trimestre", comparison: "Trimestre Anterior" },
+  year: { label: "Ano", comparison: "Ano Anterior" },
 };
