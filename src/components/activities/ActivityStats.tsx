@@ -32,19 +32,19 @@ export function ActivityStats() {
     },
     { 
       label: "LinkedIn", 
-      value: stats?.byType.linkedin ?? 0, 
+      value: stats?.linkedinToday ?? 0, 
       icon: Linkedin,
       color: "text-status-info"
     },
     { 
       label: "WhatsApp", 
-      value: stats?.byType.whatsapp ?? 0, 
+      value: stats?.whatsappToday ?? 0, 
       icon: MessageCircle,
       color: "text-status-success"
     },
     { 
       label: "Notas", 
-      value: stats?.byType.note ?? 0, 
+      value: stats?.notesToday ?? 0, 
       icon: FileText,
       color: "text-muted-foreground"
     },
