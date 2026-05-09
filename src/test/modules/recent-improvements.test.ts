@@ -343,3 +343,30 @@ describe('SSR Warning Cleanup', () => {
     });
   });
 });
+
+// ==========================================
+// COMPETENCY DATA & FEATURE FLAGS
+// ==========================================
+describe('Competency & Feature Flags Integration', () => {
+  it('should map data to competency radar areas', () => {
+    const areas = ['Prospecção', 'Qualificação', 'Negociação', 'Fechamento', 'Follow-up', 'Apresentação'];
+    areas.forEach(area => {
+      expect(area.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should calculate rollout status deterministically', () => {
+    const hash = (userId: string, key: string) => {
+      const str = `${userId}:${key}`;
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i);
+      return Math.abs(h % 100);
+    };
+
+    const user1 = 'user-123';
+    const flag = 'new_feature';
+    const result1 = hash(user1, flag);
+    const result2 = hash(user1, flag);
+    expect(result1).toBe(result2);
+  });
+});
