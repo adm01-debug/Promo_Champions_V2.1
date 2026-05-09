@@ -1,8 +1,10 @@
 import { FC, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Timer, TrendingDown, TrendingUp, Minus, Clock } from 'lucide-react';
+import { Timer, TrendingDown, TrendingUp, Minus, Clock, Maximize2 } from 'lucide-react';
 import { useClosingTime, ClosingTimeData } from '@/hooks/useClosingTime';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart, 
   Bar, 
