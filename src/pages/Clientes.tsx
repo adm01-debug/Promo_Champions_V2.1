@@ -402,6 +402,7 @@ const Clientes = () => {
           {view360Client && <Client360View client={view360Client} />}
         </DialogContent>
       </Dialog>
+      </PageTransition>
     </SkeletonTransition>
   </>
   );
