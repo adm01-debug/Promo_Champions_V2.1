@@ -70,6 +70,33 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   const [salespersonOpen, setSalespersonOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
 
+  const templates: Record<ActivityType, { label: string; text: string }[]> = {
+    call: [
+      { label: "Caixa Postal", text: "Deixado recado na caixa postal. Agendado novo follow-up." },
+      { label: "Qualificação BANT", text: "Budget: \nAuthority: \nNeed: \nTimeline: " },
+      { label: "Conexão Sucedida", text: "Conversamos sobre [DOR]. Demonstrou interesse em [PRODUTO]." }
+    ],
+    email: [
+      { label: "Follow-up #1", text: "Olá [NOME], estou acompanhando nosso último contato sobre [ASSUNTO]..." },
+      { label: "Cold Outreach", text: "Vi que você atua com [SETOR] e gostaria de compartilhar como ajudamos..." }
+    ],
+    linkedin: [
+      { label: "Pedido Conexão", text: "Olá [NOME], acompanho seu trabalho em [EMPRESA] e gostaria de conectar." },
+      { label: "Mensagem InMail", text: "Notei seu interesse em [ASSUNTO] e acredito que podemos colaborar..." }
+    ],
+    whatsapp: [
+      { label: "Confirmar Reunião", text: "Oi [NOME], passando para confirmar nossa reunião hoje às [HORA]. Podemos manter?" },
+      { label: "Follow-up Rápido", text: "Conseguiu dar uma olhada no material que te enviei por e-mail?" }
+    ],
+    meeting: [
+      { label: "Ata de Reunião", text: "Participantes: \nPrincipais pontos: \nPróximos passos: " }
+    ],
+    note: [
+      { label: "Insight ICP", text: "Cliente se encaixa perfeitamente no perfil de [SEGMENTO] devido a [RAZÃO]." }
+    ],
+    other: []
+  };
+
   const form = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
     defaultValues: {
@@ -87,18 +114,20 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   const selectedClientId = form.watch("client_id");
   const selectedClient = clients?.find(c => c.id === selectedClientId);
 
+  const applyTemplate = (text: string) => {
+    const currentNotes = form.getValues("notes");
+    form.setValue("notes", currentNotes ? `${currentNotes}\n\n${text}` : text);
+    toast.success("Template aplicado!");
+  };
+
   const handleOpenWhatsApp = () => {
-    const phone = selectedClient?.phone;
-    if (!phone) {
-      toast.error("Cliente sem telefone cadastrado");
-      return;
-    }
-    const cleanPhone = phone.replace(/\D/g, "");
+// ... keep existing code
     const text = encodeURIComponent(form.getValues("notes") || "Olá, tudo bem?");
     window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
   };
 
   const handleSubmit = (data: ActivityFormData) => {
+// ... keep existing code
     createActivity.mutate({
       sale_id: saleId || undefined,
       client_id: data.client_id || undefined,
