@@ -31,6 +31,9 @@ export interface ActivityStats {
   callsToday: number;
   emailsToday: number;
   meetingsToday: number;
+  linkedinToday: number;
+  whatsappToday: number;
+  notesToday: number;
   connectedToday: number;
   scheduledToday: number;
 }
@@ -161,6 +164,9 @@ export const useActivityStats = (salespersonId?: string) => {
         callsToday: todayByType.call,
         emailsToday: todayByType.email,
         meetingsToday: todayByType.meeting,
+        linkedinToday: todayByType.linkedin,
+        whatsappToday: todayByType.whatsapp,
+        notesToday: todayByType.note,
         connectedToday: todayByOutcome.connected,
         scheduledToday: todayByOutcome.scheduled,
       };
