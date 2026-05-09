@@ -87,7 +87,6 @@ const Index = () => {
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
-  const allEmpty = !hasRevenue && !hasSales && !hasClients && !hasConversion;
 
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
