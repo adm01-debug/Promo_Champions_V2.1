@@ -68,20 +68,27 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({ data
                   </div>
                 )}
               </div>
-              {/* XP Bar Micro-component - Leveling Strategy */}
-              <div className="flex flex-col gap-1 mt-2">
-                <div className="flex justify-between items-center w-24">
-                  <span className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">XP Progress</span>
-                  <span className="text-[7px] font-black text-primary">{((data.progress.overall % 10) * 10).toFixed(0)}%</span>
+              {/* XP Bar Micro-component - Strategic Progression */}
+              <div className="flex flex-col gap-1.5 mt-3 group/xp">
+                <div className="flex justify-between items-center">
+                  <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Nível {Math.floor(data.progress.overall / 10) + 1}</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{((data.progress.overall % 10) * 10).toFixed(0)}/100 XP</span>
                 </div>
-                <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                <div className="w-32 h-2 bg-black/40 rounded-full overflow-hidden border border-white/5 shadow-inner relative">
                   <div 
-                    className="h-full bg-gradient-to-r from-primary/40 to-primary animate-shimmer relative" 
+                    className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 animate-shimmer relative transition-all duration-1000" 
                     style={{ width: `${(data.progress.overall % 10) * 10}%` }} 
                   >
-                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                   </div>
+                  {/* XP Threshold Markers */}
+                  <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/10" />
+                  <div className="absolute top-0 left-2/4 w-[1px] h-full bg-white/10" />
+                  <div className="absolute top-0 left-3/4 w-[1px] h-full bg-white/10" />
                 </div>
+                <p className="text-[7px] font-bold text-muted-foreground/60 uppercase tracking-tighter opacity-0 group-hover/xp:opacity-100 transition-opacity">
+                  +125 XP para o Próximo Nível
+                </p>
               </div>
             </div>
           </div>

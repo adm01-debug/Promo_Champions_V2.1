@@ -91,19 +91,33 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
         <Radar className="h-24 w-24 text-primary animate-spin-slow" />
       </div>
       
-      <CardHeader className="pb-3 border-b border-white/10 bg-gradient-to-r from-primary/10 via-transparent to-transparent">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Activity className="h-4 w-4 text-primary animate-pulse" />
-              <div className="absolute -inset-1 bg-primary/20 blur-sm rounded-full animate-pulse" />
+      <CardHeader className="pb-3 border-b border-white/10 bg-gradient-to-r from-primary/10 via-transparent to-transparent relative">
+        <div className="flex flex-col gap-1.5">
+          <CardTitle className="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Activity className="h-4 w-4 text-primary animate-pulse" />
+                <div className="absolute -inset-1 bg-primary/20 blur-sm rounded-full animate-pulse" />
+              </div>
+              Pulse da Arena Live
             </div>
-            Pulse da Arena Live
+            <Badge variant="outline" className="bg-primary/5 text-[8px] font-black border-primary/30 animate-pulse">
+              SISTEMA ATIVO
+            </Badge>
+          </CardTitle>
+          <div className="flex items-center gap-2 px-1">
+            <div className="flex -space-x-1.5 overflow-hidden">
+              {data.slice(0, 3).map((sp, i) => (
+                <div key={i} className="w-4 h-4 rounded-full border border-background bg-muted text-[6px] font-black flex items-center justify-center uppercase">
+                  {sp.salesperson_name[0]}
+                </div>
+              ))}
+            </div>
+            <span className="text-[8px] font-black uppercase tracking-widest text-primary/70">
+              +{data.length} Pilotos em Operação
+            </span>
           </div>
-          <Badge variant="outline" className="bg-primary/5 text-[8px] font-black border-primary/30 animate-pulse">
-            SISTEMA ATIVO
-          </Badge>
-        </CardTitle>
+        </div>
       </CardHeader>
       
       <CardContent className="p-0">

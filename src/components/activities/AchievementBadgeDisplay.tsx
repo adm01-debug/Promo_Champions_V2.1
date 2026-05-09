@@ -52,9 +52,18 @@ export const AchievementBadgeDisplay: React.FC = () => {
                         <p className="text-[11px] font-black uppercase tracking-widest text-foreground">{badge.name}</p>
                       </div>
                       <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic">{badge.desc}</p>
-                      <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-[8px] font-black text-primary uppercase">Status: DESBLOQUEADO</span>
-                        <Flame className="h-3 w-3 text-status-warning" />
+                      <div className="pt-2 border-t border-white/5 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[8px] font-black text-primary uppercase tracking-widest">Próximo Nível</span>
+                          <span className="text-[8px] font-black text-muted-foreground uppercase">85%</span>
+                        </div>
+                        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary animate-shimmer" style={{ width: '85%' }} />
+                        </div>
+                        <div className="flex items-center justify-between pt-1">
+                          <span className="text-[7px] font-black text-muted-foreground/50 uppercase">Rarity: ELITE</span>
+                          <Flame className="h-3 w-3 text-status-warning animate-pulse" />
+                        </div>
                       </div>
                     </div>
                   </TooltipContent>
