@@ -13,6 +13,8 @@ export interface Product {
   status: string;
   rating: number;
   sales_count: number;
+  sku?: string;
+  stock_quantity?: number;
   created_at: string;
   updated_at: string;
 }
@@ -87,6 +89,8 @@ export const useCreateProduct = () => {
       name: string;
       price: number;
       category?: string;
+      sku?: string;
+      stock_quantity?: number;
     }) => {
       const { data, error } = await supabase
         .from('products')
@@ -94,6 +98,8 @@ export const useCreateProduct = () => {
           name: input.name,
           price: input.price,
           category: input.category || 'Geral',
+          sku: input.sku,
+          stock_quantity: input.stock_quantity || 0,
           status: 'ativo',
         })
         .select()
@@ -116,18 +122,22 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, name, price, category, status }: { 
+    mutationFn: async ({ id, name, price, category, status, sku, stock_quantity }: { 
       id: string; 
       name?: string; 
       price?: number; 
       category?: string;
       status?: string;
+      sku?: string;
+      stock_quantity?: number;
     }) => {
       const updates: TableUpdate<'products'> = { updated_at: new Date().toISOString() };
       if (name !== undefined) updates.name = name;
       if (price !== undefined) updates.price = price;
       if (category !== undefined) updates.category = category;
       if (status !== undefined) updates.status = status;
+      if (sku !== undefined) updates.sku = sku;
+      if (stock_quantity !== undefined) updates.stock_quantity = stock_quantity;
 
       const { data, error } = await supabase
         .from('products')

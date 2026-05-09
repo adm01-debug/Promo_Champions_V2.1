@@ -39,6 +39,7 @@ const editClientSchema = z.object({
     .string()
     .refine((val) => !val || !isNaN(parseFloat(val)), "Valor inválido")
     .refine((val) => !val || parseFloat(val) >= 0, "Valor deve ser positivo"),
+  lead_source: z.string().optional(),
 });
 
 type EditClientFormData = z.infer<typeof editClientSchema>;
@@ -60,6 +61,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
       phone: "",
       company: "",
       total_value: "0",
+      lead_source: "",
     },
   });
 
@@ -71,6 +73,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         phone: client.phone || "",
         company: client.company || "",
         total_value: client.total_value?.toString() || "0",
+        lead_source: (client as any).lead_source || "",
       });
     }
   }, [client, form]);
@@ -86,6 +89,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         phone: data.phone || null,
         company: data.company || null,
         total_value: parseFloat(data.total_value) || 0,
+        lead_source: data.lead_source || null,
       },
       {
         onSuccess: () => {
@@ -185,6 +189,23 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
                       step="0.01"
                       min="0"
                       placeholder="0.00"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lead_source"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Origem do Lead</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Ex: LinkedIn, Indicação, Site..."
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>

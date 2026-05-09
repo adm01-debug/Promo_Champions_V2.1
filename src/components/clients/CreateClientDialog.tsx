@@ -21,6 +21,7 @@ const clientSchema = z.object({
   email: z.string().trim().email("E-mail inválido").max(255, "E-mail deve ter no máximo 255 caracteres").or(z.literal("")),
   phone: z.string().trim().max(20, "Telefone deve ter no máximo 20 caracteres").optional().or(z.literal("")),
   company: z.string().trim().max(100, "Empresa deve ter no máximo 100 caracteres").optional().or(z.literal("")),
+  lead_source: z.string().optional().or(z.literal("")),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -36,6 +37,7 @@ export const CreateClientDialog = () => {
       email: "",
       phone: "",
       company: "",
+      lead_source: "",
     },
   });
 
@@ -46,6 +48,7 @@ export const CreateClientDialog = () => {
         email: data.email || undefined,
         phone: data.phone || undefined,
         company: data.company || undefined,
+        lead_source: data.lead_source || undefined,
       },
       {
         onSuccess: () => {
@@ -139,6 +142,23 @@ export const CreateClientDialog = () => {
                     <Input
                       {...field}
                       placeholder="Nome da empresa"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lead_source"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Origem do Lead</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Ex: LinkedIn, Indicação, Site..."
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>

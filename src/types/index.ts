@@ -38,6 +38,9 @@ export interface Client {
   employee_count?: number;
   annual_revenue?: number;
   total_value?: number;
+  lat?: number;
+  lng?: number;
+  lead_source?: string;
   created_at: string;
   updated_at: string;
   last_contact_date?: string;

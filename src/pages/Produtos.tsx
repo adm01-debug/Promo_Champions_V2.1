@@ -230,6 +230,7 @@ const Produtos = () => {
                       <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                         {product.name}
                       </h3>
+                      <p className="text-[10px] font-mono text-muted-foreground/60">SKU: {product.sku || 'N/A'}</p>
                     </div>
                   </div>
                   
@@ -241,7 +242,7 @@ const Produtos = () => {
 
                   <div className="mt-4 pt-4 border-t border-border/30">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Preço</span>
+                      <span className="text-xs text-muted-foreground">Estoque: {product.stock_quantity || 0}</span>
                       <span className="text-xl font-bold gradient-text">
                         R$ {Number(product.price).toLocaleString("pt-BR")}
                       </span>

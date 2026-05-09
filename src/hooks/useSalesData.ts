@@ -37,12 +37,12 @@ export interface CreateSaleInput {
 }
 
 const statusMap: Record<string, string> = {
-  pending: "pendente",
-  qualified: "qualificada",
-  proposal: "proposta",
-  negotiation: "negociação",
-  completed: "concluída",
-  lost: "cancelada",
+  pending: "pending",
+  qualified: "qualified",
+  proposal: "proposal",
+  negotiation: "negotiation",
+  completed: "completed",
+  lost: "lost",
 };
 
 export const useSalesData = (searchTerm?: string) => {

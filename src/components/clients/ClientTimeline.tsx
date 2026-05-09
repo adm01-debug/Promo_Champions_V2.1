@@ -71,6 +71,17 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
   const { data: events, isLoading } = useQuery<TimelineEvent[]>({
     queryKey: ['client-timeline', clientId],
     queryFn: async () => {
+      // Fetch interactions from dedicated table
+      const { data: interactions, error: intError } = await supabase
+        .from('client_interactions' as any)
+        .select('*')
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false });
+
+      if (intError) {
+        console.error('Error fetching client_interactions:', intError);
+      }
+
       // Fetch activities linked to sales for this client
       const { data: sales, error: salesError } = await supabase
         .from('sales')
@@ -80,22 +91,47 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
       if (salesError) throw salesError;
 
       const saleIds = (sales || []).map(s => s.id);
-      if (saleIds.length === 0) return [];
+      
+      let activities: any[] = [];
+      if (saleIds.length > 0) {
+        const { data: actData, error: actError } = await supabase
+          .from('activities')
+          .select('*')
+          .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
+          .order('created_at', { ascending: false })
+          .limit(100);
+        
+        if (actError) throw actError;
+        activities = actData || [];
+      } else {
+        const { data: actData, error: actError } = await supabase
+          .from('activities')
+          .select('*')
+          .eq('client_id', clientId)
+          .order('created_at', { ascending: false })
+          .limit(100);
+        
+        if (!actError) activities = actData || [];
+      }
 
-      const { data: activities, error: actError } = await supabase
-        .from('activities')
-        .select('*')
-        .in('sale_id', saleIds)
-        .order('created_at', { ascending: false })
-        .limit(100);
+      const timelineEvents: TimelineEvent[] = [];
 
-      if (actError) throw actError;
+      (interactions || []).forEach((int: any) => {
+        timelineEvents.push({
+          id: int.id,
+          type: int.type,
+          description: int.content || activityLabels[int.type] || int.type,
+          date: new Date(int.created_at),
+          outcome: int.metadata?.outcome,
+          notes: int.content || undefined,
+        });
+      });
 
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      return (activities || []).map(act => {
+      activities.forEach((act: any) => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
-        return {
+        timelineEvents.push({
           id: act.id,
           type: act.activity_type,
           description: act.notes || activityLabels[act.activity_type] || act.activity_type,
@@ -105,8 +141,10 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           notes: act.notes || undefined,
           durationMinutes: act.duration_minutes || undefined,
           relatedDeal: sale ? { id: sale.id, name: sale.product_name, status: sale.status } : undefined,
-        };
+        });
       });
+
+      return timelineEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
     },
     enabled: !!clientId && !!clientName,
     staleTime: 1000 * 60 * 5,

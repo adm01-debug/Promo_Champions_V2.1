@@ -2883,6 +2883,51 @@ export type Database = {
         }
         Relationships: []
       }
+      client_interactions: {
+        Row: {
+          client_id: string | null
+          content: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_interactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "client_interactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_portfolio: {
         Row: {
           assigned_at: string
@@ -2890,7 +2935,9 @@ export type Database = {
           client_id: string
           created_at: string
           id: string
+          is_active: boolean | null
           last_purchase_date: string | null
+          lead_source: string | null
           salesperson_id: string
           source: string | null
           status: string
@@ -2902,7 +2949,9 @@ export type Database = {
           client_id: string
           created_at?: string
           id?: string
+          is_active?: boolean | null
           last_purchase_date?: string | null
+          lead_source?: string | null
           salesperson_id: string
           source?: string | null
           status?: string
@@ -2914,7 +2963,9 @@ export type Database = {
           client_id?: string
           created_at?: string
           id?: string
+          is_active?: boolean | null
           last_purchase_date?: string | null
+          lead_source?: string | null
           salesperson_id?: string
           source?: string | null
           status?: string
@@ -2971,7 +3022,9 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          last_interaction_at: string | null
           lat: number | null
+          lead_source: string | null
           lng: number | null
           name: string
           phone: string | null
@@ -2984,7 +3037,9 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          last_interaction_at?: string | null
           lat?: number | null
+          lead_source?: string | null
           lng?: number | null
           name: string
           phone?: string | null
@@ -2997,7 +3052,9 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          last_interaction_at?: string | null
           lat?: number | null
+          lead_source?: string | null
           lng?: number | null
           name?: string
           phone?: string | null
@@ -8742,6 +8799,38 @@ export type Database = {
           },
         ]
       }
+      product_stock_log: {
+        Row: {
+          change_amount: number
+          created_at: string | null
+          id: string
+          product_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          change_amount: number
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          change_amount?: number
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_stock_log_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_usage_events: {
         Row: {
           account_id: string
@@ -8830,7 +8919,9 @@ export type Database = {
           price: number
           rating: number
           sales_count: number
+          sku: string | null
           status: string
+          stock_quantity: number | null
           updated_at: string
         }
         Insert: {
@@ -8841,7 +8932,9 @@ export type Database = {
           price?: number
           rating?: number
           sales_count?: number
+          sku?: string | null
           status?: string
+          stock_quantity?: number | null
           updated_at?: string
         }
         Update: {
@@ -8852,7 +8945,9 @@ export type Database = {
           price?: number
           rating?: number
           sales_count?: number
+          sku?: string | null
           status?: string
+          stock_quantity?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -10963,6 +11058,7 @@ export type Database = {
           category: string
           client_name: string
           created_at: string
+          deal_status: Database["public"]["Enums"]["deal_status"] | null
           forecast_category:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -10982,6 +11078,7 @@ export type Database = {
           category?: string
           client_name: string
           created_at?: string
+          deal_status?: Database["public"]["Enums"]["deal_status"] | null
           forecast_category?:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -11001,6 +11098,7 @@ export type Database = {
           category?: string
           client_name?: string
           created_at?: string
+          deal_status?: Database["public"]["Enums"]["deal_status"] | null
           forecast_category?:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -16411,6 +16509,13 @@ export type Database = {
       app_role: "admin" | "manager" | "salesperson"
       cadence_type: "prospecting" | "quote_followup"
       cs_survey_type: "csat" | "ces"
+      deal_status:
+        | "pending"
+        | "qualified"
+        | "proposal"
+        | "negotiation"
+        | "completed"
+        | "lost"
       expansion_opp_status:
         | "identified"
         | "qualified"
@@ -16606,6 +16711,14 @@ export const Constants = {
       app_role: ["admin", "manager", "salesperson"],
       cadence_type: ["prospecting", "quote_followup"],
       cs_survey_type: ["csat", "ces"],
+      deal_status: [
+        "pending",
+        "qualified",
+        "proposal",
+        "negotiation",
+        "completed",
+        "lost",
+      ],
       expansion_opp_status: [
         "identified",
         "qualified",

@@ -22,12 +22,14 @@ const editProductSchema = z.object({
     .trim()
     .min(1, "Nome é obrigatório")
     .max(100, "Nome deve ter no máximo 100 caracteres"),
+  sku: z.string().trim().min(1, "SKU é obrigatório"),
   category: z.string().default("Assinatura"),
   price: z
     .string()
     .min(1, "Preço é obrigatório")
     .refine((val) => !isNaN(parseFloat(val)), "Preço inválido")
     .refine((val) => parseFloat(val) >= 0, "Preço deve ser positivo"),
+  stock_quantity: z.string().default("0"),
 });
 
 type EditProductFormData = z.infer<typeof editProductSchema>;
@@ -45,8 +47,10 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
     resolver: zodResolver(editProductSchema),
     defaultValues: {
       name: "",
+      sku: "",
       category: "Assinatura",
       price: "0",
+      stock_quantity: "0",
     },
   });
 
@@ -54,8 +58,10 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
     if (product) {
       form.reset({
         name: product.name || "",
+        sku: (product as any).sku || "",
         category: product.category || "Assinatura",
         price: product.price?.toString() || "0",
+        stock_quantity: (product as any).stock_quantity?.toString() || "0",
       });
     }
   }, [product, form]);
@@ -67,8 +73,10 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
       {
         id: product.id,
         name: data.name,
+        sku: data.sku,
         category: data.category,
         price: parseFloat(data.price),
+        stock_quantity: parseInt(data.stock_quantity) || 0,
       },
       {
         onSuccess: () => {
@@ -96,6 +104,23 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
                     <Input
                       {...field}
                       placeholder="Nome do produto"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sku"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>SKU *</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="SKU do produto"
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>
@@ -139,6 +164,24 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
                       step="0.01"
                       min="0"
                       placeholder="0.00"
+                      className="bg-muted/50 border-border/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="stock_quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estoque</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="0"
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>
