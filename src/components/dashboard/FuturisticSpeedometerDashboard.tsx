@@ -596,7 +596,10 @@ export const FuturisticSpeedometerDashboard = () => {
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
     
-    const currentSettings = { ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale };
+    const currentSettings = { 
+      ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale,
+      oppThreshold, retThreshold, alertFrequency 
+    };
     const newSettings = { ...currentSettings, ...updates };
     
     await supabase.from("user_app_settings").upsert({
