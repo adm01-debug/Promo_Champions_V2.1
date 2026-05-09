@@ -37,10 +37,13 @@ export function ObjectionsLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newObjection, setNewObjection] = useState({ objection: '', response: '', category: 'general' });
+  const [editingObjection, setEditingObjection] = useState<any>(null);
+  const [newObjection, setNewObjection] = useState({ objection: '', response: '', category: 'general', tags: [] as string[], effectiveness_score: 5 });
+  const [tagInput, setTagInput] = useState('');
 
   const { data: objections, isLoading } = useObjectionsLibrary(selectedCategory);
   const addObjection = useAddObjection();
+  const updateObjection = useUpdateObjection();
   const incrementUsage = useIncrementObjectionUsage();
   const deleteObjection = useDeleteObjection();
 
