@@ -20,7 +20,7 @@ import { ICPBadge } from "@/components/shared/ICPBadge";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { EmptyStateClients } from "@/components/shared/EmptyStateClients";
 import { ClientTimeline } from "@/components/clients/ClientTimeline";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -355,23 +355,8 @@ const Clientes = () => {
                   </p>
                 </div>
               </div>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    className="h-9 px-4 rounded-xl bg-primary text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />Log Activity
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
-                   <DialogHeader>
-                    <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Register Client Interaction</DialogTitle>
-                  </DialogHeader>
-                  <ActivityLogForm 
-                    clientId={timelineClient?.id} 
-                  />
-                </DialogContent>
-              </Dialog>
+              
+              <ActivityLogTrigger clientId={timelineClient?.id} />
             </div>
           </DialogHeader>
           <div className="flex-1 overflow-hidden px-6 pb-6">
@@ -406,6 +391,30 @@ const Clientes = () => {
     </PageTransition>
     </SkeletonTransition>
   </>
+  );
+};
+
+const ActivityLogTrigger = ({ clientId }: { clientId?: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button 
+          className="h-9 px-4 rounded-xl bg-primary text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+        >
+          <Plus className="h-4 w-4 mr-2" />Log Activity
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
+         <DialogHeader>
+          <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Register Client Interaction</DialogTitle>
+        </DialogHeader>
+        <ActivityLogForm 
+          clientId={clientId} 
+          onSuccess={() => setOpen(false)}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 

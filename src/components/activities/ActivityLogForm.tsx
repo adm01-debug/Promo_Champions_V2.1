@@ -54,6 +54,7 @@ interface ActivityLogFormProps {
 
 export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogFormProps) {
   const { data: salespeople } = useSalespeople();
+  const { data: clients } = useClients();
   const createActivity = useCreateActivity();
 
   const form = useForm<ActivityFormData>({
@@ -62,6 +63,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogForm
       activity_type: "call",
       outcome: "connected",
       salesperson_id: "",
+      client_id: clientId || "",
       contact_name: "",
       duration_minutes: undefined,
       notes: "",
@@ -71,6 +73,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogForm
   const handleSubmit = (data: ActivityFormData) => {
     createActivity.mutate({
       sale_id: saleId || undefined,
+      client_id: data.client_id || undefined,
       salesperson_id: data.salesperson_id || undefined,
       activity_type: data.activity_type,
       outcome: data.outcome,

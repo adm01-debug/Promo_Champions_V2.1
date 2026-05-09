@@ -1,7 +1,8 @@
 import { Helmet } from "react-helmet-async";
-import { ShoppingCart, Search, Loader2 } from "lucide-react";
+import { ShoppingCart, Search, Loader2, Plus, History } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -16,7 +17,6 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
-import { Plus, History } from "lucide-react";
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
   pending: "bg-warning/20 text-warning border-warning/30",
