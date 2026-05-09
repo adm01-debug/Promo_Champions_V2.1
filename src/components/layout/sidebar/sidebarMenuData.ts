@@ -152,6 +152,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
   {
     label: "Análises", icon: Gauge,
     items: [
+      { title: "Competências", url: "/competencias", icon: Brain },
       { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
