@@ -74,6 +74,7 @@ export const BISDR = lazy(() => import("@/pages/BISDR"));
 export const BICloser = lazy(() => import("@/pages/BICloser"));
 export const RelatorioAtividades = lazy(() => import("@/pages/RelatorioAtividades"));
 export const RelatoriosEmail = lazy(() => import("@/pages/RelatoriosEmail"));
+export const EmailAnalyticsPage = lazy(() => import("@/pages/EmailAnalyticsPage"));
 export const RelatoriosExecutivos = lazy(() => import("@/pages/RelatoriosExecutivos"));
 export const ScheduledReports = lazy(() => import("@/pages/ScheduledReports"));
 export const CustomReports = lazy(() => import("@/pages/CustomReports"));
