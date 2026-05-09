@@ -54,7 +54,29 @@ interface ABCChartTableProps {
 }
 
 export const ABCChartTable = React.memo(function ABCChartTable({ items, chartTitle, tableTitle, chartIcon, tableIcon, emptyIcon }: ABCChartTableProps) {
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const hasData = items && items.length > 0;
+
+  const toggleSelectAll = () => {
+    if (selectedItems.length === items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(items.map(i => i.name));
+    }
+  };
+
+  const toggleSelectItem = (name: string) => {
+    setSelectedItems(prev => 
+      prev.includes(name) 
+        ? prev.filter(i => i !== name) 
+        : [...prev, name]
+    );
+  };
+
+  const handleBulkAction = (action: string) => {
+    toast.info(`${action} aplicado a ${selectedItems.length} itens: ${selectedItems.join(', ')}`);
+    // Here we would implement real logic like assigning tags, sending campaigns, etc.
+  };
 
   const emptyState = (
     <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
