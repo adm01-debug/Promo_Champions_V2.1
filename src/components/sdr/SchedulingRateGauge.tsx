@@ -97,7 +97,7 @@ export function SchedulingRateGauge({
               )}
             </div>
             <div>
-              <h2 className="text-xl font-mono font-black uppercase tracking-widest text-primary">Target Conversion</h2>
+              <h2 className={cn("text-xl font-mono font-black uppercase tracking-widest", getRateColor(rate))}>{title}</h2>
               <p className="text-[10px] font-mono font-bold text-muted-foreground tracking-[0.2em] uppercase">SDR Operational Telemetry</p>
             </div>
           </div>
