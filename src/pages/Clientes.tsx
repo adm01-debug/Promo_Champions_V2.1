@@ -33,6 +33,15 @@ const sortOptions: SortOption[] = [
   { label: "Mais antigo", value: "date_asc", direction: "asc" },
 ];
 
+const TotalValueDisplay = ({ value }: { value: number }) => {
+  const animated = useCountUp(value, { duration: 1200 });
+  return (
+    <span className="font-display font-black text-xl text-primary tracking-tighter">
+      R$ {animated.toLocaleString("pt-BR", { notation: 'compact' })}
+    </span>
+  );
+};
+
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name_asc");
