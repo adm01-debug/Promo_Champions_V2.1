@@ -876,8 +876,11 @@ export const FuturisticSpeedometerDashboard = () => {
             <h2 className="font-display text-lg font-bold tracking-tight text-primary" style={{ textShadow: "0 0 10px hsl(var(--primary) / 0.6), 0 0 22px hsl(var(--primary) / 0.35)" }}>
               Performance HUD
             </h2>
-            <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
-              Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
+            <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider flex items-center gap-2">
+              <span className="opacity-70">Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}</span>
+              <span className="inline-block w-1 h-1 rounded-full bg-success animate-pulse" />
+              <span className="text-[9px] text-success/80">Sincronizado: {new Date().toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</span>
+            </p>
             </p>
           </div>
         </div>
