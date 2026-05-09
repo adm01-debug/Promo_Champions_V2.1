@@ -71,6 +71,17 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
   const { data: events, isLoading } = useQuery<TimelineEvent[]>({
     queryKey: ['client-timeline', clientId],
     queryFn: async () => {
+      // Fetch interactions from dedicated table
+      const { data: interactions, error: intError } = await supabase
+        .from('client_interactions' as any)
+        .select('*')
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false });
+
+      if (intError) {
+        console.error('Error fetching client_interactions:', intError);
+      }
+
       // Fetch activities linked to sales for this client
       const { data: sales, error: salesError } = await supabase
         .from('sales')
@@ -80,20 +91,32 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
       if (salesError) throw salesError;
 
       const saleIds = (sales || []).map(s => s.id);
-      if (saleIds.length === 0) return [];
-
-      const { data: activities, error: actError } = await supabase
-        .from('activities')
-        .select('*')
-        .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      if (actError) throw actError;
+      
+      let activities: any[] = [];
+      if (saleIds.length > 0) {
+        const { data: actData, error: actError } = await supabase
+          .from('activities')
+          .select('*')
+          .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
+          .order('created_at', { ascending: false })
+          .limit(100);
+        
+        if (actError) throw actError;
+        activities = actData || [];
+      } else {
+        const { data: actData, error: actError } = await supabase
+          .from('activities')
+          .select('*')
+          .eq('client_id', clientId)
+          .order('created_at', { ascending: false })
+          .limit(100);
+        
+        if (!actError) activities = actData || [];
+      }
 
       const timelineEvents: TimelineEvent[] = [];
 
-      (interactions || []).forEach(int => {
+      (interactions || []).forEach((int: any) => {
         timelineEvents.push({
           id: int.id,
           type: int.type,
@@ -106,7 +129,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      allActivities.forEach(act => {
+      activities.forEach((act: any) => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
         timelineEvents.push({
           id: act.id,
