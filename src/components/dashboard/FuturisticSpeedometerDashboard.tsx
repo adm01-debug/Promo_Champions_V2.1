@@ -110,13 +110,17 @@ const Speedometer = ({
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
 
 
+  const isSmallScreen = s < 200;
+
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         if (width > 0) {
-          setCurrentSize(Math.min(width - 24, size));
+          // Optimization: throttle resize updates by avoiding unnecessary state changes
+          const newSize = Math.min(width - 24, size);
+          setCurrentSize((prev) => (Math.abs(prev - newSize) > 5 ? newSize : prev));
         }
       }
     });
