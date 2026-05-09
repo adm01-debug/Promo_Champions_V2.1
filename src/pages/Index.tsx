@@ -62,8 +62,9 @@ const Index = () => {
   const { section } = useParams<{ section?: string }>();
   const navigate = useNavigate();
   useDashboardRedirect();
+  const [period, setPeriod] = useState<KPIPeriod>("current_month");
 
-  const { data: kpis, isLoading } = useDashboardKPIs();
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period);
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
   const priorities = useDashboardPriorities();
