@@ -62,6 +62,18 @@ const SDRStatCardInner = function SDRStatCard({
   const isPositive = (change ?? 0) >= 0;
   const hasSignificantChange = Math.abs(change ?? 0) >= 10;
   const styles = getVariantStyles(variant);
+  
+  const numericValue = typeof value === 'number' ? value : parseFloat(String(value).replace(/[^\d.-]/g, ''));
+  const animatedValue = useCountUp(numericValue || 0, {
+    duration: 1400,
+    decimals: typeof value === 'string' && value.includes(".") ? 1 : 0
+  });
+
+  const displayValue = typeof value === 'string' && value.includes("%") 
+    ? `${animatedValue.toFixed(1)}%` 
+    : typeof value === 'number' 
+      ? animatedValue.toLocaleString('pt-BR') 
+      : value;
 
   return (
     <motion.div
