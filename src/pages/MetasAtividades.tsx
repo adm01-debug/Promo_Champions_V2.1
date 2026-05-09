@@ -239,7 +239,9 @@ export default function MetasAtividades() {
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
               {/* Left Column: Live Intelligence */}
               <div className="xl:col-span-1 space-y-6 animate-fade-in-up stagger-1">
+                <AchievementBadgeDisplay />
                 <ArenaPulseFeed data={progressData || []} />
+                <ArenaAITips data={progressData || []} />
                 <PredictiveVelocity data={progressData || []} />
                 <ActivityVersusDuel data={progressData || []} />
                 <ActivityHeatmap />
