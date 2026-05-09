@@ -143,7 +143,7 @@ const Index = () => {
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
             {/* KPI Overview */}
-            {!allEmpty && (
+            {true && (
               <motion.div 
                 variants={containerVariants}
                 initial="hidden"
