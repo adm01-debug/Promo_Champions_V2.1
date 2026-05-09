@@ -15,7 +15,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useClients } from "@/hooks/useClients";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText, ExternalLink, Send } from "lucide-react";
+import { toast } from "sonner";
 
 const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[] = [
   { value: "call", label: "Ligação", icon: Phone },
@@ -79,6 +80,21 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
     },
   });
 
+  const selectedActivityType = form.watch("activity_type");
+  const selectedClientId = form.watch("client_id");
+  const selectedClient = clients?.find(c => c.id === selectedClientId);
+
+  const handleOpenWhatsApp = () => {
+    const phone = selectedClient?.phone;
+    if (!phone) {
+      toast.error("Cliente sem telefone cadastrado");
+      return;
+    }
+    const cleanPhone = phone.replace(/\D/g, "");
+    const text = encodeURIComponent(form.getValues("notes") || "Olá, tudo bem?");
+    window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
+  };
+
   const handleSubmit = (data: ActivityFormData) => {
     createActivity.mutate({
       sale_id: saleId || undefined,
@@ -91,7 +107,12 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
       contact_name: data.contact_name || undefined,
     }, {
       onSuccess: () => {
-        form.reset();
+        form.reset({
+          ...form.getValues(),
+          notes: "",
+          duration_minutes: undefined,
+          contact_name: "",
+        });
         onSuccess?.();
       }
     });
@@ -339,11 +360,25 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               name="notes"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel className="text-xs font-medium text-muted-foreground">Observações</FormLabel>
+                  <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+                    Observações
+                    {selectedActivityType === "whatsapp" && selectedClientId && (
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 text-[10px] gap-1 text-primary hover:text-primary-glow"
+                        onClick={handleOpenWhatsApp}
+                      >
+                        <MessageCircle className="h-3 w-3" />
+                        Enviar no WhatsApp
+                      </Button>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Detalhes da atividade..."
+                      placeholder={selectedActivityType === "whatsapp" ? "Escreva a mensagem para enviar..." : "Detalhes da atividade..."}
                       className="min-h-[60px] text-xs resize-none bg-muted/30 border-border/50 hover:border-border focus:border-primary transition-colors"
                     />
                   </FormControl>

@@ -11080,6 +11080,8 @@ export type Database = {
           client_name: string
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
+          enrichment_data: Json | null
+          enrichment_status: string | null
           forecast_category:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -11104,6 +11106,8 @@ export type Database = {
           client_name: string
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
+          enrichment_data?: Json | null
+          enrichment_status?: string | null
           forecast_category?:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -11128,6 +11132,8 @@ export type Database = {
           client_name?: string
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
+          enrichment_data?: Json | null
+          enrichment_status?: string | null
           forecast_category?:
             | Database["public"]["Enums"]["forecast_category"]
             | null
@@ -16023,6 +16029,10 @@ export type Database = {
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      enrich_lead_data: {
+        Args: { lead_id: string; new_data: Json }
+        Returns: undefined
+      }
       enroll_quote_in_cadence: {
         Args: { _cadence_id: string; _quote_id: string }
         Returns: string

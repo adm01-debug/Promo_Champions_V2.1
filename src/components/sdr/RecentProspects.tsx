@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -5,11 +6,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Users, Flame, Thermometer, Snowflake, Clock, Package } from "lucide-react";
+import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2, Linkedin, Building2, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function RecentProspects() {
-  const { data: prospects } = useQuery({
+  const { mutate: enrich } = useLeadEnrichment();
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
+
+  const { data: prospects, refetch } = useQuery({
     queryKey: ["recent-prospects"],
     queryFn: async () => {
       const { data: sales } = await supabase
@@ -34,6 +41,17 @@ export function RecentProspects() {
       }));
     },
   });
+
+  const handleEnrich = (id: string, clientName: string) => {
+    setEnrichingId(id);
+    enrich({ leadId: id, companyName: clientName }, {
+      onSuccess: () => {
+        setEnrichingId(null);
+        refetch();
+      },
+      onError: () => setEnrichingId(null)
+    });
+  };
 
   const getTemperature = (score: number) => {
     if (score >= 75) return { label: "Quente", color: "text-status-error", bgColor: "bg-status-error/10", borderColor: "border-status-error/30", icon: Flame, glowClass: "hover-glow-error" };
@@ -89,55 +107,108 @@ export function RecentProspects() {
             {prospects?.map((prospect, index) => {
               const temp = getTemperature(prospect.score);
               const TempIcon = temp.icon;
+              const enrichment = (prospect as any).enrichment_data;
+              const isEnrichingCurrent = enrichingId === prospect.id;
               
               return (
                 <div 
                   key={prospect.id}
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-xl glass border hover-lift transition-all group cursor-pointer animate-fade-in",
+                    "flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in",
                     temp.borderColor,
                     temp.glowClass
                   )}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <div className={cn(
-                    "p-2.5 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg",
-                    temp.bgColor,
-                    temp.color
-                  )}>
-                    <TempIcon className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-display font-medium truncate group-hover:text-primary transition-colors">
-                      {prospect.client_name}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <Package className="h-3 w-3 text-muted-foreground/60" />
-                      <p className="text-[10px] text-muted-foreground truncate group-hover:text-foreground/70 transition-colors">
-                        {prospect.product_name}
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "p-2.5 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg",
+                      temp.bgColor,
+                      temp.color
+                    )}>
+                      <TempIcon className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-display font-medium truncate group-hover:text-primary transition-colors">
+                        {prospect.client_name}
                       </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Package className="h-3 w-3 text-muted-foreground/60" />
+                        <p className="text-[10px] text-muted-foreground truncate group-hover:text-foreground/70 transition-colors">
+                          {prospect.product_name}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 rounded-full hover:bg-primary/10"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEnrich(prospect.id, prospect.client_name);
+                                }}
+                                disabled={isEnrichingCurrent}
+                              >
+                                {isEnrichingCurrent ? (
+                                  <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                                ) : (
+                                  <Sparkles className="h-3 w-3 text-primary" />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-[10px]">Enriquecer Lead com AI</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <Badge 
+                          variant="outline" 
+                          className={cn(
+                            "text-[10px] transition-all group-hover:scale-105 shadow-sm",
+                            getStatusColor(prospect.status)
+                          )}
+                        >
+                          {getStatusLabel(prospect.status)}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
+                        <Clock className="h-2.5 w-2.5" />
+                        <span>
+                          {formatDistanceToNow(new Date(prospect.created_at), { 
+                            addSuffix: true, 
+                            locale: ptBR 
+                          })}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right space-y-1.5">
-                    <Badge 
-                      variant="outline" 
-                      className={cn(
-                        "text-[10px] transition-all group-hover:scale-105 shadow-sm",
-                        getStatusColor(prospect.status)
+
+                  {/* Enriched Data Bar */}
+                  {enrichment && Object.keys(enrichment).length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-border/30">
+                      {enrichment.linkedin_url && (
+                        <a href={enrichment.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-primary hover:underline">
+                          <Linkedin className="h-2.5 w-2.5" /> LinkedIn
+                        </a>
                       )}
-                    >
-                      {getStatusLabel(prospect.status)}
-                    </Badge>
-                    <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
-                      <Clock className="h-2.5 w-2.5" />
-                      <span>
-                        {formatDistanceToNow(new Date(prospect.created_at), { 
-                          addSuffix: true, 
-                          locale: ptBR 
-                        })}
-                      </span>
+                      {enrichment.company_size && (
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Building2 className="h-2.5 w-2.5" /> {enrichment.company_size} emp.
+                        </span>
+                      )}
+                      {enrichment.industry && (
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Globe className="h-2.5 w-2.5" /> {enrichment.industry}
+                        </span>
+                      )}
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
