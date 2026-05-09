@@ -46,7 +46,7 @@ function FunnelStage({ stage, maxCount, index, prevCount }: { stage: any, maxCou
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${(stage.count / maxCount) * 100}%` }}
-          transition={{ duration: 1.4, ease: "easeOutCubic" }}
+          transition={{ duration: 1.4, ease: [0.33, 1, 0.68, 1] }}
           className={cn(
             "h-full rounded-lg transition-all flex items-center justify-center group-hover/stage:brightness-110",
             stage.count === 0 && "opacity-30"
