@@ -584,6 +584,9 @@ export const FuturisticSpeedometerDashboard = () => {
         if (typeof s.customMax !== 'undefined') setCustomMax(s.customMax);
         if (typeof s.customUnit !== 'undefined') setCustomUnit(s.customUnit);
         if (typeof s.autoScale !== 'undefined') setAutoScale(s.autoScale);
+        if (typeof s.oppThreshold === 'number') setOppThreshold(s.oppThreshold);
+        if (typeof s.retThreshold === 'number') setRetThreshold(s.retThreshold);
+        if (s.alertFrequency) setAlertFrequency(s.alertFrequency);
       }
     };
     
