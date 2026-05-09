@@ -359,10 +359,18 @@ const Clientes = () => {
               <ActivityLogTrigger clientId={timelineClient?.id} />
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-hidden px-6 pb-6">
-            {timelineClient && (
-              <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
-            )}
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="space-y-6">
+              <ActivityLogForm 
+                clientId={timelineClient?.id} 
+                onSuccess={() => {
+                  // The timeline query will be invalidated automatically by the hook
+                }} 
+              />
+              {timelineClient && (
+                <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
