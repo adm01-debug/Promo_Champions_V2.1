@@ -99,7 +99,34 @@ const Index = () => {
         <RankingPositionBanner />
         <CompetitiveStatusBar />
         <OnboardingChecklist />
-        <DashboardHeader />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex-1">
+            <DashboardHeader />
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="bg-black/40 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Period: {PERIOD_LABELS[period].label}
+                  <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black/90 border-primary/30 backdrop-blur-xl">
+                {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map((p) => (
+                  <DropdownMenuItem 
+                    key={p} 
+                    onClick={() => setPeriod(p)}
+                    className="text-xs font-mono uppercase tracking-widest text-foreground focus:bg-primary/20 focus:text-primary cursor-pointer"
+                  >
+                    {PERIOD_LABELS[p].label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         
         {/* Priority Hint based on role */}
         <motion.div
