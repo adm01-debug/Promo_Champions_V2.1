@@ -24,6 +24,7 @@ import { LeadRoutingHub } from "@/components/lead-routing/LeadRoutingHub";
 import { ConversationHub } from "@/components/conversation-intelligence/ConversationHub";
 import { PipelinePulseHub } from "@/components/pipeline-pulse/PipelinePulseHub";
 import { BriefingHub } from "@/components/executive-briefing/BriefingHub";
+import { PipelineStrategicReview } from "@/components/intelligence/PipelineStrategicReview";
 
 
 export const RevenueIntelligenceHub: FC = () => {
@@ -72,6 +73,7 @@ export const RevenueIntelligenceHub: FC = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="briefing">✨ Briefing</TabsTrigger>
+          <TabsTrigger value="revisao-ai">🤖 Revisão AI</TabsTrigger>
           <TabsTrigger value="comando">⚡ Comando</TabsTrigger>
           <TabsTrigger value="forecast-accuracy">Precisão do Forecast</TabsTrigger>
           <TabsTrigger value="deal-health">Saúde dos Deals</TabsTrigger>
@@ -90,6 +92,9 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsList>
         <TabsContent value="briefing" className="mt-4">
           <BriefingHub />
+        </TabsContent>
+        <TabsContent value="revisao-ai" className="mt-4">
+          <PipelineStrategicReview />
         </TabsContent>
         <TabsContent value="comando" className="mt-4">
           <PipelinePulseHub onNavigateTab={setActiveTab} />

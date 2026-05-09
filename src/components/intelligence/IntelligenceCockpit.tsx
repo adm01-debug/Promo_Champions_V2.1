@@ -8,11 +8,16 @@ import {
   ArrowUpRight,
   Target,
   Users,
-  Timer
+  Timer,
+  ShieldCheck,
+  ChevronRight,
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 const IntelligenceCockpit = () => {
   const navigate = useNavigate();
@@ -58,24 +63,30 @@ const IntelligenceCockpit = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-bold tracking-tight text-foreground">
-            Intelligence <span className="text-primary italic">Cockpit</span>
+      {/* CEO Level Executive Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        <div className="lg:col-span-3 space-y-2">
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">Executive View</Badge>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">May 2026 • Quarter 2</span>
+          </div>
+          <h1 className="text-4xl font-display font-black tracking-tight text-foreground uppercase italic leading-none">
+            Intelligence <span className="text-primary">Cockpit</span>
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Central de comando integrada para decisões baseadas em dados.
+          <p className="text-muted-foreground text-sm max-w-2xl">
+            Sua central de comando unificada. Insights de IA consolidados de todos os módulos para decisões estratégicas rápidas.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate("/relatorios")}>
-            Relatório Completo
-          </Button>
-          <Button size="sm" className="shadow-lg shadow-primary/20">
-            Gerar Insights IA
-          </Button>
-        </div>
+        
+        <Card className="p-4 border-primary/30 bg-primary/5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">Business Health Score</p>
+            <div className="text-3xl font-black text-primary">88/100</div>
+          </div>
+          <div className="size-12 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center">
+            <ShieldCheck className="size-6 text-primary" />
+          </div>
+        </Card>
       </div>
 
       {/* Main KPI Grid */}
@@ -83,7 +94,7 @@ const IntelligenceCockpit = () => {
         {hubs.map((hub) => (
           <Card 
             key={hub.title}
-            className="group relative overflow-hidden border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/40 transition-all cursor-pointer"
+            className="group relative overflow-hidden border-border/40 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/40 transition-all cursor-pointer hover:shadow-xl hover:shadow-primary/5"
             onClick={() => navigate(hub.route)}
           >
             <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full blur-3xl opacity-20 transition-opacity group-hover:opacity-40 ${hub.bg}`} />
@@ -95,7 +106,7 @@ const IntelligenceCockpit = () => {
               <ArrowUpRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
 
-            <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">{hub.title}</h3>
+            <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{hub.title}</h3>
             <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{hub.description}</p>
             
             <div className="pt-4 border-t border-border/40 flex justify-between items-end">
@@ -103,7 +114,7 @@ const IntelligenceCockpit = () => {
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{hub.stats.label}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold font-mono">{hub.stats.value}</span>
-                  <span className={`text-[10px] font-medium ${hub.stats.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
+                  <span className={`text-[10px] font-bold ${hub.stats.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
                     {hub.stats.trend}
                   </span>
                 </div>
@@ -113,87 +124,116 @@ const IntelligenceCockpit = () => {
         ))}
       </div>
 
-      {/* Unified Insights & Live Feed */}
+      {/* Unified Insights & Strategic Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 p-6 border-border/40 bg-card/50">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Zap className="w-4 h-4 text-primary" />
-              Intelligence Pulse
+        <Card className="lg:col-span-2 p-6 border-border/40 bg-gradient-to-br from-card to-primary/5">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-bold flex items-center gap-2 text-lg">
+              <Zap className="w-5 h-5 text-primary" />
+              Strategic Pulse
             </h3>
-            <span className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary font-medium animate-pulse">
-              LIVE DATA
-            </span>
+            <div className="flex gap-2">
+              <Badge variant="outline" className="bg-background/50">Real-time Analysis</Badge>
+              <Button size="sm" variant="outline" className="h-7 text-[10px] font-bold uppercase tracking-widest">Export QBR</Button>
+            </div>
           </div>
           
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
                   <span className="text-muted-foreground flex items-center gap-1">
-                    <Target className="w-3 h-3" /> Meta Trimestral
+                    <Target className="w-3.5 h-3.5 text-primary" /> Meta do Quarter
                   </span>
-                  <span className="font-mono font-medium">82%</span>
+                  <span className="text-foreground">82%</span>
                 </div>
-                <Progress value={82} className="h-1.5" />
+                <Progress value={82} className="h-2 bg-primary/10" />
+                <p className="text-[10px] text-muted-foreground italic">Faltam R$ 420k para o Target</p>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+              
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
                   <span className="text-muted-foreground flex items-center gap-1">
-                    <Users className="w-3 h-3" /> Sentiment Index
+                    <Users className="w-3.5 h-3.5 text-blue-500" /> Market Sentiment
                   </span>
-                  <span className="font-mono font-medium">74%</span>
+                  <span className="text-foreground">Saudável (74)</span>
                 </div>
-                <Progress value={74} className="h-1.5" />
+                <Progress value={74} className="h-2 bg-blue-500/10" />
+                <p className="text-[10px] text-muted-foreground italic">Baseado em 142 reuniões IA</p>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-tight">
                   <span className="text-muted-foreground flex items-center gap-1">
-                    <Timer className="w-3 h-3" /> Sales Velocity
+                    <Timer className="w-3.5 h-3.5 text-amber-500" /> Sales Cycle
                   </span>
-                  <span className="font-mono font-medium">18d</span>
+                  <span className="text-foreground">18.4 dias</span>
                 </div>
-                <div className="h-1.5 w-full bg-secondary/30 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-[65%]" />
+                <div className="h-2 w-full bg-amber-500/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500 w-[65%]" />
                 </div>
+                <p className="text-[10px] text-muted-foreground italic">Redução de 2.1d vs. Mês Anterior</p>
               </div>
             </div>
 
-            <div className="rounded-xl bg-secondary/20 p-4 border border-border/20">
-              <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
-                <Brain className="w-4 h-4 text-purple-500" />
-                Executive Summary (AI)
+            <div className="rounded-2xl bg-primary/5 p-5 border border-primary/10 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+                <Brain className="size-12" />
+              </div>
+              <h4 className="text-sm font-bold mb-3 flex items-center gap-2 text-primary uppercase tracking-widest">
+                <Sparkles className="w-4 h-4" />
+                AI Strategic Insight
               </h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                A performance deste mês indica um crescimento orgânico de 12% no pipeline qualificado. 
-                O <span className="text-primary font-medium">Conversational Intelligence</span> detectou um aumento de 15% em menções competitivas da "Concorrente X", sugerindo a necessidade de ajuste imediato nos Battle Cards. 
-                O forecast atual projeta um fechamento de <span className="text-foreground font-semibold">R$ 2.4M</span> com 88% de confiança.
+              <p className="text-sm text-card-foreground leading-relaxed">
+                A performance atual projeta um fechamento de <span className="font-black text-primary underline decoration-2 underline-offset-4">R$ 2.48M</span>. O <span className="font-bold">Deal Intelligence</span> identificou uma concentração de 42% da receita em apenas 3 grandes contas (Risco de Concentração). O módulo <span className="font-bold">Conversational</span> alerta para um aumento de menções ao concorrente <span className="italic">"NexGen"</span> em reuniões de descoberta.
               </p>
+              <div className="mt-4 flex gap-4">
+                <Button variant="link" className="p-0 h-auto text-xs font-bold text-primary group/link">
+                  Explorar Forecast Detalhado <ChevronRight className="size-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6 border-border/40 bg-card/50">
-          <h3 className="font-semibold mb-4">Critical Alerts</h3>
-          <div className="space-y-4">
-            {[
-              { label: "Deal Stalled", desc: "Acme Corp parado há 12 dias", color: "text-amber-500", bg: "bg-amber-500/10" },
-              { label: "Low Sentiment", desc: "Call com João Silva apresentou sinais de risco", color: "text-rose-500", bg: "bg-rose-500/10" },
-              { label: "Pipeline Gap", desc: "Necessário +R$ 400k para atingir meta", color: "text-blue-500", bg: "bg-blue-500/10" }
-            ].map((alert, i) => (
-              <div key={i} className="flex gap-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors border border-transparent hover:border-border/40">
-                <div className={`w-1 rounded-full ${alert.color.replace('text', 'bg')}`} />
-                <div>
-                  <p className={`text-xs font-bold uppercase ${alert.color}`}>{alert.label}</p>
-                  <p className="text-xs text-muted-foreground">{alert.desc}</p>
+        <div className="space-y-4">
+          <Card className="p-6 border-border/40 bg-card/50">
+            <h3 className="font-bold mb-4 flex items-center gap-2 uppercase tracking-widest text-xs text-muted-foreground">
+              <AlertCircle className="size-4 text-destructive" />
+              Prioridades do Gestor (AI)
+            </h3>
+            <div className="space-y-4">
+              {[
+                { label: "Deal Stalled", desc: "Acme Corp parado há 12 dias", color: "text-amber-500", bg: "bg-amber-500/10" },
+                { label: "Risco de Churn", desc: "Cliente 'Global Tech' reduziu uso em 30%", color: "text-rose-500", bg: "bg-rose-500/10" },
+                { label: "Pipeline Gap", desc: "Necessário +R$ 400k para atingir meta", color: "text-blue-500", bg: "bg-blue-500/10" },
+                { label: "Coaching Ops", desc: "SDR João com 15% win-rate em calls", color: "text-purple-500", bg: "bg-purple-500/10" }
+              ].map((alert, i) => (
+                <div key={i} className="flex gap-3 p-3 rounded-xl hover:bg-secondary/30 transition-all border border-transparent hover:border-border/40 group cursor-pointer">
+                  <div className={`w-1 rounded-full ${alert.color.replace('text', 'bg')} transition-all group-hover:w-1.5`} />
+                  <div>
+                    <p className={`text-[10px] font-black uppercase ${alert.color}`}>{alert.label}</p>
+                    <p className="text-xs font-medium text-foreground mt-0.5">{alert.desc}</p>
+                  </div>
                 </div>
+              ))}
+            </div>
+            <Button variant="outline" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest h-9">
+              Abrir Central de Alertas
+            </Button>
+          </Card>
+
+          <Card className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="size-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-500">
+                <Brain className="size-4" />
               </div>
-            ))}
-          </div>
-          <Button variant="ghost" className="w-full mt-6 text-xs text-muted-foreground hover:text-primary">
-            Ver Todas Notificações
-          </Button>
-        </Card>
+              <p className="text-xs font-bold uppercase tracking-tighter">Ask Anything AI</p>
+            </div>
+            <p className="text-[11px] text-muted-foreground mb-3 leading-snug">Pergunte qualquer coisa sobre o seu negócio para a nossa inteligência.</p>
+            <Button size="sm" className="w-full h-8 text-[10px] font-bold uppercase tracking-widest bg-purple-500 hover:bg-purple-600 text-white border-none">Consultar Analista</Button>
+          </Card>
+        </div>
       </div>
     </div>
   );

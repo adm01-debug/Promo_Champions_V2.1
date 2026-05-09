@@ -19,6 +19,7 @@ import { QuestionQualityCard } from "./questions/QuestionQualityCard";
 import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
 import { CoachingScorecardCard } from "./coaching/CoachingScorecardCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IntentTracker, type Intent } from "./IntentTracker";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
 
 interface Props {
@@ -30,6 +31,24 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
   const { data: recordings, isLoading } = useCallRecordings();
   const rec = recordings?.find((r) => r.id === recordingId) ?? null;
   const { data: moments } = useCriticalMoments(rec?.id);
+
+  const derivedIntents: Intent[] = (rec?.objections_summary as Objection[] ?? []).map((o, idx) => ({
+    type: o.category === "preço" ? "objection" : "followup",
+    label: o.text,
+    confidence: 0.85,
+    timestamp_sec: 120 + idx * 45, // mock timestamp
+    excerpt: o.text
+  }));
+
+  if (rec?.key_topics?.includes("Competitor")) {
+    derivedIntents.push({
+      type: "comparison",
+      label: "Menção a Concorrente",
+      confidence: 0.92,
+      timestamp_sec: 300,
+      excerpt: "O cliente mencionou o concorrente principal ao falar sobre preço."
+    });
+  }
 
   return (
     <Sheet open={!!recordingId} onOpenChange={(o) => !o && onClose()}>
@@ -75,7 +94,12 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
               objections={(rec.objections_summary as Objection[]) ?? []}
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
-            <SentimentTimelineChart recordingId={rec.id} moments={moments ?? []} />
+            <IntentTracker recordingId={rec.id} intents={derivedIntents} />
+            <SentimentTimelineChart 
+              recordingId={rec.id} 
+              moments={moments ?? []} 
+              intents={derivedIntents} 
+            />
             <ConversationMetricsCard recordingId={rec.id} />
             <QuestionQualityCard recordingId={rec.id} />
             <ObjectionHandlingCard recordingId={rec.id} />

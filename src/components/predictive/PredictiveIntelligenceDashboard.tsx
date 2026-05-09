@@ -15,6 +15,7 @@ import { usePredictiveIntelligence } from "@/hooks/usePredictiveIntelligence";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LeadScoreExplainCard } from "@/components/lead-scoring/LeadScoreExplainCard";
 import { cn } from "@/lib/utils";
+import { PredictiveScenarioPlanner } from "./PredictiveScenarioPlanner";
 
 const formatBRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
@@ -133,6 +134,9 @@ export function PredictiveIntelligenceDashboard() {
           tone={(data?.trends.velocity_change_pct ?? 0) >= 0 ? "success" : "warning"}
         />
       </div>
+
+      {/* SCENARIO PLANNER */}
+      <PredictiveScenarioPlanner />
 
       {/* TABS */}
       <Tabs defaultValue="forecast" className="space-y-4">

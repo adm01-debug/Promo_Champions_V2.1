@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import { usePricingIntelligence, type PricingHealth } from "@/hooks/usePricingIntelligence";
 import { cn } from "@/lib/utils";
+import { DiscountOptimizer } from "./DiscountOptimizer";
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
@@ -148,6 +149,9 @@ export function PricingIntelligenceHub() {
           accent={k.alert_ratio > 0.2 ? "text-destructive" : "text-foreground"}
         />
       </div>
+
+      {/* Simulator */}
+      <DiscountOptimizer />
 
       {/* Distribution chart */}
       <Card>

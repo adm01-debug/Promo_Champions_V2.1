@@ -22,12 +22,14 @@ import {
 } from "./sentimentHelpers";
 import type { RechartsTooltipProps } from "@/types/recharts";
 import { severityHexColor, type CriticalMoment } from "./criticalMomentsHelpers";
+import type { Intent } from "./IntentTracker";
 
 interface Props {
   recordingId: string;
   currentTime?: number;
   onSeek?: (sec: number) => void;
   moments?: CriticalMoment[];
+  intents?: Intent[];
 }
 
 const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
@@ -46,7 +48,7 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   );
 };
 
-export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments }: Props) => {
+export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments, intents = [] }: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
 
@@ -135,6 +137,17 @@ export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, momen
                     strokeDasharray="3 2"
                   />
                 ))}
+              {intents.map((intent, i) => (
+                <ReferenceDot
+                  key={`intent-${i}`}
+                  x={intent.timestamp_sec}
+                  y={0.5} // High up to avoid clashing with sentiment
+                  r={4}
+                  fill="hsl(var(--primary))"
+                  stroke="hsl(var(--background))"
+                  strokeWidth={1}
+                />
+              ))}
             </AreaChart>
           </ResponsiveContainer>
         )}
