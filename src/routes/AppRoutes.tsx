@@ -161,6 +161,7 @@ export function AppRoutes() {
                      <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
                      <Route path="/analytics/abc" element={<Manager><ABCAnalysisPage /></Manager>} />
                      <Route path="/analytics/closing-time" element={<Manager><ClosingTimePage /></Manager>} />
+                     <Route path="/analytics/deal-velocity" element={<Manager><DealVelocityPage /></Manager>} />
                      <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
