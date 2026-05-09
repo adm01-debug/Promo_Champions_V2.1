@@ -23,7 +23,7 @@ interface BISDRChartsProps {
   outcomesByChannel?: OutcomeByChannel[];
 }
 
-export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activitiesByDay, conversionFunnel, leadsBySource }: BISDRChartsProps) {
+export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activitiesByDay, conversionFunnel, leadsBySource, outcomesByChannel }: BISDRChartsProps) {
   const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" };
 
   return (
