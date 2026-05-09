@@ -48,7 +48,7 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   );
 };
 
-export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments }: Props) => {
+export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments, intents = [] }: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
 
