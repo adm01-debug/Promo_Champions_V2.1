@@ -759,6 +759,11 @@ export const FuturisticSpeedometerDashboard = () => {
       });
     }
 
+    if (alertChannels.includes("hud")) {
+      setActiveHudAlert(data);
+      setTimeout(() => setActiveHudAlert(null), 8000);
+    }
+
     setAlertHistory(prev => [data, ...prev].slice(0, 20));
   };
 
