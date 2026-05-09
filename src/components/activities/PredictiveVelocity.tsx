@@ -96,7 +96,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
                   Diretriz Tática <Zap className="h-2.5 w-2.5 text-primary" />
                 </span>
               </div>
-              <span className="text-[8px] font-black text-muted-foreground/40 uppercase">Arena Intel v13.0</span>
+              <span className="text-[8px] font-black text-muted-foreground/40 uppercase">Arena Intel v14.0</span>
             </div>
             <div className={cn(
               "p-3 rounded-xl border transition-all duration-500",
