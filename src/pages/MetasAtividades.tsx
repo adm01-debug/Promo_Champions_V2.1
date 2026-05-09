@@ -21,6 +21,12 @@ import { MetasAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadi
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { ArenaPulseFeed } from "@/components/activities/ArenaPulseFeed";
+import { ActivityVersusDuel } from "@/components/activities/ActivityVersusDuel";
+import { PredictiveVelocity } from "@/components/activities/PredictiveVelocity";
+import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
+import { ArenaAITips } from "@/components/activities/ArenaAITips";
+import { AchievementBadgeDisplay } from "@/components/activities/AchievementBadgeDisplay";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -95,49 +101,97 @@ export default function MetasAtividades() {
       skeleton={<MetasAtividadesLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background bg-gradient-subtle">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        {/* Header */}
-        <div className="animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Operations</span>
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent/10 blur-[100px] rounded-full animate-float pointer-events-none" />
+        
+        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
+          {/* Header Section with Holographic Title */}
+          <div className="animate-fade-in-up relative">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-8 rounded-[2rem] glass border border-white/10 shadow-2xl overflow-hidden group">
+              {/* Animated background lines for the header */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer" />
+                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer-reverse" />
+              </div>
+              
+              <div className="space-y-4 relative z-10">
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 backdrop-blur-md shadow-glow-primary/20 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-glow-primary" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-primary drop-shadow-sm">Arena de Operações Live</span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
-                  Arena de Atividades
-                </h1>
-                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary/60" />
-                  {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} • <span className="text-foreground/80">Ciclo de Alta Performance</span>
+                
+                <div className="relative">
+                  <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-2xl">
+                    Arena de Atividades
+                  </h1>
+                  {/* Decorative underline */}
+                  <div className="h-1.5 w-32 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-2" />
+                </div>
+                
+                <p className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
+                  <div className="p-2 rounded-lg bg-muted/50 border border-border/50">
+                    <Calendar className="h-5 w-5 text-primary/70" />
+                  </div>
+                  <span>
+                    {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} 
+                    <span className="mx-2 text-border">|</span>
+                    <span className="text-foreground/90 font-bold uppercase tracking-widest text-xs">Ciclo de Alta Performance</span>
+                  </span>
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+
+              <div className="flex flex-wrap items-center gap-4 relative z-10">
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="lg" 
                   onClick={handleTestCelebration}
-                  className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group rounded-xl bg-transparent"
+                  className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 group rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
                 >
-                  <PartyPopper className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Simular Vitória</span>
+                  <PartyPopper className="h-5 w-5 text-primary group-hover:rotate-12 group-hover:scale-110 transition-all" />
+                  <span className="text-xs font-black uppercase tracking-widest">Testar Vitória</span>
                 </Button>
-                <div className="px-5 py-2.5 rounded-2xl glass border border-primary/20 shadow-xl shadow-primary/5 flex flex-col items-end group/ritmo relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/ritmo:opacity-100 transition-opacity duration-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 leading-none mb-1.5 relative z-10 italic">Pulse da Arena</span>
-                  <div className="flex items-center gap-2.5 relative z-10">
-                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-status-success/10 border border-status-success/20">
-                      <TrendingUp className="h-3 w-3 text-status-success animate-bounce-subtle" />
-                    </div>
-                    <span className="text-2xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-sm">{avgProgress.toFixed(0)}%</span>
+                
+                <div className="px-8 py-4 rounded-[2rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/10 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[180px]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/5 opacity-50 pointer-events-none" />
+                  <div className="absolute top-0 right-0 p-2 opacity-10">
+                    <TrendingUp className="w-12 h-12 text-primary" />
                   </div>
+                  
+                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 leading-none mb-2 relative z-10 italic">Pulse Global</span>
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-status-success/20 border border-status-success/40 shadow-glow-success/20">
+                      <Flame className="h-5 w-5 text-status-success animate-pulse" />
+                    </div>
+                    <span className="text-4xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-glow">
+                      {avgProgress.toFixed(0)}%
+                    </span>
+            </div>
+            {/* Global Arena Boss Bar */}
+            <div className="mt-8 space-y-2">
+              <div className="flex justify-between items-end">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/70">Objetivo Coletivo da Arena</span>
+                </div>
+                <span className="text-xs font-black text-primary italic">Status: Em Operação Nomimal</span>
+              </div>
+              <div className="h-3 w-full bg-muted/20 rounded-full overflow-hidden border border-white/5 relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div 
+                  className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-1000 ease-spring shadow-glow-primary relative" 
+                  style={{ width: `${avgProgress}%` }}
+                >
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
                 </div>
               </div>
             </div>
           </div>
         </div>
+            </div>
+          </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -151,24 +205,27 @@ export default function MetasAtividades() {
                 key={index} 
                 variant="glass"
                 className={cn(
-                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated",
+                  "animate-fade-in-up hover:shadow-2xl transition-all duration-500 overflow-hidden relative group border-border/40 card-elevated rounded-3xl",
                   `stagger-${index + 1}`
                 )}
               >
-                <div className={cn("absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full -mr-12 -mt-12 transition-all opacity-10 group-hover:opacity-20", stat.bgColor)} />
-                <CardContent className="p-6 relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={cn("p-3 rounded-2xl shadow-inner transition-transform duration-500 group-hover:scale-110", stat.bgColor)}>
-                      <stat.icon className={cn("h-5 w-5", stat.color)} />
+                <div className={cn("absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -mr-16 -mt-16 transition-all opacity-20 group-hover:opacity-40 group-hover:scale-150 duration-700", stat.bgColor)} />
+                <CardContent className="p-8 relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={cn("p-4 rounded-2xl shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6", stat.bgColor)}>
+                      <stat.icon className={cn("h-6 w-6", stat.color)} />
                     </div>
-                    <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-none px-2", stat.bgColor, stat.color)}>
+                    <Badge variant="outline" className={cn("text-[10px] font-black uppercase tracking-widest border-none px-3 py-1 rounded-full shadow-sm", stat.bgColor, stat.color)}>
                       {stat.trend}
                     </Badge>
                   </div>
                   <div>
-                    <p className={cn("text-3xl font-display font-black tracking-tighter leading-none mb-1", stat.color)}>{stat.value}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/80 mb-1">{stat.label}</p>
-                    <p className="text-[9px] text-muted-foreground font-medium">{stat.description}</p>
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <p className={cn("text-5xl font-display font-black tracking-tighter leading-none", stat.color)}>{stat.value}</p>
+                      {stat.trend.startsWith('+') && <span className="text-status-success text-xs font-bold animate-pulse">{stat.trend}</span>}
+                    </div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/90 mb-2">{stat.label}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium italic opacity-80 group-hover:opacity-100 transition-opacity">{stat.description}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -198,54 +255,69 @@ export default function MetasAtividades() {
           </TabsList>
 
           <TabsContent value="progress" className="animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Ranking */}
-              <div className="animate-fade-in-up stagger-1">
-                {isLoading ? (
-                  <Skeleton className="h-[450px] w-full rounded-xl" />
-                ) : (
-                  <DailyActivityRanking data={progressData || []} />
-                )}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+              {/* Left Column: Live Intelligence */}
+              <div className="xl:col-span-1 space-y-6 animate-fade-in-up stagger-1">
+                <AchievementBadgeDisplay />
+                <ArenaPulseFeed data={progressData || []} />
+                <ArenaAITips data={progressData || []} />
+                <PredictiveVelocity data={progressData || []} />
+                <ActivityVersusDuel data={progressData || []} />
+                <ActivityHeatmap />
               </div>
 
-              {/* Progress Cards Grid */}
-              <div className="lg:col-span-2 animate-fade-in-up stagger-2">
-                <Card variant="glass">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <div className="icon-container-primary p-1.5 rounded-lg">
-                        <Target className="h-4 w-4" />
-                      </div>
-                      Progresso por Vendedor
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              {/* Center Column: Ranking & Main Progress */}
+              <div className="xl:col-span-3 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Ranking */}
+                  <div className="lg:col-span-1 animate-fade-in-up stagger-2">
                     {isLoading ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {[...Array(4)].map((_, i) => (
-                          <Skeleton key={i} className="h-64 w-full rounded-xl" />
-                        ))}
-                      </div>
-                    ) : progressData && progressData.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {progressData.map((sp, index) => (
-                          <div key={sp.salesperson_id} className={cn("animate-fade-in-up", `stagger-${index + 1}`)}>
-                            <ActivityGoalCard
-                              data={sp}
-                              onEdit={setEditingId}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <Skeleton className="h-[600px] w-full rounded-3xl" />
                     ) : (
-                      <div className="empty-state">
-                        <Users className="empty-state-icon" />
-                        <p className="empty-state-title">Nenhum vendedor encontrado</p>
-                        <p className="empty-state-description">Adicione vendedores para ver o progresso de atividades.</p>
-                      </div>
+                      <DailyActivityRanking data={progressData || []} />
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+
+                  {/* Progress Cards Grid */}
+                  <div className="lg:col-span-2 animate-fade-in-up stagger-3">
+                    <Card variant="glass" className="rounded-3xl border-border/40 overflow-hidden">
+                      <CardHeader className="pb-4 bg-muted/20 border-b border-border/10">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
+                          <div className="icon-container-primary p-2 rounded-xl bg-primary/10 border border-primary/20">
+                            <Target className="h-4 w-4 text-primary" />
+                          </div>
+                          Grid de Performance Individual
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        {isLoading ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[...Array(4)].map((_, i) => (
+                              <Skeleton key={i} className="h-64 w-full rounded-2xl" />
+                            ))}
+                          </div>
+                        ) : progressData && progressData.length > 0 ? (
+                          <div className="flex xl:grid xl:grid-cols-2 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory xl:overflow-visible no-scrollbar">
+                            {progressData.map((sp, index) => (
+                              <div key={sp.salesperson_id} className={cn("animate-fade-in-up flex-shrink-0 w-[280px] sm:w-[350px] xl:w-auto snap-center", `stagger-${index + 1}`)}>
+                                <ActivityGoalCard
+                                  data={sp}
+                                  onEdit={setEditingId}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="empty-state">
+                            <Users className="empty-state-icon" />
+                            <p className="empty-state-title">Nenhum piloto na pista</p>
+                            <p className="empty-state-description">Configure os pilotos para iniciar a monitoração na arena.</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>

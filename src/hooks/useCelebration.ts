@@ -123,6 +123,46 @@ export function useCelebration() {
     }, 500);
   }, []);
 
+  const triggerArenaWinCelebration = useCallback(async () => {
+    const confetti = (await import('canvas-confetti')).default;
+    const duration = 5000;
+    const end = Date.now() + duration;
+
+    const frame = () => {
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#8B5CF6', '#D946EF', '#0EA5E9']
+      });
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#8B5CF6', '#D946EF', '#0EA5E9']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+
+    // Firework burst
+    const scalar = 2;
+    const triangle = confetti.shapeFromPath({ path: 'M0 10 L5 0 L10 10z' });
+
+    confetti({
+      shapes: [triangle],
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      scalar
+    });
+  }, []);
+
   const celebrate = useCallback((id: string, salespersonName?: string, salespersonId?: string) => {
     if (hasPlayedRef.current.has(id)) return;
     
