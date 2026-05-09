@@ -8,9 +8,12 @@ export function ActivityEffectiveness() {
 
   // Calculation logic
   const total = stats?.total ?? 0;
-  const connected = (stats?.byOutcome.connected ?? 0) + (stats?.byOutcome.scheduled ?? 0) + (stats?.byOutcome.qualified ?? 0);
+  const connected = (stats?.byOutcome.connected ?? 0) + (stats?.byOutcome.scheduled ?? 0) + (stats?.byOutcome.qualified ?? 0) + (stats?.byOutcome.callback ?? 0);
   const scheduled = stats?.byOutcome.scheduled ?? 0;
   const qualified = stats?.byOutcome.qualified ?? 0;
+  const badTiming = stats?.byOutcome.bad_timing ?? 0;
+  const wrongPerson = stats?.byOutcome.wrong_person ?? 0;
+  const unsubscribed = stats?.byOutcome.unsubscribed ?? 0;
 
   const connectionRate = total > 0 ? (connected / total) * 100 : 0;
   const schedulingRate = connected > 0 ? (scheduled / connected) * 100 : 0;
@@ -40,6 +43,14 @@ export function ActivityEffectiveness() {
       description: "Leads qualificados vs conexões",
       color: "text-emerald-500",
       progressColor: "bg-emerald-500"
+    },
+    {
+      label: "Taxa de Rejeição",
+      value: total > 0 ? ((badTiming + wrongPerson + unsubscribed) / total) * 100 : 0,
+      icon: TrendingUp,
+      description: "Descarte vs tentativas",
+      color: "text-red-500",
+      progressColor: "bg-red-500"
     }
   ];
 

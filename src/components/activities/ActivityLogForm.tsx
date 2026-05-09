@@ -37,11 +37,14 @@ const outcomes: { value: ActivityOutcome; label: string; color: string }[] = [
   { value: "callback", label: "Retornar", color: "bg-status-purple" },
   { value: "not_interested", label: "Sem Interesse", color: "bg-muted-foreground" },
   { value: "qualified", label: "Qualificado", color: "bg-primary" },
+  { value: "bad_timing", label: "Momento Ruim", color: "bg-amber-500" },
+  { value: "wrong_person", label: "Pessoa Errada", color: "bg-red-500" },
+  { value: "unsubscribed", label: "Descadastrou", color: "bg-gray-500" },
 ];
 
 const activitySchema = z.object({
   activity_type: z.enum(["call", "email", "meeting", "linkedin", "whatsapp", "note", "other"]),
-  outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified"]),
+  outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified", "bad_timing", "wrong_person", "unsubscribed"]),
   salesperson_id: z.string().optional(),
   client_id: z.string().optional(),
   contact_name: z.string().max(100, "Nome do contato deve ter no máximo 100 caracteres").optional(),
@@ -138,7 +141,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel className="text-xs font-medium text-muted-foreground">Tipo de Atividade</FormLabel>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                     {activityTypes.map(type => {
                       const Icon = type.icon;
                       return (
@@ -170,7 +173,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel className="text-xs font-medium text-muted-foreground">Resultado</FormLabel>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-1.5">
                     {outcomes.map(o => (
                       <button
                         key={o.value}
@@ -314,7 +317,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
             )}
 
             {/* Contact Name & Duration */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="contact_name"

@@ -16579,6 +16579,9 @@ export type Database = {
         | "callback"
         | "not_interested"
         | "qualified"
+        | "bad_timing"
+        | "wrong_person"
+        | "unsubscribed"
       activity_type:
         | "call"
         | "email"
@@ -16780,6 +16783,9 @@ export const Constants = {
         "callback",
         "not_interested",
         "qualified",
+        "bad_timing",
+        "wrong_person",
+        "unsubscribed",
       ],
       activity_type: [
         "call",

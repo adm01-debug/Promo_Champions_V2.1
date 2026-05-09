@@ -63,7 +63,7 @@ export function ActivityStats() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
       {statItems.map((item, index) => {
         const Icon = item.icon;
         const isFirst = index === 0;

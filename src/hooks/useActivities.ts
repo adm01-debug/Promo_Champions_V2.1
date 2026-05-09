@@ -6,7 +6,7 @@ import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
 export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
-export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified';
+export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified' | 'bad_timing' | 'wrong_person' | 'unsubscribed';
 
 export interface ActivityRecord {
   id: string;
@@ -104,17 +104,18 @@ export const useActivityStats = (salespersonId?: string) => {
       
       const byOutcome: Record<ActivityOutcome, number> = {
         connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
-        busy: 0, callback: 0, not_interested: 0, qualified: 0
+        busy: 0, callback: 0, not_interested: 0, qualified: 0,
+        bad_timing: 0, wrong_person: 0, unsubscribed: 0
       };
       
       const byTypeOutcome: Record<ActivityType, Record<ActivityOutcome, number>> = {
-        call: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        email: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        meeting: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        linkedin: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        whatsapp: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        note: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
-        other: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0 },
+        call: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        email: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        meeting: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        linkedin: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        whatsapp: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        note: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        other: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
       };
       
       let totalDuration = 0;
@@ -142,7 +143,8 @@ export const useActivityStats = (salespersonId?: string) => {
       };
       const todayByOutcome: Record<ActivityOutcome, number> = {
         connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
-        busy: 0, callback: 0, not_interested: 0, qualified: 0
+        busy: 0, callback: 0, not_interested: 0, qualified: 0,
+        bad_timing: 0, wrong_person: 0, unsubscribed: 0
       };
       
       todayActivities.forEach(a => {
@@ -193,7 +195,7 @@ export const useCreateActivity = () => {
     }) => {
       const { data, error } = await supabase
         .from('activities')
-        .insert(input)
+        .insert([input as any])
         .select()
         .single();
 

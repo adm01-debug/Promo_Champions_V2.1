@@ -18,6 +18,9 @@ export const outcomeLabels: Record<ActivityOutcome, { label: string; color: stri
   callback: { label: "Retornar", color: "bg-status-purple/10 text-status-purple border-status-purple/20" },
   not_interested: { label: "Sem Interesse", color: "bg-muted text-muted-foreground border-border" },
   qualified: { label: "Qualificado", color: "bg-primary/10 text-primary border-primary/20" },
+  bad_timing: { label: "Momento Ruim", color: "bg-amber-100 text-amber-700 border-amber-200" },
+  wrong_person: { label: "Pessoa Errada", color: "bg-red-100 text-red-700 border-red-200" },
+  unsubscribed: { label: "Descadastrou", color: "bg-gray-100 text-gray-700 border-gray-200" },
 };
 
 export const activityTypeOptions = [
@@ -31,4 +34,6 @@ export const outcomeOptions = [
   { label: "Agendou", value: "scheduled" }, { label: "Caixa Postal", value: "voicemail" },
   { label: "Ocupado", value: "busy" }, { label: "Retornar", value: "callback" },
   { label: "Sem Interesse", value: "not_interested" }, { label: "Qualificado", value: "qualified" },
+  { label: "Momento Ruim", value: "bad_timing" }, { label: "Pessoa Errada", value: "wrong_person" },
+  { label: "Descadastrou", value: "unsubscribed" },
 ];
