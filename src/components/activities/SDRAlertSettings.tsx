@@ -35,17 +35,10 @@ export function SDRAlertSettings() {
 
       if (error) throw error;
 
-      toast({
-        title: "Configurações salvas",
-        description: "Seus alertas automáticos foram atualizados com sucesso.",
-      });
+      toast.success("Configurações salvas: Seus alertas automáticos foram atualizados com sucesso.");
     } catch (error) {
       console.error(error);
-      toast({
-        title: "Erro ao salvar",
-        description: "Ocorreu um erro ao tentar salvar suas configurações.",
-        variant: "destructive",
-      });
+      toast.error("Erro ao salvar: Ocorreu um erro ao tentar salvar suas configurações.");
     } finally {
       setLoading(false);
     }
