@@ -23,6 +23,7 @@ import { ExecutiveSummaryReport } from "./ExecutiveSummaryReport";
 import { ScenarioSimulator } from "./ScenarioSimulator";
 import { RelationshipGraph } from "./RelationshipGraph";
 import { IntelligenceCommandBar } from "./IntelligenceCommandBar";
+import { ActivityPulse } from "./ActivityPulse";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
