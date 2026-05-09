@@ -2,8 +2,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDealVelocity } from '@/hooks/useDealVelocity';
-import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity, Maximize2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface DealVelocityChartProps {
   salespersonId?: string;
@@ -27,6 +29,9 @@ function ChangeIndicator({ change, inverted = false }: { change?: number; invert
 
 export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
   const { data, isLoading } = useDealVelocity(salespersonId);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isDedicatedPage = location.pathname === '/analytics/deal-velocity';
 
   if (isLoading) {
     return (
@@ -74,9 +79,19 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
               </Badge>
             )}
             {hasData && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-muted/50 border-border/30">
                 {totalDeals} deals analisados
               </Badge>
+            )}
+            {!isDedicatedPage && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-full hover:bg-primary/10 transition-colors"
+                onClick={() => navigate('/analytics/deal-velocity')}
+              >
+                <Maximize2 className="h-4 w-4" />
+              </Button>
             )}
           </div>
         </div>
