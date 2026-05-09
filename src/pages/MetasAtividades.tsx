@@ -27,6 +27,8 @@ import { PredictiveVelocity } from "@/components/activities/PredictiveVelocity";
 import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
 import { ArenaAITips } from "@/components/activities/ArenaAITips";
 import { AchievementBadgeDisplay } from "@/components/activities/AchievementBadgeDisplay";
+import { ArenaStatusBadge } from "@/components/arena/ArenaStatusBadge";
+import { EnhancedActivityCard } from "@/components/arena/EnhancedActivityCard";
 
 export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
@@ -118,11 +120,11 @@ export default function MetasAtividades() {
               </div>
               
               <div className="space-y-4 relative z-10">
-                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 backdrop-blur-md shadow-glow-primary/20 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-glow-primary" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-primary drop-shadow-sm">Arena de Operações Live</span>
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <ArenaStatusBadge status="online" label="Arena de Operações Live" />
+                  <ArenaStatusBadge status="busy" label="Alta Volatilidade" showRipple={false} />
                 </div>
-                
+
                 <div className="relative">
                   <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-2xl">
                     Arena de Atividades
