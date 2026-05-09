@@ -31,7 +31,7 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string; lead_source?: string; lat?: number; lng?: number }) => {
+    mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string; lead_source?: string; lat?: number; lng?: number; total_value?: number }) => {
       const { data, error } = await supabase.from('clients').insert(input).select().single();
       if (error) throw error;
       return data;
