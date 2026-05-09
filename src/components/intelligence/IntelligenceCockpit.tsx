@@ -24,6 +24,7 @@ import { ScenarioSimulator } from "./ScenarioSimulator";
 import { RelationshipGraph } from "./RelationshipGraph";
 import { IntelligenceCommandBar } from "./IntelligenceCommandBar";
 import { ActivityPulse } from "./ActivityPulse";
+import { HealthGauge } from "./HealthGauge";
 import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
