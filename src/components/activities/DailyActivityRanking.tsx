@@ -49,6 +49,27 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
   const { data: xpData } = useAllSalespeopleXP();
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"overall" | "calls" | "emails" | "meetings">("overall");
+  const [localReactions, setLocalReactions] = useState<Record<string, string[]>>({});
+  const [activeReactions, setActiveReactions] = useState<{ id: string; emoji: string; x: number; y: number }[]>([]);
+
+  const handleReaction = (salespersonId: string, emoji: string, event: React.MouseEvent) => {
+    // Add to local state
+    setLocalReactions(prev => ({
+      ...prev,
+      [salespersonId]: [...(prev[salespersonId] || []), emoji].slice(-5)
+    }));
+
+    // Particle effect
+    const id = Math.random().toString(36).substr(2, 9);
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = event.clientX;
+    const y = event.clientY;
+
+    setActiveReactions(prev => [...prev, { id, emoji, x, y }]);
+    setTimeout(() => {
+      setActiveReactions(prev => prev.filter(r => r.id !== id));
+    }, 1000);
+  };
 
   const getXPInfo = (salespersonId: string) => {
     const xp = xpData?.find(x => x.salesperson_id === salespersonId);
