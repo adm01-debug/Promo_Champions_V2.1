@@ -20,6 +20,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ExecutiveSummaryReport } from "./ExecutiveSummaryReport";
+import { ScenarioSimulator } from "./ScenarioSimulator";
+import { motion } from "framer-motion";
 
 const IntelligenceCockpit = () => {
   const navigate = useNavigate();
