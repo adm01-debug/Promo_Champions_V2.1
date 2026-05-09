@@ -141,7 +141,7 @@ export const ActivityHeatmap: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-success/10 border border-status-success/20 shadow-glow-success/5 animate-pulse">
                 <Flame className="h-3.5 w-3.5 text-status-success" />
-                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">Streak: 12 Dias</span>
+                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">Streak: {streak} Dias</span>
               </div>
             </div>
             
