@@ -95,49 +95,78 @@ export default function MetasAtividades() {
       skeleton={<MetasAtividadesLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background bg-gradient-subtle">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
-        {/* Header */}
-        <div className="animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Operations</span>
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent/10 blur-[100px] rounded-full animate-float pointer-events-none" />
+        
+        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
+          {/* Header Section with Holographic Title */}
+          <div className="animate-fade-in-up relative">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-8 rounded-[2rem] glass border border-white/10 shadow-2xl overflow-hidden group">
+              {/* Animated background lines for the header */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer" />
+                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer-reverse" />
+              </div>
+              
+              <div className="space-y-4 relative z-10">
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 backdrop-blur-md shadow-glow-primary/20 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-glow-primary" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-primary drop-shadow-sm">Arena de Operações Live</span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
-                  Arena de Atividades
-                </h1>
-                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary/60" />
-                  {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} • <span className="text-foreground/80">Ciclo de Alta Performance</span>
+                
+                <div className="relative">
+                  <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-2xl">
+                    Arena de Atividades
+                  </h1>
+                  {/* Decorative underline */}
+                  <div className="h-1.5 w-32 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-2" />
+                </div>
+                
+                <p className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
+                  <div className="p-2 rounded-lg bg-muted/50 border border-border/50">
+                    <Calendar className="h-5 w-5 text-primary/70" />
+                  </div>
+                  <span>
+                    {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} 
+                    <span className="mx-2 text-border">|</span>
+                    <span className="text-foreground/90 font-bold uppercase tracking-widest text-xs">Ciclo de Alta Performance</span>
+                  </span>
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+
+              <div className="flex flex-wrap items-center gap-4 relative z-10">
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="lg" 
                   onClick={handleTestCelebration}
-                  className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group rounded-xl bg-transparent"
+                  className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 group rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
                 >
-                  <PartyPopper className="h-4 w-4 text-primary group-hover:rotate-12 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Simular Vitória</span>
+                  <PartyPopper className="h-5 w-5 text-primary group-hover:rotate-12 group-hover:scale-110 transition-all" />
+                  <span className="text-xs font-black uppercase tracking-widest">Testar Vitória</span>
                 </Button>
-                <div className="px-5 py-2.5 rounded-2xl glass border border-primary/20 shadow-xl shadow-primary/5 flex flex-col items-end group/ritmo relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/ritmo:opacity-100 transition-opacity duration-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 leading-none mb-1.5 relative z-10 italic">Pulse da Arena</span>
-                  <div className="flex items-center gap-2.5 relative z-10">
-                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-status-success/10 border border-status-success/20">
-                      <TrendingUp className="h-3 w-3 text-status-success animate-bounce-subtle" />
+                
+                <div className="px-8 py-4 rounded-[2rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/10 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[180px]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/5 opacity-50 pointer-events-none" />
+                  <div className="absolute top-0 right-0 p-2 opacity-10">
+                    <TrendingUp className="w-12 h-12 text-primary" />
+                  </div>
+                  
+                  <span className="text-[11px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 leading-none mb-2 relative z-10 italic">Pulse Global</span>
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-status-success/20 border border-status-success/40 shadow-glow-success/20">
+                      <Flame className="h-5 w-5 text-status-success animate-pulse" />
                     </div>
-                    <span className="text-2xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-sm">{avgProgress.toFixed(0)}%</span>
+                    <span className="text-4xl font-display font-black text-primary leading-none tracking-tighter drop-shadow-glow">
+                      {avgProgress.toFixed(0)}%
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
