@@ -152,8 +152,10 @@ const Vendas = () => {
     // Apply status filter
     if (statusFilter) {
       filtered = filtered.filter(s => s.status === statusFilter);
-    } else {
-      // Por padrão, remover vendas "lost" da visualização principal a menos que filtrado explicitamente
+    }
+    
+    // Improved Lost Deals Handling: Filtered list shows lost deals only if specifically requested
+    if (!statusFilter || statusFilter !== "lost") {
       filtered = filtered.filter(s => s.status !== "lost");
     }
     
