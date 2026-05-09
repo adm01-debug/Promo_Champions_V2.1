@@ -194,6 +194,21 @@ function EventCard({ event }: { event: AgendaEvent }) {
               <Badge variant={priorityVariant[event.priority]}>{priorityLabel[event.priority]}</Badge>
             </div>
             {event.description && <p className="text-sm text-muted-foreground mt-1">{event.description}</p>}
+            
+            {(event as any).client?.name && (
+              <div className="flex items-center gap-1 mt-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+                <Users className="h-3 w-3" />
+                {(event as any).client.name}
+              </div>
+            )}
+
+            {(event as any).sale?.product_name && (
+              <div className="flex items-center gap-1 mt-1 text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
+                <ShoppingCart className="h-3 w-3" />
+                {(event as any).sale.product_name}
+              </div>
+            )}
+
             <p className="text-xs text-muted-foreground mt-2">
               {typeLabel[event.event_type]} · {format(new Date(event.scheduled_at), "dd MMM yyyy 'às' HH:mm", { locale: ptBR })}
             </p>
