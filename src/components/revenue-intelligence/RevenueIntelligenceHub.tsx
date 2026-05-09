@@ -93,6 +93,9 @@ export const RevenueIntelligenceHub: FC = () => {
         <TabsContent value="briefing" className="mt-4">
           <BriefingHub />
         </TabsContent>
+        <TabsContent value="revisao-ai" className="mt-4">
+          <PipelineStrategicReview />
+        </TabsContent>
         <TabsContent value="comando" className="mt-4">
           <PipelinePulseHub onNavigateTab={setActiveTab} />
         </TabsContent>
