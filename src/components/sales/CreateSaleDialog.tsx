@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { useCreateSale } from "@/hooks/useSalesData";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useProducts } from "@/hooks/useProducts";
+import { useClients } from "@/hooks/useClients";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,8 +21,10 @@ import {
 } from "@/components/ui/form";
 
 const saleSchema = z.object({
-  client_name: z.string().trim().min(1, "Nome do cliente é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
-  product_name: z.string().trim().min(1, "Produto é obrigatório").max(100, "Produto deve ter no máximo 100 caracteres"),
+  client_id: z.string().optional(),
+  client_name: z.string().trim().min(1, "Nome do cliente é obrigatório"),
+  product_id: z.string().optional(),
+  product_name: z.string().trim().min(1, "Produto é obrigatório"),
   amount: z.string().min(1, "Valor é obrigatório").refine((val) => {
     const num = parseFloat(val);
     return !isNaN(num) && num > 0;
@@ -37,11 +40,14 @@ export const CreateSaleDialog = () => {
   const createSale = useCreateSale();
   const { data: salespeople } = useSalespeople();
   const { data: products } = useProducts();
+  const { data: clients } = useClients();
 
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
     defaultValues: {
+      client_id: "",
       client_name: "",
+      product_id: "",
       product_name: "",
       amount: "",
       salesperson_id: "",
@@ -52,7 +58,9 @@ export const CreateSaleDialog = () => {
   const onSubmit = (data: SaleFormData) => {
     createSale.mutate(
       {
+        client_id: data.client_id || undefined,
         client_name: data.client_name,
+        product_id: data.product_id || undefined,
         product_name: data.product_name,
         amount: parseFloat(data.amount),
         salesperson_id: data.salesperson_id || undefined,
@@ -67,11 +75,20 @@ export const CreateSaleDialog = () => {
     );
   };
 
-  const handleProductSelect = (productName: string) => {
-    form.setValue("product_name", productName);
-    const product = products?.find((p) => p.name === productName);
+  const handleProductSelect = (productId: string) => {
+    form.setValue("product_id", productId);
+    const product = products?.find((p) => p.id === productId);
     if (product) {
+      form.setValue("product_name", product.name);
       form.setValue("amount", product.price.toString());
+    }
+  };
+
+  const handleClientSelect = (clientId: string) => {
+    form.setValue("client_id", clientId);
+    const client = clients?.find((c) => c.id === clientId);
+    if (client) {
+      form.setValue("client_name", client.name);
     }
   };
 
@@ -98,16 +115,31 @@ export const CreateSaleDialog = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="client_name"
+              name="client_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cliente *</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Nome do cliente"
-                      className="bg-muted/50 border-border/50"
-                    />
+                    {clients && clients.length > 0 ? (
+                      <Select value={field.value} onValueChange={handleClientSelect}>
+                        <SelectTrigger className="bg-muted/50 border-border/50">
+                          <SelectValue placeholder="Selecione um cliente" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.name} {client.company ? `(${client.company})` : ""}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        placeholder="Nome do cliente"
+                        className="bg-muted/50 border-border/50"
+                        onChange={(e) => form.setValue("client_name", e.target.value)}
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,7 +147,7 @@ export const CreateSaleDialog = () => {
             />
             <FormField
               control={form.control}
-              name="product_name"
+              name="product_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Produto *</FormLabel>

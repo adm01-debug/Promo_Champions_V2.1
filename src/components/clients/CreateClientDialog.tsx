@@ -22,6 +22,8 @@ const clientSchema = z.object({
   phone: z.string().trim().max(20, "Telefone deve ter no máximo 20 caracteres").optional().or(z.literal("")),
   company: z.string().trim().max(100, "Empresa deve ter no máximo 100 caracteres").optional().or(z.literal("")),
   lead_source: z.string().optional().or(z.literal("")),
+  lat: z.string().optional().or(z.literal("")),
+  lng: z.string().optional().or(z.literal("")),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -38,6 +40,8 @@ export const CreateClientDialog = () => {
       phone: "",
       company: "",
       lead_source: "",
+      lat: "",
+      lng: "",
     },
   });
 
@@ -49,6 +53,8 @@ export const CreateClientDialog = () => {
         phone: data.phone || undefined,
         company: data.company || undefined,
         lead_source: data.lead_source || undefined,
+        lat: data.lat ? parseFloat(data.lat) : undefined,
+        lng: data.lng ? parseFloat(data.lng) : undefined,
       },
       {
         onSuccess: () => {
@@ -166,6 +172,46 @@ export const CreateClientDialog = () => {
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="lat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Latitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        step="any"
+                        placeholder="-23.5505"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lng"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Longitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        step="any"
+                        placeholder="-46.6333"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 Cancelar

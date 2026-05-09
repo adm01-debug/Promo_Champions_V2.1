@@ -40,6 +40,8 @@ const editClientSchema = z.object({
     .refine((val) => !val || !isNaN(parseFloat(val)), "Valor inválido")
     .refine((val) => !val || parseFloat(val) >= 0, "Valor deve ser positivo"),
   lead_source: z.string().optional(),
+  lat: z.string().optional(),
+  lng: z.string().optional(),
 });
 
 type EditClientFormData = z.infer<typeof editClientSchema>;
@@ -62,6 +64,8 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
       company: "",
       total_value: "0",
       lead_source: "",
+      lat: "",
+      lng: "",
     },
   });
 
@@ -74,6 +78,8 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         company: client.company || "",
         total_value: client.total_value?.toString() || "0",
         lead_source: (client as any).lead_source || "",
+        lat: client.lat?.toString() || "",
+        lng: client.lng?.toString() || "",
       });
     }
   }, [client, form]);
@@ -90,6 +96,8 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
         company: data.company || null,
         total_value: parseFloat(data.total_value) || 0,
         lead_source: data.lead_source || null,
+        lat: data.lat ? parseFloat(data.lat) : null,
+        lng: data.lng ? parseFloat(data.lng) : null,
       },
       {
         onSuccess: () => {
@@ -213,6 +221,46 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="lat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Latitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        step="any"
+                        placeholder="-23.5505"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lng"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Longitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        step="any"
+                        placeholder="-46.6333"
+                        className="bg-muted/50 border-border/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
