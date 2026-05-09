@@ -99,20 +99,35 @@ export default function SDRDashboard() {
               </div>
             </motion.div>
 
-            {/* Scheduling Rate KPI - Destacado */}
+            {/* Hero Metrics - Gauges Row */}
             <motion.div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-xl blur-xl opacity-70" />
-                <div className="relative">
+                <div className="relative h-full">
                   <SchedulingRateGauge
                     rate={metrics?.current.schedulingRate ?? 0}
                     change={metrics?.changes.schedulingRate}
                     meetings={metrics?.current.meetingsScheduled ?? 0}
                     leads={metrics?.current.totalLeads ?? 0}
+                  />
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-success/30 via-success/10 to-success/30 rounded-xl blur-xl opacity-70" />
+                <div className="relative h-full">
+                  <SchedulingRateGauge
+                    rate={(metrics?.current.qualifiedLeads ?? 0) / (metrics?.current.totalLeads || 1) * 100}
+                    change={metrics?.changes.qualified}
+                    meetings={metrics?.current.qualifiedLeads ?? 0}
+                    leads={metrics?.current.totalLeads ?? 0}
+                    title="Qualification Efficiency"
+                    variant="success"
                   />
                 </div>
               </div>
