@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
@@ -10,7 +10,8 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
 import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
 import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
-import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+// Removed unused useDashboardKPIs import
+import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,10 +27,20 @@ import {
   Users,
   TrendingUp,
   Zap,
+  Receipt,
+  Calendar,
+  ChevronDown,
 } from "lucide-react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 // Lazy-loaded modules for better performance
 const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
@@ -51,8 +62,9 @@ const Index = () => {
   const { section } = useParams<{ section?: string }>();
   const navigate = useNavigate();
   useDashboardRedirect();
+  const [period, setPeriod] = useState<KPIPeriod>("current_month");
 
-  const { data: kpis, isLoading } = useDashboardKPIs();
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period);
   const { data: goalsData } = useGoalsDashboard();
   const { salesperson } = useAuth();
   const priorities = useDashboardPriorities();
@@ -75,7 +87,6 @@ const Index = () => {
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
   const hasClients = (kpis?.current.newClients ?? 0) > 0;
   const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
-  const allEmpty = !hasRevenue && !hasSales && !hasClients && !hasConversion;
 
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
@@ -87,7 +98,34 @@ const Index = () => {
         <RankingPositionBanner />
         <CompetitiveStatusBar />
         <OnboardingChecklist />
-        <DashboardHeader />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex-1">
+            <DashboardHeader />
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="bg-black/40 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Period: {PERIOD_LABELS[period].label}
+                  <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-black/90 border-primary/30 backdrop-blur-xl">
+                {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map((p) => (
+                  <DropdownMenuItem 
+                    key={p} 
+                    onClick={() => setPeriod(p)}
+                    className="text-xs font-mono uppercase tracking-widest text-foreground focus:bg-primary/20 focus:text-primary cursor-pointer"
+                  >
+                    {PERIOD_LABELS[p].label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         
         {/* Priority Hint based on role */}
         <motion.div
@@ -104,7 +142,7 @@ const Index = () => {
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
             {/* KPI Overview */}
-            {!allEmpty && (
+            {true && (
               <motion.div 
                 variants={containerVariants}
                 initial="hidden"
@@ -128,7 +166,7 @@ const Index = () => {
                   )}
                 </motion.div>
                 
-                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:col-span-3">
+                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3">
                   <motion.div variants={itemVariants}>
                     {hasSales ? (
                       <StatCard
@@ -143,6 +181,23 @@ const Index = () => {
                       <DashboardEmptyState type="sales" />
                     )}
                   </motion.div>
+                  
+                  <motion.div variants={itemVariants}>
+                    {kpis?.current.avgTicket ? (
+                      <StatCard
+                        title="Ticket Médio"
+                        value={formatCurrency(kpis?.current.avgTicket ?? 0)}
+                        numericValue={kpis?.current.avgTicket ?? 0}
+                        change={kpis?.changes.avgTicket ?? 0}
+                        previousValue={kpis ? formatCurrency(kpis.previous.avgTicket) : undefined}
+                        icon={Receipt}
+                        variant="primary"
+                      />
+                    ) : (
+                      <DashboardEmptyState type="revenue" />
+                    )}
+                  </motion.div>
+
                   <motion.div variants={itemVariants}>
                     {hasClients ? (
                       <StatCard
@@ -158,6 +213,7 @@ const Index = () => {
                       <DashboardEmptyState type="clients" />
                     )}
                   </motion.div>
+
                   <motion.div variants={itemVariants}>
                     {hasConversion ? (
                       <StatCard

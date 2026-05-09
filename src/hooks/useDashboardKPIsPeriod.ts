@@ -2,6 +2,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import {
+  startOfWeek,
+  endOfWeek,
+  subWeeks,
   startOfMonth,
   endOfMonth,
   subMonths,
@@ -13,12 +16,14 @@ import {
   subYears,
   format,
 } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-export type KPIPeriod = "current_month" | "last_month" | "quarter" | "year";
+export type KPIPeriod = "week" | "current_month" | "last_month" | "quarter" | "year";
 
 interface KPIData {
   totalRevenue: number;
   totalSales: number;
+  newClients: number;
   conversionRate: number;
   avgTicket: number;
 }
@@ -29,6 +34,7 @@ export interface KPIPeriodResult {
   changes: {
     revenue: number;
     sales: number;
+    clients: number;
     conversion: number;
     avgTicket: number;
   };
@@ -37,6 +43,13 @@ export interface KPIPeriodResult {
 const getRanges = (period: KPIPeriod) => {
   const now = new Date();
   switch (period) {
+    case "week":
+      return {
+        curStart: startOfWeek(now, { locale: ptBR }),
+        curEnd: endOfWeek(now, { locale: ptBR }),
+        prevStart: startOfWeek(subWeeks(now, 1), { locale: ptBR }),
+        prevEnd: endOfWeek(subWeeks(now, 1), { locale: ptBR }),
+      };
     case "current_month":
       return {
         curStart: startOfMonth(now),
@@ -85,29 +98,33 @@ const fetchPeriod = async (
     .lte("created_at", e + "T23:59:59");
   if (salespersonId) salesQuery = salesQuery.eq("salesperson_id", salespersonId);
 
-  const salesRes = await salesQuery;
+  const [salesRes, metricsRes] = await Promise.all([
+    salesQuery,
+    supabase
+      .from("daily_metrics")
+      .select("new_clients, conversion_rate")
+      .gte("date", s)
+      .lte( "date", e)
+  ]);
+
   const all = salesRes.data ?? [];
+  const metrics = metricsRes.data ?? [];
+  
   const completed = all.filter((s) => s.status === "completed");
   const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
   const totalSales = completed.length;
+  const newClients = metrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
 
   let conversionRate = 0;
   if (salespersonId) {
-    // Per-salesperson conversion: completed / total sales records in period
     conversionRate = all.length > 0 ? (completed.length / all.length) * 100 : 0;
   } else {
-    const metricsRes = await supabase
-      .from("daily_metrics")
-      .select("conversion_rate")
-      .gte("date", s)
-      .lte("date", e);
-    const metrics = metricsRes.data ?? [];
     conversionRate = metrics.length
       ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length
       : 0;
   }
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
-  return { totalRevenue, totalSales, conversionRate, avgTicket };
+  return { totalRevenue, totalSales, newClients, conversionRate, avgTicket };
 };
 
 const change = (cur: number, prev: number): number => {
@@ -149,6 +166,7 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
         changes: {
           revenue: change(current.totalRevenue, previous.totalRevenue),
           sales: change(current.totalSales, previous.totalSales),
+          clients: change(current.newClients, previous.newClients),
           conversion: change(current.conversionRate, previous.conversionRate),
           avgTicket: change(current.avgTicket, previous.avgTicket),
         },
@@ -159,6 +177,7 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
 };
 
 export const PERIOD_LABELS: Record<KPIPeriod, { label: string; comparison: string }> = {
+  week: { label: "Semana Atual", comparison: "Semana Anterior" },
   current_month: { label: "Mês Atual", comparison: "Mês Anterior" },
   last_month: { label: "Último Mês", comparison: "Mês Anterior" },
   quarter: { label: "Trimestre", comparison: "Trimestre Anterior" },
