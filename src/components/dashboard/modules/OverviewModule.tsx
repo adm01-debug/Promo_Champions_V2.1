@@ -29,16 +29,21 @@ export const OverviewModule = ({ goalsData, kpis }: OverviewModuleProps) => {
       
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6"
+        className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6"
       >
         <div className="lg:col-span-2 min-h-[300px] sm:min-h-[350px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-md overflow-hidden hover:border-primary/30 transition-all duration-300">
           <SalesChart />
         </div>
-        <div className="min-h-[220px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-md overflow-hidden hover:border-accent/30 transition-all duration-300" data-tour="goals">
-          <GoalProgress
-            current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0}
-            goal={goalsData?.totalGoal || 0}
-          />
+        <div className="flex flex-col gap-4 lg:gap-6">
+          <div className="flex-1 min-h-[220px] rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-md overflow-hidden hover:border-accent/30 transition-all duration-300" data-tour="goals">
+            <GoalProgress
+              current={goalsData?.totalSales ?? kpis?.current.totalRevenue ?? 0}
+              goal={goalsData?.totalGoal || 0}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <MiniLeaderboard />
         </div>
       </motion.div>
     </motion.div>
