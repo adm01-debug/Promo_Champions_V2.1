@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useClients } from "@/hooks/useClients";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";
 
 const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[] = [
   { value: "call", label: "Ligação", icon: Phone },
@@ -18,6 +18,7 @@ const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[
   { value: "meeting", label: "Reunião", icon: Users },
   { value: "linkedin", label: "LinkedIn", icon: Linkedin },
   { value: "whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { value: "note", label: "Nota", icon: FileText },
   { value: "other", label: "Outro", icon: MoreHorizontal },
 ];
 
@@ -33,7 +34,7 @@ const outcomes: { value: ActivityOutcome; label: string; color: string }[] = [
 ];
 
 const activitySchema = z.object({
-  activity_type: z.enum(["call", "email", "meeting", "linkedin", "whatsapp", "other"]),
+  activity_type: z.enum(["call", "email", "meeting", "linkedin", "whatsapp", "note", "other"]),
   outcome: z.enum(["connected", "no_answer", "scheduled", "voicemail", "busy", "callback", "not_interested", "qualified"]),
   salesperson_id: z.string().optional(),
   client_id: z.string().optional(),
@@ -109,7 +110,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormLabel className="text-xs font-medium text-muted-foreground">Tipo de Atividade</FormLabel>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     {activityTypes.map(type => {
                       const Icon = type.icon;
                       return (

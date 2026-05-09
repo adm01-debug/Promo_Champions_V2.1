@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
-export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'other';
+export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
 export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified';
 
 export interface ActivityRecord {
@@ -95,7 +95,7 @@ export const useActivityStats = (salespersonId?: string) => {
       const todayActivities = activities.filter(a => a.created_at.startsWith(today));
       
       const byType: Record<ActivityType, number> = {
-        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, other: 0
+        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, note: 0, other: 0
       };
       
       const byOutcome: Record<ActivityOutcome, number> = {
@@ -121,7 +121,7 @@ export const useActivityStats = (salespersonId?: string) => {
       
       // Today stats
       const todayByType: Record<ActivityType, number> = {
-        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, other: 0
+        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, note: 0, other: 0
       };
       const todayByOutcome: Record<ActivityOutcome, number> = {
         connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
