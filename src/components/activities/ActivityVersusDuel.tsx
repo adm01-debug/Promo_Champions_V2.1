@@ -115,7 +115,5 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
         </div>
       </CardContent>
     </Card>
-      </CardContent>
-    </Card>
   );
 };
