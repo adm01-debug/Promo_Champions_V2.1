@@ -2,8 +2,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/useABCAnalysis';
-import { Package, Users, Layers } from 'lucide-react';
+import { Package, Users, Layers, Download, Filter, MousePointerSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
+import { toast } from 'sonner';
 
 const COLORS = {
   A: 'hsl(var(--status-success))',
