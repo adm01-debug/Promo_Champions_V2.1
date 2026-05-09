@@ -712,6 +712,64 @@ export const FuturisticSpeedometerDashboard = () => {
     loadSettings();
   }, [user?.id]);
 
+  // Monitor KPIs and Trigger Alerts
+  useEffect(() => {
+    if (!kpis || !user?.id || alertFrequency !== "realtime") return;
+
+    const checkThresholds = async () => {
+      const currentOpp = kpis.current.conversionRate; // Using conversion as a proxy for Opp performance
+      const currentRet = 85; // Mocking retention for this demo context
+      
+      const newAlerts = [];
+
+      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
+        newAlerts.push({
+          title: "Meta de Oportunidades Atingida!",
+          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
+          type: "goal_achieved",
+          severity: "success",
+          metadata: { threshold: oppThreshold, actual: currentOpp }
+        });
+        setNotifiedEvents(prev => new Set(prev).add(`opp_${oppThreshold}`));
+      }
+
+      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
+        newAlerts.push({
+          title: "Alerta de Retenção",
+          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
+          type: "threshold_reached",
+          severity: "warning",
+          metadata: { threshold: retThreshold, actual: currentRet }
+        });
+        setNotifiedEvents(prev => new Set(prev).add(`ret_${retThreshold}`));
+      }
+
+      for (const alertData of newAlerts) {
+        const { data, error } = await supabase
+          .from("notifications")
+          .insert({ ...alertData, user_id: user.id })
+          .select()
+          .single();
+
+        if (data) {
+          if (alertChannels.includes("toast")) {
+            toast[data.severity === 'success' ? 'success' : 'warning'](data.title, {
+              description: data.message,
+              icon: <Bell className="h-4 w-4" />
+            });
+          }
+          if (alertChannels.includes("hud")) {
+            setActiveHudAlert(data);
+            setTimeout(() => setActiveHudAlert(null), 8000);
+          }
+          setAlertHistory(prev => [data, ...prev].slice(0, 20));
+        }
+      }
+    };
+
+    checkThresholds();
+  }, [kpis, oppThreshold, retThreshold, alertFrequency, user?.id]);
+
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
     
