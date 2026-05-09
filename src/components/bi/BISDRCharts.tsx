@@ -116,6 +116,34 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
           </CardContent>
         </Card>
       </div>
+
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="text-lg font-display flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-primary">
+              <Zap className="h-4 w-4 text-white" />
+            </div>
+            Efetividade por Canal & Desfecho
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {outcomesByChannel && outcomesByChannel.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={outcomesByChannel} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis dataKey="channel" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="connections" name="Conectou" fill="hsl(var(--primary))" stackId="a" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="scheduling" name="Agendou" fill="hsl(var(--success))" stackId="a" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="qualification" name="Qualificou" fill="hsl(var(--chart-4))" stackId="a" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Sem dados de efetividade</div>
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 });
