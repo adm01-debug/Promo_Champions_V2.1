@@ -19,7 +19,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
   const isOnTrack = avgProgress >= 70 || (avgProgress >= 40 && hoursRemaining > 4);
 
   return (
-    <Card variant="glass" className="overflow-hidden border-primary/20 bg-primary/5">
+    <Card variant="glass" className="overflow-hidden border-primary/20 bg-primary/5 group/velocity hover:shadow-glow-primary/10 transition-all duration-500">
       <CardHeader className="pb-3">
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
           <Timer className="h-4 w-4 text-primary" />
@@ -39,7 +39,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
           </div>
           <div className={cn(
             "p-3 rounded-2xl",
-            isOnTrack ? "bg-status-success/10" : "bg-status-warning/10"
+            isOnTrack ? "bg-status-success/20 shadow-glow-success/20" : "bg-status-warning/20 shadow-glow-warning/20"
           )}>
             {isOnTrack ? (
               <TrendingUp className="h-6 w-6 text-status-success" />
