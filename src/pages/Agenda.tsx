@@ -137,6 +137,36 @@ function NewEventDialog() {
               </Select>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Vincular Cliente</Label>
+              <Select value={clientId} onValueChange={setClientId}>
+                <SelectTrigger className="text-xs">
+                  <SelectValue placeholder="Cliente" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  {clients?.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Vincular Deal / Venda</Label>
+              <Select value={saleId} onValueChange={setSaleId}>
+                <SelectTrigger className="text-xs">
+                  <SelectValue placeholder="Deal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  {sales?.map((s) => (
+                    <SelectItem key={s.fullId} value={s.fullId}>{s.cliente} - {s.produto}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div>
             <Label htmlFor="ev-when">Data e hora</Label>
             <Input id="ev-when" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} required />
