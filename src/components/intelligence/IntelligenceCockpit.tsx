@@ -264,8 +264,13 @@ const IntelligenceCockpit = () => {
           </Card>
         </div>
       </div>
-    </div>
-  );
-};
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="pt-8 border-t border-white/5"
+      >
+        <StrategicRecommendations />
+      </motion.div>
 
 export default IntelligenceCockpit;
