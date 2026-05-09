@@ -104,8 +104,8 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
         title: '',
         description: '',
         salesperson_id: '',
-        client_id: '',
-        sale_id: '',
+        client_id: defaultClientId || '',
+        sale_id: defaultSaleId || '',
         priority: 'medium',
         task_type: 'other',
         due_date: new Date().toISOString().split('T')[0],
@@ -117,10 +117,12 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="glow" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nova Tarefa
-        </Button>
+        {trigger || (
+          <Button variant="glow" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nova Tarefa
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
