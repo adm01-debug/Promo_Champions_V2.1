@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
@@ -28,8 +29,15 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
   
   const isVeryRecent = differenceInMinutes(new Date(), new Date(activity.created_at)) < 5;
 
+  const isSuccess = activity.outcome === 'scheduled' || activity.outcome === 'qualified';
+  
   return (
-    <div className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border/30 hover:border-border/50 transition-all duration-200 space-y-2 hover-lift group">
+    <div className={cn(
+      "p-3 rounded-lg border transition-all duration-200 space-y-2 hover-lift group",
+      isSuccess 
+        ? "bg-gradient-to-br from-status-success/5 to-transparent border-status-success/20 shadow-sm" 
+        : "bg-muted/30 hover:bg-muted/50 border-border/30 hover:border-border/50"
+    )}>
       <div className="flex items-start gap-3">
         <div className="relative">
           <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 shadow-sm">

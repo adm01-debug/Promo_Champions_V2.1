@@ -3,6 +3,7 @@ import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { ActivityList } from "@/components/activities/ActivityList";
 import { ActivityStats } from "@/components/activities/ActivityStats";
 import { ActivityEffectiveness } from "@/components/activities/ActivityEffectiveness";
+import { ActivityChannelEffectiveness } from "@/components/activities/ActivityChannelEffectiveness";
 import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
 import { ClipboardList } from "lucide-react";
 import { useActivities } from "@/hooks/useActivities";
@@ -53,7 +54,10 @@ export default function Atividades() {
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             <div className="space-y-6">
               <ActivityLogForm />
-              <ActivityEffectiveness />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+                <ActivityEffectiveness />
+                <ActivityChannelEffectiveness />
+              </div>
               <ActivityHeatmap />
             </div>
           </div>
