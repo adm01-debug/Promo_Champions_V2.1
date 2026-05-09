@@ -643,6 +643,22 @@ export const FuturisticSpeedometerDashboard = () => {
   const ticketMax = customMax || (autoScale ? Math.max(ticket * 1.5, prevTicket * 1.5, 1000) : Math.max(ticket * 1.5, 1000));
   const conversionMax = customMax || (autoScale ? Math.max(conversion * 1.2, prevConversion * 1.2, 100) : 100);
 
+  const mockRevenueHistory = [
+    { name: 'S1', value: revenue * 0.15 },
+    { name: 'S2', value: revenue * 0.25 },
+    { name: 'S3', value: revenue * 0.35 },
+    { name: 'S4', value: revenue * 0.25 }
+  ];
+
+  const mockSalesHistory = [
+    { name: 'Lun', value: Math.floor(sales * 0.1) },
+    { name: 'Mar', value: Math.floor(sales * 0.2) },
+    { name: 'Mie', value: Math.floor(sales * 0.3) },
+    { name: 'Jue', value: Math.floor(sales * 0.1) },
+    { name: 'Vie', value: Math.floor(sales * 0.3) }
+  ];
+
+
   const fmtBRL = (v: number) => {
     if (gaugeMode === "compact") return `R$ ${v.toLocaleString("pt-BR", { notation: "compact" })}`;
     if (gaugeMode === "kilo") return `R$ ${(v / 1000).toFixed(1)}k`;
