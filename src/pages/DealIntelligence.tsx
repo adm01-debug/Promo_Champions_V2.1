@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
 import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
 import { RelationshipHealthGraph } from "@/components/deal-intelligence/committee/RelationshipHealthGraph";
+import { NextBestActionPanel } from "@/components/deal-intelligence/NextBestActionPanel";
 import { useState } from "react";
 import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
 
@@ -97,8 +98,11 @@ export default function DealIntelligence() {
                 <WeakCoverageDealsTable onSelectDeal={(id) => setSelectedSaleId(id)} />
               </TabsContent>
               <TabsContent value="velocity" className="mt-4 space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                   <StuckDealsPanel />
+                  <NextBestActionPanel saleId={displaySaleId} />
+                </div>
+                <div className="mt-4">
                   <StageBottlenecksChart />
                 </div>
                 <StageBaselinesPanel />
