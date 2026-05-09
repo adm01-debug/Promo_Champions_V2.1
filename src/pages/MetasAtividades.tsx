@@ -312,6 +312,7 @@ export default function MetasAtividades() {
             <AchievementsHistory />
           </TabsContent>
         </Tabs>
+        </div>
       </div>
 
       <ActivityGoalEditDialog
