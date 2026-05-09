@@ -95,6 +95,7 @@ export const CoachingInteligente = lazy(() => import("@/pages/CoachingInteligent
 export const RevOpsHub = lazy(() => import("@/pages/RevOpsHub"));
 export const DealIntelligence = lazy(() => import("@/pages/DealIntelligence"));
 export const WinLossIntelligence = lazy(() => import("@/pages/WinLossIntelligence"));
+export const WinLossAnalysisPage = lazy(() => import("@/pages/WinLossAnalysisPage"));
 export const ABCAnalysisPage = lazy(() => import("@/pages/ABCAnalysisPage"));
 export const ClosingTimePage = lazy(() => import("@/pages/ClosingTimePage"));
 export const DealVelocityPage = lazy(() => import("@/pages/DealVelocityPage"));
