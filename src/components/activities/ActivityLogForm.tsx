@@ -48,10 +48,11 @@ type ActivityFormData = z.infer<typeof activitySchema>;
 
 interface ActivityLogFormProps {
   saleId?: string;
+  clientId?: string;
   onSuccess?: () => void;
 }
 
-export function ActivityLogForm({ saleId, onSuccess }: ActivityLogFormProps) {
+export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogFormProps) {
   const { data: salespeople } = useSalespeople();
   const createActivity = useCreateActivity();
 
