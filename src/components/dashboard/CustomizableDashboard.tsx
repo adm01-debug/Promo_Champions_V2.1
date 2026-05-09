@@ -41,6 +41,7 @@ import { CalendarPreviewWidget } from "./widgets/CalendarPreviewWidget";
 import { CustomReportWidget } from "./widgets/CustomReportWidget";
 import { CustomReportWidgetEditor } from "./widgets/CustomReportWidgetEditor";
 import { Pencil } from "lucide-react";
+import { DashboardEmptyState } from "./DashboardEmptyState";
 
 const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   revenue_kpi: RevenueKpiWidget,
@@ -280,18 +281,9 @@ export function CustomizableDashboard() {
       )}
 
       {visibleWidgets.length === 0 && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <LayoutGrid className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-            <h3 className="font-display font-semibold text-lg mb-1">Nenhum widget visível</h3>
-            <p className="text-sm text-muted-foreground mb-4">Adicione widgets para montar seu dashboard personalizado</p>
-            <WidgetManagerDialog
-              layout={currentLayout}
-              onToggleWidget={handleToggleWidget}
-              onAddWidget={handleAddWidget}
-            />
-          </CardContent>
-        </Card>
+        <div className="max-w-2xl mx-auto py-12">
+          <DashboardEmptyState type="revenue" hero={true} />
+        </div>
       )}
 
       <CustomReportWidgetEditor

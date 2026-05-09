@@ -7,6 +7,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Building2, Mail, Phone, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useCountUp } from '@/hooks/useCountUp';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Client {
   id: string;
@@ -31,6 +33,15 @@ const STAGES = [
   { id: 'inactive', label: 'Inativo', color: 'bg-destructive/10 border-destructive/30 text-destructive' },
   { id: 'churned', label: 'Perdido', color: 'bg-muted border-border text-muted-foreground' },
 ];
+
+const StageValue = ({ value }: { value: number }) => {
+  const animated = useCountUp(value, { duration: 1200 });
+  return (
+    <span className="text-xs font-bold text-primary tracking-tight">
+      R$ {animated.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+    </span>
+  );
+};
 
 export function ClientKanban() {
   const queryClient = useQueryClient();
@@ -115,57 +126,75 @@ export function ClientKanban() {
             onDragLeave={() => setDragOverStage(null)}
             onDrop={() => handleDrop(stage.id)}
           >
-            <div className="flex items-center justify-between mb-3 px-1">
+            <div className="flex items-center justify-between mb-4 px-2">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className={cn("text-xs", stage.color)}>
+                <Badge variant="outline" className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border-2", stage.color)}>
                   {stage.label}
                 </Badge>
-                <span className="text-xs text-muted-foreground">{entries.length}</span>
+                <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground border border-border/50">
+                  {entries.length}
+                </div>
               </div>
-              <span className="text-xs font-medium text-muted-foreground">{formatValue(totalValue)}</span>
+              <StageValue value={totalValue} />
             </div>
 
-            <ScrollArea className="h-[calc(100vh-380px)] lg:h-[calc(100vh-320px)]">
-              <div className="space-y-2">
-                {entries.map(entry => (
-                  <Card
-                    key={entry.id}
-                    draggable
-                    onDragStart={() => handleDragStart(entry.id)}
-                    className={cn(
-                      "cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow border",
-                      draggedItem === entry.id && "opacity-50"
-                    )}
-                  >
-                    <CardContent className="p-3 space-y-2">
-                      <div className="flex items-start gap-2">
-                        <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate">{entry.clients?.name}</p>
-                          {entry.clients?.company && (
-                            <p className="text-xs text-muted-foreground flex items-center gap-1">
-                              <Building2 className="h-3 w-3" />
-                              {entry.clients.company}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-primary">
-                          {formatValue(entry.clients?.total_value || 0)}
-                        </span>
-                        <div className="flex gap-1">
-                          {entry.clients?.email && <Mail className="h-3 w-3 text-muted-foreground" />}
-                          {entry.clients?.phone && <Phone className="h-3 w-3 text-muted-foreground" />}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+            <ScrollArea className="h-[calc(100vh-380px)] lg:h-[calc(100vh-320px)] pr-2">
+              <div className="space-y-3 p-1">
+                <AnimatePresence>
+                  {entries.map(entry => (
+                    <motion.div
+                      key={entry.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Card
+                        draggable
+                        onDragStart={() => handleDragStart(entry.id)}
+                        className={cn(
+                          "cursor-grab active:cursor-grabbing transition-all duration-300 border border-border/50 bg-card/40 backdrop-blur-sm hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 group relative overflow-hidden",
+                          draggedItem === entry.id && "opacity-50 grayscale"
+                        )}
+                      >
+                        <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                        <CardContent className="p-3.5 space-y-3">
+                          <div className="flex items-start gap-2.5">
+                            <div className="p-1 rounded-md bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                              <GripVertical className="h-3.5 w-3.5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-black uppercase tracking-tight truncate group-hover:text-primary transition-colors">
+                                {entry.clients?.name}
+                              </p>
+                              {entry.clients?.company && (
+                                <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider truncate mt-0.5">
+                                  <Building2 className="h-3 w-3" />
+                                  {entry.clients.company}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between pt-1 border-t border-border/10">
+                            <span className="text-[11px] font-black text-primary/80 tracking-tighter">
+                              {formatValue(entry.clients?.total_value || 0)}
+                            </span>
+                            <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                              {entry.clients?.email && <Mail className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
+                              {entry.clients?.phone && <Phone className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
                 {entries.length === 0 && (
-                  <div className="text-center py-8 text-xs text-muted-foreground">
-                    <Users className="h-6 w-6 mx-auto mb-2 opacity-30" />
-                    Arraste clientes aqui
+                  <div className="text-center py-10 border-2 border-dashed border-muted rounded-xl bg-muted/5">
+                    <Users className="h-6 w-6 mx-auto mb-2 text-muted-foreground opacity-20" />
+                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">Estágio Vazio</p>
                   </div>
                 )}
               </div>

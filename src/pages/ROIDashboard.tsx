@@ -10,6 +10,7 @@ import { useROIDashboard } from '@/hooks/useROIDashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis, Legend } from 'recharts';
 import { ROIRankingList } from '@/components/roi/ROIRankingList';
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { useCountUp } from '@/hooks/useCountUp';
 
 const formatCurrency = (v: any) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
 const formatPercent = (v: any) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
@@ -18,6 +19,11 @@ const periodOptions = [{ label: '1 mês', value: 1 }, { label: '3 meses', value:
 const ROIDashboard = () => {
   const [period, setPeriod] = useState(3);
   const { roiData, summary, isLoading } = useROIDashboard(period);
+
+  const animatedROI = useCountUp(summary.overallROI, { duration: 1400, decimals: 1 });
+  const animatedCAC = useCountUp(summary.avgCAC, { duration: 1400 });
+  const animatedLTV = useCountUp(summary.avgLTV, { duration: 1400 });
+  const animatedPayback = useCountUp(summary.avgPayback, { duration: 1400 });
 
   if (isLoading) {
     return (
@@ -39,24 +45,67 @@ const ROIDashboard = () => {
       <Helmet><title>ROI por Vendedor | PROMO CHAMPIONS</title><meta name="description" content="Dashboard de ROI por vendedor com CAC, LTV e payback period" /></Helmet>
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div><h1 className="text-2xl lg:text-3xl font-bold font-display text-foreground">ROI por Vendedor</h1><p className="text-muted-foreground text-sm mt-1">Análise de retorno sobre investimento, CAC, LTV e payback</p></div>
-          <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
-            {periodOptions.map((p) => (<button key={p.value} onClick={() => setPeriod(p.value)} className={cn('px-3 py-1.5 text-sm rounded-md font-medium transition-all', period === p.value ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>{p.label}</button>))}
+          <div><h1 className="text-2xl lg:text-3xl font-black tracking-tight gradient-text">ROI por Vendedor</h1><p className="text-muted-foreground text-sm mt-1">Análise de retorno sobre investimento, CAC, LTV e payback</p></div>
+          <div className="flex gap-1 bg-muted/50 rounded-lg p-1 border border-border/50">
+            {periodOptions.map((p) => (<button key={p.value} onClick={() => setPeriod(p.value)} className={cn('px-3 py-1.5 text-sm rounded-md font-bold transition-all', period === p.value ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground')}>{p.label}</button>))}
           </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
-            <Card className="border-none shadow-lg bg-gradient-to-br from-primary/10 to-primary/5"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><DollarSign className="h-5 w-5 text-primary" />{summary.overallROI >= 0 ? <ArrowUpRight className="h-4 w-4 text-success" /> : <ArrowDownRight className="h-4 w-4 text-destructive" />}</div><p className="text-2xl font-bold text-foreground">{formatPercent(summary.overallROI)}</p><p className="text-xs text-muted-foreground mt-1">ROI Geral</p></CardContent></Card>
+            <Card className="border-none shadow-xl bg-gradient-to-br from-primary/15 to-transparent relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity"><DollarSign className="h-12 w-12" /></div>
+              <CardContent className="p-5 relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-2 rounded-lg bg-primary/20"><DollarSign className="h-4 w-4 text-primary" /></div>
+                  {summary.overallROI >= 0 ? <ArrowUpRight className="h-4 w-4 text-success" /> : <ArrowDownRight className="h-4 w-4 text-destructive" />}
+                </div>
+                <p className="text-3xl font-black text-foreground">{formatPercent(animatedROI)}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">ROI Geral</p>
+              </CardContent>
+              <div className="absolute bottom-0 left-0 h-1 w-full bg-primary/10">
+                <motion.div className="h-full bg-primary" initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5 }} />
+              </div>
+            </Card>
           </motion.div>
+          
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Target className="h-5 w-5 text-secondary" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgCAC)}</p><p className="text-xs text-muted-foreground mt-1">CAC Médio</p></CardContent></Card>
+            <Card className="border-none shadow-xl glass group relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"><Target className="h-12 w-12" /></div>
+              <CardContent className="p-5 relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-2 rounded-lg bg-secondary/20"><Target className="h-4 w-4 text-secondary" /></div>
+                </div>
+                <p className="text-3xl font-black text-foreground">R$ {animatedCAC.toLocaleString('pt-BR')}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">CAC Médio</p>
+              </CardContent>
+            </Card>
           </motion.div>
+
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><TrendingUp className="h-5 w-5 text-accent" /></div><p className="text-2xl font-bold text-foreground">{formatCurrency(summary.avgLTV)}</p><p className="text-xs text-muted-foreground mt-1">LTV Médio</p></CardContent></Card>
+            <Card className="border-none shadow-xl glass group relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"><TrendingUp className="h-12 w-12" /></div>
+              <CardContent className="p-5 relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-2 rounded-lg bg-accent/20"><TrendingUp className="h-4 w-4 text-accent" /></div>
+                </div>
+                <p className="text-3xl font-black text-foreground">R$ {animatedLTV.toLocaleString('pt-BR')}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">LTV Médio</p>
+              </CardContent>
+            </Card>
           </motion.div>
+
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="border-none shadow-lg hover-lift-sm"><CardContent className="p-4"><div className="flex items-center justify-between mb-2"><Timer className="h-5 w-5 text-rank-gold" /></div><p className="text-2xl font-bold text-foreground">{Math.round(summary.avgPayback)}d</p><p className="text-xs text-muted-foreground mt-1">Payback Médio</p></CardContent></Card>
+            <Card className="border-none shadow-xl glass group relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"><Timer className="h-12 w-12" /></div>
+              <CardContent className="p-5 relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-2 rounded-lg bg-warning/20"><Timer className="h-4 w-4 text-warning" /></div>
+                </div>
+                <p className="text-3xl font-black text-foreground">{Math.round(animatedPayback)} dias</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Payback Médio</p>
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
 

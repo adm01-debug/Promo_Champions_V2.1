@@ -22,6 +22,7 @@ import { ClientTimeline } from "@/components/clients/ClientTimeline";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
+import { useCountUp } from "@/hooks/useCountUp";
 
 const sortOptions: SortOption[] = [
   { label: "Nome (A-Z)", value: "name_asc", direction: "asc" },
@@ -31,6 +32,15 @@ const sortOptions: SortOption[] = [
   { label: "Mais recente", value: "date_desc", direction: "desc" },
   { label: "Mais antigo", value: "date_asc", direction: "asc" },
 ];
+
+const TotalValueDisplay = ({ value }: { value: number }) => {
+  const animated = useCountUp(value, { duration: 1200 });
+  return (
+    <span className="font-display font-black text-xl text-primary tracking-tighter">
+      R$ {animated.toLocaleString("pt-BR", { notation: 'compact' })}
+    </span>
+  );
+};
 
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -267,9 +277,7 @@ const Clientes = () => {
                       <div className="space-y-0.5">
                         <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Total Lifecycle</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="font-display font-black text-xl text-primary tracking-tighter">
-                            R$ {Number(client.total_value).toLocaleString("pt-BR", { notation: 'compact' })}
-                          </span>
+                          <TotalValueDisplay value={Number(client.total_value)} />
                           <span className="text-[9px] font-bold text-emerald-500 uppercase">Valued</span>
                         </div>
                       </div>

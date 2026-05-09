@@ -11,6 +11,7 @@ import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
+import { useCountUp } from "@/hooks/useCountUp";
 
 const NPSGauge = React.memo(({ nps }: { nps: number }) => {
   const color = nps >= 50 ? "text-green-500" : nps >= 0 ? "text-yellow-500" : "text-destructive";
@@ -55,6 +56,12 @@ export default function NPSDashboard() {
   const [respondScore, setRespondScore] = useState<number | null>(null);
   const [respondComment, setRespondComment] = useState("");
 
+  const animatedNPS = useCountUp(stats?.nps ?? 0, { duration: 1400 });
+  const animatedPromoters = useCountUp(stats?.promoters ?? 0, { duration: 1400 });
+  const animatedPassives = useCountUp(stats?.passives ?? 0, { duration: 1400 });
+  const animatedDetractors = useCountUp(stats?.detractors ?? 0, { duration: 1400 });
+  const animatedAvg = useCountUp(stats?.avgScore ?? 0, { duration: 1400, decimals: 1 });
+
   const handleSend = () => {
     if (!newClient.trim()) return;
     createSurvey.mutate({ client_name: newClient.trim() });
@@ -82,12 +89,12 @@ export default function NPSDashboard() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="p-3 rounded-xl gradient-primary">
+            <div className="p-3 rounded-xl gradient-primary shadow-lg shadow-primary/20">
               <MessageSquare className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h1 className="text-page-title gradient-text">NPS & Satisfação</h1>
-              <p className="text-muted-foreground">Acompanhe a satisfação dos seus clientes</p>
+              <h1 className="text-3xl font-black tracking-tight gradient-text">NPS & Satisfação</h1>
+              <p className="text-muted-foreground text-sm">Acompanhe a satisfação dos seus clientes em tempo real</p>
             </div>
           </motion.div>
 
@@ -98,28 +105,47 @@ export default function NPSDashboard() {
             </div>
           ) : stats && (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="col-span-2 md:col-span-1 glass rounded-xl p-4 border border-border/40 flex items-center justify-center">
-                <NPSGauge nps={stats.nps} />
-              </div>
-              <div className="glass rounded-xl p-4 border border-green-500/20 text-center">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="col-span-2 md:col-span-1 glass rounded-xl p-4 border-2 border-primary/20 flex items-center justify-center glow-primary"
+              >
+                <NPSGauge nps={animatedNPS} />
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="glass rounded-xl p-4 border border-green-500/20 text-center relative overflow-hidden group"
+              >
+                <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity"><ThumbsUp className="h-8 w-8 text-green-500" /></div>
                 <ThumbsUp className="h-5 w-5 text-green-500 mx-auto mb-1" />
-                <p className="text-2xl font-bold text-green-500">{stats.promoters}</p>
-                <p className="text-[10px] text-muted-foreground">Promotores (9-10)</p>
-              </div>
-              <div className="glass rounded-xl p-4 border border-yellow-500/20 text-center">
+                <p className="text-3xl font-black text-green-500">{animatedPromoters}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Promotores</p>
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                className="glass rounded-xl p-4 border border-yellow-500/20 text-center relative overflow-hidden group"
+              >
+                <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity"><Minus className="h-8 w-8 text-yellow-500" /></div>
                 <Minus className="h-5 w-5 text-yellow-500 mx-auto mb-1" />
-                <p className="text-2xl font-bold text-yellow-500">{stats.passives}</p>
-                <p className="text-[10px] text-muted-foreground">Neutros (7-8)</p>
-              </div>
-              <div className="glass rounded-xl p-4 border border-destructive/20 text-center">
+                <p className="text-3xl font-black text-yellow-500">{animatedPassives}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Neutros</p>
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                className="glass rounded-xl p-4 border border-destructive/20 text-center relative overflow-hidden group"
+              >
+                <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity"><ThumbsDown className="h-8 w-8 text-destructive" /></div>
                 <ThumbsDown className="h-5 w-5 text-destructive mx-auto mb-1" />
-                <p className="text-2xl font-bold text-destructive">{stats.detractors}</p>
-                <p className="text-[10px] text-muted-foreground">Detratores (0-6)</p>
-              </div>
-              <div className="glass rounded-xl p-4 border border-border/40 text-center">
-                <p className="text-2xl font-bold">{stats.avgScore.toFixed(1)}</p>
-                <p className="text-[10px] text-muted-foreground">Score Médio</p>
-              </div>
+                <p className="text-3xl font-black text-destructive">{animatedDetractors}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Detratores</p>
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                className="glass rounded-xl p-4 border border-border/40 text-center"
+              >
+                <p className="text-3xl font-black">{animatedAvg.toFixed(1)}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Score Médio</p>
+              </motion.div>
             </div>
           )}
 
