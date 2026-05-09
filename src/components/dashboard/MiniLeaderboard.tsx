@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Crown, Medal, Trophy, ChevronRight, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -47,7 +48,7 @@ function _MiniLeaderboard() {
     );
   }
 
-  if (!top3.length) return null;
+  if (!top3.length) return <DashboardEmptyState type="leaderboard" />;
 
   return (
     <Card className="relative overflow-hidden bg-black/40 border-white/5 backdrop-blur-md group">
