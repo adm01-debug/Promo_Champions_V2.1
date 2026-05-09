@@ -86,7 +86,7 @@ export const ActivityHeatmap: React.FC = () => {
             {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((d, i) => (
               <span key={i} className="text-[9px] font-black text-muted-foreground/40 mb-1">{d}</span>
             ))}
-            {days.map((day) => (
+            {last35Days.map((day) => (
               <TooltipProvider key={day.day}>
                 <Tooltip>
                   <TooltipTrigger asChild>
