@@ -1176,6 +1176,10 @@ export const FuturisticSpeedometerDashboard = () => {
             </span>
             <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
           </div>
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">Última atualização</span>
+            <span className="text-[10px] font-mono font-bold text-foreground/80">{format(lastUpdate, "HH:mm:ss")}</span>
+          </div>
         </div>
       </div>
 
