@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface DashboardEmptyStateProps {
-  type: "revenue" | "sales" | "clients" | "conversion";
+  type: "revenue" | "sales" | "clients" | "conversion" | "leaderboard";
+  hero?: boolean;
 }
 
 /** Inline SVG illustrations per type — lightweight, no external assets */
