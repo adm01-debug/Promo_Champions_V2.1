@@ -65,27 +65,66 @@ const useVendedorData = (id: string) => {
   });
 };
 
-const StatCard = ({ title, value, change, icon: Icon, variant = "default" }: {
-  title: string; value: string; change?: number; icon: LucideIcon; variant?: "default" | "primary" | "success";
+const StatCard = ({ title, value, numericValue, change, icon: Icon, variant = "default", isHero = false }: {
+  title: string; 
+  value: string; 
+  numericValue?: number;
+  change?: number; 
+  icon: LucideIcon; 
+  variant?: "default" | "primary" | "success";
+  isHero?: boolean;
 }) => {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
+  
   return (
-    <div className={cn("glass rounded-xl p-5", variant === "primary" && "gradient-border glow-primary", variant === "success" && "border-success/30 bg-success/5")}>
+    <div className={cn(
+      "glass rounded-xl p-5 relative overflow-hidden group transition-all duration-300",
+      variant === "primary" && "gradient-border glow-primary", 
+      variant === "success" && "border-success/30 bg-success/5",
+      isHero && "sm:col-span-2 lg:col-span-2 p-8"
+    )}>
+      {isHero && (
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Icon className="h-24 w-24" />
+        </div>
+      )}
+      
       <div className="flex items-center gap-3 mb-3">
         <div className={cn("p-2 rounded-lg", variant === "primary" ? "gradient-primary" : variant === "success" ? "bg-success/20" : "bg-muted")}>
           <Icon className={cn("h-4 w-4", variant === "primary" || variant === "success" ? "text-primary-foreground" : "text-muted-foreground")} />
         </div>
-        <span className="text-sm text-muted-foreground">{title}</span>
+        <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{title}</span>
         {change !== undefined && (
-          <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full ml-auto",
+          <span className={cn("text-xs font-bold px-2 py-0.5 rounded-full ml-auto",
             isPositive && "bg-success/20 text-success", isNegative && "bg-destructive/20 text-destructive",
             !isPositive && !isNegative && "bg-muted text-muted-foreground")}>
             {isPositive && "+"}{change}%
           </span>
         )}
       </div>
-      <p className={cn("text-2xl font-bold", variant === "primary" && "gradient-text")}>{value}</p>
+      
+      <div className="flex items-baseline gap-2">
+        <p className={cn(
+          "font-black tracking-tighter", 
+          isHero ? "text-4xl sm:text-5xl lg:text-6xl" : "text-2xl",
+          variant === "primary" && "gradient-text"
+        )}>
+          {isHero && <span className="text-2xl sm:text-3xl mr-1 text-muted-foreground/50 font-medium">R$</span>}
+          {value}
+        </p>
+      </div>
+      
+      {isHero && (
+        <div className="mt-4 h-1 w-full bg-muted rounded-full overflow-hidden">
+          <motion.div 
+            className="h-full gradient-primary"
+            initial={{ width: 0 }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
+        </div>
+      )}
     </div>
   );
 };
