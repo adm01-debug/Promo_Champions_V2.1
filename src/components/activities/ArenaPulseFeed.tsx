@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Zap, Trophy, TrendingUp, Star, Flame, Target, MessageCircle, Radar, Ghost } from "lucide-react";
+import { Activity, Zap, Trophy, TrendingUp, Star, Flame, Target, MessageCircle, Radar, Ghost, Crown, Medal, Award, Search, Filter } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ interface ArenaPulseFeedProps {
 
 interface PulseEvent {
   id: string;
-  type: 'victory' | 'streak' | 'velocity' | 'milestone' | 'stealth';
+  type: 'victory' | 'streak' | 'velocity' | 'milestone' | 'stealth' | 'social';
   salesperson: string;
   message: string;
   time: string;
@@ -26,7 +26,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
     const newEvents: PulseEvent[] = [];
     
     // Derive events from progress data
-    data.forEach(sp => {
+    data.forEach((sp, index) => {
       if (sp.progress.overall >= 100) {
         newEvents.push({
           id: `victory-${sp.salesperson_id}`,
@@ -34,7 +34,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
           salesperson: sp.salesperson_name,
           message: "META DIÁRIA ATINGIDA! 🏆",
           time: "LIVE",
-          icon: Trophy,
+          icon: Crown,
           color: "text-status-success",
           bgColor: "bg-status-success/20"
         });
@@ -45,9 +45,9 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
           salesperson: sp.salesperson_name,
           message: "Rumo ao topo: 80% concluído!",
           time: "5m",
-          icon: Target,
-          color: "text-primary",
-          bgColor: "bg-primary/20"
+          icon: Medal,
+          color: "text-info",
+          bgColor: "bg-info/20"
         });
       }
       
@@ -76,13 +76,27 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
           bgColor: "bg-muted/20"
         });
       }
+
+      // Add social interaction event simulation
+      if (index % 3 === 0 && sp.progress.overall > 50) {
+        newEvents.push({
+          id: `social-${sp.salesperson_id}`,
+          type: 'social',
+          salesperson: sp.salesperson_name,
+          message: "Recebeu reações da equipe! ⚡",
+          time: "2m",
+          icon: Zap,
+          color: "text-primary",
+          bgColor: "bg-primary/20"
+        });
+      }
     });
 
     // Sort by type priority
     return newEvents.sort((a, b) => {
-      const priority = { victory: 0, streak: 1, milestone: 2, velocity: 3, stealth: 4 };
+      const priority = { victory: 0, streak: 1, milestone: 2, velocity: 3, social: 4, stealth: 5 };
       return priority[a.type] - priority[b.type];
-    }).slice(0, 6);
+    }).slice(0, 8);
   }, [data]);
 
   return (
@@ -156,22 +170,34 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
                       </div>
                     </div>
                     
-                    <p className="text-xs font-bold leading-relaxed tracking-tight">
+                    <p className="text-xs font-bold leading-relaxed tracking-tight group-hover/item:text-primary transition-colors">
                       {event.message}
                     </p>
                     
-                    {event.type === 'victory' && (
-                      <div className="flex gap-1.5 mt-2">
-                        <Badge className="text-[7px] bg-status-success hover:bg-status-success text-white font-black px-2 py-0 h-4 border-none shadow-glow-success/40">
-                          MVP STATUS
-                        </Badge>
-                        <Badge variant="outline" className="text-[7px] border-primary/30 text-primary bg-primary/10 font-black h-4 px-2 py-0">
-                          +500 XP Gained
-                        </Badge>
-                      </div>
-                    )}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {event.type === 'victory' && (
+                        <>
+                          <Badge className="text-[7px] bg-status-success hover:bg-status-success text-white font-black px-2 py-0 h-4 border-none shadow-glow-success/40">
+                            MVP STATUS
+                          </Badge>
+                          <Badge variant="outline" className="text-[7px] border-primary/30 text-primary bg-primary/10 font-black h-4 px-2 py-0">
+                            +500 XP Gained
+                          </Badge>
+                        </>
+                      )}
+                      {event.type === 'social' && (
+                        <div className="flex gap-1">
+                          {['🔥', '⚡', '👏'].map((emoji, i) => (
+                            <button key={i} className="w-5 h-5 rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-[10px] hover:bg-primary/20 transition-colors">
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
                     {event.type === 'stealth' && (
-                      <div className="mt-2 p-2 rounded-lg bg-background/40 border border-dashed border-white/10">
+                      <div className="mt-2 p-2 rounded-lg bg-background/40 border border-dashed border-white/10 group-hover/item:border-primary/30 transition-colors">
                         <p className="text-[9px] font-medium text-muted-foreground flex items-center gap-2">
                           <Zap className="h-3 w-3 text-primary" />
                           Sugestão: Realize 5 ligações agora para quebrar o gelo.

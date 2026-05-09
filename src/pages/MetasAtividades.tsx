@@ -182,7 +182,7 @@ export default function MetasAtividades() {
                       Arena de Atividades
                       <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary/20 border border-primary/30 backdrop-blur-md animate-pulse">
                         <Zap className="h-6 w-6 text-primary fill-primary" />
-                        <span className="text-xl font-black text-primary tracking-widest italic">10/10</span>
+                        <span className="text-xl font-black text-primary tracking-widest italic">11/10</span>
                       </div>
                     </h1>
                   <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
