@@ -753,8 +753,8 @@ export const FuturisticSpeedometerDashboard = () => {
     }
 
     if (alertChannels.includes("toast")) {
-      toast.info("Teste de Alerta", {
-        description: "As notificações estão funcionando corretamente!",
+      toast.info(data.title, {
+        description: data.message,
         icon: <Bell className="h-4 w-4" />
       });
     }
@@ -762,6 +762,20 @@ export const FuturisticSpeedometerDashboard = () => {
     if (alertChannels.includes("hud")) {
       setActiveHudAlert(data);
       setTimeout(() => setActiveHudAlert(null), 8000);
+    }
+
+    if (alertChannels.includes("email")) {
+      toast.success("E-mail Enviado", {
+        description: `Um alerta foi enviado para o e-mail: ${user.email}`,
+        icon: <Mail className="h-4 w-4" />
+      });
+    }
+
+    if (alertChannels.includes("push")) {
+      toast.success("Push Notification", {
+        description: "Alerta enviado para seus dispositivos sincronizados.",
+        icon: <Smartphone className="h-4 w-4" />
+      });
     }
 
     setAlertHistory(prev => [data, ...prev].slice(0, 20));
