@@ -589,7 +589,7 @@ const Speedometer = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/20">
-                        {drilldownData.slice(-3).reverse().map((item, i) => (
+                        {displayData.slice(-3).reverse().map((item, i) => (
                           <tr key={i} className="hover:bg-muted/30 transition-colors">
                             <td className="px-4 py-2 font-mono text-xs text-muted-foreground">{new Date().toLocaleDateString('pt-BR')} {10+i}:00</td>
                             <td className="px-4 py-2 font-bold">{formatValue ? formatValue(item.value) : item.value}</td>
