@@ -378,36 +378,8 @@ const Speedometer = ({
         </div>
       </div>
     </div>
-  </DialogTrigger>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Status</span>
-                <span className={cn("text-xs font-mono font-bold", colors.text)}>{label}</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Telemetria</span>
-                <span className="text-xs font-mono font-bold text-foreground">
-                  {formatValue ? formatValue(value) : value.toLocaleString("pt-BR")} {unit}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Eficiência</span>
-                <span className="text-xs font-mono font-bold text-foreground">{percentStr}</span>
-              </div>
-              <div className="w-full h-1 bg-muted/30 rounded-full mt-1 overflow-hidden">
-                <motion.div 
-                  className="h-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: percentStr }}
-                  style={{ backgroundColor: colors.stroke }}
-                />
-              </div>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
 
-      <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
