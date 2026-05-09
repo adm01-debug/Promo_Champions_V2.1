@@ -137,12 +137,12 @@ const Clientes = () => {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
               </div>
               <div>
-                <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Client Portfolio</h1>
+                <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Clientes</h1>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Database v2.4</span>
                   <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                   <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
-                    {totalItems} COMMAND UNITS REGISTERED
+                    {totalItems} UNIDADES CADASTRADAS
                   </p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ const Clientes = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
-                          {client.company || "OPERATIVA INDEPENDENTE"} • {client.lead_source || "FONTE DIRETA"}
+                          {client.company || "OPERATIVA INDEPENDENTE"} • {client.lead_source || "DIRETO"}
                         </p>
                         <ICPBadge icpData={icpMap.get(client.id)} size="sm" />
                       </div>
@@ -276,10 +276,10 @@ const Clientes = () => {
                   <div className="pt-4 border-t border-border/10">
                     <div className="flex justify-between items-end">
                       <div className="space-y-0.5">
-                        <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Total Lifecycle</span>
+                        <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Ciclo de Vida Total</span>
                         <div className="flex items-baseline gap-1">
                           <TotalValueDisplay value={Number(client.total_value || 0)} />
-                          <span className="text-[9px] font-bold text-emerald-500 uppercase">Valued</span>
+                          <span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span>
                         </div>
                       </div>
                       <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">
@@ -359,7 +359,7 @@ const Clientes = () => {
               <ActivityLogTrigger clientId={timelineClient?.id} />
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-hidden px-6 pb-6">
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
             {timelineClient && (
               <ClientTimeline clientId={timelineClient.id} clientName={timelineClient.name} />
             )}

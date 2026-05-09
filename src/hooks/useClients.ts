@@ -31,8 +31,10 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string; lead_source?: string; lat?: number; lng?: number; total_value?: number }) => {
-      const { data, error } = await supabase.from('clients').insert(input).select().single();
+    mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string; lead_source?: string; lat?: number; lng?: number; total_value?: number; user_id?: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const payload = { ...input, user_id: input.user_id || user?.id };
+      const { data, error } = await supabase.from('clients').insert(payload).select().single();
       if (error) throw error;
       return data;
     },

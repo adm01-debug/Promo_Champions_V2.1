@@ -84,7 +84,7 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
         <SortableContext items={deals.map(d => d.id)} strategy={verticalListSortingStrategy}>
           {deals.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-primary/30 rounded-lg bg-gradient-to-b from-primary/10 to-primary/5 transition-all hover:border-primary/40 hover:bg-primary/15">
-              <p className="text-xs text-muted-foreground font-medium">Arraste deals aqui</p>
+              <p className="text-xs text-muted-foreground font-medium">Arraste oportunidades aqui</p>
             </div>
           ) : (
             deals.map((deal) => (

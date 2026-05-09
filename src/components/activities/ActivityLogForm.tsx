@@ -50,9 +50,10 @@ interface ActivityLogFormProps {
   saleId?: string;
   clientId?: string;
   onSuccess?: () => void;
+  defaultActivityType?: ActivityType;
 }
 
-export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogFormProps) {
+export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityType }: ActivityLogFormProps) {
   const { data: salespeople } = useSalespeople();
   const { data: clients } = useClients();
   const createActivity = useCreateActivity();
@@ -60,7 +61,7 @@ export function ActivityLogForm({ saleId, clientId, onSuccess }: ActivityLogForm
   const form = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
     defaultValues: {
-      activity_type: "call",
+      activity_type: defaultActivityType || "call",
       outcome: "connected",
       salesperson_id: "",
       client_id: clientId || "",

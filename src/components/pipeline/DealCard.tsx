@@ -113,7 +113,7 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
                     <div className="space-y-2">
                       <div className="flex items-center gap-1.5 pb-1 border-b border-border/40">
                         <Brain className="h-3 w-3 text-primary" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wider">Top drivers</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">Principais motivadores</span>
                       </div>
                       {explanation.top_drivers.slice(0, 3).map((d) => (
                         <div key={d.factor} className="flex items-center justify-between text-[11px]">
@@ -164,14 +164,14 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
               probability.probability > 70 ? "bg-emerald-500/10 text-emerald-500" : "bg-primary/10 text-primary"
             )}>
               <Zap className="h-2.5 w-2.5 mr-0.5 fill-current" />
-              {probability.probability}% WIN
+              {probability.probability}% CHANCE DE GANHO
             </Badge>
           )}
 
           {icpData?.is_icp_match && (
             <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-indigo-500/10 text-indigo-500 border-none">
               <Users className="h-2.5 w-2.5 mr-0.5" />
-              TARGET ICP
+              ICP ALVO
             </Badge>
           )}
         </div>

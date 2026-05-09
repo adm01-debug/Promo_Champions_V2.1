@@ -161,7 +161,7 @@ export const CreateSaleDialog = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {products.map((product) => (
-                            <SelectItem key={product.id} value={product.name}>
+                            <SelectItem key={product.id} value={product.id}>
                               {product.name} - R$ {product.price.toLocaleString("pt-BR")}
                             </SelectItem>
                           ))}
