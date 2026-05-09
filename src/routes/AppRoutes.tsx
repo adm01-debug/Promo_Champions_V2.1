@@ -160,7 +160,8 @@ export function AppRoutes() {
                     {/* ─── Analytics & BI ────────────────────────── */}
                      <Route path="/analytics" element={<Manager><Analytics /></Manager>} />
                      <Route path="/analytics/abc" element={<Manager><ABCAnalysisPage /></Manager>} />
-                    <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
+                     <Route path="/analytics/closing-time" element={<Manager><ClosingTimePage /></Manager>} />
+                     <Route path="/relatorios" element={<Manager><Relatorios /></Manager>} />
                     <Route path="/bi-vendedor" element={<BIVendedor />} />
                     <Route path="/bi-sdr" element={<BISDR />} />
                     <Route path="/bi-closer" element={<BICloser />} />
