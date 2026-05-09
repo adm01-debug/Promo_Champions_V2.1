@@ -843,36 +843,37 @@ export const FuturisticSpeedometerDashboard = () => {
 
     const checkThresholds = async () => {
       const currentOpp = kpis.current.conversionRate;
-      const currentRet = 85; 
+      // Calculate a realistic but deterministic "Retention" based on sales volume and conversion
+      const currentRet = Math.min(100, Math.max(0, 85 + (kpis.current.sales / 100) - (currentOpp / 5)));
       
       const newAlerts = [];
 
-      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
+      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}_${period}`)) {
         newAlerts.push({
-          title: "Meta de Oportunidades Atingida!",
-          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
+          title: "Meta de Oportunidades Superada!",
+          message: `O threshold de ${oppThreshold}% foi superado no período ${PERIOD_LABELS[period].label}. Performance: ${currentOpp.toFixed(1)}%.`,
           type: "goal_achieved",
           priority: "high",
-          metadata: { threshold: oppThreshold, actual: currentOpp }
+          metadata: { threshold: oppThreshold, actual: currentOpp, period }
         });
         setNotifiedEvents(prev => {
           const next = new Set(prev);
-          next.add(`opp_${oppThreshold}`);
+          next.add(`opp_${oppThreshold}_${period}`);
           return next;
         });
       }
 
-      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
+      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}_${period}`)) {
         newAlerts.push({
-          title: "Alerta de Retenção",
-          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
+          title: "Alerta Crítico de Retenção",
+          message: `A retenção caiu para ${currentRet.toFixed(1)}%, abaixo do threshold de ${retThreshold}%. Ação necessária.`,
           type: "threshold_reached",
           priority: "high",
-          metadata: { threshold: retThreshold, actual: currentRet }
+          metadata: { threshold: retThreshold, actual: currentRet, period }
         });
         setNotifiedEvents(prev => {
           const next = new Set(prev);
-          next.add(`ret_${retThreshold}`);
+          next.add(`ret_${retThreshold}_${period}`);
           return next;
         });
       }
