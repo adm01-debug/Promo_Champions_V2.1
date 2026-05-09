@@ -1512,7 +1512,11 @@ export const FuturisticSpeedometerDashboard = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <DashboardSection title="Infraestrutura de Comunicação" description="Monitoramento de integridade e logs de entrega de notificações">
+      <DashboardSection 
+        title="Infraestrutura de Comunicação" 
+        icon={<Settings2 className="h-4 w-4" />}
+        teaser="Verificar status de entrega e logs de e-mail/push"
+      >
         <IntegrationStatusPanel />
       </DashboardSection>
     </motion.section>
