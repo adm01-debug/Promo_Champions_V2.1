@@ -14,6 +14,8 @@ import { VendedorHeader } from "@/components/vendedor/VendedorHeader";
 import { VendedorCharts } from "@/components/vendedor/VendedorCharts";
 import { VendedorBottomRow } from "@/components/vendedor/VendedorBottomRow";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { motion } from "framer-motion";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface Sale {
   id: string;
