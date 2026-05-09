@@ -9,6 +9,7 @@ interface Objection {
   category: string;
   effectiveness_score: number | null;
   usage_count: number | null;
+  tags: string[] | null;
   created_by: string | null;
   created_at: string;
 }
@@ -17,6 +18,8 @@ interface NewObjection {
   objection: string;
   response: string;
   category: string;
+  tags?: string[];
+  effectiveness_score?: number;
   created_by?: string;
 }
 
