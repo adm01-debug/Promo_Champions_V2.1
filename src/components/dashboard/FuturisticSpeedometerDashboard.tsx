@@ -666,11 +666,11 @@ export const FuturisticSpeedometerDashboard = () => {
   const [retThreshold, setRetThreshold] = useState(75);
   const [alertFrequency, setAlertFrequency] = useState<"daily" | "weekly" | "realtime">("realtime");
   const [alertChannels, setAlertChannels] = useState<string[]>(["hud", "toast"]);
-  const [alertEvents, setAlertEvents] = useState<string[]>(["threshold_reached"]);
+  const [alertEvents, setAlertEvents] = useState<string[]>(["threshold_reached", "goal_achieved"]);
   const [alertHistory, setAlertHistory] = useState<any[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
-
+  const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
 
   // Persistence logic
   useEffect(() => {
