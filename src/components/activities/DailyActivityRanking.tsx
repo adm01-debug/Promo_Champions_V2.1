@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star, MessageCircle } from "lucide-react";
+import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star, MessageCircle, Heart, ThumbsUp, PartyPopper } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
@@ -49,6 +49,27 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
   const { data: xpData } = useAllSalespeopleXP();
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"overall" | "calls" | "emails" | "meetings">("overall");
+  const [localReactions, setLocalReactions] = useState<Record<string, string[]>>({});
+  const [activeReactions, setActiveReactions] = useState<{ id: string; emoji: string; x: number; y: number }[]>([]);
+
+  const handleReaction = (salespersonId: string, emoji: string, event: React.MouseEvent) => {
+    // Add to local state
+    setLocalReactions(prev => ({
+      ...prev,
+      [salespersonId]: [...(prev[salespersonId] || []), emoji].slice(-5)
+    }));
+
+    // Particle effect
+    const id = Math.random().toString(36).substr(2, 9);
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = event.clientX;
+    const y = event.clientY;
+
+    setActiveReactions(prev => [...prev, { id, emoji, x, y }]);
+    setTimeout(() => {
+      setActiveReactions(prev => prev.filter(r => r.id !== id));
+    }, 1000);
+  };
 
   const getXPInfo = (salespersonId: string) => {
     const xp = xpData?.find(x => x.salesperson_id === salespersonId);
@@ -179,16 +200,28 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
                       </div>
                       <div className="flex items-center gap-1">
                         <TooltipProvider>
-                          <Tooltip>
+                          <Tooltip delayDuration={0}>
                             <TooltipTrigger asChild>
-                              <div className="p-1.5 rounded-lg bg-background/50 border border-white/10 hover:border-primary/50 transition-colors cursor-help group/reaction">
+                              <div className="p-1.5 rounded-lg bg-background/50 border border-white/10 hover:border-primary/50 transition-colors cursor-help group/reaction relative overflow-hidden">
                                 <MessageCircle className="h-3.5 w-3.5 text-muted-foreground group-hover/reaction:text-primary transition-colors" />
+                                {localReactions[sp.salesperson_id] && localReactions[sp.salesperson_id].length > 0 && (
+                                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse shadow-glow-primary" />
+                                )}
                               </div>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="flex gap-2 p-1 bg-background/95 backdrop-blur-xl border-primary/20">
-                              {['🔥', '👏', '🚀', '🎯'].map(emoji => (
-                                <button key={emoji} className="p-1.5 hover:bg-primary/20 rounded-md transition-colors text-sm">
-                                  {emoji}
+                            <TooltipContent side="top" className="flex gap-2 p-1 bg-background/95 backdrop-blur-xl border-primary/20 shadow-2xl animate-in zoom-in">
+                              {[
+                                { e: '🔥', icon: Flame, color: 'text-orange-500' },
+                                { e: '🚀', icon: Zap, color: 'text-primary' },
+                                { e: '👏', icon: ThumbsUp, color: 'text-blue-500' },
+                                { e: '🎉', icon: PartyPopper, color: 'text-pink-500' }
+                              ].map(({ e, icon: Icon, color }) => (
+                                <button 
+                                  key={e} 
+                                  onClick={(ev) => handleReaction(sp.salesperson_id, e, ev)}
+                                  className="p-2 hover:bg-white/10 rounded-lg transition-all hover:scale-125 group/btn active:scale-95"
+                                >
+                                  <span className="text-lg leading-none filter drop-shadow-md">{e}</span>
                                 </button>
                               ))}
                             </TooltipContent>
@@ -220,7 +253,29 @@ function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
 
             )}
           </div>
+          {activeReactions.map(reaction => (
+            <div
+              key={reaction.id}
+              className="fixed pointer-events-none z-[9999] animate-float-up opacity-0"
+              style={{
+                left: reaction.x - 10,
+                top: reaction.y - 20,
+              }}
+            >
+              <span className="text-2xl filter drop-shadow-glow">{reaction.emoji}</span>
+            </div>
+          ))}
         </ScrollArea>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes float-up {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-20px) scale(1.2) rotate(10deg); }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+          }
+          .animate-float-up {
+            animation: float-up 1s ease-out forwards;
+          }
+        `}} />
       </CardContent>
     </Card>
   );
