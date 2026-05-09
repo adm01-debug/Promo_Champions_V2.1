@@ -71,29 +71,40 @@ const IntelligenceCockpit = () => {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <ExecutiveSummaryReport isOpen={reportOpen} onClose={() => setReportOpen(false)} />
       {/* CEO Level Executive Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-        <div className="lg:col-span-3 space-y-2">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">Executive View</Badge>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">May 2026 • Quarter 2</span>
-          </div>
-          <h1 className="text-4xl font-display font-black tracking-tight text-foreground uppercase italic leading-none">
-            Intelligence <span className="text-primary">Cockpit</span>
-          </h1>
-          <p className="text-muted-foreground text-sm max-w-2xl">
-            Sua central de comando unificada. Insights de IA consolidados de todos os módulos para decisões estratégicas rápidas.
-          </p>
-        </div>
+      <div className="relative p-8 rounded-3xl bg-black/40 border border-white/5 overflow-hidden group/hero">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] -ml-32 -mb-32" />
         
-        <Card className="p-4 border-primary/30 bg-primary/5 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">Business Health Score</p>
-            <div className="text-3xl font-black text-primary">88/100</div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-center relative z-10">
+          <div className="lg:col-span-3 space-y-4">
+            <div className="flex items-center gap-3">
+              <Badge className="bg-primary/20 text-primary border-primary/30 px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                Strategic Intelligence
+              </Badge>
+              <div className="flex items-center gap-2">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">May 2026 • Quarter 2</span>
+              </div>
+            </div>
+            
+            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
+              Intelligence <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]">Cockpit</span>
+            </h1>
+            
+            <p className="text-muted-foreground text-sm max-w-xl font-medium leading-relaxed">
+              Central de comando unificada. Insights de IA consolidados para decisões executivas de alta precisão e baixo risco.
+            </p>
           </div>
-          <div className="size-12 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center">
-            <ShieldCheck className="size-6 text-primary" />
-          </div>
-        </Card>
+          
+          <Card className="p-6 border-white/5 bg-white/5 backdrop-blur-xl flex flex-col items-center justify-center gap-2 relative group/health">
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/health:opacity-100 transition-opacity rounded-xl" />
+            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Business Health</p>
+            <div className="text-5xl font-black text-white tracking-tighter">88<span className="text-primary text-xl">/100</span></div>
+            <div className="flex items-center gap-1 text-emerald-500 font-bold text-[10px] uppercase">
+              <ArrowUpRight className="size-3" /> +4.2% Growth
+            </div>
+          </Card>
+        </div>
       </div>
 
       {/* Main KPI Grid */}
