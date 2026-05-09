@@ -13,23 +13,45 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     const activeData = data.filter(d => d.hasGoals);
     if (activeData.length === 0) return [];
 
+    const results = [];
     const laggard = [...activeData].sort((a, b) => a.progress.overall - b.progress.overall)[0];
     const leader = [...activeData].sort((a, b) => b.progress.overall - a.progress.overall)[0];
+    const lowCalls = activeData.filter(d => (d.current.calls / d.goals.calls) < 0.4);
 
-    return [
-      {
+    if (laggard && laggard.progress.overall < 40) {
+      results.push({
         id: 1,
-        title: "Estratégia de Recuperação",
-        description: `${laggard.salesperson_name} está com volume baixo de emails. Sugestão: Disparar cadência de reativação agora.`,
-        impact: "Alta"
-      },
-      {
+        title: "Protocolo de Recuperação",
+        description: `${laggard.salesperson_name} está em zona crítica (${laggard.progress.overall.toFixed(0)}%). Necessário reforço imediato em prospecção fria.`,
+        impact: "Crítico",
+        color: "text-status-error",
+        bgColor: "bg-status-error/10"
+      });
+    }
+
+    if (lowCalls.length > 0) {
+      results.push({
         id: 2,
-        title: "Momento de Escala",
-        description: `${leader.salesperson_name} está em 'Hot Streak'. Faltam 3 reuniões para o recorde semanal.`,
-        impact: "Média"
-      }
-    ];
+        title: "Gargalo de Conexão",
+        description: `Detectado baixo volume de ligações em ${lowCalls.length} pilotos. Sugestão: Iniciar 'Power Hour' de chamadas agora.`,
+        impact: "Alta",
+        color: "text-primary",
+        bgColor: "bg-primary/10"
+      });
+    }
+
+    if (leader && leader.progress.overall >= 90) {
+      results.push({
+        id: 3,
+        title: "Otimização de Fechamento",
+        description: `${leader.salesperson_name} está a um passo do 100%. Priorizar follow-up de propostas enviadas hoje.`,
+        impact: "Oportunidade",
+        color: "text-status-success",
+        bgColor: "bg-status-success/10"
+      });
+    }
+
+    return results.slice(0, 2);
   }, [data]);
 
   if (tips.length === 0) return null;
