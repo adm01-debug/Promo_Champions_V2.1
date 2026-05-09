@@ -25,6 +25,7 @@ export const PIPELINE_STAGES: PipelineStageConfig[] = [
 // Deal type for pipeline board
 export interface Deal {
   id: string;
+  client_id: string | null;
   client_name: string;
   product_name: string;
   amount: number;
