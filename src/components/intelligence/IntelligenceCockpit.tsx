@@ -111,7 +111,12 @@ const IntelligenceCockpit = () => {
       <div className="-mt-12 relative z-20 px-8">
         <IntelligenceCommandBar />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-1"
+      >
         {hubs.map((hub) => (
           <Card 
             key={hub.title}
