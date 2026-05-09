@@ -348,10 +348,36 @@ const Speedometer = ({
                 <circle cx={cx} cy={cy} r="3" fill={colors.stroke}>
                   <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
                 </circle>
-              </svg>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="bg-popover/95 backdrop-blur-xl border-primary/20 p-3 shadow-2xl">
+                  <div className="space-y-1.5 text-center">
+                    <p className="text-[10px] uppercase font-bold text-primary tracking-widest">{label}</p>
+                    <p className="text-xs font-mono">Clique para detalhes e exportação</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <div className="mt-4 flex flex-col items-center gap-1 w-full">
+              <div
+                className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
+                style={{
+                  fontSize: Math.max(22, s * 0.16),
+                  textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
+                }}
+              >
+                {displayValue}
+              </div>
+              <div
+                className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
+                style={{ fontSize: Math.max(8, s * 0.04) }}
+              >
+                max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+              </div>
             </div>
-          </DialogTrigger>
-        </TooltipTrigger>
+          </div>
+        </DialogTrigger>
           <TooltipContent className="bg-popover/95 backdrop-blur-xl border-primary/20 p-3 shadow-2xl">
             <div className="space-y-1.5">
               <div className="flex items-center justify-between gap-4">
