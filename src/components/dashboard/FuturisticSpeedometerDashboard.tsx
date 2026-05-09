@@ -225,6 +225,26 @@ const Speedometer = ({
     });
   }, [arcRadius, cx, cy, startAngle, arcLength, animatedPct, min, range, ticksCount, s]);
 
+  const [displayData, setDisplayData] = useState(drilldownData);
+
+  useEffect(() => {
+    if (!drilldownData.length) return;
+    
+    // Simulate data variation based on selected period for "excellence"
+    // In a real app, this would be an API call
+    const multiplier = 
+      drilldownPeriod === "year" ? 12 : 
+      drilldownPeriod === "quarter" ? 3 : 
+      drilldownPeriod === "last_month" ? 1.1 : 1;
+    
+    const newData = drilldownData.map(d => ({
+      ...d,
+      value: d.value * multiplier * (0.9 + Math.random() * 0.2)
+    }));
+    
+    setDisplayData(newData);
+  }, [drilldownPeriod, drilldownData]);
+
   useEffect(() => {
     const startValue = animatedValue;
     const endValue = value;
