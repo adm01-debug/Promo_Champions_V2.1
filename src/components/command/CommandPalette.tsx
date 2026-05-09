@@ -15,7 +15,7 @@ import {
   BarChart3, Settings, Trophy, Calendar,
   Bell, FileText, Zap, Search, Plus, Moon, Sun, Keyboard,
   Clock, Brain, Flame, Radar, Shield, Globe, Sparkles, Loader2,
-  Gauge, HeartPulse,
+  Gauge, HeartPulse, LineChart, MessageSquare, Briefcase, TrendingUp,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSemanticSearch } from "@/hooks/semantic/useSemanticSearch";
@@ -88,7 +88,11 @@ export function CommandPalette() {
     { id: "dashboard-performance", label: "Performance", icon: Gauge, action: () => navigate("/dashboard/performance"), group: "navigation", keywords: ["speedometer", "velocidade", "metas"] },
     { id: "dashboard-analytics", label: "Dashboard Analytics", icon: BarChart3, action: () => navigate("/dashboard/analises"), group: "navigation", keywords: ["análises", "gráficos", "data"] },
     { id: "dashboard-competition", label: "Competição", icon: Trophy, action: () => navigate("/dashboard/competicao"), group: "navigation", keywords: ["ranking", "arena", "leaderboard"] },
-    { id: "dashboard-intelligence", label: "Inteligência", icon: Zap, action: () => navigate("/dashboard/inteligencia"), group: "navigation", keywords: ["ai", "insight", "preditivo"] },
+    { id: "dashboard-intelligence", label: "Inteligência Hub", icon: Zap, action: () => navigate("/dashboard/inteligencia"), group: "navigation", keywords: ["ai", "insight", "preditivo"] },
+    { id: "revenue-intelligence", label: "Revenue Intelligence", icon: TrendingUp, action: () => navigate("/revenue-intelligence"), group: "navigation", keywords: ["receita", "forecast", "vendas"] },
+    { id: "conversational-intelligence", label: "Conversational Intelligence", icon: MessageSquare, action: () => navigate("/conversational-intelligence"), group: "navigation", keywords: ["transcrição", "análise de voz", "calls"] },
+    { id: "deal-intelligence", label: "Deal Intelligence", icon: Briefcase, action: () => navigate("/deal-intelligence"), group: "navigation", keywords: ["oportunidades", "riscos", "pipeline"] },
+    { id: "predictive-intelligence", label: "Inteligência Preditiva", icon: Brain, action: () => navigate("/inteligencia-preditiva"), group: "navigation", keywords: ["previsão", "machine learning"] },
     { id: "dashboard-engagement", label: "Engajamento", icon: HeartPulse, action: () => navigate("/dashboard/engajamento"), group: "navigation", keywords: ["mood", "pulse", "feedback"] },
     { id: "pipeline", label: "Pipeline", icon: Zap, shortcut: "⌘P", action: () => navigate("/pipeline"), group: "navigation", keywords: ["funil", "kanban"] },
     { id: "vendas", label: "Vendas", icon: ShoppingCart, shortcut: "⌘V", action: () => navigate("/vendas"), group: "navigation", keywords: ["sales", "deals", "negócios"] },
