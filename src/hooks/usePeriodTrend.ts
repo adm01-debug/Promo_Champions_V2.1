@@ -30,6 +30,8 @@ export interface TrendBucket {
 const getRange = (period: KPIPeriod) => {
   const now = new Date();
   switch (period) {
+    case "week":
+      return { start: startOfWeek(now, { locale: ptBR }), end: endOfWeek(now, { locale: ptBR }), granularity: "day" as const };
     case "current_month":
       return { start: startOfMonth(now), end: endOfMonth(now), granularity: "week" as const };
     case "last_month": {
