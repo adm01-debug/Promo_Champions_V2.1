@@ -727,7 +727,7 @@ export const FuturisticSpeedometerDashboard = () => {
           title: "Meta de Oportunidades Atingida!",
           message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
           type: "goal_achieved",
-          severity: "success",
+          priority: "high",
           metadata: { threshold: oppThreshold, actual: currentOpp }
         });
         setNotifiedEvents(prev => new Set(prev).add(`opp_${oppThreshold}`));
@@ -738,7 +738,7 @@ export const FuturisticSpeedometerDashboard = () => {
           title: "Alerta de Retenção",
           message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
           type: "threshold_reached",
-          severity: "warning",
+          priority: "high",
           metadata: { threshold: retThreshold, actual: currentRet }
         });
         setNotifiedEvents(prev => new Set(prev).add(`ret_${retThreshold}`));
@@ -753,7 +753,7 @@ export const FuturisticSpeedometerDashboard = () => {
 
         if (data) {
           if (alertChannels.includes("toast")) {
-            toast[data.severity === 'success' ? 'success' : 'warning'](data.title, {
+            toast[data.priority === 'high' ? 'success' : 'warning'](data.title, {
               description: data.message,
               icon: <Bell className="h-4 w-4" />
             });
@@ -795,7 +795,7 @@ export const FuturisticSpeedometerDashboard = () => {
       title: "Teste de Alerta",
       message: "Este é um alerta de teste para validar suas configurações de threshold e canais.",
       type: "system",
-      severity: "info",
+      priority: "info",
       metadata: { threshold: 0, actual: 0 }
     };
 
@@ -870,6 +870,72 @@ export const FuturisticSpeedometerDashboard = () => {
   useEffect(() => {
     if (kpis) setLastUpdate(new Date());
   }, [kpis]);
+  // Monitor KPIs and Trigger Alerts
+  useEffect(() => {
+    if (!kpis || !user?.id || alertFrequency !== "realtime") return;
+
+    const checkThresholds = async () => {
+      const currentOpp = kpis.current.conversionRate;
+      const currentRet = 85; 
+      
+      const newAlerts = [];
+
+      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
+        newAlerts.push({
+          title: "Meta de Oportunidades Atingida!",
+          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
+          type: "goal_achieved",
+          priority: "high",
+          metadata: { threshold: oppThreshold, actual: currentOpp }
+        });
+        setNotifiedEvents(prev => {
+          const next = new Set(prev);
+          next.add(`opp_${oppThreshold}`);
+          return next;
+        });
+      }
+
+      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
+        newAlerts.push({
+          title: "Alerta de Retenção",
+          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
+          type: "threshold_reached",
+          priority: "high",
+          metadata: { threshold: retThreshold, actual: currentRet }
+        });
+        setNotifiedEvents(prev => {
+          const next = new Set(prev);
+          next.add(`ret_${retThreshold}`);
+          return next;
+        });
+      }
+
+      for (const alertData of newAlerts) {
+        const { data, error } = await supabase
+          .from("notifications")
+          .insert({ ...alertData, user_id: user.id })
+          .select()
+          .single();
+
+        if (data) {
+          if (alertChannels.includes("toast")) {
+            toast[data.priority === 'high' ? 'warning' : 'info'](data.title, {
+              description: data.message,
+              icon: <Bell className="h-4 w-4" />
+            });
+          }
+          if (alertChannels.includes("hud")) {
+            setActiveHudAlert(data);
+            setTimeout(() => setActiveHudAlert(null), 8000);
+          }
+          setAlertHistory(prev => [data, ...prev].slice(0, 20));
+        }
+      }
+    };
+
+    checkThresholds();
+  }, [kpis, oppThreshold, retThreshold, alertFrequency, user?.id, alertChannels, notifiedEvents]);
+
 
   const { data: goals } = useGoalsDashboard();
 
