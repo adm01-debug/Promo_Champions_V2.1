@@ -79,6 +79,21 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
     },
   });
 
+  const selectedActivityType = form.watch("activity_type");
+  const selectedClientId = form.watch("client_id");
+  const selectedClient = clients?.find(c => c.id === selectedClientId);
+
+  const handleOpenWhatsApp = () => {
+    const phone = selectedClient?.phone;
+    if (!phone) {
+      toast.error("Cliente sem telefone cadastrado");
+      return;
+    }
+    const cleanPhone = phone.replace(/\D/g, "");
+    const text = encodeURIComponent(form.getValues("notes") || "Olá, tudo bem?");
+    window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
+  };
+
   const handleSubmit = (data: ActivityFormData) => {
     createActivity.mutate({
       sale_id: saleId || undefined,
@@ -91,7 +106,12 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
       contact_name: data.contact_name || undefined,
     }, {
       onSuccess: () => {
-        form.reset();
+        form.reset({
+          ...form.getValues(),
+          notes: "",
+          duration_minutes: undefined,
+          contact_name: "",
+        });
         onSuccess?.();
       }
     });
