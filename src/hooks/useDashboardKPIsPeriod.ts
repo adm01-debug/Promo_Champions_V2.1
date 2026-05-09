@@ -19,6 +19,7 @@ export type KPIPeriod = "current_month" | "last_month" | "quarter" | "year";
 interface KPIData {
   totalRevenue: number;
   totalSales: number;
+  newClients: number;
   conversionRate: number;
   avgTicket: number;
 }
@@ -29,6 +30,7 @@ export interface KPIPeriodResult {
   changes: {
     revenue: number;
     sales: number;
+    clients: number;
     conversion: number;
     avgTicket: number;
   };
@@ -85,29 +87,33 @@ const fetchPeriod = async (
     .lte("created_at", e + "T23:59:59");
   if (salespersonId) salesQuery = salesQuery.eq("salesperson_id", salespersonId);
 
-  const salesRes = await salesQuery;
+  const [salesRes, metricsRes] = await Promise.all([
+    salesQuery,
+    supabase
+      .from("daily_metrics")
+      .select("new_clients, conversion_rate")
+      .gte("date", s)
+      .lte( "date", e)
+  ]);
+
   const all = salesRes.data ?? [];
+  const metrics = metricsRes.data ?? [];
+  
   const completed = all.filter((s) => s.status === "completed");
   const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
   const totalSales = completed.length;
+  const newClients = metrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
 
   let conversionRate = 0;
   if (salespersonId) {
-    // Per-salesperson conversion: completed / total sales records in period
     conversionRate = all.length > 0 ? (completed.length / all.length) * 100 : 0;
   } else {
-    const metricsRes = await supabase
-      .from("daily_metrics")
-      .select("conversion_rate")
-      .gte("date", s)
-      .lte("date", e);
-    const metrics = metricsRes.data ?? [];
     conversionRate = metrics.length
       ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length
       : 0;
   }
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
-  return { totalRevenue, totalSales, conversionRate, avgTicket };
+  return { totalRevenue, totalSales, newClients, conversionRate, avgTicket };
 };
 
 const change = (cur: number, prev: number): number => {
@@ -149,6 +155,7 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
         changes: {
           revenue: change(current.totalRevenue, previous.totalRevenue),
           sales: change(current.totalSales, previous.totalSales),
+          clients: change(current.newClients, previous.newClients),
           conversion: change(current.conversionRate, previous.conversionRate),
           avgTicket: change(current.avgTicket, previous.avgTicket),
         },
