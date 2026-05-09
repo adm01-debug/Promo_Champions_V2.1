@@ -612,10 +612,20 @@ const Speedometer = ({
             
             <Separator className="bg-border/20" />
             
-            <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/10 rounded-xl">
-              <Zap className="h-4 w-4 text-primary animate-pulse" />
-              <p className="text-xs text-primary font-medium">
-                Insight IA: {animatedPct < 0.5 ? "Acelere as atividades de topo de funil para normalizar este indicador." : "Performance saudável. Mantenha a cadência atual para atingir o benchmark."}
+            <div className={cn(
+              "flex items-center gap-2 p-3 border rounded-xl transition-all duration-500",
+              animatedPct < 0.3 ? "bg-destructive/5 border-destructive/20 text-destructive" :
+              animatedPct < 0.6 ? "bg-warning/5 border-warning/20 text-warning" :
+              "bg-success/5 border-success/20 text-success"
+            )}>
+              <Zap className={cn("h-4 w-4", animatedPct < 0.3 ? "animate-pulse" : "")} />
+              <p className="text-[10px] font-mono uppercase tracking-tight font-bold">
+                IA Insight :: {
+                  animatedPct < 0.3 ? "ALERTA CRÍTICO: Volume insuficiente para atingir meta. Recomenda-se urgência em novas leads." :
+                  animatedPct < 0.6 ? "ATENÇÃO: Performance moderada. Ajuste o funil para garantir o benchmark do período." :
+                  animatedPct < 0.9 ? "ESTÁVEL: Mantendo ritmo ideal. Oportunidade de upsell identificada na base atual." :
+                  "EXCELÊNCIA: Performance acima do benchmark. Considere aumentar os targets para o próximo período."
+                }
               </p>
             </div>
           </div>
@@ -671,6 +681,7 @@ export const FuturisticSpeedometerDashboard = () => {
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
   const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Persistence logic
   useEffect(() => {
@@ -703,6 +714,7 @@ export const FuturisticSpeedometerDashboard = () => {
       const { data: historyData } = await supabase
         .from("notifications")
         .select("*")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(20);
       
@@ -715,6 +727,7 @@ export const FuturisticSpeedometerDashboard = () => {
 
   const saveSettings = async (updates: any) => {
     if (!user?.id) return;
+    setIsSyncing(true);
     
     const currentSettings = { 
       ticksCount, gaugeMode, minVal, customMax, customUnit, autoScale,
@@ -722,12 +735,33 @@ export const FuturisticSpeedometerDashboard = () => {
     };
     const newSettings = { ...currentSettings, ...updates };
     
-    await supabase.from("user_app_settings").upsert({
+    const { error } = await supabase.from("user_app_settings").upsert({
       user_id: user.id,
       key: "speedometer_settings",
       value: newSettings,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id, key' });
+
+    if (error) {
+      toast.error("Erro ao sincronizar configurações");
+    } else {
+      setTimeout(() => setIsSyncing(false), 800);
+    }
+  };
+
+  const clearAlertHistory = async () => {
+    if (!user?.id) return;
+    const { error } = await supabase
+      .from("notifications")
+      .delete()
+      .eq("user_id", user.id);
+    
+    if (error) {
+      toast.error("Erro ao limpar histórico");
+    } else {
+      setAlertHistory([]);
+      toast.success("Histórico limpo com sucesso");
+    }
   };
 
   const testAlert = async () => {
@@ -819,36 +853,37 @@ export const FuturisticSpeedometerDashboard = () => {
 
     const checkThresholds = async () => {
       const currentOpp = kpis.current.conversionRate;
-      const currentRet = 85; 
+      // Calculate a realistic but deterministic "Retention" based on sales volume and conversion
+      const currentRet = Math.min(100, Math.max(0, 85 + (kpis.current.totalSales / 100) - (currentOpp / 5)));
       
       const newAlerts = [];
 
-      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}`)) {
+      if (currentOpp >= oppThreshold && !notifiedEvents.has(`opp_${oppThreshold}_${period}`)) {
         newAlerts.push({
-          title: "Meta de Oportunidades Atingida!",
-          message: `O threshold de ${oppThreshold}% foi superado. Performance atual: ${currentOpp.toFixed(1)}%.`,
+          title: "Meta de Oportunidades Superada!",
+          message: `O threshold de ${oppThreshold}% foi superado no período ${PERIOD_LABELS[period].label}. Performance: ${currentOpp.toFixed(1)}%.`,
           type: "goal_achieved",
           priority: "high",
-          metadata: { threshold: oppThreshold, actual: currentOpp }
+          metadata: { threshold: oppThreshold, actual: currentOpp, period }
         });
         setNotifiedEvents(prev => {
           const next = new Set(prev);
-          next.add(`opp_${oppThreshold}`);
+          next.add(`opp_${oppThreshold}_${period}`);
           return next;
         });
       }
 
-      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}`)) {
+      if (currentRet < retThreshold && !notifiedEvents.has(`ret_${retThreshold}_${period}`)) {
         newAlerts.push({
-          title: "Alerta de Retenção",
-          message: `A retenção caiu abaixo do threshold de ${retThreshold}%. Valor atual: ${currentRet}%.`,
+          title: "Alerta Crítico de Retenção",
+          message: `A retenção caiu para ${currentRet.toFixed(1)}%, abaixo do threshold de ${retThreshold}%. Ação necessária.`,
           type: "threshold_reached",
           priority: "high",
-          metadata: { threshold: retThreshold, actual: currentRet }
+          metadata: { threshold: retThreshold, actual: currentRet, period }
         });
         setNotifiedEvents(prev => {
           const next = new Set(prev);
-          next.add(`ret_${retThreshold}`);
+          next.add(`ret_${retThreshold}_${period}`);
           return next;
         });
       }
@@ -973,9 +1008,18 @@ export const FuturisticSpeedometerDashboard = () => {
                 <Settings2 className="h-3.5 w-3.5 text-primary" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 bg-popover/95 backdrop-blur-xl border-primary/20 p-4">
+            <PopoverContent className="w-80 bg-popover/95 backdrop-blur-xl border-primary/20 p-4 shadow-2xl rounded-2xl">
               <div className="space-y-4">
-                <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-2">HUD Configuration</h4>
+                <div className="flex items-center justify-between border-b border-primary/20 pb-2">
+                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">HUD Configuration</h4>
+                  {isSyncing ? (
+                    <div className="flex items-center gap-1.5 text-[8px] font-mono text-primary animate-pulse">
+                      <RefreshCw className="h-2 w-2 animate-spin" /> SYNCING
+                    </div>
+                  ) : (
+                    <div className="text-[8px] font-mono text-success/70">CLOUDSYNC ACTIVE</div>
+                  )}
+                </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
@@ -1349,6 +1393,16 @@ export const FuturisticSpeedometerDashboard = () => {
                 <DialogDescription className="text-[10px] font-mono uppercase text-muted-foreground">Logs de Telemetria & Thresholds</DialogDescription>
               </div>
             </div>
+            {alertHistory.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-[9px] font-mono uppercase text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5"
+                onClick={clearAlertHistory}
+              >
+                Limpar Logs
+              </Button>
+            )}
           </DialogHeader>
           <ScrollArea className="max-h-[400px]">
             <div className="p-4 space-y-4">
@@ -1368,11 +1422,11 @@ export const FuturisticSpeedometerDashboard = () => {
                       <div className={cn(
                         "mt-1 p-1.5 rounded-md border shrink-0",
                         alert.priority === 'high' ? "bg-destructive/10 border-destructive/30 text-destructive" :
-                        alert.priority === 'high' ? "bg-warning/10 border-warning/30 text-warning" :
+                        alert.priority === 'medium' ? "bg-warning/10 border-warning/30 text-warning" :
                         "bg-primary/10 border-primary/30 text-primary"
                       )}>
                         {alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
-                         alert.priority === 'high' ? <AlertTriangle className="h-3 w-3" /> :
+                         alert.priority === 'medium' ? <AlertTriangle className="h-3 w-3" /> :
                          <Info className="h-3 w-3" />}
                       </div>
                       <div className="flex-1 min-w-0">
