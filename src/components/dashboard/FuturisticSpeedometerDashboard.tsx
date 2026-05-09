@@ -1109,41 +1109,86 @@ export const FuturisticSpeedometerDashboard = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-3 border-t border-primary/10">
+                <div className="space-y-4 pt-3 border-t border-primary/10">
                   <h5 className="font-mono text-[9px] font-bold uppercase tracking-widest text-primary/80">Thresholds & Alerts</h5>
                   
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
-                      <span>Threshold Oportunidades</span>
-                      <span className="text-primary">{oppThreshold}%</span>
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                        <span>Threshold Oportunidades</span>
+                        <span className="text-primary font-bold">{oppThreshold}%</span>
+                      </div>
+                      <Slider 
+                        value={[oppThreshold]} 
+                        min={1} max={100} step={1} 
+                        onValueChange={(v) => {
+                          setOppThreshold(v[0]);
+                          saveSettings({ oppThreshold: v[0] });
+                        }} 
+                      />
                     </div>
-                    <Slider 
-                      value={[oppThreshold]} 
-                      min={1} max={50} step={1} 
-                      onValueChange={(v) => {
-                        setOppThreshold(v[0]);
-                        saveSettings({ oppThreshold: v[0] });
-                      }} 
-                    />
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
+                        <span>Threshold Retenção</span>
+                        <span className="text-primary font-bold">{retThreshold}%</span>
+                      </div>
+                      <Slider 
+                        value={[retThreshold]} 
+                        min={1} max={100} step={1} 
+                        onValueChange={(v) => {
+                          setRetThreshold(v[0]);
+                          saveSettings({ retThreshold: v[0] });
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  <Separator className="bg-primary/5" />
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5">
+                      <Layout className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-[8px] font-mono uppercase text-muted-foreground">Canais de Alerta</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {[
+                        { id: "hud", icon: Layout, label: "HUD" },
+                        { id: "toast", icon: Bell, label: "Toast" },
+                        { id: "email", icon: Mail, label: "Email" },
+                        { id: "push", icon: Smartphone, label: "Push" }
+                      ].map((channel) => (
+                        <Button
+                          key={channel.id}
+                          variant="outline"
+                          size="sm"
+                          className={cn(
+                            "h-5 px-1.5 text-[7px] font-mono uppercase gap-1 bg-background/20",
+                            alertChannels.includes(channel.id) 
+                              ? "border-primary/50 text-primary bg-primary/10" 
+                              : "border-border/20 text-muted-foreground opacity-50"
+                          )}
+                          onClick={() => {
+                            const newChannels = alertChannels.includes(channel.id)
+                              ? alertChannels.filter(c => c !== channel.id)
+                              : [...alertChannels, channel.id];
+                            setAlertChannels(newChannels);
+                            saveSettings({ alertChannels: newChannels });
+                            toast.success(`Canal ${channel.label} ${alertChannels.includes(channel.id) ? 'desativado' : 'ativado'}`);
+                          }}
+                        >
+                          <channel.icon className="h-2 w-2.5" />
+                          {channel.label}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground">
-                      <span>Threshold Retenção</span>
-                      <span className="text-primary">{retThreshold}%</span>
+                    <div className="flex items-center gap-1.5">
+                      <History className="h-3 w-3 text-muted-foreground" />
+                      <label className="text-[8px] font-mono uppercase text-muted-foreground">Frequência</label>
                     </div>
-                    <Slider 
-                      value={[retThreshold]} 
-                      min={1} max={50} step={1} 
-                      onValueChange={(v) => {
-                        setRetThreshold(v[0]);
-                        saveSettings({ retThreshold: v[0] });
-                      }} 
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[8px] font-mono uppercase text-muted-foreground">Frequência de Alerta</label>
                     <Select 
                       value={alertFrequency} 
                       onValueChange={(v: any) => {
@@ -1154,7 +1199,7 @@ export const FuturisticSpeedometerDashboard = () => {
                       <SelectTrigger className="h-6 text-[9px] bg-background/40 border-border/40 font-mono">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-popover/95 backdrop-blur-xl">
+                      <SelectContent className="bg-popover/95 backdrop-blur-xl border-primary/20">
                         <SelectItem value="realtime"><span className="text-[10px] font-mono">Real-time</span></SelectItem>
                         <SelectItem value="daily"><span className="text-[10px] font-mono">Daily</span></SelectItem>
                         <SelectItem value="weekly"><span className="text-[10px] font-mono">Weekly</span></SelectItem>
@@ -1171,7 +1216,7 @@ export const FuturisticSpeedometerDashboard = () => {
               <Users className="h-3.5 w-3.5 mr-1.5 text-primary shrink-0" />
               <SelectValue placeholder="Selecionar vendedor" />
             </SelectTrigger>
-            <SelectContent className="bg-popover/95 backdrop-blur-xl">
+            <SelectContent className="bg-popover/95 backdrop-blur-xl border-primary/20">
               <SelectItem value={ME}><span className="font-mono text-xs">Eu{currentUser?.name ? ` (${currentUser.name})` : ""}</span></SelectItem>
               <SelectItem value={ALL_SALESPEOPLE}><span className="font-mono text-xs">Toda Equipe</span></SelectItem>
               {salespeople.map((sp) => (
@@ -1185,22 +1230,29 @@ export const FuturisticSpeedometerDashboard = () => {
               <button
                 key={opt.value}
                 onClick={() => setPeriod(opt.value)}
-                className={cn("px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all", period === opt.value ? "bg-primary/20 text-primary border border-primary/30" : "text-muted-foreground hover:text-foreground hover:bg-background/80")}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-md transition-all",
+                  period === opt.value 
+                    ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                )}
               >
                 {opt.label}
               </button>
             ))}
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30">
+
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success/10 border border-success/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
             </span>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live</span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-success font-bold">Live Telemetry</span>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">Última atualização</span>
-            <span className="text-[10px] font-mono font-bold text-foreground/80">{format(lastUpdate, "HH:mm:ss")}</span>
+
+          <div className="flex flex-col items-end pr-2 border-r border-border/40">
+            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest leading-none mb-1">Sincronização</span>
+            <span className="text-[10px] font-mono font-black text-primary animate-pulse">{format(lastUpdate, "HH:mm:ss")}</span>
           </div>
         </div>
       </div>
