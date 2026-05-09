@@ -169,7 +169,7 @@ export default function MetasAtividades() {
 
 
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
-          {/* Header Section with Holographic Title */}
+          {/* Header Section with Holographic Title v12.0 */}
           <div className="animate-fade-in-up relative group/arena-header">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-10 rounded-[3rem] glass border border-white/20 shadow-glow-primary/10 overflow-hidden relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 opacity-50" />
@@ -177,15 +177,19 @@ export default function MetasAtividades() {
               <div className="space-y-4 relative z-10">
                 <div className="flex flex-wrap items-center gap-3 mb-2">
                   <ArenaStatusBadge status="online" label="Arena de Operações Live" />
-                  <ArenaStatusBadge status="busy" label="Alta Volatilidade" showRipple={false} />
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 animate-pulse">
+                    <Cpu className="h-3 w-3 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Sincronização Neural v12.0</span>
+                  </div>
                 </div>
 
                 <div className="relative">
                     <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02] flex items-center gap-4">
                       Arena de Atividades
-                      <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary/20 border border-primary/30 backdrop-blur-md animate-pulse">
-                        <Zap className="h-6 w-6 text-primary fill-primary" />
-                        <span className="text-xl font-black text-primary tracking-widest italic">12/10</span>
+                      <div className="hidden sm:flex items-center justify-center h-20 w-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow p-1 relative shadow-glow-primary/20">
+                        <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">12/10</span>
+                        </div>
                       </div>
                     </h1>
                   <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
@@ -204,6 +208,26 @@ export default function MetasAtividades() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 relative z-10">
+                <div className="flex -space-x-3 mr-4 transition-all hover:-space-x-1">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="relative group/avatar cursor-pointer">
+                      <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
+                        <AvatarImage src={`https://i.pravatar.cc/150?u=${i + 20}`} />
+                        <AvatarFallback>U{i}</AvatarFallback>
+                      </Avatar>
+                      <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success border-2 border-background rounded-full shadow-sm" />
+                    </div>
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  onClick={() => toast({ title: "Modo Foco Ativado", description: "Interface simplificada para máxima produtividade." })}
+                  className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
+                >
+                  <MousePointer2 className="h-5 w-5 text-primary" />
+                  <span className="text-xs font-black uppercase tracking-widest">Modo Foco</span>
+                </Button>
                 <Button 
                   variant="outline" 
                   size="lg" 
@@ -211,7 +235,7 @@ export default function MetasAtividades() {
                   className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 group rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
                 >
                   <PartyPopper className="h-5 w-5 text-primary group-hover:rotate-12 group-hover:scale-110 transition-all" />
-                  <span className="text-xs font-black uppercase tracking-widest">Testar Vitória</span>
+                  <span className="text-xs font-black uppercase tracking-widest">Lançar Resultado</span>
                 </Button>
                 
                 <div className="flex flex-col items-end gap-2 group/boss-bar">
