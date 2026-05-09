@@ -64,18 +64,18 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
       </div>
       
       {tips.map(tip => (
-        <Card key={tip.id} className="border border-primary/10 bg-background/40 backdrop-blur-xl shadow-2xl group hover:border-primary/40 transition-all duration-500 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:bg-primary/10 group-hover:scale-150" />
+        <Card key={tip.id} className={cn("border bg-background/40 backdrop-blur-xl shadow-2xl group transition-all duration-500 overflow-hidden relative", tip.color.replace('text-', 'border-') + '/20', "hover:border-opacity-100")}>
+          <div className={cn("absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full -mr-12 -mt-12 transition-all group-hover:scale-150 opacity-20", tip.bgColor)} />
           <CardContent className="p-4 flex gap-4 relative z-10">
             <div className="mt-1">
-              <div className="p-2 rounded-xl bg-background border border-primary/20 shadow-inner group-hover:rotate-12 transition-transform">
-                <Lightbulb className="h-4 w-4 text-primary" />
+              <div className={cn("p-2 rounded-xl bg-background border shadow-inner group-hover:rotate-12 transition-transform", tip.color.replace('text-', 'border-') + '/20')}>
+                <Lightbulb className={cn("h-4 w-4", tip.color)} />
               </div>
             </div>
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary">{tip.title}</span>
-                <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary uppercase">Impacto: {tip.impact}</span>
+                <span className={cn("text-[10px] font-black uppercase tracking-widest", tip.color)}>{tip.title}</span>
+                <span className={cn("text-[8px] font-bold px-2 py-0.5 rounded-full uppercase", tip.bgColor, tip.color)}>Impacto: {tip.impact}</span>
               </div>
               <p className="text-xs font-medium leading-relaxed text-foreground/80">
                 {tip.description}
