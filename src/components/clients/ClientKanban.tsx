@@ -34,6 +34,15 @@ const STAGES = [
   { id: 'churned', label: 'Perdido', color: 'bg-muted border-border text-muted-foreground' },
 ];
 
+const StageValue = ({ value }: { value: number }) => {
+  const animated = useCountUp(value, { duration: 1200 });
+  return (
+    <span className="text-xs font-bold text-primary tracking-tight">
+      R$ {animated.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+    </span>
+  );
+};
+
 export function ClientKanban() {
   const queryClient = useQueryClient();
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
