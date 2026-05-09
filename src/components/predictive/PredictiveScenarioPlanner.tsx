@@ -10,7 +10,8 @@ import {
   Users, 
   Calendar,
   Sparkles,
-  Info
+  Info,
+  Zap
 } from "lucide-react";
 import { 
   Tooltip,
