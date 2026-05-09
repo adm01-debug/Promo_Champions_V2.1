@@ -13,12 +13,14 @@ interface LeadsByDay { day: string; generated: number; qualified: number; }
 interface ActivitiesByDay { day: string; count: number; }
 interface FunnelStage { stage: string; count: number; percentage: number; }
 interface LeadSource { source: string; count: number; }
+interface OutcomeByChannel { channel: string; connections: number; scheduling: number; qualification: number; total: number; }
 
 interface BISDRChartsProps {
   leadsByDay?: LeadsByDay[];
   activitiesByDay?: ActivitiesByDay[];
   conversionFunnel?: FunnelStage[];
   leadsBySource?: LeadSource[];
+  outcomesByChannel?: OutcomeByChannel[];
 }
 
 export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activitiesByDay, conversionFunnel, leadsBySource }: BISDRChartsProps) {
