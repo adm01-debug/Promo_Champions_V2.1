@@ -998,9 +998,18 @@ export const FuturisticSpeedometerDashboard = () => {
                 <Settings2 className="h-3.5 w-3.5 text-primary" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 bg-popover/95 backdrop-blur-xl border-primary/20 p-4">
+            <PopoverContent className="w-80 bg-popover/95 backdrop-blur-xl border-primary/20 p-4 shadow-2xl rounded-2xl">
               <div className="space-y-4">
-                <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-2">HUD Configuration</h4>
+                <div className="flex items-center justify-between border-b border-primary/20 pb-2">
+                  <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">HUD Configuration</h4>
+                  {isSyncing ? (
+                    <div className="flex items-center gap-1.5 text-[8px] font-mono text-primary animate-pulse">
+                      <RefreshCw className="h-2 w-2 animate-spin" /> SYNCING
+                    </div>
+                  ) : (
+                    <div className="text-[8px] font-mono text-success/70">CLOUDSYNC ACTIVE</div>
+                  )}
+                </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
