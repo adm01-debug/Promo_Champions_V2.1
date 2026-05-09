@@ -15,7 +15,8 @@ import { LostStageBreakdown } from "@/components/deal-intelligence/winloss/LostS
 import { CompetitorAnalysisTable } from "@/components/deal-intelligence/winloss/CompetitorAnalysisTable";
 import { WinLossInsightsPanel } from "@/components/deal-intelligence/winloss/WinLossInsightsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy } from "lucide-react";
+import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
+import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
 
 export default function DealIntelligence() {
   return (
@@ -50,6 +51,9 @@ export default function DealIntelligence() {
           >
             <Tabs defaultValue="health" className="w-full">
               <TabsList>
+                <TabsTrigger value="risk" className="gap-2">
+                  <AlertTriangle className="h-4 w-4" /> Análise de Risco
+                </TabsTrigger>
                 <TabsTrigger value="health" className="gap-2">
                   <Heart className="h-4 w-4" /> Saúde dos Deals
                 </TabsTrigger>
@@ -66,6 +70,9 @@ export default function DealIntelligence() {
                   <Trophy className="h-4 w-4" /> Win/Loss
                 </TabsTrigger>
               </TabsList>
+              <TabsContent value="risk" className="mt-4 space-y-4">
+                <RiskAssessmentPanel />
+              </TabsContent>
               <TabsContent value="health" className="mt-4">
                 <StalledDealsTable />
               </TabsContent>
