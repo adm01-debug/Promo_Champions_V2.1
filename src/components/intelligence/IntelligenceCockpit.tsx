@@ -240,5 +240,3 @@ const IntelligenceCockpit = () => {
 };
 
 export default IntelligenceCockpit;
-
-export default IntelligenceCockpit;
