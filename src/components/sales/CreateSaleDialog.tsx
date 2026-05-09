@@ -65,6 +65,7 @@ export const CreateSaleDialog = () => {
         amount: parseFloat(data.amount),
         salesperson_id: data.salesperson_id || undefined,
         source: data.source,
+        status: "pending", // Default status
       },
       {
         onSuccess: () => {
