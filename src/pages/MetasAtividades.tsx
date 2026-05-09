@@ -334,7 +334,7 @@ export default function MetasAtividades() {
                             ))}
                           </div>
                         ) : progressData && progressData.length > 0 ? (
-                          <div className="flex xl:grid xl:grid-cols-2 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory xl:overflow-visible arena-scrollbar">
+                          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
                             {progressData.map((sp, index) => (
                               <div key={sp.salesperson_id} className={cn("animate-fade-in-up flex-shrink-0 w-[300px] sm:w-[400px] xl:w-auto snap-center", `stagger-${index + 1}`)}>
                                 <EnhancedActivityCard
