@@ -6577,6 +6577,42 @@ export type Database = {
           },
         ]
       }
+      integration_logs: {
+        Row: {
+          details: Json | null
+          error_message: string | null
+          event_type: string
+          id: string
+          integration_type: string
+          metadata: Json | null
+          recipient: string | null
+          status: string
+          timestamp: string | null
+        }
+        Insert: {
+          details?: Json | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          integration_type: string
+          metadata?: Json | null
+          recipient?: string | null
+          status: string
+          timestamp?: string | null
+        }
+        Update: {
+          details?: Json | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          integration_type?: string
+          metadata?: Json | null
+          recipient?: string | null
+          status?: string
+          timestamp?: string | null
+        }
+        Relationships: []
+      }
       intent_audit_logs: {
         Row: {
           created_at: string
