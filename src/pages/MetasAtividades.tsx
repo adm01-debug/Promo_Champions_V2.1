@@ -93,6 +93,26 @@ export default function MetasAtividades() {
 
   return (
     <PageTransition>
+    <style dangerouslySetInnerHTML={{ __html: `
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      .arena-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      .arena-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+      }
+      .arena-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(var(--primary), 0.3);
+        border-radius: 10px;
+      }
+      .arena-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--primary), 0.5);
+      }
+    `}} />
     <>
     <Helmet>
       <title>Metas de Atividades | Promo Champions</title>
@@ -103,11 +123,15 @@ export default function MetasAtividades() {
       skeleton={<MetasAtividadesLoadingSkeleton />}
       duration={400}
     >
-      <div className="min-h-screen bg-background relative overflow-hidden">
-        {/* Background Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full animate-pulse pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent/10 blur-[100px] rounded-full animate-float pointer-events-none" />
+      <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/30">
+        {/* Background Decorative Elements - Advanced Arena DNA */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[150px] rounded-full animate-pulse pointer-events-none" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-accent/15 blur-[120px] rounded-full animate-float pointer-events-none" />
+        
+        {/* Scanning Line Effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
 
         <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-8 relative z-10">
           {/* Header Section with Holographic Title */}
@@ -258,6 +282,25 @@ export default function MetasAtividades() {
 
                   {/* Progress Cards Grid */}
                   <div className="lg:col-span-2 animate-fade-in-up stagger-3">
+                    {completed > 0 && (
+                      <div className="mb-6 p-6 rounded-[2rem] bg-gradient-to-r from-rank-gold/20 via-primary/10 to-rank-gold/20 border border-rank-gold/30 shadow-glow-gold/10 animate-pulse relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-shimmer opacity-20" />
+                        <div className="relative z-10 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-2xl bg-rank-gold shadow-glow-gold">
+                              <Trophy className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-display font-black tracking-tighter uppercase italic text-rank-gold">Membro no Hall da Fama!</h4>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/70">O pódio da arena já tem ocupantes hoje.</p>
+                            </div>
+                          </div>
+                          <Badge className="bg-rank-gold hover:bg-rank-gold text-white font-black px-4 py-1.5 rounded-full text-[10px] tracking-widest animate-bounce">
+                            MVP ATIVO
+                          </Badge>
+                        </div>
+                      </div>
+                    )}
                     <Card variant="glass" className="rounded-[2.5rem] border-white/10 overflow-hidden shadow-2xl transition-all duration-500 hover:bg-background/30 group/grid">
                       <CardHeader className="pb-6 bg-primary/5 border-b border-white/5">
                         <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
@@ -275,7 +318,7 @@ export default function MetasAtividades() {
                             ))}
                           </div>
                         ) : progressData && progressData.length > 0 ? (
-                          <div className="flex xl:grid xl:grid-cols-2 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory xl:overflow-visible no-scrollbar">
+                          <div className="flex xl:grid xl:grid-cols-2 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory xl:overflow-visible arena-scrollbar">
                             {progressData.map((sp, index) => (
                               <div key={sp.salesperson_id} className={cn("animate-fade-in-up flex-shrink-0 w-[300px] sm:w-[400px] xl:w-auto snap-center", `stagger-${index + 1}`)}>
                                 <EnhancedActivityCard

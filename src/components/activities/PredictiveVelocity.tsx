@@ -65,11 +65,26 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
             </div>
           </div>
-          <p className="text-[9px] text-muted-foreground font-medium italic">
-            {isOnTrack 
-              ? "Ritmo excelente! Mantendo a cadência, o time atinge a meta antes do fim do expediente."
-              : "Ritmo moderado. Necessário aumentar o volume de calls no próximo bloco para garantir a meta."}
-          </p>
+          <div className="space-y-2 pt-2">
+            <div className="flex items-center gap-2">
+              <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isOnTrack ? "bg-status-success" : "bg-status-warning")} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Diretriz Estratégica</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed border-l-2 border-primary/20 pl-3 italic">
+              {isOnTrack 
+                ? "Ritmo excelente! Foque em QUALIDADE das reuniões. O volume já está garantido."
+                : "URGENTE: Redirecionar time para prospecção ativa. Volume atual projeta 85% da meta."}
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[8px] font-black uppercase tracking-tighter text-muted-foreground/50">Confiança do Modelo</span>
+          <div className="flex gap-0.5">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className={cn("w-2 h-1 rounded-full", i <= 4 ? "bg-primary" : "bg-white/10")} />
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
