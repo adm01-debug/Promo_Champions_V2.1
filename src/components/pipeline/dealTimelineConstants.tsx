@@ -33,7 +33,7 @@ export const OUTCOME_COLORS: Record<string, string> = {
 
 export const STAGE_LABELS: Record<string, string> = {
   pending: "Lead", lead: "Lead", qualified: "Qualificado",
-  proposal: "Proposta", negotiation: "Negociação", completed: "Fechado", lost: "Perdido",
+  proposal: "Proposta", negotiation: "Negociação", won: "Ganho", lost: "Perdido", closed: "Arquivado", completed: "Finalizado",
 };
 
 export const TASK_TYPE_ICONS: Record<string, React.ReactNode> = {

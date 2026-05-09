@@ -4,7 +4,7 @@ import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
 
 // Pipeline stage type for the kanban board
-export type PipelineStageId = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed';
+export type PipelineStageId = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost' | 'closed';
 
 export interface PipelineStageConfig {
   id: PipelineStageId;
@@ -19,7 +19,9 @@ export const PIPELINE_STAGES: PipelineStageConfig[] = [
   { id: 'qualified', label: 'Qualificado', color: 'bg-yellow-500', order: 2, probability: 25 },
   { id: 'proposal', label: 'Proposta', color: 'bg-orange-500', order: 3, probability: 50 },
   { id: 'negotiation', label: 'Negociação', color: 'bg-purple-500', order: 4, probability: 75 },
-  { id: 'closed', label: 'Fechado', color: 'bg-green-500', order: 5, probability: 100 },
+  { id: 'won', label: 'Ganho', color: 'bg-green-500', order: 5, probability: 100 },
+  { id: 'lost', label: 'Perdido', color: 'bg-red-500', order: 6, probability: 0 },
+  { id: 'closed', label: 'Arquivado', color: 'bg-gray-500', order: 7, probability: 0 },
 ];
 
 // Deal type for pipeline board
@@ -59,6 +61,8 @@ export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
         qualified: [],
         proposal: [],
         negotiation: [],
+        won: [],
+        lost: [],
         closed: [],
       };
       

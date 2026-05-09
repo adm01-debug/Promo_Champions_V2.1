@@ -81,7 +81,7 @@ export const SLADashboard = React.memo(() => {
                     ? "Violado"
                     : deal.status === "warning"
                     ? `${deal.daysRemaining}d restantes`
-                    : `${deal.daysRemaining}d restantes`}
+                    : deal.hoursInStage < 24 ? `${Math.round(deal.maxHours - deal.hoursInStage)}h restantes` : `${deal.daysRemaining}d restantes`}
                 </Badge>
               </div>
               <div className="flex items-center gap-2">

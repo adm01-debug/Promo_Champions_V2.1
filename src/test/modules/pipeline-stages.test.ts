@@ -6,8 +6,8 @@ import { describe, it, expect } from 'vitest';
 import { PIPELINE_STAGES, type PipelineStageId } from '@/hooks/usePipeline';
 
 describe('PIPELINE_STAGES configuration', () => {
-  it('should have 5 stages', () => {
-    expect(PIPELINE_STAGES).toHaveLength(5);
+  it('should have 7 stages', () => {
+    expect(PIPELINE_STAGES).toHaveLength(7);
   });
 
   it('should have correct stage IDs', () => {
@@ -16,6 +16,8 @@ describe('PIPELINE_STAGES configuration', () => {
     expect(ids).toContain('qualified');
     expect(ids).toContain('proposal');
     expect(ids).toContain('negotiation');
+    expect(ids).toContain('won');
+    expect(ids).toContain('lost');
     expect(ids).toContain('closed');
   });
 
@@ -25,15 +27,17 @@ describe('PIPELINE_STAGES configuration', () => {
     }
   });
 
-  it('should have increasing probabilities', () => {
-    for (let i = 1; i < PIPELINE_STAGES.length; i++) {
-      expect(PIPELINE_STAGES[i].probability).toBeGreaterThan(PIPELINE_STAGES[i - 1].probability);
+  it('should have correct probabilities for core stages', () => {
+    // Lead to Won should increase
+    const coreStages = PIPELINE_STAGES.filter(s => ['lead', 'qualified', 'proposal', 'negotiation', 'won'].includes(s.id));
+    for (let i = 1; i < coreStages.length; i++) {
+      expect(coreStages[i].probability).toBeGreaterThan(coreStages[i - 1].probability);
     }
   });
 
-  it('should have lead at 10% and closed at 100%', () => {
-    expect(PIPELINE_STAGES[0].probability).toBe(10);
-    expect(PIPELINE_STAGES[PIPELINE_STAGES.length - 1].probability).toBe(100);
+  it('should have lead at 10% and won at 100%', () => {
+    expect(PIPELINE_STAGES.find(s => s.id === 'lead')?.probability).toBe(10);
+    expect(PIPELINE_STAGES.find(s => s.id === 'won')?.probability).toBe(100);
   });
 
   it('should have labels for all stages', () => {
@@ -63,7 +67,7 @@ describe('PIPELINE_STAGES configuration', () => {
 describe('Pipeline Deal Grouping Logic', () => {
   const groupDealsByStage = (deals: { id: string; status: string }[]) => {
     const groups: Record<PipelineStageId, typeof deals> = {
-      lead: [], qualified: [], proposal: [], negotiation: [], closed: [],
+      lead: [], qualified: [], proposal: [], negotiation: [], won: [], lost: [], closed: [],
     };
     deals.forEach(deal => {
       const status = deal.status as PipelineStageId;

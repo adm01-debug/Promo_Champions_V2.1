@@ -292,17 +292,18 @@ export const PipelineBoard = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory md:snap-none">
+        <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory md:snap-none 2xl:grid 2xl:grid-cols-7 2xl:overflow-x-visible">
           {currentStages.map((stage) => (
-            <PipelineColumn
-              key={stage.id}
-              stage={stage}
-              deals={currentDealsByStage?.[stage.id] || []}
-              probabilities={isDefaultPipeline ? probabilities : undefined}
-              leadScores={isDefaultPipeline ? leadScores : undefined}
-              activeCadences={isDefaultPipeline ? activeCadences : undefined}
-              icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
-            />
+            <div key={stage.id} className="2xl:min-w-0">
+              <PipelineColumn
+                stage={stage}
+                deals={currentDealsByStage?.[stage.id] || []}
+                probabilities={isDefaultPipeline ? probabilities : undefined}
+                leadScores={isDefaultPipeline ? leadScores : undefined}
+                activeCadences={isDefaultPipeline ? activeCadences : undefined}
+                icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
+              />
+            </div>
           ))}
         </div>
 

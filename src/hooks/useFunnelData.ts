@@ -45,7 +45,7 @@ export const useFunnelData = (timeframe: number = 30) => {
       if (sError) throw sError;
 
       // Define funnel stages in order
-      const stageOrder = ['lead', 'prospecting', 'qualified', 'proposal', 'negotiation'];
+      const stageOrder = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'lost', 'closed'];
 
       // Count unique sales per stage from history
       const stageGroups = new Map<string, Set<string>>();
@@ -86,7 +86,7 @@ export const useFunnelData = (timeframe: number = 30) => {
         return result;
       });
 
-      const wonSales = (sales || []).filter(s => s.status === 'completed');
+      const wonSales = (sales || []).filter(s => s.status === 'completed' || s.status === 'won');
       const overallConversion = totalDeals > 0
         ? (wonSales.length / totalDeals) * 100
         : 0;
