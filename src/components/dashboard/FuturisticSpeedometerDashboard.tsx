@@ -5,7 +5,7 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw } from "lucide-react";
+import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileJson, FileText as FileTextIcon } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -101,6 +102,7 @@ const Speedometer = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSize, setCurrentSize] = useState(size);
   const [isDrilldownOpen, setIsDrilldownOpen] = useState(false);
+  const [drilldownPeriod, setDrilldownPeriod] = useState<KPIPeriod>("current_month");
   
   const colors = accentMap[accent];
   const range = max - min;
@@ -108,6 +110,23 @@ const Speedometer = ({
 
   const statusLabel = animatedPct >= 0.8 ? "Excelente" : animatedPct >= 0.5 ? "Bom" : animatedPct >= 0.3 ? "Atenção" : "Crítico";
   const statusColor = animatedPct >= 0.8 ? "text-success" : animatedPct >= 0.5 ? "text-primary" : animatedPct >= 0.3 ? "text-warning" : "text-destructive";
+
+  const handleExportCSV = () => {
+    if (!drilldownData.length) return;
+    const headers = ["Period", "Value"];
+    const rows = drilldownData.map(d => [d.name, d.value]);
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `drilldown_${label.toLowerCase()}_${drilldownPeriod}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
 
   const s = currentSize;
@@ -227,11 +246,12 @@ const Speedometer = ({
       </div>
 
       <Dialog open={isDrilldownOpen} onOpenChange={setIsDrilldownOpen}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DialogTrigger asChild>
-                <div className="relative cursor-pointer hover:brightness-110 transition-all" style={{ width: s, height: s }}>
+        <DialogTrigger asChild>
+          <div className="relative cursor-pointer hover:brightness-110 transition-all flex flex-col items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="relative" style={{ width: s, height: s }}>
               {theme === "cyber" && !isSmallScreen && (
                 <motion.div
                   className="absolute inset-0 rounded-full blur-3xl pointer-events-none"
@@ -330,38 +350,60 @@ const Speedometer = ({
                 </circle>
               </svg>
             </div>
-          </DialogTrigger>
-        </TooltipTrigger>
+          </TooltipTrigger>
           <TooltipContent className="bg-popover/95 backdrop-blur-xl border-primary/20 p-3 shadow-2xl">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Status</span>
-                <span className={cn("text-xs font-mono font-bold", colors.text)}>{label}</span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Telemetria</span>
-                <span className="text-xs font-mono font-bold text-foreground">
-                  {formatValue ? formatValue(value) : value.toLocaleString("pt-BR")} {unit}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Eficiência</span>
-                <span className="text-xs font-mono font-bold text-foreground">{percentStr}</span>
-              </div>
-              <div className="w-full h-1 bg-muted/30 rounded-full mt-1 overflow-hidden">
-                <motion.div 
-                  className="h-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: percentStr }}
-                  style={{ backgroundColor: colors.stroke }}
-                />
-              </div>
+            <div className="space-y-1.5 text-center">
+              <p className="text-[10px] uppercase font-bold text-primary tracking-widest">{label}</p>
+              <p className="text-xs font-mono">Clique para detalhes e exportação</p>
             </div>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
+      <div className="mt-4 flex flex-col items-center gap-1 w-full pointer-events-none">
+        <div
+          className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
+          style={{
+            fontSize: Math.max(22, s * 0.16),
+            textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
+          }}
+        >
+          {displayValue}
+        </div>
+        <div
+          className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
+          style={{ fontSize: Math.max(8, s * 0.04) }}
+        >
+          max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+        </div>
+                  </div>
+                </TooltipTrigger>
+              </Tooltip>
+            </TooltipProvider>
+
+            <div className="mt-4 flex flex-col items-center gap-1 w-full pointer-events-none">
+              <div
+                className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
+                style={{
+                  fontSize: Math.max(22, s * 0.16),
+                  textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
+                }}
+              >
+                {displayValue}
+              </div>
+              <div
+                className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
+                style={{ fontSize: Math.max(8, s * 0.04) }}
+              >
+                max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
+              </div>
+            </div>
+          </div>
+        </DialogTrigger>
       <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-border/40 shadow-2xl p-0 overflow-hidden rounded-2xl">
+
+
+
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -371,13 +413,31 @@ const Speedometer = ({
               <div>
                 <DialogTitle className="text-xl font-display font-bold">{label}</DialogTitle>
                 <DialogDescription className="text-sm font-medium mt-0.5">
-                  Análise Detalhada de Performance e Origem dos Dados
+                  Análise Detalhada e Origem dos Dados
                 </DialogDescription>
               </div>
             </div>
-            <Badge variant="outline" className={cn("px-3 py-1 font-mono uppercase tracking-wider border-current/20", statusColor, "bg-current/10")}>
-              Status: {statusLabel}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 p-1 bg-muted/40 rounded-lg border border-border/40">
+                {PERIOD_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setDrilldownPeriod(opt.value)}
+                    className={cn(
+                      "px-2 py-1 text-[9px] font-mono uppercase tracking-wider rounded transition-all",
+                      drilldownPeriod === opt.value 
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+                    )}
+                  >
+                    {opt.label.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+              <Badge variant="outline" className={cn("px-3 py-1 font-mono uppercase tracking-wider border-current/20", statusColor, "bg-current/10")}>
+                {statusLabel}
+              </Badge>
+            </div>
           </div>
         </DialogHeader>
 
@@ -393,6 +453,20 @@ const Speedometer = ({
                 </p>
               </div>
             )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <Target className="h-3 w-3" /> KPIs no Período Selecionado
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={handleExportCSV}>
+                  <Download className="h-3 w-3" /> CSV
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 text-[10px] font-mono gap-1.5 border border-border/40 bg-background/40" onClick={() => window.print()}>
+                  <FileTextIcon className="h-3 w-3" /> PDF/Print
+                </Button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 rounded-xl bg-card border border-border/40 shadow-sm flex flex-col items-center text-center">
@@ -509,23 +583,6 @@ const Speedometer = ({
       </DialogContent>
     </Dialog>
 
-      <div className="mt-4 flex flex-col items-center gap-1 w-full">
-        <div
-          className={cn("font-mono font-black tabular-nums tracking-tight leading-none transition-all duration-300", colors.text)}
-          style={{
-            fontSize: Math.max(22, s * 0.16),
-            textShadow: theme === "cyber" ? `0 0 24px ${colors.glow}, 0 0 48px ${colors.glow}` : "none",
-          }}
-        >
-          {displayValue}
-        </div>
-        <div
-          className="text-muted-foreground/70 font-mono uppercase tracking-[0.2em]"
-          style={{ fontSize: Math.max(8, s * 0.04) }}
-        >
-          max {formatValue ? formatValue(max) : max.toLocaleString("pt-BR")}
-        </div>
-      </div>
     </motion.div>
   );
 };
