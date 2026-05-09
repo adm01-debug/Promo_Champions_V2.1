@@ -223,6 +223,71 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               )}
             />
 
+            {/* Qualification MQL Fields */}
+            {selectedOutcome === "qualified" && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-3 overflow-hidden"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-primary">Qualificação de Lead (MQL)</h3>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="pain_points"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Dores / Desafios</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: Baixa conversão" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="budget_range"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Budget Estimado</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: R$ 10k-50k" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="timeline"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Timeline</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: 3 meses" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="decision_criteria"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-[10px] text-muted-foreground">Critérios de Decisão</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ex: Preço, ROI" className="h-8 text-xs bg-background" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+            )}
+
             {/* Outcome */}
             <FormField
               control={form.control}
