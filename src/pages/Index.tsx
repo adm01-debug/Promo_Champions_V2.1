@@ -4,12 +4,8 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { cn } from "@/lib/utils";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
-import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
-import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
-import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
 // Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
@@ -21,7 +17,6 @@ import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkel
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
-import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import {
   DollarSign,
   ShoppingBag,
@@ -108,13 +103,13 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-black/40 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
+                <Button variant="outline" className="bg-card/60 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
                   <Calendar className="mr-2 h-4 w-4" />
                   PERÍODO: {PERIOD_LABELS[period].label}
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black/90 border-primary/30 backdrop-blur-xl">
+              <DropdownMenuContent align="end" className="bg-popover/95 border-primary/30 backdrop-blur-xl">
                 {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map((p) => (
                   <DropdownMenuItem 
                     key={p} 
@@ -144,8 +139,7 @@ const Index = () => {
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
             {/* KPI Overview */}
-            {true && (
-              <motion.div 
+            <motion.div 
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -235,7 +229,6 @@ const Index = () => {
                   </motion.div>
                 </motion.div>
               </motion.div>
-            )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
             <Tabs 
