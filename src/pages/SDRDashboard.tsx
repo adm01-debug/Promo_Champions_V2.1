@@ -31,8 +31,23 @@ import {
   Snowflake,
   Clock,
   TrendingUp,
-  Zap
+  Zap,
+  Download,
+  FileJson,
+  FileText,
+  Search,
+  Sparkles,
+  Trophy
 } from "lucide-react";
+import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
+import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
+import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 import { useDialerQueues, useRebuildQueue, useNextItem } from "@/hooks/dialer/usePowerDialer";
 import { toast } from "sonner";
