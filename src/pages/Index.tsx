@@ -103,13 +103,13 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-black/40 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
+                <Button variant="outline" className="bg-card/60 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
                   <Calendar className="mr-2 h-4 w-4" />
                   PERÍODO: {PERIOD_LABELS[period].label}
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black/90 border-primary/30 backdrop-blur-xl">
+              <DropdownMenuContent align="end" className="bg-popover/95 border-primary/30 backdrop-blur-xl">
                 {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map((p) => (
                   <DropdownMenuItem 
                     key={p} 
