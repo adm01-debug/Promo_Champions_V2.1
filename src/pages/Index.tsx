@@ -229,7 +229,6 @@ const Index = () => {
                   </motion.div>
                 </motion.div>
               </motion.div>
-            )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
             <Tabs 
