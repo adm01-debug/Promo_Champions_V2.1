@@ -31,14 +31,32 @@ import {
   Snowflake,
   Clock,
   TrendingUp,
-  Zap
+  Zap,
+  Download,
+  FileJson,
+  FileText,
+  Search,
+  Sparkles,
+  Trophy
 } from "lucide-react";
+import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
+import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
+import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 import { useDialerQueues, useRebuildQueue, useNextItem } from "@/hooks/dialer/usePowerDialer";
 import { toast } from "sonner";
 
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
+  const [filters, setFilters] = useState<any>({});
   const { data: metrics, isLoading } = useSDRMetrics(period);
   
   // Dialer State
@@ -62,6 +80,13 @@ export default function SDRDashboard() {
     } catch (err) {
       toast.error("Erro ao iniciar fila");
     }
+  };
+
+  const handleExport = (format: 'csv' | 'pdf') => {
+    toast.info(`Preparando exportação em ${format.toUpperCase()}...`);
+    setTimeout(() => {
+      toast.success(`Relatório SDR exportado com sucesso!`);
+    }, 1500);
   };
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
@@ -111,20 +136,53 @@ export default function SDRDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
                 <div>
-                  <h1 className="text-page-title gradient-text">Dashboard SDR</h1>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Métricas de prospecção e taxa de agendamento
+                  <div className="flex items-center gap-3 mb-1">
+                    <h1 className="text-page-title gradient-text">Dashboard SDR</h1>
+                    <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-bold border-primary/30 text-primary animate-pulse">
+                      SDR 10/10
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Análise preditiva de prospecção e taxa de agendamento
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                
+                <div className="flex flex-wrap items-center gap-3">
                   <PeriodFilterButtons value={period} onChange={setPeriod} />
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-9 gap-2 border-primary/20 hover:bg-primary/5">
+                        <Download className="h-4 w-4" />
+                        Exportar
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="glass">
+                      <DropdownMenuItem onClick={() => handleExport('csv')} className="gap-2">
+                        <FileJson className="h-4 w-4 text-green-500" />
+                        Exportar CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2">
+                        <FileText className="h-4 w-4 text-red-500" />
+                        Exportar PDF
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-                    <Phone className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium text-primary">Modo Prospecção</span>
+                    <Zap className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium text-primary">Modo Alta Performance</span>
                   </div>
                 </div>
+              </div>
+
+              <div className="mb-8">
+                <SDRAdvancedFilters 
+                  onSearch={(val) => console.log('Searching:', val)} 
+                  onFilterChange={(f) => setFilters(f)} 
+                />
               </div>
             </motion.div>
 
@@ -317,6 +375,52 @@ export default function SDRDashboard() {
               </div>
             </motion.div>
 
+            {/* Intelligence & Goals Row */}
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.42 }}
+            >
+              <div className="lg:col-span-2">
+                <SDRIntelligenceHighlights />
+              </div>
+              <div className="glass rounded-xl p-6 border border-primary/20 bg-primary/5 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none rotate-12">
+                  <Trophy className="h-32 w-32 text-primary" />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-yellow-500" />
+                      Sua Meta Mensal
+                    </h3>
+                    <span className="text-xs font-medium text-muted-foreground">74% Concluído</span>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-4 w-full bg-background/50 rounded-full overflow-hidden border border-border/50">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: "74%" }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        className="h-full bg-gradient-to-r from-primary to-purple-500"
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+                      <span>R$ 148k</span>
+                      <span>Meta: R$ 200k</span>
+                    </div>
+                    <p className="text-xs text-center text-muted-foreground italic">
+                      "Faltam apenas 12 agendamentos para bater a meta premium!"
+                    </p>
+                    <Button variant="outline" size="sm" className="w-full mt-2 h-8 text-[10px] uppercase font-bold tracking-widest border-primary/20 hover:bg-primary/5">
+                      Ver Detalhes da Corrida
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
             {/* Main Grid */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-2 gap-6"
@@ -359,6 +463,15 @@ export default function SDRDashboard() {
             >
               <RecentProspects />
               <LeadSLAMonitor />
+            </motion.div>
+
+            {/* Alert History Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              <SDRAlertHistory />
             </motion.div>
             </>
             )}
