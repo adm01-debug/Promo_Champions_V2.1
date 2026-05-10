@@ -4,12 +4,8 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { cn } from "@/lib/utils";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
-import { SeasonalEventBanner } from "@/components/gamification/SeasonalEventBanner";
-import { FlashSalesBanner } from "@/components/gamification/FlashSalesBanner";
-import ProfilePerformanceCard from "@/components/profile/ProfilePerformanceCard";
 // Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
