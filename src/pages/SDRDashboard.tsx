@@ -42,6 +42,7 @@ import {
 import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
