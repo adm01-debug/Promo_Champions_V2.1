@@ -2181,3 +2181,45 @@
 a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
 }
+
+@layer utilities {
+  @keyframes progress {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(-20%); }
+    100% { transform: translateX(100%); }
+  }
+  .animate-progress {
+    animation: progress 2s infinite linear;
+    width: 30%;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .glass, .backdrop-blur-md, .backdrop-blur-xl {
+    backdrop-filter: none !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+  }
+  button, .Button {
+    display: none !important;
+  }
+  .Card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
+  }
+  h1, h2, h3, h4, .font-black {
+    color: black !important;
+  }
+  /* Force grid layout in print if needed */
+  .grid {
+    display: grid !important;
+  }
+}
