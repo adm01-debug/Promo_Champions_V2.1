@@ -432,13 +432,16 @@ export default function SDRDashboard() {
 
             {/* Intelligence & Goals Row */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-4 gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.42 }}
             >
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-1">
                 <SDRIntelligenceHighlights />
+              </div>
+              <div className="lg:col-span-2">
+                <PredictiveSuccessMap />
               </div>
               <div className="glass rounded-xl p-6 border border-primary/20 bg-primary/5 flex flex-col justify-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none rotate-12">
