@@ -7,61 +7,43 @@ import { MessageSquare, ThumbsUp, ThumbsDown, AlertTriangle } from "lucide-react
 export const SDRConversationInsights = () => {
   // Mock data for the demonstration of 10/10 excellence
   const sentimentData = [
-    { name: "Positivo", value: 65, color: "#10b981" },
-    { name: "Neutro", value: 25, color: "#6366f1" },
-    { name: "Negativo", value: 10, color: "#f43f5e" }
+    { sentiment: "positive", label: "Positivo", value: 65, color: "#10b981" },
+    { sentiment: "neutral", label: "Neutro", value: 25, color: "#6366f1" },
+    { sentiment: "negative", label: "Negativo", value: 10, color: "#f43f5e" }
+  ];
+
+  const objectionsData = [
+    { label: "Preço muito alto", count: 14 },
+    { label: "Sem tempo para reunião", count: 9 },
+    { label: "Já trabalha com concorrente", count: 7 },
+    { label: "Falta de feature específica", count: 4 }
   ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="glass border-primary/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-primary" />
-            Sentimento Médio das Ligações
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <div className="w-full sm:w-1/2 h-[180px]">
-              <SentimentDistributionCard 
-                data={sentimentData} 
-                compact 
-              />
+      <div className="relative group">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+        <div className="relative">
+          <SentimentDistributionCard data={sentimentData} />
+          <div className="absolute top-12 right-6 space-y-3 hidden sm:block">
+            <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-2 max-w-[180px]">
+              <ThumbsUp className="h-3 w-3 text-green-500 shrink-0" />
+              <p className="text-[9px] text-muted-foreground leading-tight">Clareza na proposta de valor inicial.</p>
             </div>
-            <div className="w-full sm:w-1/2 space-y-4">
-              <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-3">
-                <ThumbsUp className="h-4 w-4 text-green-500" />
-                <div>
-                  <p className="text-[11px] font-bold text-green-500">Ponto Forte</p>
-                  <p className="text-[10px] text-muted-foreground">Clareza na proposta de valor inicial.</p>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-3">
-                <ThumbsDown className="h-4 w-4 text-red-500" />
-                <div>
-                  <p className="text-[11px] font-bold text-red-500">A Melhorar</p>
-                  <p className="text-[10px] text-muted-foreground">Lidar com hesitação de preço prematura.</p>
-                </div>
-              </div>
+            <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2 max-w-[180px]">
+              <ThumbsDown className="h-3 w-3 text-red-500 shrink-0" />
+              <p className="text-[9px] text-muted-foreground leading-tight">Lidar com hesitação de preço.</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="glass border-primary/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
-            Top Objeções Detectadas (IA)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px]">
-            <ObjectionsTrendChart compact />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="relative group">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+        <div className="relative">
+          <ObjectionsTrendChart data={objectionsData} />
+        </div>
+      </div>
     </div>
   );
 };
