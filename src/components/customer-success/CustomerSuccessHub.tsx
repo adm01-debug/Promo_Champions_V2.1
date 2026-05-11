@@ -195,7 +195,8 @@ export function CustomerSuccessHub() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="p-6 hover:bg-muted/30 transition-all group relative overflow-hidden"
+                  onClick={() => handleAccountClick(acc)}
+                  className="p-6 hover:bg-muted/30 transition-all group relative overflow-hidden cursor-pointer"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="flex-1 min-w-0 space-y-3">
