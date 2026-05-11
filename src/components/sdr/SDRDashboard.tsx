@@ -17,6 +17,7 @@ import { RecentProspects } from "./RecentProspects";
 import { ActivityAuditTrail } from "./ActivityAuditTrail";
 import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
+import { SDRSequenceOrchestrator } from "./SDRSequenceOrchestrator";
 import { PerformanceCoaching } from "./PerformanceCoaching";
 import { SDRAchievementTracker } from "./SDRAchievementTracker";
 import { motion, AnimatePresence } from "framer-motion";
@@ -158,6 +159,10 @@ const SDRDashboardInner = () => {
               <Zap className="w-4 h-4" />
               AI Performance Coaching
             </TabsTrigger>
+            <TabsTrigger value="orchestrator" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Sequence Orchestrator
+            </TabsTrigger>
             <TabsTrigger value="activity" className="gap-2">
               <Clock className="w-4 h-4" />
               Activity Audit
@@ -166,6 +171,10 @@ const SDRDashboardInner = () => {
           
           <TabsContent value="coaching" className="mt-0 outline-none">
             <PerformanceCoaching />
+          </TabsContent>
+          
+          <TabsContent value="orchestrator" className="mt-0 outline-none">
+            <SDRSequenceOrchestrator />
           </TabsContent>
           
           <TabsContent value="activity" className="mt-0 outline-none">
