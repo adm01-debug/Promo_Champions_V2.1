@@ -151,7 +151,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
-        placeholder="Buscar deals e clientes... (Ctrl+K)"
+        placeholder="Buscar deals, clientes ou ações... (Ctrl+K)"
         value={query}
         onValueChange={setQuery}
       />
@@ -159,6 +159,25 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
         <CommandEmpty>
           {isLoading ? "Buscando..." : "Nenhum resultado encontrado."}
         </CommandEmpty>
+
+        <CommandGroup heading="Ações Rápidas">
+          <CommandItem onSelect={() => { setOpen(false); navigate("/"); }} className="cursor-pointer">
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>Ir para Dashboard</span>
+          </CommandItem>
+          <CommandItem onSelect={() => { setOpen(false); navigate("/pipeline"); }} className="cursor-pointer">
+            <Briefcase className="mr-2 h-4 w-4" />
+            <span>Abrir Pipeline</span>
+          </CommandItem>
+          <CommandItem onSelect={() => { setOpen(false); navigate("/sales-enablement"); }} className="cursor-pointer">
+            <BookOpen className="mr-2 h-4 w-4" />
+            <span>Abrir Enablement Hub</span>
+          </CommandItem>
+          <CommandItem onSelect={() => { setOpen(false); navigate("/conversational-intelligence"); }} className="cursor-pointer">
+            <Headphones className="mr-2 h-4 w-4" />
+            <span>Inteligência de Chamadas</span>
+          </CommandItem>
+        </CommandGroup>
 
         {clients.length > 0 && (
           <CommandGroup heading="Clientes">
