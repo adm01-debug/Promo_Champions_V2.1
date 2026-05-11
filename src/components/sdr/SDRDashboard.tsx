@@ -14,13 +14,16 @@ import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
 import { SchedulingRateGauge } from "./SchedulingRateGauge";
 import { RecentProspects } from "./RecentProspects";
+import { ActivityAuditTrail } from "./ActivityAuditTrail";
 import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
+import { SDRSequenceOrchestrator } from "./SDRSequenceOrchestrator";
 import { PerformanceCoaching } from "./PerformanceCoaching";
 import { SDRAchievementTracker } from "./SDRAchievementTracker";
 import { motion, AnimatePresence } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
+import { SDRCommandBar } from "./SDRCommandBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SDRDashboardInner = () => {
@@ -83,6 +86,8 @@ const SDRDashboardInner = () => {
       animate="visible"
       className="space-y-8"
     >
+      <SDRCommandBar />
+      
       {/* Upper Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((card, idx) => (
@@ -157,6 +162,10 @@ const SDRDashboardInner = () => {
               <Zap className="w-4 h-4" />
               AI Performance Coaching
             </TabsTrigger>
+            <TabsTrigger value="orchestrator" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Sequence Orchestrator
+            </TabsTrigger>
             <TabsTrigger value="activity" className="gap-2">
               <Clock className="w-4 h-4" />
               Activity Audit
@@ -167,14 +176,12 @@ const SDRDashboardInner = () => {
             <PerformanceCoaching />
           </TabsContent>
           
+          <TabsContent value="orchestrator" className="mt-0 outline-none">
+            <SDRSequenceOrchestrator />
+          </TabsContent>
+          
           <TabsContent value="activity" className="mt-0 outline-none">
-            <div className="glass border-primary/20 rounded-xl p-8 flex flex-col items-center justify-center text-center">
-              <LayoutDashboard className="w-12 h-12 text-primary/40 mb-4" />
-              <h3 className="text-lg font-bold">Activity Audit em Desenvolvimento</h3>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Estamos processando seus logs de chamadas e mensagens para gerar um mapa de calor de produtividade detalhado.
-              </p>
-            </div>
+            <ActivityAuditTrail />
           </TabsContent>
         </Tabs>
       </motion.div>

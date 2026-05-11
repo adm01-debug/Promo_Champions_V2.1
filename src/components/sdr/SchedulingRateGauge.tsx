@@ -207,8 +207,14 @@ export function SchedulingRateGauge({
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((rate / 30) * 100, 100)}%` }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
-                  className={cn("h-full shadow-[0_0_10px_currentColor]", getRateColor(rate).replace('text-', 'bg-'))}
-                />
+                  className={cn("h-full shadow-[0_0_10px_currentColor] relative overflow-hidden", getRateColor(rate).replace('text-', 'bg-'))}
+                >
+                  <motion.div 
+                    className="absolute inset-0 bg-white/30"
+                    animate={{ left: ["-100%", "100%"] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  />
+                </motion.div>
               </div>
             </div>
 
