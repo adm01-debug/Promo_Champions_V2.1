@@ -433,9 +433,10 @@ export function LeadScoringDashboard() {
 
                 return (
                   <div key={lead.id}
+                    onClick={() => lead.bestDealId && setExplainSaleId(lead.bestDealId)}
                     className={cn(
-                      "group relative flex items-center gap-6 p-5 transition-all duration-500",
-                      "hover:bg-primary/[0.02] hover:backdrop-blur-sm",
+                      "group relative flex items-center gap-6 p-5 transition-all duration-500 cursor-pointer",
+                      "hover:bg-primary/[0.04] hover:backdrop-blur-md",
                       idx === 0 && "bg-primary/[0.03] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary"
                     )}
                   >
