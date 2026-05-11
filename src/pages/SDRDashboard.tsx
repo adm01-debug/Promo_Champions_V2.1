@@ -39,9 +39,14 @@ import {
   Sparkles,
   Trophy
 } from "lucide-react";
+import { exportToCSV } from "@/lib/csvExporter";
+import { exportToPDF } from "@/lib/pdfExporter";
+
 import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
+import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -57,7 +62,10 @@ import { toast } from "sonner";
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const [filters, setFilters] = useState<any>({});
-  const { data: metrics, isLoading } = useSDRMetrics(period);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const { data: metrics, isLoading } = useSDRMetrics(period, filters, searchTerm);
+
   
   // Dialer State
   const [activeQueueId, setActiveQueueId] = useState<string | null>(null);
@@ -82,12 +90,64 @@ export default function SDRDashboard() {
     }
   };
 
-  const handleExport = (format: 'csv' | 'pdf') => {
+  const handleExport = async (format: 'csv' | 'pdf') => {
+    if (!metrics) {
+      toast.error("Sem dados para exportar");
+      return;
+    }
+
     toast.info(`Preparando exportação em ${format.toUpperCase()}...`);
-    setTimeout(() => {
+    
+    const dataToExport = [
+      {
+        Métrica: "Total de Leads",
+        Valor: metrics.current.totalLeads,
+        Crescimento: `${metrics.changes.leads.toFixed(1)}%`
+      },
+      {
+        Métrica: "Leads Qualificados",
+        Valor: metrics.current.qualifiedLeads,
+        Crescimento: `${metrics.changes.qualified.toFixed(1)}%`
+      },
+      {
+        Métrica: "Reuniões Agendadas",
+        Valor: metrics.current.meetingsScheduled,
+        Crescimento: `${metrics.changes.meetings.toFixed(1)}%`
+      },
+      {
+        Métrica: "Taxa de Agendamento",
+        Valor: `${metrics.current.schedulingRate.toFixed(1)}%`,
+        Crescimento: `${metrics.changes.schedulingRate.toFixed(1)}%`
+      },
+      {
+        Métrica: "Leads Quentes",
+        Valor: metrics.current.hotLeads,
+        Crescimento: "-"
+      },
+      {
+        Métrica: "Prospects Ativos",
+        Valor: metrics.current.activeProspects,
+        Crescimento: "-"
+      }
+    ];
+
+    try {
+      if (format === 'csv') {
+        await exportToCSV(dataToExport, `relatorio-sdr-${period}-${new Date().toISOString().split('T')[0]}`);
+      } else {
+        await exportToPDF(
+          dataToExport, 
+          `relatorio-sdr-${period}`,
+          `Relatório de Performance SDR - ${periodLabel}`
+        );
+      }
       toast.success(`Relatório SDR exportado com sucesso!`);
-    }, 1500);
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Erro ao exportar relatório");
+    }
   };
+
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
   
@@ -180,10 +240,11 @@ export default function SDRDashboard() {
 
               <div className="mb-8">
                 <SDRAdvancedFilters 
-                  onSearch={(val) => console.log('Searching:', val)} 
+                  onSearch={(val) => setSearchTerm(val)} 
                   onFilterChange={(f) => setFilters(f)} 
                 />
               </div>
+
             </motion.div>
 
             {/* Hero Metrics - Gauges Row */}
@@ -420,6 +481,21 @@ export default function SDRDashboard() {
                 </div>
               </div>
             </motion.div>
+            
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.44 }}
+            >
+              <div className="lg:col-span-1">
+                <MQLQualificationForm />
+              </div>
+              <div className="lg:col-span-2">
+                <SDRAlertHistory />
+              </div>
+            </motion.div>
+
 
             {/* Main Grid */}
             <motion.div 
