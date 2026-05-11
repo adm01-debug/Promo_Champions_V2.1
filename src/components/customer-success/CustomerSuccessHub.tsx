@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { ChurnRiskDetailDialog } from "./ChurnRiskDetailDialog";
 
 const RISK_VARIANTS: Record<AccountHealth["churn_risk"], string> = {
   low: "bg-success/15 text-success border-success/30",
