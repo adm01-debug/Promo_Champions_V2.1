@@ -31,6 +31,11 @@ export interface RevenueForecastResponse {
   narrative: string;
   risks: string[];
   opportunities: string[];
+  accuracy?: {
+    avg_deviation: number;
+    last_period_accuracy: number;
+    trend: 'improving' | 'stable' | 'declining';
+  };
   generated_at: string;
 }
 
