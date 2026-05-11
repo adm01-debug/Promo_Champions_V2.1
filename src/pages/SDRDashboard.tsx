@@ -247,6 +247,15 @@ export default function SDRDashboard() {
 
             </motion.div>
 
+            {/* Achievement Tracker */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+            >
+              <SDRAchievementTracker />
+            </motion.div>
+
             {/* Hero Metrics - Gauges Row */}
             <motion.div
               className="grid grid-cols-1 lg:grid-cols-2 gap-6"
