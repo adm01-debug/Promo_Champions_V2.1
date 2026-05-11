@@ -239,13 +239,14 @@ export default function SDRDashboard() {
                 </div>
               </div>
 
-              <div className="mb-8">
+              <div className="mb-6">
                 <SDRAdvancedFilters 
                   onSearch={(val) => setSearchTerm(val)} 
                   onFilterChange={(f) => setFilters(f)} 
                 />
               </div>
 
+              <SDRCommandBar />
             </motion.div>
 
             {/* Achievement Tracker */}
