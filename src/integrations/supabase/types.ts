@@ -6574,6 +6574,7 @@ export type Database = {
           client_id: string
           created_at: string
           grupo_nicho: string | null
+          icp_score: number | null
           id: string
           is_icp_match: boolean | null
           num_colaboradores: number | null
@@ -6586,6 +6587,7 @@ export type Database = {
           client_id: string
           created_at?: string
           grupo_nicho?: string | null
+          icp_score?: number | null
           id?: string
           is_icp_match?: boolean | null
           num_colaboradores?: number | null
@@ -6598,6 +6600,7 @@ export type Database = {
           client_id?: string
           created_at?: string
           grupo_nicho?: string | null
+          icp_score?: number | null
           id?: string
           is_icp_match?: boolean | null
           num_colaboradores?: number | null
@@ -6620,6 +6623,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      icp_parameters: {
+        Row: {
+          created_at: string | null
+          id: string
+          min_capital: number | null
+          min_employees: number | null
+          preferred_niches: string[] | null
+          target_industries: string[] | null
+          updated_at: string | null
+          weight_capital: number | null
+          weight_employees: number | null
+          weight_industry: number | null
+          weight_niche: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          min_capital?: number | null
+          min_employees?: number | null
+          preferred_niches?: string[] | null
+          target_industries?: string[] | null
+          updated_at?: string | null
+          weight_capital?: number | null
+          weight_employees?: number | null
+          weight_industry?: number | null
+          weight_niche?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          min_capital?: number | null
+          min_employees?: number | null
+          preferred_niches?: string[] | null
+          target_industries?: string[] | null
+          updated_at?: string | null
+          weight_capital?: number | null
+          weight_employees?: number | null
+          weight_industry?: number | null
+          weight_niche?: number | null
+        }
+        Relationships: []
       }
       inbound_reply_events: {
         Row: {
