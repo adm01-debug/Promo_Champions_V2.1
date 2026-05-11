@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Activity, MessageSquare, TrendingDown, TrendingUp, Info } from "lucide-react";
+import { AlertTriangle, Activity, MessageSquare, TrendingDown, TrendingUp, Info, Hourglass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DealRiskMeter } from "./DealRiskMeter";
 import { useDealHealthBatch } from "@/hooks/deal-intelligence/useDealHealth";
@@ -59,16 +59,16 @@ export function RiskAssessmentPanel() {
               
               <div className="grid grid-cols-2 gap-2">
                 <RiskFactor 
-                  icon={Activity} 
-                  label="Inatividade" 
+                  icon={Hourglass} 
+                  label="Tempo no Estágio" 
                   value={`${deal.days_in_stage || 0} dias`} 
                   status={deal.days_in_stage > 15 ? "risk" : "ok"} 
                 />
                 <RiskFactor 
-                  icon={MessageSquare} 
-                  label="Sentimento" 
-                  value="Negativo" 
-                  status="risk" 
+                  icon={Activity} 
+                  label="Inatividade" 
+                  value="12 dias" 
+                  status="warning" 
                 />
                 <RiskFactor 
                   icon={TrendingDown} 

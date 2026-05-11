@@ -8,12 +8,6 @@ import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselin
 import { StuckDealsPanel } from "@/components/deal-intelligence/velocity/StuckDealsPanel";
 import { StageBottlenecksChart } from "@/components/deal-intelligence/velocity/StageBottlenecksChart";
 import { ConversionOptimizerPanel } from "@/components/deal-intelligence/ConversionOptimizerPanel";
-import { WinLossSummaryCard } from "@/components/deal-intelligence/winloss/WinLossSummaryCard";
-import { WinFactorsChart } from "@/components/deal-intelligence/winloss/WinFactorsChart";
-import { LossFactorsChart } from "@/components/deal-intelligence/winloss/LossFactorsChart";
-import { LostStageBreakdown } from "@/components/deal-intelligence/winloss/LostStageBreakdown";
-import { CompetitorAnalysisTable } from "@/components/deal-intelligence/winloss/CompetitorAnalysisTable";
-import { WinLossInsightsPanel } from "@/components/deal-intelligence/winloss/WinLossInsightsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
 import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
@@ -21,6 +15,7 @@ import { RelationshipHealthGraph } from "@/components/deal-intelligence/committe
 import { NextBestActionPanel } from "@/components/deal-intelligence/NextBestActionPanel";
 import { useState } from "react";
 import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
+import WinLossIntelligence from "./WinLossIntelligence";
 
 export default function DealIntelligence() {
   const { data: weakDeals } = useWeakCoverageDeals();
@@ -111,19 +106,7 @@ export default function DealIntelligence() {
                 <ConversionOptimizerPanel />
               </TabsContent>
               <TabsContent value="winloss" className="mt-4">
-                <div className="rounded-xl border border-border/50 p-8 text-center bg-card">
-                  <Trophy className="h-10 w-10 text-primary mx-auto mb-3" />
-                  <h3 className="text-lg font-display font-semibold mb-1">Win/Loss agora é um módulo dedicado</h3>
-                  <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                    Filtros avançados, tendências, matriz de motivos, comparativo por vendedor e battle cards de concorrentes.
-                  </p>
-                  <a
-                    href="/win-loss-intelligence"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
-                  >
-                    Abrir módulo completo →
-                  </a>
-                </div>
+                <WinLossIntelligence />
               </TabsContent>
             </Tabs>
           </motion.div>

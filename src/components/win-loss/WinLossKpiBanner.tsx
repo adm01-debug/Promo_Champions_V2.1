@@ -29,11 +29,11 @@ interface Item {
 }
 
 const toneClasses: Record<Item["tone"], string> = {
-  success: "text-emerald-600 bg-emerald-500/10",
-  danger: "text-rose-600 bg-rose-500/10",
-  info: "text-sky-600 bg-sky-500/10",
+  success: "text-emerald-400 bg-emerald-500/10",
+  danger: "text-rose-400 bg-rose-500/10",
+  info: "text-sky-400 bg-sky-500/10",
   primary: "text-primary bg-primary/10",
-  warning: "text-amber-600 bg-amber-500/10",
+  warning: "text-amber-400 bg-amber-500/10",
 };
 
 export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, delta, forecast }: Props) {
@@ -57,7 +57,7 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
           transition={{ duration: 0.3, delay: idx * 0.05 }}
           whileHover={{ y: -2, transition: { type: "spring", stiffness: 380, damping: 22 } }}
         >
-          <Card className="border-border/50 transition-shadow hover:shadow-md">
+          <Card className="glass border-border/40 transition-shadow hover:shadow-md hover:border-primary/40">
             <CardContent className="p-3">
               <div className="flex items-center justify-between mb-1.5 gap-1">
                 <span className="text-[11px] uppercase tracking-wide text-muted-foreground truncate">{it.label}</span>
@@ -87,7 +87,7 @@ export function WinLossKpiBanner({ kpis, isLoading, onWinsClick, onLossesClick, 
       ))}
       {/* Wins/Losses inline visual */}
       <div className="col-span-2 sm:col-span-3 lg:col-span-6">
-        <Card className="border-border/50">
+        <Card className="glass border-border/40">
           <CardContent className="p-3 flex items-center gap-3">
             <TrendingDown className="h-4 w-4 text-muted-foreground rotate-180" />
             <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden flex">
