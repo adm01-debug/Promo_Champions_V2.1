@@ -16716,6 +16716,10 @@ export type Database = {
         Args: { _contact_id: string; _contact_type: string }
         Returns: number
       }
+      reconcile_forecast_accuracy: {
+        Args: { _days?: number }
+        Returns: undefined
+      }
       record_engagement_signal: {
         Args: {
           _contact_id: string
