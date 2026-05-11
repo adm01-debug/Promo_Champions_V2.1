@@ -119,7 +119,7 @@ export function ICPPerformanceChart() {
               <YAxis hide />
               <Tooltip 
                 contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
-                formatter={(value: number) => [new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value), 'Ticket Médio']}
+                formatter={(value: any) => [new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value)), 'Ticket Médio']}
               />
               <Bar dataKey="avgTicket" radius={[4, 4, 0, 0]} barSize={40}>
                 {stats?.map((entry, index) => (
