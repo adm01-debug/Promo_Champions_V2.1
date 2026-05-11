@@ -1,7 +1,7 @@
 import { useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Zap, Info } from "lucide-react";
+import { TrendingUp, Zap, Info, ShieldCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   ResponsiveContainer,
