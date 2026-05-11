@@ -1,11 +1,11 @@
-import { FC, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { FC, useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { RefreshCw, TrendingUp, Target, Activity } from "lucide-react";
+import { RefreshCw, TrendingUp, Target, Activity, Zap, History, ChevronRight } from "lucide-react";
 import { useRevenueForecast } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +19,7 @@ import { ScenarioCard } from "./ScenarioCard";
 import { ForecastNarrativeCard } from "./ForecastNarrativeCard";
 import { PipelineContributionChart } from "./PipelineContributionChart";
 import { ForecastScenarioSimulator } from "./ForecastScenarioSimulator";
+import { cn } from "@/lib/utils";
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
