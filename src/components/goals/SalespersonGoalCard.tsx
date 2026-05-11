@@ -44,6 +44,8 @@ function _SalespersonGoalCard({
   rank,
   level = 1,
   totalXP = 0,
+  predictedAttainment,
+  paceStatus,
 }: SalespersonGoalCardProps) {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
