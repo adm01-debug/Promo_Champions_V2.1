@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Medal, Trophy, TrendingUp, Sparkles } from 'lucide-react';
+import { Crown, Medal, Trophy, TrendingUp, Sparkles, Flame, Target, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
