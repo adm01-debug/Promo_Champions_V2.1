@@ -50,6 +50,7 @@ import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
 import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
 import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
 import { TargetSimulator } from "@/components/sdr/TargetSimulator";
+import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
