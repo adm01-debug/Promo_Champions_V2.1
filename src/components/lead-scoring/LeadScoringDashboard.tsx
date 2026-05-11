@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLeadScoring } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw, AlertTriangle, ShieldAlert } from "lucide-react";
+import { 
+  Target, TrendingUp, Flame, Thermometer, Snowflake, 
+  BarChart3, Info, Brain, RefreshCw, AlertTriangle, 
+  ShieldAlert, Download, Search, Filter, CheckCircle2,
+  Calendar, FileText, Activity
+} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
 import { LeadScoreDistribution } from "./LeadScoreDistribution";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const categoryConfig = {
   Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/20", label: "ELITE" },
