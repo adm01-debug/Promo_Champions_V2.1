@@ -95,6 +95,16 @@ const SDRDashboardInner = () => {
       animate="visible"
       className="space-y-8"
     >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+          <span className="text-[10px] font-mono font-bold text-success uppercase tracking-widest">Live Telemetry Active</span>
+        </div>
+        <div className="text-[10px] font-mono text-muted-foreground/60">
+          LAST_SYNC: {new Date().toLocaleTimeString()}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-8">
           <SDRCommandBar />
