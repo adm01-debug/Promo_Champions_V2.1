@@ -75,6 +75,13 @@ const KPICard = ({ icon: Icon, label, value, subtext, color, delay }: any) => (
 export function CustomerSuccessHub() {
   const { data, isLoading } = useCustomerSuccess();
   const [search, setSearch] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState<AccountHealth | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleAccountClick = (acc: AccountHealth) => {
+    setSelectedAccount(acc);
+    setDialogOpen(true);
+  };
 
   const filteredAccounts = useMemo(() => {
     if (!data?.accounts) return [];
