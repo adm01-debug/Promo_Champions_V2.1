@@ -76,10 +76,10 @@ export const ConversationalIntelligenceHub = () => {
       ) : data ? (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <KPICard icon={Mic} label="Chamadas" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% analisadas pela IA`} />
-            <KPICard icon={Clock} label="Tempo total" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} />
-            <KPICard icon={TrendingUp} label="Sentimento médio" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala -1 a +1" />
-            <KPICard icon={MessageSquare} label="Talk ratio (vendedor)" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} perguntas / call`} />
+            <KPICard icon={Mic} label="Chamadas" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% analisadas pela IA`} trend="+12%" />
+            <KPICard icon={Clock} label="Tempo total" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" />
+            <KPICard icon={TrendingUp} label="Sentimento médio" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala -1 a +1" trend="+0.05" />
+            <KPICard icon={MessageSquare} label="Talk ratio (vendedor)" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} perguntas / call`} trend="Ideal" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

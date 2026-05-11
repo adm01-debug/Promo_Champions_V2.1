@@ -62,7 +62,7 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
   };
 
   return (
-    <Card className="glass border-primary/20 bg-primary/5">
+    <Card className="glass border-primary/20 bg-primary/5 shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)]">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-display flex items-center gap-2">
           <Zap className="h-4 w-4 text-primary animate-pulse" />
