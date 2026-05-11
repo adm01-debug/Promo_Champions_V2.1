@@ -120,14 +120,18 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
 
       {/* Completed Battles */}
       {completedBattles.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-            <Trophy className="h-4 w-4" />
-            Encerradas ({completedBattles.length})
-          </h3>
-          {completedBattles.slice(0, 3).map((b: Battle) => (
-            <BattleCardItem key={b.id} battle={b} />
-          ))}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2 italic">
+              <Trophy className="h-4 w-4" />
+              Hall of Fame: Encerradas ({completedBattles.length})
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {completedBattles.slice(0, 4).map((b: Battle) => (
+              <BattleCardItem key={b.id} battle={b} />
+            ))}
+          </div>
         </div>
       )}
 
