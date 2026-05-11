@@ -210,15 +210,21 @@ export function LeadScoringDashboard() {
           </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mr-2">
+            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", connectionStatus === "connected" ? "bg-emerald-500" : "bg-rose-500")} />
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+              {connectionStatus === "connected" ? "Neural Link Active" : "Link Error"}
+            </span>
+          </div>
+
           <Button
             variant="outline"
-            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-[0_0_15px_rgba(var(--primary-rgb),0.05)]"
             onClick={async () => {
               const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
               if (ids.length > 0) {
                 await explainBatch.mutateAsync(ids.slice(0, 50));
-                // Invalidate query to update scores with trend history
                 await supabase.from('lead_score_trends').insert(
                   allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score }))
                 );
@@ -228,6 +234,16 @@ export function LeadScoringDashboard() {
           >
             <Brain className={cn("h-4 w-4 mr-2", explainBatch.isPending && "animate-spin")} />
             Neural Analysis
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={exportToPDF}
+            disabled={isExporting}
+            className="h-12 px-6 rounded-xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Full Report
           </Button>
         </div>
       </div>
