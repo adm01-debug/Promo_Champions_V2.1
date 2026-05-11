@@ -248,6 +248,13 @@ export const RevenueForecastHub: FC = () => {
         </Card>
       )}
 
+      {/* Simulador What-If */}
+      <ForecastScenarioSimulator 
+        baseForecast={data.scenarios.realistic}
+        baseCoverage={data.metrics.total_open_pipeline / (data.metrics.goal_for_horizon || 1)}
+        baseWinRate={data.metrics.goal_for_horizon > 0 ? (data.scenarios.realistic / data.metrics.total_open_pipeline) : 0.2}
+      />
+
       {/* Insights IA */}
       <ForecastNarrativeCard
         narrative={data.narrative}
