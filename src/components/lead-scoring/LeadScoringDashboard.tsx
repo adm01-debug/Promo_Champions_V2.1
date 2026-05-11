@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useLeadScoring } from "@/hooks/useLeadScoring";
+import { useState, useMemo, useCallback } from "react";
+import { useLeadScoring, type ScoredLead } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -9,7 +9,7 @@ import {
   Target, TrendingUp, Flame, Thermometer, Snowflake, 
   BarChart3, Info, Brain, RefreshCw, AlertTriangle, 
   ShieldAlert, Download, Search, Filter, CheckCircle2,
-  Calendar, FileText, Activity
+  Calendar, FileText, Activity, UserPlus, Zap
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
