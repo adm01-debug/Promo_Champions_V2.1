@@ -74,7 +74,8 @@ export function LeadScoringDashboard() {
   const [attendedAlerts, setAttendedAlerts] = useState<Set<string>>(new Set());
   const explainBatch = useExplainBatch();
 
-  // Real-time synchronization
+  const [realtimeStatus, setRealtimeStatus] = useState<"connected" | "connecting" | "error">("connecting");
+
   useMemo(() => {
     const channel = supabase
       .channel('lead-scoring-realtime')
@@ -84,7 +85,11 @@ export function LeadScoringDashboard() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_churn_risk' }, () => {
         refetch();
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') setRealtimeStatus("connected");
+        else if (status === 'CLOSED') setRealtimeStatus("connecting");
+        else if (status === 'CHANNEL_ERROR') setRealtimeStatus("error");
+      });
 
     return () => {
       supabase.removeChannel(channel);
