@@ -310,36 +310,64 @@ export function TodaysCadenceTasks() {
 
                     {/* Action buttons */}
                     {!isNotesOpen && (
-                      <div className="flex items-center gap-2 pt-2">
-                        <Button
-                          size="sm"
-                          variant="glow"
-                          className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-                          onClick={() => quickAction(task.id, "complete")}
-                          disabled={completeTask.isPending}
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                          Concluir
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 text-xs gap-1 hover:bg-primary/5 border-border/50 hover:border-primary/40"
-                          onClick={() => handleAction(task.id, "complete")}
-                          title="Concluir com nota"
-                        >
-                          <MessageSquare className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 hover:scale-105 transition-all duration-200"
-                          onClick={() => handleAction(task.id, "skip")}
-                          disabled={skipTask.isPending}
-                        >
-                          <SkipForward className="h-3.5 w-3.5" />
-                          Pular
-                        </Button>
+                      <div className="flex flex-col gap-2 pt-2">
+                        {/* Deep Links for Multichannel */}
+                        {(step?.action_type === 'whatsapp' || step?.action_type === 'linkedin' || step?.action_type === 'call') && (
+                          <div className="flex gap-2 mb-1">
+                            {step?.action_type === 'whatsapp' && (sale as any)?.client_phone && (
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-7 text-[10px] gap-1.5 flex-1 bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
+                                onClick={() => window.open(`https://wa.me/${(sale as any).client_phone.replace(/\D/g, '')}`, '_blank')}
+                              >
+                                <MessageCircle className="h-3 w-3" /> Abrir WhatsApp
+                              </Button>
+                            )}
+                            {step?.action_type === 'linkedin' && (sale as any)?.client_linkedin && (
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-7 text-[10px] gap-1.5 flex-1 bg-blue-500/10 text-blue-600 border-blue-500/30 hover:bg-blue-500/20"
+                                onClick={() => window.open(String((sale as any).client_linkedin), '_blank')}
+                              >
+                                <Linkedin className="h-3 w-3" /> Ver LinkedIn
+                              </Button>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="glow"
+                            className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+                            onClick={() => quickAction(task.id, "complete")}
+                            disabled={completeTask.isPending}
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Concluir
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs gap-1 hover:bg-primary/5 border-border/50 hover:border-primary/40"
+                            onClick={() => handleAction(task.id, "complete")}
+                            title="Concluir com nota"
+                          >
+                            <MessageSquare className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs gap-1.5 hover:bg-muted/50 border-border/50 hover:border-primary/40 hover:scale-105 transition-all duration-200"
+                            onClick={() => handleAction(task.id, "skip")}
+                            disabled={skipTask.isPending}
+                          >
+                            <SkipForward className="h-3.5 w-3.5" />
+                            Pular
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
