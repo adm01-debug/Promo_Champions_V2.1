@@ -633,16 +633,17 @@ export function LeadScoringDashboard() {
                       </Tooltip>
 
                       {/* Explain IA Button */}
-                      {lead.bestDealId && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setExplainSaleId(lead.bestDealId!)}
-                          className="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary transition-all duration-500 shadow-sm"
-                        >
-                          <Brain className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLeadId(lead.id);
+                        }}
+                        className="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary transition-all duration-500 shadow-sm"
+                      >
+                        <Brain className="h-4 w-4" />
+                      </Button>
 
                       {/* Quick Status */}
                       <div className="hidden md:flex flex-col items-end gap-1 px-3">
