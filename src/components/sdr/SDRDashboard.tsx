@@ -183,6 +183,8 @@ const SDRDashboardInner = () => {
                 setSelectedLeadData(id === selectedLeadId ? null : { name, score });
               }}
               selectedLeadId={selectedLeadId}
+              searchTerm={searchTerm}
+              filters={filters}
             />
           </motion.div>
           

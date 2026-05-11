@@ -14,7 +14,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { motion } from "framer-motion";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
 
-export function RecentProspects({ onSelectLead, selectedLeadId }: { onSelectLead?: (id: string, name: string, score: number) => void, selectedLeadId?: string | null }) {
+export function RecentProspects({ 
+  onSelectLead, 
+  selectedLeadId,
+  searchTerm,
+  filters
+}: { 
+  onSelectLead?: (id: string, name: string, score: number) => void, 
+  selectedLeadId?: string | null,
+  searchTerm?: string,
+  filters?: any
+}) {
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
   const [internalSelectedLeadId, setInternalSelectedLeadId] = useState<string | null>(null);
@@ -22,12 +32,22 @@ export function RecentProspects({ onSelectLead, selectedLeadId }: { onSelectLead
   const currentSelectedId = selectedLeadId !== undefined ? selectedLeadId : internalSelectedLeadId;
 
   const { data: prospects, refetch } = useQuery({
-    queryKey: ["recent-prospects"],
+    queryKey: ["recent-prospects", searchTerm, filters],
     queryFn: async () => {
-      const { data: sales } = await supabase
+      let query = supabase
         .from("sales")
         .select("*")
-        .in("status", ["lead", "qualified"])
+        .in("status", ["lead", "qualified"]);
+
+      if (searchTerm) {
+        query = query.ilike("client_name", `%${searchTerm}%`);
+      }
+
+      if (filters?.status && filters.status !== 'all') {
+        query = query.eq('status', filters.status);
+      }
+
+      const { data: sales } = await query
         .order("created_at", { ascending: false })
         .limit(6);
 
