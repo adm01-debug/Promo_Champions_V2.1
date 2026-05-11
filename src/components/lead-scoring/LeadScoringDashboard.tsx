@@ -361,17 +361,18 @@ export function LeadScoringDashboard() {
                         <CheckCircle2 className="h-3 w-3 mr-1" />
                         Atendido
                       </Button>
-                      {lead.bestDealId && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => setExplainSaleId(lead.bestDealId!)}
-                          className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
-                        >
-                          <Activity className="h-3 w-3 mr-1" />
-                          Detalhes
-                        </Button>
-                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLeadId(lead.id);
+                        }}
+                        className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
+                      >
+                        <Activity className="h-3 w-3 mr-1" />
+                        Detalhes
+                      </Button>
                     </div>
                   </div>
                 ))
