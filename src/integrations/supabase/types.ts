@@ -12198,6 +12198,33 @@ export type Database = {
         }
         Relationships: []
       }
+      sdr_performance_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          outcome_mix_alert_enabled: boolean | null
+          rejection_rate_threshold: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          outcome_mix_alert_enabled?: boolean | null
+          rejection_rate_threshold?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          outcome_mix_alert_enabled?: boolean | null
+          rejection_rate_threshold?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       security_alert_history: {
         Row: {
           access_count: number
