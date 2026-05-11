@@ -118,6 +118,18 @@ function _SalespersonGoalCard({
                 Bônus Ativo
               </Badge>
             )}
+            {predictedAttainment !== undefined && (
+              <Badge 
+                variant="outline" 
+                className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border-none ${
+                  paceStatus === 'ahead' ? 'bg-success/20 text-success' : 
+                  paceStatus === 'on_track' ? 'bg-info/20 text-info' : 
+                  'bg-destructive/20 text-destructive'
+                }`}
+              >
+                Previsto: {predictedAttainment.toFixed(0)}%
+              </Badge>
+            )}
           </div>
         </div>
 
