@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { useEnablementAssets, useLogAssetUsage, useCreateAsset, type EnablementAsset } from "@/hooks/useSalesEnablement";
+import { useState, useMemo } from "react";
+import { 
+  useEnablementAssets, 
+  useLogAssetUsage, 
+  useCreateAsset, 
+  usePlaybooks,
+  useAssetEfficiency,
+  type EnablementAsset,
+  type Playbook 
+} from "@/hooks/useSalesEnablement";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +17,27 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { BookOpen, Eye, ExternalLink, Plus, Search, FileText, Video, Presentation, FileSpreadsheet } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { 
+  BookOpen, 
+  Eye, 
+  ExternalLink, 
+  Plus, 
+  Search, 
+  FileText, 
+  Video, 
+  Presentation, 
+  FileSpreadsheet, 
+  Target, 
+  TrendingUp, 
+  Shield, 
+  Zap,
+  BarChart3,
+  CheckCircle2,
+  Lock
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
   { value: "all", label: "Todos" },
@@ -30,6 +58,7 @@ const typeIcon = (t: string) => {
 
 const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
   const log = useLogAssetUsage();
+  const { data: efficiency } = useAssetEfficiency(asset.id);
   const Icon = typeIcon(asset.asset_type);
   const handleOpen = () => {
     log.mutate({ asset_id: asset.id, action: "view" });
@@ -47,12 +76,23 @@ const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
             {asset.view_count}
           </Badge>
         </div>
-        <CardTitle className="text-base mt-3 line-clamp-2">{asset.title}</CardTitle>
+        <CardTitle className="text-base mt-3 line-clamp-2 group-hover:text-primary transition-colors">{asset.title}</CardTitle>
         {asset.description && (
-          <CardDescription className="line-clamp-2">{asset.description}</CardDescription>
+          <CardDescription className="line-clamp-2 text-xs">{asset.description}</CardDescription>
         )}
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
+        {efficiency && efficiency.deals_influenced > 0 && (
+          <div className="p-2 rounded-lg bg-success/5 border border-success/20 space-y-1">
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-success">
+              <span>Eficiência de Conversão</span>
+              <span>{efficiency.win_rate_influenced.toFixed(1)}%</span>
+            </div>
+            <Progress value={Number(efficiency.win_rate_influenced)} className="h-1 bg-success/20" />
+            <p className="text-[9px] text-muted-foreground italic">Influenciou {efficiency.deals_influenced} deals fechados</p>
+          </div>
+        )}
+        
         <div className="flex flex-wrap gap-1">
           {asset.funnel_stage && <Badge variant="outline" className="text-xs">{asset.funnel_stage}</Badge>}
           {asset.tags.slice(0, 3).map((t) => (
