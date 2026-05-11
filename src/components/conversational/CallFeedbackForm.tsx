@@ -10,10 +10,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   recordingId: string;
+  clientId?: string | null;
   onSuccess?: () => void;
 }
 
-export function CallFeedbackForm({ recordingId, onSuccess }: Props) {
+export function CallFeedbackForm({ recordingId, clientId, onSuccess }: Props) {
   const [rating, setRating] = useState([50]);
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,8 +28,9 @@ export function CallFeedbackForm({ recordingId, onSuccess }: Props) {
     setIsSubmitting(true);
     try {
       // Registrar log detalhado de feedback manual
-      const { error } = await supabase.from('lead_detailed_logs').insert({
+      const { error } = await (supabase as any).from('lead_detailed_logs').insert({
         event_type: 'call_feedback',
+        client_id: clientId || undefined,
         action: 'Manual Manager Feedback',
         details: { 
           recording_id: recordingId,
