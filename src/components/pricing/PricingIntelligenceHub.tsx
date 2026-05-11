@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,9 +17,9 @@ import {
 } from "recharts";
 import { usePricingIntelligence, type PricingHealth } from "@/hooks/usePricingIntelligence";
 import { cn } from "@/lib/utils";
-import { DiscountOptimizer } from "./DiscountOptimizer";
-import { PriceElasticityChart } from "./PriceElasticityChart";
-import { RevenueLeakageCard } from "./RevenueLeakageCard";
+const DiscountOptimizer = lazy(() => import("./DiscountOptimizer").then(m => ({ default: m.DiscountOptimizer })));
+const PriceElasticityChart = lazy(() => import("./PriceElasticityChart").then(m => ({ default: m.PriceElasticityChart })));
+const RevenueLeakageCard = lazy(() => import("./RevenueLeakageCard").then(m => ({ default: m.RevenueLeakageCard })));
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
@@ -53,7 +53,7 @@ const healthMeta: Record<PricingHealth, { label: string; tone: string; ring: str
 };
 
 export function PricingIntelligenceHub() {
-  const [days, setDays] = useState<30 | 60 | 90>(30);
+  const [days, setDays] = useState<7 | 30 | 90>(30);
   const { data, isLoading } = usePricingIntelligence(days);
 
   const distribution = useMemo(
@@ -98,10 +98,10 @@ export function PricingIntelligenceHub() {
             Análise de descontos, margem e elasticidade dos seus deals.
           </p>
         </div>
-        <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 30 | 60 | 90)}>
+        <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)}>
           <TabsList>
+            <TabsTrigger value="7">7 dias</TabsTrigger>
             <TabsTrigger value="30">30 dias</TabsTrigger>
-            <TabsTrigger value="60">60 dias</TabsTrigger>
             <TabsTrigger value="90">90 dias</TabsTrigger>
           </TabsList>
         </Tabs>
@@ -153,18 +153,24 @@ export function PricingIntelligenceHub() {
       </div>
 
       {/* Revenue Leakage Map */}
-      <RevenueLeakageCard 
-        totalLost={k.revenue_lost}
-        discountLost={k.revenue_lost * 0.55}
-        competitorLost={k.revenue_lost * 0.30}
-        marginErosion={k.revenue_lost * 0.15}
-      />
+      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+        <RevenueLeakageCard 
+          totalLost={k.revenue_lost}
+          discountLost={k.revenue_lost * 0.55}
+          competitorLost={k.revenue_lost * 0.30}
+          marginErosion={k.revenue_lost * 0.15}
+        />
+      </Suspense>
 
       {/* Price Elasticity Chart */}
-      <PriceElasticityChart />
+      <Suspense fallback={<Skeleton className="h-80 w-full rounded-xl" />}>
+        <PriceElasticityChart />
+      </Suspense>
 
       {/* Simulator */}
-      <DiscountOptimizer />
+      <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
+        <DiscountOptimizer />
+      </Suspense>
 
       {/* Distribution chart */}
       <Card>

@@ -54,7 +54,7 @@ export interface PricingIntelligenceResponse {
   }[];
 }
 
-export function usePricingIntelligence(days: 30 | 60 | 90 = 30) {
+export function usePricingIntelligence(days: 7 | 30 | 90 = 30) {
   return useQuery<PricingIntelligenceResponse>({
     queryKey: ["pricing-intelligence", days],
     queryFn: async () => {
