@@ -89,7 +89,11 @@ export function PricingIntelligenceHub() {
   const k = data.kpis;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-info/5 blur-[100px] rounded-full pointer-events-none" />
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
