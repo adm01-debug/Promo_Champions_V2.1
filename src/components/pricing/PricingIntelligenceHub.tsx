@@ -173,9 +173,9 @@ export function PricingIntelligenceHub() {
       <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
         <RevenueLeakageCard 
           totalLost={k.revenue_lost}
-          discountLost={k.revenue_lost * 0.55}
-          competitorLost={k.revenue_lost * 0.30}
-          marginErosion={k.revenue_lost * 0.15}
+          discountLost={data.leakage_segments?.discount ?? k.revenue_lost * 0.55}
+          competitorLost={data.leakage_segments?.competitor ?? k.revenue_lost * 0.30}
+          marginErosion={data.leakage_segments?.erosion ?? k.revenue_lost * 0.15}
         />
       </Suspense>
 
