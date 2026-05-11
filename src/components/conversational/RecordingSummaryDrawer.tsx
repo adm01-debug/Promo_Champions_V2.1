@@ -18,6 +18,7 @@ import { ConversationMetricsCard } from "./metrics/ConversationMetricsCard";
 import { QuestionQualityCard } from "./questions/QuestionQualityCard";
 import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
 import { CoachingScorecardCard } from "./coaching/CoachingScorecardCard";
+import { CallFeedbackForm } from "./CallFeedbackForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IntentTracker, type Intent } from "./IntentTracker";
 import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
@@ -105,6 +106,7 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
             <ObjectionHandlingCard recordingId={rec.id} />
             <CriticalMomentsList recordingId={rec.id} />
             <CompetitorMentionsCard recordingId={rec.id} />
+            <CallFeedbackForm recordingId={rec.id} clientId={rec.sale_id} />
             <CoachingActionsList recordingId={rec.id} />
           </div>
         ) : null}
