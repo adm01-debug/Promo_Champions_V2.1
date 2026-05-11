@@ -49,6 +49,7 @@ import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
 import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
 import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
 import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
+import { TargetSimulator } from "@/components/sdr/TargetSimulator";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
