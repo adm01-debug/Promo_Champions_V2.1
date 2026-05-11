@@ -92,7 +92,7 @@ export function ICPPerformanceChart() {
               <YAxis hide />
               <Tooltip 
                 contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
-                formatter={(value: number) => [`${value.toFixed(1)}%`, 'Win Rate']}
+                formatter={(value: any) => [`${Number(value).toFixed(1)}%`, 'Win Rate']}
               />
               <Bar dataKey="winRate" radius={[4, 4, 0, 0]} barSize={40}>
                 {stats?.map((entry, index) => (
