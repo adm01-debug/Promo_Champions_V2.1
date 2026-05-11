@@ -1,11 +1,12 @@
 import { useMemo, useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight } from "lucide-react";
+import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight, ShieldCheck, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   ResponsiveContainer,
   BarChart,
