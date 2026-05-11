@@ -26,6 +26,7 @@ export function TeamGoalProgress({
   daysRemaining,
   dailyAverage,
   requiredDailyAverage,
+  predictedAttainment,
 }: TeamGoalProgressProps) {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
