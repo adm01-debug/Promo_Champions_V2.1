@@ -7,7 +7,10 @@ import { CompetencyRadar } from "@/components/analytics/CompetencyRadar";
 import { useCompetencyData } from "@/hooks/useCompetencyData";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Brain, LayoutDashboard } from "lucide-react";
+import { Sparkles, Brain, LayoutDashboard, Target } from "lucide-react";
+import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
+import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
+import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
 
 export const IntelligenceModule = () => {
   const { salesperson } = useAuth();
@@ -29,6 +32,10 @@ export const IntelligenceModule = () => {
             <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2">
               <Brain className="w-4 h-4" />
               Tactical Insights
+            </TabsTrigger>
+            <TabsTrigger value="sdr" className="data-[state=active]:bg-background gap-2">
+              <Target className="w-4 h-4" />
+              SDR Intelligence
             </TabsTrigger>
           </TabsList>
         </div>
@@ -65,6 +72,17 @@ export const IntelligenceModule = () => {
             </div>
             <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
               <SelfBenchmarkWidget />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="sdr" className="mt-0 outline-none space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8 space-y-6">
+              <PredictiveSuccessMap />
+              <PerformanceCoaching />
+            </div>
+            <div className="lg:col-span-4">
+              <LeadScoreBreakdown />
             </div>
           </div>
         </TabsContent>
