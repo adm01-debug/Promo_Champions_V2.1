@@ -262,7 +262,12 @@ export function CustomerSuccessHub() {
                             acc.health_score > 75 ? "bg-success" : acc.health_score > 40 ? "bg-warning" : "bg-destructive"
                           )}
                         />
-                      </div>
+      <ChurnRiskDetailDialog 
+        account={selectedAccount} 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+      />
+    </div>
                       
                       {acc.health_factors && (
                         <div className="grid grid-cols-3 gap-2">
