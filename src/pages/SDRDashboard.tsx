@@ -45,6 +45,8 @@ import { exportToPDF } from "@/lib/pdfExporter";
 import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
+import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
