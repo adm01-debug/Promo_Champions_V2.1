@@ -8,8 +8,6 @@ import { useCompetencyData } from "@/hooks/useCompetencyData";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Brain, LayoutDashboard, Target } from "lucide-react";
-import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
-import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
 import { SDRDashboard } from "@/components/sdr/SDRDashboard";
 
 export const IntelligenceModule = () => {
@@ -75,16 +73,8 @@ export const IntelligenceModule = () => {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="sdr" className="mt-0 outline-none space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 space-y-6">
-              <PredictiveSuccessMap />
-              <PerformanceCoaching />
-            </div>
-            <div className="lg:col-span-4">
-              <LeadScoreBreakdown />
-            </div>
-          </div>
+        <TabsContent value="sdr" className="mt-0 outline-none">
+          <SDRDashboard />
         </TabsContent>
       </Tabs>
     </div>
