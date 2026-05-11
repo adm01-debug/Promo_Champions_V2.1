@@ -2,6 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export interface AssetEfficiency {
+  total_views: number;
+  deals_influenced: number;
+  win_rate_influenced: number;
+  total_revenue_influenced: number;
+}
+
 export interface EnablementAsset {
   id: string;
   title: string;
@@ -16,6 +23,26 @@ export interface EnablementAsset {
   view_count: number;
   created_at: string;
   updated_at: string;
+  efficiency?: AssetEfficiency;
+}
+
+export interface Playbook {
+  id: string;
+  title: string;
+  description: string | null;
+  stage: string | null;
+  created_at: string;
+  items: PlaybookItem[];
+}
+
+export interface PlaybookItem {
+  id: string;
+  playbook_id: string;
+  content: string;
+  item_type: 'text' | 'asset' | 'checklist';
+  asset_id: string | null;
+  item_order: number;
+  is_required: boolean;
 }
 
 export const useEnablementAssets = (category?: string) => {
@@ -31,6 +58,40 @@ export const useEnablementAssets = (category?: string) => {
       const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as EnablementAsset[];
+    },
+  });
+};
+
+export const usePlaybooks = (stage?: string) => {
+  return useQuery({
+    queryKey: ["playbooks", stage],
+    queryFn: async () => {
+      let q = supabase
+        .from("playbooks")
+        .select(`
+          *,
+          items:playbook_items(*)
+        `)
+        .order("created_at", { ascending: false });
+      
+      if (stage) q = q.eq("stage", stage);
+      
+      const { data, error } = await q;
+      if (error) throw error;
+      return (data ?? []) as Playbook[];
+    },
+  });
+};
+
+export const useAssetEfficiency = (assetId: string) => {
+  return useQuery({
+    queryKey: ["asset-efficiency", assetId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("calculate_asset_efficiency", {
+        _asset_id: assetId
+      });
+      if (error) throw error;
+      return data[0] as AssetEfficiency;
     },
   });
 };

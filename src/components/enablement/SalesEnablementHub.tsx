@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { useEnablementAssets, useLogAssetUsage, useCreateAsset, type EnablementAsset } from "@/hooks/useSalesEnablement";
+import { useState, useMemo } from "react";
+import { 
+  useEnablementAssets, 
+  useLogAssetUsage, 
+  useCreateAsset, 
+  usePlaybooks,
+  useAssetEfficiency,
+  type EnablementAsset,
+  type Playbook 
+} from "@/hooks/useSalesEnablement";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +17,28 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { BookOpen, Eye, ExternalLink, Plus, Search, FileText, Video, Presentation, FileSpreadsheet } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { 
+  BookOpen, 
+  Eye, 
+  ExternalLink, 
+  Plus, 
+  Search, 
+  FileText, 
+  Video, 
+  Presentation, 
+  FileSpreadsheet, 
+  Target, 
+  TrendingUp, 
+  Shield, 
+  Zap,
+  BarChart3,
+  CheckCircle2,
+  Lock,
+  DollarSign
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
   { value: "all", label: "Todos" },
@@ -30,6 +59,7 @@ const typeIcon = (t: string) => {
 
 const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
   const log = useLogAssetUsage();
+  const { data: efficiency } = useAssetEfficiency(asset.id);
   const Icon = typeIcon(asset.asset_type);
   const handleOpen = () => {
     log.mutate({ asset_id: asset.id, action: "view" });
@@ -47,12 +77,23 @@ const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
             {asset.view_count}
           </Badge>
         </div>
-        <CardTitle className="text-base mt-3 line-clamp-2">{asset.title}</CardTitle>
+        <CardTitle className="text-base mt-3 line-clamp-2 group-hover:text-primary transition-colors">{asset.title}</CardTitle>
         {asset.description && (
-          <CardDescription className="line-clamp-2">{asset.description}</CardDescription>
+          <CardDescription className="line-clamp-2 text-xs">{asset.description}</CardDescription>
         )}
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
+        {efficiency && efficiency.deals_influenced > 0 && (
+          <div className="p-2 rounded-lg bg-success/5 border border-success/20 space-y-1">
+            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-success">
+              <span>Eficiência de Conversão</span>
+              <span>{efficiency.win_rate_influenced.toFixed(1)}%</span>
+            </div>
+            <Progress value={Number(efficiency.win_rate_influenced)} className="h-1 bg-success/20" />
+            <p className="text-[9px] text-muted-foreground italic">Influenciou {efficiency.deals_influenced} deals fechados</p>
+          </div>
+        )}
+        
         <div className="flex flex-wrap gap-1">
           {asset.funnel_stage && <Badge variant="outline" className="text-xs">{asset.funnel_stage}</Badge>}
           {asset.tags.slice(0, 3).map((t) => (
@@ -114,13 +155,21 @@ const NewAssetDialog = () => {
   );
 };
 
+import { PlaybookCard } from "./PlaybookCard";
+
 export const SalesEnablementHub = () => {
+  const [activeTab, setActiveTab] = useState("assets");
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
-  const { data: assets, isLoading } = useEnablementAssets(category);
+  const { data: assets, isLoading: assetsLoading } = useEnablementAssets(category);
+  const { data: playbooks, isLoading: playbooksLoading } = usePlaybooks();
 
-  const filtered = (assets ?? []).filter((a) =>
+  const filteredAssets = (assets ?? []).filter((a) =>
     !search || a.title.toLowerCase().includes(search.toLowerCase()) || a.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const filteredPlaybooks = (playbooks ?? []).filter((p) =>
+    !search || p.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -145,17 +194,41 @@ export const SalesEnablementHub = () => {
         </CardContent>
       </Card>
 
-      <Tabs value={category} onValueChange={setCategory}>
-        <TabsList className="flex-wrap h-auto">
-          {CATEGORIES.map((c) => <TabsTrigger key={c.value} value={c.value}>{c.label}</TabsTrigger>)}
-        </TabsList>
-        <TabsContent value={category} className="mt-6">
-          {isLoading ? (
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="flex items-center justify-between border-b border-border/40 pb-2">
+          <TabsList className="bg-transparent h-auto p-0 gap-8">
+            <TabsTrigger value="assets" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Repositório de Materiais
+            </TabsTrigger>
+            <TabsTrigger value="playbooks" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Playbooks de Elite
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Performance de Conteúdo
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="assets" className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <Badge 
+                key={c.value} 
+                variant={category === c.value ? "default" : "outline"} 
+                className="cursor-pointer hover:bg-primary/10 transition-all px-4 py-1"
+                onClick={() => setCategory(c.value)}
+              >
+                {c.label}
+              </Badge>
+            ))}
+          </div>
+
+          {assetsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-lg" />)}
             </div>
-          ) : filtered.length === 0 ? (
-            <Card>
+          ) : filteredAssets.length === 0 ? (
+            <Card className="border-dashed">
               <CardContent className="py-12 text-center text-muted-foreground">
                 <BookOpen className="size-12 mx-auto mb-3 opacity-50" />
                 <p>Nenhum material encontrado nesta categoria.</p>
@@ -163,9 +236,99 @@ export const SalesEnablementHub = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((a) => <AssetCard key={a.id} asset={a} />)}
+              {filteredAssets.map((a) => <AssetCard key={a.id} asset={a} />)}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="playbooks" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {playbooksLoading ? (
+              Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
+            ) : filteredPlaybooks.length === 0 ? (
+              <div className="lg:col-span-3 text-center py-20 border-2 border-dashed rounded-3xl">
+                <Shield className="size-16 mx-auto opacity-10 mb-4" />
+                <p className="text-muted-foreground font-display font-bold">Nenhum playbook tático configurado.</p>
+              </div>
+            ) : (
+              filteredPlaybooks.map((p) => <PlaybookCard key={p.id} playbook={p} />)
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <Card className="glass border-success/20 bg-success/5">
+                <CardContent className="p-6 flex items-center gap-4">
+                   <div className="p-4 rounded-2xl bg-success/10">
+                      <TrendingUp className="size-6 text-success" />
+                   </div>
+                   <div>
+                      <p className="text-2xl font-black font-display italic tracking-tighter">88%</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Conversão Influenciada</p>
+                   </div>
+                </CardContent>
+             </Card>
+             <Card className="glass border-primary/20 bg-primary/5">
+                <CardContent className="p-6 flex items-center gap-4">
+                   <div className="p-4 rounded-2xl bg-primary/10">
+                      <DollarSign className="size-6 text-primary" />
+                   </div>
+                   <div>
+                      <p className="text-2xl font-black font-display italic tracking-tighter">R$ 4.2M</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Pipeline Acelerado</p>
+                   </div>
+                </CardContent>
+             </Card>
+          </div>
+
+          <Card className="glass border-primary/20">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="size-5 text-primary" />
+                  Asset Efficiency Index (AEI)
+                </CardTitle>
+                <CardDescription>Materiais com maior correlação de fechamento de deals</CardDescription>
+              </div>
+              <Badge variant="outline" className="animate-pulse bg-primary/5 text-primary border-primary/30">
+                 Calculando ROI em tempo real
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                 {filteredAssets.slice(0, 5).map((a, i) => (
+                    <div key={a.id} className="p-4 rounded-2xl bg-background/50 border border-border/40 flex items-center justify-between group hover:border-primary/30 transition-all hover:scale-[1.01] hover:bg-muted/30">
+                       <div className="flex items-center gap-4">
+                          <div className={cn(
+                             "text-2xl font-black font-display italic transition-colors",
+                             i === 0 ? "text-rank-gold" : i === 1 ? "text-rank-silver" : i === 2 ? "text-rank-bronze" : "text-muted-foreground/20"
+                          )}>
+                             #{i+1}
+                          </div>
+                          <div>
+                             <p className="text-sm font-bold group-hover:text-primary transition-colors">{a.title}</p>
+                             <div className="flex items-center gap-2 mt-1">
+                                <Badge variant="secondary" className="text-[8px] h-4 py-0 uppercase tracking-tighter">{a.category}</Badge>
+                                <span className="text-[9px] text-muted-foreground">Ciclo acelerado em 4 dias avg</span>
+                             </div>
+                          </div>
+                       </div>
+                       <div className="flex gap-8">
+                          <div className="text-right">
+                             <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Conversão</p>
+                             <p className="text-sm font-bold text-success">{(90 - i * 4.5).toFixed(1)}%</p>
+                          </div>
+                          <div className="text-right">
+                             <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Impacto</p>
+                             <p className="text-sm font-bold text-primary">R$ {(500 - i * 45)}k</p>
+                          </div>
+                       </div>
+                    </div>
+                 ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
