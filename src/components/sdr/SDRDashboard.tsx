@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { 
   Users, 
   Target, 
@@ -7,7 +7,8 @@ import {
   Clock, 
   Activity,
   Zap,
-  LayoutDashboard
+  LayoutDashboard,
+  Search
 } from "lucide-react";
 import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
@@ -17,12 +18,14 @@ import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
 import { PerformanceCoaching } from "./PerformanceCoaching";
 import { SDRAchievementTracker } from "./SDRAchievementTracker";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
 
 const SDRDashboardInner = () => {
   const { data: metrics, isLoading } = useSDRMetrics("month");
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [selectedLeadData, setSelectedLeadData] = useState<{name: string, score: number} | null>(null);
 
   const statCards = useMemo(() => {
     if (!metrics) return [];
@@ -114,9 +117,31 @@ const SDRDashboardInner = () => {
         {/* Intelligence Sidepanel */}
         <div className="lg:col-span-4 space-y-6">
           <motion.div variants={itemVariants}>
-            <RecentProspects />
+            <RecentProspects 
+              onSelectLead={(id, name, score) => {
+                setSelectedLeadId(id === selectedLeadId ? null : id);
+                setSelectedLeadData(id === selectedLeadId ? null : { name, score });
+              }}
+              selectedLeadId={selectedLeadId}
+            />
           </motion.div>
           
+          <AnimatePresence>
+            {selectedLeadId && selectedLeadData && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                variants={itemVariants}
+              >
+                <LeadScoreBreakdown 
+                  leadName={selectedLeadData.name} 
+                  score={selectedLeadData.score} 
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <motion.div variants={itemVariants}>
             <PredictiveSuccessMap />
           </motion.div>
