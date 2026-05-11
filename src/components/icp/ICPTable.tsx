@@ -2,7 +2,9 @@ import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, Building2, Tag, Banknote, Users, CheckCircle2, XCircle, Edit } from "lucide-react";
+import { Target, Building2, Tag, Banknote, Users, CheckCircle2, XCircle, Edit, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ICPRadarChart } from "./ICPRadarChart";
 import type { ICPData } from "@/hooks/useICPData";
 
 interface ICPTableProps {
