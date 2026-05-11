@@ -2,7 +2,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Brain, Sparkles, TrendingUp, Target, Lightbulb } from "lucide-react";
+import { Brain, Sparkles, TrendingUp, Target, Lightbulb, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { useScoreTrend } from "@/hooks/scoring/useScoreTrend";
@@ -96,6 +96,11 @@ export const LeadScoreExplainCard = React.memo(({ saleId }: Props) => {
             </h4>
           </div>
           <ul className="space-y-2">
+            {/* NBA Badge */}
+            <div className="flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded bg-primary/10 w-fit">
+              <Zap className="h-3 w-3 text-primary animate-pulse" />
+              <span className="text-[9px] font-black text-primary uppercase tracking-widest">Next Best Action (NBA)</span>
+            </div>
             {exp.recommendations.map((r, i) => (
               <li
                 key={i}

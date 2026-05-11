@@ -7156,6 +7156,44 @@ export type Database = {
           },
         ]
       }
+      lead_churn_risk: {
+        Row: {
+          detected_at: string | null
+          factors: Json | null
+          id: string
+          risk_level: string | null
+          risk_score: number | null
+          sale_id: string
+          status: string | null
+        }
+        Insert: {
+          detected_at?: string | null
+          factors?: Json | null
+          id?: string
+          risk_level?: string | null
+          risk_score?: number | null
+          sale_id: string
+          status?: string | null
+        }
+        Update: {
+          detected_at?: string | null
+          factors?: Json | null
+          id?: string
+          risk_level?: string | null
+          risk_score?: number | null
+          sale_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_churn_risk_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_detailed_logs: {
         Row: {
           action: string
@@ -7200,6 +7238,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lead_intelligence_metrics: {
+        Row: {
+          avg_score: number | null
+          captured_at: string | null
+          cold_count: number | null
+          distribution: Json | null
+          hot_count: number | null
+          id: string
+          warm_count: number | null
+        }
+        Insert: {
+          avg_score?: number | null
+          captured_at?: string | null
+          cold_count?: number | null
+          distribution?: Json | null
+          hot_count?: number | null
+          id?: string
+          warm_count?: number | null
+        }
+        Update: {
+          avg_score?: number | null
+          captured_at?: string | null
+          cold_count?: number | null
+          distribution?: Json | null
+          hot_count?: number | null
+          id?: string
+          warm_count?: number | null
+        }
+        Relationships: []
       }
       lead_routing_log: {
         Row: {
@@ -16446,6 +16514,7 @@ export type Database = {
           positive_factors: Json
         }[]
       }
+      calculate_lead_distribution: { Args: never; Returns: Json }
       calculate_performance_pace: {
         Args: { _salesperson_id: string }
         Returns: {

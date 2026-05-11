@@ -19,7 +19,13 @@ interface ServerScoreFactors {
   labels?: Record<string, string>;
 }
 
-interface ScoredLead {
+export interface ChurnRisk {
+  risk_level: 'critical' | 'high' | 'medium' | 'low';
+  risk_score: number;
+  factors: string[];
+}
+
+export interface ScoredLead {
   id: string;
   name: string;
   email: string;
@@ -31,6 +37,7 @@ interface ScoredLead {
   lastActivity?: Date;
   bestDealId?: string;
   trend?: number[]; // Historico recente
+  churnRisk?: ChurnRisk;
 }
 
 /**
@@ -102,6 +109,14 @@ export const useLeadScoring = (leadId?: string) => {
 
       const icpMap = new Map((icpData || []).map(d => [d.client_id, d]));
 
+      // Get Churn Risk data
+      const { data: riskData } = await supabase
+        .from('lead_churn_risk')
+        .select('*')
+        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']);
+
+      const riskMap = new Map((riskData || []).map(r => [r.sale_id, r]));
+
       return clients.map(client => {
         const dealIds = clientSalesMap.get(client.id) || [];
         const icp = icpMap.get(client.id);
@@ -135,6 +150,7 @@ export const useLeadScoring = (leadId?: string) => {
             labels: bestLabels,
             bestDealId,
             trend: trendMap.get(bestDealId || '') || [],
+            churnRisk: bestDealId ? (riskMap.get(bestDealId) as unknown as ChurnRisk) : undefined,
           };
         }
 
