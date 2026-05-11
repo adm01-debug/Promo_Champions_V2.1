@@ -1,6 +1,12 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
+interface HealthFactor {
+  label: string;
+  status: "good" | "warning" | "bad";
+  value: string;
+}
+
 interface AccountHealth {
   account_id: string;
   account_name: string;
@@ -12,6 +18,13 @@ interface AccountHealth {
   days_since_last_activity: number;
   total_revenue: number;
   recommended_action: string;
+  health_factors?: HealthFactor[];
+  engagement_radar?: {
+    usage: number;
+    sentiment: number;
+    support: number;
+    financial: number;
+  };
 }
 
 Deno.serve(async (req) => {
