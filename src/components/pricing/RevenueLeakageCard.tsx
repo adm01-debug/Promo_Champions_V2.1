@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { TrendingDown, AlertCircle, ShieldOff, Sparkles, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -15,6 +15,38 @@ interface Props {
 
 const fmtBRL = (n: number) => 
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
+
+const CountUp = ({ value, className }: { value: number; className?: string }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useMemo(() => {
+    let start = 0;
+    const end = value;
+    const duration = 2000;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOutExpo = 1 - Math.pow(2, -10 * progress);
+      const current = easeOutExpo * (end - start) + start;
+      
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return (
+    <span className={className}>
+      {Math.round(displayValue).toLocaleString("pt-BR")}
+    </span>
+  );
+};
 
 export const RevenueLeakageCard = memo(function RevenueLeakageCard({ totalLost, discountLost, competitorLost, marginErosion }: Props) {
   const total = discountLost + competitorLost + marginErosion || 1;
@@ -83,38 +115,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({ totalLost, 
             <ChevronRight className="h-3.5 w-3.5" />
           </Button>
         </div>
-...
-const CountUp = ({ value, className }: { value: number; className?: string }) => {
-  const [displayValue, setDisplayValue] = useState(0);
-  
-  useMemo(() => {
-    let start = 0;
-    const end = value;
-    const duration = 2000;
-    const startTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeOutExpo = 1 - Math.pow(2, -10 * progress);
-      const current = easeOutExpo * (end - start) + start;
-      
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [value]);
-
-  return (
-    <span className={className}>
-      {Math.round(displayValue).toLocaleString("pt-BR")}
-    </span>
-  );
-};
         <div className="md:col-span-2 p-6 space-y-4">
           <TooltipProvider>
             {items.map((item, i) => {
