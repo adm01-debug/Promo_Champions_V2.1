@@ -202,7 +202,7 @@ export function CustomerSuccessHub() {
                           {RISK_LABELS[acc.churn_risk]}
                         </Badge>
                         {acc.expansion_potential > 75 && (
-                          <Badge variant="glow" className="gap-1 bg-success/10 text-success border-success/30 animate-pulse">
+                          <Badge variant="success" className="gap-1 animate-pulse">
                             <Zap className="size-3" /> Upsell Potential
                           </Badge>
                         )}
