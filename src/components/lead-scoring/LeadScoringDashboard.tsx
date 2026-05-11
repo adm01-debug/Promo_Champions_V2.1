@@ -374,9 +374,9 @@ export function LeadScoringDashboard() {
 
 
       {/* Elite Ranking Table */}
-      <Card variant="modern" className="overflow-hidden">
+      <Card variant="modern" className="overflow-hidden bg-card/40 backdrop-blur-md border-white/5">
         <CardHeader className="p-6 border-b border-border/10">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-3 text-xl font-black uppercase tracking-tighter italic">
                 <BarChart3 className="h-5 w-5 text-primary" />
@@ -384,25 +384,49 @@ export function LeadScoringDashboard() {
               </CardTitle>
               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Painel de Priorização de Ativos</p>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/50 border border-white/5 shadow-inner">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sincronizado via Neural Link</span>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative w-full md:w-64 group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Input 
+                  placeholder="LOCALIZAR COMBATANTE..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-9 pl-9 bg-background/50 border-white/5 text-[10px] font-black uppercase tracking-widest focus-visible:ring-primary/20"
+                />
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportToCSV}
+                disabled={isExporting}
+                className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+              >
+                <Download className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                Exportar CSV
+              </Button>
+
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/30 border border-white/5 shadow-inner">
+                <Activity className="w-3.5 h-3.5 text-primary animate-pulse" />
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Live Sync Ativo</span>
+              </div>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          {allLeads.length === 0 ? (
+          {filteredLeads.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground">
               <div className="relative inline-block mb-4">
                 <Target className="h-16 w-16 mx-auto opacity-10" />
                 <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full" />
               </div>
-              <p className="font-display font-black uppercase tracking-widest text-sm">Nenhum combatante detectado</p>
-              <p className="text-[10px] mt-2 font-medium">Adicione clientes para iniciar o escaneamento</p>
+              <p className="font-display font-black uppercase tracking-widest text-sm italic">Nenhum combatante localizado</p>
+              <p className="text-[10px] mt-2 font-medium uppercase tracking-widest">Ajuste os parâmetros de busca neural</p>
             </div>
           ) : (
             <div className="divide-y divide-border/5">
-              {allLeads.map((lead, idx) => {
+              {filteredLeads.map((lead, idx) => {
                 const cfg = categoryConfig[lead.category];
                 const Icon = cfg.icon;
                 const isServerScore = "dealValue" in lead.factors;
