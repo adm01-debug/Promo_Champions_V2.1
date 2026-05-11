@@ -34,20 +34,28 @@ export const DiscountOptimizer = () => {
   const expectedProfit = dealValue * currentMargin * currentWinRate;
 
   return (
-    <Card className="glass border-primary/20 bg-gradient-to-br from-card to-primary/5 shadow-xl">
-      <CardHeader className="pb-4">
+    <Card className="glass border-primary/30 bg-gradient-to-br from-slate-950 to-slate-900 shadow-2xl relative overflow-hidden group">
+      {/* Animated Glow */}
+      <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 blur-[100px] rounded-full group-hover:bg-primary/30 transition-all duration-700" />
+      <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-info/10 blur-[100px] rounded-full" />
+
+      <CardHeader className="pb-6 border-b border-white/5 relative z-10 bg-white/5 backdrop-blur-sm">
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <Calculator className="size-5 text-primary" />
-              Simulador de Elasticidade de Preço
-            </CardTitle>
-            <CardDescription>
-              Ajuste o desconto para prever o impacto no Win-Rate e Lucratividade
-            </CardDescription>
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]">
+              <Calculator className="size-6 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-black font-sora tracking-tighter">
+                Price Elasticity Simulator
+              </CardTitle>
+              <CardDescription className="text-xs font-medium uppercase tracking-widest text-primary/70">
+                IA-Powered Revenue Optimization
+              </CardDescription>
+            </div>
           </div>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-            AI Beta
+          <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] px-3 py-1 shadow-lg animate-pulse">
+            NEURAL ENGINE v4
           </Badge>
         </div>
       </CardHeader>

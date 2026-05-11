@@ -47,24 +47,32 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({ data, o
   const chartData = useMemo(() => data ?? generateMockData(), [data]);
 
   return (
-    <Card className="glass border-primary/20 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-primary/5 via-background to-transparent pb-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div>
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg font-display">Curva de Elasticidade de Preço</CardTitle>
+    <Card className="glass border-white/5 overflow-hidden shadow-2xl bg-slate-950/40 relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_50%_120%,rgba(var(--primary),0.1),transparent)] pointer-events-none" />
+      
+      <CardHeader className="bg-white/5 border-b border-white/5 backdrop-blur-md pb-6 relative z-10">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-inner">
+              <Zap className="h-6 w-6 text-primary animate-pulse" />
             </div>
-            <CardDescription>
-              Correlação entre preço praticado e probabilidade de fechamento.
-            </CardDescription>
+            <div>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-xl font-black font-sora tracking-tight">Price Elasticity Curve</CardTitle>
+                <Badge variant="outline" className="text-[8px] font-black uppercase py-0 border-primary/30 text-primary">Live Model</Badge>
+              </div>
+              <CardDescription className="text-xs font-medium">
+                Correlação neural entre preço praticado e probabilidade de conversão (Win-Rate).
+              </CardDescription>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4 bg-background/40 p-3 rounded-2xl border border-white/5 shadow-xl">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Price Shield Ativo</span>
-              <Badge variant="outline" className="gap-1.5 bg-success/10 text-success border-success/30 shadow-[0_0_15px_rgba(34,197,94,0.2)] animate-pulse">
-                <Zap className="h-3 w-3 fill-current" />
-                Preço Ótimo: R$ {optimalPrice.toLocaleString("pt-BR")}
+              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Price Shield Proteção</span>
+              <Badge className="gap-2 bg-success text-white border-none shadow-[0_0_20px_rgba(34,197,94,0.4)] font-black text-xs px-4 py-1.5 rounded-full">
+                <ShieldCheck className="h-3.5 w-3.5 fill-current" />
+                PREÇO ÓTIMO: {optimalPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
               </Badge>
             </div>
           </div>
