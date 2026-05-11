@@ -1,13 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useWeightedForecast } from "@/hooks/useWeightedForecast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { TrendingUp, DollarSign, Target, Gauge, ArrowUpRight, ArrowDownRight, Clock, BarChart3, Zap } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Gauge, ArrowUpRight, ArrowDownRight, Clock, BarChart3, Zap, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ForecastTopDeals } from "./ForecastTopDeals";
+import { supabase } from "@/integrations/supabase/client";
 
 const formatCurrency = (val: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(val);
