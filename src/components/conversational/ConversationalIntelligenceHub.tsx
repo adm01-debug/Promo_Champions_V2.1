@@ -16,6 +16,7 @@ import { ConversationMetricsFeed } from "./metrics/ConversationMetricsFeed";
 import { QuestionFeedPanel } from "./questions/QuestionFeedPanel";
 import { ObjectionLibraryPanel } from "./objections/ObjectionLibraryPanel";
 import { CoachingLeaderboardPanel } from "./coaching/CoachingLeaderboardPanel";
+import { LiveIntelligenceFeed } from "./LiveIntelligenceFeed";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -58,6 +59,9 @@ export const ConversationalIntelligenceHub = () => {
               <TabsTrigger value="7">7 dias</TabsTrigger>
               <TabsTrigger value="30">30 dias</TabsTrigger>
               <TabsTrigger value="90">90 dias</TabsTrigger>
+              <TabsTrigger value="live" className="text-primary font-bold">
+                <Zap className="size-3 mr-1 animate-pulse" /> LIVE
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -147,13 +151,28 @@ export const ConversationalIntelligenceHub = () => {
             </Card>
           </div>
 
-          <ConversationMetricsFeed />
-
-          <QuestionFeedPanel onSelect={drawer.open} />
-
-          <ObjectionLibraryPanel onSelect={drawer.open} />
-
-          <CoachingLeaderboardPanel />
+          {horizon === 0 || String(horizon) === 'live' ? (
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                   <Card className="h-[600px] flex flex-col items-center justify-center border-dashed">
+                      <Headphones className="size-16 opacity-10 mb-4 animate-bounce" />
+                      <p className="text-sm font-medium">Sincronizando áudio em tempo real...</p>
+                      <p className="text-xs text-muted-foreground mt-1">Conecte o discador Twilio ou Zoom para iniciar</p>
+                   </Card>
+                </div>
+                <div className="space-y-4">
+                   <LiveIntelligenceFeed />
+                   <CoachingLeaderboardPanel />
+                </div>
+             </div>
+          ) : (
+            <>
+              <ConversationMetricsFeed />
+              <QuestionFeedPanel onSelect={drawer.open} />
+              <ObjectionLibraryPanel onSelect={drawer.open} />
+              <CoachingLeaderboardPanel />
+            </>
+          )}
 
           <Card>
             <CardHeader>
