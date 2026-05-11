@@ -244,6 +244,21 @@ export function LeadScoringDashboard() {
                         <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
                           {lead.company || lead.email || "UNIDENTIFIED SECTOR"}
                         </p>
+                        {lead.trend && lead.trend.length > 1 && (
+                          <div className="flex items-center gap-1 ml-2">
+                            {lead.trend[lead.trend.length - 1] > lead.trend[0] ? (
+                              <TrendingUp className="h-3 w-3 text-emerald-500" />
+                            ) : (
+                              <TrendingUp className="h-3 w-3 text-rose-500 rotate-180" />
+                            )}
+                            <span className={cn(
+                              "text-[10px] font-bold",
+                              lead.trend[lead.trend.length - 1] > lead.trend[0] ? "text-emerald-500" : "text-rose-500"
+                            )}>
+                              {Math.abs(lead.trend[lead.trend.length - 1] - lead.trend[0])}%
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
