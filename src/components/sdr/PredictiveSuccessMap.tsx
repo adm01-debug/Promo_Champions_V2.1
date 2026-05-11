@@ -1,21 +1,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Clock, Zap, TrendingUp, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Brain, Clock, Zap, TrendingUp, Calendar, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-
-const hourlySuccessData = [
-  { hour: "08:00", probability: 45, status: "low" },
-  { hour: "09:00", probability: 78, status: "high" },
-  { hour: "10:00", probability: 85, status: "high" },
-  { hour: "11:00", probability: 62, status: "medium" },
-  { hour: "12:00", probability: 30, status: "low" },
-  { hour: "14:00", probability: 92, status: "critical" },
-  { hour: "15:00", probability: 88, status: "high" },
-  { hour: "16:00", probability: 75, status: "high" },
-  { hour: "17:00", probability: 55, status: "medium" },
-];
+import { useHourlySuccessProbability } from "@/hooks/useSDRMetrics";
+import { toast } from "sonner";
 
 export function PredictiveSuccessMap() {
+  const { data: hourlySuccessData, isLoading } = useHourlySuccessProbability();
+
+  const handleScheduleBlock = () => {
+    const bestHour = hourlySuccessData?.reduce((prev, current) => 
+      (prev.probability > current.probability) ? prev : current
+    );
+
+    toast.success(`Bloco de Foco Agendado!`, {
+      description: `Reservamos o horário das ${bestHour?.hour} no seu calendário para prospecção de alta performance.`,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="glass border-primary/20 h-[400px] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </Card>
+    );
+  }
   return (
     <Card className="glass border-primary/20 overflow-hidden">
       <CardHeader className="pb-2 border-b border-border/50">
@@ -40,7 +50,7 @@ export function PredictiveSuccessMap() {
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
-            {hourlySuccessData.map((data, index) => (
+            {hourlySuccessData?.map((data, index) => (
               <motion.div
                 key={data.hour}
                 initial={{ opacity: 0, y: 10 }}
@@ -85,17 +95,24 @@ export function PredictiveSuccessMap() {
             <span className="text-xs font-bold uppercase tracking-wider text-primary">Insight de Ouro</span>
           </div>
           <p className="text-xs leading-relaxed text-foreground/80">
-            Leads do setor <span className="font-bold text-primary">Tecnologia</span> têm 3.4x mais chance de converter entre <span className="font-bold">14:00 e 15:30</span>. Priorize sua fila do Power Dialer para este bloco.
+            Baseado em seus dados reais, o melhor horário para converter é às <span className="font-bold text-primary">
+              {hourlySuccessData?.reduce((prev, curr) => prev.probability > curr.probability ? prev : curr).hour}
+            </span>.
           </p>
           <div className="flex items-center gap-4 pt-1">
             <div className="flex items-center gap-1">
               <TrendingUp className="h-3 w-3 text-success" />
               <span className="text-[10px] text-success font-medium">+24% conversão esperada</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-primary" />
-              <span className="text-[10px] text-primary font-medium">Agendar Bloco</span>
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-auto p-0 flex items-center gap-1 text-primary hover:bg-transparent"
+              onClick={handleScheduleBlock}
+            >
+              <Calendar className="h-3 w-3" />
+              <span className="text-[10px] font-bold underline">Agendar Bloco</span>
+            </Button>
           </div>
         </div>
       </CardContent>

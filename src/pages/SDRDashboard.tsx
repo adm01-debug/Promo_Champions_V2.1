@@ -485,42 +485,8 @@ export default function SDRDashboard() {
                 <SDRIntelligenceHighlights />
                 <LeadScoreBreakdown />
               </div>
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-3">
                 <PredictiveSuccessMap />
-              </div>
-              <div className="glass rounded-xl p-6 border border-primary/20 bg-primary/5 flex flex-col justify-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none rotate-12">
-                  <Trophy className="h-32 w-32 text-primary" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-bold flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      Sua Meta Mensal
-                    </h3>
-                    <span className="text-xs font-medium text-muted-foreground">74% Concluído</span>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-4 w-full bg-background/50 rounded-full overflow-hidden border border-border/50">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: "74%" }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        className="h-full bg-gradient-to-r from-primary to-purple-500"
-                      />
-                    </div>
-                    <div className="flex justify-between text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-                      <span>R$ 148k</span>
-                      <span>Meta: R$ 200k</span>
-                    </div>
-                    <p className="text-xs text-center text-muted-foreground italic">
-                      "Faltam apenas 12 agendamentos para bater a meta premium!"
-                    </p>
-                    <Button variant="outline" size="sm" className="w-full mt-2 h-8 text-[10px] uppercase font-bold tracking-widest border-primary/20 hover:bg-primary/5">
-                      Ver Detalhes da Corrida
-                    </Button>
-                  </div>
-                </div>
               </div>
             </motion.div>
             

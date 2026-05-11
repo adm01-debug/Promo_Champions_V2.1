@@ -2,19 +2,47 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Award, TrendingUp, AlertTriangle, Lightbulb, CheckCircle2, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 
 export function PerformanceCoaching() {
-  const strengths = [
-    "Alta taxa de conversão em leads quentes (92%)",
-    "Consistência no volume de ligações diárias",
-    "Excelente tempo de resposta inicial (< 5min)"
-  ];
+  const { data: metrics } = useSDRMetrics("month");
 
-  const improvements = [
-    "Aumentar taxa de agendamento em leads 'mornos'",
-    "Utilizar mais scripts de contorno de objeção 'Preço'",
-    "Melhorar o follow-up após 48h de inatividade"
-  ];
+  const generateInsights = () => {
+    if (!metrics) return { strengths: [], improvements: [] };
+
+    const schedulingRate = metrics.current.schedulingRate;
+    const leads = metrics.current.totalLeads;
+    const qualified = metrics.current.qualifiedLeads;
+
+    const strengths = [];
+    const improvements = [];
+
+    if (schedulingRate > 20) {
+      strengths.push(`Alta taxa de agendamento (${schedulingRate.toFixed(1)}%)`);
+    } else {
+      improvements.push(`Aumentar taxa de agendamento (atualmente ${schedulingRate.toFixed(1)}%)`);
+    }
+
+    if (leads > 100) {
+      strengths.push(`Ótimo volume de novos leads (${leads})`);
+    } else {
+      improvements.push("Aumentar volume de prospecção diária");
+    }
+
+    if (qualified / leads > 0.5) {
+      strengths.push("Excelente qualidade de filtros (ICP Match)");
+    } else {
+      improvements.push("Refinar critérios de qualificação (MQL → SQL)");
+    }
+
+    // Default fallbacks if empty
+    if (strengths.length === 0) strengths.push("Consistência no volume de atividades");
+    if (improvements.length === 0) improvements.push("Explorar novos canais de prospecção (LinkedIn)");
+
+    return { strengths, improvements };
+  };
+
+  const { strengths, improvements } = generateInsights();
 
   return (
     <Card className="glass border-primary/20 overflow-hidden h-full">
