@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Brain, LayoutDashboard, Target } from "lucide-react";
 import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
 import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
-import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
+import { SDRDashboard } from "@/components/sdr/SDRDashboard";
 
 export const IntelligenceModule = () => {
   const { salesperson } = useAuth();
@@ -35,7 +35,7 @@ export const IntelligenceModule = () => {
             </TabsTrigger>
             <TabsTrigger value="sdr" className="data-[state=active]:bg-background gap-2">
               <Target className="w-4 h-4" />
-              SDR Intelligence
+              SDR Dashboard
             </TabsTrigger>
           </TabsList>
         </div>
