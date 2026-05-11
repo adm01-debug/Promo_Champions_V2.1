@@ -154,6 +154,24 @@ export const RevenueForecastHub: FC = () => {
             <Progress value={data.confidence} className="h-1.5 mt-2" />
           </CardContent>
         </Card>
+        {data.accuracy && (
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-muted-foreground">Precisão histórica</div>
+                <Badge variant="outline" className="h-5 text-[10px] bg-success/10 text-success">
+                  {data.accuracy.last_period_accuracy}%
+                </Badge>
+              </div>
+              <div className="font-display text-xl font-semibold mt-1">
+                {100 - data.accuracy.avg_deviation}%
+              </div>
+              <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                Tendência: <span className="font-bold text-primary">{data.accuracy.trend === 'improving' ? 'Melhorando' : 'Estável'}</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Cenários */}
