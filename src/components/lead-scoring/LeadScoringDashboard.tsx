@@ -179,42 +179,73 @@ export function LeadScoringDashboard() {
 
 
       {/* Analytics & Distribution Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
           <LeadScoreDistribution />
         </div>
         
-        <Card className="bg-gradient-to-br from-card/80 to-card/40 border-border/20 shadow-2xl backdrop-blur-md overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4 text-status-error" />
-              Sinais de Churn Risk
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).slice(0, 3).map(lead => (
-              <div key={lead.id} className="p-3 rounded-xl bg-status-error/5 border border-status-error/10 space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-black uppercase tracking-tighter truncate max-w-[150px]">{lead.name}</span>
-                  <Badge variant="destructive" className="text-[8px] px-1 h-4">CRÍTICO</Badge>
+        <div className="lg:col-span-4 space-y-6">
+          <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 text-status-error" />
+                Alertas de Churn (NBA)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).slice(0, 3).map(lead => (
+                <div key={lead.id} className="group p-3 rounded-xl bg-status-error/5 border border-status-error/10 space-y-3 hover:bg-status-error/10 transition-colors">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-black uppercase tracking-tighter truncate max-w-[150px]">{lead.name}</span>
+                    <Badge variant="destructive" className="text-[8px] px-1.5 h-4 font-black">CRÍTICO</Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] font-bold">
+                      <span className="text-muted-foreground uppercase tracking-widest">Risk Level</span>
+                      <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
+                    </div>
+                    <Progress value={lead.churnRisk?.risk_score} className="h-1.5 bg-status-error/10" indicatorClassName="bg-status-error shadow-[0_0_10px_rgba(var(--status-error-rgb),0.5)]" />
+                  </div>
+                  <div className="pt-2 border-t border-status-error/10">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Brain className="h-3 w-3 text-status-error" />
+                      <span className="text-[9px] font-black text-status-error uppercase tracking-widest">Recomendação IA</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground italic leading-tight font-medium">
+                      {lead.churnRisk?.factors[0] || "Sem atividade detectada"}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                   <Progress value={lead.churnRisk?.risk_score} className="h-1 flex-1 bg-status-error/20" indicatorClassName="bg-status-error" />
-                   <span className="text-[10px] font-bold text-status-error">{lead.churnRisk?.risk_score}%</span>
+              ))}
+              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).length === 0 && (
+                <div className="text-center py-12">
+                  <div className="relative inline-block mb-4">
+                    <ShieldAlert className="h-10 w-10 mx-auto text-emerald-500/20" />
+                    <div className="absolute inset-0 bg-emerald-500/10 blur-xl rounded-full" />
+                  </div>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Base Segura: Sem Riscos</p>
                 </div>
-                <p className="text-[9px] text-muted-foreground italic leading-tight">
-                  {lead.churnRisk?.factors[0] || "Sem atividade detectada"}
-                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Brain className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-primary">Strategic Insight</h4>
+                  <p className="text-[10px] text-muted-foreground">Otimização de Conversão</p>
+                </div>
               </div>
-            ))}
-            {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).length === 0 && (
-              <div className="text-center py-8">
-                <ShieldAlert className="h-8 w-8 mx-auto mb-2 text-emerald-500 opacity-20" />
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum risco crítico</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              <p className="text-xs leading-relaxed text-muted-foreground font-medium italic">
+                "Detectamos um aumento de 15% no engajamento do segmento 'ACTIVE'. Priorize o follow-up nesses leads para acelerar o fechamento do Q2."
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
 
