@@ -51,6 +51,10 @@ import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
 import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
 import { TargetSimulator } from "@/components/sdr/TargetSimulator";
 import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
+import { SDRSequenceOrchestrator } from "@/components/sdr/SDRSequenceOrchestrator";
+import { SDRConversationInsights } from "@/components/sdr/SDRConversationInsights";
+import { SDRAchievementTracker } from "@/components/sdr/SDRAchievementTracker";
+import { SDRCommandBar } from "@/components/sdr/SDRCommandBar";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -235,13 +239,23 @@ export default function SDRDashboard() {
                 </div>
               </div>
 
-              <div className="mb-8">
+              <div className="mb-6">
                 <SDRAdvancedFilters 
                   onSearch={(val) => setSearchTerm(val)} 
                   onFilterChange={(f) => setFilters(f)} 
                 />
               </div>
 
+              <SDRCommandBar />
+            </motion.div>
+
+            {/* Achievement Tracker */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+            >
+              <SDRAchievementTracker />
             </motion.div>
 
             {/* Hero Metrics - Gauges Row */}
@@ -372,6 +386,24 @@ export default function SDRDashboard() {
                 icon={Target}
                 variant="primary"
               />
+            </motion.div>
+
+            {/* Sequence Orchestrator */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.36 }}
+            >
+              <SDRSequenceOrchestrator />
+            </motion.div>
+
+            {/* Conversation Insights */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.37 }}
+            >
+              <SDRConversationInsights />
             </motion.div>
 
             {/* Performance Coaching */}
