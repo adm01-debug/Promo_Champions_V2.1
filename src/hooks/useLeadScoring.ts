@@ -30,6 +30,7 @@ interface ScoredLead {
   labels?: Record<string, string>;
   lastActivity?: Date;
   bestDealId?: string;
+  trend?: number[]; // Historico recente
 }
 
 /**
@@ -41,6 +42,14 @@ export const useLeadScoring = (leadId?: string) => {
     queryKey: ['lead-scoring', leadId],
     queryFn: async (): Promise<ScoredLead[]> => {
       // Get clients
+      const { data: trends } = await supabase.from('lead_score_trends').select('*').order('captured_at', { ascending: true });
+      const trendMap = new Map<string, number[]>();
+      (trends || []).forEach(t => {
+        const existing = trendMap.get(t.sale_id) || [];
+        existing.push(t.score);
+        trendMap.set(t.sale_id, existing.slice(-5));
+      });
+
       let clientQuery = supabase.from('clients').select('id, name, email, company, total_value');
       if (leadId) clientQuery = clientQuery.eq('id', leadId);
 
@@ -125,6 +134,7 @@ export const useLeadScoring = (leadId?: string) => {
             factors: bestFactors,
             labels: bestLabels,
             bestDealId,
+            trend: trendMap.get(bestDealId || '') || [],
           };
         }
 

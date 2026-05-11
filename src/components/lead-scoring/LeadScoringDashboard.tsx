@@ -110,9 +110,15 @@ export function LeadScoringDashboard() {
           <Button
             variant="outline"
             className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-            onClick={() => {
+            onClick={async () => {
               const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
-              if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+              if (ids.length > 0) {
+                await explainBatch.mutateAsync(ids.slice(0, 50));
+                // Invalidate query to update scores with trend history
+                await supabase.from('lead_score_trends').insert(
+                  allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score }))
+                );
+              }
             }}
             disabled={explainBatch.isPending}
           >
