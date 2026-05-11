@@ -18,6 +18,7 @@ import {
 import { ScenarioCard } from "./ScenarioCard";
 import { ForecastNarrativeCard } from "./ForecastNarrativeCard";
 import { PipelineContributionChart } from "./PipelineContributionChart";
+import { ForecastScenarioSimulator } from "./ForecastScenarioSimulator";
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
@@ -246,6 +247,13 @@ export const RevenueForecastHub: FC = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Simulador What-If */}
+      <ForecastScenarioSimulator 
+        baseForecast={data.scenarios.realistic}
+        baseCoverage={data.metrics.total_open_pipeline / (data.metrics.goal_for_horizon || 1)}
+        baseWinRate={data.metrics.goal_for_horizon > 0 ? (data.scenarios.realistic / data.metrics.total_open_pipeline) : 0.2}
+      />
 
       {/* Insights IA */}
       <ForecastNarrativeCard

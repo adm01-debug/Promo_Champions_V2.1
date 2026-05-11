@@ -11,6 +11,7 @@ import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell } from 'recharts';
 import { ExecInsightsBanner } from '@/components/reports/ExecInsightsBanner';
+import { QBRStoryGenerator } from '@/components/reports/QBRStoryGenerator';
 import { PageTransition } from "@/components/transitions/PageTransition";
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(142 71% 45%)', 'hsl(var(--destructive))', 'hsl(var(--secondary))'];
@@ -132,6 +133,14 @@ const RelatoriosExecutivos = () => {
         </div>
 
         <ExecInsightsBanner insights={insights} periodLabel={periodLabel} />
+
+        {period === 'quarter' && (
+          <QBRStoryGenerator 
+            metrics={metrics} 
+            topSellers={topSellers} 
+            periodLabel={periodLabel} 
+          />
+        )}
 
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}</div>
