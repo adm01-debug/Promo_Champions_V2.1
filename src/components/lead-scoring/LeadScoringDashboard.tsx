@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
@@ -110,9 +111,15 @@ export function LeadScoringDashboard() {
           <Button
             variant="outline"
             className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-            onClick={() => {
+            onClick={async () => {
               const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
-              if (ids.length > 0) explainBatch.mutate(ids.slice(0, 50));
+              if (ids.length > 0) {
+                await explainBatch.mutateAsync(ids.slice(0, 50));
+                // Invalidate query to update scores with trend history
+                await supabase.from('lead_score_trends').insert(
+                  allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score }))
+                );
+              }
             }}
             disabled={explainBatch.isPending}
           >
@@ -237,6 +244,21 @@ export function LeadScoringDashboard() {
                         <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">
                           {lead.company || lead.email || "UNIDENTIFIED SECTOR"}
                         </p>
+                        {lead.trend && lead.trend.length > 1 && (
+                          <div className="flex items-center gap-1 ml-2">
+                            {lead.trend[lead.trend.length - 1] > lead.trend[0] ? (
+                              <TrendingUp className="h-3 w-3 text-emerald-500" />
+                            ) : (
+                              <TrendingUp className="h-3 w-3 text-rose-500 rotate-180" />
+                            )}
+                            <span className={cn(
+                              "text-[10px] font-bold",
+                              lead.trend[lead.trend.length - 1] > lead.trend[0] ? "text-emerald-500" : "text-rose-500"
+                            )}>
+                              {Math.abs(lead.trend[lead.trend.length - 1] - lead.trend[0])}%
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

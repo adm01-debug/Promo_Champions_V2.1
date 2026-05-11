@@ -36,6 +36,8 @@ interface SourceMetrics {
   conversionRate: number;
   avgDealSize: number;
   percentageOfTotal: number;
+  roi?: number;
+  costPerLead?: number;
 }
 
 interface SourceAnalysis {
@@ -46,6 +48,7 @@ interface SourceAnalysis {
   bestConversionSource: LeadSource | null;
   highestValueSource: LeadSource | null;
   highestVolumeSource: LeadSource | null;
+  totalInvestment?: number;
 }
 
 export function useLeadSourceAnalysis(months: number = 3) {
@@ -63,6 +66,12 @@ export function useLeadSourceAnalysis(months: number = 3) {
         .lte("created_at", endDate.toISOString());
 
       if (error) throw error;
+
+      const { data: configs } = await supabase
+        .from("lead_source_configs")
+        .select("*");
+
+      const configMap = new Map((configs || []).map(c => [c.source_name, c]));
 
       // Group by source
       const sourceMap = new Map<LeadSource, any[]>();
@@ -93,6 +102,11 @@ export function useLeadSourceAnalysis(months: number = 3) {
           .reduce((sum, s) => sum + Number(s.amount), 0);
         const totalSourceValue = sourceSales.reduce((sum, s) => sum + Number(s.amount), 0);
 
+        const config = configMap.get(source);
+        const monthlyBudget = config?.monthly_budget ? Number(config.monthly_budget) : 0;
+        // Simplified investment over period
+        const periodInvestment = monthlyBudget * months;
+
         sources.push({
           source,
           totalLeads: sourceTotal,
@@ -103,6 +117,8 @@ export function useLeadSourceAnalysis(months: number = 3) {
           conversionRate: sourceTotal > 0 ? (closed / sourceTotal) * 100 : 0,
           avgDealSize: closed > 0 ? closedValue / closed : 0,
           percentageOfTotal: totalLeads > 0 ? (sourceTotal / totalLeads) * 100 : 0,
+          roi: periodInvestment > 0 ? closedValue / periodInvestment : undefined,
+          costPerLead: sourceTotal > 0 ? periodInvestment / sourceTotal : undefined,
         });
       }
 
@@ -130,6 +146,7 @@ export function useLeadSourceAnalysis(months: number = 3) {
         bestConversionSource: bestConversion?.source || null,
         highestValueSource: highestValue?.source || null,
         highestVolumeSource: highestVolume?.source || null,
+        totalInvestment: Array.from(configMap.values()).reduce((sum, c) => sum + Number(c.monthly_budget || 0), 0) * months
       };
     },
   });
