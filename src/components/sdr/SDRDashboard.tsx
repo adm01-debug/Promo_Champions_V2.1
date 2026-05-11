@@ -12,7 +12,10 @@ import {
   MessageSquare,
   FileCheck,
   Calculator,
-  LineChart
+  LineChart,
+  Filter,
+  AlertTriangle,
+  Award
 } from "lucide-react";
 import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
@@ -21,6 +24,11 @@ import { RecentProspects } from "./RecentProspects";
 import { ActivityAuditTrail } from "./ActivityAuditTrail";
 import { SDRConversationInsights } from "./SDRConversationInsights";
 import { MQLQualificationForm } from "./MQLQualificationForm";
+import { SDRAdvancedFilters } from "./SDRAdvancedFilters";
+import { SDRAlertHistory } from "./SDRAlertHistory";
+import { SDRConversionEvolution } from "./SDRConversionEvolution";
+import { SDRConversionRanking } from "./SDRConversionRanking";
+import { TopSDRsRanking } from "./TopSDRsRanking";
 import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
 import { SDRSequenceOrchestrator } from "./SDRSequenceOrchestrator";
@@ -36,7 +44,11 @@ import { SDRCommandBar } from "./SDRCommandBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SDRDashboardInner = () => {
-  const { data: metrics, isLoading } = useSDRMetrics("month");
+  const [period, setPeriod] = useState<"week" | "month" | "quarter">("month");
+  const [filters, setFilters] = useState<any>({});
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const { data: metrics, isLoading } = useSDRMetrics(period, filters, searchTerm);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [selectedLeadData, setSelectedLeadData] = useState<{name: string, score: number} | null>(null);
 
@@ -204,9 +216,17 @@ const SDRDashboardInner = () => {
               <FileCheck className="w-4 h-4" />
               MQL Qualification
             </TabsTrigger>
+            <TabsTrigger value="performance" className="gap-2">
+              <Award className="w-4 h-4" />
+              Ranking & Growth
+            </TabsTrigger>
             <TabsTrigger value="strategy" className="gap-2">
               <Calculator className="w-4 h-4" />
-              Growth Strategy
+              Strategy Simulator
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Alert History
             </TabsTrigger>
           </TabsList>
           
@@ -230,11 +250,23 @@ const SDRDashboardInner = () => {
             <MQLQualificationForm />
           </TabsContent>
 
+          <TabsContent value="performance" className="mt-0 outline-none space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SDRConversionRanking period={period} />
+              <TopSDRsRanking />
+            </div>
+            <SDRConversionEvolution period={period} />
+          </TabsContent>
+
           <TabsContent value="strategy" className="mt-0 outline-none space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <TargetSimulator />
-              <SDRActivityTrend period="month" />
+              <SDRActivityTrend period={period} />
             </div>
+          </TabsContent>
+
+          <TabsContent value="alerts" className="mt-0 outline-none">
+            <SDRAlertHistory />
           </TabsContent>
         </Tabs>
       </motion.div>
