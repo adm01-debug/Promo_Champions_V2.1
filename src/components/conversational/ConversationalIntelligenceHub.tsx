@@ -273,21 +273,34 @@ const KPICard = ({
   label,
   value,
   hint,
+  trend,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   hint?: string;
+  trend?: string;
 }) => (
-  <Card>
+  <Card className="glass border-border/40 hover:border-primary/30 transition-all duration-300 group">
     <CardContent className="pt-6">
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
-          <p className="text-2xl font-bold mt-1">{value}</p>
-          {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
+        <div className="space-y-1">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+          <div className="flex items-baseline gap-2">
+            <p className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">{value}</p>
+            {trend && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                trend.includes('+') ? 'bg-success/10 text-success' : 
+                trend.includes('-') ? 'bg-destructive/10 text-destructive' : 
+                'bg-primary/10 text-primary'
+              }`}>
+                {trend}
+              </span>
+            )}
+          </div>
+          {hint && <p className="text-[10px] text-muted-foreground font-medium">{hint}</p>}
         </div>
-        <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+        <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 shadow-sm shadow-primary/20">
           <Icon className="size-5" />
         </div>
       </div>
