@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { cn } from '@/lib/utils';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
