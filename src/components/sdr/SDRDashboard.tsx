@@ -23,6 +23,7 @@ import { SDRAchievementTracker } from "./SDRAchievementTracker";
 import { motion, AnimatePresence } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
+import { SDRCommandBar } from "./SDRCommandBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SDRDashboardInner = () => {
@@ -85,6 +86,8 @@ const SDRDashboardInner = () => {
       animate="visible"
       className="space-y-8"
     >
+      <SDRCommandBar />
+      
       {/* Upper Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((card, idx) => (
