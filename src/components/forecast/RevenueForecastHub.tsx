@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { RefreshCw, TrendingUp, Target, Activity, Zap, History, ChevronRight } from "lucide-react";
+import { RefreshCw, TrendingUp, Target, Activity, Zap, History, ChevronRight, ShieldCheck } from "lucide-react";
 import { useRevenueForecast } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
