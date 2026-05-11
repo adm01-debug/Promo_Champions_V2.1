@@ -106,6 +106,28 @@ export const RevenueForecastHub: FC = () => {
           </Button>
         </div>
       </motion.div>
+      
+      <div className="flex justify-end mb-2">
+        <Button 
+          variant="glow" 
+          size="sm" 
+          className="h-8 text-[10px] font-black uppercase tracking-widest gap-2"
+          onClick={async () => {
+             await supabase.from('forecast_snapshots').insert({
+               horizon_days: horizon,
+               pessimistic_value: data.scenarios.pessimistic,
+               realistic_value: data.scenarios.realistic,
+               optimistic_value: data.scenarios.optimistic,
+               confidence_at_time: data.confidence,
+               metadata: { source: 'manual_trigger' }
+             });
+             refetch();
+          }}
+        >
+          <Activity className="h-3 w-3" />
+          Registrar Snapshot
+        </Button>
+      </div>
 
       {/* KPIs principais */}
       <div className="grid gap-3 md:grid-cols-4">
