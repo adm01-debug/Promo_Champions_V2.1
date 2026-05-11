@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Lock, ArrowRight, Shield, Zap } from "lucide-react";
+import { CheckCircle2, Lock, ArrowRight, Shield, Zap, PlayCircle } from "lucide-react";
 import type { Playbook } from "@/hooks/useSalesEnablement";
+import { PlaybookExecutionDialog } from "./PlaybookExecutionDialog";
 
 export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
   return (
@@ -42,10 +43,7 @@ export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
             </p>
           )}
         </div>
-        <Button className="w-full h-8 text-xs font-bold gap-2 group-hover:glow" variant="secondary">
-          Iniciar Playbook
-          <ArrowRight className="size-3 group-hover:translate-x-1 transition-transform" />
-        </Button>
+        <PlaybookExecutionDialog playbook={playbook} />
       </CardContent>
     </Card>
   );
