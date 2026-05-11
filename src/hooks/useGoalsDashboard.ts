@@ -49,7 +49,7 @@ export function useGoalsDashboard() {
       const daysRemaining = totalDays - daysElapsed;
 
       // Fetch all data in parallel for better performance
-      const [salespeopleResult, goalsResult, salesResult] = await Promise.all([
+      const [salespeopleResult, goalsResult, salesResult, predictionsResult] = await Promise.all([
         supabase
           .from("salespeople")
           .select("id, name, avatar_url, role, commission_rate")
@@ -64,6 +64,10 @@ export function useGoalsDashboard() {
           .eq("status", "completed")
           .gte("created_at", monthStart.toISOString())
           .lte("created_at", monthEnd.toISOString()),
+        supabase
+          .from("quota_attainment_predictions")
+          .select("*")
+          .eq("period_date", currentMonth),
       ]);
 
       if (salespeopleResult.error) throw salespeopleResult.error;
