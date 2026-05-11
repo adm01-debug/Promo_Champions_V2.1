@@ -18,3 +18,4 @@ export { PredictiveSuccessMap } from './PredictiveSuccessMap';
 export { ActivityAuditTrail } from './ActivityAuditTrail';
 export { MQLQualificationForm } from './MQLQualificationForm';
 export { SDRAdvancedFilters } from './SDRAdvancedFilters';
+export { SDRConversationInsights } from './SDRConversationInsights';
