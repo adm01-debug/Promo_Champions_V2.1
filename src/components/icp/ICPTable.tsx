@@ -38,6 +38,7 @@ export const ICPTable = React.memo(function ICPTable({ data, clientMap, onEdit }
             <TableHead>Grupo/Nicho</TableHead>
             <TableHead>Capital Social</TableHead>
             <TableHead>Colaboradores</TableHead>
+            <TableHead>Score Fit</TableHead>
             <TableHead>Status ICP</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
