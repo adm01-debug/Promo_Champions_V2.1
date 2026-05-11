@@ -455,6 +455,16 @@ export function LeadScoringDashboard() {
                   <FileText className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
                   PDF
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportToPDF}
+                  disabled={isExporting}
+                  className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+                >
+                  <FileText className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                  PDF
+                </Button>
               </div>
 
               <div className={cn(
