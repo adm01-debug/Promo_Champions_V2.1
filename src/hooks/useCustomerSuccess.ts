@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export interface HealthFactor {
+  label: string;
+  status: "good" | "warning" | "bad";
+  value: string;
+}
+
 export interface AccountHealth {
   account_id: string;
   account_name: string;
@@ -12,6 +18,13 @@ export interface AccountHealth {
   days_since_last_activity: number;
   total_revenue: number;
   recommended_action: string;
+  health_factors?: HealthFactor[];
+  engagement_radar?: {
+    usage: number;
+    sentiment: number;
+    support: number;
+    financial: number;
+  };
 }
 
 export interface CustomerSuccessSummary {

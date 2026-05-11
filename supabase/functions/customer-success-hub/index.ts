@@ -1,6 +1,12 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
+interface HealthFactor {
+  label: string;
+  status: "good" | "warning" | "bad";
+  value: string;
+}
+
 interface AccountHealth {
   account_id: string;
   account_name: string;
@@ -12,6 +18,13 @@ interface AccountHealth {
   days_since_last_activity: number;
   total_revenue: number;
   recommended_action: string;
+  health_factors?: HealthFactor[];
+  engagement_radar?: {
+    usage: number;
+    sentiment: number;
+    support: number;
+    financial: number;
+  };
 }
 
 Deno.serve(async (req) => {
@@ -57,10 +70,18 @@ Deno.serve(async (req) => {
         const expansionPotential = Math.max(0, Math.min(100, score - daysSince + (acc.tier === "enterprise" ? 20 : 0)));
 
         let action = "Manter cadência regular";
-        if (churnRisk === "critical") action = "🚨 Reunião executiva urgente — risco de churn";
-        else if (churnRisk === "high") action = "📞 Call de retenção esta semana";
-        else if (expansionPotential > 70) action = "💎 Apresentar proposta de expansão (upsell)";
-        else if (daysSince > 14) action = "✉️ Reengajar com novidades/conteúdo";
+        const factors: HealthFactor[] = [
+          { label: "Atividade", status: daysSince > 30 ? "bad" : daysSince > 14 ? "warning" : "good", value: `${daysSince}d` },
+          { label: "Sentimento", status: score < 40 ? "bad" : score < 70 ? "warning" : "good", value: score > 70 ? "Positivo" : score > 40 ? "Neutro" : "Negativo" },
+          { label: "Suporte", status: "good", value: "Normal" }
+        ];
+
+        const radar = {
+          usage: Math.round(score * 0.8),
+          sentiment: score,
+          support: 90,
+          financial: 100
+        };
 
         return {
           account_id: acc.id,
@@ -73,6 +94,8 @@ Deno.serve(async (req) => {
           days_since_last_activity: daysSince,
           total_revenue: acc.annual_revenue ?? 0,
           recommended_action: action,
+          health_factors: factors,
+          engagement_radar: radar
         };
       })
     );
