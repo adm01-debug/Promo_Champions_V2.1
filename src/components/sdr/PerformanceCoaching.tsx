@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award, TrendingUp, AlertTriangle, Lightbulb, CheckCircle2 } from "lucide-react";
+import { Award, TrendingUp, AlertTriangle, Lightbulb, CheckCircle2, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function PerformanceCoaching() {
