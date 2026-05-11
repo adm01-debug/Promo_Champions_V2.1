@@ -57,7 +57,10 @@ import { toast } from "sonner";
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const [filters, setFilters] = useState<any>({});
-  const { data: metrics, isLoading } = useSDRMetrics(period);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const { data: metrics, isLoading } = useSDRMetrics(period, filters, searchTerm);
+
   
   // Dialer State
   const [activeQueueId, setActiveQueueId] = useState<string | null>(null);
@@ -180,10 +183,11 @@ export default function SDRDashboard() {
 
               <div className="mb-8">
                 <SDRAdvancedFilters 
-                  onSearch={(val) => console.log('Searching:', val)} 
+                  onSearch={(val) => setSearchTerm(val)} 
                   onFilterChange={(f) => setFilters(f)} 
                 />
               </div>
+
             </motion.div>
 
             {/* Hero Metrics - Gauges Row */}

@@ -46,10 +46,15 @@ function getPeriodRange(period: PeriodFilter, offset: number = 0) {
   }
 }
 
-export function useSDRMetrics(period: PeriodFilter = "month") {
+export function useSDRMetrics(
+  period: PeriodFilter = "month",
+  filters?: any,
+  searchTerm?: string
+) {
   return useQuery({
-    queryKey: ["sdr-metrics", period],
+    queryKey: ["sdr-metrics", period, filters, searchTerm],
     queryFn: async (): Promise<SDRComparison> => {
+
       const currentRange = getPeriodRange(period, 0);
       const previousRange = getPeriodRange(period, 1);
 
