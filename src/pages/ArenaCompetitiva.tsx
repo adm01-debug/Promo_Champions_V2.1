@@ -42,22 +42,46 @@ const ArenaCompetitiva = () => {
       </Helmet>
 
       <PageTransition>
-      <div className="min-h-screen bg-background bg-gradient-subtle">
-        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Futuristic Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px]" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px] animate-pulse" />
+        </div>
+
+        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-10 relative z-10">
           <div className="animate-fade-in-up">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Tournament Hub</span>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Live Tournament Hub v2.0</span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
-                  Arena Competitiva
+                <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-[0.8]">
+                  Arena <br /> <span className="text-foreground">Competitiva</span>
                 </h1>
-                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
-                  <Swords className="h-4 w-4 text-primary/60" />
-                  Ecossistema Global de Competição • <span className="text-foreground/80 italic font-bold">Modo Ativo</span>
-                </p>
+                <div className="flex items-center gap-4">
+                  <p className="text-sm text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2">
+                    <Swords className="h-4 w-4 text-primary" />
+                    Global Ecosystem • <span className="text-primary italic animate-pulse">Active Mode</span>
+                  </p>
+                  <div className="h-4 w-px bg-white/10" />
+                  <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-[0.2em]">
+                    Real-time Data Sync enabled
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <Card className="glass border-white/5 p-4 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Status</p>
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">ONLINE</Badge>
+                </Card>
+                <Card className="glass border-white/5 p-4 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Players</p>
+                  <p className="text-xl font-black italic tracking-tighter">1,248</p>
+                </Card>
               </div>
             </div>
           </div>
