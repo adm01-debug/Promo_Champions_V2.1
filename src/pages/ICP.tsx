@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { TableSkeleton, PageHeaderSkeleton, SkeletonCard } from "@/components/skeletons/PageLoadingSkeleton";
-import { Target, Search, CheckCircle2, XCircle, Filter, Settings2, BarChart3, Users } from "lucide-react";
+import { Target, Search, CheckCircle2, XCircle, Filter, Settings2, BarChart3, Users, TrendingUp } from "lucide-react";
 import { ICPTable } from "@/components/icp/ICPTable";
 import { ICPEditDialog } from "@/components/icp/ICPEditDialog";
 import { PageTransition } from "@/components/transitions/PageTransition";
