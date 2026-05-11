@@ -77,10 +77,12 @@ export function useGoalsDashboard() {
       const salespeople = salespeopleResult.data || [];
       const goals = goalsResult.data || [];
       const sales = salesResult.data || [];
+      const predictions = predictionsResult.data || [];
 
       // Calculate per-salesperson data
       const salespeopleData: SalespersonGoalData[] = salespeople.map(sp => {
         const goal = goals.find(g => g.salesperson_id === sp.id);
+        const prediction = predictions.find(p => p.salesperson_id === sp.id);
         const goalAmount = goal ? Number(goal.goal_amount) : 0;
         const spSales = sales.filter(s => s.salesperson_id === sp.id);
         const currentSales = spSales.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -110,6 +112,8 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
+          predictedAttainment: prediction?.predicted_attainment_pct,
+          paceStatus: prediction?.pace_status as any,
         };
       });
 
