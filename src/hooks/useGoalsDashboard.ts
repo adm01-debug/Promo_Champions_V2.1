@@ -33,6 +33,7 @@ interface TeamGoalData {
   requiredDailyAverage: number;
   totalCurrentCommission: number;
   totalProjectedCommission: number;
+  teamPredictedAttainment?: number;
   salespeople: SalespersonGoalData[];
 }
 
