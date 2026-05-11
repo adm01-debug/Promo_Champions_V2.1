@@ -499,7 +499,10 @@ export default function SDRDashboard() {
               <div className="lg:col-span-1">
                 <MQLQualificationForm />
               </div>
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-1">
+                <TargetSimulator />
+              </div>
+              <div className="lg:col-span-1">
                 <SDRAlertHistory />
               </div>
             </motion.div>
