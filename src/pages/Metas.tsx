@@ -193,6 +193,7 @@ export default function Metas() {
                 daysRemaining={data?.daysRemaining || 0}
                 dailyAverage={data?.dailyAverage || 0}
                 requiredDailyAverage={data?.requiredDailyAverage || 0}
+                predictedAttainment={data?.teamPredictedAttainment}
               />
 
               {/* Commission Calculator */}

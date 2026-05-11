@@ -13,6 +13,7 @@ interface TeamGoalProgressProps {
   daysRemaining: number;
   dailyAverage: number;
   requiredDailyAverage: number;
+  predictedAttainment?: number;
 }
 
 export function TeamGoalProgress({
@@ -25,6 +26,7 @@ export function TeamGoalProgress({
   daysRemaining,
   dailyAverage,
   requiredDailyAverage,
+  predictedAttainment,
 }: TeamGoalProgressProps) {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -92,6 +94,14 @@ export function TeamGoalProgress({
                 <span className="text-[10px] font-black text-primary uppercase">Elite</span>
               </div>
               <p className="text-4xl font-display font-black tracking-tighter text-foreground italic leading-none">{progress.toFixed(1)}%</p>
+              {predictedAttainment !== undefined && (
+                <div className="flex items-center justify-end gap-1 mt-1">
+                  <TrendingUp className={`h-3 w-3 ${predictedAttainment >= 100 ? 'text-success' : 'text-primary'}`} />
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${predictedAttainment >= 100 ? 'text-success' : 'text-primary'}`}>
+                    Previsão: {predictedAttainment.toFixed(0)}%
+                  </span>
+                </div>
+              )}
               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 mt-1">Concluído</p>
             </div>
           </div>

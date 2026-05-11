@@ -20,6 +20,8 @@ interface SalespersonGoalCardProps {
   rank: number;
   level?: number;
   totalXP?: number;
+  predictedAttainment?: number;
+  paceStatus?: 'ahead' | 'on_track' | 'behind';
 }
 
 const roleLabels: Record<string, string> = {
@@ -42,6 +44,8 @@ function _SalespersonGoalCard({
   rank,
   level = 1,
   totalXP = 0,
+  predictedAttainment,
+  paceStatus,
 }: SalespersonGoalCardProps) {
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
@@ -112,6 +116,18 @@ function _SalespersonGoalCard({
             {hasExceededGoal && (
               <Badge className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-rank-gold/20 text-rank-gold border-none">
                 Bônus Ativo
+              </Badge>
+            )}
+            {predictedAttainment !== undefined && (
+              <Badge 
+                variant="outline" 
+                className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border-none ${
+                  paceStatus === 'ahead' ? 'bg-success/20 text-success' : 
+                  paceStatus === 'on_track' ? 'bg-info/20 text-info' : 
+                  'bg-destructive/20 text-destructive'
+                }`}
+              >
+                Previsto: {predictedAttainment.toFixed(0)}%
               </Badge>
             )}
           </div>

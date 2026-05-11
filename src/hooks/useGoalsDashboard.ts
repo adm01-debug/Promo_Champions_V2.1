@@ -17,6 +17,8 @@ interface SalespersonGoalData {
   commissionRate: number;
   currentCommission: number;
   projectedCommission: number;
+  predictedAttainment?: number;
+  paceStatus?: 'ahead' | 'on_track' | 'behind';
 }
 
 interface TeamGoalData {
@@ -31,6 +33,7 @@ interface TeamGoalData {
   requiredDailyAverage: number;
   totalCurrentCommission: number;
   totalProjectedCommission: number;
+  teamPredictedAttainment?: number;
   salespeople: SalespersonGoalData[];
 }
 
@@ -47,7 +50,7 @@ export function useGoalsDashboard() {
       const daysRemaining = totalDays - daysElapsed;
 
       // Fetch all data in parallel for better performance
-      const [salespeopleResult, goalsResult, salesResult] = await Promise.all([
+      const [salespeopleResult, goalsResult, salesResult, predictionsResult] = await Promise.all([
         supabase
           .from("salespeople")
           .select("id, name, avatar_url, role, commission_rate")
@@ -62,6 +65,10 @@ export function useGoalsDashboard() {
           .eq("status", "completed")
           .gte("created_at", monthStart.toISOString())
           .lte("created_at", monthEnd.toISOString()),
+        supabase
+          .from("quota_attainment_predictions")
+          .select("*")
+          .eq("period_date", currentMonth),
       ]);
 
       if (salespeopleResult.error) throw salespeopleResult.error;
@@ -71,10 +78,12 @@ export function useGoalsDashboard() {
       const salespeople = salespeopleResult.data || [];
       const goals = goalsResult.data || [];
       const sales = salesResult.data || [];
+      const predictions = predictionsResult.data || [];
 
       // Calculate per-salesperson data
       const salespeopleData: SalespersonGoalData[] = salespeople.map(sp => {
         const goal = goals.find(g => g.salesperson_id === sp.id);
+        const prediction = predictions.find(p => p.salesperson_id === sp.id);
         const goalAmount = goal ? Number(goal.goal_amount) : 0;
         const spSales = sales.filter(s => s.salesperson_id === sp.id);
         const currentSales = spSales.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -104,10 +113,13 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
+          predictedAttainment: (prediction as any)?.predicted_attainment_pct,
+          paceStatus: (prediction as any)?.pace_status as any,
         };
       });
 
       // Calculate team totals
+      const teamPrediction = predictions.find(p => p.salesperson_id === '00000000-0000-0000-0000-000000000000'); // ID fictício para time ou lógica similar
       const totalGoal = salespeopleData.reduce((sum, sp) => sum + sp.goalAmount, 0);
       const totalSales = salespeopleData.reduce((sum, sp) => sum + sp.currentSales, 0);
       const teamProgress = totalGoal > 0 ? (totalSales / totalGoal) * 100 : 0;
@@ -131,6 +143,7 @@ export function useGoalsDashboard() {
         requiredDailyAverage: Math.max(0, teamRequiredDaily),
         totalCurrentCommission,
         totalProjectedCommission,
+        teamPredictedAttainment: teamPrediction ? (teamPrediction as any).predicted_attainment_pct : (teamProgress * (totalDays / daysElapsed)),
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },

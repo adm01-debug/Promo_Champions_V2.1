@@ -8552,6 +8552,33 @@ export type Database = {
           },
         ]
       }
+      performance_impact_factors: {
+        Row: {
+          description: string | null
+          factor_name: string | null
+          id: string
+          impact_score: number | null
+          recorded_at: string | null
+          salesperson_id: string
+        }
+        Insert: {
+          description?: string | null
+          factor_name?: string | null
+          id?: string
+          impact_score?: number | null
+          recorded_at?: string | null
+          salesperson_id: string
+        }
+        Update: {
+          description?: string | null
+          factor_name?: string | null
+          id?: string
+          impact_score?: number | null
+          recorded_at?: string | null
+          salesperson_id?: string
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           action: string
@@ -12085,6 +12112,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      salesperson_performance_telemetry: {
+        Row: {
+          captured_at: string | null
+          id: string
+          metric_type: string | null
+          metric_value: number | null
+          salesperson_id: string
+        }
+        Insert: {
+          captured_at?: string | null
+          id?: string
+          metric_type?: string | null
+          metric_value?: number | null
+          salesperson_id: string
+        }
+        Update: {
+          captured_at?: string | null
+          id?: string
+          metric_type?: string | null
+          metric_value?: number | null
+          salesperson_id?: string
+        }
+        Relationships: []
       }
       salesperson_preferences: {
         Row: {
@@ -16326,6 +16377,14 @@ export type Database = {
           health_score: number
           negative_factors: Json
           positive_factors: Json
+        }[]
+      }
+      calculate_performance_pace: {
+        Args: { _salesperson_id: string }
+        Returns: {
+          current_pct: number
+          predicted_pct: number
+          status: string
         }[]
       }
       calculate_source_roi: {
