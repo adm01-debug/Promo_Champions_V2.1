@@ -59,10 +59,15 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({ data, o
               Correlação entre preço praticado e probabilidade de fechamento.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="gap-1 bg-success/5 text-success border-success/30">
-            <TrendingUp className="h-3 w-3" />
-            Preço Ótimo: R$ {optimalPrice.toLocaleString("pt-BR")}
-          </Badge>
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase">Price Shield Ativo</span>
+              <Badge variant="outline" className="gap-1.5 bg-success/10 text-success border-success/30 shadow-[0_0_15px_rgba(34,197,94,0.2)] animate-pulse">
+                <Zap className="h-3 w-3 fill-current" />
+                Preço Ótimo: R$ {optimalPrice.toLocaleString("pt-BR")}
+              </Badge>
+            </div>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="h-80 p-4">
