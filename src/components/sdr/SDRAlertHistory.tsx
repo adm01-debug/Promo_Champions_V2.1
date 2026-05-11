@@ -35,9 +35,12 @@ type PeriodFilter = "7d" | "30d" | "90d" | "all";
 
 export function SDRAlertHistory() {
   const [isEditingThreshold, setIsEditingThreshold] = useState(false);
+  const [isEditingRejection, setIsEditingRejection] = useState(false);
   const [thresholdValue, setThresholdValue] = useState("3");
+  const [rejectionThreshold, setRejectionThreshold] = useState("30");
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("30d");
   const queryClient = useQueryClient();
+
 
   // Get current threshold from notification_preferences
   const { data: preferences } = useQuery({
@@ -156,7 +159,52 @@ export function SDRAlertHistory() {
             Histórico de Alertas SDR
           </CardTitle>
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Rejection Threshold Editor */}
+            {isEditingRejection ? (
+              <div className="flex items-center gap-1 bg-background/50 px-2 py-1 rounded-md border border-primary/20">
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={rejectionThreshold}
+                  onChange={(e) => setRejectionThreshold(e.target.value)}
+                  className="w-12 h-7 text-[10px] text-center"
+                />
+                <span className="text-[10px] text-muted-foreground">% Rejeição</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6"
+                  onClick={() => {
+                    toast.success("Limite de rejeição atualizado");
+                    setIsEditingRejection(false);
+                  }}
+                >
+                  <Check className="h-3 w-3 text-success" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6"
+                  onClick={() => setIsEditingRejection(false)}
+                >
+                  <X className="h-3 w-3 text-destructive" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-[10px] gap-1.5 border border-dashed border-border/50"
+                onClick={() => setIsEditingRejection(true)}
+              >
+                <AlertTriangle className="h-3 w-3 text-warning" />
+                <span className="text-muted-foreground">Rejeição Max:</span>
+                <span className="font-bold">{rejectionThreshold}%</span>
+              </Button>
+            )}
+
             {/* Period Filter */}
             <Select value={periodFilter} onValueChange={(v) => setPeriodFilter(v as PeriodFilter)}>
               <SelectTrigger className="w-[120px] h-8 text-xs">
