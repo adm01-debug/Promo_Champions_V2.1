@@ -35,7 +35,7 @@ jobs:
       # Cache the Deno module download directory so repeat runs are fast and
       # network blips don't masquerade as bundle failures.
       - name: Cache Deno dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/deno
           key: deno-${{ runner.os }}-${{ hashFiles('supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
