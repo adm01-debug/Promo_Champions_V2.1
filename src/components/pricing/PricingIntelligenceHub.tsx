@@ -18,6 +18,8 @@ import {
 import { usePricingIntelligence, type PricingHealth } from "@/hooks/usePricingIntelligence";
 import { cn } from "@/lib/utils";
 import { DiscountOptimizer } from "./DiscountOptimizer";
+import { PriceElasticityChart } from "./PriceElasticityChart";
+import { RevenueLeakageCard } from "./RevenueLeakageCard";
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
@@ -149,6 +151,17 @@ export function PricingIntelligenceHub() {
           accent={k.alert_ratio > 0.2 ? "text-destructive" : "text-foreground"}
         />
       </div>
+
+      {/* Revenue Leakage Map */}
+      <RevenueLeakageCard 
+        totalLost={k.revenue_lost}
+        discountLost={k.revenue_lost * 0.55}
+        competitorLost={k.revenue_lost * 0.30}
+        marginErosion={k.revenue_lost * 0.15}
+      />
+
+      {/* Price Elasticity Chart */}
+      <PriceElasticityChart />
 
       {/* Simulator */}
       <DiscountOptimizer />

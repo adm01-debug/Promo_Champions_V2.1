@@ -1,27 +1,23 @@
-### Plano de Implementação: Customer Success Hub 10/10
+### Plano de Implementação: Pricing Intelligence Hub 10/10
 
-O Customer Success Hub será elevado ao padrão de excelência "Glow & Glass" com inteligência preditiva para antecipar churn e identificar expansões.
+O Pricing Intelligence Hub será transformado em um cockpit de proteção de margem de elite, utilizando IA para identificar elasticidade e evitar vazamento de receita.
 
-#### Passo 1: IA Churn Predictor & Engagement Radar
-- **Refatoração Visual**: Atualizar `src/components/customer-success/CustomerSuccessHub.tsx` com o design system cibernético.
-- **Predição de Churn**: Adicionar detalhes sobre *por que* o score caiu (ex: baixa atividade, sentimento negativo em chamadas).
-- **Engagement Radar**: Criar mini-indicadores de saúde (Uso, Suporte, Sentimento, Financeiro).
+#### Passo 1: IA Elasticity Curve & Price Shield
+- **Visualização de Elasticidade**: Criar `src/components/pricing/PriceElasticityChart.tsx` para mostrar a correlação entre preço e win-rate por categoria.
+- **Price Shield**: Adicionar indicadores de "Preço Ótimo" baseados em modelos preditivos.
 
-#### Passo 2: Oportunidades de Expansão (Upsell)
-- **Expansão Inteligente**: Implementar lógica visual para destacar contas com alto health score e renovação próxima como "Oportunidades de Ouro".
-- **Revenue Projection**: Mostrar o valor potencial de expansão diretamente na lista.
+#### Passo 2: Revenue Leakage Analysis
+- **Mapa de Vazamento**: Detalhar o impacto financeiro de descontos excessivos e perda de margem por concorrente.
+- **Micro-interações**: Animações de contagem e glow dinâmico para destacar prejuízos críticos.
 
-#### Passo 3: Integração de Notificações de CS
-- **Alertas Proativos**: Configurar gatilhos para notificar o gestor/CSM quando:
-  - Uma conta entra em "Risco Crítico".
-  - Uma conta atinge "Expansion Ready".
+#### Passo 3: Refatoração Visual "Glow & Glass"
+- Atualizar `src/components/pricing/PricingIntelligenceHub.tsx` com o padrão visual imersivo de alta performance (borders transparentes, blur de fundo, count-up animations).
 
-#### Passo 4: Refinamento Estético e Micro-interações
-- **Glassmorphism**: Aplicar efeitos de transparência e brilho nos cards.
-- **Animações**: Framer motion para entrada de listas e transição de estados de health.
+#### Passo 4: Notificações de Margem Crítica
+- Implementar disparos de alertas proativos quando a margem de um deal fechado cair abaixo de 15% ou divergir drasticamente do benchmark.
 
 ---
 **Detalhes Técnicos:**
-- **Hooks**: Expandir `useCustomerSuccess` para incluir detalhes dos fatores de risco.
-- **Componentes**: Criar `ChurnRiskDetailDialog.tsx` para explicar as predições da IA.
-- **UI**: Uso extensivo de `framer-motion` e `lucide-react`.
+- **Hooks**: Expandir `usePricingIntelligence` para fornecer dados de elasticidade.
+- **Componentes**: Novo `RevenueLeakageCard.tsx`.
+- **UI**: Framer Motion para gráficos e tabelas.
