@@ -131,23 +131,35 @@ export function PricingIntelligenceHub() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard icon={DollarSign} label="Ticket médio" value={fmtCurrency(k.avg_ticket)} accent="text-info" />
+        <KpiCard 
+          icon={DollarSign} 
+          label="Ticket médio" 
+          value={fmtCurrency(k.avg_ticket)} 
+          numericValue={k.avg_ticket}
+          isCurrency
+          accent="text-info" 
+        />
         <KpiCard
           icon={TrendingDown}
           label="Desconto médio"
           value={fmtPct(k.avg_discount_pct)}
+          numericValue={k.avg_discount_pct * 100}
+          isPercent
           accent={k.avg_discount_pct > 0.15 ? "text-warning" : "text-foreground"}
         />
         <KpiCard
           icon={AlertTriangle}
           label="Receita perdida"
           value={fmtCurrency(k.revenue_lost)}
+          numericValue={k.revenue_lost}
+          isCurrency
           accent="text-destructive"
         />
         <KpiCard
           icon={Target}
           label="Deals em alerta"
           value={`${k.alerted_deals} (${fmtPct(k.alert_ratio)})`}
+          numericValue={k.alerted_deals}
           accent={k.alert_ratio > 0.2 ? "text-destructive" : "text-foreground"}
         />
       </div>
