@@ -46,6 +46,7 @@ import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
+import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -533,13 +534,12 @@ export default function SDRDashboard() {
               <LeadSLAMonitor />
             </motion.div>
 
-            {/* Alert History Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <SDRAlertHistory />
+              <ActivityAuditTrail />
             </motion.div>
             </>
             )}
