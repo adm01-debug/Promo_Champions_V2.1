@@ -5,18 +5,55 @@ import { Brain, Clock, Zap, TrendingUp, Calendar, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useHourlySuccessProbability } from "@/hooks/useSDRMetrics";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function PredictiveSuccessMap() {
   const { data: hourlySuccessData, isLoading } = useHourlySuccessProbability();
 
-  const handleScheduleBlock = () => {
+  const handleScheduleBlock = async () => {
     const bestHour = hourlySuccessData?.reduce((prev, current) => 
       (prev.probability > current.probability) ? prev : current
     );
 
-    toast.success(`Bloco de Foco Agendado!`, {
-      description: `Reservamos o horário das ${bestHour?.hour} no seu calendário para prospecção de alta performance.`,
-    });
+    if (!bestHour) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Você precisa estar logado para agendar blocos.");
+        return;
+      }
+
+      const { data: salesperson } = await supabase
+        .from("salespeople")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (!salesperson) return;
+
+      const [hours, minutes] = bestHour.hour.split(':');
+      const taskDate = new Date();
+      taskDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      const { error } = await supabase.from("tasks").insert({
+        salesperson_id: salesperson.id,
+        title: `Bloco de Foco: Prospecção AI (${bestHour.probability}% prob.)`,
+        task_type: "call",
+        due_date: taskDate.toISOString(),
+        status: "pending",
+        priority: "high"
+      });
+
+      if (error) throw error;
+
+      toast.success(`Bloco de Foco Agendado!`, {
+        description: `Reservamos o horário das ${bestHour.hour} no seu calendário para prospecção de alta performance.`,
+      });
+    } catch (error) {
+      console.error("Error scheduling block:", error);
+      toast.error("Erro ao agendar bloco de foco.");
+    }
   };
 
   if (isLoading) {
