@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { TrendingDown, AlertCircle, ShieldOff, Sparkles, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -71,37 +70,62 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({ totalLost, 
           <p className="text-xs text-muted-foreground mt-2 italic">
             Receita perdida no período por ineficiência de pricing.
           </p>
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="mt-4 h-8 text-[10px] font-bold text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 p-0 justify-start"
+            onClick={handleApplyRecovery}
+          >
+            <Sparkles className="h-3 w-3" />
+            APLICAR RECUPERAÇÃO
+            <ChevronRight className="h-3 w-3" />
+          </Button>
         </div>
         <div className="md:col-span-2 p-6 space-y-4">
-          {items.map((item, i) => {
-            const pct = (item.value / total) * 100;
-            return (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
-                    <span className="text-xs font-bold">{item.label}</span>
-                  </div>
-                  <span className="text-sm font-mono font-black tracking-tight">{fmtBRL(item.value)}</span>
-                </div>
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${pct}%` }}
-                    transition={{ duration: 1, delay: i * 0.15 }}
-                    className={`h-full ${item.bg} rounded-full`}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
+          <TooltipProvider>
+            {items.map((item, i) => {
+              const pct = (item.value / total) * 100;
+              return (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="cursor-help">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
+                            <span className="text-xs font-bold">{item.label}</span>
+                          </div>
+                          <span className="text-sm font-mono font-black tracking-tight">{fmtBRL(item.value)}</span>
+                        </div>
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${pct}%` }}
+                            transition={{ duration: 1, delay: i * 0.15 }}
+                            className={`h-full ${item.bg} rounded-full`}
+                          />
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[240px] p-3 text-xs">
+                      <p className="font-bold mb-1">{item.label}</p>
+                      <p className="text-muted-foreground mb-2">{item.recommendation}</p>
+                      <div className="text-[10px] text-primary bg-primary/10 px-2 py-1 rounded inline-block">
+                        Impacto: {pct.toFixed(1)}% do total
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </motion.div>
+              );
+            })}
+          </TooltipProvider>
         </div>
       </div>
     </Card>
   );
-}
+});
