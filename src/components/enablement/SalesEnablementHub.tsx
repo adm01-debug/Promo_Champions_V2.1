@@ -154,13 +154,21 @@ const NewAssetDialog = () => {
   );
 };
 
+import { PlaybookCard } from "./PlaybookCard";
+
 export const SalesEnablementHub = () => {
+  const [activeTab, setActiveTab] = useState("assets");
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
-  const { data: assets, isLoading } = useEnablementAssets(category);
+  const { data: assets, isLoading: assetsLoading } = useEnablementAssets(category);
+  const { data: playbooks, isLoading: playbooksLoading } = usePlaybooks();
 
-  const filtered = (assets ?? []).filter((a) =>
+  const filteredAssets = (assets ?? []).filter((a) =>
     !search || a.title.toLowerCase().includes(search.toLowerCase()) || a.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const filteredPlaybooks = (playbooks ?? []).filter((p) =>
+    !search || p.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -185,17 +193,41 @@ export const SalesEnablementHub = () => {
         </CardContent>
       </Card>
 
-      <Tabs value={category} onValueChange={setCategory}>
-        <TabsList className="flex-wrap h-auto">
-          {CATEGORIES.map((c) => <TabsTrigger key={c.value} value={c.value}>{c.label}</TabsTrigger>)}
-        </TabsList>
-        <TabsContent value={category} className="mt-6">
-          {isLoading ? (
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="flex items-center justify-between border-b border-border/40 pb-2">
+          <TabsList className="bg-transparent h-auto p-0 gap-8">
+            <TabsTrigger value="assets" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Repositório de Materiais
+            </TabsTrigger>
+            <TabsTrigger value="playbooks" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Playbooks de Elite
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="p-0 h-10 bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none text-sm font-bold uppercase tracking-widest">
+              Performance de Conteúdo
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="assets" className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <Badge 
+                key={c.value} 
+                variant={category === c.value ? "default" : "outline"} 
+                className="cursor-pointer hover:bg-primary/10 transition-all px-4 py-1"
+                onClick={() => setCategory(c.value)}
+              >
+                {c.label}
+              </Badge>
+            ))}
+          </div>
+
+          {assetsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-lg" />)}
             </div>
-          ) : filtered.length === 0 ? (
-            <Card>
+          ) : filteredAssets.length === 0 ? (
+            <Card className="border-dashed">
               <CardContent className="py-12 text-center text-muted-foreground">
                 <BookOpen className="size-12 mx-auto mb-3 opacity-50" />
                 <p>Nenhum material encontrado nesta categoria.</p>
@@ -203,9 +235,61 @@ export const SalesEnablementHub = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((a) => <AssetCard key={a.id} asset={a} />)}
+              {filteredAssets.map((a) => <AssetCard key={a.id} asset={a} />)}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="playbooks" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {playbooksLoading ? (
+              Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
+            ) : filteredPlaybooks.length === 0 ? (
+              <div className="lg:col-span-3 text-center py-20 border-2 border-dashed rounded-3xl">
+                <Shield className="size-16 mx-auto opacity-10 mb-4" />
+                <p className="text-muted-foreground font-display font-bold">Nenhum playbook tático configurado.</p>
+              </div>
+            ) : (
+              filteredPlaybooks.map((p) => <PlaybookCard key={p.id} playbook={p} />)
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6">
+          <Card className="glass border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="size-5 text-primary" />
+                ROI de Conteúdo & Influência em Deals
+              </CardTitle>
+              <CardDescription>Materiais que mais convertem leads em vendas finalizadas</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                 {filteredAssets.slice(0, 5).map((a, i) => (
+                    <div key={a.id} className="p-4 rounded-xl bg-background/50 border border-border/40 flex items-center justify-between group hover:border-primary/30 transition-all">
+                       <div className="flex items-center gap-4">
+                          <div className="text-2xl font-black font-display italic text-muted-foreground/20 group-hover:text-primary/20 transition-colors">#{i+1}</div>
+                          <div>
+                             <p className="text-sm font-bold group-hover:text-primary transition-colors">{a.title}</p>
+                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{a.category}</p>
+                          </div>
+                       </div>
+                       <div className="flex gap-8">
+                          <div className="text-right">
+                             <p className="text-[9px] font-black uppercase text-muted-foreground">Conversão</p>
+                             <p className="text-sm font-bold text-success">85%</p>
+                          </div>
+                          <div className="text-right">
+                             <p className="text-[9px] font-black uppercase text-muted-foreground">Impacto</p>
+                             <p className="text-sm font-bold text-primary">R$ 1.2M</p>
+                          </div>
+                       </div>
+                    </div>
+                 ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
