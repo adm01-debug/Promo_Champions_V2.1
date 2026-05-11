@@ -8839,6 +8839,7 @@ export type Database = {
       }
       playbook_items: {
         Row: {
+          asset_id: string | null
           content: string
           created_at: string
           id: string
@@ -8846,8 +8847,10 @@ export type Database = {
           item_order: number
           item_type: string
           playbook_id: string
+          target_outcome: string | null
         }
         Insert: {
+          asset_id?: string | null
           content: string
           created_at?: string
           id?: string
@@ -8855,8 +8858,10 @@ export type Database = {
           item_order?: number
           item_type?: string
           playbook_id: string
+          target_outcome?: string | null
         }
         Update: {
+          asset_id?: string | null
           content?: string
           created_at?: string
           id?: string
@@ -8864,8 +8869,16 @@ export type Database = {
           item_order?: number
           item_type?: string
           playbook_id?: string
+          target_outcome?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "playbook_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "sales_enablement_assets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "playbook_items_playbook_id_fkey"
             columns: ["playbook_id"]
@@ -16365,6 +16378,15 @@ export type Database = {
       calculate_account_score: {
         Args: { p_account_id: string }
         Returns: number
+      }
+      calculate_asset_efficiency: {
+        Args: { _asset_id: string }
+        Returns: {
+          deals_influenced: number
+          total_revenue_influenced: number
+          total_views: number
+          win_rate_influenced: number
+        }[]
       }
       calculate_daily_challenge_streak: {
         Args: { p_salesperson_id: string }
