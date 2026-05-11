@@ -66,28 +66,102 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 }
 
 export function LeadScoringDashboard() {
-  const { data: leads, isLoading } = useLeadScoring();
+  const { data: leads, isLoading, refetch } = useLeadScoring();
   const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [churnFilter, setChurnFilter] = useState<string>("all");
+  const [isExporting, setIsExporting] = useState(false);
+  const [attendedAlerts, setAttendedAlerts] = useState<Set<string>>(new Set());
   const explainBatch = useExplainBatch();
+
+  // Real-time synchronization
+  useMemo(() => {
+    const channel = supabase
+      .channel('lead-scoring-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_score_trends' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_churn_risk' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch]);
+
+  const allLeads = leads || [];
+  
+  const filteredLeads = useMemo(() => {
+    return allLeads.filter(l => {
+      const matchesSearch = l.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           (l.company?.toLowerCase().includes(searchTerm.toLowerCase()));
+      return matchesSearch;
+    });
+  }, [allLeads, searchTerm]);
+
+  const alerts = useMemo(() => {
+    return allLeads.filter(l => 
+      l.churnRisk && 
+      l.churnRisk.risk_score > 50 && 
+      !attendedAlerts.has(l.id) &&
+      (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
+    ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
+  }, [allLeads, attendedAlerts, churnFilter]);
+
+  const exportToCSV = () => {
+    setIsExporting(true);
+    try {
+      const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
+      const rows = filteredLeads.map((l, i) => [
+        i + 1,
+        l.name,
+        l.company || "N/A",
+        l.score,
+        l.category,
+        l.churnRisk?.risk_level || "low",
+        l.churnRisk?.risk_score || 0
+      ]);
+
+      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `lead_ranking_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Ranking exportado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao exportar dados.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <Target className="h-6 w-6 text-primary" />
-          <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
+          <h1 className="font-display text-2xl font-bold italic uppercase tracking-tighter">Lead Intelligence</h1>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {Array.from({ length: 3 }).map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
-        <Skeleton className="h-96 rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <Skeleton className="md:col-span-8 h-96 rounded-xl" />
+          <Skeleton className="md:col-span-4 h-96 rounded-xl" />
+        </div>
       </div>
     );
   }
 
-  const allLeads = leads || [];
   const hotCount = allLeads.filter(l => l.category === "Hot").length;
   const warmCount = allLeads.filter(l => l.category === "Warm").length;
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
