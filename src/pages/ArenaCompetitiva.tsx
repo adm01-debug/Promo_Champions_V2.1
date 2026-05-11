@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet-async';
+import { cn } from '@/lib/utils';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
 import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin, Search, ListChecks } from 'lucide-react';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
@@ -42,61 +44,104 @@ const ArenaCompetitiva = () => {
       </Helmet>
 
       <PageTransition>
-      <div className="min-h-screen bg-background bg-gradient-subtle">
-        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Futuristic Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px]" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px] animate-pulse" />
+        </div>
+
+        <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-10 relative z-10">
           <div className="animate-fade-in-up">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Tournament Hub</span>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Live Tournament Hub v2.0</span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none">
-                  Arena Competitiva
+                <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-[0.8]">
+                  Arena <br /> <span className="text-foreground">Competitiva</span>
                 </h1>
-                <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
-                  <Swords className="h-4 w-4 text-primary/60" />
-                  Ecossistema Global de Competição • <span className="text-foreground/80 italic font-bold">Modo Ativo</span>
-                </p>
+                <div className="flex items-center gap-4">
+                  <p className="text-sm text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2">
+                    <Swords className="h-4 w-4 text-primary" />
+                    Global Ecosystem • <span className="text-primary italic animate-pulse">Active Mode</span>
+                  </p>
+                  <div className="h-4 w-px bg-white/10" />
+                  <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-[0.2em]">
+                    Real-time Data Sync enabled
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <Card className="glass border-white/5 p-4 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Status</p>
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">ONLINE</Badge>
+                </Card>
+                <Card className="glass border-white/5 p-4 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Players</p>
+                  <p className="text-xl font-black italic tracking-tighter">1,248</p>
+                </Card>
               </div>
             </div>
           </div>
 
         <SeasonAndPowerUps />
 
-        <Tabs defaultValue="feed" className="space-y-4">
-          <TabsList className="bg-muted/50 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="feed" className="gap-1.5"><Trophy className="h-4 w-4" /><span className="hidden sm:inline">Vitórias</span></TabsTrigger>
-            <TabsTrigger value="profile" className="gap-1.5"><User className="h-4 w-4" /><span className="hidden sm:inline">Perfil</span></TabsTrigger>
-            <TabsTrigger value="ranking" className="gap-1.5"><Flame className="h-4 w-4" /><span className="hidden sm:inline">Ranking</span></TabsTrigger>
-            <TabsTrigger value="badges" className="gap-1.5"><Award className="h-4 w-4" /><span className="hidden sm:inline">Badges</span></TabsTrigger>
-            <TabsTrigger value="fame" className="gap-1.5"><Star className="h-4 w-4" /><span className="hidden sm:inline">Kudos</span></TabsTrigger>
-            <TabsTrigger value="streaks" className="gap-1.5"><TrendingUp className="h-4 w-4" /><span className="hidden sm:inline">Streaks</span></TabsTrigger>
-            <TabsTrigger value="leagues" className="gap-1.5"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Ligas</span></TabsTrigger>
-            <TabsTrigger value="h2h" className="gap-1.5"><Users className="h-4 w-4" /><span className="hidden sm:inline">1v1</span></TabsTrigger>
-            <TabsTrigger value="bench" className="gap-1.5"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Bench</span></TabsTrigger>
-            <TabsTrigger value="heatmap" className="gap-1.5"><Clock className="h-4 w-4" /><span className="hidden sm:inline">Heatmap</span></TabsTrigger>
-            <TabsTrigger value="goals" className="gap-1.5"><Target className="h-4 w-4" /><span className="hidden sm:inline">Metas</span></TabsTrigger>
-            <TabsTrigger value="missions" className="gap-1.5"><Target className="h-4 w-4" /><span className="hidden sm:inline">Missões</span></TabsTrigger>
-            <TabsTrigger value="chat" className="gap-1.5"><MessageCircle className="h-4 w-4" /><span className="hidden sm:inline">Chat</span></TabsTrigger>
-            <TabsTrigger value="wheel" className="gap-1.5"><Gift className="h-4 w-4" /><span className="hidden sm:inline">Roda</span></TabsTrigger>
-            <TabsTrigger value="battles" className="gap-1.5"><Swords className="h-4 w-4" /><span className="hidden sm:inline">Duelos</span></TabsTrigger>
-            <TabsTrigger value="tournament" className="gap-1.5"><Crown className="h-4 w-4" /><span className="hidden sm:inline">Torneios</span></TabsTrigger>
-            <TabsTrigger value="bets" className="gap-1.5"><Coins className="h-4 w-4" /><span className="hidden sm:inline">Apostas</span></TabsTrigger>
-            <TabsTrigger value="territory" className="gap-1.5"><MapPin className="h-4 w-4" /><span className="hidden sm:inline">Territórios</span></TabsTrigger>
-            <TabsTrigger value="tv" className="gap-1.5"><Tv className="h-4 w-4" /><span className="hidden sm:inline">TV</span></TabsTrigger>
-            <TabsTrigger value="tvpro" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">TV Pro</span></TabsTrigger>
-            <TabsTrigger value="scoreboard" className="gap-1.5"><Monitor className="h-4 w-4" /><span className="hidden sm:inline">Placar</span></TabsTrigger>
-            <TabsTrigger value="comparison" className="gap-1.5"><Search className="h-4 w-4" /><span className="hidden sm:inline">Market Intel</span></TabsTrigger>
-            <TabsTrigger value="plan" className="gap-1.5 bg-primary/10 text-primary animate-pulse"><ListChecks className="h-4 w-4" /><span className="hidden sm:inline">Plano 10 Etapas</span></TabsTrigger>
-            <TabsTrigger value="alerts" className="gap-1.5 relative">
-              <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alertas</span>
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[9px] bg-destructive text-destructive-foreground">{unreadCount}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="evolution" className="gap-1.5"><TrendingUp className="h-4 w-4" /><span className="hidden sm:inline">Evolução</span></TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="feed" className="space-y-8 relative z-10">
+          <div className="flex justify-center">
+            <TabsList className="bg-white/5 backdrop-blur-xl border border-white/5 flex-wrap h-auto gap-2 p-2 rounded-2xl shadow-2xl">
+              {[
+                { value: 'feed', icon: Trophy, label: 'Vitórias' },
+                { value: 'profile', icon: User, label: 'Perfil' },
+                { value: 'ranking', icon: Flame, label: 'Ranking' },
+                { value: 'badges', icon: Award, label: 'Badges' },
+                { value: 'fame', icon: Star, label: 'Kudos' },
+                { value: 'streaks', icon: TrendingUp, label: 'Streaks' },
+                { value: 'leagues', icon: Shield, label: 'Ligas' },
+                { value: 'h2h', icon: Users, label: '1v1' },
+                { value: 'bench', icon: BarChart3, label: 'Bench' },
+                { value: 'heatmap', icon: Clock, label: 'Heatmap' },
+                { value: 'goals', icon: Target, label: 'Metas' },
+                { value: 'missions', icon: Target, label: 'Missões' },
+                { value: 'chat', icon: MessageCircle, label: 'Chat' },
+                { value: 'wheel', icon: Gift, label: 'Roda' },
+                { value: 'battles', icon: Swords, label: 'Duelos' },
+                { value: 'tournament', icon: Crown, label: 'Torneios' },
+                { value: 'bets', icon: Coins, label: 'Apostas' },
+                { value: 'territory', icon: MapPin, label: 'Territórios' },
+                { value: 'tv', icon: Tv, label: 'TV' },
+                { value: 'tvpro', icon: Monitor, label: 'TV Pro' },
+                { value: 'scoreboard', icon: Monitor, label: 'Placar' },
+                { value: 'comparison', icon: Search, label: 'Market Intel' },
+                { value: 'plan', icon: ListChecks, label: 'Plano 10 Etapas', special: true },
+                { value: 'evolution', icon: TrendingUp, label: 'Evolução' },
+              ].map((tab) => (
+                <TabsTrigger 
+                  key={tab.value}
+                  value={tab.value} 
+                  className={cn(
+                    "gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 data-[state=active]:shadow-lg",
+                    tab.special ? "bg-primary/10 text-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground animate-pulse" : "hover:bg-white/5"
+                  )}
+                >
+                  <tab.icon className="h-4 w-4" />
+                  <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">{tab.label}</span>
+                </TabsTrigger>
+              ))}
+              <TabsTrigger value="alerts" className="gap-2 px-4 py-2.5 rounded-xl hover:bg-white/5 relative">
+                <Bell className="h-4 w-4" />
+                <span className="text-[10px] font-black uppercase tracking-widest hidden lg:inline">Alertas</span>
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] font-black bg-destructive text-destructive-foreground border-2 border-background animate-bounce shadow-lg">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="feed"><VictoryFeed currentSalespersonId={currentSalesperson?.id} /></TabsContent>
           <TabsContent value="profile"><GamifiedProfile salespersonId={currentSalesperson?.id} /></TabsContent>
