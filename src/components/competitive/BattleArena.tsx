@@ -124,17 +124,25 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
 
       {/* Completed Battles */}
       {completedBattles.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2 italic">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b border-white/5 pb-4">
+            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-muted-foreground/40 flex items-center gap-2 italic">
               <Trophy className="h-4 w-4" />
-              Hall of Fame: Encerradas ({completedBattles.length})
+              Battle Archive: Hall of Fame
             </h3>
+            <Badge variant="outline" className="bg-white/5 border-white/10 text-[10px] font-black uppercase tracking-widest px-4">
+              {completedBattles.length} Records Found
+            </Badge>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {completedBattles.slice(0, 4).map((b: Battle) => (
               <BattleCardItem key={b.id} battle={b} />
             ))}
+          </div>
+          <div className="flex justify-center pt-4">
+            <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors">
+               Ver Histórico de Batalhas <TrendingUp className="size-3 ml-2" />
+            </Button>
           </div>
         </div>
       )}
