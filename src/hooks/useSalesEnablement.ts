@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useSendNotification } from "./useNotifications";
 
 export interface AssetEfficiency {
   total_views: number;
@@ -98,10 +99,13 @@ export const useAssetEfficiency = (assetId: string) => {
 
 export const useLogAssetUsage = () => {
   const qc = useQueryClient();
+  const sendNotification = useSendNotification();
+
   return useMutation({
-    mutationFn: async (params: { asset_id: string; action?: string; deal_id?: string }) => {
+    mutationFn: async (params: { asset_id: string; action?: string; deal_id?: string; asset_title?: string }) => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Não autenticado");
+
       const { error } = await supabase.from("asset_usage_logs").insert({
         asset_id: params.asset_id,
         user_id: userData.user.id,
@@ -109,6 +113,28 @@ export const useLogAssetUsage = () => {
         deal_id: params.deal_id,
       });
       if (error) throw error;
+
+      // Check for milestones in efficiency after logging usage
+      const { data: efficiencyData, error: effError } = await supabase.rpc("calculate_asset_efficiency", {
+        _asset_id: params.asset_id
+      });
+
+      if (!effError && efficiencyData?.[0]) {
+        const efficiency = efficiencyData[0] as AssetEfficiency;
+        
+        // Notify milestone: Influence milestone (e.g., every 10 deals)
+        if (efficiency.deals_influenced > 0 && efficiency.deals_influenced % 10 === 0) {
+          sendNotification.mutate({
+            user_id: userData.user.id,
+            type: "sales_milestone",
+            title: "🚀 Novo Marco de Influência!",
+            message: `O material "${params.asset_title || 'Ativo de Vendas'}" acaba de influenciar seu ${efficiency.deals_influenced}º deal!`,
+            category: "sales",
+            priority: "high",
+            metadata: { asset_id: params.asset_id, count: efficiency.deals_influenced }
+          });
+        }
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["enablement-assets"] });
