@@ -7124,7 +7124,9 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          filter_job_titles: string[] | null
           filter_min_value: number | null
+          filter_products: string[] | null
           filter_role: string | null
           filter_source: string | null
           filter_state: string | null
@@ -7139,7 +7141,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          filter_job_titles?: string[] | null
           filter_min_value?: number | null
+          filter_products?: string[] | null
           filter_role?: string | null
           filter_source?: string | null
           filter_state?: string | null
@@ -7154,7 +7158,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          filter_job_titles?: string[] | null
           filter_min_value?: number | null
+          filter_products?: string[] | null
           filter_role?: string | null
           filter_source?: string | null
           filter_state?: string | null
@@ -7249,6 +7255,27 @@ export type Database = {
           },
         ]
       }
+      lead_score_trends: {
+        Row: {
+          captured_at: string | null
+          id: string
+          sale_id: string
+          score: number
+        }
+        Insert: {
+          captured_at?: string | null
+          id?: string
+          sale_id: string
+          score: number
+        }
+        Update: {
+          captured_at?: string | null
+          id?: string
+          sale_id?: string
+          score?: number
+        }
+        Relationships: []
+      }
       lead_scores: {
         Row: {
           calculated_at: string
@@ -7286,6 +7313,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lead_source_configs: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          monthly_budget: number | null
+          source_name: string
+          target_cpl: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_budget?: number | null
+          source_name: string
+          target_cpl?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_budget?: number | null
+          source_name?: string
+          target_cpl?: number | null
+        }
+        Relationships: []
       }
       league_members: {
         Row: {
@@ -16111,6 +16165,14 @@ export type Database = {
           health_score: number
           negative_factors: Json
           positive_factors: Json
+        }[]
+      }
+      calculate_source_roi: {
+        Args: { _days?: number; _source: string }
+        Returns: {
+          roi_index: number
+          total_leads: number
+          total_revenue: number
         }[]
       }
       check_rate_limit: {
