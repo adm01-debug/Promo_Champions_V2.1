@@ -1,7 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { memo } from "react";
+import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { TrendingDown, AlertCircle, ShieldOff } from "lucide-react";
+import { TrendingDown, AlertCircle, ShieldOff, Sparkles, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 interface Props {
   totalLost: number;
@@ -13,14 +17,42 @@ interface Props {
 const fmtBRL = (n: number) => 
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
 
-export function RevenueLeakageCard({ totalLost, discountLost, competitorLost, marginErosion }: Props) {
+export const RevenueLeakageCard = memo(function RevenueLeakageCard({ totalLost, discountLost, competitorLost, marginErosion }: Props) {
   const total = discountLost + competitorLost + marginErosion || 1;
 
   const items = [
-    { label: "Descontos Excessivos", value: discountLost, icon: TrendingDown, color: "text-warning", bg: "bg-warning" },
-    { label: "Pressão Competitiva", value: competitorLost, icon: ShieldOff, color: "text-destructive", bg: "bg-destructive" },
-    { label: "Erosão de Margem", value: marginErosion, icon: AlertCircle, color: "text-info", bg: "bg-info" },
+    { 
+      label: "Descontos Excessivos", 
+      value: discountLost, 
+      icon: TrendingDown, 
+      color: "text-warning", 
+      bg: "bg-warning",
+      recommendation: "Revisar alçadas de aprovação e treinar equipe em negociação baseada em valor."
+    },
+    { 
+      label: "Pressão Competitiva", 
+      value: competitorLost, 
+      icon: ShieldOff, 
+      color: "text-destructive", 
+      bg: "bg-destructive",
+      recommendation: "Ajustar posicionamento de preço ou destacar diferenciais exclusivos em relação à concorrência."
+    },
+    { 
+      label: "Erosão de Margem", 
+      value: marginErosion, 
+      icon: AlertCircle, 
+      color: "text-info", 
+      bg: "bg-info",
+      recommendation: "Implementar gatilhos de reajuste por inflação ou custos variáveis nos contratos."
+    },
   ];
+
+  const handleApplyRecovery = () => {
+    toast.success("Plano de Recuperação Iniciado", {
+      description: "A IA está revisando as sugestões de preços e ajustando as alçadas de desconto.",
+      duration: 5000,
+    });
+  };
 
   return (
     <Card className="glass border-destructive/20 overflow-hidden">
