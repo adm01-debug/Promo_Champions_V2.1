@@ -2,7 +2,9 @@ import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, Building2, Tag, Banknote, Users, CheckCircle2, XCircle, Edit } from "lucide-react";
+import { Target, Building2, Tag, Banknote, Users, CheckCircle2, XCircle, Edit, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ICPRadarChart } from "./ICPRadarChart";
 import type { ICPData } from "@/hooks/useICPData";
 
 interface ICPTableProps {
@@ -36,6 +38,7 @@ export const ICPTable = React.memo(function ICPTable({ data, clientMap, onEdit }
             <TableHead>Grupo/Nicho</TableHead>
             <TableHead>Capital Social</TableHead>
             <TableHead>Colaboradores</TableHead>
+            <TableHead>Score Fit</TableHead>
             <TableHead>Status ICP</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
@@ -65,10 +68,35 @@ export const ICPTable = React.memo(function ICPTable({ data, clientMap, onEdit }
                 ) : <span className="text-muted-foreground">-</span>}
               </TableCell>
               <TableCell>
+                <div className="flex items-center gap-2">
+                  <div className="w-12 bg-muted rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className={`h-full ${item.icp_score && item.icp_score >= 70 ? 'bg-status-success' : 'bg-status-warning'}`} 
+                      style={{ width: `${item.icp_score || 0}%` }} 
+                    />
+                  </div>
+                  <span className="text-xs font-mono">{item.icp_score || 0}%</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full">
+                        <Info className="h-3 w-3 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0 border-none">
+                      <ICPRadarChart clientIcp={item} />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </TableCell>
+              <TableCell>
                 {item.is_icp_match ? (
-                  <Badge className="bg-status-success/20 text-status-success border-status-success/30"><CheckCircle2 className="h-3 w-3 mr-1" />Match</Badge>
+                  <Badge className="bg-emerald-500/20 text-emerald-500 border-emerald-500/30 font-bold uppercase tracking-widest text-[10px]">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />Match
+                  </Badge>
                 ) : (
-                  <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Sem Match</Badge>
+                  <Badge variant="secondary" className="opacity-70 font-bold uppercase tracking-widest text-[10px]">
+                    <XCircle className="h-3 w-3 mr-1" />Sem Match
+                  </Badge>
                 )}
               </TableCell>
               <TableCell className="text-right">
