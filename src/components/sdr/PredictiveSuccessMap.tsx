@@ -50,7 +50,7 @@ export function PredictiveSuccessMap() {
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
-            {hourlySuccessData.map((data, index) => (
+            {hourlySuccessData?.map((data, index) => (
               <motion.div
                 key={data.hour}
                 initial={{ opacity: 0, y: 10 }}
@@ -95,17 +95,24 @@ export function PredictiveSuccessMap() {
             <span className="text-xs font-bold uppercase tracking-wider text-primary">Insight de Ouro</span>
           </div>
           <p className="text-xs leading-relaxed text-foreground/80">
-            Leads do setor <span className="font-bold text-primary">Tecnologia</span> têm 3.4x mais chance de converter entre <span className="font-bold">14:00 e 15:30</span>. Priorize sua fila do Power Dialer para este bloco.
+            Baseado em seus dados reais, o melhor horário para converter é às <span className="font-bold text-primary">
+              {hourlySuccessData?.reduce((prev, curr) => prev.probability > curr.probability ? prev : curr).hour}
+            </span>.
           </p>
           <div className="flex items-center gap-4 pt-1">
             <div className="flex items-center gap-1">
               <TrendingUp className="h-3 w-3 text-success" />
               <span className="text-[10px] text-success font-medium">+24% conversão esperada</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-primary" />
-              <span className="text-[10px] text-primary font-medium">Agendar Bloco</span>
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-auto p-0 flex items-center gap-1 text-primary hover:bg-transparent"
+              onClick={handleScheduleBlock}
+            >
+              <Calendar className="h-3 w-3" />
+              <span className="text-[10px] font-bold underline">Agendar Bloco</span>
+            </Button>
           </div>
         </div>
       </CardContent>
