@@ -20,6 +20,8 @@ interface SalespersonGoalCardProps {
   rank: number;
   level?: number;
   totalXP?: number;
+  predictedAttainment?: number;
+  paceStatus?: 'ahead' | 'on_track' | 'behind';
 }
 
 const roleLabels: Record<string, string> = {
