@@ -76,6 +76,16 @@ export function useSDRMetrics(
         salesQuery = salesQuery.eq('status', filters.status);
         prevSalesQuery = prevSalesQuery.eq('status', filters.status);
       }
+
+      if (filters?.channel && filters.channel !== 'all') {
+        salesQuery = salesQuery.eq('source', filters.channel);
+        prevSalesQuery = prevSalesQuery.eq('source', filters.channel);
+      }
+
+      if (searchTerm) {
+        salesQuery = salesQuery.ilike('client_name', `%${searchTerm}%`);
+        prevSalesQuery = prevSalesQuery.ilike('client_name', `%${searchTerm}%`);
+      }
       
       const [sdrsResult, currentSalesResult, previousSalesResult, leadScoresResult, currentTasksResult, previousTasksResult] = await Promise.all([
         supabase

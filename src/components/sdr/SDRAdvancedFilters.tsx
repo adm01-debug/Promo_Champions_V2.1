@@ -57,7 +57,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
             Filtros Avançados
           </Button>
           
-          <Select onValueChange={(val) => onFilterChange({ channel: val })}>
+          <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, channel: val })}>
             <SelectTrigger className="w-[140px] h-10 glass">
               <SelectValue placeholder="Canal" />
             </SelectTrigger>
@@ -85,7 +85,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Status de Qualificação
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ status: val })}>
+                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, status: val })}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -103,7 +103,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Temperatura
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ temp: val })}>
+                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, temp: val })}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Temperatura" />
                   </SelectTrigger>
@@ -120,7 +120,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   SDR Responsável
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ sdr: val })}>
+                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, sdr: val })}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="SDR" />
                   </SelectTrigger>
