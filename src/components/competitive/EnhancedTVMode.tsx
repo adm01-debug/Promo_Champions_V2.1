@@ -152,38 +152,57 @@ function EnhancedTVModeComponent() {
       </div>
 
       {/* TV Screen */}
-      <Card className="bg-gradient-to-br from-background to-muted/20 border-2 min-h-[400px]">
-        <CardContent className="p-6">
+      {/* TV Screen */}
+      <Card className="glass border-white/5 min-h-[600px] relative overflow-hidden shadow-2xl">
+         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse" />
+        <CardContent className="p-10 relative z-10">
           {/* Header */}
-          <div className="text-center mb-6">
+          <div className="text-center mb-12">
             <motion.div key={currentScreen} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-2 text-2xl font-display font-bold">
-              <CurrentIcon className="h-7 w-7 text-primary" />
-              <span className="gradient-text">{screenLabels[currentScreen].label}</span>
+              className="flex flex-col items-center justify-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-2xl border border-primary/20">
+                <CurrentIcon className="h-8 w-8" />
+              </div>
+              <span className="text-4xl font-black italic uppercase tracking-tighter gradient-text leading-none">{screenLabels[currentScreen].label}</span>
             </motion.div>
-            <div className="flex items-center justify-center gap-2 mt-2">
+            <div className="flex items-center justify-center gap-3 mt-6">
               {screens.map(s => (
-                <div key={s} className={`h-1.5 w-8 rounded-full transition-colors ${s === currentScreen ? 'bg-primary' : 'bg-muted'}`} />
+                <div key={s} className={cn(
+                  "h-1.5 rounded-full transition-all duration-500",
+                  s === currentScreen ? "w-12 bg-primary shadow-lg shadow-primary/40" : "w-3 bg-white/10"
+                )} />
               ))}
             </div>
           </div>
 
           <AnimatePresence mode="wait">
             {currentScreen === 'leaderboard' && (
-              <motion.div key="lb" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="space-y-3">
+              <motion.div key="lb" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                className="space-y-4">
                 {salespeople.slice(0, 8).map((sp, i) => (
-                  <motion.div key={sp.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
-                    className={`flex items-center gap-4 p-3 rounded-xl ${i < 3 ? 'bg-primary/5 border border-primary/20' : 'bg-muted/20'}`}>
-                    <div className="text-2xl font-bold w-8 text-center">
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
+                  <motion.div key={sp.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+                    className={cn(
+                      'flex items-center gap-6 p-5 rounded-2xl border transition-all duration-500 group/row overflow-hidden relative',
+                      i === 0 ? 'bg-rank-gold/10 border-rank-gold/30 shadow-2xl shadow-rank-gold/10' : 'bg-white/5 border-white/5'
+                    )}>
+                    <div className={cn(
+                      "text-3xl font-black italic w-12 text-center drop-shadow-lg",
+                      i === 0 ? "text-rank-gold" : "text-muted-foreground/40"
+                    )}>
+                      {i === 0 ? '01' : i === 1 ? '02' : i === 2 ? '03' : `${i + 1}`}
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-lg">{sp.name}</div>
-                      <div className="text-sm text-muted-foreground">Nível {sp.level || 1} · {sp.role}</div>
+                      <div className="font-black text-xl italic uppercase tracking-tighter text-foreground">{sp.name}</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-black/40 border-white/10">LVL {sp.level || 1}</Badge>
+                        <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">{sp.role}</span>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl font-bold text-primary">{(sp.xp || 0).toLocaleString()} XP</div>
+                      <div className={cn("text-3xl font-black italic tracking-tighter leading-none", i === 0 ? "text-rank-gold" : "text-primary")}>
+                        {(sp.xp || 0).toLocaleString()} <span className="text-[10px] font-black uppercase tracking-widest opacity-60">XP</span>
+                      </div>
+                      {i === 0 && <p className="text-[9px] font-black text-rank-gold uppercase tracking-[0.2em] mt-1">Arena Legend</p>}
                     </div>
                   </motion.div>
                 ))}
@@ -191,49 +210,79 @@ function EnhancedTVModeComponent() {
             )}
 
             {currentScreen === 'latest-sales' && (
-              <motion.div key="ls" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="space-y-3">
+              <motion.div key="ls" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }}
+                className="space-y-4">
                 {latestSales.map((sale, i) => (
-                  <motion.div key={sale.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.15 }}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-success/5 border border-success/20">
-                     <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
-                       <DollarSign className="h-5 w-5 text-success" />
+                  <motion.div key={sale.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}
+                    className="flex items-center gap-6 p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 group/sale overflow-hidden relative">
+                    <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(16,185,129,0.03),transparent)] animate-shimmer" />
+                    <div className="h-16 w-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center shadow-2xl relative z-10">
+                      <DollarSign className="h-8 w-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
                     </div>
-                    <div className="flex-1">
-                      <div className="font-semibold">{sale.client_name}</div>
-                      <div className="text-sm text-muted-foreground">{sale.product_name} · {spMap.get(sale.salesperson_id ?? '') || 'N/A'}</div>
+                    <div className="flex-1 relative z-10">
+                      <div className="font-black text-2xl italic uppercase tracking-tighter text-foreground leading-none mb-2">{sale.client_name}</div>
+                      <div className="flex items-center gap-3">
+                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest">{sale.product_name}</Badge>
+                        <div className="h-4 w-px bg-white/10" />
+                        <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1.5">
+                          <Rocket className="size-3 text-emerald-400" /> {spMap.get(sale.salesperson_id ?? '') || 'Elite Closer'}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-xl font-bold text-success">
-                      R$ {(sale.amount || 0).toLocaleString('pt-BR')}
+                    <div className="text-right relative z-10">
+                      <div className="text-4xl font-black italic tracking-tighter text-emerald-400 leading-none">
+                        R$ {(sale.amount || 0).toLocaleString('pt-BR')}
+                      </div>
+                      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 italic">Transação Verificada</p>
                     </div>
                   </motion.div>
                 ))}
-                {latestSales.length === 0 && (
-                  <div className="text-center py-12 text-muted-foreground">Nenhuma venda recente</div>
-                )}
               </motion.div>
             )}
 
             {currentScreen === 'goals' && (
-              <motion.div key="gl" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <motion.div key="gl" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {goals.slice(0, 6).map((goal, i: number) => {
                   const goalWithAmount = goal as typeof goal & { current_amount?: number };
                   const progress = goal.goal_amount > 0 ? Math.min(((goalWithAmount.current_amount || 0) / goal.goal_amount) * 100, 100) : 0;
                   return (
                     <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-semibold">{goal.salespeople?.name || 'N/A'}</span>
-                            <Badge variant={progress >= 100 ? 'default' : 'outline'}>{progress.toFixed(0)}%</Badge>
+                      <Card className="glass border-white/5 overflow-hidden group/goal">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                               <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover/goal:rotate-6 transition-transform">
+                                 <Target className="size-5" />
+                               </div>
+                               <span className="font-black italic uppercase tracking-tighter text-lg">{goal.salespeople?.name || 'Closer'}</span>
+                            </div>
+                            <Badge className={cn(
+                              "text-[10px] font-black uppercase tracking-widest h-8 px-3",
+                              progress >= 100 ? "bg-emerald-500 text-white" : "bg-white/5 border-white/10"
+                            )}>
+                              {progress.toFixed(0)}% COMPLETE
+                            </Badge>
                           </div>
-                          <div className="h-3 bg-muted rounded-full overflow-hidden">
-                            <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1.5, ease: 'easeOut' }} />
+                          <div className="h-3 bg-black/40 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                            <motion.div 
+                              className={cn("h-full relative", progress >= 100 ? "bg-emerald-500" : "bg-primary")}
+                              initial={{ width: 0 }} 
+                              animate={{ width: `${progress}%` }} 
+                              transition={{ duration: 1.5, ease: 'circOut' }} 
+                            >
+                               <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
+                            </motion.div>
                           </div>
-                          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                            <span>R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
-                            <span>R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
+                          <div className="flex justify-between mt-3 px-1">
+                            <div className="flex flex-col">
+                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Atual</span>
+                               <span className="text-sm font-black italic text-foreground tracking-tighter">R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
+                            </div>
+                            <div className="flex flex-col text-right">
+                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Meta</span>
+                               <span className="text-sm font-black italic text-muted-foreground/60 tracking-tighter">R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
