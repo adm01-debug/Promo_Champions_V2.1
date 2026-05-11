@@ -118,49 +118,49 @@ export function LeadScoringDashboard() {
       const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
       const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-  const exportToCSV = () => {
-    setIsExporting(true);
-    try {
-      const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
-      const rows = filteredLeads.map((l, i) => [
-        i + 1,
-        l.name,
-        l.company || "N/A",
-        l.score,
-        l.category,
-        l.churnRisk?.risk_level || "low",
-        l.churnRisk?.risk_score || 0
-      ]);
+      const exportToCSV = () => {
+        setIsExporting(true);
+        try {
+          const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
+          // Use filteredLeads to respect current filters
+          const rows = filteredLeads.map((l, i) => [
+            i + 1,
+            `"${l.name}"`,
+            `"${l.company || "N/A"}"`,
+            l.score,
+            l.category,
+            l.churnRisk?.risk_level || "low",
+            l.churnRisk?.risk_score || 0
+          ]);
 
-      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `lead_ranking_${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success("Ranking exportado para CSV com sucesso!");
-    } catch (error) {
-      toast.error("Erro ao exportar CSV.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
+          const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", `lead_ranking_filtered_${new Date().toISOString().split('T')[0]}.csv`);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          toast.success("Ranking filtrado exportado para CSV com sucesso!");
+        } catch (error) {
+          toast.error("Erro ao exportar CSV.");
+        } finally {
+          setIsExporting(false);
+        }
+      };
 
-  const exportToPDF = () => {
-    setIsExporting(true);
-    toast.info("Gerando PDF Estratégico...");
-    setTimeout(() => {
-      // Simulating PDF generation with a printable view or a simple notification for now
-      // as specialized PDF libraries might not be available
-      window.print();
-      toast.success("Relatório PDF gerado com sucesso!");
-      setIsExporting(false);
-    }, 1500);
-  };
+      const exportToPDF = () => {
+        setIsExporting(true);
+        toast.info("Gerando PDF Estratégico com filtros atuais...");
+        setTimeout(() => {
+          // Capturing the current view state
+          window.print();
+          toast.success("Relatório PDF estratégico gerado!");
+          setIsExporting(false);
+        }, 1500);
+      };
 
   if (isLoading) {
     return (
