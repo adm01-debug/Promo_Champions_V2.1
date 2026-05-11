@@ -97,6 +97,7 @@ export function useCreateCadenceStep() {
       template_content?: string;
       step_order: number;
       needs_approval?: boolean;
+      task_type?: 'manual' | 'automatic';
       singu_variables?: any;
     }) => {
       const { data, error } = await supabase
@@ -135,6 +136,7 @@ export function useUpdateCadenceStep() {
       template_content?: string;
       step_order?: number;
       needs_approval?: boolean;
+      task_type?: 'manual' | 'automatic';
       singu_variables?: any;
     }) => {
       const { id, cadence_id: _cadence_id, ...updates } = input;
