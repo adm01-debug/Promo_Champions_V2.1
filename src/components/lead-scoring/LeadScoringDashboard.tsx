@@ -68,6 +68,7 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 export function LeadScoringDashboard() {
   const { data: leads, isLoading, refetch } = useLeadScoring();
   const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [churnFilter, setChurnFilter] = useState<string>("all");
   const [isExporting, setIsExporting] = useState(false);
