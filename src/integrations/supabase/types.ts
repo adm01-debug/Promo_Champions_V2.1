@@ -7582,6 +7582,82 @@ export type Database = {
           },
         ]
       }
+      mql_qualifications: {
+        Row: {
+          authority_level: string | null
+          budget_range: string | null
+          competitors: string[] | null
+          created_at: string | null
+          decision_process: string | null
+          id: string
+          need_urgency: string | null
+          nurture_reason: string | null
+          pain_points: string[] | null
+          qualification_status: string | null
+          qualified_by: string | null
+          sale_id: string | null
+          timeline: string | null
+          unqualified_reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          authority_level?: string | null
+          budget_range?: string | null
+          competitors?: string[] | null
+          created_at?: string | null
+          decision_process?: string | null
+          id?: string
+          need_urgency?: string | null
+          nurture_reason?: string | null
+          pain_points?: string[] | null
+          qualification_status?: string | null
+          qualified_by?: string | null
+          sale_id?: string | null
+          timeline?: string | null
+          unqualified_reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          authority_level?: string | null
+          budget_range?: string | null
+          competitors?: string[] | null
+          created_at?: string | null
+          decision_process?: string | null
+          id?: string
+          need_urgency?: string | null
+          nurture_reason?: string | null
+          pain_points?: string[] | null
+          qualification_status?: string | null
+          qualified_by?: string | null
+          sale_id?: string | null
+          timeline?: string | null
+          unqualified_reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mql_qualifications_qualified_by_fkey"
+            columns: ["qualified_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mql_qualifications_qualified_by_fkey"
+            columns: ["qualified_by"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mql_qualifications_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           consecutive_days_threshold: number
