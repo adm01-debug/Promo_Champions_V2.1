@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Zap } from "lucide-react";
+import { TrendingUp, Zap, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   ResponsiveContainer,
   ScatterChart,
@@ -42,7 +43,7 @@ const generateMockData = (): ElasticityPoint[] => {
   return data;
 };
 
-export function PriceElasticityChart({ data, optimalPrice = 2200 }: Props) {
+export const PriceElasticityChart = memo(function PriceElasticityChart({ data, optimalPrice = 2200 }: Props) {
   const chartData = useMemo(() => data ?? generateMockData(), [data]);
 
   return (
@@ -87,16 +88,38 @@ export function PriceElasticityChart({ data, optimalPrice = 2200 }: Props) {
             <ZAxis type="number" dataKey="volume" range={[60, 400]} name="Volume" />
             <RTooltip 
               cursor={{ strokeDasharray: "3 3" }}
-              contentStyle={{
-                background: "hsl(var(--popover))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-              formatter={(value: any, name: any) => {
-                if (name === "Preço") return `R$ ${Number(value).toLocaleString("pt-BR")}`;
-                if (name === "Win Rate") return `${value}%`;
-                return `${value} deals`;
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload as ElasticityPoint;
+                  const isNearOptimal = Math.abs(data.price - optimalPrice) / optimalPrice < 0.1;
+                  
+                  return (
+                    <div className="bg-popover border border-border p-3 rounded-lg shadow-xl text-xs max-w-[200px]">
+                      <div className="font-bold mb-1 flex items-center justify-between">
+                        <span>R$ {data.price.toLocaleString("pt-BR")}</span>
+                        {isNearOptimal && <Badge className="bg-success/20 text-success border-none h-4 px-1 text-[10px]">Ideal</Badge>}
+                      </div>
+                      <div className="space-y-1 text-muted-foreground">
+                        <div className="flex justify-between">
+                          <span>Win Rate:</span>
+                          <span className="font-mono text-foreground">{data.win_rate}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Volume:</span>
+                          <span className="font-mono text-foreground">{data.volume} deals</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-border italic text-[10px] text-primary/80">
+                        {data.win_rate > 70 
+                          ? "Alta conversão. Considere testar preços ligeiramente superiores." 
+                          : data.win_rate < 30 
+                            ? "Baixa conversão. Preço pode estar acima do valor percebido."
+                            : "Equilíbrio saudável entre volume e preço."}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
               }}
             />
             <ReferenceLine 
@@ -104,7 +127,6 @@ export function PriceElasticityChart({ data, optimalPrice = 2200 }: Props) {
               stroke="hsl(var(--success))" 
               strokeDasharray="4 4" 
               strokeWidth={2}
-              label={{ value: "Ponto Ótimo", position: "top", fill: "hsl(var(--success))", fontSize: 11, fontWeight: "bold" }}
             />
             <Scatter 
               data={chartData} 
@@ -117,4 +139,4 @@ export function PriceElasticityChart({ data, optimalPrice = 2200 }: Props) {
       </CardContent>
     </Card>
   );
-}
+});
