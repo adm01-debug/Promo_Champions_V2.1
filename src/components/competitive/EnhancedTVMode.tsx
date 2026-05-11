@@ -247,32 +247,40 @@ function EnhancedTVModeComponent() {
                   const goalWithAmount = goal as typeof goal & { current_amount?: number };
                   const progress = goal.goal_amount > 0 ? Math.min(((goalWithAmount.current_amount || 0) / goal.goal_amount) * 100, 100) : 0;
                   return (
-                    <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                      <Card className="glass border-white/5 overflow-hidden group/goal">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                               <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover/goal:rotate-6 transition-transform">
-                                 <Target className="size-5" />
-                               </div>
-                               <span className="font-black italic uppercase tracking-tighter text-lg">{goal.salespeople?.name || 'Closer'}</span>
-                            </div>
-                            <Badge className={cn(
-                              "text-[10px] font-black uppercase tracking-widest h-8 px-3",
-                              progress >= 100 ? "bg-emerald-500 text-white" : "bg-white/5 border-white/10"
-                            )}>
-                              {progress.toFixed(0)}% COMPLETE
-                            </Badge>
-                          </div>
-                          <div className="h-3 bg-black/40 rounded-full overflow-hidden border border-white/5 shadow-inner">
-                            <motion.div 
-                              className={cn("h-full relative", progress >= 100 ? "bg-emerald-500" : "bg-primary")}
-                              initial={{ width: 0 }} 
-                              animate={{ width: `${progress}%` }} 
-                              transition={{ duration: 1.5, ease: 'circOut' }} 
-                            >
-                               <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
-                            </motion.div>
+                  );
+                })}
+                {goals.length === 0 && <div className="col-span-2 text-center py-12 text-muted-foreground uppercase tracking-widest font-black opacity-20">Nenhuma meta ativa no momento</div>}
+              </motion.div>
+            )}
+
+            {currentScreen === 'streaks' && (
+              <motion.div key="st" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {salespeople.slice(0, 8).map((sp, i) => (
+                  <motion.div key={sp.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+                    <Card className="glass border-white/5 overflow-hidden group/streak text-center">
+                      <CardContent className="p-8">
+                        <div className="relative inline-block mb-6">
+                           <div className="text-5xl group-hover:scale-110 transition-transform duration-500">{i < 3 ? '🔥' : '⚡'}</div>
+                           {i < 3 && <div className="absolute -top-2 -right-2 size-6 rounded-full bg-rank-gold flex items-center justify-center border-2 border-background animate-pulse shadow-lg"><Sparkles className="size-3 text-white" /></div>}
+                        </div>
+                        <div className="font-black italic uppercase tracking-tighter text-lg truncate mb-2">{sp.name}</div>
+                        <div className="flex flex-col gap-1">
+                          <div className="text-3xl font-black italic tracking-tighter text-primary">LVL {sp.level || 1}</div>
+                          <div className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] opacity-60">{(sp.xp || 0).toLocaleString()} TOTAL XP</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
                           </div>
                           <div className="flex justify-between mt-3 px-1">
                             <div className="flex flex-col">
