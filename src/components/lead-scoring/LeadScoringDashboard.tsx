@@ -441,23 +441,23 @@ export function LeadScoringDashboard() {
 
               <div className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-300",
-                realtimeStatus === "connected" ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]" : 
-                realtimeStatus === "error" ? "bg-rose-500/10 border-rose-500/20" : "bg-accent/30 border-white/5 shadow-inner"
+                connectionStatus === "connected" ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]" : 
+                connectionStatus === "error" ? "bg-rose-500/10 border-rose-500/20" : "bg-accent/30 border-white/5 shadow-inner"
               )}>
-                {explainBatch.isPending || isLoading ? (
+                {explainBatch.isPending || isLoadingLeads || isLoading ? (
                   <RefreshCw className="w-3.5 h-3.5 text-primary animate-spin" />
                 ) : (
                   <Activity className={cn("w-3.5 h-3.5 animate-pulse", 
-                    realtimeStatus === "connected" ? "text-emerald-500" : 
-                    realtimeStatus === "error" ? "text-rose-500" : "text-primary"
+                    connectionStatus === "connected" ? "text-emerald-500" : 
+                    connectionStatus === "error" ? "text-rose-500" : "text-primary"
                   )} />
                 )}
                 <span className={cn("text-[9px] font-black uppercase tracking-widest",
-                  realtimeStatus === "connected" ? "text-emerald-500" : 
-                  realtimeStatus === "error" ? "text-rose-500" : "text-muted-foreground"
+                  connectionStatus === "connected" ? "text-emerald-500" : 
+                  connectionStatus === "error" ? "text-rose-500" : "text-muted-foreground"
                 )}>
-                  {realtimeStatus === "connected" ? "Neural Link Active" : 
-                   realtimeStatus === "error" ? "Link Error" : "Connecting..."}
+                  {connectionStatus === "connected" ? "Neural Link Active" : 
+                   connectionStatus === "error" ? "Link Error" : "Connecting..."}
                 </span>
               </div>
             </div>
