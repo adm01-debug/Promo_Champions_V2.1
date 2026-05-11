@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
