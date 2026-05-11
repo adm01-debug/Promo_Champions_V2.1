@@ -59,21 +59,31 @@ export function useSDRMetrics(
       const previousRange = getPeriodRange(period, 1);
 
       // Fetch all data in parallel for better performance
+      let salesQuery = supabase
+        .from("sales")
+        .select("id, status, salesperson_id")
+        .gte("created_at", currentRange.start.toISOString())
+        .lte("created_at", currentRange.end.toISOString());
+
+      let prevSalesQuery = supabase
+        .from("sales")
+        .select("id, status, salesperson_id")
+        .gte("created_at", previousRange.start.toISOString())
+        .lte("created_at", previousRange.end.toISOString());
+
+      // Apply Filters to Sales Query
+      if (filters?.status && filters.status !== 'all') {
+        salesQuery = salesQuery.eq('status', filters.status);
+        prevSalesQuery = prevSalesQuery.eq('status', filters.status);
+      }
+      
       const [sdrsResult, currentSalesResult, previousSalesResult, leadScoresResult, currentTasksResult, previousTasksResult] = await Promise.all([
         supabase
           .from("salespeople")
           .select("id")
           .in("role", ["sdr", "hybrid"]),
-        supabase
-          .from("sales")
-          .select("id, status, salesperson_id")
-          .gte("created_at", currentRange.start.toISOString())
-          .lte("created_at", currentRange.end.toISOString()),
-        supabase
-          .from("sales")
-          .select("id, status, salesperson_id")
-          .gte("created_at", previousRange.start.toISOString())
-          .lte("created_at", previousRange.end.toISOString()),
+        salesQuery,
+        prevSalesQuery,
         supabase
           .from("lead_scores")
           .select("sale_id, score"),
@@ -90,6 +100,7 @@ export function useSDRMetrics(
           .gte("created_at", previousRange.start.toISOString())
           .lte("created_at", previousRange.end.toISOString()),
       ]);
+
 
       const sdrIds = sdrsResult.data?.map(s => s.id) || [];
       
