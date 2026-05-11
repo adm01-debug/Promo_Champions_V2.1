@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ArrowRight, Zap, Target, BarChart3, Users, Search, Database, Mail, Link as LinkIcon, MessageSquare, Sparkles } from "lucide-react";
+import { CheckCircle2, ArrowRight, Zap, Target, BarChart3, Users, Search, Database, Mail, Link as LinkIcon, MessageSquare, Sparkles, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 export const ImprovementPlan = () => {
