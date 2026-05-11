@@ -106,6 +106,28 @@ export const RevenueForecastHub: FC = () => {
           </Button>
         </div>
       </motion.div>
+      
+      <div className="flex justify-end mb-2">
+        <Button 
+          variant="glow" 
+          size="sm" 
+          className="h-8 text-[10px] font-black uppercase tracking-widest gap-2"
+          onClick={async () => {
+             const { error } = await (supabase as any).from('forecast_snapshots').insert({
+               horizon_days: horizon,
+               pessimistic_value: data.scenarios.pessimistic,
+               realistic_value: data.scenarios.realistic,
+               optimistic_value: data.scenarios.optimistic,
+               confidence_at_time: data.confidence,
+               metadata: { source: 'manual_trigger' }
+             });
+             if (!error) refetch();
+          }}
+        >
+          <Activity className="h-3 w-3" />
+          Registrar Snapshot
+        </Button>
+      </div>
 
       {/* KPIs principais */}
       <div className="grid gap-3 md:grid-cols-4">
@@ -154,6 +176,24 @@ export const RevenueForecastHub: FC = () => {
             <Progress value={data.confidence} className="h-1.5 mt-2" />
           </CardContent>
         </Card>
+        {data.accuracy && (
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-muted-foreground">Precisão histórica</div>
+                <Badge variant="outline" className="h-5 text-[10px] bg-success/10 text-success">
+                  {data.accuracy.last_period_accuracy}%
+                </Badge>
+              </div>
+              <div className="font-display text-xl font-semibold mt-1">
+                {100 - data.accuracy.avg_deviation}%
+              </div>
+              <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                Tendência: <span className="font-bold text-primary">{data.accuracy.trend === 'improving' ? 'Melhorando' : 'Estável'}</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Cenários */}
