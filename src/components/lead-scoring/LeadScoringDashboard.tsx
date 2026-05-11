@@ -188,7 +188,14 @@ export function LeadScoringDashboard() {
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
   return (
-    <div className="space-y-8 p-1 sm:p-0">
+    <div className="space-y-8 p-1 sm:p-0 relative">
+      {/* Real-time Global Sync Loading State */}
+      {(isLoadingLeads || explainBatch.isPending) && (
+        <div className="fixed top-0 left-0 w-full h-1 z-[100] overflow-hidden bg-primary/5">
+          <div className="h-full bg-primary animate-progress shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" />
+        </div>
+      )}
+
       {/* Header with Telemetry Style */}
       <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/10">
         <div className="flex items-center gap-4">
