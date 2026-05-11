@@ -118,7 +118,7 @@ export const LeadScoreExplainCard = React.memo(({ saleId, churnRisk, onActionCom
       <div className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <Sparkles className="h-4 w-4 text-primary" />
-          <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Como chegamos a este Score?</h4>
+          <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Neural Matrix: Decomposição de Score</h4>
         </div>
         
         <div className="space-y-3">
@@ -131,7 +131,7 @@ export const LeadScoreExplainCard = React.memo(({ saleId, churnRisk, onActionCom
                 key={idx}
                 className={cn(
                   "relative p-4 rounded-xl border transition-all duration-300",
-                  isExpanded ? "bg-primary/5 border-primary/20" : "bg-card/40 border-white/5 hover:bg-primary/5"
+                  isExpanded ? "bg-primary/5 border-primary/20 shadow-[0_0_15px_rgba(var(--primary-rgb),0.05)]" : "bg-card/40 border-white/5 hover:bg-primary/5"
                 )}
               >
                 <div 
@@ -139,12 +139,16 @@ export const LeadScoreExplainCard = React.memo(({ saleId, churnRisk, onActionCom
                   onClick={() => setExpandedStep(isExpanded ? null : idx)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg bg-background/50", step.color)}>
+                    <div className={cn("p-2 rounded-lg bg-background/50 ring-1 ring-inset ring-white/5", step.color)}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
                       <h5 className="text-[11px] font-black uppercase tracking-widest">{step.title}</h5>
-                      <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-tighter">Impacto: {step.impact > 0 ? "+" : ""}{step.impact} pts</p>
+                      <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-tighter">
+                         Impacto: <span className={cn("font-bold", step.impact > 0 ? "text-emerald-500" : "text-rose-500")}>
+                           {step.impact > 0 ? "+" : ""}{step.impact} pts
+                         </span>
+                      </p>
                     </div>
                   </div>
                   {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
@@ -156,10 +160,27 @@ export const LeadScoreExplainCard = React.memo(({ saleId, churnRisk, onActionCom
                       {step.description}
                     </p>
                     {idx === 1 && (
-                      <div className="grid grid-cols-1 gap-2.5">
+                      <div className="grid grid-cols-1 gap-3">
                         {exp.top_drivers.map((d) => (
-                          <ScoreContributionBar key={d.factor} driver={d} />
+                          <div key={d.factor} className="space-y-1.5 p-3 rounded-lg bg-background/30 border border-white/5 group/driver hover:bg-background/50 transition-colors">
+                            <ScoreContributionBar driver={d} />
+                            <div className="flex items-center gap-1.5 opacity-0 group-hover/driver:opacity-100 transition-opacity">
+                              <div className="h-1 w-1 rounded-full bg-primary" />
+                              <span className="text-[8px] font-black text-primary uppercase tracking-widest">IA Insight: Driver Crítico para Conversão</span>
+                            </div>
+                          </div>
                         ))}
+                      </div>
+                    )}
+                    {idx === 2 && churnRisk && (
+                      <div className="mt-2 p-3 rounded-lg bg-status-error/5 border border-status-error/10">
+                         <div className="flex items-center gap-2 mb-2">
+                           <ShieldAlert className="h-3 w-3 text-status-error" />
+                           <span className="text-[9px] font-black text-status-error uppercase tracking-widest">Ajuste Neural por Risco de Churn</span>
+                         </div>
+                         <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic">
+                           O score final foi penalizado em <span className="text-status-error font-bold">{Math.round(churnRisk.risk_score / 2)} pontos</span> devido a sinais críticos de instabilidade na conta.
+                         </p>
                       </div>
                     )}
                   </div>

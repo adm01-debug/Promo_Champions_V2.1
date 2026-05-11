@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useLeadScoring } from "@/hooks/useLeadScoring";
+import { useState, useMemo, useCallback } from "react";
+import { useLeadScoring, type ScoredLead } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -9,7 +9,7 @@ import {
   Target, TrendingUp, Flame, Thermometer, Snowflake, 
   BarChart3, Info, Brain, RefreshCw, AlertTriangle, 
   ShieldAlert, Download, Search, Filter, CheckCircle2,
-  Calendar, FileText, Activity
+  Calendar, FileText, Activity, UserPlus, Zap
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -68,27 +68,28 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 export function LeadScoringDashboard() {
   const { data: leads, isLoading, refetch } = useLeadScoring();
   const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [churnFilter, setChurnFilter] = useState<string>("all");
   const [isExporting, setIsExporting] = useState(false);
   const [attendedAlerts, setAttendedAlerts] = useState<Set<string>>(new Set());
   const explainBatch = useExplainBatch();
 
-  const [realtimeStatus, setRealtimeStatus] = useState<"connected" | "connecting" | "error">("connecting");
-
   useMemo(() => {
     const channel = supabase
       .channel('lead-scoring-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_score_trends' }, () => {
-        refetch();
+        setIsLoadingLeads(true);
+        refetch().finally(() => setIsLoadingLeads(false));
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_churn_risk' }, () => {
-        refetch();
+        setIsLoadingLeads(true);
+        refetch().finally(() => setIsLoadingLeads(false));
       })
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') setRealtimeStatus("connected");
-        else if (status === 'CLOSED') setRealtimeStatus("connecting");
-        else if (status === 'CHANNEL_ERROR') setRealtimeStatus("error");
+        if (status === 'SUBSCRIBED') setConnectionStatus("connected");
+        else if (status === 'CLOSED') setConnectionStatus("connecting");
+        else if (status === 'CHANNEL_ERROR') setConnectionStatus("error");
       });
 
     return () => {
@@ -106,58 +107,61 @@ export function LeadScoringDashboard() {
     });
   }, [allLeads, searchTerm]);
 
-  const alerts = useMemo(() => {
-    return allLeads.filter(l => 
-      l.churnRisk && 
-      l.churnRisk.risk_score > 50 && 
-      !attendedAlerts.has(l.id) &&
-      (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
-    ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
-  }, [allLeads, attendedAlerts, churnFilter]);
+      const alerts = useMemo(() => {
+        return allLeads.filter(l => 
+          l.churnRisk && 
+          l.churnRisk.risk_score > 50 && 
+          !attendedAlerts.has(l.id) &&
+          (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
+        ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
+      }, [allLeads, attendedAlerts, churnFilter]);
 
-  const exportToCSV = () => {
-    setIsExporting(true);
-    try {
-      const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
-      const rows = filteredLeads.map((l, i) => [
-        i + 1,
-        l.name,
-        l.company || "N/A",
-        l.score,
-        l.category,
-        l.churnRisk?.risk_level || "low",
-        l.churnRisk?.risk_score || 0
-      ]);
+      const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
+      const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `lead_ranking_${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success("Ranking exportado para CSV com sucesso!");
-    } catch (error) {
-      toast.error("Erro ao exportar CSV.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
+      const exportToCSV = () => {
+        setIsExporting(true);
+        try {
+          const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
+          // Use filteredLeads to respect current filters
+          const rows = filteredLeads.map((l, i) => [
+            i + 1,
+            `"${l.name}"`,
+            `"${l.company || "N/A"}"`,
+            l.score,
+            l.category,
+            l.churnRisk?.risk_level || "low",
+            l.churnRisk?.risk_score || 0
+          ]);
 
-  const exportToPDF = () => {
-    setIsExporting(true);
-    toast.info("Gerando PDF Estratégico...");
-    setTimeout(() => {
-      // Simulating PDF generation with a printable view or a simple notification for now
-      // as specialized PDF libraries might not be available
-      window.print();
-      toast.success("Relatório PDF gerado com sucesso!");
-      setIsExporting(false);
-    }, 1500);
-  };
+          const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", `lead_ranking_filtered_${new Date().toISOString().split('T')[0]}.csv`);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          toast.success("Ranking filtrado exportado para CSV com sucesso!");
+        } catch (error) {
+          toast.error("Erro ao exportar CSV.");
+        } finally {
+          setIsExporting(false);
+        }
+      };
+
+      const exportToPDF = () => {
+        setIsExporting(true);
+        toast.info("Gerando PDF Estratégico com filtros atuais...");
+        setTimeout(() => {
+          // Capturing the current view state
+          window.print();
+          toast.success("Relatório PDF estratégico gerado!");
+          setIsExporting(false);
+        }, 1500);
+      };
 
   if (isLoading) {
     return (
@@ -207,15 +211,21 @@ export function LeadScoringDashboard() {
           </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mr-2">
+            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", connectionStatus === "connected" ? "bg-emerald-500" : "bg-rose-500")} />
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+              {connectionStatus === "connected" ? "Neural Link Active" : "Link Error"}
+            </span>
+          </div>
+
           <Button
             variant="outline"
-            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            className="h-12 px-6 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-[0_0_15px_rgba(var(--primary-rgb),0.05)]"
             onClick={async () => {
               const ids = allLeads.map((l) => l.bestDealId).filter(Boolean) as string[];
               if (ids.length > 0) {
                 await explainBatch.mutateAsync(ids.slice(0, 50));
-                // Invalidate query to update scores with trend history
                 await supabase.from('lead_score_trends').insert(
                   allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score }))
                 );
@@ -225,6 +235,16 @@ export function LeadScoringDashboard() {
           >
             <Brain className={cn("h-4 w-4 mr-2", explainBatch.isPending && "animate-spin")} />
             Neural Analysis
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={exportToPDF}
+            disabled={isExporting}
+            className="h-12 px-6 rounded-xl border-white/10 bg-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Full Report
           </Button>
         </div>
       </div>
@@ -341,17 +361,18 @@ export function LeadScoringDashboard() {
                         <CheckCircle2 className="h-3 w-3 mr-1" />
                         Atendido
                       </Button>
-                      {lead.bestDealId && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => setExplainSaleId(lead.bestDealId!)}
-                          className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
-                        >
-                          <Activity className="h-3 w-3 mr-1" />
-                          Detalhes
-                        </Button>
-                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLeadId(lead.id);
+                        }}
+                        className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
+                      >
+                        <Activity className="h-3 w-3 mr-1" />
+                        Detalhes
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -434,27 +455,37 @@ export function LeadScoringDashboard() {
                   <FileText className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
                   PDF
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportToPDF}
+                  disabled={isExporting}
+                  className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+                >
+                  <FileText className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                  PDF
+                </Button>
               </div>
 
               <div className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-300",
-                realtimeStatus === "connected" ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]" : 
-                realtimeStatus === "error" ? "bg-rose-500/10 border-rose-500/20" : "bg-accent/30 border-white/5 shadow-inner"
+                connectionStatus === "connected" ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]" : 
+                connectionStatus === "error" ? "bg-rose-500/10 border-rose-500/20" : "bg-accent/30 border-white/5 shadow-inner"
               )}>
-                {explainBatch.isPending || isLoading ? (
+                {explainBatch.isPending || isLoadingLeads || isLoading ? (
                   <RefreshCw className="w-3.5 h-3.5 text-primary animate-spin" />
                 ) : (
                   <Activity className={cn("w-3.5 h-3.5 animate-pulse", 
-                    realtimeStatus === "connected" ? "text-emerald-500" : 
-                    realtimeStatus === "error" ? "text-rose-500" : "text-primary"
+                    connectionStatus === "connected" ? "text-emerald-500" : 
+                    connectionStatus === "error" ? "text-rose-500" : "text-primary"
                   )} />
                 )}
                 <span className={cn("text-[9px] font-black uppercase tracking-widest",
-                  realtimeStatus === "connected" ? "text-emerald-500" : 
-                  realtimeStatus === "error" ? "text-rose-500" : "text-muted-foreground"
+                  connectionStatus === "connected" ? "text-emerald-500" : 
+                  connectionStatus === "error" ? "text-rose-500" : "text-muted-foreground"
                 )}>
-                  {realtimeStatus === "connected" ? "Neural Link Active" : 
-                   realtimeStatus === "error" ? "Link Error" : "Connecting..."}
+                  {connectionStatus === "connected" ? "Neural Link Active" : 
+                   connectionStatus === "error" ? "Link Error" : "Connecting..."}
                 </span>
               </div>
             </div>
@@ -479,7 +510,7 @@ export function LeadScoringDashboard() {
 
                 return (
                   <div key={lead.id}
-                    onClick={() => lead.bestDealId && setExplainSaleId(lead.bestDealId)}
+                    onClick={() => setSelectedLeadId(lead.id)}
                     className={cn(
                       "group relative flex items-center gap-6 p-5 transition-all duration-500 cursor-pointer",
                       "hover:bg-primary/[0.04] hover:backdrop-blur-md",
@@ -612,16 +643,17 @@ export function LeadScoringDashboard() {
                       </Tooltip>
 
                       {/* Explain IA Button */}
-                      {lead.bestDealId && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setExplainSaleId(lead.bestDealId!)}
-                          className="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary transition-all duration-500 shadow-sm"
-                        >
-                          <Brain className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLeadId(lead.id);
+                        }}
+                        className="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary transition-all duration-500 shadow-sm"
+                      >
+                        <Brain className="h-4 w-4" />
+                      </Button>
 
                       {/* Quick Status */}
                       <div className="hidden md:flex flex-col items-end gap-1 px-3">
@@ -664,6 +696,81 @@ export function LeadScoringDashboard() {
                 toast.success("Ação estratégica iniciada!");
               }}
             />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedLeadId} onOpenChange={(o) => !o && setSelectedLeadId(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-2xl">
+          <DialogHeader className="border-b border-white/5 pb-4 mb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter italic">
+                <UserPlus className="h-6 w-6 text-primary" />
+                Dossiê Neural do Lead
+              </DialogTitle>
+            </div>
+          </DialogHeader>
+          
+          {selectedLeadId && (
+            <div className="space-y-8">
+               {/* Resumo do Lead */}
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="p-6 bg-primary/5 border-primary/20 flex flex-col items-center justify-center">
+                    <ScoreRing score={allLeads.find(l => l.id === selectedLeadId)?.score || 0} size={100} />
+                    <p className="mt-4 text-xs font-black uppercase tracking-widest text-muted-foreground">Intelligence Score</p>
+                  </Card>
+                  
+                  <Card className="md:col-span-2 p-6 bg-card/40 border-white/5">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-xl font-black uppercase tracking-tighter italic">{allLeads.find(l => l.id === selectedLeadId)?.name}</h3>
+                        <p className="text-sm text-primary font-bold">{allLeads.find(l => l.id === selectedLeadId)?.company || "Empresa Independente"}</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                        <div>
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Categoria</p>
+                          <Badge className={cn("mt-1", categoryConfig[allLeads.find(l => l.id === selectedLeadId)?.category || 'Cold'].bg)}>
+                            {allLeads.find(l => l.id === selectedLeadId)?.category}
+                          </Badge>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Risco de Evasão</p>
+                          <p className={cn("text-lg font-black italic", 
+                            (allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0) > 50 ? "text-status-error" : "text-emerald-500"
+                          )}>
+                            {allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+               </div>
+
+               {/* Detalhes de IA - Reusando componente de explicação se tiver deal */}
+               {allLeads.find(l => l.id === selectedLeadId)?.bestDealId ? (
+                 <div className="pt-6 border-t border-white/5">
+                    <LeadScoreExplainCard 
+                      saleId={allLeads.find(l => l.id === selectedLeadId)!.bestDealId!} 
+                      churnRisk={allLeads.find(l => l.id === selectedLeadId)?.churnRisk}
+                      onActionComplete={() => {
+                        setSelectedLeadId(null);
+                        toast.success("Estratégia executada!");
+                      }}
+                    />
+                 </div>
+               ) : (
+                 <div className="p-12 text-center bg-accent/5 rounded-2xl border border-dashed border-white/10">
+                    <Brain className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest">Aguardando Primeira Negociação</p>
+                    <p className="text-xs text-muted-foreground/60 mt-2">Inicie uma proposta para ativar a análise neural profunda deste lead.</p>
+                    <Button className="mt-6 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8">
+                      <Zap className="h-3 w-3 mr-2" />
+                      Gerar Proposta Preditiva
+                    </Button>
+                 </div>
+               )}
+            </div>
           )}
         </DialogContent>
       </Dialog>
