@@ -48,6 +48,7 @@ export interface CadenceTask {
   cadence_step_id: string;
   scheduled_date: string;
   status: CadenceTaskStatus;
+  task_type: 'manual' | 'automatic';
   completed_at: string | null;
   notes: string | null;
   created_at: string;

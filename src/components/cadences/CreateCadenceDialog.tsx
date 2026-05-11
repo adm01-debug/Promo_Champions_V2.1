@@ -42,6 +42,7 @@ interface StepInput {
   title: string;
   description: string;
   needs_approval: boolean;
+  task_type: 'manual' | 'automatic';
 }
 
 export function CreateCadenceDialog() {
@@ -49,7 +50,7 @@ export function CreateCadenceDialog() {
   const [step, setStep] = useState<"info" | "steps">("info");
   const [cadenceId, setCadenceId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepInput[]>([
-    { day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false },
+    { day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false, task_type: "manual" },
   ]);
 
   const createCadence = useCreateCadence();
@@ -68,7 +69,7 @@ export function CreateCadenceDialog() {
     setStep("info");
     setCadenceId(null);
     form.reset();
-    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false }]);
+    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false, task_type: "manual" }]);
   };
 
   const handleCreateCadence = async (data: CadenceFormData) => {
@@ -87,7 +88,8 @@ export function CreateCadenceDialog() {
       action_type: "call", 
       title: "", 
       description: "",
-      needs_approval: false
+      needs_approval: false,
+      task_type: "manual"
     }]);
   };
 
@@ -115,6 +117,7 @@ export function CreateCadenceDialog() {
         title: step.title,
         description: step.description || undefined,
         needs_approval: step.needs_approval,
+        task_type: step.task_type,
         step_order: i,
       });
     }
@@ -256,17 +259,31 @@ export function CreateCadenceDialog() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-xs font-medium">Aprovação Humana</FormLabel>
-                      <p className="text-[10px] text-muted-foreground">Exigir aprovação antes de enviar</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-[10px] font-medium">Aprovação</FormLabel>
+                        <p className="text-[9px] text-muted-foreground">Exigir manual</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.needs_approval}
+                        onChange={(e) => updateStep(index, "needs_approval", e.target.checked)}
+                      />
                     </div>
-                    <input 
-                      type="checkbox" 
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      checked={s.needs_approval}
-                      onChange={(e) => updateStep(index, "needs_approval", e.target.checked)}
-                    />
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-[10px] font-medium">Automática</FormLabel>
+                        <p className="text-[9px] text-muted-foreground">Execução robô</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.task_type === 'automatic'}
+                        onChange={(e) => updateStep(index, "task_type", e.target.checked ? 'automatic' : 'manual')}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">

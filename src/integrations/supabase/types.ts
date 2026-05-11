@@ -1801,6 +1801,7 @@ export type Database = {
           prospect_cadence_id: string
           scheduled_date: string
           status: string
+          task_type: string | null
         }
         Insert: {
           cadence_step_id: string
@@ -1813,6 +1814,7 @@ export type Database = {
           prospect_cadence_id: string
           scheduled_date: string
           status?: string
+          task_type?: string | null
         }
         Update: {
           cadence_step_id?: string
@@ -1825,6 +1827,7 @@ export type Database = {
           prospect_cadence_id?: string
           scheduled_date?: string
           status?: string
+          task_type?: string | null
         }
         Relationships: [
           {
