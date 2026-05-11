@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingDown, TrendingUp, Target } from "lucide-react";
+import { TrendingDown, TrendingUp, Target, Sparkles } from "lucide-react";
 import {
   formatCompactBRL,
   scenarioColor,
@@ -10,6 +10,7 @@ import {
   type ScenarioKey,
   deltaPct,
 } from "./forecastHelpers";
+import { cn } from "@/lib/utils";
 
 interface Props {
   scenario: ScenarioKey;
@@ -22,6 +23,12 @@ const ICONS: Record<ScenarioKey, typeof TrendingUp> = {
   pessimistic: TrendingDown,
   realistic: Target,
   optimistic: TrendingUp,
+};
+
+const SCENARIO_THEME: Record<ScenarioKey, string> = {
+  pessimistic: "border-warning/20 bg-warning/5 text-warning shadow-warning/5",
+  realistic: "border-primary/20 bg-primary/5 text-primary shadow-primary/5",
+  optimistic: "border-emerald-500/20 bg-emerald-500/5 text-emerald-500 shadow-emerald-500/5",
 };
 
 export const ScenarioCard: FC<Props> = ({ scenario, value, goal, index }) => {
