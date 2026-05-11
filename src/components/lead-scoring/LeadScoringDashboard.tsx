@@ -413,20 +413,49 @@ export function LeadScoringDashboard() {
                 />
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={exportToCSV}
-                disabled={isExporting}
-                className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
-              >
-                <Download className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
-                Exportar CSV
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportToCSV}
+                  disabled={isExporting}
+                  className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+                >
+                  <Download className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                  CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportToPDF}
+                  disabled={isExporting}
+                  className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+                >
+                  <FileText className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                  PDF
+                </Button>
+              </div>
 
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/30 border border-white/5 shadow-inner">
-                <Activity className="w-3.5 h-3.5 text-primary animate-pulse" />
-                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Live Sync Ativo</span>
+              <div className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-300",
+                realtimeStatus === "connected" ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]" : 
+                realtimeStatus === "error" ? "bg-rose-500/10 border-rose-500/20" : "bg-accent/30 border-white/5 shadow-inner"
+              )}>
+                {explainBatch.isPending || isLoading ? (
+                  <RefreshCw className="w-3.5 h-3.5 text-primary animate-spin" />
+                ) : (
+                  <Activity className={cn("w-3.5 h-3.5 animate-pulse", 
+                    realtimeStatus === "connected" ? "text-emerald-500" : 
+                    realtimeStatus === "error" ? "text-rose-500" : "text-primary"
+                  )} />
+                )}
+                <span className={cn("text-[9px] font-black uppercase tracking-widest",
+                  realtimeStatus === "connected" ? "text-emerald-500" : 
+                  realtimeStatus === "error" ? "text-rose-500" : "text-muted-foreground"
+                )}>
+                  {realtimeStatus === "connected" ? "Neural Link Active" : 
+                   realtimeStatus === "error" ? "Link Error" : "Connecting..."}
+                </span>
               </div>
             </div>
           </div>
