@@ -348,86 +348,96 @@ export function LeadScoringDashboard() {
                     </div>
 
 
-                    {/* Risk Indicator */}
-                    {lead.churnRisk && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className={cn(
-                            "p-2 rounded-lg cursor-help transition-all",
-                            lead.churnRisk.risk_level === 'critical' ? "bg-status-error/10 text-status-error" : 
-                            lead.churnRisk.risk_level === 'high' ? "bg-status-warning/10 text-status-warning" : "bg-info/10 text-info"
-                          )}>
-                            <AlertTriangle className="h-4 w-4" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="space-y-1">
-                            <p className="font-bold text-xs uppercase">Risco de Churn: {lead.churnRisk.risk_level}</p>
-                            {lead.churnRisk.factors.map((f, i) => (
-                              <p key={i} className="text-[10px]">• {f}</p>
-                            ))}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-
-                    {/* Factors */}
-                    {isServerScore ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="p-1.5 rounded-md hover:bg-muted shrink-0">
-                            <Info className="h-4 w-4 text-muted-foreground" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="left" className="max-w-xs">
-                          <div className="space-y-2 p-1">
-                            <p className="font-semibold text-xs mb-2">Fatores do Score</p>
-                            {lead.labels && Object.entries(lead.labels).map(([key, val]) => (
-                              <div key={key} className="text-xs">
-                                <span className="text-muted-foreground">{key}: </span>
-                                <span>{String(val)}</span>
+                    {/* Risk & Intelligence Hub */}
+                    <div className="flex items-center gap-3">
+                      {lead.churnRisk && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className={cn(
+                              "p-2.5 rounded-xl cursor-help transition-all duration-300 ring-1 ring-inset",
+                              lead.churnRisk.risk_level === 'critical' ? "bg-status-error/10 text-status-error ring-status-error/20" : 
+                              lead.churnRisk.risk_level === 'high' ? "bg-status-warning/10 text-status-warning ring-status-warning/20" : "bg-info/10 text-info ring-info/20"
+                            )}>
+                              <AlertTriangle className="h-4 w-4" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="p-3 bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl">
+                            <div className="space-y-2">
+                              <p className="font-black text-[10px] uppercase tracking-widest text-status-error">Risco de Churn Detectado</p>
+                              <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                                <div className="h-full bg-status-error" style={{ width: `${lead.churnRisk.risk_score}%` }} />
                               </div>
-                            ))}
-                            {!lead.labels && (
-                              <FactorBar label="Valor do Deal" value={((lead.factors as unknown as Record<string, number>)).dealValue} maxValue={25} />
-                            )}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
+                              {lead.churnRisk.factors.map((f, i) => (
+                                <p key={i} className="text-[10px] font-medium leading-tight text-muted-foreground">• {f}</p>
+                              ))}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+
+                      {/* Factors Insight */}
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <button className="p-1.5 rounded-md hover:bg-muted shrink-0">
-                            <Info className="h-4 w-4 text-muted-foreground" />
+                          <button className="p-2.5 rounded-xl bg-accent/50 hover:bg-accent text-muted-foreground transition-all duration-300 ring-1 ring-inset ring-white/5">
+                            <Info className="h-4 w-4" />
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent side="left" className="max-w-xs">
-                          <div className="space-y-2 p-1">
-                            <p className="font-semibold text-xs mb-2">Fatores Locais</p>
-                            <FactorBar label="Empresa" value={((lead.factors as unknown as Record<string, number>)).companySize} maxValue={20} />
-                            <FactorBar label="Indústria" value={((lead.factors as unknown as Record<string, number>)).industry} maxValue={15} />
-                            <FactorBar label="Engajamento" value={((lead.factors as unknown as Record<string, number>)).engagement} maxValue={25} />
-                            <FactorBar label="Origem" value={((lead.factors as unknown as Record<string, number>)).source} maxValue={10} />
+                        <TooltipContent side="left" className="w-64 p-4 bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl">
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2 border-b border-border/10 pb-2">
+                              <Target className="h-4 w-4 text-primary" />
+                              <p className="font-black text-[10px] uppercase tracking-widest">Matriz de Contribuição</p>
+                            </div>
+                            <div className="space-y-3">
+                              {isServerScore ? (
+                                <>
+                                  {lead.labels && Object.entries(lead.labels).map(([key, val]) => (
+                                    <div key={key} className="space-y-1">
+                                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
+                                        <span className="text-muted-foreground">{key}</span>
+                                        <span>{String(val)}</span>
+                                      </div>
+                                      <Progress value={70} className="h-1" />
+                                    </div>
+                                  ))}
+                                  {!lead.labels && (
+                                    <FactorBar label="Deal Momentum" value={((lead.factors as unknown as Record<string, number>)).dealValue} maxValue={25} />
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <FactorBar label="Firmographics" value={((lead.factors as unknown as Record<string, number>)).companySize} maxValue={20} />
+                                  <FactorBar label="ICP Fit" value={((lead.factors as unknown as Record<string, number>)).industry} maxValue={15} />
+                                  <FactorBar label="Engajamento" value={((lead.factors as unknown as Record<string, number>)).engagement} maxValue={25} />
+                                </>
+                              )}
+                            </div>
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                    )}
 
-                    {/* Explain IA */}
-                    {lead.bestDealId && (
-                      <button
-                        onClick={() => setExplainSaleId(lead.bestDealId!)}
-                        className="p-1.5 rounded-md hover:bg-primary/10 shrink-0 group"
-                        aria-label="Explicar score com IA"
-                      >
-                        <Brain className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-                      </button>
-                    )}
+                      {/* Explain IA Button */}
+                      {lead.bestDealId && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setExplainSaleId(lead.bestDealId!)}
+                          className="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary transition-all duration-500 shadow-sm"
+                        >
+                          <Brain className="h-4 w-4" />
+                        </Button>
+                      )}
 
-                    {/* Status Signal */}
-                    <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 shrink-0 border border-emerald-500/10">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">DEPLOYED</span>
+                      {/* Quick Status */}
+                      <div className="hidden md:flex flex-col items-end gap-1 px-3">
+                        <span className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Priority Status</span>
+                        <div className="flex items-center gap-1.5">
+                           <div className={cn("w-1.5 h-1.5 rounded-full", lead.score > 70 ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30")} />
+                           <span className={cn("text-[9px] font-black uppercase tracking-widest", lead.score > 70 ? "text-emerald-500" : "text-muted-foreground/60")}>
+                             {lead.score > 70 ? "TOP PRIORITY" : "MONITORING"}
+                           </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
