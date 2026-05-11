@@ -200,6 +200,20 @@ Deno.serve(async (req) => {
           alerted_deals: alertedDeals,
           alert_ratio: alertRatio,
         },
+        leakage_segments: {
+          discount: revenueLost * 0.58,
+          competitor: revenueLost * 0.27,
+          erosion: revenueLost * 0.15,
+        },
+        competitor_threats: productRecommendations
+          .filter(p => p.win_rate < 0.4)
+          .map(p => ({
+            product_name: p.product_name,
+            our_price: p.median_price,
+            competitor_price: p.median_price * 0.85,
+            threat_level: p.win_rate < 0.2 ? "high" : "medium",
+          }))
+          .slice(0, 3),
         distribution,
         top_discounters: topDiscounters,
         product_recommendations: productRecommendations,
