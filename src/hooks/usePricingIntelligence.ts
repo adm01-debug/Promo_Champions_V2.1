@@ -46,6 +46,11 @@ export interface PricingIntelligenceResponse {
   distribution: DiscountBucket[];
   top_discounters: TopDiscounter[];
   product_recommendations: ProductRecommendation[];
+  leakage_segments?: {
+    discount: number;
+    competitor: number;
+    erosion: number;
+  };
   competitor_threats?: {
     product_name: string;
     our_price: number;

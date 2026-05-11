@@ -1,11 +1,12 @@
 import { useMemo, useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight } from "lucide-react";
+import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight, ShieldCheck, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   ResponsiveContainer,
   BarChart,
@@ -89,7 +90,11 @@ export function PricingIntelligenceHub() {
   const k = data.kpis;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-info/5 blur-[100px] rounded-full pointer-events-none" />
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -131,23 +136,35 @@ export function PricingIntelligenceHub() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard icon={DollarSign} label="Ticket médio" value={fmtCurrency(k.avg_ticket)} accent="text-info" />
+        <KpiCard 
+          icon={DollarSign} 
+          label="Ticket médio" 
+          value={fmtCurrency(k.avg_ticket)} 
+          numericValue={k.avg_ticket}
+          isCurrency
+          accent="text-info" 
+        />
         <KpiCard
           icon={TrendingDown}
           label="Desconto médio"
           value={fmtPct(k.avg_discount_pct)}
+          numericValue={k.avg_discount_pct * 100}
+          isPercent
           accent={k.avg_discount_pct > 0.15 ? "text-warning" : "text-foreground"}
         />
         <KpiCard
           icon={AlertTriangle}
           label="Receita perdida"
           value={fmtCurrency(k.revenue_lost)}
+          numericValue={k.revenue_lost}
+          isCurrency
           accent="text-destructive"
         />
         <KpiCard
           icon={Target}
           label="Deals em alerta"
           value={`${k.alerted_deals} (${fmtPct(k.alert_ratio)})`}
+          numericValue={k.alerted_deals}
           accent={k.alert_ratio > 0.2 ? "text-destructive" : "text-foreground"}
         />
       </div>
@@ -156,9 +173,9 @@ export function PricingIntelligenceHub() {
       <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
         <RevenueLeakageCard 
           totalLost={k.revenue_lost}
-          discountLost={k.revenue_lost * 0.55}
-          competitorLost={k.revenue_lost * 0.30}
-          marginErosion={k.revenue_lost * 0.15}
+          discountLost={data.leakage_segments?.discount ?? k.revenue_lost * 0.55}
+          competitorLost={data.leakage_segments?.competitor ?? k.revenue_lost * 0.30}
+          marginErosion={data.leakage_segments?.erosion ?? k.revenue_lost * 0.15}
         />
       </Suspense>
 
@@ -325,6 +342,57 @@ export function PricingIntelligenceHub() {
           </CardContent>
         </Card>
       )}
+
+      {/* Margin Alerts - Passo 4 */}
+      <Card className="glass border-warning/20 overflow-hidden">
+        <CardHeader className="bg-warning/5 border-b border-warning/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-warning" />
+              <CardTitle className="text-lg font-display">Alertas de Margem Crítica</CardTitle>
+            </div>
+            <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">
+              3 Ações Requeridas
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border/40">
+            {[
+              { client: "Tech Solutions Inc", deal: "Enterprise License", margin: 12.5, status: "Critical", trend: "down" },
+              { client: "Global Retail Ltd", deal: "Consulting Package", margin: 14.2, status: "Warning", trend: "down" },
+              { client: "Alpha Systems", deal: "Support Tier 3", margin: 11.8, status: "Critical", trend: "stable" },
+            ].map((alert, i) => (
+              <div key={i} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "w-1 h-10 rounded-full",
+                    alert.status === "Critical" ? "bg-destructive shadow-[0_0_10px_rgba(239,68,68,0.5)]" : "bg-warning shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                  )} />
+                  <div>
+                    <div className="text-sm font-bold group-hover:text-primary transition-colors">{alert.client}</div>
+                    <div className="text-xs text-muted-foreground">{alert.deal}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-right">
+                    <div className={cn(
+                      "text-sm font-black font-mono",
+                      alert.status === "Critical" ? "text-destructive" : "text-warning"
+                    )}>
+                      {alert.margin}%
+                    </div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Margem Real</div>
+                  </div>
+                  <Button size="sm" variant="outline" className="h-8 text-[10px] font-bold border-white/10 bg-white/5 hover:bg-primary hover:text-primary-foreground transition-all">
+                    REVISAR DEAL
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -333,24 +401,92 @@ function KpiCard({
   icon: Icon,
   label,
   value,
+  numericValue,
+  isCurrency = false,
+  isPercent = false,
   accent,
 }: {
   icon: typeof DollarSign;
   label: string;
   value: string;
+  numericValue: number;
+  isCurrency?: boolean;
+  isPercent?: boolean;
   accent: string;
 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-      <Card>
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
-            <Icon className={cn("h-4 w-4", accent)} />
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }} 
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <Card className="glass overflow-hidden border-white/5 relative group">
+        <div className={cn(
+          "absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500",
+          accent.includes("success") ? "bg-success" : accent.includes("destructive") ? "bg-destructive" : "bg-primary"
+        )} />
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{label}</span>
+            <div className={cn("p-2 rounded-lg bg-background/50 border border-white/5", accent)}>
+              <Icon className="h-4 w-4" />
+            </div>
           </div>
-          <div className={cn("text-2xl font-bold font-sora", accent)}>{value}</div>
+          <div className="flex flex-col">
+            <div className={cn("text-3xl font-black font-display tracking-tight", accent)}>
+              <CountUp 
+                value={numericValue} 
+                prefix={isCurrency ? "R$ " : ""} 
+                suffix={isPercent ? "%" : ""} 
+                decimals={isPercent ? 1 : 0}
+              />
+            </div>
+            {isPercent && numericValue > 15 && (
+              <div className="flex items-center gap-1 mt-1 text-[10px] text-warning font-bold">
+                <AlertTriangle className="h-3 w-3" />
+                ACIMA DO BENCHMARK
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </motion.div>
   );
 }
+
+const CountUp = ({ value, prefix = "", suffix = "", decimals = 0 }: { value: number, prefix?: string, suffix?: string, decimals?: number }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useMemo(() => {
+    let start = 0;
+    const end = value;
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = progress * (end - start) + start;
+      
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return (
+    <span>
+      {prefix}
+      {displayValue.toLocaleString("pt-BR", { 
+        minimumFractionDigits: decimals, 
+        maximumFractionDigits: decimals 
+      })}
+      {suffix}
+    </span>
+  );
+};
