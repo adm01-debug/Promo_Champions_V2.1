@@ -115,6 +115,12 @@ export function ICPBadge({ icpData, size = "md", showTooltip = true, className }
             </div>
 
             <div className="text-xs space-y-1">
+              {icpData.icp_score !== undefined && (
+                <div className="flex items-center justify-between gap-4 mb-1 pb-1 border-b border-border/20">
+                  <span className="text-muted-foreground">Score de Fit:</span>
+                  <span className="font-bold text-primary">{icpData.icp_score}%</span>
+                </div>
+              )}
               {icpData.ramo_atividade && (
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Ramo:</span>
