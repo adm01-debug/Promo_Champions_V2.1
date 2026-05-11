@@ -20,3 +20,4 @@ export { MQLQualificationForm } from './MQLQualificationForm';
 export { SDRAdvancedFilters } from './SDRAdvancedFilters';
 export { SDRConversationInsights } from './SDRConversationInsights';
 export { SDRAchievementTracker } from './SDRAchievementTracker';
+export { SDRCommandBar } from './SDRCommandBar';
