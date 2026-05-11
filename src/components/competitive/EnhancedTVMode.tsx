@@ -152,7 +152,6 @@ function EnhancedTVModeComponent() {
       </div>
 
       {/* TV Screen */}
-      {/* TV Screen */}
       <Card className="glass border-white/5 min-h-[600px] relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse" />
         <CardContent className="p-10 relative z-10">
@@ -247,6 +246,46 @@ function EnhancedTVModeComponent() {
                   const goalWithAmount = goal as typeof goal & { current_amount?: number };
                   const progress = goal.goal_amount > 0 ? Math.min(((goalWithAmount.current_amount || 0) / goal.goal_amount) * 100, 100) : 0;
                   return (
+                    <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+                      <Card className="glass border-white/5 overflow-hidden group/goal">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                               <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover/goal:rotate-6 transition-transform">
+                                 <Target className="size-5" />
+                               </div>
+                               <span className="font-black italic uppercase tracking-tighter text-lg">{goal.salespeople?.name || 'Closer'}</span>
+                            </div>
+                            <Badge className={cn(
+                              "text-[10px] font-black uppercase tracking-widest h-8 px-3",
+                              progress >= 100 ? "bg-emerald-500 text-white" : "bg-white/5 border-white/10"
+                            )}>
+                              {progress.toFixed(0)}% COMPLETE
+                            </Badge>
+                          </div>
+                          <div className="h-3 bg-black/40 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                            <motion.div 
+                              className={cn("h-full relative", progress >= 100 ? "bg-emerald-500" : "bg-primary")}
+                              initial={{ width: 0 }} 
+                              animate={{ width: `${progress}%` }} 
+                              transition={{ duration: 1.5, ease: 'circOut' }} 
+                            >
+                               <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
+                            </motion.div>
+                          </div>
+                          <div className="flex justify-between mt-3 px-1">
+                            <div className="flex flex-col">
+                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Atual</span>
+                               <span className="text-sm font-black italic text-foreground tracking-tighter">R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
+                            </div>
+                            <div className="flex flex-col text-right">
+                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Meta</span>
+                               <span className="text-sm font-black italic text-muted-foreground/60 tracking-tighter">R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   );
                 })}
                 {goals.length === 0 && <div className="col-span-2 text-center py-12 text-muted-foreground uppercase tracking-widest font-black opacity-20">Nenhuma meta ativa no momento</div>}
@@ -281,49 +320,5 @@ function EnhancedTVModeComponent() {
     </div>
   );
 }
-                          </div>
-                          <div className="flex justify-between mt-3 px-1">
-                            <div className="flex flex-col">
-                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Atual</span>
-                               <span className="text-sm font-black italic text-foreground tracking-tighter">R$ {((goalWithAmount.current_amount || 0) / 1000).toFixed(1)}k</span>
-                            </div>
-                            <div className="flex flex-col text-right">
-                               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Meta</span>
-                               <span className="text-sm font-black italic text-muted-foreground/60 tracking-tighter">R$ {((goal.goal_amount || 0) / 1000).toFixed(1)}k</span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-                {goals.length === 0 && <div className="col-span-2 text-center py-12 text-muted-foreground">Nenhuma meta definida</div>}
-              </motion.div>
-            )}
-
-            {currentScreen === 'streaks' && (
-              <motion.div key="st" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {salespeople.slice(0, 8).map((sp, i) => (
-                  <motion.div key={sp.id} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}>
-                    <Card className="text-center">
-                      <CardContent className="p-4">
-                        <div className="text-3xl mb-2">{i < 3 ? '🔥' : '⚡'}</div>
-                        <div className="font-semibold text-sm truncate">{sp.name}</div>
-                        <div className="text-2xl font-bold text-primary mt-1">Lv.{sp.level || 1}</div>
-                        <div className="text-xs text-muted-foreground">{(sp.xp || 0).toLocaleString()} XP</div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
 
 export const EnhancedTVMode = React.memo(EnhancedTVModeComponent);
