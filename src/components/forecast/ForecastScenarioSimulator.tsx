@@ -32,7 +32,7 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
             <Calculator className="h-5 w-5 text-primary" />
             <CardTitle className="text-lg">Simulador de Cenários "What-If"</CardTitle>
           </div>
-          <Badge variant="glow" className="gap-1 px-3 py-1 animate-pulse">
+          <Badge variant="live" className="gap-1 px-3 py-1">
             <Sparkles className="h-3 w-3" />
             IA Predictive Mode
           </Badge>
