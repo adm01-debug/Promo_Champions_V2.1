@@ -340,103 +340,102 @@ export function PricingIntelligenceHub() {
         </Card>
       </div>
 
-      {/* Top discounters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-sora text-lg">Vendedores com maior desconto médio</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data.top_discounters.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sem dados suficientes.</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Vendedor</TableHead>
-                  <TableHead className="text-right">Deals</TableHead>
-                  <TableHead className="text-right">Ticket médio</TableHead>
-                  <TableHead className="text-right">Desconto médio</TableHead>
-                  <TableHead className="text-right">Receita perdida</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.top_discounters.map((s) => (
-                  <TableRow key={s.salesperson_id}>
-                    <TableCell className="font-medium">{s.salesperson_name}</TableCell>
-                    <TableCell className="text-right">{s.deals_count}</TableCell>
-                    <TableCell className="text-right">{fmtCurrency(s.avg_ticket)}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          s.avg_discount_pct > 0.2
-                            ? "bg-destructive/10 text-destructive border-destructive/30"
-                            : s.avg_discount_pct > 0.1
-                              ? "bg-warning/10 text-warning border-warning/30"
-                              : "bg-success/10 text-success border-success/30",
-                        )}
-                      >
-                        {fmtPct(s.avg_discount_pct)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right text-destructive">
-                      {fmtCurrency(s.revenue_lost)}
-                    </TableCell>
+      {/* Listas Detalhadas com Visual Premium */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Top discounters */}
+        <Card className="glass border-white/5">
+          <CardHeader className="border-b border-white/5 bg-white/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="font-sora text-lg font-bold">Top Discounters</CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">Vendedores com maior erosão de margem</p>
+              </div>
+              <Target className="h-5 w-5 text-primary opacity-50" />
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {data.top_discounters.length === 0 ? (
+              <p className="p-8 text-center text-sm text-muted-foreground italic">Sem dados suficientes para análise.</p>
+            ) : (
+              <Table>
+                <TableHeader className="bg-white/5">
+                  <TableRow className="hover:bg-transparent border-white/5">
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Vendedor</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Desconto</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Leakage</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {data.top_discounters.slice(0, 5).map((s) => (
+                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/5 transition-colors">
+                      <TableCell className="font-bold text-sm pl-6 py-4">{s.salesperson_name}</TableCell>
+                      <TableCell className="text-right py-4">
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "font-mono font-bold",
+                            s.avg_discount_pct > 0.2
+                              ? "bg-destructive/10 text-destructive border-destructive/20"
+                              : "bg-warning/10 text-warning border-warning/20"
+                          )}
+                        >
+                          {fmtPct(s.avg_discount_pct)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono font-bold text-destructive pr-6 py-4">
+                        {fmtCurrency(s.revenue_lost)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Product recommendations */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-sora text-lg flex items-center gap-2">
-            <ArrowUpRight className="h-5 w-5 text-success" />
-            Sugestões de reajuste de preço (IA)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data.product_recommendations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Nenhum produto com oportunidade clara de reajuste no período.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Produto</TableHead>
-                  <TableHead className="text-right">Deals</TableHead>
-                  <TableHead className="text-right">Preço mediano</TableHead>
-                  <TableHead className="text-right">Win-rate</TableHead>
-                  <TableHead className="text-right">Preço sugerido</TableHead>
-                  <TableHead className="text-right">Uplift</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.product_recommendations.map((p) => (
-                  <TableRow key={p.product_name}>
-                    <TableCell className="font-medium max-w-xs truncate">{p.product_name}</TableCell>
-                    <TableCell className="text-right">{p.deals_count}</TableCell>
-                    <TableCell className="text-right">{fmtCurrency(p.median_price)}</TableCell>
-                    <TableCell className="text-right">{fmtPct(p.win_rate)}</TableCell>
-                    <TableCell className="text-right font-semibold">
-                      {fmtCurrency(p.recommended_price)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Badge className="bg-success/15 text-success border border-success/30">
-                        +{fmtPct(p.uplift_pct)}
-                      </Badge>
-                    </TableCell>
+        {/* Product recommendations */}
+        <Card className="glass border-white/5">
+          <CardHeader className="border-b border-white/5 bg-white/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="font-sora text-lg font-bold">IA Price Recommender</CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">Oportunidades de aumento de preço (Uplift)</p>
+              </div>
+              <ArrowUpRight className="h-5 w-5 text-success opacity-50" />
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {data.product_recommendations.length === 0 ? (
+              <p className="p-8 text-center text-sm text-muted-foreground italic">Nenhuma oportunidade detectada no momento.</p>
+            ) : (
+              <Table>
+                <TableHeader className="bg-white/5">
+                  <TableRow className="hover:bg-transparent border-white/5">
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Produto</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Sugerido</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Uplift</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {data.product_recommendations.slice(0, 5).map((p) => (
+                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/5 transition-colors">
+                      <TableCell className="font-bold text-sm pl-6 py-4 max-w-[150px] truncate">{p.product_name}</TableCell>
+                      <TableCell className="text-right py-4 font-mono font-bold">
+                        {fmtCurrency(p.recommended_price)}
+                      </TableCell>
+                      <TableCell className="text-right pr-6 py-4">
+                        <Badge className="bg-success text-success-foreground border-none font-black text-[10px]">
+                          +{fmtPct(p.uplift_pct)}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
       {/* Ocultando antigo competitor threats pois foi integrado acima */}
 
       {/* Margin Alerts - Passo 4 Premium */}
