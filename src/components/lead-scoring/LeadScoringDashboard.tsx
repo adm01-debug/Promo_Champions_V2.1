@@ -687,6 +687,81 @@ export function LeadScoringDashboard() {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!selectedLeadId} onOpenChange={(o) => !o && setSelectedLeadId(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-2xl">
+          <DialogHeader className="border-b border-white/5 pb-4 mb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter italic">
+                <UserPlus className="h-6 w-6 text-primary" />
+                Dossiê Neural do Lead
+              </DialogTitle>
+            </div>
+          </DialogHeader>
+          
+          {selectedLeadId && (
+            <div className="space-y-8">
+               {/* Resumo do Lead */}
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="p-6 bg-primary/5 border-primary/20 flex flex-col items-center justify-center">
+                    <ScoreRing score={allLeads.find(l => l.id === selectedLeadId)?.score || 0} size={100} />
+                    <p className="mt-4 text-xs font-black uppercase tracking-widest text-muted-foreground">Intelligence Score</p>
+                  </Card>
+                  
+                  <Card className="md:col-span-2 p-6 bg-card/40 border-white/5">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-xl font-black uppercase tracking-tighter italic">{allLeads.find(l => l.id === selectedLeadId)?.name}</h3>
+                        <p className="text-sm text-primary font-bold">{allLeads.find(l => l.id === selectedLeadId)?.company || "Empresa Independente"}</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                        <div>
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Categoria</p>
+                          <Badge className={cn("mt-1", categoryConfig[allLeads.find(l => l.id === selectedLeadId)?.category || 'Cold'].bg)}>
+                            {allLeads.find(l => l.id === selectedLeadId)?.category}
+                          </Badge>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Risco de Evasão</p>
+                          <p className={cn("text-lg font-black italic", 
+                            (allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0) > 50 ? "text-status-error" : "text-emerald-500"
+                          )}>
+                            {allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+               </div>
+
+               {/* Detalhes de IA - Reusando componente de explicação se tiver deal */}
+               {allLeads.find(l => l.id === selectedLeadId)?.bestDealId ? (
+                 <div className="pt-6 border-t border-white/5">
+                    <LeadScoreExplainCard 
+                      saleId={allLeads.find(l => l.id === selectedLeadId)!.bestDealId!} 
+                      churnRisk={allLeads.find(l => l.id === selectedLeadId)?.churnRisk}
+                      onActionComplete={() => {
+                        setSelectedLeadId(null);
+                        toast.success("Estratégia executada!");
+                      }}
+                    />
+                 </div>
+               ) : (
+                 <div className="p-12 text-center bg-accent/5 rounded-2xl border border-dashed border-white/10">
+                    <Brain className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest">Aguardando Primeira Negociação</p>
+                    <p className="text-xs text-muted-foreground/60 mt-2">Inicie uma proposta para ativar a análise neural profunda deste lead.</p>
+                    <Button className="mt-6 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8">
+                      <Zap className="h-3 w-3 mr-2" />
+                      Gerar Proposta Preditiva
+                    </Button>
+                 </div>
+               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
