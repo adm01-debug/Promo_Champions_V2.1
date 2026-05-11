@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Swords, Timer, Trophy, Zap } from 'lucide-react';
+import { Swords, Timer, Trophy, Zap, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
