@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Monitor, Trophy, Flame, DollarSign, Target, Timer, Volume2, VolumeX, Sparkles, Zap, Rocket, Star, TrendingUp } from 'lucide-react';
+import { Monitor, Trophy, Flame, DollarSign, Target, Timer, Volume2, VolumeX, Sparkles, Zap, Rocket, Star, TrendingUp, Tv, Maximize2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
