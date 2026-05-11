@@ -18,6 +18,7 @@ import {
 import { ScenarioCard } from "./ScenarioCard";
 import { ForecastNarrativeCard } from "./ForecastNarrativeCard";
 import { PipelineContributionChart } from "./PipelineContributionChart";
+import { ForecastScenarioSimulator } from "./ForecastScenarioSimulator";
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
