@@ -14,6 +14,7 @@ import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
 import { SchedulingRateGauge } from "./SchedulingRateGauge";
 import { RecentProspects } from "./RecentProspects";
+import { ActivityAuditTrail } from "./ActivityAuditTrail";
 import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
 import { PerformanceCoaching } from "./PerformanceCoaching";
@@ -168,13 +169,7 @@ const SDRDashboardInner = () => {
           </TabsContent>
           
           <TabsContent value="activity" className="mt-0 outline-none">
-            <div className="glass border-primary/20 rounded-xl p-8 flex flex-col items-center justify-center text-center">
-              <LayoutDashboard className="w-12 h-12 text-primary/40 mb-4" />
-              <h3 className="text-lg font-bold">Activity Audit em Desenvolvimento</h3>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Estamos processando seus logs de chamadas e mensagens para gerar um mapa de calor de produtividade detalhado.
-              </p>
-            </div>
+            <ActivityAuditTrail />
           </TabsContent>
         </Tabs>
       </motion.div>
