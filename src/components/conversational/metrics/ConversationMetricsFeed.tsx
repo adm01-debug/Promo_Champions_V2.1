@@ -136,12 +136,12 @@ function KpiCard({
   icon: Icon, label, value,
 }: { icon: typeof Activity; label: string; value: string | number }) {
   return (
-    <Card className="p-3">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" />
+    <Card className="p-3 glass border-border/40 hover:border-primary/30 transition-all duration-300">
+      <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+        <Icon className="h-3 w-3 text-primary" />
         {label}
       </div>
-      <div className="mt-1 text-lg font-semibold text-foreground">{value}</div>
+      <div className="mt-1 text-lg font-display font-bold text-foreground">{value}</div>
     </Card>
   );
 }
