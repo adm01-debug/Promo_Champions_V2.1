@@ -14,10 +14,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { motion } from "framer-motion";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
 
-export function RecentProspects() {
+export function RecentProspects({ onSelectLead, selectedLeadId }: { onSelectLead?: (id: string, name: string, score: number) => void, selectedLeadId?: string | null }) {
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [internalSelectedLeadId, setInternalSelectedLeadId] = useState<string | null>(null);
+  
+  const currentSelectedId = selectedLeadId !== undefined ? selectedLeadId : internalSelectedLeadId;
 
   const { data: prospects, refetch } = useQuery({
     queryKey: ["recent-prospects"],
@@ -118,10 +120,16 @@ export function RecentProspects() {
                   key={prospect.id}
                   className={cn(
                     "flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in cursor-pointer",
-                    selectedLeadId === prospect.id ? "ring-2 ring-primary border-primary/50" : temp.borderColor,
+                    currentSelectedId === prospect.id ? "ring-2 ring-primary border-primary/50" : temp.borderColor,
                     temp.glowClass
                   )}
-                  onClick={() => setSelectedLeadId(selectedLeadId === prospect.id ? null : prospect.id)}
+                  onClick={() => {
+                    if (onSelectLead) {
+                      onSelectLead(prospect.id, prospect.client_name, prospect.score);
+                    } else {
+                      setInternalSelectedLeadId(currentSelectedId === prospect.id ? null : prospect.id);
+                    }
+                  }}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-3">
@@ -214,7 +222,7 @@ export function RecentProspects() {
                     </div>
                   )}
 
-                  {selectedLeadId === prospect.id && (
+                  {currentSelectedId === prospect.id && !onSelectLead && (
                     <motion.div 
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
