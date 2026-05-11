@@ -39,6 +39,9 @@ import {
   Sparkles,
   Trophy
 } from "lucide-react";
+import { exportToCSV } from "@/lib/csvExporter";
+import { exportToPDF } from "@/lib/pdfExporter";
+
 import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
@@ -85,12 +88,64 @@ export default function SDRDashboard() {
     }
   };
 
-  const handleExport = (format: 'csv' | 'pdf') => {
+  const handleExport = async (format: 'csv' | 'pdf') => {
+    if (!metrics) {
+      toast.error("Sem dados para exportar");
+      return;
+    }
+
     toast.info(`Preparando exportação em ${format.toUpperCase()}...`);
-    setTimeout(() => {
+    
+    const dataToExport = [
+      {
+        Métrica: "Total de Leads",
+        Valor: metrics.current.totalLeads,
+        Crescimento: `${metrics.changes.leads.toFixed(1)}%`
+      },
+      {
+        Métrica: "Leads Qualificados",
+        Valor: metrics.current.qualifiedLeads,
+        Crescimento: `${metrics.changes.qualified.toFixed(1)}%`
+      },
+      {
+        Métrica: "Reuniões Agendadas",
+        Valor: metrics.current.meetingsScheduled,
+        Crescimento: `${metrics.changes.meetings.toFixed(1)}%`
+      },
+      {
+        Métrica: "Taxa de Agendamento",
+        Valor: `${metrics.current.schedulingRate.toFixed(1)}%`,
+        Crescimento: `${metrics.changes.schedulingRate.toFixed(1)}%`
+      },
+      {
+        Métrica: "Leads Quentes",
+        Valor: metrics.current.hotLeads,
+        Crescimento: "-"
+      },
+      {
+        Métrica: "Prospects Ativos",
+        Valor: metrics.current.activeProspects,
+        Crescimento: "-"
+      }
+    ];
+
+    try {
+      if (format === 'csv') {
+        await exportToCSV(dataToExport, `relatorio-sdr-${period}-${new Date().toISOString().split('T')[0]}`);
+      } else {
+        await exportToPDF(
+          dataToExport, 
+          `relatorio-sdr-${period}`,
+          `Relatório de Performance SDR - ${periodLabel}`
+        );
+      }
       toast.success(`Relatório SDR exportado com sucesso!`);
-    }, 1500);
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Erro ao exportar relatório");
+    }
   };
+
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
   
