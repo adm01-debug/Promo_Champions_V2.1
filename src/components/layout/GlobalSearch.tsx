@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Briefcase } from "lucide-react";
+import { User, Briefcase, Plus, LayoutDashboard, Settings, Mail, ListTodo, Headphones, BookOpen } from "lucide-react";
 import Fuse from "fuse.js";
 import { supabase } from "@/integrations/supabase/client";
 import {
