@@ -13,31 +13,37 @@ export function PerformanceCoaching() {
     const schedulingRate = metrics.current.schedulingRate;
     const leads = metrics.current.totalLeads;
     const qualified = metrics.current.qualifiedLeads;
+    const active = metrics.current.activeProspects;
 
     const strengths = [];
     const improvements = [];
 
+    // Dinamic insights based on real metrics
     if (schedulingRate > 20) {
-      strengths.push(`Alta taxa de agendamento (${schedulingRate.toFixed(1)}%)`);
+      strengths.push(`Alta taxa de agendamento (${schedulingRate.toFixed(1)}%) - Acima da média do setor`);
+    } else if (schedulingRate > 10) {
+      strengths.push(`Taxa de agendamento estável (${schedulingRate.toFixed(1)}%)`);
     } else {
-      improvements.push(`Aumentar taxa de agendamento (atualmente ${schedulingRate.toFixed(1)}%)`);
+      improvements.push(`Taxa de agendamento crítica (${schedulingRate.toFixed(1)}%) - Requer revisão de script`);
     }
 
-    if (leads > 100) {
-      strengths.push(`Ótimo volume de novos leads (${leads})`);
+    if (leads > 50) {
+      strengths.push(`Bom fluxo de entrada (${leads} novos leads no período)`);
     } else {
-      improvements.push("Aumentar volume de prospecção diária");
+      improvements.push(`Fluxo de prospecção baixo (${leads} leads) - Meta sugerida: 15+ semana`);
     }
 
-    if (qualified / leads > 0.5) {
-      strengths.push("Excelente qualidade de filtros (ICP Match)");
+    if (qualified / leads > 0.4) {
+      strengths.push("Perfil de leads altamente alinhado ao ICP");
     } else {
-      improvements.push("Refinar critérios de qualificação (MQL → SQL)");
+      improvements.push("Alta taxa de desqualificação - Ajustar critérios de entrada");
     }
 
-    // Default fallbacks if empty
-    if (strengths.length === 0) strengths.push("Consistência no volume de atividades");
-    if (improvements.length === 0) improvements.push("Explorar novos canais de prospecção (LinkedIn)");
+    if (active > 20) {
+      strengths.push(`Pipeline ativo saudável com ${active} negociações`);
+    } else {
+      improvements.push(`Volume de pipeline insuficiente para bater metas`);
+    }
 
     return { strengths, improvements };
   };

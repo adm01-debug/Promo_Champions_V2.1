@@ -18,8 +18,6 @@ export function RecentProspects() {
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
-  const { mutate: enrich } = useLeadEnrichment();
-  const [enrichingId, setEnrichingId] = useState<string | null>(null);
 
   const { data: prospects, refetch } = useQuery({
     queryKey: ["recent-prospects"],
