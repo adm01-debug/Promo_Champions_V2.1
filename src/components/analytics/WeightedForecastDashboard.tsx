@@ -17,6 +17,19 @@ const STAGE_COLORS = ["hsl(var(--muted-foreground))", "hsl(var(--primary))", "hs
 
 export function WeightedForecastDashboard() {
   const { data, isLoading } = useWeightedForecast();
+  const [impactFactors, setImpactFactors] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchImpact = async () => {
+      const { data: factors } = await supabase
+        .from('performance_impact_factors')
+        .select('*')
+        .order('impact_score', { ascending: false })
+        .limit(3);
+      if (factors) setImpactFactors(factors);
+    };
+    fetchImpact();
+  }, []);
 
   const funnelData = useMemo(() => {
     if (!data) return [];
