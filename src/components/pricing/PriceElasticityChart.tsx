@@ -123,10 +123,22 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({ data, o
               }}
             />
             <ReferenceLine 
-              x={optimalPrice} 
+              x={optimalPrice * 0.9} 
               stroke="hsl(var(--success))" 
-              strokeDasharray="4 4" 
-              strokeWidth={2}
+              strokeDasharray="3 3" 
+              label={{ position: 'top', value: 'Piso Seguro', fill: 'hsl(var(--success))', fontSize: 10 }}
+            />
+            <ReferenceLine 
+              x={optimalPrice * 1.1} 
+              stroke="hsl(var(--warning))" 
+              strokeDasharray="3 3" 
+              label={{ position: 'top', value: 'Teto Alerta', fill: 'hsl(var(--warning))', fontSize: 10 }}
+            />
+            <ReferenceLine 
+              x={optimalPrice} 
+              stroke="hsl(var(--primary))" 
+              strokeWidth={3}
+              label={{ position: 'insideBottomRight', value: 'PREÇO ÓTIMO IA', fill: 'hsl(var(--primary))', fontSize: 10, fontWeight: 'bold' }}
             />
             <Scatter 
               data={chartData} 
