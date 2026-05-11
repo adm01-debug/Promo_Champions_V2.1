@@ -106,6 +106,32 @@ export function WeightedForecastDashboard() {
         </Card>
       </div>
 
+      {impactFactors.length > 0 && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-display flex items-center gap-2">
+              <Brain className="h-4 w-4 text-primary" />
+              IA Insight: Fatores de Impacto na Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {impactFactors.map((f, i) => (
+                <div key={i} className="p-3 rounded-lg bg-background/50 border border-border/40">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{f.factor_name}</span>
+                    <Badge className={cn(f.impact_score > 0 ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive")}>
+                      {f.impact_score > 0 ? "+" : ""}{f.impact_score}%
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-foreground font-medium">{f.description}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <ForecastTopDeals deals={topDeals} />
     </div>
   );
