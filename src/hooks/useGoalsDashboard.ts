@@ -112,8 +112,8 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
-          predictedAttainment: prediction?.predicted_attainment_pct,
-          paceStatus: prediction?.pace_status as any,
+          predictedAttainment: (prediction as any)?.predicted_attainment_pct,
+          paceStatus: (prediction as any)?.pace_status as any,
         };
       });
 
