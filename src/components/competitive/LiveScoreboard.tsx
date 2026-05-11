@@ -133,8 +133,12 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
             )}
 
             {/* Scoreboard */}
-            <div className="space-y-2">
-              <AnimatePresence>
+            <div className="space-y-4">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2 italic">
+                <Crown className="h-4 w-4" />
+                Top 5 Gladiadores
+              </h3>
+              <AnimatePresence mode="popLayout">
                 {topFive.map((person, i) => {
                   const maxSales = topFive[0]?.totalSales || 1;
                   const barWidth = (person.totalSales / maxSales) * 100;
@@ -147,9 +151,8 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1, type: 'spring', stiffness: 200 }}
                       className={cn(
-                        'relative flex items-center gap-4 p-4 rounded-xl border overflow-hidden',
-                        i === 0 && 'bg-gradient-to-r from-rank-gold/10 to-transparent border-rank-gold/30',
-                        i > 0 && 'bg-muted/20 border-border/30',
+                        'relative flex items-center gap-6 p-6 rounded-2xl border overflow-hidden transition-all duration-500 group/row',
+                        i === 0 ? 'bg-rank-gold/10 border-rank-gold/30 shadow-2xl shadow-rank-gold/10' : 'bg-white/5 border-white/5 hover:bg-white/10'
                       )}
                     >
                       {/* Animated bar background */}
@@ -160,38 +163,45 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                         )}
                         initial={{ width: 0 }}
                         animate={{ width: `${barWidth}%` }}
-                        transition={{ delay: i * 0.1 + 0.3, duration: 0.8, ease: 'easeOut' }}
+                        transition={{ delay: i * 0.1 + 0.3, duration: 1, ease: 'circOut' }}
                       />
 
                       <div className={cn(
-                        'relative z-10 h-12 w-12 rounded-xl flex items-center justify-center font-bold text-lg',
-                        i < 3 ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground shadow-lg` : 'bg-muted text-muted-foreground'
+                        'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-2xl',
+                        i < 3 ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground` : 'bg-white/10 text-muted-foreground'
                       )}>
                         {i < 3 ? (
-                          <Crown className={cn('h-6 w-6', i === 0 && 'animate-bounce')} />
+                          <Crown className={cn('h-7 w-7', i === 0 && 'animate-bounce')} />
                         ) : (
-                          <span>#{person.rank}</span>
+                          <span className="italic tracking-tighter">#{person.rank}</span>
                         )}
                       </div>
 
-                      <Avatar className="relative z-10 h-11 w-11 border-2 border-background shadow-md">
-                        <AvatarImage src={person.avatar_url || undefined} />
-                        <AvatarFallback className="text-sm font-bold bg-primary/10 text-primary">
-                          {person.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="relative z-10">
+                        <Avatar className="h-14 w-14 border-2 border-background shadow-2xl group-hover/row:scale-110 transition-transform duration-500">
+                          <AvatarImage src={person.avatar_url || undefined} />
+                          <AvatarFallback className="text-sm font-black bg-primary/20 text-primary">
+                            {person.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        {i === 0 && (
+                          <div className="absolute -top-2 -right-2 size-6 rounded-full bg-rank-gold flex items-center justify-center border-2 border-background animate-bounce">
+                            <Sparkles className="size-3 text-white" />
+                          </div>
+                        )}
+                      </div>
 
                       <div className="relative z-10 flex-1 min-w-0">
                         <p className={cn(
-                          'font-bold truncate',
-                          i === 0 ? 'text-lg text-foreground' : 'text-sm text-foreground'
+                          'font-black italic uppercase tracking-tighter truncate leading-none mb-2',
+                          i === 0 ? 'text-xl' : 'text-base'
                         )}>
                           {person.name}
                         </p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-[10px]">{person.dealsCount} deals</Badge>
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10">{person.dealsCount} deals</Badge>
                           {person.dealsCount >= 5 && (
-                            <span className="text-[10px] text-coins font-medium flex items-center gap-0.5">
+                            <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
                               <Flame className="h-3 w-3" /> On Fire
                             </span>
                           )}
@@ -200,15 +210,15 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
 
                       <div className="relative z-10 text-right">
                         <p className={cn(
-                          'font-bold',
-                          i === 0 ? 'text-2xl text-rank-gold' : 'text-lg text-foreground'
+                          'font-black italic tracking-tighter leading-none mb-1',
+                          i === 0 ? 'text-3xl text-rank-gold' : 'text-xl text-foreground'
                         )}>
                           R$ {(person.totalSales / 1000).toFixed(0)}k
                         </p>
                         {i > 0 && (
-                          <p className="text-[10px] text-muted-foreground flex items-center justify-end gap-0.5">
-                            <TrendingUp className="h-2.5 w-2.5" />
-                            -R$ {((topFive[0].totalSales - person.totalSales) / 1000).toFixed(0)}k
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-end gap-1.5 opacity-60">
+                            <TrendingUp className="h-3 w-3" />
+                            GAP: R$ {((topFive[0].totalSales - person.totalSales) / 1000).toFixed(0)}k
                           </p>
                         )}
                       </div>
