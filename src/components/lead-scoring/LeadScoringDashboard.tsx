@@ -313,19 +313,45 @@ export function LeadScoringDashboard() {
           <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error bg-card/40 backdrop-blur-xl">
             <CardHeader className="pb-2 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 text-status-error" />
-                  Alertas de Churn
-                </CardTitle>
+                  <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80">
+                    Alertas de Churn
+                  </CardTitle>
+                  {alerts.length > 0 && (
+                    <Badge variant="destructive" className="h-5 px-1.5 text-[9px] font-black animate-pulse">
+                      {alerts.length}
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex gap-1">
-                   <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className={cn("h-6 w-6 rounded-md", churnFilter === "critical" && "bg-status-error/20")}
-                    onClick={() => setChurnFilter(churnFilter === "critical" ? "all" : "critical")}
-                   >
-                     <AlertTriangle className="h-3 w-3 text-status-error" />
-                   </Button>
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-7 w-7 rounded-md", churnFilter === "critical" && "bg-status-error/20 ring-1 ring-status-error/30")}
+                        onClick={() => setChurnFilter(churnFilter === "critical" ? "all" : "critical")}
+                       >
+                         <AlertTriangle className="h-3.5 w-3.5 text-status-error" />
+                       </Button>
+                     </TooltipTrigger>
+                     <TooltipContent className="text-[10px] font-bold">Apenas Críticos</TooltipContent>
+                   </Tooltip>
+                   
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-7 w-7 rounded-md", churnFilter === "high" && "bg-status-warning/20 ring-1 ring-status-warning/30")}
+                        onClick={() => setChurnFilter(churnFilter === "high" ? "all" : "high")}
+                       >
+                         <Activity className="h-3.5 w-3.5 text-status-warning" />
+                       </Button>
+                     </TooltipTrigger>
+                     <TooltipContent className="text-[10px] font-bold">Risco Alto</TooltipContent>
+                   </Tooltip>
                 </div>
               </div>
             </CardHeader>
