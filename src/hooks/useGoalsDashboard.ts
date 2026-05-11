@@ -17,6 +17,8 @@ interface SalespersonGoalData {
   commissionRate: number;
   currentCommission: number;
   projectedCommission: number;
+  predictedAttainment?: number;
+  paceStatus?: 'ahead' | 'on_track' | 'behind';
 }
 
 interface TeamGoalData {
