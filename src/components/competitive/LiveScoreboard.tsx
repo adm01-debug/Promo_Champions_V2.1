@@ -55,54 +55,60 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
 
   return (
     <div className={cn(
-      'space-y-4',
-      isFullscreen && 'fixed inset-0 z-50 bg-background p-8 overflow-auto',
+      'space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700',
+      isFullscreen && 'fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl p-8 overflow-auto',
       className
     )}>
-      <Card className="border-none shadow-2xl overflow-hidden">
-        <div className="bg-gradient-to-br from-primary/10 via-background to-accent/10">
+      <Card className="glass border-white/5 shadow-2xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse" />
+        <div className="bg-white/5 backdrop-blur-xl relative z-10">
           {/* Header */}
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                  <Monitor className="h-5 w-5 text-primary-foreground" />
+          <CardHeader className="pb-6 border-b border-white/5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <CardTitle className="text-3xl flex items-center gap-4 italic uppercase font-black tracking-tighter">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
+                  <Monitor className="h-7 w-7 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
                 </div>
                 <div>
-                  <span className="block">Placar ao Vivo</span>
-                  <span className="text-xs text-muted-foreground font-normal">
-                    {clock.toLocaleTimeString('pt-BR')} • Atualiza a cada 60s
-                  </span>
+                  <span className="block gradient-text">Placar ao Vivo</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+                      {clock.toLocaleTimeString('pt-BR')} • Real-time Sync
+                    </span>
+                  </div>
                 </div>
               </CardTitle>
-              <Button variant="outline" size="sm" onClick={toggleFullscreen} className="gap-1.5">
-                <Maximize2 className="h-4 w-4" />
-                {isFullscreen ? 'Sair' : 'TV Mode'}
-              </Button>
+              <div className="flex gap-3">
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-4 py-1.5 h-10 flex items-center">
+                  Update: 60s
+                </Badge>
+                <Button variant="outline" size="sm" onClick={toggleFullscreen} className="gap-2 h-10 px-4 border-white/10 bg-white/5 hover:bg-white/10 transition-all text-xs font-black uppercase tracking-widest">
+                  <Maximize2 className="h-4 w-4" />
+                  {isFullscreen ? 'Sair' : 'TV Mode'}
+                </Button>
+              </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
+          <CardContent className="p-8 space-y-8">
             {/* Team KPIs */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-gradient-to-br from-primary/15 to-primary/5 rounded-xl p-4 text-center border border-primary/20">
-                <p className="text-2xl font-bold text-primary">
-                  R$ {(totalTeamRevenue / 1000).toFixed(0)}k
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Receita do Time</p>
-              </div>
-              <div className="bg-gradient-to-br from-success/15 to-success/5 rounded-xl p-4 text-center border border-success/20">
-                <p className="text-2xl font-bold text-success">
-                  {totalDeals}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Deals Fechados</p>
-              </div>
-              <div className="bg-gradient-to-br from-coins/15 to-coins/5 rounded-xl p-4 text-center border border-coins/20">
-                <p className="text-2xl font-bold text-coins">
-                  {ranking?.length || 0}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Competidores</p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { label: 'Receita do Time', value: `R$ ${(totalTeamRevenue / 1000).toFixed(0)}k`, color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20', icon: TrendingUp },
+                { label: 'Deals Fechados', value: totalDeals, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Flame },
+                { label: 'Competidores', value: ranking?.length || 0, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Monitor }
+              ].map((kpi, idx) => (
+                <div key={idx} className={cn("rounded-3xl p-6 text-center border relative overflow-hidden group/kpi", kpi.bg, kpi.border)}>
+                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/kpi:scale-110 transition-transform">
+                    <kpi.icon className="size-12" />
+                  </div>
+                  <p className={cn("text-4xl font-black italic tracking-tighter mb-1", kpi.color)}>
+                    {kpi.value}
+                  </p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{kpi.label}</p>
+                </div>
+              ))}
             </div>
 
             {/* Last deal ticker */}
@@ -110,12 +116,16 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 px-4 py-2 bg-success/10 border border-success/20 rounded-xl"
+                className="flex items-center gap-4 px-6 py-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl relative overflow-hidden group/ticker"
               >
-                <Flame className="h-4 w-4 text-success animate-pulse" />
-                <span className="text-sm text-foreground">
-                  <strong>{lastDeal.name}</strong> lidera com{' '}
-                  <strong className="text-success">
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(16,185,129,0.05),transparent)] animate-shimmer" />
+                <div className="size-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 animate-pulse relative z-10">
+                  <Flame className="h-6 w-6" />
+                </div>
+                <span className="text-sm font-medium text-foreground relative z-10">
+                  <span className="font-black italic uppercase tracking-tighter text-emerald-400 mr-2">Top Performance:</span>
+                  <strong>{lastDeal.name}</strong> lidera a arena com{' '}
+                  <strong className="text-emerald-400 font-black">
                     R$ {lastDeal.value.toLocaleString('pt-BR')}
                   </strong>
                 </span>
