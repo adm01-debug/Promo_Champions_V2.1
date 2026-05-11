@@ -22,16 +22,16 @@ import {
 } from "lucide-react";
 import type { Playbook } from "@/hooks/useSalesEnablement";
 import { useTogglePlaybookItem, useAllPlaybookProgress } from "@/hooks/useSalesEnablement";
-import { useSales } from "@/hooks/useSales";
+import { useSalesData } from "@/hooks/useSalesData";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) => {
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
-  const { data: sales } = useSales();
+  const { data: sales } = useSalesData();
   const toggleItem = useTogglePlaybookItem();
   const { data: completedItems } = useAllPlaybookProgress(selectedSaleId || undefined);
 
-  const activeSales = sales?.filter(s => s.status !== 'completed' && s.status !== 'lost') || [];
+  const activeSales = (sales || []).filter((s: any) => s.status !== 'completed' && s.status !== 'lost') || [];
 
   return (
     <Dialog>
@@ -67,9 +67,9 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
                 <SelectValue placeholder="Selecione um Deal ativo..." />
               </SelectTrigger>
               <SelectContent>
-                {activeSales.map((sale) => (
-                  <SelectItem key={sale.id} value={sale.id}>
-                    {sale.client_name} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.amount)}
+                {activeSales.map((sale: any) => (
+                  <SelectItem key={sale.fullId} value={sale.fullId}>
+                    {sale.cliente} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.valor)}
                   </SelectItem>
                 ))}
               </SelectContent>
