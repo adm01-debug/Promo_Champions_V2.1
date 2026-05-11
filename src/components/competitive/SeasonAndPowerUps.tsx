@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Star, Flame, Calendar } from 'lucide-react';
+import { Zap, Shield, Star, Flame, Calendar, Sparkles, TrendingUp, Trophy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
