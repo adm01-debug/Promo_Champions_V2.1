@@ -47,6 +47,10 @@ import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighl
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
 import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
+import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
+import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
+import { TargetSimulator } from "@/components/sdr/TargetSimulator";
+import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -370,6 +374,15 @@ export default function SDRDashboard() {
               />
             </motion.div>
 
+            {/* Performance Coaching */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.38 }}
+            >
+              <PerformanceCoaching />
+            </motion.div>
+
             {/* Dialer & Power Mode */}
             <motion.div 
               className="space-y-4"
@@ -431,13 +444,17 @@ export default function SDRDashboard() {
 
             {/* Intelligence & Goals Row */}
             <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-4 gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.42 }}
             >
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-1 space-y-6">
                 <SDRIntelligenceHighlights />
+                <LeadScoreBreakdown />
+              </div>
+              <div className="lg:col-span-2">
+                <PredictiveSuccessMap />
               </div>
               <div className="glass rounded-xl p-6 border border-primary/20 bg-primary/5 flex flex-col justify-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none rotate-12">
@@ -484,7 +501,10 @@ export default function SDRDashboard() {
               <div className="lg:col-span-1">
                 <MQLQualificationForm />
               </div>
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-1">
+                <TargetSimulator />
+              </div>
+              <div className="lg:col-span-1">
                 <SDRAlertHistory />
               </div>
             </motion.div>
