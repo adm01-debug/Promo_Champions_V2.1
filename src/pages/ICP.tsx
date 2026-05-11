@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { TableSkeleton, PageHeaderSkeleton, SkeletonCard } from "@/components/skeletons/PageLoadingSkeleton";
-import { Target, Search, CheckCircle2, XCircle, Filter } from "lucide-react";
+import { Target, Search, CheckCircle2, XCircle, Filter, Settings2, BarChart3, Users } from "lucide-react";
 import { ICPTable } from "@/components/icp/ICPTable";
 import { ICPEditDialog } from "@/components/icp/ICPEditDialog";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ICPConfigForm } from "@/components/icp/ICPConfigForm";
+import { ICPPerformanceChart } from "@/components/icp/ICPPerformanceChart";
 
 export default function ICP() {
   const { data: icpData, isLoading: isLoadingICP } = useICPData();
