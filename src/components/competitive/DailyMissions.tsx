@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import { Target, Zap, Check, Gift, Flame, Phone, Mail, MessageSquare } from 'lucide-react';
+import { Target, Zap, Check, Gift, Flame, Phone, Mail, MessageSquare, Sparkles, Clock, Rocket } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
