@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { QuickActionsMenu } from "./QuickActionsMenu";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -7,10 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
+import { useDealPlaybookProgress, usePlaybooksByStage } from "@/hooks/usePlaybooks";
+import { DealPlaybookModal } from "./DealPlaybookModal";
+import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -37,7 +40,11 @@ interface DealCardProps {
 }
 
 export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData }: DealCardProps) => {
+  const [playbookOpen, setPlaybookOpen] = useState(false);
   const { data: explanation } = useLeadScoreExplanation(leadScore ? deal.id : null);
+  const { data: playbooks } = usePlaybooksByStage(deal.status);
+  const { data: progress } = useDealPlaybookProgress(deal.id);
+
   const {
     attributes,
     listeners,
@@ -51,6 +58,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  const allPlaybookItems = playbooks?.flatMap(pb => pb.items || []) || [];
+  const completedCount = progress?.length || 0;
+  const totalCount = allPlaybookItems.length;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -138,6 +149,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
                 </TooltipContent>
               </Tooltip>
             )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-1.5 flex items-center gap-1 hover:bg-primary/10 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPlaybookOpen(true);
+                  }}
+                >
+                  <ListTodo className={cn("h-3.5 w-3.5", completedCount > 0 ? "text-emerald-500" : "text-muted-foreground")} />
+                  {totalCount > 0 && (
+                    <span className="text-[9px] font-bold">
+                      {completedCount}/{totalCount}
+                    </span>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs">Abrir Playbook de Execução</p>
+              </TooltipContent>
+            </Tooltip>
             <QuickActionsMenu deal={deal} />
           </div>
         </div>
@@ -207,6 +241,14 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           <Calendar className="h-3 w-3" />
           <span>{format(parseISO(deal.created_at), "dd MMM", { locale: ptBR })}</span>
         </div>
+
+        <DealPlaybookModal
+          open={playbookOpen}
+          onOpenChange={setPlaybookOpen}
+          dealId={deal.id}
+          clientName={deal.client_name}
+          stageId={deal.status}
+        />
       </Card>
     </div>
   );
