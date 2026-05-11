@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLeadScoring } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw, AlertTriangle, ShieldAlert } from "lucide-react";
+import { 
+  Target, TrendingUp, Flame, Thermometer, Snowflake, 
+  BarChart3, Info, Brain, RefreshCw, AlertTriangle, 
+  ShieldAlert, Download, Search, Filter, CheckCircle2,
+  Calendar, FileText, Activity
+} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
 import { LeadScoreDistribution } from "./LeadScoreDistribution";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const categoryConfig = {
   Hot: { icon: Flame, color: "text-status-error", bg: "bg-status-error/10 border-status-error/20", label: "ELITE" },
@@ -58,28 +66,102 @@ function FactorBar({ label, value, maxValue }: { label: string; value: number; m
 }
 
 export function LeadScoringDashboard() {
-  const { data: leads, isLoading } = useLeadScoring();
+  const { data: leads, isLoading, refetch } = useLeadScoring();
   const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [churnFilter, setChurnFilter] = useState<string>("all");
+  const [isExporting, setIsExporting] = useState(false);
+  const [attendedAlerts, setAttendedAlerts] = useState<Set<string>>(new Set());
   const explainBatch = useExplainBatch();
+
+  // Real-time synchronization
+  useMemo(() => {
+    const channel = supabase
+      .channel('lead-scoring-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_score_trends' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_churn_risk' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch]);
+
+  const allLeads = leads || [];
+  
+  const filteredLeads = useMemo(() => {
+    return allLeads.filter(l => {
+      const matchesSearch = l.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           (l.company?.toLowerCase().includes(searchTerm.toLowerCase()));
+      return matchesSearch;
+    });
+  }, [allLeads, searchTerm]);
+
+  const alerts = useMemo(() => {
+    return allLeads.filter(l => 
+      l.churnRisk && 
+      l.churnRisk.risk_score > 50 && 
+      !attendedAlerts.has(l.id) &&
+      (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
+    ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
+  }, [allLeads, attendedAlerts, churnFilter]);
+
+  const exportToCSV = () => {
+    setIsExporting(true);
+    try {
+      const headers = ["Rank", "Name", "Company", "Score", "Category", "Risk Level", "Risk Score"];
+      const rows = filteredLeads.map((l, i) => [
+        i + 1,
+        l.name,
+        l.company || "N/A",
+        l.score,
+        l.category,
+        l.churnRisk?.risk_level || "low",
+        l.churnRisk?.risk_score || 0
+      ]);
+
+      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `lead_ranking_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Ranking exportado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao exportar dados.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <Target className="h-6 w-6 text-primary" />
-          <h1 className="font-display text-2xl font-bold">Lead Scoring</h1>
+          <h1 className="font-display text-2xl font-bold italic uppercase tracking-tighter">Lead Intelligence</h1>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {Array.from({ length: 3 }).map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
-        <Skeleton className="h-96 rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <Skeleton className="md:col-span-8 h-96 rounded-xl" />
+          <Skeleton className="md:col-span-4 h-96 rounded-xl" />
+        </div>
       </div>
     );
   }
 
-  const allLeads = leads || [];
   const hotCount = allLeads.filter(l => l.category === "Hot").length;
   const warmCount = allLeads.filter(l => l.category === "Warm").length;
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
@@ -185,39 +267,78 @@ export function LeadScoringDashboard() {
         </div>
         
         <div className="lg:col-span-4 space-y-6">
-          <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
-                <ShieldAlert className="h-4 w-4 text-status-error" />
-                Alertas de Churn (NBA)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).slice(0, 3).map(lead => (
-                <div key={lead.id} className="group p-3 rounded-xl bg-status-error/5 border border-status-error/10 space-y-3 hover:bg-status-error/10 transition-colors">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black uppercase tracking-tighter truncate max-w-[150px]">{lead.name}</span>
-                    <Badge variant="destructive" className="text-[8px] px-1.5 h-4 font-black">CRÍTICO</Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[10px] font-bold">
-                      <span className="text-muted-foreground uppercase tracking-widest">Risk Level</span>
-                      <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
-                    </div>
-                    <Progress value={lead.churnRisk?.risk_score} className="h-1.5 bg-status-error/10" indicatorClassName="bg-status-error shadow-[0_0_10px_rgba(var(--status-error-rgb),0.5)]" />
-                  </div>
-                  <div className="pt-2 border-t border-status-error/10">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Brain className="h-3 w-3 text-status-error" />
-                      <span className="text-[9px] font-black text-status-error uppercase tracking-widest">Recomendação IA</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground italic leading-tight font-medium">
-                      {lead.churnRisk?.factors[0] || "Sem atividade detectada"}
-                    </p>
-                  </div>
+          <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error bg-card/40 backdrop-blur-xl">
+            <CardHeader className="pb-2 border-b border-white/5">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+                  <ShieldAlert className="h-4 w-4 text-status-error" />
+                  Alertas de Churn
+                </CardTitle>
+                <div className="flex gap-1">
+                   <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-6 w-6 rounded-md", churnFilter === "critical" && "bg-status-error/20")}
+                    onClick={() => setChurnFilter(churnFilter === "critical" ? "all" : "critical")}
+                   >
+                     <AlertTriangle className="h-3 w-3 text-status-error" />
+                   </Button>
                 </div>
-              ))}
-              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).length === 0 && (
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+              {alerts.length > 0 ? (
+                alerts.map(lead => (
+                  <div key={lead.id} className="group p-4 rounded-xl bg-status-error/5 border border-status-error/10 space-y-3 hover:bg-status-error/10 transition-all duration-300">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-0.5">
+                        <span className="text-[11px] font-black uppercase tracking-tighter truncate block max-w-[140px]">{lead.name}</span>
+                        <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-widest">{lead.company || "N/A"}</span>
+                      </div>
+                      <Badge variant="destructive" className={cn(
+                        "text-[8px] px-1.5 h-4 font-black",
+                        lead.churnRisk?.risk_level === 'critical' ? "bg-status-error animate-pulse" : "bg-status-warning"
+                      )}>
+                        {lead.churnRisk?.risk_level === 'critical' ? "CRÍTICO" : "ALTO RISCO"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[10px] font-bold">
+                        <span className="text-muted-foreground uppercase tracking-widest">Intensidade</span>
+                        <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
+                      </div>
+                      <Progress value={lead.churnRisk?.risk_score} className="h-1.5 bg-status-error/10" indicatorClassName="bg-status-error shadow-[0_0_10px_rgba(var(--status-error-rgb),0.5)]" />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-status-error/10">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                          setAttendedAlerts(prev => new Set([...prev, lead.id]));
+                          toast.success(`Alerta de ${lead.name} marcado como atendido.`);
+                        }}
+                        className="h-7 px-2 text-[9px] font-black uppercase tracking-widest hover:bg-status-success hover:text-white"
+                      >
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Atendido
+                      </Button>
+                      {lead.bestDealId && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setExplainSaleId(lead.bestDealId!)}
+                          className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
+                        >
+                          <Activity className="h-3 w-3 mr-1" />
+                          Detalhes
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
                 <div className="text-center py-12">
                   <div className="relative inline-block mb-4">
                     <ShieldAlert className="h-10 w-10 mx-auto text-emerald-500/20" />
@@ -229,19 +350,22 @@ export function LeadScoringDashboard() {
             </CardContent>
           </Card>
 
-          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20">
+          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20 glass">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-lg bg-primary/10">
+                <div className="p-2 rounded-lg bg-primary/10 ring-1 ring-primary/20">
                   <Brain className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-widest text-primary">Strategic Insight</h4>
-                  <p className="text-[10px] text-muted-foreground">Otimização de Conversão</p>
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Predição Neural</p>
                 </div>
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground font-medium italic">
-                "Detectamos um aumento de 15% no engajamento do segmento 'ACTIVE'. Priorize o follow-up nesses leads para acelerar o fechamento do Q2."
+                {allLeads.length > 0 && hotCount > 0 
+                  ? `Detectamos que ${hotCount} combatantes estão em ponto de conversão. Recomendamos foco total no fechamento imediato para bater as metas do período.`
+                  : "O motor de inteligência está processando novos dados de mercado para gerar o próximo movimento estratégico."
+                }
               </p>
             </CardContent>
           </Card>
@@ -250,9 +374,9 @@ export function LeadScoringDashboard() {
 
 
       {/* Elite Ranking Table */}
-      <Card variant="modern" className="overflow-hidden">
+      <Card variant="modern" className="overflow-hidden bg-card/40 backdrop-blur-md border-white/5">
         <CardHeader className="p-6 border-b border-border/10">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-3 text-xl font-black uppercase tracking-tighter italic">
                 <BarChart3 className="h-5 w-5 text-primary" />
@@ -260,34 +384,59 @@ export function LeadScoringDashboard() {
               </CardTitle>
               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Painel de Priorização de Ativos</p>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/50 border border-white/5 shadow-inner">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sincronizado via Neural Link</span>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative w-full md:w-64 group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Input 
+                  placeholder="LOCALIZAR COMBATANTE..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-9 pl-9 bg-background/50 border-white/5 text-[10px] font-black uppercase tracking-widest focus-visible:ring-primary/20"
+                />
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportToCSV}
+                disabled={isExporting}
+                className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
+              >
+                <Download className={cn("h-3.5 w-3.5 mr-2", isExporting && "animate-bounce")} />
+                Exportar CSV
+              </Button>
+
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/30 border border-white/5 shadow-inner">
+                <Activity className="w-3.5 h-3.5 text-primary animate-pulse" />
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Live Sync Ativo</span>
+              </div>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          {allLeads.length === 0 ? (
+          {filteredLeads.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground">
               <div className="relative inline-block mb-4">
                 <Target className="h-16 w-16 mx-auto opacity-10" />
                 <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full" />
               </div>
-              <p className="font-display font-black uppercase tracking-widest text-sm">Nenhum combatante detectado</p>
-              <p className="text-[10px] mt-2 font-medium">Adicione clientes para iniciar o escaneamento</p>
+              <p className="font-display font-black uppercase tracking-widest text-sm italic">Nenhum combatante localizado</p>
+              <p className="text-[10px] mt-2 font-medium uppercase tracking-widest">Ajuste os parâmetros de busca neural</p>
             </div>
           ) : (
             <div className="divide-y divide-border/5">
-              {allLeads.map((lead, idx) => {
+              {filteredLeads.map((lead, idx) => {
                 const cfg = categoryConfig[lead.category];
                 const Icon = cfg.icon;
                 const isServerScore = "dealValue" in lead.factors;
 
                 return (
                   <div key={lead.id}
+                    onClick={() => lead.bestDealId && setExplainSaleId(lead.bestDealId)}
                     className={cn(
-                      "group relative flex items-center gap-6 p-5 transition-all duration-500",
-                      "hover:bg-primary/[0.02] hover:backdrop-blur-sm",
+                      "group relative flex items-center gap-6 p-5 transition-all duration-500 cursor-pointer",
+                      "hover:bg-primary/[0.04] hover:backdrop-blur-md",
                       idx === 0 && "bg-primary/[0.03] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary"
                     )}
                   >
@@ -451,14 +600,25 @@ export function LeadScoringDashboard() {
       </Card>
 
       <Dialog open={!!explainSaleId} onOpenChange={(o) => !o && setExplainSaleId(null)}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
-              Explicação do Score
-            </DialogTitle>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <DialogHeader className="border-b border-white/5 pb-4 mb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter italic">
+                <Brain className="h-6 w-6 text-primary animate-pulse" />
+                Intelligence Profile: {allLeads.find(l => l.bestDealId === explainSaleId)?.name}
+              </DialogTitle>
+            </div>
           </DialogHeader>
-          {explainSaleId && <LeadScoreExplainCard saleId={explainSaleId} />}
+          {explainSaleId && (
+            <LeadScoreExplainCard 
+              saleId={explainSaleId} 
+              churnRisk={allLeads.find(l => l.bestDealId === explainSaleId)?.churnRisk}
+              onActionComplete={() => {
+                setExplainSaleId(null);
+                toast.success("Ação estratégica iniciada!");
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
