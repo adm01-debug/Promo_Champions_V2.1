@@ -72,65 +72,123 @@ export default function ICP() {
         <div className="space-y-6 animate-fade-in">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-display font-bold gradient-text">Perfil Ideal de Cliente</h1>
-              <p className="text-muted-foreground mt-1">Visualize e edite critérios de qualificação ICP</p>
+              <h1 className="text-3xl font-display font-bold gradient-text">Ideal Customer Profile</h1>
+              <p className="text-muted-foreground mt-1">Inteligência e qualificação de perfil ideal de clientes</p>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="glass border-border/40 hover-lift">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center"><Target className="h-5 w-5 text-primary-foreground" /></div>
-                  <div><p className="text-sm text-muted-foreground">Total Clientes ICP</p><p className="text-metric">{stats.total}</p></div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="glass border-border/40 hover-lift">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-status-success/20 flex items-center justify-center"><CheckCircle2 className="h-5 w-5 text-status-success" /></div>
-                  <div><p className="text-sm text-muted-foreground">Match ICP</p><p className="text-2xl font-bold text-status-success">{stats.matches}</p></div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="glass border-border/40 hover-lift">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center"><XCircle className="h-5 w-5 text-muted-foreground" /></div>
-                  <div><p className="text-sm text-muted-foreground">Sem Match</p><p className="text-2xl font-bold text-muted-foreground">{stats.noMatch}</p></div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Tabs defaultValue="analytics" className="w-full space-y-6">
+            <TabsList className="bg-muted/50 p-1 border border-border/40">
+              <TabsTrigger value="analytics" className="gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Performance
+              </TabsTrigger>
+              <TabsTrigger value="clients" className="gap-2">
+                <Users className="h-4 w-4" />
+                Gestão de Clientes
+              </TabsTrigger>
+              <TabsTrigger value="config" className="gap-2">
+                <Settings2 className="h-4 w-4" />
+                Configuração
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Filters */}
-          <Card className="glass border-border/40 hover-lift-sm">
-            <CardContent className="p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Buscar por cliente, ramo ou nicho..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9" />
-                </div>
-                <div className="flex gap-2">
-                  <Button variant={filterICP === "all" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("all")}><Filter className="h-4 w-4 mr-1" />Todos</Button>
-                  <Button variant={filterICP === "match" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("match")}><CheckCircle2 className="h-4 w-4 mr-1" />Match</Button>
-                  <Button variant={filterICP === "no-match" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("no-match")}><XCircle className="h-4 w-4 mr-1" />Sem Match</Button>
-                </div>
+            <TabsContent value="analytics" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="glass border-border/40 hover-lift">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center">
+                        <Target className="h-5 w-5 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Total Clientes Analisados</p>
+                        <p className="text-metric">{stats.total}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/40 hover-lift">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">ICP Match Rate</p>
+                        <p className="text-2xl font-bold text-emerald-500">
+                          {stats.total > 0 ? Math.round((stats.matches / stats.total) * 100) : 0}%
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/40 hover-lift">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-status-warning/20 flex items-center justify-center">
+                        <TrendingUp className="h-5 w-5 text-status-warning" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Oportunidade de Mercado</p>
+                        <p className="text-2xl font-bold text-status-warning">{stats.noMatch}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Table */}
-          <Card className="glass border-border/40 hover-lift-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" />Dados ICP</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ICPTable data={filteredData} clientMap={clientMap} onEdit={handleEdit} />
-            </CardContent>
-          </Card>
+              <ICPPerformanceChart />
+            </TabsContent>
+
+            <TabsContent value="clients" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {/* Filters */}
+              <Card className="glass border-border/40">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Buscar por cliente, ramo ou nicho..." 
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
+                        className="pl-9" 
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant={filterICP === "all" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("all")}>
+                        <Filter className="h-4 w-4 mr-1" />Todos
+                      </Button>
+                      <Button variant={filterICP === "match" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("match")}>
+                        <CheckCircle2 className="h-4 w-4 mr-1" />Match
+                      </Button>
+                      <Button variant={filterICP === "no-match" ? "default" : "outline"} size="sm" onClick={() => setFilterICP("no-match")}>
+                        <XCircle className="h-4 w-4 mr-1" />Sem Match
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Table */}
+              <Card className="glass border-border/40 overflow-hidden">
+                <CardHeader className="bg-muted/30">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Users className="h-5 w-5 text-primary" />
+                    Base de Clientes e Fit ICP
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ICPTable data={filteredData} clientMap={clientMap} onEdit={handleEdit} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="config" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <ICPConfigForm />
+            </TabsContent>
+          </Tabs>
         </div>
       </SkeletonTransition>
 
