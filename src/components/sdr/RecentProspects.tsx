@@ -10,9 +10,10 @@ import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2
 import { cn } from "@/lib/utils";
 import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
 
 export function RecentProspects() {
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
 
@@ -114,10 +115,11 @@ export function RecentProspects() {
                 <div 
                   key={prospect.id}
                   className={cn(
-                    "flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in",
-                    temp.borderColor,
+                    "flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in cursor-pointer",
+                    selectedLeadId === prospect.id ? "ring-2 ring-primary border-primary/50" : temp.borderColor,
                     temp.glowClass
                   )}
+                  onClick={() => setSelectedLeadId(selectedLeadId === prospect.id ? null : prospect.id)}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-3">
@@ -208,6 +210,16 @@ export function RecentProspects() {
                         </span>
                       )}
                     </div>
+                  )}
+
+                  {selectedLeadId === prospect.id && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="mt-3 pt-3 border-t border-border/40"
+                    >
+                      <LeadScoreBreakdown saleId={prospect.id} />
+                    </motion.div>
                   )}
                 </div>
               );
