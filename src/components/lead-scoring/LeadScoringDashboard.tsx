@@ -106,14 +106,17 @@ export function LeadScoringDashboard() {
     });
   }, [allLeads, searchTerm]);
 
-  const alerts = useMemo(() => {
-    return allLeads.filter(l => 
-      l.churnRisk && 
-      l.churnRisk.risk_score > 50 && 
-      !attendedAlerts.has(l.id) &&
-      (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
-    ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
-  }, [allLeads, attendedAlerts, churnFilter]);
+      const alerts = useMemo(() => {
+        return allLeads.filter(l => 
+          l.churnRisk && 
+          l.churnRisk.risk_score > 50 && 
+          !attendedAlerts.has(l.id) &&
+          (churnFilter === "all" || l.churnRisk.risk_level === churnFilter)
+        ).sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
+      }, [allLeads, attendedAlerts, churnFilter]);
+
+      const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
+      const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
   const exportToCSV = () => {
     setIsExporting(true);
