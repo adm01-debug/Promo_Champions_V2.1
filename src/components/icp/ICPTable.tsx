@@ -68,10 +68,35 @@ export const ICPTable = React.memo(function ICPTable({ data, clientMap, onEdit }
                 ) : <span className="text-muted-foreground">-</span>}
               </TableCell>
               <TableCell>
+                <div className="flex items-center gap-2">
+                  <div className="w-12 bg-muted rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className={`h-full ${item.icp_score && item.icp_score >= 70 ? 'bg-status-success' : 'bg-status-warning'}`} 
+                      style={{ width: `${item.icp_score || 0}%` }} 
+                    />
+                  </div>
+                  <span className="text-xs font-mono">{item.icp_score || 0}%</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full">
+                        <Info className="h-3 w-3 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0 border-none">
+                      <ICPRadarChart clientIcp={item} />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </TableCell>
+              <TableCell>
                 {item.is_icp_match ? (
-                  <Badge className="bg-status-success/20 text-status-success border-status-success/30"><CheckCircle2 className="h-3 w-3 mr-1" />Match</Badge>
+                  <Badge className="bg-emerald-500/20 text-emerald-500 border-emerald-500/30 font-bold uppercase tracking-widest text-[10px]">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />Match
+                  </Badge>
                 ) : (
-                  <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Sem Match</Badge>
+                  <Badge variant="secondary" className="opacity-70 font-bold uppercase tracking-widest text-[10px]">
+                    <XCircle className="h-3 w-3 mr-1" />Sem Match
+                  </Badge>
                 )}
               </TableCell>
               <TableCell className="text-right">
