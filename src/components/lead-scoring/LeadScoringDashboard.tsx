@@ -267,39 +267,78 @@ export function LeadScoringDashboard() {
         </div>
         
         <div className="lg:col-span-4 space-y-6">
-          <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
-                <ShieldAlert className="h-4 w-4 text-status-error" />
-                Alertas de Churn (NBA)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).slice(0, 3).map(lead => (
-                <div key={lead.id} className="group p-3 rounded-xl bg-status-error/5 border border-status-error/10 space-y-3 hover:bg-status-error/10 transition-colors">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black uppercase tracking-tighter truncate max-w-[150px]">{lead.name}</span>
-                    <Badge variant="destructive" className="text-[8px] px-1.5 h-4 font-black">CRÍTICO</Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[10px] font-bold">
-                      <span className="text-muted-foreground uppercase tracking-widest">Risk Level</span>
-                      <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
-                    </div>
-                    <Progress value={lead.churnRisk?.risk_score} className="h-1.5 bg-status-error/10" indicatorClassName="bg-status-error shadow-[0_0_10px_rgba(var(--status-error-rgb),0.5)]" />
-                  </div>
-                  <div className="pt-2 border-t border-status-error/10">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Brain className="h-3 w-3 text-status-error" />
-                      <span className="text-[9px] font-black text-status-error uppercase tracking-widest">Recomendação IA</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground italic leading-tight font-medium">
-                      {lead.churnRisk?.factors[0] || "Sem atividade detectada"}
-                    </p>
-                  </div>
+          <Card variant="modern" className="overflow-hidden border-l-4 border-l-status-error bg-card/40 backdrop-blur-xl">
+            <CardHeader className="pb-2 border-b border-white/5">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+                  <ShieldAlert className="h-4 w-4 text-status-error" />
+                  Alertas de Churn
+                </CardTitle>
+                <div className="flex gap-1">
+                   <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-6 w-6 rounded-md", churnFilter === "critical" && "bg-status-error/20")}
+                    onClick={() => setChurnFilter(churnFilter === "critical" ? "all" : "critical")}
+                   >
+                     <AlertTriangle className="h-3 w-3 text-status-error" />
+                   </Button>
                 </div>
-              ))}
-              {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).length === 0 && (
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+              {alerts.length > 0 ? (
+                alerts.map(lead => (
+                  <div key={lead.id} className="group p-4 rounded-xl bg-status-error/5 border border-status-error/10 space-y-3 hover:bg-status-error/10 transition-all duration-300">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-0.5">
+                        <span className="text-[11px] font-black uppercase tracking-tighter truncate block max-w-[140px]">{lead.name}</span>
+                        <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-widest">{lead.company || "N/A"}</span>
+                      </div>
+                      <Badge variant="destructive" className={cn(
+                        "text-[8px] px-1.5 h-4 font-black",
+                        lead.churnRisk?.risk_level === 'critical' ? "bg-status-error animate-pulse" : "bg-status-warning"
+                      )}>
+                        {lead.churnRisk?.risk_level === 'critical' ? "CRÍTICO" : "ALTO RISCO"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[10px] font-bold">
+                        <span className="text-muted-foreground uppercase tracking-widest">Intensidade</span>
+                        <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
+                      </div>
+                      <Progress value={lead.churnRisk?.risk_score} className="h-1.5 bg-status-error/10" indicatorClassName="bg-status-error shadow-[0_0_10px_rgba(var(--status-error-rgb),0.5)]" />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-status-error/10">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                          setAttendedAlerts(prev => new Set([...prev, lead.id]));
+                          toast.success(`Alerta de ${lead.name} marcado como atendido.`);
+                        }}
+                        className="h-7 px-2 text-[9px] font-black uppercase tracking-widest hover:bg-status-success hover:text-white"
+                      >
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Atendido
+                      </Button>
+                      {lead.bestDealId && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setExplainSaleId(lead.bestDealId!)}
+                          className="h-7 px-2 text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary"
+                        >
+                          <Activity className="h-3 w-3 mr-1" />
+                          Detalhes
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
                 <div className="text-center py-12">
                   <div className="relative inline-block mb-4">
                     <ShieldAlert className="h-10 w-10 mx-auto text-emerald-500/20" />
@@ -311,19 +350,22 @@ export function LeadScoringDashboard() {
             </CardContent>
           </Card>
 
-          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20">
+          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20 glass">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-lg bg-primary/10">
+                <div className="p-2 rounded-lg bg-primary/10 ring-1 ring-primary/20">
                   <Brain className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-widest text-primary">Strategic Insight</h4>
-                  <p className="text-[10px] text-muted-foreground">Otimização de Conversão</p>
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Predição Neural</p>
                 </div>
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground font-medium italic">
-                "Detectamos um aumento de 15% no engajamento do segmento 'ACTIVE'. Priorize o follow-up nesses leads para acelerar o fechamento do Q2."
+                {allLeads.length > 0 && hotCount > 0 
+                  ? `Detectamos que ${hotCount} combatantes estão em ponto de conversão. Recomendamos foco total no fechamento imediato para bater as metas do período.`
+                  : "O motor de inteligência está processando novos dados de mercado para gerar o próximo movimento estratégico."
+                }
               </p>
             </CardContent>
           </Card>
