@@ -11,6 +11,7 @@ export interface ICPData {
   capital_social: number | null;
   num_colaboradores: number | null;
   is_icp_match: boolean | null;
+  icp_score: number | null;
 }
 
 interface ICPDataWithClient extends ICPData {
