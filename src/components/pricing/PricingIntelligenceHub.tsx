@@ -333,24 +333,92 @@ function KpiCard({
   icon: Icon,
   label,
   value,
+  numericValue,
+  isCurrency = false,
+  isPercent = false,
   accent,
 }: {
   icon: typeof DollarSign;
   label: string;
   value: string;
+  numericValue: number;
+  isCurrency?: boolean;
+  isPercent?: boolean;
   accent: string;
 }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-      <Card>
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
-            <Icon className={cn("h-4 w-4", accent)} />
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }} 
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <Card className="glass overflow-hidden border-white/5 relative group">
+        <div className={cn(
+          "absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500",
+          accent.includes("success") ? "bg-success" : accent.includes("destructive") ? "bg-destructive" : "bg-primary"
+        )} />
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{label}</span>
+            <div className={cn("p-2 rounded-lg bg-background/50 border border-white/5", accent)}>
+              <Icon className="h-4 w-4" />
+            </div>
           </div>
-          <div className={cn("text-2xl font-bold font-sora", accent)}>{value}</div>
+          <div className="flex flex-col">
+            <div className={cn("text-3xl font-black font-display tracking-tight", accent)}>
+              <CountUp 
+                value={numericValue} 
+                prefix={isCurrency ? "R$ " : ""} 
+                suffix={isPercent ? "%" : ""} 
+                decimals={isPercent ? 1 : 0}
+              />
+            </div>
+            {isPercent && numericValue > 15 && (
+              <div className="flex items-center gap-1 mt-1 text-[10px] text-warning font-bold">
+                <AlertTriangle className="h-3 w-3" />
+                ACIMA DO BENCHMARK
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </motion.div>
   );
 }
+
+const CountUp = ({ value, prefix = "", suffix = "", decimals = 0 }: { value: number, prefix?: string, suffix?: string, decimals?: number }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useMemo(() => {
+    let start = 0;
+    const end = value;
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = progress * (end - start) + start;
+      
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return (
+    <span>
+      {prefix}
+      {displayValue.toLocaleString("pt-BR", { 
+        minimumFractionDigits: decimals, 
+        maximumFractionDigits: decimals 
+      })}
+      {suffix}
+    </span>
+  );
+};
