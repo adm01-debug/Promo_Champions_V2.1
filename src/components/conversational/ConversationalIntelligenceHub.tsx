@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangle, Sparkles, Brain } from "lucide-react";
+import { Headphones, Search, Mic, MessageSquare, TrendingUp, Clock, AlertTriangle, Sparkles, Brain, Zap } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { RecordingSummaryDrawer, useRecordingSummaryDrawer } from "./RecordingSummaryDrawer";
