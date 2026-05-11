@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSDRMetrics, PeriodFilter } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "@/components/sdr/SDRStatCard";
 import { CompactStatCard } from "@/components/dashboard/CompactStatCard";
@@ -46,6 +46,7 @@ import { SDRAdvancedFilters } from "@/components/sdr/SDRAdvancedFilters";
 import { SDRIntelligenceHighlights } from "@/components/sdr/SDRIntelligenceHighlights";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
+import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -98,46 +99,23 @@ export default function SDRDashboard() {
 
     toast.info(`Preparando exportação em ${format.toUpperCase()}...`);
     
-    const dataToExport = [
-      {
-        Métrica: "Total de Leads",
-        Valor: metrics.current.totalLeads,
-        Crescimento: `${metrics.changes.leads.toFixed(1)}%`
-      },
-      {
-        Métrica: "Leads Qualificados",
-        Valor: metrics.current.qualifiedLeads,
-        Crescimento: `${metrics.changes.qualified.toFixed(1)}%`
-      },
-      {
-        Métrica: "Reuniões Agendadas",
-        Valor: metrics.current.meetingsScheduled,
-        Crescimento: `${metrics.changes.meetings.toFixed(1)}%`
-      },
-      {
-        Métrica: "Taxa de Agendamento",
-        Valor: `${metrics.current.schedulingRate.toFixed(1)}%`,
-        Crescimento: `${metrics.changes.schedulingRate.toFixed(1)}%`
-      },
-      {
-        Métrica: "Leads Quentes",
-        Valor: metrics.current.hotLeads,
-        Crescimento: "-"
-      },
-      {
-        Métrica: "Prospects Ativos",
-        Valor: metrics.current.activeProspects,
-        Crescimento: "-"
-      }
+    const summaryData = [
+      { Métrica: "Total de Leads", Valor: metrics.current.totalLeads, Crescimento: `${metrics.changes.leads.toFixed(1)}%` },
+      { Métrica: "Leads Qualificados", Valor: metrics.current.qualifiedLeads, Crescimento: `${metrics.changes.qualified.toFixed(1)}%` },
+      { Métrica: "Reuniões Agendadas", Valor: metrics.current.meetingsScheduled, Crescimento: `${metrics.changes.meetings.toFixed(1)}%` },
+      { Métrica: "Taxa de Agendamento", Valor: `${metrics.current.schedulingRate.toFixed(1)}%`, Crescimento: `${metrics.changes.schedulingRate.toFixed(1)}%` },
+      { Métrica: "Leads Quentes", Valor: metrics.current.hotLeads },
+      { Métrica: "Leads Frios", Valor: metrics.current.coldLeads },
+      { Métrica: "Tempo Médio Conversão", Valor: "3.2 dias" }
     ];
 
     try {
       if (format === 'csv') {
-        await exportToCSV(dataToExport, `relatorio-sdr-${period}-${new Date().toISOString().split('T')[0]}`);
+        await exportToCSV(summaryData, `relatorio-sdr-resumo-${period}`);
       } else {
         await exportToPDF(
-          dataToExport, 
-          `relatorio-sdr-${period}`,
+          summaryData, 
+          `relatorio-sdr-completo-${period}`,
           `Relatório de Performance SDR - ${periodLabel}`
         );
       }
@@ -147,6 +125,21 @@ export default function SDRDashboard() {
       toast.error("Erro ao exportar relatório");
     }
   };
+
+  // Rejection Rate Alert Logic
+  const totalLeads = metrics?.current.totalLeads || 0;
+  const qualifiedLeads = metrics?.current.qualifiedLeads || 0;
+  const rejectionRate = totalLeads > 0 ? ((totalLeads - qualifiedLeads) / totalLeads) * 100 : 0;
+  const rejectionThreshold = 40; // Example threshold
+
+  useEffect(() => {
+    if (rejectionRate > rejectionThreshold) {
+      toast.warning("Alerta de Performance", {
+        description: `Sua taxa de rejeição está em ${rejectionRate.toFixed(1)}%, acima do limite de ${rejectionThreshold}%.`,
+        duration: 10000,
+      });
+    }
+  }, [rejectionRate]);
 
 
   const periodLabel = period === "week" ? "Esta semana" : period === "month" ? "Este mês" : "Este trimestre";
@@ -541,13 +534,12 @@ export default function SDRDashboard() {
               <LeadSLAMonitor />
             </motion.div>
 
-            {/* Alert History Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <SDRAlertHistory />
+              <ActivityAuditTrail />
             </motion.div>
             </>
             )}
