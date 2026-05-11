@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ArrowRight, Zap, Target, BarChart3, Users, Search, Database, Mail, Link as LinkIcon, MessageSquare } from "lucide-react";
+import { CheckCircle2, ArrowRight, Zap, Target, BarChart3, Users, Search, Database, Mail, Link as LinkIcon, MessageSquare, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const ImprovementPlan = () => {
   const steps = [
@@ -97,47 +98,76 @@ export const ImprovementPlan = () => {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col space-y-2">
-        <h2 className="text-3xl font-black italic tracking-tighter uppercase gradient-text">Plano de Melhorias: 10 Etapas</h2>
-        <p className="text-muted-foreground font-medium">Roteiro estratégico para atingir a paridade e superar a concorrência.</p>
+        <div className="flex items-center gap-2 mb-2">
+          <Badge className="bg-primary/20 text-primary border-primary/30 px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+            Strategic Roadmap
+          </Badge>
+          <div className="flex items-center gap-1.5 ml-2">
+            <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Execution Mode: Active</span>
+          </div>
+        </div>
+        <h2 className="text-4xl font-black italic tracking-tighter uppercase gradient-text leading-none">Plano de 10 Etapas</h2>
+        <p className="text-muted-foreground text-sm font-medium">Roteiro estratégico para atingir a paridade e superar a concorrência.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {steps.map((item) => (
-          <Card key={item.step} className="group hover:border-primary/50 transition-all duration-300 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                    <item.icon className="h-5 w-5" />
+        {steps.map((item, idx) => (
+          <motion.div
+            key={item.step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+          >
+            <Card className="group hover:border-primary/40 transition-all duration-500 glass overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mr-12 -mt-12 group-hover:bg-primary/10 transition-colors" />
+              <CardHeader className="pb-2 relative z-10">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 border border-primary/20 shadow-lg shadow-primary/5">
+                      <item.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] leading-none mb-1 block">Passo {item.step}</span>
+                      <CardTitle className="text-lg font-bold leading-tight group-hover:text-primary transition-colors italic uppercase tracking-tighter">{item.title}</CardTitle>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-primary/60 uppercase tracking-widest leading-none">Passo {item.step}</span>
-                    <CardTitle className="text-lg font-bold leading-tight">{item.title}</CardTitle>
-                  </div>
-                </div>
-                <Badge variant="outline" className="text-[10px] uppercase font-bold border-primary/20 bg-primary/5">
-                  {item.impact} Impact
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <CardDescription className="text-sm leading-relaxed min-h-[40px]">
-                {item.description}
-              </CardDescription>
-              <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-muted text-muted-foreground text-[10px] hover:bg-muted">
-                    {item.focus}
+                  <Badge variant="outline" className="text-[9px] uppercase font-black border-primary/20 bg-primary/5 px-2 py-0.5">
+                    {item.impact} Impact
                   </Badge>
-                  <span className="text-[10px] text-muted-foreground font-medium italic">Esforço: {item.effort}</span>
                 </div>
-                <ArrowRight className="h-4 w-4 text-primary/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="space-y-4 relative z-10">
+                <CardDescription className="text-sm leading-relaxed text-muted-foreground font-medium min-h-[40px]">
+                  {item.description}
+                </CardDescription>
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-white/5 text-muted-foreground text-[10px] font-bold uppercase hover:bg-white/10 border-white/5">
+                      {item.focus}
+                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="size-3 text-muted-foreground/60" />
+                      <span className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-tighter">Esforço: {item.effort}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-primary/40 group-hover:text-primary transition-all group-hover:translate-x-1">
+                    <span className="text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Details</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
+      </div>
+      
+      <div className="pt-6 border-t border-white/5 flex justify-center">
+        <Button className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-10 h-12 text-xs font-black uppercase tracking-[0.3em] rounded-full shadow-2xl shadow-primary/10">
+          <Sparkles className="size-4 mr-2" /> Iniciar Transformação Digital
+        </Button>
       </div>
     </div>
   );
