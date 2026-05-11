@@ -3925,6 +3925,51 @@ export type Database = {
           },
         ]
       }
+      competitors_pricing: {
+        Row: {
+          competitor_id: string | null
+          id: string
+          is_promotion: boolean | null
+          price: number
+          product_id: string | null
+          recorded_at: string | null
+          source_url: string | null
+        }
+        Insert: {
+          competitor_id?: string | null
+          id?: string
+          is_promotion?: boolean | null
+          price: number
+          product_id?: string | null
+          recorded_at?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          competitor_id?: string | null
+          id?: string
+          is_promotion?: boolean | null
+          price?: number
+          product_id?: string | null
+          recorded_at?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitors_pricing_competitor_id_fkey"
+            columns: ["competitor_id"]
+            isOneToOne: false
+            referencedRelation: "competitors_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitors_pricing_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitors_registry: {
         Row: {
           aliases: string[]
@@ -8951,6 +8996,44 @@ export type Database = {
           },
         ]
       }
+      price_protection_rules: {
+        Row: {
+          auto_apply: boolean | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          min_margin_pct: number | null
+          product_id: string | null
+          target_position: string | null
+        }
+        Insert: {
+          auto_apply?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          min_margin_pct?: number | null
+          product_id?: string | null
+          target_position?: string | null
+        }
+        Update: {
+          auto_apply?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          min_margin_pct?: number | null
+          product_id?: string | null
+          target_position?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_protection_rules_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prize_wheel_spins: {
         Row: {
           id: string
@@ -11258,6 +11341,7 @@ export type Database = {
           category: string
           client_id: string | null
           client_name: string
+          competitor_price_at_deal: number | null
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data: Json | null
@@ -11266,6 +11350,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id: string
+          lost_to_competitor_id: string | null
           pipeline_id: string | null
           product_id: string | null
           product_name: string
@@ -11284,6 +11369,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           client_name: string
+          competitor_price_at_deal?: number | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data?: Json | null
@@ -11292,6 +11378,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id?: string
+          lost_to_competitor_id?: string | null
           pipeline_id?: string | null
           product_id?: string | null
           product_name: string
@@ -11310,6 +11397,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           client_name?: string
+          competitor_price_at_deal?: number | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data?: Json | null
@@ -11318,6 +11406,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id?: string
+          lost_to_competitor_id?: string | null
           pipeline_id?: string | null
           product_id?: string | null
           product_name?: string
@@ -11349,6 +11438,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_lost_to_competitor_id_fkey"
+            columns: ["lost_to_competitor_id"]
+            isOneToOne: false
+            referencedRelation: "competitors_registry"
             referencedColumns: ["id"]
           },
           {

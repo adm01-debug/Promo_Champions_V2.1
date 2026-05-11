@@ -278,6 +278,34 @@ export function PricingIntelligenceHub() {
           )}
         </CardContent>
       </Card>
+      {/* Competitor Threats */}
+      {data.competitor_threats && data.competitor_threats.length > 0 && (
+        <Card className="border-destructive/30 bg-destructive/5">
+          <CardHeader>
+            <CardTitle className="font-sora text-lg flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              Ameaças Competitivas Detectadas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {data.competitor_threats.map((threat) => (
+                <div key={threat.product_name} className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-destructive/20">
+                  <div>
+                    <div className="font-bold">{threat.product_name}</div>
+                    <div className="text-xs text-muted-foreground">Nosso: {fmtCurrency(threat.our_price)} | Concorrente: {fmtCurrency(threat.competitor_price)}</div>
+                  </div>
+                  <Badge className={cn(
+                    threat.threat_level === 'high' ? "bg-destructive" : "bg-warning"
+                  )}>
+                    Risco {threat.threat_level === 'high' ? 'Crítico' : 'Médio'}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

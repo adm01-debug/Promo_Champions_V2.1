@@ -46,6 +46,12 @@ export interface PricingIntelligenceResponse {
   distribution: DiscountBucket[];
   top_discounters: TopDiscounter[];
   product_recommendations: ProductRecommendation[];
+  competitor_threats?: {
+    product_name: string;
+    our_price: number;
+    competitor_price: number;
+    threat_level: "high" | "medium" | "low";
+  }[];
 }
 
 export function usePricingIntelligence(days: 30 | 60 | 90 = 30) {
