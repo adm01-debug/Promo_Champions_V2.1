@@ -10,7 +10,9 @@ import {
   LayoutDashboard,
   Search,
   MessageSquare,
-  FileCheck
+  FileCheck,
+  Calculator,
+  LineChart
 } from "lucide-react";
 import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
@@ -24,6 +26,9 @@ import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
 import { SDRSequenceOrchestrator } from "./SDRSequenceOrchestrator";
 import { PerformanceCoaching } from "./PerformanceCoaching";
 import { SDRAchievementTracker } from "./SDRAchievementTracker";
+import { SDRIntelligenceHighlights } from "./SDRIntelligenceHighlights";
+import { TargetSimulator } from "./TargetSimulator";
+import { SDRActivityTrend } from "./SDRActivityTrend";
 import { motion, AnimatePresence } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
@@ -90,7 +95,14 @@ const SDRDashboardInner = () => {
       animate="visible"
       className="space-y-8"
     >
-      <SDRCommandBar />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        <div className="lg:col-span-8">
+          <SDRCommandBar />
+        </div>
+        <div className="lg:col-span-4">
+          <SDRIntelligenceHighlights />
+        </div>
+      </div>
       
       {/* Upper Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -182,6 +194,10 @@ const SDRDashboardInner = () => {
               <FileCheck className="w-4 h-4" />
               MQL Qualification
             </TabsTrigger>
+            <TabsTrigger value="strategy" className="gap-2">
+              <Calculator className="w-4 h-4" />
+              Growth Strategy
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="coaching" className="mt-0 outline-none">
@@ -202,6 +218,13 @@ const SDRDashboardInner = () => {
           
           <TabsContent value="qualification" className="mt-0 outline-none">
             <MQLQualificationForm />
+          </TabsContent>
+
+          <TabsContent value="strategy" className="mt-0 outline-none space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <TargetSimulator />
+              <SDRActivityTrend period="month" />
+            </div>
           </TabsContent>
         </Tabs>
       </motion.div>
