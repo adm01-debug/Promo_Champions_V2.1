@@ -48,6 +48,7 @@ import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { MQLQualificationForm } from "@/components/sdr/MQLQualificationForm";
 import { ActivityAuditTrail } from "@/components/sdr/ActivityAuditTrail";
 import { PredictiveSuccessMap } from "@/components/sdr/PredictiveSuccessMap";
+import { PerformanceCoaching } from "@/components/sdr/PerformanceCoaching";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
