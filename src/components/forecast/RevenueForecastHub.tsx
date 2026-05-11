@@ -268,3 +268,76 @@ export const RevenueForecastHub: FC = () => {
     </div>
   );
 };
+
+function ForecastKpiCard({
+  label,
+  value,
+  subtitle,
+  isCurrency = false,
+  icon: Icon,
+  color,
+}: {
+  label: string;
+  value: number;
+  subtitle?: string;
+  isCurrency?: boolean;
+  icon: any;
+  color: string;
+}) {
+  return (
+    <Card className="glass overflow-hidden border-white/5 relative group">
+      <div className={cn("absolute -right-4 -top-4 w-20 h-20 blur-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-500", color.replace('text-', 'bg-'))} />
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/80">{label}</span>
+          <div className={cn("p-1.5 rounded-lg bg-background/50 border border-white/5", color)}>
+            <Icon className="h-3.5 w-3.5" />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="flex items-baseline gap-1">
+            {isCurrency && <span className="text-sm font-bold opacity-50">R$</span>}
+            <CountUp value={value} isCompact className="text-3xl font-black font-display tracking-tight" />
+          </div>
+          {subtitle && <div className="text-[10px] text-muted-foreground mt-1 font-medium">{subtitle}</div>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const CountUp = ({ value, className, isCompact = false }: { value: number; className?: string; isCompact?: boolean }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOutExpo = 1 - Math.pow(2, -10 * progress);
+      const current = easeOutExpo * (end - start) + start;
+      
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  const formatted = isCompact 
+    ? formatCompactBRL(displayValue).replace('R$', '').trim()
+    : Math.round(displayValue).toLocaleString("pt-BR");
+
+  return (
+    <span className={className}>
+      {formatted}
+    </span>
+  );
+};
