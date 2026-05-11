@@ -8,7 +8,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SDRAdvancedFiltersProps {
@@ -19,10 +19,35 @@ interface SDRAdvancedFiltersProps {
 export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    channel: "all",
+    status: "all",
+    temp: "all",
+    sdr: "all"
+  });
+
+  const updateFilter = (key: string, value: string) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     onSearch(e.target.value);
+  };
+
+  const clearFilters = () => {
+    const defaultFilters = {
+      channel: "all",
+      status: "all",
+      temp: "all",
+      sdr: "all"
+    };
+    setFilters(defaultFilters);
+    setSearchTerm("");
+    onSearch("");
+    onFilterChange(defaultFilters);
   };
 
   return (
@@ -57,7 +82,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
             Filtros Avançados
           </Button>
           
-          <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, channel: val })}>
+          <Select value={filters.channel} onValueChange={(val) => updateFilter("channel", val)}>
             <SelectTrigger className="w-[140px] h-10 glass">
               <SelectValue placeholder="Canal" />
             </SelectTrigger>
@@ -85,7 +110,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Status de Qualificação
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, status: val })}>
+                <Select value={filters.status} onValueChange={(val) => updateFilter("status", val)}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -103,7 +128,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Temperatura
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, temp: val })}>
+                <Select value={filters.temp} onValueChange={(val) => updateFilter("temp", val)}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Temperatura" />
                   </SelectTrigger>
@@ -120,7 +145,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   SDR Responsável
                 </label>
-                <Select onValueChange={(val) => onFilterChange({ ...onFilterChange, sdr: val })}>
+                <Select value={filters.sdr} onValueChange={(val) => updateFilter("sdr", val)}>
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="SDR" />
                   </SelectTrigger>
@@ -137,10 +162,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                   variant="ghost" 
                   size="sm" 
                   className="w-full h-9 text-xs font-medium hover:text-primary"
-                  onClick={() => {
-                    onFilterChange({});
-                    setSearchTerm("");
-                  }}
+                  onClick={clearFilters}
                 >
                   Limpar Filtros
                 </Button>
