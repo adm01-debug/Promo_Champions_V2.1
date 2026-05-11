@@ -86,10 +86,13 @@ const SDRStatCardInner = function SDRStatCard({
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <Card className={cn(
-        "glass overflow-hidden group cursor-pointer border-border/40",
+        "glass overflow-hidden group cursor-pointer border-border/40 relative",
         styles.border,
         highlight && "ring-2 ring-primary/40 shadow-lg shadow-primary/10"
       )}>
+        <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+           <Icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
+        </div>
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div className="space-y-2">
