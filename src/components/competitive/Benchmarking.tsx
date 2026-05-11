@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, ArrowLeftRight, TrendingUp, Zap, Target, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
