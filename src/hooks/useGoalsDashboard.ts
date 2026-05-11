@@ -119,6 +119,7 @@ export function useGoalsDashboard() {
       });
 
       // Calculate team totals
+      const teamPrediction = predictions.find(p => p.salesperson_id === '00000000-0000-0000-0000-000000000000'); // ID fictício para time ou lógica similar
       const totalGoal = salespeopleData.reduce((sum, sp) => sum + sp.goalAmount, 0);
       const totalSales = salespeopleData.reduce((sum, sp) => sum + sp.currentSales, 0);
       const teamProgress = totalGoal > 0 ? (totalSales / totalGoal) * 100 : 0;
