@@ -113,7 +113,7 @@ export const RevenueForecastHub: FC = () => {
           size="sm" 
           className="h-8 text-[10px] font-black uppercase tracking-widest gap-2"
           onClick={async () => {
-             await supabase.from('forecast_snapshots').insert({
+             const { error } = await (supabase as any).from('forecast_snapshots').insert({
                horizon_days: horizon,
                pessimistic_value: data.scenarios.pessimistic,
                realistic_value: data.scenarios.realistic,
@@ -121,7 +121,7 @@ export const RevenueForecastHub: FC = () => {
                confidence_at_time: data.confidence,
                metadata: { source: 'manual_trigger' }
              });
-             refetch();
+             if (!error) refetch();
           }}
         >
           <Activity className="h-3 w-3" />
