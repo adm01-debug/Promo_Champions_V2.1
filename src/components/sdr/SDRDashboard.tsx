@@ -21,6 +21,7 @@ import { SDRAchievementTracker } from "./SDRAchievementTracker";
 import { motion, AnimatePresence } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SDRDashboardInner = () => {
   const { data: metrics, isLoading } = useSDRMetrics("month");
