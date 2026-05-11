@@ -140,3 +140,66 @@ export const useCreateAsset = () => {
     onError: (e: Error) => toast.error(e.message),
   });
 };
+
+export const usePlaybookProgress = (playbookId?: string, saleId?: string) => {
+  return useQuery({
+    queryKey: ["playbook-progress", playbookId, saleId],
+    enabled: !!playbookId && !!saleId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("playbook_progress")
+        .select("*")
+        .eq("playbook_id", playbookId!)
+        .eq("sale_id", saleId!)
+        .maybeSingle();
+      
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+  });
+};
+
+export const useTogglePlaybookItem = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: { playbook_item_id: string; sale_id: string; completed: boolean }) => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("Não autenticado");
+
+      if (params.completed) {
+        const { error } = await supabase.from("playbook_progress").insert({
+          playbook_item_id: params.playbook_item_id,
+          sale_id: params.sale_id,
+          completed_by: userData.user.id,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("playbook_progress")
+          .delete()
+          .eq("playbook_item_id", params.playbook_item_id)
+          .eq("sale_id", params.sale_id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["playbook-progress-all", variables.sale_id] });
+      toast.success(variables.completed ? "Etapa concluída!" : "Etapa desmarcada");
+    },
+  });
+};
+
+export const useAllPlaybookProgress = (saleId?: string) => {
+  return useQuery({
+    queryKey: ["playbook-progress-all", saleId],
+    enabled: !!saleId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("playbook_progress")
+        .select("playbook_item_id")
+        .eq("sale_id", saleId!);
+      if (error) throw error;
+      return new Set(data.map(d => d.playbook_item_id));
+    },
+  });
+};
