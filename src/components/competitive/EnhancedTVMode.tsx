@@ -91,36 +91,60 @@ function EnhancedTVModeComponent() {
   const CurrentIcon = screenLabels[currentScreen].icon;
 
   return (
-    <div className="space-y-4">
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-display font-bold flex items-center gap-2">
-            <Monitor className="h-5 w-5 text-primary" /> Modo TV Competitivo
-          </h2>
-          <p className="text-sm text-muted-foreground">Dashboard para TV do escritório com rotação automática</p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Controls Header */}
+      <Card className="glass border-white/5 overflow-hidden group">
+        <div className="bg-white/5 backdrop-blur-xl relative z-10">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
+                  <Tv className="h-7 w-7 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary border-primary/20">
+                      Arena Broadcast System
+                    </Badge>
+                    <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  </div>
+                  <CardTitle className="text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">Modo TV Pro</CardTitle>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Button size="sm" variant={autoRotate ? 'default' : 'outline'} onClick={() => setAutoRotate(!autoRotate)} className="h-10 px-4 border-white/10 text-xs font-black uppercase tracking-widest rounded-xl">
+                  <Timer className="h-4 w-4 mr-2" /> {autoRotate ? 'AUTO-BROADCAST' : 'MANUAL'}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setSoundEnabled(!soundEnabled)} className="h-10 w-10 border-white/10 rounded-xl p-0">
+                  {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                </Button>
+                <Button size="sm" variant="outline" onClick={toggleFullscreen} className="h-10 px-4 border-white/10 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-primary-foreground transition-all">
+                  <Maximize2 className="h-4 w-4 mr-2" /> FULLSCREEN
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
         </div>
-        <div className="flex gap-2">
-          <Button size="sm" variant={autoRotate ? 'default' : 'outline'} onClick={() => setAutoRotate(!autoRotate)}>
-            <Timer className="h-4 w-4 mr-1" /> {autoRotate ? 'Auto' : 'Manual'}
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => setSoundEnabled(!soundEnabled)}>
-            {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          </Button>
-          <Button size="sm" variant="outline" onClick={toggleFullscreen}>
-            <Monitor className="h-4 w-4 mr-1" /> Fullscreen
-          </Button>
-        </div>
-      </div>
+      </Card>
 
       {/* Screen selector */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-3 justify-center">
         {screens.map(screen => {
           const config = screenLabels[screen];
+          const isActive = currentScreen === screen;
           return (
-            <Button key={screen} size="sm" variant={currentScreen === screen ? 'default' : 'ghost'}
-              onClick={() => { setCurrentScreen(screen); setAutoRotate(false); }}>
-              <config.icon className="h-3.5 w-3.5 mr-1" /> {config.label}
+            <Button 
+              key={screen} 
+              size="sm" 
+              variant={isActive ? 'default' : 'outline'}
+              onClick={() => { setCurrentScreen(screen); setAutoRotate(false); }}
+              className={cn(
+                "h-10 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300",
+                isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-white/5 border-white/10 hover:bg-white/10"
+              )}
+            >
+              <config.icon className="h-3.5 w-3.5 mr-2" /> {config.label}
             </Button>
           );
         })}
