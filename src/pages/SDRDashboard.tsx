@@ -54,6 +54,7 @@ import { LeadScoreBreakdown } from "@/components/sdr/LeadScoreBreakdown";
 import { SDRSequenceOrchestrator } from "@/components/sdr/SDRSequenceOrchestrator";
 import { SDRConversationInsights } from "@/components/sdr/SDRConversationInsights";
 import { SDRAchievementTracker } from "@/components/sdr/SDRAchievementTracker";
+import { SDRCommandBar } from "@/components/sdr/SDRCommandBar";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
