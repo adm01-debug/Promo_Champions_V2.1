@@ -1,21 +1,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Clock, Zap, TrendingUp, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Brain, Clock, Zap, TrendingUp, Calendar, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-
-const hourlySuccessData = [
-  { hour: "08:00", probability: 45, status: "low" },
-  { hour: "09:00", probability: 78, status: "high" },
-  { hour: "10:00", probability: 85, status: "high" },
-  { hour: "11:00", probability: 62, status: "medium" },
-  { hour: "12:00", probability: 30, status: "low" },
-  { hour: "14:00", probability: 92, status: "critical" },
-  { hour: "15:00", probability: 88, status: "high" },
-  { hour: "16:00", probability: 75, status: "high" },
-  { hour: "17:00", probability: 55, status: "medium" },
-];
+import { useHourlySuccessProbability } from "@/hooks/useSDRMetrics";
+import { toast } from "sonner";
 
 export function PredictiveSuccessMap() {
+  const { data: hourlySuccessData, isLoading } = useHourlySuccessProbability();
+
+  const handleScheduleBlock = () => {
+    const bestHour = hourlySuccessData?.reduce((prev, current) => 
+      (prev.probability > current.probability) ? prev : current
+    );
+
+    toast.success(`Bloco de Foco Agendado!`, {
+      description: `Reservamos o horário das ${bestHour?.hour} no seu calendário para prospecção de alta performance.`,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="glass border-primary/20 h-[400px] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </Card>
+    );
+  }
   return (
     <Card className="glass border-primary/20 overflow-hidden">
       <CardHeader className="pb-2 border-b border-border/50">
