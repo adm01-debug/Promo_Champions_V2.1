@@ -600,14 +600,25 @@ export function LeadScoringDashboard() {
       </Card>
 
       <Dialog open={!!explainSaleId} onOpenChange={(o) => !o && setExplainSaleId(null)}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
-              Explicação do Score
-            </DialogTitle>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <DialogHeader className="border-b border-white/5 pb-4 mb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter italic">
+                <Brain className="h-6 w-6 text-primary animate-pulse" />
+                Intelligence Profile: {allLeads.find(l => l.bestDealId === explainSaleId)?.name}
+              </DialogTitle>
+            </div>
           </DialogHeader>
-          {explainSaleId && <LeadScoreExplainCard saleId={explainSaleId} />}
+          {explainSaleId && (
+            <LeadScoreExplainCard 
+              saleId={explainSaleId} 
+              churnRisk={allLeads.find(l => l.bestDealId === explainSaleId)?.churnRisk}
+              onActionComplete={() => {
+                setExplainSaleId(null);
+                toast.success("Ação estratégica iniciada!");
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
