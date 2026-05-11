@@ -2129,6 +2129,41 @@ export type Database = {
           },
         ]
       }
+      call_intelligence_triggers: {
+        Row: {
+          action_type: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          target_asset_id: string | null
+          trigger_keyword: string
+        }
+        Insert: {
+          action_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          target_asset_id?: string | null
+          trigger_keyword: string
+        }
+        Update: {
+          action_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          target_asset_id?: string | null
+          trigger_keyword?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_intelligence_triggers_target_asset_id_fkey"
+            columns: ["target_asset_id"]
+            isOneToOne: false
+            referencedRelation: "sales_enablement_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_logs: {
         Row: {
           call_sid: string | null
@@ -2615,6 +2650,7 @@ export type Database = {
       }
       call_transcripts: {
         Row: {
+          ai_live_insights: Json | null
           created_at: string
           full_text: string
           id: string
@@ -2624,6 +2660,7 @@ export type Database = {
           word_count: number | null
         }
         Insert: {
+          ai_live_insights?: Json | null
           created_at?: string
           full_text: string
           id?: string
@@ -2633,6 +2670,7 @@ export type Database = {
           word_count?: number | null
         }
         Update: {
+          ai_live_insights?: Json | null
           created_at?: string
           full_text?: string
           id?: string
@@ -3263,6 +3301,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      coaching_scorecard_config: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          dimension_name: string
+          id: string
+          is_active: boolean | null
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          dimension_name: string
+          id?: string
+          is_active?: boolean | null
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          dimension_name?: string
+          id?: string
+          is_active?: boolean | null
+          weight?: number | null
+        }
+        Relationships: []
       }
       coaching_sessions: {
         Row: {
