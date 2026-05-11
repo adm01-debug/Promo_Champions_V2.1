@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCreateCadence, useCreateCadenceStep, useCadenceSteps, ActionType } from "@/hooks/useCadences";
-import { Plus, Trash2, Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal } from "lucide-react";
+import { Plus, Trash2, Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Braces } from "lucide-react";
+import { MergeTagPicker } from "./MergeTagPicker";
 import { Badge } from "@/components/ui/badge";
 import {
   Form,
@@ -279,12 +280,18 @@ export function CreateCadenceDialog() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">Descrição (Suporta variáveis SINGU like {'{name}'})</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel className="text-xs font-medium text-muted-foreground">Conteúdo do Template</FormLabel>
+                      <MergeTagPicker
+                        preview={s.description}
+                        onInsert={(token) => updateStep(index, "description", (s.description || "") + token)}
+                      />
+                    </div>
                     <Textarea
                       value={s.description}
                       onChange={(e) => updateStep(index, "description", e.target.value)}
-                      placeholder="Instruções ou template..."
-                      className="min-h-[60px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors"
+                      placeholder="Instruções ou template da mensagem..."
+                      className="min-h-[80px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors font-mono"
                     />
                   </div>
                 </div>
