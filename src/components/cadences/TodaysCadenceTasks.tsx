@@ -338,16 +338,22 @@ export function TodaysCadenceTasks() {
                         )}
 
                         <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="glow"
-                            className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-                            onClick={() => quickAction(task.id, "complete")}
-                            disabled={completeTask.isPending}
-                          >
-                            <Check className="h-3.5 w-3.5" />
-                            Concluir
-                          </Button>
+                          {(task as any).task_type === 'automatic' ? (
+                            <div className="flex-1 flex items-center justify-center p-1.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold animate-pulse">
+                              <Zap className="h-3 w-3 mr-1" /> EXECUTANDO AUTOMATICAMENTE
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="glow"
+                              className="h-7 text-xs gap-1.5 flex-1 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+                              onClick={() => quickAction(task.id, "complete")}
+                              disabled={completeTask.isPending}
+                            >
+                              <Check className="h-3.5 w-3.5" />
+                              Concluir
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="outline"
