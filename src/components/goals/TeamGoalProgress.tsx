@@ -13,6 +13,7 @@ interface TeamGoalProgressProps {
   daysRemaining: number;
   dailyAverage: number;
   requiredDailyAverage: number;
+  predictedAttainment?: number;
 }
 
 export function TeamGoalProgress({
