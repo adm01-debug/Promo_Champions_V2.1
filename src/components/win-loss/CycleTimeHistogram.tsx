@@ -36,7 +36,7 @@ export const CycleTimeHistogram = memo(function CycleTimeHistogram({ rows, onBin
   const empty = data.every(d => d.won === 0 && d.lost === 0);
 
   return (
-    <Card className="border-border/50">
+    <Card className="glass border-border/40 hover:border-primary/40 transition-all duration-300">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Hourglass className="h-4 w-4 text-primary" />
