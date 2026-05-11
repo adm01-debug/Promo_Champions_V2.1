@@ -8,13 +8,17 @@ import {
   Activity,
   Zap,
   LayoutDashboard,
-  Search
+  Search,
+  MessageSquare,
+  FileCheck
 } from "lucide-react";
 import { useSDRMetrics } from "@/hooks/useSDRMetrics";
 import { SDRStatCard } from "./SDRStatCard";
 import { SchedulingRateGauge } from "./SchedulingRateGauge";
 import { RecentProspects } from "./RecentProspects";
 import { ActivityAuditTrail } from "./ActivityAuditTrail";
+import { SDRConversationInsights } from "./SDRConversationInsights";
+import { MQLQualificationForm } from "./MQLQualificationForm";
 import { ProspectingFunnel } from "./ProspectingFunnel";
 import { PredictiveSuccessMap } from "./PredictiveSuccessMap";
 import { SDRSequenceOrchestrator } from "./SDRSequenceOrchestrator";
@@ -170,6 +174,14 @@ const SDRDashboardInner = () => {
               <Clock className="w-4 h-4" />
               Activity Audit
             </TabsTrigger>
+            <TabsTrigger value="conversations" className="gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Conversation Intel
+            </TabsTrigger>
+            <TabsTrigger value="qualification" className="gap-2">
+              <FileCheck className="w-4 h-4" />
+              MQL Qualification
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="coaching" className="mt-0 outline-none">
@@ -182,6 +194,14 @@ const SDRDashboardInner = () => {
           
           <TabsContent value="activity" className="mt-0 outline-none">
             <ActivityAuditTrail />
+          </TabsContent>
+          
+          <TabsContent value="conversations" className="mt-0 outline-none">
+            <SDRConversationInsights />
+          </TabsContent>
+          
+          <TabsContent value="qualification" className="mt-0 outline-none">
+            <MQLQualificationForm />
           </TabsContent>
         </Tabs>
       </motion.div>
