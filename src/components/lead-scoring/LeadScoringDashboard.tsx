@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw } from "lucide-react";
+import { Target, TrendingUp, Flame, Thermometer, Snowflake, BarChart3, Info, Brain, RefreshCw, AlertTriangle, ShieldAlert } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
+import { LeadScoreDistribution } from "./LeadScoreDistribution";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -177,6 +178,46 @@ export function LeadScoringDashboard() {
       </div>
 
 
+      {/* Analytics & Distribution Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <LeadScoreDistribution />
+        </div>
+        
+        <Card className="bg-gradient-to-br from-card/80 to-card/40 border-border/20 shadow-2xl backdrop-blur-md overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-status-error" />
+              Sinais de Churn Risk
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).slice(0, 3).map(lead => (
+              <div key={lead.id} className="p-3 rounded-xl bg-status-error/5 border border-status-error/10 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-black uppercase tracking-tighter truncate max-w-[150px]">{lead.name}</span>
+                  <Badge variant="destructive" className="text-[8px] px-1 h-4">CRÍTICO</Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                   <Progress value={lead.churnRisk?.risk_score} className="h-1 flex-1 bg-status-error/20" indicatorClassName="bg-status-error" />
+                   <span className="text-[10px] font-bold text-status-error">{lead.churnRisk?.risk_score}%</span>
+                </div>
+                <p className="text-[9px] text-muted-foreground italic leading-tight">
+                  {lead.churnRisk?.factors[0] || "Sem atividade detectada"}
+                </p>
+              </div>
+            ))}
+            {allLeads.filter(l => l.churnRisk && l.churnRisk.risk_score > 50).length === 0 && (
+              <div className="text-center py-8">
+                <ShieldAlert className="h-8 w-8 mx-auto mb-2 text-emerald-500 opacity-20" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum risco crítico</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+
       {/* Elite Ranking Table */}
       <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
         <CardHeader className="p-6 border-b border-border/10">
@@ -262,6 +303,29 @@ export function LeadScoringDashboard() {
                       </div>
                     </div>
 
+
+                    {/* Risk Indicator */}
+                    {lead.churnRisk && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className={cn(
+                            "p-2 rounded-lg cursor-help transition-all",
+                            lead.churnRisk.risk_level === 'critical' ? "bg-status-error/10 text-status-error" : 
+                            lead.churnRisk.risk_level === 'high' ? "bg-status-warning/10 text-status-warning" : "bg-info/10 text-info"
+                          )}>
+                            <AlertTriangle className="h-4 w-4" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="space-y-1">
+                            <p className="font-bold text-xs uppercase">Risco de Churn: {lead.churnRisk.risk_level}</p>
+                            {lead.churnRisk.factors.map((f, i) => (
+                              <p key={i} className="text-[10px]">• {f}</p>
+                            ))}
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
 
                     {/* Factors */}
                     {isServerScore ? (
