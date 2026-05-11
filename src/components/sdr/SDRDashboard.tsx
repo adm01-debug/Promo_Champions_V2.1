@@ -107,15 +107,31 @@ const SDRDashboardInner = () => {
       animate="visible"
       className="space-y-8"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-          <span className="text-[10px] font-mono font-bold text-success uppercase tracking-widest">Live Telemetry Active</span>
+      <div className="flex items-center justify-between mb-4 glass p-4 rounded-xl border-primary/20">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+            <span className="text-[10px] font-mono font-bold text-success uppercase tracking-widest">Live Telemetry Active</span>
+          </div>
+          
+          <Tabs value={period} onValueChange={(v: any) => setPeriod(v)} className="w-auto">
+            <TabsList className="h-8 bg-muted/30">
+              <TabsTrigger value="week" className="text-[10px] uppercase font-bold px-3">Semana</TabsTrigger>
+              <TabsTrigger value="month" className="text-[10px] uppercase font-bold px-3">Mês</TabsTrigger>
+              <TabsTrigger value="quarter" className="text-[10px] uppercase font-bold px-3">Trimestre</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
-        <div className="text-[10px] font-mono text-muted-foreground/60">
+        <div className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-2">
+          <Clock className="h-3 w-3" />
           LAST_SYNC: {new Date().toLocaleTimeString()}
         </div>
       </div>
+
+      <SDRAdvancedFilters 
+        onSearch={setSearchTerm} 
+        onFilterChange={setFilters} 
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-8">
