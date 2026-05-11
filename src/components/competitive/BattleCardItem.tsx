@@ -173,7 +173,7 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
     </Card>
   );
 });
-  );
-});
+
+BattleCardItem.displayName = 'BattleCardItem';
 
 BattleCardItem.displayName = 'BattleCardItem';
