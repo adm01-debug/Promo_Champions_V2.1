@@ -10,9 +10,13 @@ import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2
 import { cn } from "@/lib/utils";
 import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
 import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
 
 export function RecentProspects() {
+  const { mutate: enrich } = useLeadEnrichment();
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
@@ -218,7 +222,7 @@ export function RecentProspects() {
                       animate={{ opacity: 1, height: "auto" }}
                       className="mt-3 pt-3 border-t border-border/40"
                     >
-                      <LeadScoreBreakdown saleId={prospect.id} />
+                      <LeadScoreBreakdown leadName={prospect.client_name} score={prospect.score} />
                     </motion.div>
                   )}
                 </div>
