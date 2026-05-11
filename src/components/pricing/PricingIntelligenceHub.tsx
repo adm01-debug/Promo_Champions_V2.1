@@ -152,6 +152,17 @@ export function PricingIntelligenceHub() {
         />
       </div>
 
+      {/* Revenue Leakage Map */}
+      <RevenueLeakageCard 
+        totalLost={k.revenue_lost}
+        discountLost={k.revenue_lost * 0.55}
+        competitorLost={k.revenue_lost * 0.30}
+        marginErosion={k.revenue_lost * 0.15}
+      />
+
+      {/* Price Elasticity Chart */}
+      <PriceElasticityChart />
+
       {/* Simulator */}
       <DiscountOptimizer />
 
