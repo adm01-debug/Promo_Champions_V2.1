@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Available ElevenLabs voices
 export const VOICE_OPTIONS = [
@@ -85,10 +86,15 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
     setIsLoadingTTS(true);
     
     try {
-      // Try to use ElevenLabs via edge function
-      const response = await fetch('/api/elevenlabs-tts', {
+      // Use ElevenLabs via edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-voice`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
         body: JSON.stringify({ text, voiceId }),
       });
 
