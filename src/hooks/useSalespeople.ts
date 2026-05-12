@@ -16,6 +16,8 @@ interface Salesperson {
   role: SalespersonRole;
   auth_user_id: string | null;
   squad_id?: string | null;
+  notify_sales_in_app?: boolean;
+  notify_sales_email?: boolean;
 }
 
 interface SalesGoal {
@@ -151,5 +153,27 @@ export function useSalespeopleRanking(period: PeriodFilter = "month") {
 
       return salespeopleWithStats;
     },
+  });
+}
+
+export function useUpdateSalesperson() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Salesperson>) => {
+      const { data, error } = await supabase
+        .from("salespeople")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["salespeople"] });
+      queryClient.invalidateQueries({ queryKey: ["salespeople_ranking"] });
+      toast.success("Vendedor atualizado!");
+    },
+    onError: (e: Error) => toast.error("Erro ao atualizar: " + e.message),
   });
 }
