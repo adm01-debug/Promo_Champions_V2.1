@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   Area,
   AreaChart,
@@ -33,6 +34,7 @@ interface Props {
   onSeek?: (sec: number) => void;
   moments?: CriticalMoment[];
   intents?: Intent[];
+  hideTitle?: boolean;
 }
 
 const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
@@ -51,7 +53,14 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   );
 };
 
-export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, moments, intents = [] }: Props) => {
+export const SentimentTimelineChart = ({ 
+  recordingId, 
+  currentTime, 
+  onSeek, 
+  moments, 
+  intents = [],
+  hideTitle = false
+}: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
   const [selectedShift, setSelectedShift] = useState<{ start_sec: number, text?: string } | null>(null);
@@ -70,24 +79,26 @@ export const SentimentTimelineChart = ({ recordingId, currentTime, onSeek, momen
   };
 
   return (
-    <Card className="glass">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-primary" />
-          Curva de sentimento
-        </CardTitle>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => analyze.mutate(recordingId)}
-          disabled={analyze.isPending}
-          className="gap-1.5 h-7 text-xs"
-        >
-          <Sparkles className="h-3 w-3" />
-          {analyze.isPending ? "Analisando..." : timeline?.length ? "Reanalisar" : "Analisar"}
-        </Button>
-      </CardHeader>
-      <CardContent>
+    <Card className={cn("glass overflow-hidden", hideTitle && "border-none bg-transparent shadow-none")}>
+      {!hideTitle && (
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            Curva de sentimento
+          </CardTitle>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => analyze.mutate(recordingId)}
+            disabled={analyze.isPending}
+            className="gap-1.5 h-7 text-xs"
+          >
+            <Sparkles className="h-3 w-3" />
+            {analyze.isPending ? "Analisando..." : timeline?.length ? "Reanalisar" : "Analisar"}
+          </Button>
+        </CardHeader>
+      )}
+      <CardContent className={cn(hideTitle && "p-0")}>
         {isLoading ? (
           <Skeleton className="h-40 w-full" />
         ) : !timeline?.length ? (
