@@ -46,14 +46,26 @@ export function ProspectingFunnel() {
   if (isLoading) return <div className="h-[300px] flex items-center justify-center">Carregando funil...</div>;
 
   return (
-    <Card className="glass border-primary/20 overflow-hidden">
-      <CardHeader className="pb-2 border-b border-border/50">
+    <Card className="glass border-primary/30 bg-black/40 backdrop-blur-xl overflow-hidden relative group">
+      {/* Decorative scanline */}
+      <motion.div 
+        className="absolute top-0 left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+        animate={{ top: ["0%", "100%", "0%"] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+      />
+
+      <CardHeader className="pb-4 border-b border-white/5 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <Target className="h-4 w-4 text-primary" />
-            Funil de Prospecção
+          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+              <Target className="h-3.5 w-3.5" />
+            </div>
+            Prospecting Funnel
           </CardTitle>
-          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+          <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-success uppercase tracking-widest bg-success/10 px-2 py-0.5 rounded border border-success/20">
+            <Zap className="h-3 w-3" />
+            Active Sync
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-6">
