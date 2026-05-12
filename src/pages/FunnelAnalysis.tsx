@@ -8,7 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useFunnelData } from "@/hooks/useFunnelData";
-import { TrendingDown, TrendingUp, AlertTriangle, DollarSign, Clock, Filter, ArrowDown } from "lucide-react";
+import { TrendingDown, TrendingUp, AlertTriangle, DollarSign, Clock, Filter, ArrowDown, Zap, Brain, Target, BarChart3, Activity } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const FunnelAnalysis = () => {
   const [timeframe, setTimeframe] = useState(30);
