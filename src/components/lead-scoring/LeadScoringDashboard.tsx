@@ -14,6 +14,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
+import { LeadNeuralDossier } from "./LeadNeuralDossier";
 import { LeadScoreDistribution } from "./LeadScoreDistribution";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,68 +120,6 @@ export function LeadScoringDashboard() {
       const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
       const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-      const exportToCSV = () => {
-        setIsExporting(true);
-        try {
-          // Ranking Data
-          const rankingHeaders = ["Rank", "Name", "Company", "Email", "Score", "Category", "Risk Level", "Risk Score", "Factors"];
-          const rankingRows = filteredLeads.map((l, i) => [
-            i + 1,
-            `"${l.name}"`,
-            `"${l.company || "N/A"}"`,
-            `"${l.email}"`,
-            l.score,
-            l.category,
-            l.churnRisk?.risk_level || "low",
-            l.churnRisk?.risk_score || 0,
-            `"${l.churnRisk?.factors.join('; ') || ""}"`
-          ]);
-
-          // Distribution Data (Histogram Summary)
-          const distSummary = [
-            [],
-            ["HISTOGRAM DISTRIBUTION SUMMARY"],
-            ["Range", "Count"],
-            ["81-100 (Hot)", hotCount],
-            ["51-80 (Warm)", warmCount],
-            ["0-50 (Cold)", coldCount]
-          ];
-
-          const csvContent = [
-            ["STRATEGIC LEAD RANKING REPORT"],
-            [`Generated on: ${new Date().toLocaleString()}`],
-            [],
-            rankingHeaders, 
-            ...rankingRows,
-            ...distSummary
-          ].map(e => e.join(",")).join("\n");
-
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const link = document.createElement("a");
-          const url = URL.createObjectURL(blob);
-          link.setAttribute("href", url);
-          link.setAttribute("download", `lead_intelligence_report_${new Date().toISOString().split('T')[0]}.csv`);
-          link.style.visibility = 'hidden';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          toast.success("Relatório estratégico e histograma exportados!");
-        } catch (error) {
-          console.error(error);
-          toast.error("Erro ao gerar relatório CSV.");
-        } finally {
-          setIsExporting(false);
-        }
-      };
-
-      const exportToPDF = () => {
-        setIsExporting(true);
-        toast.info("Otimizando layout para exportação PDF...");
-        setTimeout(() => {
-          window.print();
-          setIsExporting(false);
-        }, 800);
-      };
 
   if (isLoading) {
     return (
@@ -207,8 +146,83 @@ export function LeadScoringDashboard() {
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
+  const exportToCSV = useCallback(() => {
+    setIsExporting(true);
+    try {
+      const rankingHeaders = ["Rank", "Name", "Company", "Email", "Score", "Category", "Risk Level", "Risk Score", "Factors"];
+      const rankingRows = filteredLeads.map((l, i) => [
+        i + 1,
+        `"${l.name}"`,
+        `"${l.company || "N/A"}"`,
+        `"${l.email}"`,
+        l.score,
+        l.category,
+        l.churnRisk?.risk_level || "low",
+        l.churnRisk?.risk_score || 0,
+        `"${l.churnRisk?.factors.join('; ') || ""}"`
+      ]);
+
+      const distSummary = [
+        [],
+        ["HISTOGRAM DISTRIBUTION SUMMARY"],
+        ["Range", "Count"],
+        ["81-100 (Hot)", hotCount],
+        ["51-80 (Warm)", warmCount],
+        ["0-50 (Cold)", coldCount]
+      ];
+
+      const csvContent = [
+        ["STRATEGIC LEAD RANKING REPORT"],
+        [`Generated on: ${new Date().toLocaleString()}`],
+        [],
+        rankingHeaders, 
+        ...rankingRows,
+        ...distSummary
+      ].map(e => e.join(",")).join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `lead_intelligence_report_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Relatório estratégico e histograma exportados!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao gerar relatório CSV.");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [filteredLeads, hotCount, warmCount, coldCount]);
+
+  const exportToPDF = useCallback(() => {
+    setIsExporting(true);
+    toast.info("Otimizando layout para exportação PDF...");
+    setTimeout(() => {
+      window.print();
+      setIsExporting(false);
+    }, 800);
+  }, []);
+
+  const selectedLead = useMemo(() => {
+    return allLeads.find(l => l.id === selectedLeadId) || null;
+  }, [allLeads, selectedLeadId]);
+
   return (
     <div className="space-y-8 p-1 sm:p-0 relative">
+      <LeadNeuralDossier 
+        lead={selectedLead} 
+        isOpen={!!selectedLeadId} 
+        onClose={() => setSelectedLeadId(null)} 
+      />
+      <LeadNeuralDossier 
+        lead={selectedLead} 
+        isOpen={!!selectedLeadId} 
+        onClose={() => setSelectedLeadId(null)} 
+      />
       {/* Real-time Global Sync Loading State */}
       {(isLoadingLeads || explainBatch.isPending) && (
         <div className="fixed top-0 left-0 w-full h-1 z-[100] overflow-hidden bg-primary/5">
@@ -719,102 +733,7 @@ export function LeadScoringDashboard() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!explainSaleId} onOpenChange={(o) => !o && setExplainSaleId(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-          <DialogHeader className="border-b border-white/5 pb-4 mb-4">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="flex items-center gap-3 text-2xl font-black uppercase tracking-tighter italic">
-                <Brain className="h-6 w-6 text-primary animate-pulse" />
-                Intelligence Profile: {allLeads.find(l => l.bestDealId === explainSaleId)?.name}
-              </DialogTitle>
-            </div>
-          </DialogHeader>
-          {explainSaleId && (
-            <LeadScoreExplainCard 
-              saleId={explainSaleId} 
-              churnRisk={allLeads.find(l => l.bestDealId === explainSaleId)?.churnRisk}
-              onActionComplete={() => {
-                setExplainSaleId(null);
-                toast.success("Ação estratégica iniciada!");
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!selectedLeadId} onOpenChange={(o) => !o && setSelectedLeadId(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-2xl border-white/10 shadow-2xl p-0">
-          <div className="relative">
-            <div className="h-32 bg-gradient-to-r from-primary/20 via-primary/5 to-background border-b border-white/5" />
-            
-            <div className="px-8 pb-8 -mt-12 space-y-8">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex items-center gap-6">
-                  <div className="relative group">
-                    <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <ScoreRing score={allLeads.find(l => l.id === selectedLeadId)?.score || 0} size={110} />
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-black uppercase tracking-tighter italic leading-none mb-2">
-                      {allLeads.find(l => l.id === selectedLeadId)?.name}
-                    </h3>
-                    <div className="flex items-center gap-3">
-                      <Badge className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1", categoryConfig[allLeads.find(l => l.id === selectedLeadId)?.category || 'Cold'].bg, categoryConfig[allLeads.find(l => l.id === selectedLeadId)?.category || 'Cold'].color)}>
-                        {allLeads.find(l => l.id === selectedLeadId)?.category} ASSET
-                      </Badge>
-                      <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
-                        {allLeads.find(l => l.id === selectedLeadId)?.company || "Independent Entity"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Card className="px-4 py-2 bg-background/50 border-white/5 flex flex-col items-center">
-                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Risk Index</span>
-                    <span className={cn("text-lg font-black italic", 
-                      (allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0) > 50 ? "text-status-error" : "text-emerald-500"
-                    )}>
-                      {allLeads.find(l => l.id === selectedLeadId)?.churnRisk?.risk_score || 0}%
-                    </span>
-                  </Card>
-                  <Button className="h-12 px-6 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                    <Activity className="h-4 w-4 mr-2" />
-                    Open Strategic Dossier
-                  </Button>
-                </div>
-              </div>
-
-              {/* Neural Analysis Section */}
-              <div className="pt-8 border-t border-white/5">
-                {allLeads.find(l => l.id === selectedLeadId)?.bestDealId ? (
-                  <LeadScoreExplainCard 
-                    saleId={allLeads.find(l => l.id === selectedLeadId)!.bestDealId!} 
-                    churnRisk={allLeads.find(l => l.id === selectedLeadId)?.churnRisk}
-                    onActionComplete={() => {
-                      setSelectedLeadId(null);
-                      toast.success("Estratégia executada com sucesso!");
-                    }}
-                  />
-                ) : (
-                  <div className="p-16 text-center bg-primary/5 rounded-3xl border border-dashed border-primary/20 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <Brain className="h-16 w-16 text-primary/20 mx-auto mb-6 animate-pulse" />
-                    <h4 className="text-lg font-black uppercase tracking-widest mb-2 italic">Aguardando Ponto de Ignição</h4>
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                      Este lead ainda não possui negociações ativas no funil. Inicie uma proposta estratégica para ativar a análise neural profunda e recomendações da IA.
-                    </p>
-                    <Button className="mt-8 h-12 px-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all duration-500">
-                      <Zap className="h-4 w-4 mr-2" />
-                      Gerar Proposta Preditiva
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Diálogos Legados Removidos - Usando LeadNeuralDossier */}
     </div>
   );
 }
