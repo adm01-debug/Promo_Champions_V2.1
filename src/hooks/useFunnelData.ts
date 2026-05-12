@@ -7,6 +7,7 @@ interface FunnelStage {
   value: number;
   conversionRate: number;
   averageTime: number;
+  velocityScore: number;
   dropOffRate: number;
 }
 
