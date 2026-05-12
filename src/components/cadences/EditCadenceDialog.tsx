@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateCadence, useCreateCadenceStep, useUpdateCadenceStep, useDeleteCadenceStep, useCadenceSteps } from "@/hooks/useCadences";
 import { Cadence, CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -34,6 +34,8 @@ interface NewStepInput {
   action_type: ActionType;
   title: string;
   description: string;
+  needs_approval: boolean;
+  task_type: 'manual' | 'automatic';
 }
 
 export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDialogProps) {
@@ -57,13 +59,21 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
   };
 
   const handleSaveStep = async (step: CadenceStep, editData: Partial<CadenceStep>) => {
-    const { description, template_content, ...rest } = editData;
-    await updateStep.mutateAsync({ id: step.id, cadence_id: cadence.id, ...rest, description: description ?? undefined, template_content: template_content ?? undefined });
+    const { description, template_content, needs_approval, task_type, ...rest } = editData;
+    await updateStep.mutateAsync({ 
+      id: step.id, 
+      cadence_id: cadence.id, 
+      ...rest, 
+      description: description ?? undefined, 
+      template_content: template_content ?? undefined,
+      needs_approval: needs_approval ?? undefined,
+      task_type: task_type ?? undefined
+    });
   };
 
   const addNewStep = () => {
     const lastDay = existingSteps?.length ? Math.max(...existingSteps.map(s => s.day_number)) : 0;
-    setNewSteps([...newSteps, { day_number: lastDay + 2, action_type: "call", title: "", description: "" }]);
+    setNewSteps([...newSteps, { day_number: lastDay + 2, action_type: "call", title: "", description: "", needs_approval: false, task_type: "manual" }]);
   };
 
   const handleSaveNewSteps = async () => {
@@ -71,7 +81,16 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
     for (let i = 0; i < newSteps.length; i++) {
       const s = newSteps[i];
       if (!s.title.trim()) continue;
-      await createStep.mutateAsync({ cadence_id: cadence.id, day_number: s.day_number, action_type: s.action_type, title: s.title, description: s.description || undefined, step_order: baseOrder + i });
+      await createStep.mutateAsync({ 
+        cadence_id: cadence.id, 
+        day_number: s.day_number, 
+        action_type: s.action_type, 
+        title: s.title, 
+        template_content: s.description || undefined, 
+        step_order: baseOrder + i,
+        needs_approval: s.needs_approval,
+        task_type: s.task_type
+      });
     }
     setNewSteps([]);
   };
