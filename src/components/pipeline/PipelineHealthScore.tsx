@@ -36,7 +36,7 @@ export const PipelineHealthScore = () => {
 
   if (isLoading) return null;
 
-  const healthColors = {
+  const healthColors: Record<string, string> = {
     "Excellent": "text-success border-success/20 bg-success/5",
     "Healthy": "text-warning border-warning/20 bg-warning/5",
     "At Risk": "text-danger border-danger/20 bg-danger/5"
