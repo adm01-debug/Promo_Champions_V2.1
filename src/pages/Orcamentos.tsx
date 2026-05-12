@@ -163,9 +163,28 @@ export default function Orcamentos() {
           ))}
         </motion.div>
 
-        <div className="flex items-center gap-2">
-          <Button variant={statusFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setStatusFilter("all")}>Todos</Button>
-          {QUOTE_STATUSES.map(s => (<Button key={s.value} variant={statusFilter === s.value ? "default" : "outline"} size="sm" onClick={() => setStatusFilter(s.value)}>{s.label}</Button>))}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Button variant={statusFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setStatusFilter("all")}>Todos</Button>
+            {QUOTE_STATUSES.map(s => (
+              <Button 
+                key={s.value} 
+                variant={statusFilter === s.value ? "default" : "outline"} 
+                size="sm" 
+                onClick={() => setStatusFilter(s.value)}
+                className="gap-2"
+              >
+                <div className={cn("w-2 h-2 rounded-full", s.color.split(' ')[0])} />
+                {s.label}
+              </Button>
+            ))}
+          </div>
+          
+          <div className="text-xs font-medium text-muted-foreground flex items-center gap-4 bg-muted/30 px-3 py-1.5 rounded-full">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-status-success" /> Aprovado</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-status-warning" /> Expira em ≤3d</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-destructive" /> Expirado</span>
+          </div>
         </div>
 
         <motion.div className="space-y-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
