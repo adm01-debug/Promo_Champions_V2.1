@@ -25,9 +25,9 @@ const sentimentColor = (label: string | null) => {
 };
 
 export const ConversationalIntelligenceHub = () => {
-  const [horizon, setHorizon] = useState(30);
+  const [horizon, setHorizon] = useState<number | "live">(30);
   const [search, setSearch] = useState("");
-  const { data, isLoading } = useConversationalIntelligence(horizon);
+  const { data, isLoading } = useConversationalIntelligence(horizon === "live" ? 0 : horizon);
   const drawer = useRecordingSummaryDrawer();
 
   const filteredRecordings = useMemo(() => {
@@ -41,26 +41,53 @@ export const ConversationalIntelligenceHub = () => {
   }, [data, search]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-page-title font-bold flex items-center gap-2">
-            <Headphones className="size-7 text-primary" />
-            Conversational Intelligence
+    <div className="space-y-10 relative pb-20">
+      {/* Background Neural Matrix Decor */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] bg-info/5 blur-[100px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* Header Premium 10/10 */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 border-b border-white/5 pb-10">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-primary/10 border border-primary/20 shadow-inner group hover:scale-110 transition-transform">
+              <Headphones className="size-6 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black tracking-[0.2em] uppercase py-0.5 px-2">
+                  Neural Audio Analysis
+                </Badge>
+                {horizon === "live" && (
+                  <div className="flex items-center gap-1.5 text-[10px] text-destructive font-black tracking-wider animate-pulse">
+                    <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-ping" />
+                    STREAMING LIVE
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+            Conversational <span className="text-primary/80">Intelligence</span>
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Insights de IA sobre suas chamadas: sentimento, talk ratio, objeções e próximos passos
+          <p className="text-base text-muted-foreground/80 max-w-2xl font-medium leading-relaxed">
+            Decifre cada palavra, tom e hesitação. Nossa IA neural processa milhões de parâmetros para transformar diálogos em fechamentos inevitáveis.
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+
+        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
           <CompetitorsAdminDialog />
-          <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
-            <TabsList>
-              <TabsTrigger value="7">7 dias</TabsTrigger>
-              <TabsTrigger value="30">30 dias</TabsTrigger>
-              <TabsTrigger value="90">90 dias</TabsTrigger>
-              <TabsTrigger value="live" className="text-primary font-bold">
-                <Zap className="size-3 mr-1 animate-pulse" /> LIVE
+          <div className="w-px h-8 bg-white/10 mx-1" />
+          <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(v === 'live' ? 'live' : Number(v))} className="bg-transparent">
+            <TabsList className="bg-white/5 border-none p-1">
+              <TabsTrigger value="7" className="text-xs font-black px-4">7D</TabsTrigger>
+              <TabsTrigger value="30" className="text-xs font-black px-4">30D</TabsTrigger>
+              <TabsTrigger value="90" className="text-xs font-black px-4">90D</TabsTrigger>
+              <TabsTrigger value="live" className="text-xs font-black px-5 bg-destructive/10 text-destructive data-[state=active]:bg-destructive data-[state=active]:text-white transition-all gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                LIVE
               </TabsTrigger>
             </TabsList>
           </Tabs>
