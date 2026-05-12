@@ -104,6 +104,14 @@ describe('Notification Filtering Logic', () => {
     expect(filtered).toHaveLength(1);
     expect(filtered[0].id).toBe('1');
   });
+
+  it('should handle empty input list', () => {
+    expect(filterNotifications([], 'sales')).toHaveLength(0);
+  });
+
+  it('should return all if no filters provided', () => {
+    expect(filterNotifications(mockNotifications)).toHaveLength(4);
+  });
 });
 
 describe('Sale Notification Audit - Accuracy Validation', () => {
