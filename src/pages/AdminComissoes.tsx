@@ -4,16 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { DollarSign, CheckCircle, XCircle, Clock, Filter, Search, FileText } from "lucide-react";
+import { DollarSign, CheckCircle, XCircle, Clock, Filter, Search, FileText, Wallet } from "lucide-react";
 import { useAllCommissions, useUpdateCommissionStatus, type CommissionStatus } from "@/hooks/useCommissions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const formatBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n || 0);
