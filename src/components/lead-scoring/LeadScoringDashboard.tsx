@@ -172,7 +172,7 @@ export function LeadScoringDashboard() {
         } finally {
           setIsExporting(false);
         }
-      };
+      }, [filteredLeads, hotCount, warmCount, coldCount]);
 
       const exportToPDF = useCallback(() => {
         setIsExporting(true);
@@ -181,7 +181,7 @@ export function LeadScoringDashboard() {
           window.print();
           setIsExporting(false);
         }, 800);
-      };
+      }, []);
 
   if (isLoading) {
     return (
@@ -207,10 +207,6 @@ export function LeadScoringDashboard() {
   const warmCount = allLeads.filter(l => l.category === "Warm").length;
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
-
-  const selectedLead = useMemo(() => {
-    return allLeads.find(l => l.id === selectedLeadId) || null;
-  }, [allLeads, selectedLeadId]);
 
   const selectedLead = useMemo(() => {
     return allLeads.find(l => l.id === selectedLeadId) || null;
