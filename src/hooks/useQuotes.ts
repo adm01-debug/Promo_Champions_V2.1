@@ -26,7 +26,7 @@ export interface Quote {
   subtotal: number | null;
   discount_amount: number | null;
   discount_percent: number | null;
-  items: string | null; // JSONB stored as string
+  items: any; // JSONB stored as array or object
   external_quote_id: string | null;
   sync_status: string | null;
   pdf_url: string | null;
@@ -52,13 +52,17 @@ export interface QuoteItem {
 }
 
 /** Parse the items JSON string into typed array */
-export function parseQuoteItems(itemsJson: string | null): QuoteItem[] {
-  if (!itemsJson) return [];
-  try {
-    return JSON.parse(itemsJson) as QuoteItem[];
-  } catch {
-    return [];
+/** Parse the items into typed array */
+export function parseQuoteItems(items: any): QuoteItem[] {
+  if (!items) return [];
+  if (typeof items === 'string') {
+    try {
+      return JSON.parse(items) as QuoteItem[];
+    } catch {
+      return [];
+    }
   }
+  return items as QuoteItem[];
 }
 
 export type QuoteStatus = 'draft' | 'sent' | 'approved' | 'rejected' | 'expired';
