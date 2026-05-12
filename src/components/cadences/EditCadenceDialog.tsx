@@ -146,6 +146,32 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
                       </Select>
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <Label className="text-[10px] font-medium">Aprovação</Label>
+                        <p className="text-[9px] text-muted-foreground">Exigir manual</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.needs_approval}
+                        onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, needs_approval: e.target.checked }; setNewSteps(u); }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <Label className="text-[10px] font-medium">Automática</Label>
+                        <p className="text-[9px] text-muted-foreground">Execução robô</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.task_type === 'automatic'}
+                        onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, task_type: e.target.checked ? 'automatic' : 'manual' }; setNewSteps(u); }}
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-1"><Label className="text-xs">Título *</Label><Input value={s.title} onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, title: e.target.value }; setNewSteps(u); }} className="h-8 text-sm bg-background/50" placeholder="Título da ação" /></div>
                 </div>
               ))}
