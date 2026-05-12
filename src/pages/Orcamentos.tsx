@@ -103,6 +103,34 @@ export default function Orcamentos() {
                   <div className="space-y-2"><Label>Valor Total *</Label><Input type="number" value={form.total_value} onChange={e => setForm(f => ({ ...f, total_value: e.target.value }))} placeholder="0.00" /></div>
                 </div>
                 <div className="space-y-2"><Label>Título *</Label><Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Título do orçamento" /></div>
+                
+                <div className="space-y-2">
+                  <Label>Vincular a Negociação (Pipeline)</Label>
+                  <Select 
+                    value={form.sale_id} 
+                    onValueChange={(val) => {
+                      const deal = deals?.find(d => d.id === val);
+                      setForm(f => ({ 
+                        ...f, 
+                        sale_id: val,
+                        client_name: f.client_name || deal?.client_name || "",
+                        title: f.title || `Orçamento - ${deal?.product_name || deal?.client_name}` || ""
+                      }));
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um deal..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {deals?.map(deal => (
+                        <SelectItem key={deal.id} value={deal.id}>
+                          {deal.client_name} - {deal.product_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-2"><Label>Descrição</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Detalhes..." rows={2} /></div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2"><Label>Ref. Externa</Label><Input value={form.external_reference} onChange={e => setForm(f => ({ ...f, external_reference: e.target.value }))} placeholder="ID do sistema externo" /></div>
