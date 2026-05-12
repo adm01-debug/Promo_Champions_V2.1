@@ -14,6 +14,8 @@ export function ActivityEffectiveness() {
   const badTiming = stats?.byOutcome.bad_timing ?? 0;
   const wrongPerson = stats?.byOutcome.wrong_person ?? 0;
   const unsubscribed = stats?.byOutcome.unsubscribed ?? 0;
+  const noAnswer = stats?.byOutcome.no_answer ?? 0;
+  const voicemail = stats?.byOutcome.voicemail ?? 0;
 
   const connectionRate = total > 0 ? (connected / total) * 100 : 0;
   const schedulingRate = connected > 0 ? (scheduled / connected) * 100 : 0;
