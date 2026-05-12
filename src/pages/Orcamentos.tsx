@@ -27,8 +27,18 @@ export default function Orcamentos() {
   const createQuote = useCreateQuote();
   const updateStatus = useUpdateQuoteStatus();
   const deleteQuote = useDeleteQuote();
-
-  const [form, setForm] = useState({ client_name: "", title: "", description: "", total_value: "", external_reference: "", valid_until: "", notes: "" });
+  const { data: deals } = useDealsForQuotes();
+  
+  const [form, setForm] = useState({ 
+    client_name: "", 
+    title: "", 
+    description: "", 
+    total_value: "", 
+    external_reference: "", 
+    valid_until: "", 
+    notes: "",
+    sale_id: ""
+  });
 
   const handleCreate = () => {
     if (!form.client_name || !form.title || !form.total_value) return;
