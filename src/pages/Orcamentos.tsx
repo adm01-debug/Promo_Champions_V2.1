@@ -145,9 +145,20 @@ export default function Orcamentos() {
 
         <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
           {summaryCards.map((card) => (
-            <Card key={card.label} className="p-4 flex items-center gap-3">
-              <card.icon className={cn("h-5 w-5", card.color)} />
-              <div><p className="text-metric">{card.value}</p><p className="text-xs text-muted-foreground">{card.label}</p></div>
+            <Card 
+              key={card.label} 
+              className={cn(
+                "p-4 flex items-center gap-3 transition-all duration-300 hover:shadow-md",
+                card.label === "Expirando" && card.value > 0 ? "border-status-warning/50 bg-status-warning/5 animate-pulse-subtle" : ""
+              )}
+            >
+              <div className={cn("p-2 rounded-lg", card.color.replace('text-', 'bg-').replace('text-foreground', 'bg-muted'))}>
+                <card.icon className={cn("h-5 w-5", card.color.includes('status-warning') ? 'text-status-warning' : 'text-current')} />
+              </div>
+              <div>
+                <p className="text-metric font-bold">{card.value}</p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{card.label}</p>
+              </div>
             </Card>
           ))}
         </motion.div>
