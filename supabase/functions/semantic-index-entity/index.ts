@@ -23,6 +23,7 @@ const TABLE_BY_TYPE: Record<EntityType, { table: string; ownerCol: string | null
   proposal: { table: "proposals", ownerCol: "salesperson_id" },
   task: { table: "tasks", ownerCol: "salesperson_id" },
   playbook: { table: "playbooks", ownerCol: null },
+  product: { table: "products", ownerCol: null },
 };
 
 function buildContent(type: EntityType, row: Record<string, unknown>): string {
