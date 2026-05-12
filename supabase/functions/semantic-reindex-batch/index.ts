@@ -24,6 +24,7 @@ const TABLE_BY_TYPE: Record<EntityType, { table: string; statusFilter?: string[]
   proposal: { table: "proposals" },
   task: { table: "tasks" },
   playbook: { table: "playbooks" },
+  product: { table: "products" },
 };
 
 const DEFAULT_TYPES: EntityType[] = ["client", "lead", "deal", "activity", "call_recording"];
