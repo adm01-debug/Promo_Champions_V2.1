@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSecurityStats, useLoginAttempts } from "@/hooks/useSecurityMonitoring";
 import { useCircuitBreakerStats, useCircuitBreakerHistory } from "@/hooks/useCircuitBreakerHistory";
