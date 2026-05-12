@@ -9,8 +9,8 @@ interface Salesperson {
   avatar_url: string | null;
   role: string;
   commission_rate: number;
-  notify_sales_in_app?: boolean;
-  notify_sales_email?: boolean;
+  notify_sales_in_app: boolean | null;
+  notify_sales_email: boolean | null;
 }
 
 interface AuthContextType {
