@@ -1,4 +1,5 @@
 import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord, ProspectCadence } from "@/hooks/useCadences";
+import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
