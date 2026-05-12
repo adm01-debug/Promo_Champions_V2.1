@@ -52,80 +52,219 @@ const FunnelAnalysis = () => {
             <>
               {/* Summary Cards */}
               <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="p-4 glass border-border/40 text-center">
-                  <TrendingUp className="h-5 w-5 mx-auto mb-1 text-status-success" />
-                  <p className="text-2xl font-display font-bold">{data.overallConversion}%</p>
-                  <p className="text-[10px] text-muted-foreground">Conversão Geral</p>
-                </Card>
-                <Card className="p-4 glass border-border/40 text-center">
-                  <DollarSign className="h-5 w-5 mx-auto mb-1 text-primary" />
-                  <p className="text-2xl font-display font-bold">{fmtCurrency(data.totalValue)}</p>
-                  <p className="text-[10px] text-muted-foreground">Valor Total Won</p>
-                </Card>
-                <Card className="p-4 glass border-border/40 text-center">
-                  <DollarSign className="h-5 w-5 mx-auto mb-1 text-info" />
-                  <p className="text-2xl font-display font-bold">{fmtCurrency(data.avgDealSize)}</p>
-                  <p className="text-[10px] text-muted-foreground">Ticket Médio</p>
-                </Card>
-                <Card className="p-4 glass border-border/40 text-center">
-                  <AlertTriangle className="h-5 w-5 mx-auto mb-1 text-destructive" />
-                  <p className="text-lg font-display font-bold">{data.topDropOffStage}</p>
-                  <p className="text-[10px] text-muted-foreground">Maior Drop-off</p>
-                </Card>
-              </motion.div>
-
-              {/* Funnel Visualization */}
-              <motion.div variants={itemVariants} className="space-y-1">
-                {data.stages.map((stage, index) => {
-                  const maxCount = Math.max(...data.stages.map(s => s.count), 1);
-                  const widthPercent = Math.max((stage.count / maxCount) * 100, 15);
-                  const isTopDrop = stage.stage === data.topDropOffStage;
-
-                  return (
-                    <div key={stage.stage} className="space-y-1">
-                      <div
-                        className={cn(
-                          "mx-auto rounded-lg p-4 glass border transition-all relative overflow-hidden",
-                          isTopDrop ? "border-destructive/40 bg-destructive/5" : "border-border/40"
-                        )}
-                        style={{ width: `${widthPercent}%`, minWidth: "280px" }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-display font-semibold text-sm">{stage.stage}</p>
-                            <p className="text-xs text-muted-foreground">{stage.count} deals • {fmtCurrency(stage.value)}</p>
-                          </div>
-                          <div className="flex gap-2 items-center">
-                            <Badge variant="outline" className={cn(
-                              "text-[10px]",
-                              stage.conversionRate >= 60 ? "text-status-success border-status-success/30" :
-                              stage.conversionRate >= 30 ? "text-status-warning border-status-warning/30" :
-                              "text-destructive border-destructive/30"
-                            )}>
-                              <TrendingUp className="h-3 w-3 mr-1" />{stage.conversionRate}%
-                            </Badge>
-                            {stage.dropOffRate > 0 && (
-                              <Badge variant="outline" className="text-[10px] text-destructive border-destructive/30">
-                                <TrendingDown className="h-3 w-3 mr-1" />-{stage.dropOffRate}%
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        {isTopDrop && (
-                          <Badge className="absolute top-1 right-1 text-[8px] bg-destructive/20 text-destructive border-none">
-                            ⚠️ Gargalo
-                          </Badge>
-                        )}
-                      </div>
-                      {index < data.stages.length - 1 && (
-                        <div className="flex justify-center">
-                          <ArrowDown className="h-4 w-4 text-muted-foreground/50" />
-                        </div>
-                      )}
+                <Card className="p-4 glass border-border/40 text-center group hover:border-primary/40 transition-all duration-300">
+                  <div className="flex justify-center mb-2">
+                    <div className="p-2 rounded-full bg-status-success/10 group-hover:bg-status-success/20 transition-colors">
+                      <TrendingUp className="h-5 w-5 text-status-success" />
                     </div>
-                  );
-                })}
+                  </div>
+                  <p className="text-2xl font-display font-bold text-gradient-gold">{data.overallConversion}%</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Conversão Geral</p>
+                </Card>
+                <Card className="p-4 glass border-border/40 text-center group hover:border-primary/40 transition-all duration-300">
+                  <div className="flex justify-center mb-2">
+                    <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <DollarSign className="h-5 w-5 text-primary" />
+                    </div>
+                  </div>
+                  <p className="text-2xl font-display font-bold">{fmtCurrency(data.totalValue)}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Valor Total Won</p>
+                </Card>
+                <Card className="p-4 glass border-border/40 text-center group hover:border-primary/40 transition-all duration-300">
+                  <div className="flex justify-center mb-2">
+                    <div className="p-2 rounded-full bg-info/10 group-hover:bg-info/20 transition-colors">
+                      <DollarSign className="h-5 w-5 text-info" />
+                    </div>
+                  </div>
+                  <p className="text-2xl font-display font-bold">{fmtCurrency(data.avgDealSize)}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Ticket Médio</p>
+                </Card>
+                <Card className="p-4 glass border-border/40 text-center group hover:border-destructive/40 transition-all duration-300">
+                  <div className="flex justify-center mb-2">
+                    <div className="p-2 rounded-full bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
+                      <AlertTriangle className="h-5 w-5 text-destructive" />
+                    </div>
+                  </div>
+                  <p className="text-lg font-display font-bold text-destructive">{data.topDropOffStage}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Maior Drop-off</p>
+                </Card>
               </motion.div>
+
+              {/* Neural Flow Visualization */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="h-4 w-4 text-primary animate-pulse" />
+                    <h2 className="text-sm font-display font-bold uppercase tracking-widest text-muted-foreground">Neural Flow Engine</h2>
+                  </div>
+                  
+                  <div className="relative py-4">
+                    {data.stages.map((stage, index) => {
+                      const maxCount = Math.max(...data.stages.map(s => s.count), 1);
+                      const widthPercent = Math.max((stage.count / maxCount) * 100, 25);
+                      const isTopDrop = stage.stage === data.topDropOffStage;
+                      const nextStage = data.stages[index + 1];
+
+                      return (
+                        <div key={stage.stage} className="relative mb-6 last:mb-0">
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className={cn(
+                              "mx-auto rounded-xl p-5 glass border transition-all relative overflow-hidden group",
+                              isTopDrop ? "border-destructive/40 bg-destructive/5 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-border/40 hover:border-primary/30"
+                            )}
+                            style={{ width: `${widthPercent}%`, minWidth: "320px" }}
+                          >
+                            {/* Neural Background Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            
+                            <div className="flex items-center justify-between relative z-10">
+                              <div className="flex items-center gap-3">
+                                <div className={cn(
+                                  "w-8 h-8 rounded-full flex items-center justify-center font-display font-bold text-xs",
+                                  index === 0 ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                                )}>
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-display font-bold text-base">{stage.stage}</p>
+                                    {isTopDrop && (
+                                      <Badge variant="destructive" size="sm" className="h-4 px-1 text-[8px] animate-pulse">GARGALO CRÍTICO</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground font-medium">
+                                    {stage.count} deals <span className="mx-1">•</span> {fmtCurrency(stage.value)}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div className="flex flex-col items-end gap-1">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Badge variant="outline" className={cn(
+                                        "font-bold py-1",
+                                        stage.conversionRate >= 60 ? "text-status-success border-status-success/30 bg-status-success/5" :
+                                        stage.conversionRate >= 30 ? "text-status-warning border-status-warning/30 bg-status-warning/5" :
+                                        "text-destructive border-destructive/30 bg-destructive/5"
+                                      )}>
+                                        <TrendingUp className="h-3 w-3 mr-1" />{stage.conversionRate}%
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Taxa de conversão para esta etapa</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                
+                                {stage.dropOffRate > 0 && (
+                                  <span className="text-[10px] text-destructive flex items-center font-bold">
+                                    <TrendingDown className="h-3 w-3 mr-1" />-{stage.dropOffRate}% drop
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Velocity Bar */}
+                            <div className="mt-4 h-1.5 w-full bg-muted/30 rounded-full overflow-hidden relative">
+                              <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${stage.conversionRate}%` }}
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-1000",
+                                  stage.conversionRate >= 60 ? "bg-status-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" :
+                                  stage.conversionRate >= 30 ? "bg-status-warning" : "bg-destructive"
+                                )}
+                              />
+                            </div>
+                          </motion.div>
+
+                          {nextStage && (
+                            <div className="flex flex-col items-center py-2 relative h-12">
+                              <div className="w-px h-full bg-gradient-to-b from-primary/40 to-transparent relative">
+                                <motion.div 
+                                  animate={{ y: [0, 40], opacity: [0, 1, 0] }}
+                                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                                  className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#9b87f5]"
+                                />
+                              </div>
+                              <div className="absolute top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm border border-border/40 rounded-full px-3 py-0.5 text-[9px] font-bold text-muted-foreground flex items-center gap-1 z-10">
+                                <Zap className="h-3 w-3 text-primary" /> 
+                                PROJEÇÃO IA: {(stage.conversionRate * 1.1).toFixed(1)}%
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+
+                {/* AI Insights Sidebar */}
+                <motion.div variants={itemVariants} className="space-y-6">
+                  <Card className="p-5 glass border-primary/20 relative overflow-hidden">
+                    <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+                    <div className="flex items-center gap-2 mb-4">
+                      <Brain className="h-5 w-5 text-primary" />
+                      <h3 className="font-display font-bold text-sm uppercase tracking-wider">Certeza IA Forecast</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="text-muted-foreground font-medium">Confiança Preditiva</span>
+                          <span className="text-primary font-bold">87%</span>
+                        </div>
+                        <div className="h-2 w-full bg-muted/40 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: '87%' }}
+                            className="h-full bg-gradient-to-r from-primary to-info rounded-full shadow-[0_0_10px_rgba(155,135,245,0.3)]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                        <p className="text-[11px] leading-relaxed text-muted-foreground italic">
+                          "O algoritmo detectou uma desaceleração incomum na etapa de <span className="text-primary font-bold">{data.topDropOffStage}</span>. Recomendamos ação imediata com Battlecards de fechamento."
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-2 rounded-lg border border-border/40 bg-background/40">
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Proj. Fim do Mês</p>
+                          <p className="text-lg font-display font-bold">{fmtCurrency(data.totalValue * 1.4)}</p>
+                        </div>
+                        <div className="p-2 rounded-lg border border-border/40 bg-background/40">
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Gap vs Meta</p>
+                          <p className="text-lg font-display font-bold text-destructive">-{fmtCurrency(50000)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card className="p-5 glass border-border/40">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Target className="h-5 w-5 text-status-warning" />
+                      <h3 className="font-display font-bold text-sm uppercase tracking-wider">Ações Recomendadas</h3>
+                    </div>
+                    
+                    <ul className="space-y-3">
+                      {[
+                        "Otimizar tempo de resposta na etapa 'Qualified'",
+                        "Revisar script de objeções para 'Proposal'",
+                        "Focar em leads com score > 85 para bater meta"
+                      ].map((action, i) => (
+                        <li key={i} className="flex gap-3 text-xs text-muted-foreground group cursor-pointer hover:text-foreground transition-colors">
+                          <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors shrink-0" />
+                          {action}
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                </motion.div>
+              </div>
             </>
           )}
         </div>
