@@ -14420,6 +14420,51 @@ export type Database = {
           },
         ]
       }
+      territories: {
+        Row: {
+          conquered_at: string | null
+          current_owner_id: string | null
+          id: string
+          name: string
+          total_deals: number | null
+          total_revenue: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          conquered_at?: string | null
+          current_owner_id?: string | null
+          id?: string
+          name: string
+          total_deals?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          conquered_at?: string | null
+          current_owner_id?: string | null
+          id?: string
+          name?: string
+          total_deals?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "territories_current_owner_id_fkey"
+            columns: ["current_owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "territories_current_owner_id_fkey"
+            columns: ["current_owner_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       territory_history: {
         Row: {
           conquered_at: string | null
@@ -17167,6 +17212,7 @@ export type Database = {
         Returns: string
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
+      settle_performance_bets: { Args: never; Returns: undefined }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
