@@ -3849,6 +3849,7 @@ export type Database = {
           message_type: string
           reactions: Json | null
           salesperson_id: string
+          squad_id: string | null
           target_salesperson_id: string | null
         }
         Insert: {
@@ -3859,6 +3860,7 @@ export type Database = {
           message_type?: string
           reactions?: Json | null
           salesperson_id: string
+          squad_id?: string | null
           target_salesperson_id?: string | null
         }
         Update: {
@@ -3869,6 +3871,7 @@ export type Database = {
           message_type?: string
           reactions?: Json | null
           salesperson_id?: string
+          squad_id?: string | null
           target_salesperson_id?: string | null
         }
         Relationships: [
