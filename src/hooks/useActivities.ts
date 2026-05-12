@@ -2,6 +2,7 @@
 import { CACHE_TIMES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
