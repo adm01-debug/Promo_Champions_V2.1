@@ -1750,6 +1750,7 @@ export type Database = {
           needs_approval: boolean | null
           singu_variables: Json | null
           step_order: number
+          task_type: string | null
           template_content: string | null
           title: string
         }
@@ -1763,6 +1764,7 @@ export type Database = {
           needs_approval?: boolean | null
           singu_variables?: Json | null
           step_order?: number
+          task_type?: string | null
           template_content?: string | null
           title: string
         }
@@ -1776,6 +1778,7 @@ export type Database = {
           needs_approval?: boolean | null
           singu_variables?: Json | null
           step_order?: number
+          task_type?: string | null
           template_content?: string | null
           title?: string
         }

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
-export type ActionType = 'email' | 'call' | 'linkedin' | 'whatsapp' | 'meeting' | 'other';
+export type ActionType = 'email' | 'call' | 'linkedin' | 'whatsapp' | 'meeting' | 'task' | 'other';
 export type CadenceStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 export type CadenceTaskStatus = 'pending' | 'completed' | 'skipped';
 
@@ -24,6 +24,8 @@ export interface CadenceStep {
   description: string | null;
   template_content: string | null;
   step_order: number;
+  needs_approval: boolean;
+  task_type: 'manual' | 'automatic';
   created_at: string;
 }
 

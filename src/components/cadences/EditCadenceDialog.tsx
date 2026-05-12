@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateCadence, useCreateCadenceStep, useUpdateCadenceStep, useDeleteCadenceStep, useCadenceSteps } from "@/hooks/useCadences";
 import { Cadence, CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -34,6 +34,8 @@ interface NewStepInput {
   action_type: ActionType;
   title: string;
   description: string;
+  needs_approval: boolean;
+  task_type: 'manual' | 'automatic';
 }
 
 export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDialogProps) {
@@ -57,13 +59,21 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
   };
 
   const handleSaveStep = async (step: CadenceStep, editData: Partial<CadenceStep>) => {
-    const { description, template_content, ...rest } = editData;
-    await updateStep.mutateAsync({ id: step.id, cadence_id: cadence.id, ...rest, description: description ?? undefined, template_content: template_content ?? undefined });
+    const { description, template_content, needs_approval, task_type, ...rest } = editData;
+    await updateStep.mutateAsync({ 
+      id: step.id, 
+      cadence_id: cadence.id, 
+      ...rest, 
+      description: description ?? undefined, 
+      template_content: template_content ?? undefined,
+      needs_approval: needs_approval ?? undefined,
+      task_type: task_type ?? undefined
+    });
   };
 
   const addNewStep = () => {
     const lastDay = existingSteps?.length ? Math.max(...existingSteps.map(s => s.day_number)) : 0;
-    setNewSteps([...newSteps, { day_number: lastDay + 2, action_type: "call", title: "", description: "" }]);
+    setNewSteps([...newSteps, { day_number: lastDay + 2, action_type: "call", title: "", description: "", needs_approval: false, task_type: "manual" }]);
   };
 
   const handleSaveNewSteps = async () => {
@@ -71,7 +81,16 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
     for (let i = 0; i < newSteps.length; i++) {
       const s = newSteps[i];
       if (!s.title.trim()) continue;
-      await createStep.mutateAsync({ cadence_id: cadence.id, day_number: s.day_number, action_type: s.action_type, title: s.title, description: s.description || undefined, step_order: baseOrder + i });
+      await createStep.mutateAsync({ 
+        cadence_id: cadence.id, 
+        day_number: s.day_number, 
+        action_type: s.action_type, 
+        title: s.title, 
+        template_content: s.description || undefined, 
+        step_order: baseOrder + i,
+        needs_approval: s.needs_approval,
+        task_type: s.task_type
+      });
     }
     setNewSteps([]);
   };
@@ -125,6 +144,32 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
                         <SelectTrigger className="h-8 text-sm bg-background/50"><SelectValue /></SelectTrigger>
                         <SelectContent className="glass border-border/50">{ACTION_TYPES.map(t => (<SelectItem key={t.value} value={t.value}><div className="flex items-center gap-2"><t.icon className="h-3.5 w-3.5" />{t.label}</div></SelectItem>))}</SelectContent>
                       </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <Label className="text-[10px] font-medium">Aprovação</Label>
+                        <p className="text-[9px] text-muted-foreground">Exigir manual</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.needs_approval}
+                        onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, needs_approval: e.target.checked }; setNewSteps(u); }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+                      <div className="space-y-0.5">
+                        <Label className="text-[10px] font-medium">Automática</Label>
+                        <p className="text-[9px] text-muted-foreground">Execução robô</p>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+                        checked={s.task_type === 'automatic'}
+                        onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, task_type: e.target.checked ? 'automatic' : 'manual' }; setNewSteps(u); }}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1"><Label className="text-xs">Título *</Label><Input value={s.title} onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, title: e.target.value }; setNewSteps(u); }} className="h-8 text-sm bg-background/50" placeholder="Título da ação" /></div>
