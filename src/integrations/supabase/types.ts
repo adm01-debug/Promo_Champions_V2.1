@@ -16868,6 +16868,15 @@ export type Database = {
           totp_enabled: boolean
         }[]
       }
+      get_monthly_sales_benchmark: {
+        Args: { months_back?: number }
+        Returns: {
+          deals: number
+          month: string
+          revenue: number
+          won_deals: number
+        }[]
+      }
       get_purchase_intelligence_summary: {
         Args: { _client_id: string }
         Returns: Json
