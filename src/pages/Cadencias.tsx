@@ -30,6 +30,7 @@ import { RuleAuditLogs } from "@/components/sales/cadence/RuleAuditLogs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
+import { EliteCadenceAnalytics } from "@/components/sales/cadence/EliteCadenceAnalytics";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
