@@ -102,22 +102,25 @@ export const ConversationalIntelligenceHub = () => {
         </div>
       ) : data ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <KPICard icon={Mic} label="Chamadas" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% analisadas pela IA`} trend="+12%" />
-            <KPICard icon={Clock} label="Tempo total" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" />
-            <KPICard icon={TrendingUp} label="Sentimento médio" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala -1 a +1" trend="+0.05" />
-            <KPICard icon={MessageSquare} label="Talk ratio (vendedor)" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} perguntas / call`} trend="Ideal" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <KPICard icon={Mic} label="Mapeamento de Voz" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% coverage`} trend="+12%" accent="text-primary" />
+            <KPICard icon={Clock} label="Tempo de Exposição" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" accent="text-info" />
+            <KPICard icon={TrendingUp} label="Neural Sentiment" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala de Empatia (-1 a +1)" trend="+0.05" accent="text-success" />
+            <KPICard icon={MessageSquare} label="Ratio de Persuasão" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} Q/call`} trend="Ideal" accent="text-warning" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Sparkles className="size-4 text-primary" />
-                  Distribuição de sentimento
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Brain className="size-24" />
+              </div>
+              <CardHeader className="pb-6 border-b border-white/5 bg-white/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <Sparkles className="size-4 text-primary animate-pulse" />
+                  Distribuição de Sentimento
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-5 pt-8">
                 {(["positive", "neutral", "negative"] as const).map((k) => {
                   const v = data.sentiment_distribution[k];
                   const total =
@@ -125,52 +128,67 @@ export const ConversationalIntelligenceHub = () => {
                     data.sentiment_distribution.neutral +
                     data.sentiment_distribution.negative;
                   const pct = total > 0 ? Math.round((v / total) * 100) : 0;
+                  const color = k === "positive" ? "bg-success" : k === "negative" ? "bg-destructive" : "bg-muted-foreground";
+                  
                   return (
-                    <div key={k}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="capitalize">{k === "positive" ? "Positivo" : k === "negative" ? "Negativo" : "Neutro"}</span>
-                        <span className="text-muted-foreground">{v} ({pct}%)</span>
+                    <div key={k} className="space-y-2">
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
+                        <span className="flex items-center gap-1.5">
+                          <div className={cn("h-1.5 w-1.5 rounded-full", color)} />
+                          {k === "positive" ? "Positivo" : k === "negative" ? "Negativo" : "Neutro"}
+                        </span>
+                        <span className="text-muted-foreground">{v} unidades ({pct}%)</span>
                       </div>
-                      <Progress value={pct} className="h-2" />
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 1, ease: "circOut" }}
+                          className={cn("h-full rounded-full", color)} 
+                        />
+                      </div>
                     </div>
                   );
                 })}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <CardHeader className="pb-6 border-b border-white/5 bg-warning/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
                   <AlertTriangle className="size-4 text-warning" />
-                  Top objeções
+                  Barreiras de Fechamento
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-4 pt-6">
                 {data.top_objections.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhuma objeção registrada.</p>
+                  <p className="text-sm text-muted-foreground italic text-center py-10">Nenhuma barreira crítica registrada.</p>
                 ) : (
                   data.top_objections.map((o) => (
-                    <div key={o.label} className="flex justify-between items-center text-sm">
-                      <span className="truncate">{o.label}</span>
-                      <Badge variant="secondary">{o.count}</Badge>
+                    <div key={o.label} className="flex justify-between items-center p-3 rounded-xl border border-white/5 hover:bg-white/5 transition-all group/item">
+                      <span className="text-xs font-bold group-hover/item:text-warning transition-colors">{o.label}</span>
+                      <Badge className="bg-warning/20 text-warning border-none font-black text-[10px]">{o.count} ocorrências</Badge>
                     </div>
                   ))
                 )}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Top tópicos</CardTitle>
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <CardHeader className="pb-6 border-b border-white/5 bg-primary/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <Brain className="size-4 text-primary" />
+                  Clusters de Interesse
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-4 pt-6">
                 {data.top_topics.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhum tópico identificado.</p>
+                  <p className="text-sm text-muted-foreground italic text-center py-10">Processando tópicos neurais...</p>
                 ) : (
                   data.top_topics.map((t) => (
-                    <div key={t.label} className="flex justify-between items-center text-sm">
-                      <span className="truncate">{t.label}</span>
-                      <Badge variant="outline">{t.count}</Badge>
+                    <div key={t.label} className="flex justify-between items-center p-3 rounded-xl border border-white/5 hover:bg-white/5 transition-all group/item">
+                      <span className="text-xs font-bold group-hover/item:text-primary transition-colors">{t.label}</span>
+                      <Badge variant="outline" className="border-primary/20 text-primary font-black text-[10px]">{t.count} citações</Badge>
                     </div>
                   ))
                 )}
