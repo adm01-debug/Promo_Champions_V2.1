@@ -263,6 +263,45 @@ const FunnelAnalysis = () => {
                       ))}
                     </ul>
                   </Card>
+
+                  {/* Velocity Heatmap Insight */}
+                  <Card className="p-5 glass border-border/40 overflow-hidden relative group">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Flame className="h-5 w-5 text-orange-500 animate-pulse" />
+                      <h3 className="font-display font-bold text-sm uppercase tracking-wider">Velocity Heatmap</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-5 gap-1 h-12">
+                      {data.stages.slice(0, 5).map((stage, i) => {
+                        const isHot = stage.velocityScore > 70;
+                        const isCold = stage.velocityScore < 30;
+                        return (
+                          <TooltipProvider key={i}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div 
+                                  className={cn(
+                                    "rounded-sm transition-all duration-500 cursor-help",
+                                    isHot ? "bg-orange-500/60 shadow-[0_0_8px_rgba(249,115,22,0.4)]" : 
+                                    isCold ? "bg-blue-500/40" : "bg-primary/30"
+                                  )}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-[10px] font-bold">{stage.stage}</p>
+                                <p className="text-[8px]">Velocidade: {stage.velocityScore}%</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-3 text-[10px] text-muted-foreground leading-tight">
+                      O calor indica fluidez. Zonas azuis sugerem leads "estacionados" precisando de follow-up.
+                    </p>
+                  </Card>
+                </motion.div>
+              </div>
                 </motion.div>
               </div>
             </>
