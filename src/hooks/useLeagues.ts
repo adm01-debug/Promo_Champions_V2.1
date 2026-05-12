@@ -44,7 +44,7 @@ export function useLeagues() {
       // Try to get league members from new table
       const { data: members } = await supabase
         .from("league_members")
-        .select("*")
+        .select("*, leagues(*)")
         .order("weekly_xp", { ascending: false });
 
       return (salespeople || []).map((sp) => {
