@@ -192,7 +192,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                         <p className="text-xl font-mono font-black text-primary italic tracking-tighter">{formatCurrencyFull(data.revenue)}</p>
                         <div className="flex items-center gap-2 mt-2">
                            <div className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-                              <div className="h-full bg-primary" style={{ width: `${(data.revenue / (closers[0]?.revenue || 1)) * 100}%` }} />
+                              <div className="h-full bg-primary" style={{ width: `${(data.revenue / (closers?.[0]?.revenue || 1)) * 100}%` }} />
                            </div>
                            <p className="text-[10px] font-mono font-bold text-primary">{data.deals} DEALS</p>
                         </div>
