@@ -11657,6 +11657,84 @@ export type Database = {
           },
         ]
       }
+      sale_notifications_audit: {
+        Row: {
+          created_at: string | null
+          id: string
+          notification_type: string | null
+          recipient_id: string | null
+          recipient_rank_at_time: number | null
+          sale_amount: number | null
+          sale_id: string | null
+          seller_id: string | null
+          seller_name: string | null
+          seller_rank_at_time: number | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notification_type?: string | null
+          recipient_id?: string | null
+          recipient_rank_at_time?: number | null
+          sale_amount?: number | null
+          sale_id?: string | null
+          seller_id?: string | null
+          seller_name?: string | null
+          seller_rank_at_time?: number | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notification_type?: string | null
+          recipient_id?: string | null
+          recipient_rank_at_time?: number | null
+          sale_amount?: number | null
+          sale_id?: string | null
+          seller_id?: string | null
+          seller_name?: string | null
+          seller_rank_at_time?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_notifications_audit_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales: {
         Row: {
           account_id: string | null

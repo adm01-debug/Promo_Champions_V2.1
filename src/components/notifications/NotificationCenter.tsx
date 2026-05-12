@@ -5,13 +5,21 @@ import { ptBR } from "date-fns/locale";
 import {
   Bell, BellOff, Check, CheckCheck, Trash2, Archive,
   TrendingUp, Target, Trophy, Shield, Settings, Users,
-  Sparkles, FileCheck, AlertCircle,
+  Sparkles, FileCheck, AlertCircle, History, Filter,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   useNotifications,
@@ -66,6 +74,7 @@ interface NotificationItemProps {
 function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onDelete }: NotificationItemProps) {
   const Icon = CATEGORY_ICONS[n.category] ?? Bell;
   const isUnread = !n.read_at;
+  const isSaleAlert = n.type === 'sale_alert' || n.metadata?.is_competition_alert;
 
   return (
     <div
@@ -92,6 +101,20 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
         {n.message && (
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
         )}
+        
+        {isSaleAlert && n.metadata ? (
+          <div className="mt-2 grid grid-cols-2 gap-2 p-2 rounded bg-black/20 border border-white/5">
+             <div className="text-center">
+                <p className="text-[8px] text-muted-foreground uppercase font-bold">Vendedor Rank</p>
+                <p className="text-xs font-black text-primary">#{String(n.metadata.seller_rank || '0')}</p>
+             </div>
+             <div className="text-center border-l border-white/10">
+                <p className="text-[8px] text-muted-foreground uppercase font-bold">Seu Rank</p>
+                <p className="text-xs font-black text-foreground">#{String(n.metadata.recipient_rank || '0')}</p>
+             </div>
+          </div>
+        ) : null}
+
         <div className="flex items-center gap-2 mt-1.5">
           <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4">
             {CATEGORY_LABELS[n.category]}
@@ -132,7 +155,7 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
 
 export function NotificationCenter() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<"all" | "unread" | NotificationCategory>("all");
+  const [filter, setFilter] = useState<"all" | "unread" | "ranking" | "sales">("all");
   const { data: notifications = [], isLoading } = useNotifications({ limit: 100 });
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
@@ -142,7 +165,9 @@ export function NotificationCenter() {
   const filtered = useMemo(() => {
     if (filter === "all") return notifications;
     if (filter === "unread") return notifications.filter((n) => !n.read_at);
-    return notifications.filter((n) => n.category === filter);
+    if (filter === "ranking") return notifications.filter((n) => n.category === 'gamification');
+    if (filter === "sales") return notifications.filter((n) => n.category === 'sales' || n.type === 'sale_alert');
+    return notifications;
   }, [notifications, filter]);
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
@@ -153,89 +178,86 @@ export function NotificationCenter() {
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="border-0 shadow-none bg-transparent">
+      <CardHeader className="pb-3 px-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Central de Notificações
+          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+            <Bell className="h-4 w-4 text-primary" />
+            Alertas de Performance
             {unreadCount > 0 && (
-              <Badge variant="destructive" className="ml-1">{unreadCount}</Badge>
+              <Badge variant="destructive" className="ml-1 h-5 min-w-5 flex items-center justify-center p-0 text-[10px]">
+                {unreadCount}
+              </Badge>
             )}
           </CardTitle>
-          {unreadCount > 0 && (
-            <Button
-              size="sm" variant="ghost"
-              onClick={() => markAllRead.mutate()}
-              disabled={markAllRead.isPending}
-            >
-              <CheckCheck className="h-4 w-4 mr-1" />
-              Marcar todas como lidas
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+             {unreadCount > 0 && (
+               <Button
+                 size="icon" variant="ghost" className="h-8 w-8"
+                 onClick={() => markAllRead.mutate()}
+                 disabled={markAllRead.isPending}
+                 title="Marcar todas como lidas"
+               >
+                 <CheckCheck className="h-4 w-4" />
+               </Button>
+             )}
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                   <Button size="icon" variant="ghost" className="h-8 w-8">
+                      <Filter className="h-4 w-4" />
+                   </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 glass">
+                   <DropdownMenuLabel className="text-[10px] uppercase font-bold">Filtrar por</DropdownMenuLabel>
+                   <DropdownMenuSeparator />
+                   <DropdownMenuItem onClick={() => setFilter("all")} className={cn(filter === "all" && "bg-primary/10 text-primary")}>
+                      Todas
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setFilter("unread")} className={cn(filter === "unread" && "bg-primary/10 text-primary")}>
+                      Não lidas
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setFilter("sales")} className={cn(filter === "sales" && "bg-primary/10 text-primary")}>
+                      <TrendingUp className="h-3.5 w-3.5 mr-2" /> Vendas
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setFilter("ranking")} className={cn(filter === "ranking" && "bg-primary/10 text-primary")}>
+                      <Trophy className="h-3.5 w-3.5 mr-2" /> Ranking
+                   </DropdownMenuItem>
+                </DropdownMenuContent>
+             </DropdownMenu>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-          <div className="px-4 pb-3">
-            <TabsList className="grid grid-cols-5 h-auto">
-              <TabsTrigger value="all" className="text-xs">Todas</TabsTrigger>
-              <TabsTrigger value="unread" className="text-xs">
-                Não lidas
-                {unreadCount > 0 && <span className="ml-1 text-[10px]">({unreadCount})</span>}
-              </TabsTrigger>
-              <TabsTrigger value="sales" className="text-xs">Vendas</TabsTrigger>
-              <TabsTrigger value="goals" className="text-xs">Metas</TabsTrigger>
-              <TabsTrigger value="security" className="text-xs">Segurança</TabsTrigger>
-            </TabsList>
-          </div>
-          <TabsContent value={filter} className="m-0">
-            <ScrollArea className="h-[400px] px-4 pb-4">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">
-                  Carregando...
-                </div>
-              ) : filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  {filter === "unread" ? (
-                    <>
-                      <CheckCheck className="h-10 w-10 text-success mb-3" />
-                      <p className="text-sm font-medium">Tudo em dia!</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Nenhuma notificação não lida.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <BellOff className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="text-sm font-medium">Nenhuma notificação</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Você verá novidades aqui quando elas chegarem.
-                      </p>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {filtered.map((n) => (
-                    <NotificationItem
-                      key={n.id}
-                      notification={n}
-                      onClick={handleClick}
-                      onMarkRead={(id) => markRead.mutate(id)}
-                      onArchive={(id) => archive.mutate(id)}
-                      onDelete={(id) => remove.mutate(id)}
-                    />
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
+        <ScrollArea className="h-[500px] px-4 pb-4">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center opacity-40">
+              <BellOff className="h-10 w-10 mb-3" />
+              <p className="text-xs font-bold uppercase tracking-widest">Silêncio no HUD</p>
+              <p className="text-[10px] mt-1 uppercase">Novos alertas aparecerão em tempo real</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filtered.map((n) => (
+                <NotificationItem
+                  key={n.id}
+                  notification={n}
+                  onClick={handleClick}
+                  onMarkRead={(id) => markRead.mutate(id)}
+                  onArchive={(id) => archive.mutate(id)}
+                  onDelete={(id) => remove.mutate(id)}
+                />
+              ))}
+            </div>
+          )}
+        </ScrollArea>
         {notifications.some((n) => n.priority === "critical" && !n.read_at) && (
-          <div className="border-t px-4 py-2 bg-destructive/5 flex items-center gap-2 text-xs text-destructive">
+          <div className="border-t border-destructive/20 px-4 py-2 bg-destructive/10 flex items-center gap-2 text-[10px] font-black uppercase text-destructive animate-pulse">
             <AlertCircle className="h-3.5 w-3.5" />
-            Você tem notificações críticas pendentes
+            ALERTA CRÍTICO: RESPOSTA IMEDIATA REQUERIDA
           </div>
         )}
       </CardContent>
