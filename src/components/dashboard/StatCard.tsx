@@ -199,7 +199,7 @@ export const StatCard = React.memo(({
             <div className={cn(
               "p-2 sm:p-2.5 rounded-xl border transition-all duration-300 group-hover:scale-110",
               iconColors[variant],
-              hero && "p-3 sm:p-4 rounded-2xl"
+              hero && "p-3 sm:p-5 rounded-2xl bg-primary/20 border-primary/40 shadow-[0_0_20px_rgba(14,165,233,0.3)]"
             )}>
               <Icon className={cn(
                 "h-4 w-4 sm:h-5 sm:w-5",
