@@ -249,6 +249,10 @@ export default function Cadencias() {
             </div>
           </TabsContent>
 
+          <TabsContent value="elite-analytics" className="animate-in fade-in-50 duration-500">
+            <EliteCadenceAnalytics />
+          </TabsContent>
+
           <TabsContent value="strategy" className="space-y-6 animate-in fade-in-50 duration-500">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
