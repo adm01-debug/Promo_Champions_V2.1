@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { useLeadScoring, type ScoredLead } from "@/hooks/useLeadScoring";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import {
   Target, TrendingUp, Flame, Thermometer, Snowflake, 
   BarChart3, Info, Brain, RefreshCw, AlertTriangle, 
   ShieldAlert, Download, Search, Filter, CheckCircle2,
-  Calendar, FileText, Activity, UserPlus, Zap
+  Calendar, FileText, Activity, UserPlus, Zap, Monitor, Wifi
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -264,8 +264,11 @@ export function LeadScoringDashboard() {
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mr-2">
-            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", connectionStatus === "connected" ? "bg-emerald-500" : "bg-rose-500")} />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mr-2 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+            <div className="flex items-center gap-1.5">
+              <Wifi className={cn("h-3 w-3", connectionStatus === "connected" ? "text-emerald-500" : "text-rose-500")} />
+              <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", connectionStatus === "connected" ? "bg-emerald-500" : "bg-rose-500")} />
+            </div>
             <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
               {connectionStatus === "connected" ? "Neural Link Active" : "Link Error"}
             </span>
