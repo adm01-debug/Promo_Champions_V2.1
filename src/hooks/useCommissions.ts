@@ -33,9 +33,13 @@ export const useMyCommissions = () => {
   return useQuery({
     queryKey: ["commissions", "mine"],
     queryFn: async () => {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) return [];
+      
       const { data, error } = await supabase
         .from("commissions")
         .select("*, sales(client_name, product_name, amount), salespeople(name)")
+        .eq('salesperson_id', user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as Commission[];
