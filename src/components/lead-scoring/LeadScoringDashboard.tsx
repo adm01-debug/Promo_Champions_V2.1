@@ -14,6 +14,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
+import { LeadNeuralDossier } from "./LeadNeuralDossier";
 import { LeadScoreDistribution } from "./LeadScoreDistribution";
 import { useExplainBatch } from "@/hooks/scoring/useExplainBatch";
 import { supabase } from "@/integrations/supabase/client";
@@ -207,8 +208,17 @@ export function LeadScoringDashboard() {
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
+  const selectedLead = useMemo(() => {
+    return allLeads.find(l => l.id === selectedLeadId) || null;
+  }, [allLeads, selectedLeadId]);
+
   return (
     <div className="space-y-8 p-1 sm:p-0 relative">
+      <LeadNeuralDossier 
+        lead={selectedLead} 
+        isOpen={!!selectedLeadId} 
+        onClose={() => setSelectedLeadId(null)} 
+      />
       {/* Real-time Global Sync Loading State */}
       {(isLoadingLeads || explainBatch.isPending) && (
         <div className="fixed top-0 left-0 w-full h-1 z-[100] overflow-hidden bg-primary/5">
