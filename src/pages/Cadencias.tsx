@@ -101,6 +101,10 @@ export default function Cadencias() {
                 <LayoutDashboard className="h-4 w-4 mr-2" />
                 Monitoramento
               </TabsTrigger>
+              <TabsTrigger value="elite-analytics" className="data-[state=active]:bg-background">
+                <Sparkles className="h-4 w-4 mr-2 text-primary" />
+                Elite Analytics
+              </TabsTrigger>
               <TabsTrigger value="strategy" className="data-[state=active]:bg-background">
                 <Settings2 className="h-4 w-4 mr-2" />
                 Estratégia e Regras
