@@ -133,6 +133,10 @@ interface CreateQuoteInput {
   valid_until?: string;
   notes?: string;
   created_by?: string;
+  subtotal?: number;
+  discount_amount?: number;
+  discount_percent?: number;
+  items?: any;
 }
 
 export function useCreateQuote() {
