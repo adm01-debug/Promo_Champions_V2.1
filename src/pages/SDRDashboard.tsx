@@ -339,6 +339,17 @@ export default function SDRDashboard() {
               </motion.div>
             </motion.div>
 
+            {/* Main Grid - Funnel & Insights */}
+            <motion.div 
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <ProspectingFunnel />
+              <LeadTemperatureChart />
+            </motion.div>
+
             {/* Secondary Metrics - Compact Cards with Circular Icons */}
             <motion.div 
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"
