@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, type Quote } from "@/hooks/useQuotes";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, useDealsForQuotes, type Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/contexts/AuthContext";
 import { FileText, Plus, Send, CheckCircle2, AlertTriangle } from "lucide-react";
 import { QuoteDetailDialog } from "@/components/quotes/QuoteDetailDialog";
@@ -27,16 +28,46 @@ export default function Orcamentos() {
   const createQuote = useCreateQuote();
   const updateStatus = useUpdateQuoteStatus();
   const deleteQuote = useDeleteQuote();
-
-  const [form, setForm] = useState({ client_name: "", title: "", description: "", total_value: "", external_reference: "", valid_until: "", notes: "" });
+  const { data: deals } = useDealsForQuotes();
+  
+  const [form, setForm] = useState({ 
+    client_name: "", 
+    title: "", 
+    description: "", 
+    total_value: "", 
+    external_reference: "", 
+    valid_until: "", 
+    notes: "",
+    sale_id: ""
+  });
 
   const handleCreate = () => {
     if (!form.client_name || !form.title || !form.total_value) return;
     createQuote.mutate({
-      client_name: form.client_name, title: form.title, description: form.description || undefined,
-      total_value: Number(form.total_value), external_reference: form.external_reference || undefined,
-      valid_until: form.valid_until || undefined, notes: form.notes || undefined, created_by: salesperson?.id,
-    }, { onSuccess: () => { setIsCreateOpen(false); setForm({ client_name: "", title: "", description: "", total_value: "", external_reference: "", valid_until: "", notes: "" }); } });
+      client_name: form.client_name,
+      title: form.title,
+      description: form.description || undefined,
+      total_value: Number(form.total_value),
+      external_reference: form.external_reference || undefined,
+      valid_until: form.valid_until || undefined,
+      notes: form.notes || undefined,
+      sale_id: form.sale_id || undefined,
+      created_by: salesperson?.id,
+    }, { 
+      onSuccess: () => { 
+        setIsCreateOpen(false); 
+        setForm({ 
+          client_name: "", 
+          title: "", 
+          description: "", 
+          total_value: "", 
+          external_reference: "", 
+          valid_until: "", 
+          notes: "",
+          sale_id: ""
+        }); 
+      } 
+    });
   };
 
   const summaryCards = [
@@ -72,6 +103,34 @@ export default function Orcamentos() {
                   <div className="space-y-2"><Label>Valor Total *</Label><Input type="number" value={form.total_value} onChange={e => setForm(f => ({ ...f, total_value: e.target.value }))} placeholder="0.00" /></div>
                 </div>
                 <div className="space-y-2"><Label>Título *</Label><Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Título do orçamento" /></div>
+                
+                <div className="space-y-2">
+                  <Label>Vincular a Negociação (Pipeline)</Label>
+                  <Select 
+                    value={form.sale_id} 
+                    onValueChange={(val) => {
+                      const deal = deals?.find(d => d.id === val);
+                      setForm(f => ({ 
+                        ...f, 
+                        sale_id: val,
+                        client_name: f.client_name || deal?.client_name || "",
+                        title: f.title || `Orçamento - ${deal?.product_name || deal?.client_name}` || ""
+                      }));
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um deal..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {deals?.map(deal => (
+                        <SelectItem key={deal.id} value={deal.id}>
+                          {deal.client_name} - {deal.product_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-2"><Label>Descrição</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Detalhes..." rows={2} /></div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2"><Label>Ref. Externa</Label><Input value={form.external_reference} onChange={e => setForm(f => ({ ...f, external_reference: e.target.value }))} placeholder="ID do sistema externo" /></div>

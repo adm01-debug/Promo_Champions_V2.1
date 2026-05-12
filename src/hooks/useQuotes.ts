@@ -25,6 +25,7 @@ export interface Quote {
   quote_number: string | null;
   subtotal: number | null;
   discount_amount: number | null;
+  discount_percent: number | null;
   items: string | null; // JSONB stored as string
   external_quote_id: string | null;
   sync_status: string | null;
@@ -184,5 +185,21 @@ export function useDeleteQuote() {
       toast.success('Orçamento excluído');
     },
     onError: () => toast.error('Erro ao excluir orçamento'),
+  });
+}
+
+export function useDealsForQuotes() {
+  return useQuery({
+    queryKey: ['deals-for-quotes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sales')
+        .select('id, client_name, product_name, status')
+        .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
   });
 }
