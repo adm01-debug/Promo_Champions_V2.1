@@ -187,3 +187,19 @@ export function useDeleteQuote() {
     onError: () => toast.error('Erro ao excluir orçamento'),
   });
 }
+
+export function useDealsForQuotes() {
+  return useQuery({
+    queryKey: ['deals-for-quotes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sales')
+        .select('id, client_name, product_name, status')
+        .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
