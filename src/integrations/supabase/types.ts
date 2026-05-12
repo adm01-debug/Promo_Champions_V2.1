@@ -16534,6 +16534,7 @@ export type Database = {
           total_revenue: number
         }[]
       }
+      check_quote_expirations: { Args: never; Returns: undefined }
       check_rate_limit: {
         Args: { p_action: string; p_identifier: string }
         Returns: {
