@@ -11659,8 +11659,11 @@ export type Database = {
       }
       sale_notifications_audit: {
         Row: {
+          channel: string | null
           created_at: string | null
+          error_log: string | null
           id: string
+          message_sent: string | null
           notification_type: string | null
           recipient_id: string | null
           recipient_rank_at_time: number | null
@@ -11672,8 +11675,11 @@ export type Database = {
           status: string | null
         }
         Insert: {
+          channel?: string | null
           created_at?: string | null
+          error_log?: string | null
           id?: string
+          message_sent?: string | null
           notification_type?: string | null
           recipient_id?: string | null
           recipient_rank_at_time?: number | null
@@ -11685,8 +11691,11 @@ export type Database = {
           status?: string | null
         }
         Update: {
+          channel?: string | null
           created_at?: string | null
+          error_log?: string | null
           id?: string
+          message_sent?: string | null
           notification_type?: string | null
           recipient_id?: string | null
           recipient_rank_at_time?: number | null
@@ -12162,6 +12171,8 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          notify_sales_email: boolean | null
+          notify_sales_in_app: boolean | null
           role: Database["public"]["Enums"]["salesperson_role"]
           score_total: number
           squad_id: string | null
@@ -12176,6 +12187,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          notify_sales_email?: boolean | null
+          notify_sales_in_app?: boolean | null
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
           squad_id?: string | null
@@ -12190,6 +12203,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          notify_sales_email?: boolean | null
+          notify_sales_in_app?: boolean | null
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
           squad_id?: string | null
