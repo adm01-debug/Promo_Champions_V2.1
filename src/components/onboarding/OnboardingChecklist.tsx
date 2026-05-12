@@ -24,21 +24,24 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card to-accent/5 p-4 backdrop-blur-sm shadow-sm">
+      <div className="rounded-xl border border-primary/30 bg-black/40 backdrop-blur-md p-5 shadow-[0_0_30px_rgba(14,165,233,0.05)] group relative overflow-hidden">
+        {/* Animated accent line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+        
         {/* Compact Header — always visible */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/15 shrink-0">
-            <Rocket className="h-4 w-4 text-primary" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative z-10">
+          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+            <Rocket className="h-5 w-5 text-primary" />
           </div>
 
           {/* Step indicators */}
-          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
             {steps.map((step, i) => (
               <div key={step.id} className="flex items-center gap-1.5">
                 <button
                   onClick={() => !step.completed && navigate(step.route)}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-all whitespace-nowrap",
+                    "flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
                     step.completed
                       ? "bg-success/15 text-success"
                       : step === nextStep
@@ -65,7 +68,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Progress & actions */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-medium text-muted-foreground tabular-nums">
+            <span className="text-[10px] font-mono font-bold text-muted-foreground tabular-nums uppercase tracking-widest">
               {completedCount}/{totalSteps}
             </span>
             <div className="w-16 hidden sm:block">

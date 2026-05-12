@@ -136,12 +136,12 @@ export const StatCard = React.memo(({
             </p>
             <p className={cn(
               "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter",
-              hero && "text-5xl sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_80px_rgba(139,92,246,0.6)] animate-pulse-gentle transition-all duration-500",
+              hero && "text-5xl sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3)` : 
+              textShadow: hero ? `0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 0 80px rgba(14,165,233,0.3)` : 
                           variant !== 'default' ? '0 0 12px currentColor' : 'none' 
             }}>
               {displayValue}
@@ -155,7 +155,7 @@ export const StatCard = React.memo(({
                             <motion.div 
                               initial={{ width: 0 }}
                               animate={{ width: "94%" }}
-                              className="h-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                              className="h-full bg-primary shadow-[0_0_10px_rgba(14,165,233,0.5)]"
                               transition={{ duration: 2, ease: "easeOut" }}
                             />
                           </div>
@@ -199,7 +199,7 @@ export const StatCard = React.memo(({
             <div className={cn(
               "p-2 sm:p-2.5 rounded-xl border transition-all duration-300 group-hover:scale-110",
               iconColors[variant],
-              hero && "p-3 sm:p-4 rounded-2xl"
+              hero && "p-3 sm:p-5 rounded-2xl bg-primary/20 border-primary/40 shadow-[0_0_20px_rgba(14,165,233,0.3)]"
             )}>
               <Icon className={cn(
                 "h-4 w-4 sm:h-5 sm:w-5",
