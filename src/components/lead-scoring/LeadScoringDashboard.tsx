@@ -120,7 +120,7 @@ export function LeadScoringDashboard() {
       const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
       const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-      const exportToCSV = () => {
+      const exportToCSV = useCallback(() => {
         setIsExporting(true);
         try {
           // Ranking Data
@@ -174,7 +174,7 @@ export function LeadScoringDashboard() {
         }
       };
 
-      const exportToPDF = () => {
+      const exportToPDF = useCallback(() => {
         setIsExporting(true);
         toast.info("Otimizando layout para exportação PDF...");
         setTimeout(() => {
@@ -212,8 +212,17 @@ export function LeadScoringDashboard() {
     return allLeads.find(l => l.id === selectedLeadId) || null;
   }, [allLeads, selectedLeadId]);
 
+  const selectedLead = useMemo(() => {
+    return allLeads.find(l => l.id === selectedLeadId) || null;
+  }, [allLeads, selectedLeadId]);
+
   return (
     <div className="space-y-8 p-1 sm:p-0 relative">
+      <LeadNeuralDossier 
+        lead={selectedLead} 
+        isOpen={!!selectedLeadId} 
+        onClose={() => setSelectedLeadId(null)} 
+      />
       <LeadNeuralDossier 
         lead={selectedLead} 
         isOpen={!!selectedLeadId} 
