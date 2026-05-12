@@ -83,6 +83,15 @@ export const sdrGroupedItems: MenuGroup[] = [
     ],
   },
   {
+    label: "Comunidade & Elite", icon: PartyPopper,
+    items: [
+      { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
+      { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
+      { title: "Ranking Global", url: "/ranking", icon: Trophy },
+      { title: "Arena de Duelos", url: "/arena", icon: Swords },
+    ],
+  },
+  {
     label: "Análises", icon: Gauge,
     items: [
       { title: "Competências", url: "/competencias", icon: Brain },
@@ -95,14 +104,6 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
       { title: "Agentes IA", url: "/agentes", icon: Bot },
-    ],
-  {
-    label: "Comunidade & Elite", icon: PartyPopper,
-    items: [
-      { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
-      { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
-      { title: "Ranking Global", url: "/ranking", icon: Trophy },
-      { title: "Arena de Duelos", url: "/arena", icon: Swords },
     ],
   },
 ];
@@ -128,8 +129,6 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Arena de Duelos", url: "/arena", icon: Swords },
     ],
   },
-... (rest of the code unchanged)
-
   {
     label: "CRM", icon: Briefcase,
     items: [
