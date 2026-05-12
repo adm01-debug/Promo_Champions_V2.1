@@ -9,7 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { DollarSign, CheckCircle, XCircle, Clock, Filter, Search, FileText, Wallet } from "lucide-react";
+import { DollarSign, CheckCircle, XCircle, Clock, Filter, Search, FileText, Wallet, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAllCommissions, useUpdateCommissionStatus, type CommissionStatus } from "@/hooks/useCommissions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
