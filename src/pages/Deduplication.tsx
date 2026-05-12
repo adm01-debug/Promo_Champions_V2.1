@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CACHE_TIMES } from "@/constants";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Search, Merge, AlertTriangle, Check, X } from "lucide-react";
+import { Search, Merge, AlertTriangle, Check, X, Filter } from "lucide-react";
 import { toast } from "sonner";
+import { MergeConflictsResolver } from "@/components/admin/MergeConflictsResolver";
 
 interface DuplicateGroup {
   key: string;
