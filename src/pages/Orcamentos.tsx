@@ -43,10 +43,30 @@ export default function Orcamentos() {
   const handleCreate = () => {
     if (!form.client_name || !form.title || !form.total_value) return;
     createQuote.mutate({
-      client_name: form.client_name, title: form.title, description: form.description || undefined,
-      total_value: Number(form.total_value), external_reference: form.external_reference || undefined,
-      valid_until: form.valid_until || undefined, notes: form.notes || undefined, created_by: salesperson?.id,
-    }, { onSuccess: () => { setIsCreateOpen(false); setForm({ client_name: "", title: "", description: "", total_value: "", external_reference: "", valid_until: "", notes: "" }); } });
+      client_name: form.client_name,
+      title: form.title,
+      description: form.description || undefined,
+      total_value: Number(form.total_value),
+      external_reference: form.external_reference || undefined,
+      valid_until: form.valid_until || undefined,
+      notes: form.notes || undefined,
+      sale_id: form.sale_id || undefined,
+      created_by: salesperson?.id,
+    }, { 
+      onSuccess: () => { 
+        setIsCreateOpen(false); 
+        setForm({ 
+          client_name: "", 
+          title: "", 
+          description: "", 
+          total_value: "", 
+          external_reference: "", 
+          valid_until: "", 
+          notes: "",
+          sale_id: ""
+        }); 
+      } 
+    });
   };
 
   const summaryCards = [
