@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Available ElevenLabs voices
 export const VOICE_OPTIONS = [
