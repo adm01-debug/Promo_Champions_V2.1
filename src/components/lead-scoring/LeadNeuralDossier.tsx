@@ -27,7 +27,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
                 <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
                   <Target className="h-6 w-6 text-primary" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
               </div>
               <div>
                 <DialogTitle className="font-display font-black text-2xl uppercase tracking-tighter italic flex items-center gap-3">
