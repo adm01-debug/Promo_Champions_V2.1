@@ -165,6 +165,7 @@ export function ABCAnalysis() {
   );
 }
 
+function SummaryCard({ cls, icon, label, value, delay }: { cls: 'A' | 'B' | 'C'; icon: React.ReactNode; label: string; value: number; delay: number }) {
   return (
     <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated hover-lift cursor-pointer animate-fade-in group" style={{ animationDelay: `${delay}ms` }}>
       <CardContent className="p-4">
