@@ -3,6 +3,7 @@ import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
 import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { SLADashboard } from "@/components/pipeline/SLADashboard";
 import { InactivityPanel } from "@/components/pipeline/InactivityPanel";
+import { PipelineHealthScore } from "@/components/pipeline/PipelineHealthScore";
 import { Kanban, ChevronRight, Clock, AlertTriangle } from "lucide-react";
 import { usePipelineDeals } from "@/hooks/usePipeline";
 import { PipelineLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
