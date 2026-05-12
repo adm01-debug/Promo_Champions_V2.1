@@ -41,6 +41,11 @@ export default function Cadencias() {
   const { data: allProspects } = useProspectCadences();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
+  // Auto-process trigger
+  useState(() => {
+    supabase.functions.invoke('process-cadence-tasks').catch(console.error);
+  });
+
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
   const filteredCadences = useMemo(() => {
