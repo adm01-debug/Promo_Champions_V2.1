@@ -7567,27 +7567,100 @@ export type Database = {
         }
         Relationships: []
       }
+      league_history: {
+        Row: {
+          created_at: string | null
+          demoted: boolean | null
+          id: string
+          league_id: string | null
+          promoted: boolean | null
+          rank_achieved: number | null
+          salesperson_id: string
+          season_date: string | null
+          xp_earned: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          demoted?: boolean | null
+          id?: string
+          league_id?: string | null
+          promoted?: boolean | null
+          rank_achieved?: number | null
+          salesperson_id: string
+          season_date?: string | null
+          xp_earned?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          demoted?: boolean | null
+          id?: string
+          league_id?: string | null
+          promoted?: boolean | null
+          rank_achieved?: number | null
+          salesperson_id?: string
+          season_date?: string | null
+          xp_earned?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_history_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       league_members: {
         Row: {
+          current_streak: number | null
+          demoted_at: string | null
           id: string
           joined_at: string
+          last_reset_xp: number | null
           league_id: string
+          max_streak: number | null
+          promoted_at: string | null
           salesperson_id: string
           updated_at: string
           weekly_xp: number
         }
         Insert: {
+          current_streak?: number | null
+          demoted_at?: string | null
           id?: string
           joined_at?: string
+          last_reset_xp?: number | null
           league_id: string
+          max_streak?: number | null
+          promoted_at?: string | null
           salesperson_id: string
           updated_at?: string
           weekly_xp?: number
         }
         Update: {
+          current_streak?: number | null
+          demoted_at?: string | null
           id?: string
           joined_at?: string
+          last_reset_xp?: number | null
           league_id?: string
+          max_streak?: number | null
+          promoted_at?: string | null
           salesperson_id?: string
           updated_at?: string
           weekly_xp?: number
@@ -16976,6 +17049,7 @@ export type Database = {
         }
         Returns: Json
       }
+      process_weekly_league_reset: { Args: never; Returns: undefined }
       recompute_engagement_score: {
         Args: { _contact_id: string; _contact_type: string }
         Returns: number
