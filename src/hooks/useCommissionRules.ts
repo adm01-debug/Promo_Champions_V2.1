@@ -34,7 +34,7 @@ export const useCommissionRules = () => {
 export const useUpsertCommissionRule = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (rule: Partial<CommissionRule>) => {
+    mutationFn: async (rule: any) => {
       const { data, error } = await supabase
         .from("commission_rules")
         .upsert(rule)
