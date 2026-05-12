@@ -199,9 +199,9 @@ export const gestaoGroupedItems: MenuGroup[] = [
   {
     label: "Social", icon: PartyPopper,
     items: [
-      { title: "Feed de Vitórias", url: "/feed-vitorias", icon: Trophy },
+      { title: "Feed de Vitórias", url: "/victory-feed", icon: Trophy },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
-      { title: "Temporadas", url: "/temporadas", icon: Flame },
+      { title: "Temporadas", url: "/competitive-seasons", icon: Flame },
     ],
   },
   {
@@ -214,7 +214,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Workflow Builder", url: "/workflow-builder", icon: Workflow },
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
-      { title: "Feed Equipe", url: "/feed-equipe", icon: Rss },
+      { title: "Feed Equipe", url: "/team-activity", icon: Rss },
       { title: "Inatividade", url: "/gatilhos-inatividade", icon: Timer },
     ],
   },
