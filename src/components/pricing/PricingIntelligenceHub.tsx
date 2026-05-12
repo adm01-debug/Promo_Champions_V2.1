@@ -599,8 +599,8 @@ function KpiCard({
               <Icon className="h-4 w-4" />
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className={cn("text-3xl font-black font-display tracking-tight", accent)}>
+          <div className="flex flex-col relative">
+            <div className={cn("text-4xl font-black font-display tracking-tight drop-shadow-sm", accent)}>
               <CountUp 
                 value={numericValue} 
                 prefix={isCurrency ? "R$ " : ""} 
@@ -608,12 +608,20 @@ function KpiCard({
                 decimals={isPercent ? 1 : 0}
               />
             </div>
-            {isPercent && numericValue > 15 && (
-              <div className="flex items-center gap-1 mt-1 text-[10px] text-warning font-bold">
+            {isPercent && numericValue > 15 ? (
+              <div className="flex items-center gap-1.5 mt-2 text-[10px] text-destructive font-black tracking-widest animate-pulse">
                 <AlertTriangle className="h-3 w-3" />
-                ACIMA DO BENCHMARK
+                EROSÃO CRÍTICA
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 mt-2 text-[10px] text-success font-black tracking-widest opacity-80">
+                <ShieldCheck className="h-3 w-3" />
+                PROTEÇÃO ATIVA
               </div>
             )}
+            
+            {/* Neural Sync Spark */}
+            <div className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
           </div>
         </CardContent>
       </Card>
