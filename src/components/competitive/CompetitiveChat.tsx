@@ -27,7 +27,13 @@ const TRASH_TALK = [
 ];
 
 const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) => {
-  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat();
+  const { data: salespeople } = useSalespeople();
+  const me = salespeople?.find(s => s.id === salespersonId);
+  const mySquadId = me?.squad_id;
+
+  const [chatMode, setChatMode] = useState<'global' | 'squad'>('global');
+  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat(chatMode === 'squad' ? mySquadId : null);
+  
   const [newMessage, setNewMessage] = useState('');
   const [showQuickMessages, setShowQuickMessages] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -36,7 +42,7 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, chatMode]);
 
   const handleSend = () => {
     if (!newMessage.trim() || !salespersonId) return;
