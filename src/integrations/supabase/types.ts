@@ -12049,6 +12049,7 @@ export type Database = {
           name: string
           role: Database["public"]["Enums"]["salesperson_role"]
           score_total: number
+          squad_id: string | null
           updated_at: string
         }
         Insert: {
@@ -12062,6 +12063,7 @@ export type Database = {
           name: string
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
+          squad_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -12075,9 +12077,18 @@ export type Database = {
           name?: string
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
+          squad_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "salespeople_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salesperson_badges: {
         Row: {
