@@ -327,13 +327,27 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
               </motion.div>
             )}
 
-            {/* Outcome */}
+            {/* Outcome - Enhanced with Quick Select */}
             <FormField
               control={form.control}
               name="outcome"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel className="text-xs font-medium text-muted-foreground">Resultado</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-xs font-medium text-muted-foreground">Resultado / Desfecho</FormLabel>
+                    <div className="flex gap-1">
+                      {["connected", "no_answer", "scheduled"].map(v => (
+                        <button
+                          key={v}
+                          type="button"
+                          onClick={() => field.onChange(v)}
+                          className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded border border-primary/20 bg-primary/5 hover:bg-primary/20 text-primary transition-all"
+                        >
+                          +{v.split('_')[0]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-3 gap-1.5">
                     {outcomes.map(o => (
                       <button
