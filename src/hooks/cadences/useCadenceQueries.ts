@@ -24,6 +24,8 @@ export interface CadenceStep {
   description: string | null;
   template_content: string | null;
   step_order: number;
+  needs_approval: boolean;
+  task_type: 'manual' | 'automatic';
   created_at: string;
 }
 
