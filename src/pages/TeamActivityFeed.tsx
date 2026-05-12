@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Phone, Mail, Calendar, FileText, CheckCircle, Trophy, TrendingUp, Activity } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const activityIcons: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   call: { icon: Phone, color: "text-status-info", bg: "bg-status-info/10" },
@@ -30,6 +32,7 @@ const outcomeLabels: Record<string, string> = {
 };
 
 const TeamActivityFeed = () => {
+  const queryClient = useQueryClient();
   const { data: activities, isLoading } = useQuery({
     queryKey: ["team-activity-feed"],
     queryFn: async () => {
@@ -43,6 +46,20 @@ const TeamActivityFeed = () => {
     },
     staleTime: 30_000,
   });
+
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('team-activities')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'activities' }, () => {
+        queryClient.invalidateQueries({ queryKey: ["team-activity-feed"] });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   return (
     <>
