@@ -90,45 +90,61 @@ export function PricingIntelligenceHub() {
   const k = data.kpis;
 
   return (
-    <div className="space-y-8 relative pb-20">
-      {/* Background Decor Imersivo */}
-      <div className="absolute top-[-10%] right-[-5%] -z-10 w-[600px] h-[600px] bg-primary/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[20%] left-[-5%] -z-10 w-[500px] h-[500px] bg-info/10 blur-[120px] rounded-full pointer-events-none animate-pulse" />
-      <div className="absolute top-[40%] left-[30%] -z-10 w-[300px] h-[300px] bg-success/5 blur-[100px] rounded-full pointer-events-none" />
+    <div className="space-y-10 relative pb-20">
+      {/* Background Decor Imersivo de Alta Performance */}
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-info/5 blur-[140px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-success/5 blur-[120px] rounded-full" />
+      </div>
 
-      {/* Header Premium */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-white/5 pb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black tracking-widest uppercase py-0.5">
-              Revenue Protection
-            </Badge>
-            <div className="flex items-center gap-1 text-[10px] text-success font-bold">
-              <ShieldCheck className="h-3 w-3" />
-              PRICE SHIELD ATIVO
+      {/* Header Premium com Efeito Glass e Floating Action */}
+      <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 border-b border-white/5 pb-10 relative z-20">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 backdrop-blur-xl shadow-inner group transition-all hover:scale-110">
+              <Sparkles className="h-5 w-5 text-primary group-hover:animate-spin" />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black tracking-[0.2em] uppercase py-0.5 px-2">
+                  Revenue Protection
+                </Badge>
+                <div className="flex items-center gap-1.5 text-[10px] text-success font-black tracking-wider">
+                  <ShieldCheck className="h-3.5 w-3.5 fill-current" />
+                  LINK NEURAL ATIVO
+                </div>
+              </div>
             </div>
           </div>
-          <h1 className="text-4xl font-black font-sora tracking-tighter bg-gradient-to-r from-foreground via-foreground to-foreground/50 bg-clip-text text-transparent">
-            Pricing Intelligence Hub
+          <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+            Pricing Hub <span className="text-primary/80">10/10</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-2 max-w-2xl font-medium leading-relaxed">
-            Cockpit avançado para proteção de margem e otimização de elasticidade. 
-            Utilize IA para identificar vazamentos de receita e ajustar sua estratégia de descontos em tempo real.
+          <p className="text-base text-muted-foreground/80 max-w-3xl font-medium leading-relaxed">
+            O cockpit definitivo para proteção de margem de elite. Nossa IA analisa curvas de elasticidade e vazamentos de receita em milissegundos para garantir sua dominância de mercado.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)} className="bg-white/5 p-1 rounded-lg border border-white/10">
-            <TabsList className="bg-transparent border-none">
-              <TabsTrigger value="7" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">7D</TabsTrigger>
-              <TabsTrigger value="30" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">30D</TabsTrigger>
-              <TabsTrigger value="90" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">90D</TabsTrigger>
+
+        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
+          <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)} className="bg-transparent border-none">
+            <TabsList className="bg-white/5 border-none p-1">
+              {([7, 30, 90] as const).map((d) => (
+                <TabsTrigger 
+                  key={d}
+                  value={String(d)} 
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg text-xs font-black px-5 py-2 rounded-lg transition-all"
+                >
+                  {d}D
+                </TabsTrigger>
+              ))}
             </TabsList>
           </Tabs>
-          <Button variant="outline" size="icon" className="rounded-lg border-white/10 bg-white/5 hover:bg-white/10">
-            <Zap className="h-4 w-4 text-primary" />
+          <div className="w-px h-8 bg-white/10 mx-1" />
+          <Button variant="outline" size="icon" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/15 hover:scale-105 transition-all group">
+            <Zap className="h-5 w-5 text-primary group-hover:animate-pulse" />
           </Button>
         </div>
-      </div>
+      </header>
 
       {/* Health banner Premium */}
       <motion.div
