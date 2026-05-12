@@ -339,7 +339,7 @@ export const ConversationalIntelligenceHub = () => {
                           </div>
                         )}
                       </div>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               )}
