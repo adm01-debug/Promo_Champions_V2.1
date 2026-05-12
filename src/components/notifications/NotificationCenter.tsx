@@ -106,11 +106,11 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
           <div className="mt-2 grid grid-cols-2 gap-2 p-2 rounded bg-black/20 border border-white/5">
              <div className="text-center">
                 <p className="text-[8px] text-muted-foreground uppercase font-bold">Vendedor Rank</p>
-                <p className="text-xs font-black text-primary">#{String(n.metadata.seller_rank)}</p>
+                <p className="text-xs font-black text-primary">#{String(n.metadata.seller_rank || '0')}</p>
              </div>
              <div className="text-center border-l border-white/10">
                 <p className="text-[8px] text-muted-foreground uppercase font-bold">Seu Rank</p>
-                <p className="text-xs font-black text-foreground">#{String(n.metadata.recipient_rank)}</p>
+                <p className="text-xs font-black text-foreground">#{String(n.metadata.recipient_rank || '0')}</p>
              </div>
           </div>
         )}
