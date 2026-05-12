@@ -48,6 +48,17 @@ describe('Competitive Message Formatting', () => {
     const msg = formatSaleNotification('Pedro', 2500, 1, 1);
     expect(msg).toContain('empatados');
   });
+
+  it('should handle zero amount', () => {
+    const msg = formatSaleNotification('Teste', 0, 10, 5);
+    expect(msg).toMatch(/R\$.*0,00/);
+  });
+
+  it('should handle large ranking numbers', () => {
+    const msg = formatSaleNotification('Vendedor', 1000, 150, 149);
+    expect(msg).toContain('150ª posição');
+    expect(msg).toContain('1 posição(ões) à frente dele');
+  });
 });
 
 describe('Notification Filtering Logic', () => {
