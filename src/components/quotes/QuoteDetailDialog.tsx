@@ -30,7 +30,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
   const discountAmount = quote.discount_amount || 0;
   const discountPercent = productSubtotal > 0 ? ((discountAmount / (productSubtotal + personalizationTotal)) * 100).toFixed(0) : "0";
 
-  const expirationDays = quote.valid_until && quote.status === "sent"
+  const expirationDays = quote.valid_until && (quote.status === "sent" || quote.status === "draft")
     ? differenceInDays(new Date(quote.valid_until), new Date())
     : null;
 

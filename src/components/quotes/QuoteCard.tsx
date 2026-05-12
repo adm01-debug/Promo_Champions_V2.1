@@ -22,11 +22,11 @@ const getStatusConfig = (status: string) =>
   QUOTE_STATUSES.find(s => s.value === status) || QUOTE_STATUSES[0];
 
 const getExpirationInfo = (validUntil: string | null, status: string) => {
-  if (!validUntil || status !== "sent") return null;
+  if (!validUntil || (status !== "sent" && status !== "draft")) return null;
   const days = differenceInDays(new Date(validUntil), new Date());
   if (days < 0) return { label: "Expirado", color: "text-destructive", urgent: true };
-  if (days <= 3) return { label: `${days}d restantes`, color: "text-status-warning", urgent: true };
-  return { label: `${days}d restantes`, color: "text-muted-foreground", urgent: false };
+  if (days <= 3) return { label: `Expira em ${days}d`, color: "text-status-warning", urgent: true };
+  return { label: `Válido por ${days}d`, color: "text-muted-foreground", urgent: false };
 };
 
 export const QuoteCard = React.memo(function QuoteCard({ quote, onView, onUpdateStatus, onDelete }: QuoteCardProps) {

@@ -112,9 +112,9 @@ export function useQuoteSummary() {
       const approved = quotes.filter(q => q.status === 'approved').length;
       const rejected = quotes.filter(q => q.status === 'rejected').length;
       const expiringSoon = quotes.filter(q => {
-        if (!q.valid_until || q.status !== 'sent') return false;
+        if (!q.valid_until || (q.status !== 'sent' && q.status !== 'draft')) return false;
         const diff = new Date(q.valid_until).getTime() - now.getTime();
-        return diff > 0 && diff < 3 * 24 * 60 * 60 * 1000; // 3 days
+        return diff <= 3 * 24 * 60 * 60 * 1000; // ≤ 3 days (including expired)
       }).length;
       const totalValue = quotes.filter(q => q.status === 'approved').reduce((s, q) => s + Number(q.total_value), 0);
 
