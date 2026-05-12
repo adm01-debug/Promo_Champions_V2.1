@@ -356,49 +356,63 @@ export function PricingIntelligenceHub() {
         </Card>
       </div>
 
-      {/* Listas Detalhadas com Visual Premium */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      {/* Listas Detalhadas com Visual Premium de Alta Performance */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Top discounters */}
-        <Card className="glass border-white/5">
-          <CardHeader className="border-b border-white/5 bg-white/5">
+        <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+          <CardHeader className="border-b border-white/5 bg-white/5 pb-6">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="font-sora text-lg font-bold">Top Discounters</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1">Vendedores com maior erosão de margem</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive">
+                  <TrendingDown className="h-6 w-6" />
+                </div>
+                <div>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">Top Discounters</CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">Vendedores com maior erosão de margem acumulada</p>
+                </div>
               </div>
-              <Target className="h-5 w-5 text-primary opacity-50" />
+              <Badge variant="outline" className="border-destructive/30 text-destructive bg-destructive/5 font-black text-[10px]">ALERTA DE MARGEM</Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {data.top_discounters.length === 0 ? (
-              <p className="p-8 text-center text-sm text-muted-foreground italic">Sem dados suficientes para análise.</p>
+              <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
+                <ShieldCheck className="h-12 w-12 text-success opacity-20" />
+                Sem erosão crítica detectada na equipe.
+              </div>
             ) : (
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Vendedor</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Desconto</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Leakage</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Performance</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Avg Discount</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Total Leakage</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.top_discounters.slice(0, 5).map((s) => (
-                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/5 transition-colors">
-                      <TableCell className="font-bold text-sm pl-6 py-4">{s.salesperson_name}</TableCell>
-                      <TableCell className="text-right py-4">
+                  {data.top_discounters.slice(0, 5).map((s, idx) => (
+                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                      <TableCell className="pl-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] font-black text-primary">
+                            {idx + 1}
+                          </div>
+                          <span className="font-black text-sm tracking-tight">{s.salesperson_name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right py-5">
                         <Badge
-                          variant="outline"
                           className={cn(
-                            "font-mono font-bold",
+                            "font-mono font-black text-[10px] px-3 py-1 border-none",
                             s.avg_discount_pct > 0.2
-                              ? "bg-destructive/10 text-destructive border-destructive/20"
-                              : "bg-warning/10 text-warning border-warning/20"
+                              ? "bg-destructive text-white shadow-[0_0_10px_rgba(239,68,68,0.4)]"
+                              : "bg-warning text-white shadow-[0_0_10px_rgba(245,158,11,0.4)]"
                           )}
                         >
                           {fmtPct(s.avg_discount_pct)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right font-mono font-bold text-destructive pr-6 py-4">
+                      <TableCell className="text-right font-mono font-black text-destructive/80 pr-8 py-5 text-sm">
                         {fmtCurrency(s.revenue_lost)}
                       </TableCell>
                     </TableRow>
@@ -406,49 +420,75 @@ export function PricingIntelligenceHub() {
                 </TableBody>
               </Table>
             )}
+            <div className="p-4 bg-white/5 border-t border-white/5">
+              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary hover:bg-transparent">
+                Ver Ranking Completo de Erosão
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Product recommendations */}
-        <Card className="glass border-white/5">
-          <CardHeader className="border-b border-white/5 bg-white/5">
+        <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+          <CardHeader className="border-b border-white/5 bg-white/5 pb-6">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="font-sora text-lg font-bold">IA Price Recommender</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1">Oportunidades de aumento de preço (Uplift)</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-success/10 border border-success/20 text-success">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">IA Price Recommender</CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">Oportunidades neurais de uplift e expansão de margem</p>
+                </div>
               </div>
-              <ArrowUpRight className="h-5 w-5 text-success opacity-50" />
+              <Badge className="bg-success text-white border-none font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(34,197,94,0.4)] animate-pulse">UPSELL OPORTUNIDADES</Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {data.product_recommendations.length === 0 ? (
-              <p className="p-8 text-center text-sm text-muted-foreground italic">Nenhuma oportunidade detectada no momento.</p>
+              <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
+                <Target className="h-12 w-12 text-primary opacity-20" />
+                A IA está recalibrando modelos de elasticidade.
+              </div>
             ) : (
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Produto</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Sugerido</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Uplift</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Ativos Estratégicos</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Target Price</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Uplift IA</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.product_recommendations.slice(0, 5).map((p) => (
-                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/5 transition-colors">
-                      <TableCell className="font-bold text-sm pl-6 py-4 max-w-[150px] truncate">{p.product_name}</TableCell>
-                      <TableCell className="text-right py-4 font-mono font-bold">
+                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                      <TableCell className="pl-8 py-5">
+                        <div className="flex flex-col">
+                          <span className="font-black text-sm tracking-tight group-hover/row:text-primary transition-colors">{p.product_name}</span>
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{p.deals_count} deals analisados</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right py-5 font-mono font-black text-sm text-foreground/90">
                         {fmtCurrency(p.recommended_price)}
                       </TableCell>
-                      <TableCell className="text-right pr-6 py-4">
-                        <Badge className="bg-success text-success-foreground border-none font-black text-[10px]">
-                          +{fmtPct(p.uplift_pct)}
-                        </Badge>
+                      <TableCell className="text-right pr-8 py-5">
+                        <div className="flex flex-col items-end">
+                          <Badge className="bg-success text-white border-none font-black text-[10px] px-2 py-0.5 rounded-sm">
+                            +{fmtPct(p.uplift_pct)}
+                          </Badge>
+                          <span className="text-[9px] text-success/70 font-bold mt-1 uppercase tracking-tighter">Baixa Elasticidade</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             )}
+            <div className="p-4 bg-white/5 border-t border-white/5">
+              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-success hover:bg-transparent">
+                Exportar Sugestões de Tabela de Preço
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
