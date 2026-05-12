@@ -139,7 +139,17 @@ const Index = () => {
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
             {/* KPI Overview */}
-            <motion.div 
+            {!hasRevenue && !hasSales && !hasClients ? (
+              <motion.div 
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                className="w-full h-[50vh] min-h-[400px]"
+              >
+                <DashboardEmptyState type="revenue" hero />
+              </motion.div>
+            ) : (
+              <motion.div 
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -229,6 +239,7 @@ const Index = () => {
                   </motion.div>
                 </motion.div>
               </motion.div>
+            )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
             <Tabs 
