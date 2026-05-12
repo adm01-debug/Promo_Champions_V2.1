@@ -139,7 +139,7 @@ Deno.serve(async (req) => {
       await supabase.rpc('increment_race_car_overtakes', { _salesperson_id: id }).catch(() => null);
     }
 
-    // ===== BADGES =====
+    // ===== POWER-UPS & BADGES =====
     const grantBadge = async (sp: string, code: string) => {
       await supabase.from('race_badges').upsert(
         { salesperson_id: sp, badge_code: code, season_id: season.id },
@@ -147,18 +147,60 @@ Deno.serve(async (req) => {
       );
     };
 
-    // velocista: 3 vendas em 1h
+    const grantPowerUp = async (sp: string, type: string, effect: any = {}) => {
+      await supabase.from('race_powerups').insert({
+        salesperson_id: sp,
+        season_id: season.id,
+        powerup_type: type,
+        effect_data: effect,
+        collected_at: new Date().toISOString(),
+      });
+      
+      // Emit event for real-time notification
+      await supabase.from('race_events').insert({
+        season_id: season.id,
+        salesperson_id: sp,
+        event_type: 'powerup_unlocked',
+        metadata: { powerup_type: type, ...effect },
+      });
+    };
+
     if (salespersonId) {
+      // 1. Velocista (Badge): 3 vendas em 1h
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-      const { count } = await supabase
+      const { count: recentSalesCount } = await supabase
         .from('sales')
         .select('id', { count: 'exact', head: true })
         .eq('salesperson_id', salespersonId)
         .gte('created_at', oneHourAgo);
-      if ((count ?? 0) >= 3) await grantBadge(salespersonId, 'velocista');
+      
+      if ((recentSalesCount ?? 0) >= 3) await grantBadge(salespersonId, 'velocista');
+
+      // 2. XP Boost (Power-up): 3 vendas seguidas (independente de tempo)
+      const { data: lastSales } = await supabase
+        .from('sales')
+        .select('deal_status')
+        .eq('salesperson_id', salespersonId)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      
+      if (lastSales?.length === 3 && lastSales.every(s => s.deal_status === 'completed')) {
+        await grantPowerUp(salespersonId, 'xp_boost', { multiplier: 2, duration_hours: 2 });
+      }
+
+      // 3. Mega Boost (Power-up): Venda única > $10k
+      const { data: latestSale } = await supabase
+        .from('sales')
+        .select('amount')
+        .eq('id', sale_id)
+        .maybeSingle();
+      
+      if (latestSale && (latestSale.amount ?? 0) >= 10000) {
+        await grantPowerUp(salespersonId, 'mega_boost', { multiplier: 3, duration_hours: 1 });
+      }
     }
 
-    // comeback_king: estava em último na season e agora está top 3
+    // 4. Comeback King (Badge)
     if (salespersonId && prevBoard && currBoard) {
       const prevSorted = [...(prevBoard as LeaderboardRow[])].sort((a, b) => Number(b.progress) - Number(a.progress));
       const currSorted = [...(currBoard as LeaderboardRow[])].sort((a, b) => Number(b.progress) - Number(a.progress));
@@ -167,7 +209,7 @@ Deno.serve(async (req) => {
       if (wasLast && nowTop3) await grantBadge(salespersonId, 'comeback_king');
     }
 
-    // bandeira_quadriculada + drift_master nos eventos de victory/overtake
+    // 5. Victory & Overtake Badges
     for (const e of events) {
       if (e.type === 'victory') await grantBadge(e.salesperson_id, 'bandeira_quadriculada');
     }

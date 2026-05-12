@@ -15,6 +15,7 @@ interface Salesperson {
   is_active: boolean;
   role: SalespersonRole;
   auth_user_id: string | null;
+  squad_id?: string | null;
 }
 
 interface SalesGoal {

@@ -38,15 +38,9 @@ const HistoricalBenchmark = () => {
   const [period, setPeriod] = useState<Period>("mom");
 
   const { data: salesData, isLoading } = useQuery({
-    queryKey: ["historical-benchmark"],
+    queryKey: ["historical-benchmark-agg"],
     queryFn: async () => {
-      const now = new Date();
-      const from = subMonths(now, 13);
-      const { data, error } = await supabase
-        .from("sales")
-        .select("id, amount, status, created_at")
-        .gte("created_at", from.toISOString())
-        .order("created_at");
+      const { data, error } = await supabase.rpc('get_monthly_sales_benchmark', { months_back: 24 });
       if (error) throw error;
       return data || [];
     },
@@ -54,22 +48,10 @@ const HistoricalBenchmark = () => {
 
   const monthlyData = useMemo(() => {
     if (!salesData?.length) return [];
-    const months = new Map<string, { revenue: number; deals: number; won: number }>();
-    salesData.forEach(s => {
-      const key = format(new Date(s.created_at), "yyyy-MM");
-      const m = months.get(key) || { revenue: 0, deals: 0, won: 0 };
-      m.deals += 1;
-      if (s.status === "completed" || s.status === "won") {
-        m.revenue += s.amount || 0;
-        m.won += 1;
-      }
-      months.set(key, m);
-    });
-    return Array.from(months.entries()).sort().map(([key, v]) => ({
-      month: key,
-      label: format(new Date(key + "-01"), "MMM yy", { locale: ptBR }),
+    return salesData.map((v: any) => ({
       ...v,
-      winRate: v.deals > 0 ? (v.won / v.deals) * 100 : 0,
+      label: format(new Date(v.month + "-01T12:00:00Z"), "MMM yy", { locale: ptBR }),
+      winRate: v.deals > 0 ? (v.won_deals / v.deals) * 100 : 0,
     }));
   }, [salesData]);
 

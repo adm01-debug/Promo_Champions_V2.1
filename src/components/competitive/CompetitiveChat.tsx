@@ -1,12 +1,14 @@
 import React, { FC, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, MessageCircle, Smile } from 'lucide-react';
+import { Send, MessageCircle, Smile, Users, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useCompetitiveChat } from '@/hooks/useCompetitiveChat';
+import { useSalespeople } from '@/hooks/useSalespeople';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -25,7 +27,13 @@ const TRASH_TALK = [
 ];
 
 const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) => {
-  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat();
+  const { data: salespeople } = useSalespeople();
+  const me = salespeople?.find(s => s.id === salespersonId);
+  const mySquadId = me?.squad_id;
+
+  const [chatMode, setChatMode] = useState<'global' | 'squad'>('global');
+  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat(chatMode === 'squad' ? mySquadId : null);
+  
   const [newMessage, setNewMessage] = useState('');
   const [showQuickMessages, setShowQuickMessages] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -34,7 +42,7 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, chatMode]);
 
   const handleSend = () => {
     if (!newMessage.trim() || !salespersonId) return;
@@ -54,16 +62,31 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
 
   return (
     <Card className="border-none shadow-lg overflow-hidden flex flex-col" style={{ height: '500px' }}>
-      <CardHeader className="pb-2 shrink-0">
-        <CardTitle className="text-base flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-success/80 flex items-center justify-center">
-            <MessageCircle className="h-4 w-4 text-primary-foreground" />
-          </div>
-          Chat Competitivo
-          <span className="text-xs text-muted-foreground font-normal ml-auto">
-            {messages.length} mensagens
+      <CardHeader className="pb-2 shrink-0 space-y-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-success/80 flex items-center justify-center">
+              <MessageCircle className="h-4 w-4 text-primary-foreground" />
+            </div>
+            Arena Chat
+          </CardTitle>
+          <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+            {messages.length} Live
           </span>
-        </CardTitle>
+        </div>
+        
+        {mySquadId && (
+          <Tabs value={chatMode} onValueChange={(v) => setChatMode(v as 'global' | 'squad')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-black/20 h-8 p-1 rounded-lg">
+              <TabsTrigger value="global" className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Globe className="h-3 w-3" /> Global
+              </TabsTrigger>
+              <TabsTrigger value="squad" className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Users className="h-3 w-3" /> Squad
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
       </CardHeader>
 
       {/* Messages */}

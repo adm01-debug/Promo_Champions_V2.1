@@ -3849,6 +3849,7 @@ export type Database = {
           message_type: string
           reactions: Json | null
           salesperson_id: string
+          squad_id: string | null
           target_salesperson_id: string | null
         }
         Insert: {
@@ -3859,6 +3860,7 @@ export type Database = {
           message_type?: string
           reactions?: Json | null
           salesperson_id: string
+          squad_id?: string | null
           target_salesperson_id?: string | null
         }
         Update: {
@@ -3869,6 +3871,7 @@ export type Database = {
           message_type?: string
           reactions?: Json | null
           salesperson_id?: string
+          squad_id?: string | null
           target_salesperson_id?: string | null
         }
         Relationships: [
@@ -12046,6 +12049,7 @@ export type Database = {
           name: string
           role: Database["public"]["Enums"]["salesperson_role"]
           score_total: number
+          squad_id: string | null
           updated_at: string
         }
         Insert: {
@@ -12059,6 +12063,7 @@ export type Database = {
           name: string
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
+          squad_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -12072,9 +12077,18 @@ export type Database = {
           name?: string
           role?: Database["public"]["Enums"]["salesperson_role"]
           score_total?: number
+          squad_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "salespeople_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salesperson_badges: {
         Row: {
@@ -16868,6 +16882,15 @@ export type Database = {
           totp_enabled: boolean
         }[]
       }
+      get_monthly_sales_benchmark: {
+        Args: { months_back?: number }
+        Returns: {
+          deals: number
+          month: string
+          revenue: number
+          won_deals: number
+        }[]
+      }
       get_purchase_intelligence_summary: {
         Args: { _client_id: string }
         Returns: Json
@@ -17028,6 +17051,14 @@ export type Database = {
         }[]
       }
       match_weekly_players: { Args: never; Returns: undefined }
+      merge_clients: {
+        Args: {
+          duplicate_ids: string[]
+          preferred_fields?: Json
+          target_id: string
+        }
+        Returns: undefined
+      }
       next_dialer_item: {
         Args: { _queue_id: string }
         Returns: {
