@@ -122,8 +122,9 @@ export function LeadScoringDashboard() {
       const exportToCSV = () => {
         setIsExporting(true);
         try {
-          const headers = ["Rank", "Name", "Company", "Email", "Score", "Category", "Risk Level", "Risk Score", "Factors"];
-          const rows = filteredLeads.map((l, i) => [
+          // Ranking Data
+          const rankingHeaders = ["Rank", "Name", "Company", "Email", "Score", "Category", "Risk Level", "Risk Score", "Factors"];
+          const rankingRows = filteredLeads.map((l, i) => [
             i + 1,
             `"${l.name}"`,
             `"${l.company || "N/A"}"`,
@@ -135,19 +136,38 @@ export function LeadScoringDashboard() {
             `"${l.churnRisk?.factors.join('; ') || ""}"`
           ]);
 
-          const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+          // Distribution Data (Histogram Summary)
+          const distSummary = [
+            [],
+            ["HISTOGRAM DISTRIBUTION SUMMARY"],
+            ["Range", "Count"],
+            ["81-100 (Hot)", hotCount],
+            ["51-80 (Warm)", warmCount],
+            ["0-50 (Cold)", coldCount]
+          ];
+
+          const csvContent = [
+            ["STRATEGIC LEAD RANKING REPORT"],
+            [`Generated on: ${new Date().toLocaleString()}`],
+            [],
+            rankingHeaders, 
+            ...rankingRows,
+            ...distSummary
+          ].map(e => e.join(",")).join("\n");
+
           const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
           const link = document.createElement("a");
           const url = URL.createObjectURL(blob);
           link.setAttribute("href", url);
-          link.setAttribute("download", `lead_intelligence_ranking_${new Date().toISOString().split('T')[0]}.csv`);
+          link.setAttribute("download", `lead_intelligence_report_${new Date().toISOString().split('T')[0]}.csv`);
           link.style.visibility = 'hidden';
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          toast.success("Ranking estratégico exportado para CSV!");
+          toast.success("Relatório estratégico e histograma exportados!");
         } catch (error) {
-          toast.error("Erro ao exportar CSV.");
+          console.error(error);
+          toast.error("Erro ao gerar relatório CSV.");
         } finally {
           setIsExporting(false);
         }

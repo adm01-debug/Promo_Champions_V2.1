@@ -62,13 +62,17 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
   };
 
   return (
-    <Card className="glass border-primary/20 bg-primary/5 shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)]">
+    <Card className="glass border-primary/20 bg-primary/5 shadow-[0_0_30px_rgba(var(--primary-rgb),0.1)] relative overflow-hidden group">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display flex items-center gap-2">
-          <Zap className="h-4 w-4 text-primary animate-pulse" />
-          Live Neural Monitor
-          <Badge variant="outline" className="ml-auto text-[10px] bg-primary/10 text-primary border-primary/30">
-            Real-time IA
+        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-primary">
+          <div className="relative">
+            <Zap className="h-3.5 w-3.5 text-primary animate-pulse" />
+            <div className="absolute inset-0 bg-primary/40 blur-md rounded-full animate-ping" />
+          </div>
+          Neural Battlecard Hub
+          <Badge variant="outline" className="ml-auto text-[8px] font-black bg-primary/10 text-primary border-primary/30 px-2 py-0">
+            REAL-TIME FEED
           </Badge>
         </CardTitle>
       </CardHeader>

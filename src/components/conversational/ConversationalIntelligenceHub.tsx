@@ -203,43 +203,57 @@ export const ConversationalIntelligenceHub = () => {
           {horizon === 'live' ? (
              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                   <Card className="h-[600px] flex flex-col items-center justify-center border border-white/5 bg-slate-950/40 relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent)] animate-pulse" />
+                   <Card className="h-[650px] flex flex-col items-center justify-center border border-primary/20 bg-slate-950/60 relative overflow-hidden group shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
+                      {/* Deep Neural Visual Effects */}
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent)]" />
+                      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]" />
                       
                       <div className="relative z-10 flex flex-col items-center text-center px-10">
-                        <NeuralSoundwave active={true} color="bg-destructive" />
+                        <div className="mb-10 relative">
+                          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                          <NeuralSoundwave active={true} color="bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" />
+                        </div>
                         
                         <div className="mt-8 space-y-4">
                           <div className="flex items-center justify-center gap-3">
-                            <Badge className="bg-destructive text-white border-none animate-bounce font-black text-xs px-4 py-1">LIVE STREAMING</Badge>
-                            <span className="text-xs font-bold text-muted-foreground">00:12:45</span>
+                            <Badge className="bg-primary text-primary-foreground border-none animate-pulse font-black text-xs px-5 py-1.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">NEURAL LINK ACTIVE</Badge>
+                            <span className="text-xs font-black text-primary tabular-nums tracking-widest bg-primary/10 px-3 py-1 rounded-md border border-primary/20">00:12:45</span>
                           </div>
                           
-                          <h3 className="text-3xl font-black font-sora tracking-tight">Análise Neural em Tempo Real</h3>
-                          <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-                            Ouvindo fluxo de áudio via Twilio Link. A IA está processando sentimentos, intenções e sugerindo battlecards instantaneamente.
+                          <h3 className="text-4xl font-black font-sora tracking-tighter uppercase italic text-white">Coaching Copilot <span className="text-primary">Live</span></h3>
+                          <p className="text-sm text-muted-foreground max-w-md leading-relaxed font-medium">
+                            Escaneando ondas sonoras via Twilio Bridge. Nossa rede neural está processando intenções e injetando battlecards estratégicos em tempo real.
                           </p>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-4 mt-12 w-full">
-                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
-                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Vendedor</p>
-                            <p className="text-xs font-medium italic opacity-70">"Entendo sua preocupação com o preço, mas se olharmos para o ROI..."</p>
+                        <div className="grid grid-cols-2 gap-6 mt-16 w-full max-w-2xl">
+                          <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box">
+                            <div className="absolute top-0 left-0 w-1 h-0 group-hover:h-full bg-primary transition-all duration-500" />
+                            <p className="text-[10px] font-black uppercase text-primary/60 mb-2 tracking-widest flex items-center gap-2">
+                               <Mic className="size-3" /> Transmissão: Vendedor
+                            </p>
+                            <p className="text-xs font-bold italic text-white/90">"Com base na sua infraestrutura atual, o ROI projetado é de 42% no primeiro trimestre..."</p>
                           </div>
-                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
-                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Cliente</p>
-                            <p className="text-xs font-medium italic opacity-70">"Pois é, o orçamento está bem apertado para este trimestre."</p>
+                          <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box">
+                            <div className="absolute top-0 right-0 w-1 h-0 group-hover:h-full bg-destructive transition-all duration-500" />
+                            <p className="text-[10px] font-black uppercase text-destructive/60 mb-2 tracking-widest flex items-center gap-2">
+                               <Headphones className="size-3" /> Transmissão: Cliente
+                            </p>
+                            <p className="text-xs font-bold italic text-white/90">"O ROI parece ótimo, mas preciso validar se isso se encaixa no CAPEX deste ano."</p>
                           </div>
                         </div>
                       </div>
                       
                       {/* Floating Particles */}
                       <div className="absolute bottom-10 left-10 h-1 w-1 bg-primary rounded-full animate-ping" />
-                      <div className="absolute top-20 right-20 h-1.5 w-1.5 bg-destructive rounded-full animate-ping" style={{ animationDelay: '1s' }} />
+                      <div className="absolute top-20 right-20 h-1.5 w-1.5 bg-primary rounded-full animate-ping" style={{ animationDelay: '1s' }} />
                    </Card>
                 </div>
-                <div className="space-y-4">
-                   <LiveIntelligenceFeed />
+                <div className="space-y-6">
+                   <div className="relative">
+                      <div className="absolute -top-4 -left-4 p-2 bg-primary/20 rounded-full blur-xl animate-pulse" />
+                      <LiveIntelligenceFeed />
+                   </div>
                    <CoachingLeaderboardPanel />
                 </div>
              </div>
