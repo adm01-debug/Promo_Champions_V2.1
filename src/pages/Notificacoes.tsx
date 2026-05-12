@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
-import { Bell, Plus, AlertTriangle } from "lucide-react";
+import { Bell, Plus, AlertTriangle, History, TrendingUp, User, Clock, ShieldCheck, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import {
   useNotificationPreferences,
   useCreateNotificationPreference,
@@ -17,6 +19,7 @@ import {
   useDeleteNotificationPreference,
   NotificationPreference,
 } from "@/hooks/useNotificationPreferences";
+import { useSaleNotificationAudits } from "@/hooks/useSaleNotificationAudits";
 import { SoundSettings } from "@/components/settings/SoundSettings";
 import { SDRAlertHistory } from "@/components/sdr/SDRAlertHistory";
 import { TestSDRAlertButton } from "@/components/sdr/TestSDRAlertButton";
@@ -27,6 +30,8 @@ import { toast } from "sonner";
 import { NotificacoesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const DEFAULT_PREF: {
   email: string; frequency: "realtime" | "daily" | "weekly"; notify_stagnant_deals: boolean;
@@ -40,6 +45,7 @@ const DEFAULT_PREF: {
 
 export default function Notificacoes() {
   const { data: preferences, isLoading } = useNotificationPreferences();
+  const { data: audits, isLoading: isLoadingAudits } = useSaleNotificationAudits(50);
   const createPreference = useCreateNotificationPreference();
   const updatePreference = useUpdateNotificationPreference();
   const deletePreference = useDeleteNotificationPreference();
@@ -82,40 +88,43 @@ export default function Notificacoes() {
         </div>
 
         <Tabs defaultValue="central" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="central">Central de Notificações</TabsTrigger>
-            <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
-            <TabsTrigger value="sons">Sons</TabsTrigger>
+          <TabsList className="bg-muted/30 border border-border/40 p-1">
+            <TabsTrigger value="central" className="text-xs font-bold uppercase tracking-widest px-6">HUD de Alertas</TabsTrigger>
+            <TabsTrigger value="configuracoes" className="text-xs font-bold uppercase tracking-widest px-6">Canais & Destinatários</TabsTrigger>
+            <TabsTrigger value="historico" className="text-xs font-bold uppercase tracking-widest px-6">Auditoria de Vendas</TabsTrigger>
+            <TabsTrigger value="sons" className="text-xs font-bold uppercase tracking-widest px-6">Sons & Push</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="central" className="space-y-6"><NotificationCenter /></TabsContent>
+          <TabsContent value="central" className="space-y-6">
+            <NotificationCenter />
+          </TabsContent>
 
           <TabsContent value="configuracoes" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Destinatários de Alertas</h2>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild><Button className="gradient-primary"><Plus className="h-4 w-4 mr-2" />Nova Configuração</Button></DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
+                <DialogContent className="sm:max-w-[500px] glass">
                   <DialogHeader>
-                    <DialogTitle>Nova Configuração de Notificação</DialogTitle>
+                    <DialogTitle className="font-display uppercase italic tracking-tighter">Nova Configuração</DialogTitle>
                     <DialogDescription>Configure um novo destinatário para receber alertas do sistema</DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="email@exemplo.com" value={newPreference.email} onChange={(e) => setNewPreference({ ...newPreference, email: e.target.value })} />
+                      <Input id="email" type="email" placeholder="email@exemplo.com" value={newPreference.email} onChange={(e) => setNewPreference({ ...newPreference, email: e.target.value })} className="bg-white/5 border-white/10" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Frequência</Label>
                         <Select value={newPreference.frequency} onValueChange={(value) => setNewPreference({ ...newPreference, frequency: value as "realtime" | "daily" | "weekly" })}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent><SelectItem value="realtime">Tempo real</SelectItem><SelectItem value="daily">Diário</SelectItem><SelectItem value="weekly">Semanal</SelectItem></SelectContent>
+                          <SelectTrigger className="bg-white/5 border-white/10"><SelectValue /></SelectTrigger>
+                          <SelectContent className="glass"><SelectItem value="realtime">Tempo real</SelectItem><SelectItem value="daily">Diário</SelectItem><SelectItem value="weekly">Semanal</SelectItem></SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
                         <Label>Horário preferido</Label>
-                        <Input type="time" value={newPreference.preferred_time} onChange={(e) => setNewPreference({ ...newPreference, preferred_time: e.target.value })} />
+                        <Input type="time" value={newPreference.preferred_time} onChange={(e) => setNewPreference({ ...newPreference, preferred_time: e.target.value })} className="bg-white/5 border-white/10" />
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -126,15 +135,10 @@ export default function Notificacoes() {
                         <div className="flex items-center justify-between"><span className="text-sm">Metas em risco</span><Switch checked={newPreference.notify_at_risk_goals} onCheckedChange={(checked) => setNewPreference({ ...newPreference, notify_at_risk_goals: checked })} /></div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2"><Label>Deal parado (dias)</Label><Input type="number" min={1} value={newPreference.stagnant_threshold_days} onChange={(e) => setNewPreference({ ...newPreference, stagnant_threshold_days: parseInt(e.target.value) || 14 })} /></div>
-                      <div className="space-y-2"><Label>Inatividade (dias)</Label><Input type="number" min={1} value={newPreference.inactive_threshold_days} onChange={(e) => setNewPreference({ ...newPreference, inactive_threshold_days: parseInt(e.target.value) || 60 })} /></div>
-                      <div className="space-y-2"><Label>SDR consecutivo (dias)</Label><Input type="number" min={1} max={14} value={newPreference.consecutive_days_threshold} onChange={(e) => setNewPreference({ ...newPreference, consecutive_days_threshold: parseInt(e.target.value) || 3 })} /></div>
-                    </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                    <Button onClick={handleCreate} disabled={createPreference.isPending}>{createPreference.isPending ? "Criando..." : "Criar"}</Button>
+                    <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleCreate} disabled={createPreference.isPending} className="gradient-primary">{createPreference.isPending ? "Criando..." : "Criar"}</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -155,19 +159,85 @@ export default function Notificacoes() {
             <div className="grid gap-6 lg:grid-cols-2">
               <SDRAlertHistory />
               <Card className="glass">
-                <CardHeader><div className="flex items-center justify-between"><CardTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-warning" />Sobre as Notificações</CardTitle><TestSDRAlertButton /></div></CardHeader>
+                <CardHeader><div className="flex items-center justify-between"><CardTitle className="flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-warning" />Canais de Notificação</CardTitle><TestSDRAlertButton /></div></CardHeader>
                 <CardContent className="space-y-3 text-sm text-muted-foreground">
-                  <p><strong className="text-foreground">Alertas críticos incluem:</strong></p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>Deals parados há mais de X dias sem atualização</li>
-                    <li>Clientes inativos há mais de X dias sem compra</li>
-                    <li>Vendedores com metas 40%+ abaixo do esperado</li>
-                    <li>SDRs abaixo da meta por dias consecutivos</li>
+                  <p><strong className="text-foreground italic">Ecossistema Multicanal:</strong></p>
+                  <ul className="list-disc list-inside space-y-2 ml-2">
+                    <li className="flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-primary" /> <span className="font-bold text-foreground">In-App HUD:</span> Notificações instantâneas no dashboard com dados de rank.</li>
+                    <li className="flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-accent" /> <span className="font-bold text-foreground">E-mail:</span> Alertas críticos e resumos de performance enviados via Resend.</li>
+                    <li className="flex items-center gap-2"><div className="h-2 w-2 rounded-full bg-success" /> <span className="font-bold text-foreground">Browser Push:</span> Alertas nativos mesmo com o sistema fechado.</li>
                   </ul>
-                  <p className="pt-2">Configure o domínio do Resend para enviar emails de produção. Atualmente usando o domínio de teste (onboarding@resend.dev).</p>
+                  <p className="pt-4 text-[10px] uppercase font-black opacity-60">Status do Servidor de Email: <span className="text-success">Ativo (onboarding@resend.dev)</span></p>
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="historico" className="space-y-6">
+             <Card className="glass border-primary/20">
+                <CardHeader className="border-b border-white/5">
+                   <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2 font-display uppercase italic tracking-tighter">
+                         <History className="h-5 w-5 text-primary" />
+                         Auditoria de Notificações de Vendas
+                      </CardTitle>
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                         {audits?.length || 0} LOGS
+                      </Badge>
+                   </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                   <ScrollArea className="h-[600px]">
+                      {isLoadingAudits ? (
+                        <div className="p-8 space-y-4">
+                           {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
+                        </div>
+                      ) : audits?.length === 0 ? (
+                        <div className="p-20 text-center opacity-40">
+                           <ShieldCheck className="h-12 w-12 mx-auto mb-4" />
+                           <p className="text-sm font-black uppercase tracking-widest">Nenhum evento registrado</p>
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-white/5">
+                           {audits?.map((audit) => (
+                             <div key={audit.id} className="p-4 hover:bg-white/5 transition-colors group">
+                                <div className="flex items-start justify-between gap-4">
+                                   <div className="flex gap-4">
+                                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                                         <TrendingUp className="h-5 w-5 text-primary" />
+                                      </div>
+                                      <div className="space-y-1">
+                                         <p className="text-sm font-black uppercase tracking-tight">
+                                            {audit.seller_name} <span className="text-muted-foreground font-normal">vendeu</span> R$ {audit.sale_amount.toLocaleString('pt-BR')}
+                                         </p>
+                                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                                            <Badge variant="secondary" className="h-4 text-[8px] px-1 font-bold">
+                                               RANK: #{audit.seller_rank_at_time}
+                                            </Badge>
+                                            <span>•</span>
+                                            <Badge variant="outline" className="h-4 text-[8px] px-1 font-bold border-white/10">
+                                               REC: #{audit.recipient_rank_at_time}
+                                            </Badge>
+                                            <span>•</span>
+                                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(audit.created_at), "dd/MM HH:mm:ss", { locale: ptBR })}</span>
+                                         </div>
+                                      </div>
+                                   </div>
+                                   <div className="flex flex-col items-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 border border-white/10 text-[8px] font-black uppercase tracking-widest">
+                                         {audit.notification_type === 'in-app' ? <Bell className="h-2.5 w-2.5" /> : <Mail className="h-2.5 w-2.5" />}
+                                         {audit.notification_type}
+                                      </div>
+                                      <span className="text-[8px] font-mono text-muted-foreground">ID_{audit.sale_id.slice(0,8).toUpperCase()}</span>
+                                   </div>
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                      )}
+                   </ScrollArea>
+                </CardContent>
+             </Card>
           </TabsContent>
 
           <TabsContent value="sons" className="space-y-6">
