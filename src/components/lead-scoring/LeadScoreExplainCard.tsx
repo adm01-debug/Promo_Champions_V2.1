@@ -53,38 +53,38 @@ export const LeadScoreExplainCard = React.memo(({ saleId, churnRisk, onActionCom
 
   const steps = [
     {
-      title: "Step 01: Baseline Neural",
-      description: `O modelo inicia com uma pontuação base de ${exp.baseline_score} pontos. Esta é a "âncora" estatística baseada em 12 meses de dados históricos de conversão para perfis ${exp.score > 70 ? 'de alta performance' : 'similares'}.`,
+      title: "Step 01: Baseline Neural (Data Anchor)",
+      description: `O motor de IA inicia o processamento definindo um ponto de ancoragem estatística de ${exp.baseline_score} pontos. Este valor representa a probabilidade média de conversão histórica para o segmento identificado, antes da aplicação de variáveis dinâmicas.`,
       icon: Layers,
       color: "text-blue-500",
       impact: exp.baseline_score,
-      badge: "DATA ANCHOR"
+      badge: "ANALYTIC BASELINE"
     },
     {
-      title: "Step 02: Drivers & Variáveis",
-      description: "Nesta fase, a IA processa 42 variáveis em tempo real (engajamento, firmografia, momentum). Cada driver abaixo representa um desvio positivo ou negativo em relação ao baseline.",
+      title: "Step 02: Preditores Comportamentais",
+      description: "Nesta etapa, a rede neural analisa micro-interações: frequência de e-mails, aberturas de propostas e velocidade de resposta. Cada driver abaixo é um neurônio ativo que soma ou subtrai força do score final.",
       icon: Activity,
       color: "text-primary",
-      impact: exp.top_drivers.reduce((acc, d) => acc + d.contribution, 0),
-      badge: "NEURAL PROCESSING"
+      impact: exp.top_drivers.filter(d => d.contribution > 0).reduce((acc, d) => acc + d.contribution, 0),
+      badge: "DYNAMIC DRIVERS"
     },
     {
-      title: "Step 03: Calibração de Risco",
+      title: "Step 03: Telemetria de Risco (Churn Guard)",
       description: churnRisk && churnRisk.risk_score > 30 
-        ? `Detectamos anomalias comportamentais. O score final foi penalizado em ${Math.round(churnRisk.risk_score / 2)} pontos para refletir o risco de churn detectado.`
-        : "Nenhum risco crítico de evasão detectado. O lead mantém sua integridade de conversão baseada nos drivers comportamentais.",
+        ? `ALERTA: Detectamos padrões de desengajamento (vazamento neural). O sistema aplicou uma penalidade de segurança para refletir o risco real de perda do ativo.`
+        : "ESTÁVEL: A telemetria não detectou sinais de evasão. O lead mantém integridade estrutural máxima em relação ao objetivo de conversão.",
       icon: ShieldAlert,
       color: churnRisk && churnRisk.risk_score > 50 ? "text-rose-500" : "text-emerald-500",
       impact: churnRisk ? -Math.round(churnRisk.risk_score / 2) : 0,
-      badge: "RISK GUARD"
+      badge: "RISK MITIGATION"
     },
     {
-      title: "Step 04: Intelligence Index Final",
-      description: `Cálculo final concluído. O Lead atingiu o índice de ${exp.score}%, posicionando-o na categoria ${exp.score >= 80 ? 'ELITE' : exp.score >= 50 ? 'ACTIVE' : 'STAGNANT'}.`,
+      title: "Step 04: Intelligence Index (Final Output)",
+      description: `Processamento finalizado. O índice de ${exp.score}% representa a prontidão de compra (Sales Readiness) calculada após 1.200 iterações do modelo preditivo.`,
       icon: Target,
       color: "text-emerald-500",
       impact: exp.score,
-      badge: "FINAL OUTPUT"
+      badge: "STRATEGIC RANK"
     }
   ];
 
