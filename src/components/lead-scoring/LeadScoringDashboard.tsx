@@ -146,6 +146,67 @@ export function LeadScoringDashboard() {
   const coldCount = allLeads.filter(l => l.category === "Cold").length;
   const avgScore = allLeads.length > 0 ? Math.round(allLeads.reduce((s, l) => s + l.score, 0) / allLeads.length) : 0;
 
+  const exportToCSV = useCallback(() => {
+    setIsExporting(true);
+    try {
+      const rankingHeaders = ["Rank", "Name", "Company", "Email", "Score", "Category", "Risk Level", "Risk Score", "Factors"];
+      const rankingRows = filteredLeads.map((l, i) => [
+        i + 1,
+        `"${l.name}"`,
+        `"${l.company || "N/A"}"`,
+        `"${l.email}"`,
+        l.score,
+        l.category,
+        l.churnRisk?.risk_level || "low",
+        l.churnRisk?.risk_score || 0,
+        `"${l.churnRisk?.factors.join('; ') || ""}"`
+      ]);
+
+      const distSummary = [
+        [],
+        ["HISTOGRAM DISTRIBUTION SUMMARY"],
+        ["Range", "Count"],
+        ["81-100 (Hot)", hotCount],
+        ["51-80 (Warm)", warmCount],
+        ["0-50 (Cold)", coldCount]
+      ];
+
+      const csvContent = [
+        ["STRATEGIC LEAD RANKING REPORT"],
+        [`Generated on: ${new Date().toLocaleString()}`],
+        [],
+        rankingHeaders, 
+        ...rankingRows,
+        ...distSummary
+      ].map(e => e.join(",")).join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `lead_intelligence_report_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Relatório estratégico e histograma exportados!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao gerar relatório CSV.");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [filteredLeads, hotCount, warmCount, coldCount]);
+
+  const exportToPDF = useCallback(() => {
+    setIsExporting(true);
+    toast.info("Otimizando layout para exportação PDF...");
+    setTimeout(() => {
+      window.print();
+      setIsExporting(false);
+    }, 800);
+  }, []);
+
   const selectedLead = useMemo(() => {
     return allLeads.find(l => l.id === selectedLeadId) || null;
   }, [allLeads, selectedLeadId]);
