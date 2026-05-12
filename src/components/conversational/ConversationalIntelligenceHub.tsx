@@ -322,34 +322,39 @@ const KPICard = ({
   value,
   hint,
   trend,
+  accent = "text-primary",
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   hint?: string;
   trend?: string;
+  accent?: string;
 }) => (
-  <Card className="glass border-border/40 hover:border-primary/30 transition-all duration-300 group">
-    <CardContent className="pt-6">
+  <Card className="glass border-white/5 hover:border-primary/30 transition-all duration-500 group relative overflow-hidden">
+    <div className={cn("absolute -right-4 -top-4 w-20 h-20 blur-2xl opacity-0 group-hover:opacity-10 transition-opacity", 
+      accent.includes("primary") ? "bg-primary" : accent.includes("success") ? "bg-success" : "bg-info"
+    )} />
+    <CardContent className="pt-8">
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+        <div className="space-y-2">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
           <div className="flex items-baseline gap-2">
-            <p className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">{value}</p>
+            <p className={cn("text-4xl font-black font-display tracking-tighter drop-shadow-sm", accent)}>{value}</p>
             {trend && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                trend.includes('+') ? 'bg-success/10 text-success' : 
-                trend.includes('-') ? 'bg-destructive/10 text-destructive' : 
-                'bg-primary/10 text-primary'
-              }`}>
+              <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-black tracking-tighter", 
+                trend.includes('+') ? 'bg-success/20 text-success' : 
+                trend.includes('-') ? 'bg-destructive/20 text-destructive' : 
+                'bg-primary/20 text-primary'
+              )}>
                 {trend}
               </span>
             )}
           </div>
-          {hint && <p className="text-[10px] text-muted-foreground font-medium">{hint}</p>}
+          {hint && <p className="text-[10px] text-muted-foreground font-bold tracking-tight">{hint}</p>}
         </div>
-        <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 shadow-sm shadow-primary/20">
-          <Icon className="size-5" />
+        <div className={cn("size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-500 shadow-xl group-hover:scale-110 group-hover:bg-white/10", accent)}>
+          <Icon className="size-6" />
         </div>
       </div>
     </CardContent>
