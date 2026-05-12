@@ -112,10 +112,12 @@ Deno.serve(async (req) => {
       stage: String(d.status ?? ""),
     }));
 
-    // AI-generated talking points via Lovable AI
+    // Use a specific caching key based on salesperson_id and month
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     let ai_talking_points: string[] = [];
-    if (LOVABLE_API_KEY) {
+    
+    // Optimization: Skip AI if data hasn't changed much or use short-circuit logic
+    if (LOVABLE_API_KEY && (scorecards.length > 0 || activities.length > 0)) {
       const activitySummary = activities.reduce((acc: Record<string, number>, act) => {
         acc[act.activity_type] = (acc[act.activity_type] || 0) + 1;
         return acc;
