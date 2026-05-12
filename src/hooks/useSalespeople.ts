@@ -1,12 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter } from "date-fns";
 import { PeriodFilter } from "@/components/vendedores/PeriodFilter";
 
 export type { PeriodFilter };
 export type SalespersonRole = "sdr" | "closer" | "hybrid";
 
-interface Salesperson {
+export interface Salesperson {
   id: string;
   name: string;
   email: string | null;
@@ -16,6 +17,8 @@ interface Salesperson {
   role: SalespersonRole;
   auth_user_id: string | null;
   squad_id?: string | null;
+  notify_sales_in_app?: boolean;
+  notify_sales_email?: boolean;
 }
 
 interface SalesGoal {
@@ -57,7 +60,11 @@ export function useSalespeople() {
         .order("name");
 
       if (error) throw error;
-      return data as Salesperson[];
+      return (data || []).map(sp => ({
+        ...sp,
+        notify_sales_in_app: sp.notify_sales_in_app ?? true,
+        notify_sales_email: sp.notify_sales_email ?? false,
+      })) as Salesperson[];
     },
   });
 }
@@ -140,6 +147,8 @@ export function useSalespeopleRanking(period: PeriodFilter = "month") {
           goalProgress,
           commission,
           rank: 0,
+          notify_sales_in_app: sp.notify_sales_in_app ?? true,
+          notify_sales_email: sp.notify_sales_email ?? false,
         };
       });
 
@@ -151,5 +160,27 @@ export function useSalespeopleRanking(period: PeriodFilter = "month") {
 
       return salespeopleWithStats;
     },
+  });
+}
+
+export function useUpdateSalesperson() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Salesperson>) => {
+      const { data, error } = await supabase
+        .from("salespeople")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["salespeople"] });
+      queryClient.invalidateQueries({ queryKey: ["salespeople_ranking"] });
+      toast.success("Vendedor atualizado!");
+    },
+    onError: (e: Error) => toast.error("Erro ao atualizar: " + e.message),
   });
 }

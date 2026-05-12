@@ -9,6 +9,8 @@ interface Salesperson {
   avatar_url: string | null;
   role: string;
   commission_rate: number;
+  notify_sales_in_app: boolean | null;
+  notify_sales_email: boolean | null;
 }
 
 interface AuthContextType {
@@ -37,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data, error } = await supabase
       .from("salespeople")
-      .select("id, name, email, avatar_url, role, commission_rate")
+      .select("id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email")
       .eq("auth_user_id", authUserId)
       .maybeSingle();
 
