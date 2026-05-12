@@ -16697,6 +16697,10 @@ export type Database = {
           total_revenue: number
         }[]
       }
+      check_performance_bets_completion: {
+        Args: { p_salesperson_id: string }
+        Returns: undefined
+      }
       check_quote_expirations: { Args: never; Returns: undefined }
       check_rate_limit: {
         Args: { p_action: string; p_identifier: string }
