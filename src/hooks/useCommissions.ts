@@ -33,11 +33,13 @@ export const useMyCommissions = () => {
   return useQuery({
     queryKey: ["commissions", "mine"],
     queryFn: async () => {
-      // Get current salesperson ID first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
       const { data: salesperson } = await supabase
         .from("salespeople")
         .select("id")
-        .eq("auth_user_id", (await supabase.auth.getUser()).data.user?.id)
+        .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (!salesperson) return [];
