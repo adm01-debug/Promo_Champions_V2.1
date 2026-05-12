@@ -16556,6 +16556,10 @@ export type Database = {
           step_id: string
         }[]
       }
+      award_achievement_if_not_exists: {
+        Args: { p_salesperson_id: string; p_type: string }
+        Returns: undefined
+      }
       bulk_approve_assignments: {
         Args: { _ids: string[]; _xp_overrides?: Json }
         Returns: number
@@ -17023,6 +17027,7 @@ export type Database = {
           similarity: number
         }[]
       }
+      match_weekly_players: { Args: never; Returns: undefined }
       next_dialer_item: {
         Args: { _queue_id: string }
         Returns: {
@@ -17135,6 +17140,10 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       snapshot_race_daily: { Args: { _season_id: string }; Returns: number }
+      start_of_week: {
+        Args: { date_val: string; start_day?: number }
+        Returns: string
+      }
       toggle_workflow_active: {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
