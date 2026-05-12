@@ -102,7 +102,7 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
         )}
         
-        {isSaleAlert && n.metadata && (
+        {isSaleAlert && !!n.metadata && (
           <div className="mt-2 grid grid-cols-2 gap-2 p-2 rounded bg-black/20 border border-white/5">
              <div className="text-center">
                 <p className="text-[8px] text-muted-foreground uppercase font-bold">Vendedor Rank</p>
