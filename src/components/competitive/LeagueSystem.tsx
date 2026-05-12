@@ -14,7 +14,7 @@ interface LeagueSystemProps {
   className?: string;
 }
 
-const LEAGUE_ORDER: LeagueTier[] = ['diamond', 'gold', 'silver', 'bronze'];
+const LEAGUE_ORDER: LeagueTier[] = ['legendary', 'diamond', 'gold', 'silver', 'bronze'];
 
 const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
   const { data: members, isLoading } = useLeagues();
