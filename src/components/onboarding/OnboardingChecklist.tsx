@@ -68,7 +68,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
 
           {/* Progress & actions */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-medium text-muted-foreground tabular-nums">
+            <span className="text-[10px] font-mono font-bold text-muted-foreground tabular-nums uppercase tracking-widest">
               {completedCount}/{totalSteps}
             </span>
             <div className="w-16 hidden sm:block">
