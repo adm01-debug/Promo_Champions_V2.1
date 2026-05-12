@@ -107,7 +107,7 @@ export function VictoryCelebration() {
                 {activeVictory.title}
               </h2>
               <p className="text-lg font-medium text-foreground">
-                Parabéns, {salesperson.name}!
+                Parabéns, {salesperson?.name || 'Vendedor'}!
               </p>
               <p className="text-sm text-muted-foreground">
                 {activeVictory.description}
