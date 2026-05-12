@@ -14,7 +14,7 @@ interface LeagueSystemProps {
   className?: string;
 }
 
-const LEAGUE_ORDER: LeagueTier[] = ['diamond', 'gold', 'silver', 'bronze'];
+const LEAGUE_ORDER: LeagueTier[] = ['legendary', 'diamond', 'gold', 'silver', 'bronze'];
 
 const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
   const { data: members, isLoading } = useLeagues();
@@ -50,7 +50,7 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
             </div>
             Sistema de Ligas
             <Badge variant="outline" className="text-xs ml-auto">
-              Promoção/Rebaixamento mensal
+              Promoção/Rebaixamento toda segunda às 00:00
             </Badge>
           </CardTitle>
         </CardHeader>

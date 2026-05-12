@@ -26,6 +26,9 @@ export const HexFrame = React.memo(function HexFrame({ children, glowColor, size
         className="relative w-full h-full overflow-hidden"
         style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}
       >
+        <div className="absolute inset-0 pointer-events-none z-10 opacity-20" 
+             style={{ backgroundImage: `repeating-linear-gradient(0deg, #fff, #fff 1px, transparent 1px, transparent 3px)` }} 
+        />
         {children}
       </div>
       {isChampion && (

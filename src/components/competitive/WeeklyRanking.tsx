@@ -67,7 +67,7 @@ const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
                 <div className="flex items-center gap-2 mt-1">
                    <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10 px-3 py-0.5">
                     <Sparkles className="h-3 w-3 mr-1.5 text-rank-gold" />
-                    Reseta toda segunda
+                    Reseta toda segunda às 00:00
                   </Badge>
                 </div>
               </div>
