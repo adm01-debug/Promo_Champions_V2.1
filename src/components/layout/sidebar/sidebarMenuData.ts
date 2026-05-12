@@ -197,11 +197,13 @@ export const gestaoGroupedItems: MenuGroup[] = [
     ],
   },
   {
-    label: "Social", icon: PartyPopper,
+    label: "Social & Gamificação", icon: PartyPopper,
     items: [
-      { title: "Feed de Vitórias", url: "/victory-feed", icon: Trophy },
-      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
+      { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
+      { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
+      { title: "Arena Competitiva", url: "/arena", icon: Swords },
       { title: "Temporadas", url: "/competitive-seasons", icon: Flame },
+      { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
     ],
   },
   {

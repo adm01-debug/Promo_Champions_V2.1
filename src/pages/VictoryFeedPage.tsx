@@ -81,7 +81,12 @@ const VictoryFeedPage = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm">{item.salespeople?.name || "Vendedor"}</p>
+                          <p 
+                            className="font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
+                            onClick={() => window.location.href = `/vendedor/${item.salesperson_id}`}
+                          >
+                            {item.salespeople?.name || "Vendedor"}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: ptBR })}
                           </p>
