@@ -182,12 +182,42 @@ export function ActivityLogForm({ saleId, clientId, onSuccess, defaultActivityTy
   return (
     <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
-            <Plus className="h-4 w-4 gradient-primary" />
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <Plus className="h-4 w-4 gradient-primary" />
+            </div>
+            Registrar Atividade
+          </CardTitle>
+          <div className="flex items-center gap-1">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 text-[10px] font-black uppercase tracking-tighter hover:bg-primary/10 hover:text-primary transition-all"
+              onClick={() => {
+                form.setValue("activity_type", "call");
+                form.setValue("outcome", "connected");
+                handleSubmit(form.getValues());
+              }}
+            >
+              🚀 Call Rápida
+            </Button>
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 text-[10px] font-black uppercase tracking-tighter hover:bg-streak/10 hover:text-streak transition-all"
+              onClick={() => {
+                form.setValue("activity_type", "email");
+                form.setValue("outcome", "connected");
+                handleSubmit(form.getValues());
+              }}
+            >
+              📧 Email Rápido
+            </Button>
           </div>
-          Registrar Atividade
-        </CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>

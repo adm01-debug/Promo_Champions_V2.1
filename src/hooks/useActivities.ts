@@ -2,6 +2,7 @@
 import { CACHE_TIMES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
@@ -178,6 +179,86 @@ export const useActivityStats = (salespersonId?: string) => {
   });
 };
 
+export const useSDRLeaderboard = () => {
+  return useQuery({
+    queryKey: ['sdr-leaderboard'],
+    queryFn: async () => {
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data, error } = await supabase
+        .from('activities')
+        .select('salesperson_id, salespeople:salesperson_id(name, avatar_url)')
+        .gte('created_at', today);
+      
+      if (error) throw error;
+      
+      const counts: Record<string, { id: string; name: string; avatar: string | null; count: number }> = {};
+      
+      (data || []).forEach((a: any) => {
+        const id = a.salesperson_id;
+        if (!id) return;
+        if (!counts[id]) {
+          counts[id] = { 
+            id, 
+            name: a.salespeople?.name || 'Vendedor', 
+            avatar: a.salespeople?.avatar_url,
+            count: 0 
+          };
+        }
+        counts[id].count++;
+      });
+      
+      return Object.values(counts).sort((a, b) => b.count - a.count);
+    },
+    staleTime: 60000,
+  });
+};
+
+export const useActivityGoals = (salespersonId?: string) => {
+  return useQuery({
+    queryKey: ['activity-goals', salespersonId],
+    queryFn: async () => {
+      if (!salespersonId) return null;
+      const { data, error } = await supabase
+        .from('activity_goals')
+        .select('*')
+        .eq('salesperson_id', salespersonId)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!salespersonId,
+  });
+};
+
+export const useUpdateActivityGoals = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      salesperson_id: string;
+      calls_goal?: number;
+      emails_goal?: number;
+      meetings_goal?: number;
+      linkedin_goal?: number;
+      whatsapp_goal?: number;
+    }) => {
+      const { data, error } = await supabase
+        .from('activity_goals')
+        .upsert(input, { onConflict: 'salesperson_id' })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['activity-goals', variables.salesperson_id] });
+      toast.success("Metas atualizadas!");
+    },
+  });
+};
+
 export const useCreateActivity = () => {
   const queryClient = useQueryClient();
   const { index } = useIndexEntity();
@@ -205,6 +286,7 @@ export const useCreateActivity = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
       queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['sdr-leaderboard'] });
       if (data?.id) index('activity', data.id);
     },
   });
