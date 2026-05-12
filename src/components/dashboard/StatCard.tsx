@@ -155,7 +155,7 @@ export const StatCard = React.memo(({
                             <motion.div 
                               initial={{ width: 0 }}
                               animate={{ width: "94%" }}
-                              className="h-full bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                              className="h-full bg-primary shadow-[0_0_10px_rgba(14,165,233,0.5)]"
                               transition={{ duration: 2, ease: "easeOut" }}
                             />
                           </div>
