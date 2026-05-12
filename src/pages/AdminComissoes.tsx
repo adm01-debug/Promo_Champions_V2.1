@@ -183,7 +183,7 @@ export default function AdminComissoes() {
         <DialogContent className="glass border-white/10 shadow-2xl">
           <DialogHeader>
             <DialogTitle className="font-display italic uppercase tracking-tighter">
-              {selectedCommission?.targetStatus ? `Atualizar para ${statusBadge[selectedCommission.targetStatus].label}` : 'Detalhes da Comissão'}
+              {selectedCommission?.targetStatus ? `Atualizar para ${statusBadge[selectedCommission.targetStatus as CommissionStatus].label}` : 'Detalhes da Comissão'}
             </DialogTitle>
             <DialogDescription className="text-xs">
               Vendedor: {selectedCommission?.salespeople?.name} | Valor: {formatBRL(selectedCommission?.commission_amount)}
