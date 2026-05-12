@@ -3,7 +3,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
-  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook";
+  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook" | "product";
 
 interface BatchRequest {
   entity_types?: EntityType[];
@@ -24,6 +24,7 @@ const TABLE_BY_TYPE: Record<EntityType, { table: string; statusFilter?: string[]
   proposal: { table: "proposals" },
   task: { table: "tasks" },
   playbook: { table: "playbooks" },
+  product: { table: "products" },
 };
 
 const DEFAULT_TYPES: EntityType[] = ["client", "lead", "deal", "activity", "call_recording"];

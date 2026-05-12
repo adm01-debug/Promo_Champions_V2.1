@@ -7902,6 +7902,30 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_sales_summary: {
+        Row: {
+          deals: number | null
+          month: string
+          revenue: number | null
+          updated_at: string | null
+          won_deals: number | null
+        }
+        Insert: {
+          deals?: number | null
+          month: string
+          revenue?: number | null
+          updated_at?: string | null
+          won_deals?: number | null
+        }
+        Update: {
+          deals?: number | null
+          month?: string
+          revenue?: number | null
+          updated_at?: string | null
+          won_deals?: number | null
+        }
+        Relationships: []
+      }
       mood_entries: {
         Row: {
           created_at: string
@@ -9491,6 +9515,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          description: string | null
           id: string
           min_stock_level: number | null
           name: string
@@ -9505,6 +9530,7 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          description?: string | null
           id?: string
           min_stock_level?: number | null
           name: string
@@ -9519,6 +9545,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          description?: string | null
           id?: string
           min_stock_level?: number | null
           name?: string
@@ -17164,6 +17191,10 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_monthly_sales_summary: {
+        Args: { p_month: string }
+        Returns: undefined
+      }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
       register_race_daily_checkin: {
@@ -17186,6 +17217,19 @@ export type Database = {
       }
       search_products_semantic: {
         Args: { _keywords: string[]; _limit?: number; _query?: string }
+        Returns: {
+          category: string
+          id: string
+          name: string
+          price: number
+          rating: number
+          sales_count: number
+          similarity_score: number
+          status: string
+        }[]
+      }
+      search_products_vector: {
+        Args: { _limit?: number; _query_embedding: string }
         Returns: {
           category: string
           id: string
@@ -17277,6 +17321,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_performance_bet_progress: { Args: never; Returns: undefined }
+      update_territory_conquests: { Args: never; Returns: undefined }
       update_user_mfa_settings: {
         Args: {
           p_backup_codes?: string[]

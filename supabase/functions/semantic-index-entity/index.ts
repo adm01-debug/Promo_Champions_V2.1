@@ -3,7 +3,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
-  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook";
+  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook" | "product";
 
 interface IndexRequest {
   entity_type: EntityType;
@@ -23,6 +23,7 @@ const TABLE_BY_TYPE: Record<EntityType, { table: string; ownerCol: string | null
   proposal: { table: "proposals", ownerCol: "salesperson_id" },
   task: { table: "tasks", ownerCol: "salesperson_id" },
   playbook: { table: "playbooks", ownerCol: null },
+  product: { table: "products", ownerCol: null },
 };
 
 function buildContent(type: EntityType, row: Record<string, unknown>): string {
@@ -49,6 +50,8 @@ function buildContent(type: EntityType, row: Record<string, unknown>): string {
       return j([row.title, row.description, row.status, row.priority]);
     case "playbook":
       return j([row.name, row.title, row.description, row.content, row.stage]);
+    case "product":
+      return j([row.name, row.category, row.sku, row.description as string, row.price ? `R$${row.price}` : null]);
     default:
       return "";
   }
