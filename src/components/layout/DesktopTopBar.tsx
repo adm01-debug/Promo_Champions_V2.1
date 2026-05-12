@@ -119,6 +119,9 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
             <TooltipContent side="bottom"><p>Busca semântica (⌘⇧F)</p></TooltipContent>
           </Tooltip>
 
+          {/* Streak Indicator */}
+          <StreakIndicator />
+
           {/* Divider */}
           <div className="w-px h-5 bg-border/50 mx-1.5" />
 
