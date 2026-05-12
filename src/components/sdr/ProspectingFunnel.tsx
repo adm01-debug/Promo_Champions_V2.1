@@ -37,7 +37,7 @@ export function useProspectingFunnel() {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
-import { Target, Info } from "lucide-react";
+import { Target, Info, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function ProspectingFunnel() {
