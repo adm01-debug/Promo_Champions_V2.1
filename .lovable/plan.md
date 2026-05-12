@@ -39,8 +39,8 @@ Transformar o funil de vendas em uma visualização de fluxo neural de alta perf
 - **Micro-conversão Tracking**: Adicionados indicadores de taxa de conversão entre cada etapa com análise de gargalo por IA e barra de velocidade.
 - **Predictive Sidebar**: Integrada barra de "Certeza IA" e insights preditivos no dashboard.
 
-#### Passo 2: Funnel Velocity Heatmap
-- **Mapa de Velocidade**: Implementar visualização que destaca onde os leads estão "estacionados" por mais tempo.
+#### Passo 2: Funnel Velocity Heatmap [CONCLUÍDO]
+- **Mapa de Velocidade**: Implementada visualização `Velocity Heatmap` que destaca dinamicamente zonas de calor (leads fluidos) e zonas frias (leads estacionados).
 
-#### Passo 3: Predictive Funnel Forecast
-- **Projeção de Fechamento**: Adicionar barra de "Certeza IA" sobre o volume projetado para o fim do mês.
+#### Passo 3: Predictive Funnel Forecast [CONCLUÍDO]
+- **Projeção de Fechamento**: Adicionado card `Certeza IA Forecast` com análise de gap versus meta e recomendações estratégicas baseadas em dados.
