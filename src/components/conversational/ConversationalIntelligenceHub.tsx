@@ -17,6 +17,9 @@ import { QuestionFeedPanel } from "./questions/QuestionFeedPanel";
 import { ObjectionLibraryPanel } from "./objections/ObjectionLibraryPanel";
 import { CoachingLeaderboardPanel } from "./coaching/CoachingLeaderboardPanel";
 import { LiveIntelligenceFeed } from "./LiveIntelligenceFeed";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { NeuralSoundwave } from "./NeuralSoundwave";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
