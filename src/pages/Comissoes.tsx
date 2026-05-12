@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { CommissionCalculator } from "@/components/financeiro/CommissionCalculator";
 import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import { cn } from "@/lib/utils";
 
 const formatBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n || 0);
