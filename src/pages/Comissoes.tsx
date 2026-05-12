@@ -7,6 +7,7 @@ import { DollarSign, TrendingUp, Clock, CheckCircle2, XCircle, Wallet } from "lu
 import { useMyCommissions, type CommissionStatus } from "@/hooks/useCommissions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useMemo } from "react";
 import { CommissionCalculator } from "@/components/financeiro/CommissionCalculator";
 import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
@@ -48,30 +49,34 @@ export default function Comissoes() {
     }
     if (list.length === 0) {
       return (
-        <Card className="p-8 text-center">
+        <Card className="p-8 text-center bg-white/5 border-dashed border-white/10">
           <Wallet className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-sm text-muted-foreground">Nenhuma comissão encontrada</p>
+          <p className="text-sm text-muted-foreground italic">Nenhuma comissão encontrada para este filtro.</p>
         </Card>
       );
     }
     return (
       <div className="space-y-3">
         {list.map((c) => (
-          <Card key={c.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
+          <Card key={c.id} className="hover:shadow-md transition-shadow group border-white/5 bg-black/20 overflow-hidden">
+            <CardContent className="p-4 relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex-1 min-w-[200px]">
-                  <p className="font-semibold">{c.sales?.client_name ?? "Cliente"}</p>
-                  <p className="text-sm text-muted-foreground truncate">{c.sales?.product_name ?? "—"}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                <div className="flex-1 min-w-[200px] ml-2">
+                  <p className="font-bold text-sm uppercase tracking-tight">{c.sales?.client_name ?? "Cliente"}</p>
+                  <p className="text-xs text-muted-foreground truncate uppercase font-medium">{c.sales?.product_name ?? "—"}</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-1 font-mono">
                     {format(new Date(c.created_at), "dd MMM yyyy", { locale: ptBR })}
-                    {" · "}Base: {formatBRL(c.base_amount)}
+                    {" · "}BASE: {formatBRL(c.base_amount)}
                     {" · "}{c.percentage}%
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold font-display">{formatBRL(c.commission_amount)}</p>
-                  <Badge variant={statusBadge[c.status].variant} className="mt-1">
+                  <p className="text-xl font-black italic tracking-tighter text-primary">{formatBRL(c.commission_amount)}</p>
+                  <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 mt-1 border-white/10", 
+                    c.status === 'paid' ? "bg-emerald-500/10 text-emerald-400" : 
+                    c.status === 'approved' ? "bg-blue-500/10 text-blue-400" : 
+                    c.status === 'pending' ? "bg-amber-500/10 text-amber-400" : "text-muted-foreground")}>
                     {statusBadge[c.status].label}
                   </Badge>
                 </div>
@@ -90,68 +95,73 @@ export default function Comissoes() {
         <meta name="description" content="Acompanhe suas comissões pendentes, aprovadas e pagas em tempo real." />
       </Helmet>
 
-      <main className="container max-w-6xl py-6 space-y-6">
-        <header className="flex items-center justify-between">
+      <main className="container max-w-7xl py-6 space-y-8 animate-in fade-in duration-500">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-page-title">Minhas Comissões</h1>
-            <p className="text-sm text-muted-foreground">Visão consolidada das suas comissões</p>
+            <h1 className="text-4xl font-display font-black italic uppercase tracking-tighter gradient-text">Minhas Comissões</h1>
+            <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Relatório Financeiro de Performance</p>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20">
+            <DollarSign className="h-4 w-4 text-primary" />
+            <span className="text-xs font-black uppercase tracking-widest text-primary">Live Payout Tracking</span>
           </div>
         </header>
 
         {/* KPIs */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Resumo de comissões">
-          <Card>
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground">Total geral</CardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold font-display">{formatBRL(totals.all)}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground">Pendentes</CardTitle>
-              <Clock className="h-4 w-4 text-streak" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold font-display">{formatBRL(totals.pending)}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground">Aprovadas</CardTitle>
-              <TrendingUp className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold font-display">{formatBRL(totals.approved)}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <CardTitle className="text-xs font-medium text-muted-foreground">Pagas</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-success" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold font-display">{formatBRL(totals.paid)}</p>
-            </CardContent>
-          </Card>
+          {[
+            { label: "Total Geral", value: totals.all, icon: DollarSign, color: "text-primary", bg: "bg-primary/10" },
+            { label: "Pendentes", value: totals.pending, icon: Clock, color: "text-amber-500", bg: "bg-amber-500/10" },
+            { label: "Aprovadas", value: totals.approved, icon: TrendingUp, color: "text-blue-500", bg: "bg-blue-500/10" },
+            { label: "Pagas", value: totals.paid, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10" }
+          ].map((item, i) => (
+            <Card key={i} className="border-white/5 bg-black/40 backdrop-blur-md overflow-hidden relative group">
+              <div className={cn("absolute top-0 right-0 w-24 h-24 blur-[40px] rounded-full opacity-10 transition-opacity group-hover:opacity-20", item.bg)} />
+              <CardHeader className="pb-1 px-4 pt-4 flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{item.label}</CardTitle>
+                <item.icon className={cn("h-4 w-4", item.color)} />
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <p className="text-2xl font-black italic tracking-tighter font-display">{formatBRL(item.value)}</p>
+              </CardContent>
+            </Card>
+          ))}
         </section>
 
-        <Tabs defaultValue="all">
-          <TabsList>
-            <TabsTrigger value="all">Todas</TabsTrigger>
-            <TabsTrigger value="pending">Pendentes</TabsTrigger>
-            <TabsTrigger value="approved">Aprovadas</TabsTrigger>
-            <TabsTrigger value="paid">Pagas</TabsTrigger>
-            <TabsTrigger value="cancelled"><XCircle className="h-3 w-3 mr-1" />Canceladas</TabsTrigger>
-          </TabsList>
-          <TabsContent value="all" className="mt-4">{renderList()}</TabsContent>
-          <TabsContent value="pending" className="mt-4">{renderList("pending")}</TabsContent>
-          <TabsContent value="approved" className="mt-4">{renderList("approved")}</TabsContent>
-          <TabsContent value="paid" className="mt-4">{renderList("paid")}</TabsContent>
-          <TabsContent value="cancelled" className="mt-4">{renderList("cancelled")}</TabsContent>
-        </Tabs>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8">
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="bg-black/20 border border-white/10 p-1 mb-6">
+                <TabsTrigger value="all" className="text-[10px] font-black uppercase tracking-widest">Todas</TabsTrigger>
+                <TabsTrigger value="pending" className="text-[10px] font-black uppercase tracking-widest">Pendentes</TabsTrigger>
+                <TabsTrigger value="approved" className="text-[10px] font-black uppercase tracking-widest">Aprovadas</TabsTrigger>
+                <TabsTrigger value="paid" className="text-[10px] font-black uppercase tracking-widest">Pagas</TabsTrigger>
+                <TabsTrigger value="cancelled" className="text-[10px] font-black uppercase tracking-widest">Canceladas</TabsTrigger>
+              </TabsList>
+              <TabsContent value="all" className="mt-0">{renderList()}</TabsContent>
+              <TabsContent value="pending" className="mt-0">{renderList("pending")}</TabsContent>
+              <TabsContent value="approved" className="mt-0">{renderList("approved")}</TabsContent>
+              <TabsContent value="paid" className="mt-0">{renderList("paid")}</TabsContent>
+              <TabsContent value="cancelled" className="mt-0">{renderList("cancelled")}</TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="lg:col-span-4 space-y-6">
+            <CommissionCalculator />
+            
+            <Card className="border-dashed border-white/10 bg-transparent">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Informação Importante</p>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed italic">
+                  As comissões são geradas automaticamente após a conclusão da venda e auditadas pelo departamento financeiro em até 48h.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
     </>
   );
