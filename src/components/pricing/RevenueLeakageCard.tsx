@@ -1,8 +1,9 @@
 import { memo, useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { TrendingDown, AlertCircle, ShieldOff, Sparkles, ChevronRight, Info, PieChart, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { TrendingDown, AlertCircle, ShieldOff, Sparkles, ChevronRight, Info, PieChart, ArrowDownRight, ArrowUpRight, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
