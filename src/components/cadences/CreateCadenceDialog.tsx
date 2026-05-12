@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCreateCadence, useCreateCadenceStep, useCadenceSteps, ActionType } from "@/hooks/useCadences";
-import { Plus, Trash2, Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Braces } from "lucide-react";
+import { Plus, Trash2, Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Braces, CheckSquare } from "lucide-react";
 import { MergeTagPicker } from "./MergeTagPicker";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -25,6 +25,7 @@ const actionTypes: { value: ActionType; label: string; icon: typeof Phone }[] = 
   { value: "call", label: "Ligação", icon: Phone },
   { value: "linkedin", label: "LinkedIn", icon: Linkedin },
   { value: "whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { value: "task", label: "Tarefa", icon: CheckSquare },
   { value: "meeting", label: "Reunião", icon: Users },
   { value: "other", label: "Outro", icon: MoreHorizontal },
 ];
@@ -40,7 +41,7 @@ interface StepInput {
   day_number: number;
   action_type: ActionType;
   title: string;
-  description: string;
+  template_content: string;
   needs_approval: boolean;
   task_type: 'manual' | 'automatic';
 }
@@ -50,7 +51,7 @@ export function CreateCadenceDialog() {
   const [step, setStep] = useState<"info" | "steps">("info");
   const [cadenceId, setCadenceId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepInput[]>([
-    { day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false, task_type: "manual" },
+    { day_number: 1, action_type: "email", title: "Email de introdução", template_content: "", needs_approval: false, task_type: "manual" },
   ]);
 
   const createCadence = useCreateCadence();
@@ -69,7 +70,7 @@ export function CreateCadenceDialog() {
     setStep("info");
     setCadenceId(null);
     form.reset();
-    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", description: "", needs_approval: false, task_type: "manual" }]);
+    setSteps([{ day_number: 1, action_type: "email", title: "Email de introdução", template_content: "", needs_approval: false, task_type: "manual" }]);
   };
 
   const handleCreateCadence = async (data: CadenceFormData) => {
@@ -87,7 +88,7 @@ export function CreateCadenceDialog() {
       day_number: lastDay + 2, 
       action_type: "call", 
       title: "", 
-      description: "",
+      template_content: "",
       needs_approval: false,
       task_type: "manual"
     }]);
@@ -115,7 +116,7 @@ export function CreateCadenceDialog() {
         day_number: step.day_number,
         action_type: step.action_type,
         title: step.title,
-        description: step.description || undefined,
+        template_content: step.template_content || undefined,
         needs_approval: step.needs_approval,
         task_type: step.task_type,
         step_order: i,
@@ -300,13 +301,13 @@ export function CreateCadenceDialog() {
                     <div className="flex items-center justify-between">
                       <FormLabel className="text-xs font-medium text-muted-foreground">Conteúdo do Template</FormLabel>
                       <MergeTagPicker
-                        preview={s.description}
-                        onInsert={(token) => updateStep(index, "description", (s.description || "") + token)}
+                        preview={s.template_content}
+                        onInsert={(token) => updateStep(index, "template_content", (s.template_content || "") + token)}
                       />
                     </div>
                     <Textarea
-                      value={s.description}
-                      onChange={(e) => updateStep(index, "description", e.target.value)}
+                      value={s.template_content}
+                      onChange={(e) => updateStep(index, "template_content", e.target.value)}
                       placeholder="Instruções ou template da mensagem..."
                       className="min-h-[80px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors font-mono"
                     />

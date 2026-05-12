@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType, useUpdateLeadStage } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch, CheckSquare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ const actionIcons: Record<ActionType, typeof Phone> = {
   email: Mail,
   linkedin: Linkedin,
   whatsapp: MessageCircle,
+  task: CheckSquare,
   meeting: Users,
   other: MoreHorizontal,
 };
@@ -27,6 +28,7 @@ const actionLabels: Record<ActionType, string> = {
   email: "E-mail",
   linkedin: "LinkedIn",
   whatsapp: "WhatsApp",
+  task: "Tarefa",
   meeting: "Reunião",
   other: "Outro",
 };
@@ -36,6 +38,7 @@ const actionColors: Record<ActionType, string> = {
   email: "bg-status-warning/15 text-status-warning shadow-sm shadow-status-warning/10",
   linkedin: "bg-primary/15 text-primary shadow-sm shadow-primary/10",
   whatsapp: "bg-status-success/15 text-status-success shadow-sm shadow-status-success/10",
+  task: "bg-status-info/15 text-status-info shadow-sm shadow-status-info/10",
   meeting: "bg-status-purple/15 text-status-purple shadow-sm shadow-status-purple/10",
   other: "bg-muted/50 text-muted-foreground",
 };
