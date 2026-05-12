@@ -38,7 +38,9 @@ export default function Orcamentos() {
     external_reference: "", 
     valid_until: "", 
     notes: "",
-    sale_id: ""
+    sale_id: "",
+    subtotal: "",
+    discount_amount: ""
   });
 
   const handleCreate = () => {
@@ -53,6 +55,9 @@ export default function Orcamentos() {
       notes: form.notes || undefined,
       sale_id: form.sale_id || undefined,
       created_by: salesperson?.id,
+      subtotal: Number(form.subtotal) || Number(form.total_value),
+      discount_amount: Number(form.discount_amount) || 0,
+      discount_percent: form.subtotal ? (Number(form.discount_amount) / Number(form.subtotal)) * 100 : 0
     }, { 
       onSuccess: () => { 
         setIsCreateOpen(false); 
@@ -64,7 +69,9 @@ export default function Orcamentos() {
           external_reference: "", 
           valid_until: "", 
           notes: "",
-          sale_id: ""
+          sale_id: "",
+          subtotal: "",
+          discount_amount: ""
         }); 
       } 
     });
@@ -100,7 +107,41 @@ export default function Orcamentos() {
               <div className="space-y-4 mt-2">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2"><Label>Cliente *</Label><Input value={form.client_name} onChange={e => setForm(f => ({ ...f, client_name: e.target.value }))} placeholder="Nome do cliente" /></div>
-                  <div className="space-y-2"><Label>Valor Total *</Label><Input type="number" value={form.total_value} onChange={e => setForm(f => ({ ...f, total_value: e.target.value }))} placeholder="0.00" /></div>
+                  <div className="space-y-2">
+                    <Label>Subtotal</Label>
+                    <Input 
+                      type="number" 
+                      value={form.subtotal} 
+                      onChange={e => {
+                        const sub = e.target.value;
+                        const disc = form.discount_amount;
+                        setForm(f => ({ 
+                          ...f, 
+                          subtotal: sub,
+                          total_value: String(Number(sub) - Number(disc))
+                        }));
+                      }} 
+                      placeholder="0.00" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Desconto</Label>
+                    <Input 
+                      type="number" 
+                      value={form.discount_amount} 
+                      onChange={e => {
+                        const disc = e.target.value;
+                        const sub = form.subtotal;
+                        setForm(f => ({ 
+                          ...f, 
+                          discount_amount: disc,
+                          total_value: String(Number(sub) - Number(disc))
+                        }));
+                      }} 
+                      placeholder="0.00" 
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2"><Label>Valor Final (Automático)</Label><Input type="number" value={form.total_value} readOnly className="bg-muted" /></div>
                 </div>
                 <div className="space-y-2"><Label>Título *</Label><Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Título do orçamento" /></div>
                 

@@ -133,6 +133,10 @@ interface CreateQuoteInput {
   valid_until?: string;
   notes?: string;
   created_by?: string;
+  subtotal?: number;
+  discount_amount?: number;
+  discount_percent?: number;
+  items?: any;
 }
 
 export function useCreateQuote() {
@@ -164,13 +168,28 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { error } = await supabase.from('quotes').update(updates).eq('id', id);
+      const { data: quote, error } = await supabase.from('quotes').update(updates).eq('id', id).select('sale_id').single();
       if (error) throw error;
+
+      // Sincronização automática com pipeline
+      if (quote?.sale_id) {
+        let newPipelineStatus = '';
+        if (status === 'sent') newPipelineStatus = 'proposal';
+        if (status === 'approved') newPipelineStatus = 'won';
+        if (status === 'rejected') newPipelineStatus = 'lost';
+        if (status === 'expired') newPipelineStatus = 'closed';
+
+        if (newPipelineStatus) {
+          await supabase.from('sales').update({ status: newPipelineStatus }).eq('id', quote.sale_id);
+        }
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['quotes'] });
       qc.invalidateQueries({ queryKey: ['quotes-summary'] });
-      toast.success('Status atualizado');
+      qc.invalidateQueries({ queryKey: ['pipeline-deals'] });
+      qc.invalidateQueries({ queryKey: ['sales'] });
+      toast.success('Status atualizado e pipeline sincronizado');
     },
     onError: () => toast.error('Erro ao atualizar status'),
   });
