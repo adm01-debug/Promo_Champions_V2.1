@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Cadence, CadenceStep, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Trash2, ChevronDown, ChevronUp, ListTodo, Pencil, Power } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Trash2, ChevronDown, ChevronUp, ListTodo, Pencil, Power, CheckSquare } from "lucide-react";
 import { useState } from "react";
 import { EditCadenceDialog } from "./EditCadenceDialog";
 import { DeleteCadenceDialog } from "./DeleteCadenceDialog";
@@ -13,6 +13,7 @@ const actionIcons: Record<ActionType, typeof Phone> = {
   email: Mail,
   linkedin: Linkedin,
   whatsapp: MessageCircle,
+  task: CheckSquare,
   meeting: Users,
   other: MoreHorizontal,
 };
@@ -22,6 +23,7 @@ const actionLabels: Record<ActionType, string> = {
   email: "E-mail",
   linkedin: "LinkedIn",
   whatsapp: "WhatsApp",
+  task: "Tarefa",
   meeting: "Reunião",
   other: "Outro",
 };
@@ -31,6 +33,7 @@ const actionColors: Record<ActionType, string> = {
   email: "bg-status-warning/15 text-status-warning border-status-warning/30 shadow-sm shadow-status-warning/10",
   linkedin: "bg-primary/15 text-primary border-primary/30 shadow-sm shadow-primary/10",
   whatsapp: "bg-status-success/15 text-status-success border-status-success/30 shadow-sm shadow-status-success/10",
+  task: "bg-status-info/15 text-status-info border-status-info/30 shadow-sm shadow-status-info/10",
   meeting: "bg-status-purple/15 text-status-purple border-status-purple/30 shadow-sm shadow-status-purple/10",
   other: "bg-muted/50 text-muted-foreground border-border/50",
 };
