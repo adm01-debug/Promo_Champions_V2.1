@@ -137,15 +137,48 @@ Deno.serve(async (req) => {
       .filter(Boolean)
       .join(" ");
 
-    const { data: products, error } = await supabase.rpc("search_products_semantic", {
-      _keywords: analysis.keywords,
-      _query: searchQuery,
+    // Generate query embedding for true semantic search
+    const embRes = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/text-embedding-004",
+        input: searchQuery,
+      }),
+    });
+
+    if (!embRes.ok) {
+      console.error("Embedding error:", await embRes.text());
+      throw new Error("Failed to generate query embedding");
+    }
+
+    const embData = await embRes.json();
+    const queryEmbedding = embData?.data?.[0]?.embedding;
+
+    if (!queryEmbedding) {
+      throw new Error("Invalid embedding response from AI Gateway");
+    }
+
+    const { data: products, error } = await supabase.rpc("search_products_vector", {
+      _query_embedding: queryEmbedding,
       _limit: limit,
     });
 
     if (error) {
       console.error("RPC error:", error);
-      throw error;
+      // Fallback to legacy keyword search if vector search fails
+      const { data: legacyProducts } = await supabase.rpc("search_products_semantic", {
+        _keywords: analysis.keywords,
+        _query: searchQuery,
+        _limit: limit,
+      });
+      return new Response(
+        JSON.stringify({ analysis, results: legacyProducts ?? [], count: (legacyProducts ?? []).length }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     return new Response(
