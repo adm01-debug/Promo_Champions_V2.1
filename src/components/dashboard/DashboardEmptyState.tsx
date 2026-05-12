@@ -141,7 +141,12 @@ const emptyStates = {
 };
 
 export function DashboardEmptyState({ type, hero = false }: DashboardEmptyStateProps) {
-  const state = emptyStates[type];
+  const state = { ...emptyStates[type] };
+
+  if (hero && type === "revenue") {
+    state.title = "Comece sua jornada";
+    state.description = "Sua central de performance está pronta. Registre seu primeiro faturamento para desbloquear todas as métricas elite.";
+  }
 
   return (
     <motion.div
