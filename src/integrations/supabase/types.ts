@@ -17278,6 +17278,7 @@ export type Database = {
         Returns: boolean
       }
       update_performance_bet_progress: { Args: never; Returns: undefined }
+      update_territory_conquests: { Args: never; Returns: undefined }
       update_user_mfa_settings: {
         Args: {
           p_backup_codes?: string[]
