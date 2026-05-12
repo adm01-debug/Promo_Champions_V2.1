@@ -20,6 +20,7 @@ import { LiveIntelligenceFeed } from "./LiveIntelligenceFeed";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { NeuralSoundwave } from "./NeuralSoundwave";
+import { NeuralSentimentTimeline } from "./NeuralSentimentTimeline";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -44,7 +45,7 @@ export const ConversationalIntelligenceHub = () => {
   }, [data, search]);
 
   return (
-    <div className="space-y-10 relative pb-20">
+    <div className="space-y-12 relative pb-20">
       {/* Background Neural Matrix Decor */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
@@ -105,14 +106,14 @@ export const ConversationalIntelligenceHub = () => {
         </div>
       ) : data ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <KPICard icon={Mic} label="Mapeamento de Voz" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% coverage`} trend="+12%" accent="text-primary" />
             <KPICard icon={Clock} label="Tempo de Exposição" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" accent="text-info" />
             <KPICard icon={TrendingUp} label="Neural Sentiment" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala de Empatia (-1 a +1)" trend="+0.05" accent="text-success" />
             <KPICard icon={MessageSquare} label="Ratio de Persuasão" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} Q/call`} trend="Ideal" accent="text-warning" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <Brain className="size-24" />
@@ -244,6 +245,9 @@ export const ConversationalIntelligenceHub = () => {
              </div>
           ) : (
             <>
+              {data.recordings.length > 0 && (
+                <NeuralSentimentTimeline recordingId={data.recordings[0].id} />
+              )}
               <ConversationMetricsFeed />
               <QuestionFeedPanel onSelect={drawer.open} />
               <ObjectionLibraryPanel onSelect={drawer.open} />
@@ -251,8 +255,10 @@ export const ConversationalIntelligenceHub = () => {
             </>
           )}
 
-          <Card>
-            <CardHeader>
+          <div className="h-px bg-white/5 my-12" />
+
+          <Card className="glass border-white/5 shadow-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/5 bg-white/5 pb-8">
               <CardTitle>Biblioteca de chamadas (Full-text Search)</CardTitle>
               <CardDescription>
                 Busca semântica nos transcripts — encontre objeções, concorrentes e tópicos
@@ -263,8 +269,8 @@ export const ConversationalIntelligenceHub = () => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
+          <Card className="glass border-white/5 shadow-2xl overflow-hidden">
+            <CardHeader className="border-b border-white/5 bg-white/5 pb-8">
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div>
                   <CardTitle>Todas as chamadas</CardTitle>
@@ -290,11 +296,12 @@ export const ConversationalIntelligenceHub = () => {
               ) : (
                 <div className="space-y-3">
                   {filteredRecordings.map((r) => (
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.005, x: 5 }}
                       type="button"
                       key={r.id}
                       onClick={() => drawer.open(r.id)}
-                      className="w-full text-left border border-border rounded-lg p-4 hover:bg-muted/40 hover:border-primary/30 transition-colors"
+                      className="w-full text-left border border-white/5 bg-white/[0.02] rounded-2xl p-6 hover:bg-white/5 hover:border-primary/30 transition-all shadow-sm"
                     >
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="flex-1 min-w-0">
@@ -332,7 +339,7 @@ export const ConversationalIntelligenceHub = () => {
                           </div>
                         )}
                       </div>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               )}
