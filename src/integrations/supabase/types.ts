@@ -17167,6 +17167,7 @@ export type Database = {
         Returns: string
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
+      settle_performance_bets: { Args: never; Returns: undefined }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
