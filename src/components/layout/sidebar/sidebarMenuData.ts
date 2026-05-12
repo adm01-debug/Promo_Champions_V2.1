@@ -83,6 +83,15 @@ export const sdrGroupedItems: MenuGroup[] = [
     ],
   },
   {
+    label: "Comunidade & Elite", icon: PartyPopper,
+    items: [
+      { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
+      { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
+      { title: "Ranking Global", url: "/ranking", icon: Trophy },
+      { title: "Arena de Duelos", url: "/arena", icon: Swords },
+    ],
+  },
+  {
     label: "Análises", icon: Gauge,
     items: [
       { title: "Competências", url: "/competencias", icon: Brain },
@@ -109,6 +118,15 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Email Tracking", url: "/email-tracking", icon: MailSearch },
       { title: "Automações", url: "/automacoes", icon: Zap },
       { title: "Sales Enablement", url: "/sales-enablement", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Comunidade & Elite", icon: PartyPopper,
+    items: [
+      { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
+      { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
+      { title: "Ranking Global", url: "/ranking", icon: Trophy },
+      { title: "Arena de Duelos", url: "/arena", icon: Swords },
     ],
   },
   {

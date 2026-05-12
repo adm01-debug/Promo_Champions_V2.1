@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
 import { useMemo } from "react";
+import { StreakIndicator } from "@/components/competitive/StreakIndicator";
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
@@ -117,6 +118,9 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
             </TooltipTrigger>
             <TooltipContent side="bottom"><p>Busca semântica (⌘⇧F)</p></TooltipContent>
           </Tooltip>
+
+          {/* Streak Indicator */}
+          <StreakIndicator />
 
           {/* Divider */}
           <div className="w-px h-5 bg-border/50 mx-1.5" />

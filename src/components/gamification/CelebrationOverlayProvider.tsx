@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { calculateLevelFromXP, getLevelInfo } from '@/hooks/useSalespersonXP';
 import { useLevelUpCelebration } from '@/hooks/useLevelUpCelebration';
 import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
+import { VictoryOverlay } from './VictoryOverlay';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LevelUpData {
   salespersonId: string;
@@ -21,6 +23,15 @@ interface StreakData {
   xpReward?: number;
 }
 
+interface VictoryData {
+  salespersonId: string;
+  salespersonName: string;
+  title: string;
+  description: string;
+  eventType: 'sale' | 'achievement' | 'streak' | 'level_up';
+  value?: number;
+}
+
 // Streak milestone info mapping
 const STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: number }> = {
   'streak_3': { title: 'Iniciante Dedicado', icon: '🔥', xp: 50 },
@@ -30,6 +41,7 @@ const STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: n
 };
 
 export function CelebrationOverlayProvider() {
+  const { salesperson } = useAuth();
   const { triggerLevelUp, triggerStreakMilestone } = useLevelUpCelebration();
   const salespersonNamesRef = useRef<Map<string, string>>(new Map());
   
@@ -38,9 +50,11 @@ export function CelebrationOverlayProvider() {
   const [levelUpData, setLevelUpData] = useState<LevelUpData | null>(null);
   const [showStreak, setShowStreak] = useState(false);
   const [streakData, setStreakData] = useState<StreakData | null>(null);
+  const [showVictory, setShowVictory] = useState(false);
+  const [victoryData, setVictoryData] = useState<VictoryData | null>(null);
 
   // Queue for celebrations
-  const celebrationQueueRef = useRef<Array<{ type: 'levelUp' | 'streak'; data: LevelUpData | StreakData }>>([]);
+  const celebrationQueueRef = useRef<Array<{ type: 'levelUp' | 'streak' | 'victory'; data: any }>>([]);
   const isShowingRef = useRef(false);
 
   const processQueue = useCallback(() => {
@@ -55,7 +69,6 @@ export function CelebrationOverlayProvider() {
       const data = next.data as LevelUpData;
       setLevelUpData(data);
       setShowLevelUp(true);
-      // Also trigger confetti
       triggerLevelUp({
         salespersonId: data.salespersonId,
         salespersonName: data.salespersonName,
@@ -63,185 +76,98 @@ export function CelebrationOverlayProvider() {
         levelTitle: data.levelTitle,
         levelEmoji: data.levelEmoji,
       });
-    } else {
+    } else if (next.type === 'streak') {
       const data = next.data as StreakData;
       setStreakData(data);
       setShowStreak(true);
-      // Also trigger confetti
       triggerStreakMilestone({
         salespersonId: data.salespersonId,
         salespersonName: data.salespersonName,
         streakDays: data.streakDays,
       });
+    } else if (next.type === 'victory') {
+      const data = next.data as VictoryData;
+      setVictoryData(data);
+      setShowVictory(true);
     }
   }, [triggerLevelUp, triggerStreakMilestone]);
 
-  const handleLevelUpComplete = useCallback(() => {
+  const handleComplete = useCallback(() => {
     setShowLevelUp(false);
-    setLevelUpData(null);
-    isShowingRef.current = false;
-    // Process next in queue after a short delay
-    setTimeout(() => processQueue(), 500);
-  }, [processQueue]);
-
-  const handleStreakComplete = useCallback(() => {
     setShowStreak(false);
+    setShowVictory(false);
+    setLevelUpData(null);
     setStreakData(null);
+    setVictoryData(null);
     isShowingRef.current = false;
-    // Process next in queue after a short delay
     setTimeout(() => processQueue(), 500);
   }, [processQueue]);
 
   useEffect(() => {
-    // Load salesperson names
     const loadSalespersonNames = async () => {
-      const { data } = await supabase
-        .from('salespeople')
-        .select('id, name')
-        .eq('is_active', true);
-      
-      if (data) {
-        data.forEach(sp => {
-          salespersonNamesRef.current.set(sp.id, sp.name);
-        });
-      }
+      const { data } = await supabase.from('salespeople').select('id, name').eq('is_active', true);
+      if (data) data.forEach(sp => salespersonNamesRef.current.set(sp.id, sp.name));
     };
-
     loadSalespersonNames();
 
-    // Subscribe to XP changes for level-ups
+    // Subscribe to victory_feed for current user
+    let victoryChannel: any;
+    if (salesperson?.id) {
+      victoryChannel = supabase
+        .channel('victory-celebrations')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'victory_feed', filter: `salesperson_id=eq.${salesperson.id}` },
+          (payload) => {
+            const newItem = payload.new;
+            celebrationQueueRef.current.push({
+              type: 'victory',
+              data: {
+                salespersonId: salesperson.id,
+                salespersonName: salesperson.name || 'Vendedor',
+                title: newItem.title,
+                description: newItem.description,
+                eventType: newItem.event_type,
+                value: newItem.value
+              }
+            });
+            processQueue();
+          }
+        )
+        .subscribe();
+    }
+
+    // Subscribe to XP changes
     const xpChannel = supabase
       .channel('xp-celebrations-overlay')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'salesperson_xp',
-        },
-        (payload) => {
-          const newRecord = payload.new as { salesperson_id: string; total_xp: number; current_level: number };
-          const oldRecord = payload.old as { salesperson_id: string; total_xp: number; current_level: number };
-          
-          if (!newRecord || !oldRecord) return;
-
-          const salespersonId = newRecord.salesperson_id;
-          const salespersonName = salespersonNamesRef.current.get(salespersonId) || 'Vendedor';
-          
-          // Calculate levels from XP
-          const oldLevel = calculateLevelFromXP(oldRecord.total_xp);
-          const newLevel = calculateLevelFromXP(newRecord.total_xp);
-
-          // Check for level up
-          if (newLevel.level > oldLevel.level) {
-            const levelInfo = getLevelInfo(newLevel.level);
-            
-            if (import.meta.env.DEV) {
-            void 0;
-            }
-            
-            celebrationQueueRef.current.push({
-              type: 'levelUp',
-              data: {
-                salespersonId,
-                salespersonName,
-                level: newLevel.level,
-                levelTitle: levelInfo.title,
-                levelEmoji: levelInfo.emoji,
-              }
-            });
-            processQueue();
-          }
-        }
-      )
-      .subscribe();
-
-    // Subscribe to achievements for streak milestones (legacy)
-    const achievementsChannel = supabase
-      .channel('achievement-celebrations-overlay')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'achievements',
-        },
-        (payload) => {
-          const achievement = payload.new as {
-            salesperson_id: string;
-            achievement_type: string;
-            details: { streak_days?: number } | null;
-          };
-
-          if (achievement.achievement_type === 'streak_milestone') {
-            const salespersonName = salespersonNamesRef.current.get(achievement.salesperson_id) || 'Vendedor';
-            const streakDays = achievement.details?.streak_days || 0;
-
-            if (import.meta.env.DEV) {
-            void 0;
-            }
-
-            celebrationQueueRef.current.push({
-              type: 'streak',
-              data: {
-                salespersonId: achievement.salesperson_id,
-                salespersonName,
-                streakDays,
-              }
-            });
-            processQueue();
-          }
-        }
-      )
-      .subscribe();
-
-    // Subscribe to daily_streak_achievements for new streak system
-    const dailyStreakChannel = supabase
-      .channel('daily-streak-celebrations-overlay')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'daily_streak_achievements',
-        },
-        (payload) => {
-          const streakAchievement = payload.new as {
-            salesperson_id: string;
-            streak_type: string;
-            streak_count: number;
-            xp_awarded: number;
-          };
-
-          const salespersonName = salespersonNamesRef.current.get(streakAchievement.salesperson_id) || 'Vendedor';
-          const milestoneInfo = STREAK_MILESTONE_INFO[streakAchievement.streak_type];
-
-          if (import.meta.env.DEV) {
-          void 0;
-          }
-
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' }, (payload) => {
+        const newRecord = payload.new as any;
+        const oldRecord = payload.old as any;
+        if (!newRecord || !oldRecord) return;
+        const oldLevel = calculateLevelFromXP(oldRecord.total_xp);
+        const newLevel = calculateLevelFromXP(newRecord.total_xp);
+        if (newLevel.level > oldLevel.level) {
+          const levelInfo = getLevelInfo(newLevel.level);
           celebrationQueueRef.current.push({
-            type: 'streak',
+            type: 'levelUp',
             data: {
-              salespersonId: streakAchievement.salesperson_id,
-              salespersonName,
-              streakDays: streakAchievement.streak_count,
-              milestoneTitle: milestoneInfo?.title || 'Conquista de Streak!',
-              milestoneIcon: milestoneInfo?.icon || '🔥',
-              xpReward: streakAchievement.xp_awarded,
+              salespersonId: newRecord.salesperson_id,
+              salespersonName: salespersonNamesRef.current.get(newRecord.salesperson_id) || 'Vendedor',
+              level: newLevel.level,
+              levelTitle: levelInfo.title,
+              levelEmoji: levelInfo.emoji,
             }
           });
           processQueue();
         }
-      )
+      })
       .subscribe();
 
     return () => {
+      if (victoryChannel) supabase.removeChannel(victoryChannel);
       supabase.removeChannel(xpChannel);
-      supabase.removeChannel(achievementsChannel);
-      supabase.removeChannel(dailyStreakChannel);
     };
-  }, [processQueue]);
+  }, [salesperson?.id, salesperson?.name, processQueue]);
 
   return (
     <>
@@ -251,7 +177,7 @@ export function CelebrationOverlayProvider() {
         levelTitle={levelUpData?.levelTitle || ''}
         levelEmoji={levelUpData?.levelEmoji || '🌟'}
         salespersonName={levelUpData?.salespersonName || ''}
-        onComplete={handleLevelUpComplete}
+        onComplete={handleComplete}
       />
       <StreakMilestoneOverlay
         isVisible={showStreak}
@@ -260,7 +186,16 @@ export function CelebrationOverlayProvider() {
         milestoneTitle={streakData?.milestoneTitle}
         milestoneIcon={streakData?.milestoneIcon}
         xpReward={streakData?.xpReward}
-        onComplete={handleStreakComplete}
+        onComplete={handleComplete}
+      />
+      <VictoryOverlay
+        isVisible={showVictory}
+        title={victoryData?.title || ''}
+        description={victoryData?.description || ''}
+        eventType={victoryData?.eventType || 'achievement'}
+        value={victoryData?.value}
+        salespersonName={victoryData?.salespersonName || ''}
+        onComplete={handleComplete}
       />
     </>
   );
