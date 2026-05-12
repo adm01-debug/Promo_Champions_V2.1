@@ -168,8 +168,8 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
 
 export function NotificationCenter() {
   const navigate = useNavigate();
-  const { salesperson } = useAuth();
-  const updateSalesperson = useUpdateSalesperson();
+  const { salesperson, refreshSalesperson } = useAuth();
+  const updateSalesperson = useUpdateSalesperson(() => refreshSalesperson());
   const [filter, setFilter] = useState<"all" | "unread" | "ranking" | "sales">("all");
   const { data: notifications = [], isLoading } = useNotifications({ limit: 100 });
   const markRead = useMarkNotificationRead();
