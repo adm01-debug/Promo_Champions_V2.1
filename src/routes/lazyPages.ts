@@ -59,6 +59,7 @@ export const Comissoes = lazy(() => import("@/pages/Comissoes"));
 export const Agenda = lazy(() => import("@/pages/Agenda"));
 export const AdminComissoes = lazy(() => import("@/pages/AdminComissoes"));
 export const ApprovalWorkflows = lazy(() => import("@/pages/ApprovalWorkflowsPage"));
+export const CommissionRules = lazy(() => import("@/pages/CommissionRules"));
 export const Webhooks = lazy(() => import("@/pages/WebhooksPage"));
 export const AuditLogs = lazy(() => import("@/pages/AuditLogsPage"));
 export const SLATracking = lazy(() => import("@/pages/SLATrackingPage"));
