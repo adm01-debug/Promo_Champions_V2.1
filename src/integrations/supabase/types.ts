@@ -16697,6 +16697,10 @@ export type Database = {
           total_revenue: number
         }[]
       }
+      check_performance_bets_completion: {
+        Args: { p_salesperson_id: string }
+        Returns: undefined
+      }
       check_quote_expirations: { Args: never; Returns: undefined }
       check_rate_limit: {
         Args: { p_action: string; p_identifier: string }
@@ -16945,6 +16949,14 @@ export type Database = {
           best_hour: number
           sample_size: number
         }[]
+      }
+      get_historical_benchmark: {
+        Args: {
+          p_end_date: string
+          p_salesperson_id: string
+          p_start_date: string
+        }
+        Returns: Json
       }
       get_mfa_status: {
         Args: never
