@@ -199,13 +199,42 @@ export const ConversationalIntelligenceHub = () => {
             </Card>
           </div>
 
-          {horizon === 0 || String(horizon) === 'live' ? (
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {horizon === 'live' ? (
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                   <Card className="h-[600px] flex flex-col items-center justify-center border-dashed">
-                      <Headphones className="size-16 opacity-10 mb-4 animate-bounce" />
-                      <p className="text-sm font-medium">Sincronizando áudio em tempo real...</p>
-                      <p className="text-xs text-muted-foreground mt-1">Conecte o discador Twilio ou Zoom para iniciar</p>
+                   <Card className="h-[600px] flex flex-col items-center justify-center border border-white/5 bg-slate-950/40 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent)] animate-pulse" />
+                      
+                      <div className="relative z-10 flex flex-col items-center text-center px-10">
+                        <NeuralSoundwave active={true} color="bg-destructive" />
+                        
+                        <div className="mt-8 space-y-4">
+                          <div className="flex items-center justify-center gap-3">
+                            <Badge className="bg-destructive text-white border-none animate-bounce font-black text-xs px-4 py-1">LIVE STREAMING</Badge>
+                            <span className="text-xs font-bold text-muted-foreground">00:12:45</span>
+                          </div>
+                          
+                          <h3 className="text-3xl font-black font-sora tracking-tight">Análise Neural em Tempo Real</h3>
+                          <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+                            Ouvindo fluxo de áudio via Twilio Link. A IA está processando sentimentos, intenções e sugerindo battlecards instantaneamente.
+                          </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 mt-12 w-full">
+                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Vendedor</p>
+                            <p className="text-xs font-medium italic opacity-70">"Entendo sua preocupação com o preço, mas se olharmos para o ROI..."</p>
+                          </div>
+                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Cliente</p>
+                            <p className="text-xs font-medium italic opacity-70">"Pois é, o orçamento está bem apertado para este trimestre."</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Floating Particles */}
+                      <div className="absolute bottom-10 left-10 h-1 w-1 bg-primary rounded-full animate-ping" />
+                      <div className="absolute top-20 right-20 h-1.5 w-1.5 bg-destructive rounded-full animate-ping" style={{ animationDelay: '1s' }} />
                    </Card>
                 </div>
                 <div className="space-y-4">
