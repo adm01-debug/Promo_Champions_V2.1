@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType, useUpdateLeadStage } from "@/hooks/useCadences";
-import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch, CheckSquare } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch, CheckSquare, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -214,6 +214,15 @@ export function TodaysCadenceTasks() {
           }`}>
             {tasks?.length || 0} pendentes
           </Badge>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-200"
+            onClick={() => queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] })}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-0">
