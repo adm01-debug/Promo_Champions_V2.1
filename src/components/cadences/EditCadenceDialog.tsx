@@ -23,19 +23,29 @@ const cadenceSchema = z.object({
 
 type CadenceFormData = z.infer<typeof cadenceSchema>;
 
+const stepInputSchema = z.object({
+  day_number: z.number().min(1, "Dia deve ser pelo menos 1"),
+  action_type: z.enum(["email", "call", "linkedin", "whatsapp", "task", "meeting", "other"]),
+  title: z.string().trim().min(3, "Título deve ter pelo menos 3 caracteres").max(100),
+  description: z.string().optional(),
+  needs_approval: z.boolean().default(false),
+  task_type: z.enum(['manual', 'automatic']).default('manual'),
+}).refine(data => {
+  if (data.task_type === 'automatic' && ["email", "whatsapp", "linkedin"].includes(data.action_type)) {
+    return !!data.description?.trim(); // No EditCadenceDialog, o campo se chama description no state local
+  }
+  return true;
+}, {
+  message: "Ações automáticas exigem template",
+  path: ["description"]
+});
+
+interface NewStepInput extends z.infer<typeof stepInputSchema> {}
+
 interface EditCadenceDialogProps {
   cadence: Cadence;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-interface NewStepInput {
-  day_number: number;
-  action_type: ActionType;
-  title: string;
-  description: string;
-  needs_approval: boolean;
-  task_type: 'manual' | 'automatic';
 }
 
 export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDialogProps) {
@@ -45,6 +55,7 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
   const updateStep = useUpdateCadenceStep();
   const deleteStep = useDeleteCadenceStep();
   const [newSteps, setNewSteps] = useState<NewStepInput[]>([]);
+  const [stepErrors, setStepErrors] = useState<Record<number, string[]>>({});
 
   const form = useForm<CadenceFormData>({
     resolver: zodResolver(cadenceSchema),
@@ -77,22 +88,55 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
   };
 
   const handleSaveNewSteps = async () => {
-    const baseOrder = existingSteps?.length || 0;
-    for (let i = 0; i < newSteps.length; i++) {
-      const s = newSteps[i];
-      if (!s.title.trim()) continue;
-      await createStep.mutateAsync({ 
-        cadence_id: cadence.id, 
-        day_number: s.day_number, 
-        action_type: s.action_type, 
-        title: s.title, 
-        template_content: s.description || undefined, 
-        step_order: baseOrder + i,
-        needs_approval: s.needs_approval,
-        task_type: s.task_type
-      });
+    const errors: Record<number, string[]> = {};
+    let isValid = true;
+
+    newSteps.forEach((s, idx) => {
+      const result = stepInputSchema.safeParse(s);
+      if (!result.success) {
+        errors[idx] = result.error.errors.map(err => err.message);
+        isValid = false;
+      }
+    });
+
+    const lastExistingDay = existingSteps?.length ? Math.max(...existingSteps.map(s => s.day_number)) : 0;
+    let currentLastDay = lastExistingDay;
+    newSteps.forEach((s, idx) => {
+      if (s.day_number <= currentLastDay) {
+        const e = errors[idx] || [];
+        e.push(`Dia deve ser maior que ${currentLastDay}`);
+        errors[idx] = e;
+        isValid = false;
+      }
+      currentLastDay = s.day_number;
+    });
+
+    if (!isValid) {
+      setStepErrors(errors);
+      toast.error("Corrija os erros nas novas etapas");
+      return;
     }
-    setNewSteps([]);
+
+    const baseOrder = existingSteps?.length || 0;
+    try {
+      for (let i = 0; i < newSteps.length; i++) {
+        const s = newSteps[i];
+        await createStep.mutateAsync({ 
+          cadence_id: cadence.id, 
+          day_number: s.day_number, 
+          action_type: s.action_type, 
+          title: s.title, 
+          template_content: s.description || undefined, 
+          step_order: baseOrder + i,
+          needs_approval: s.needs_approval,
+          task_type: s.task_type
+        });
+      }
+      setNewSteps([]);
+      setStepErrors({});
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -132,7 +176,7 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
             <div className="space-y-2 pt-2 border-t border-dashed border-border/40">
               <p className="text-xs text-muted-foreground font-medium">Novas etapas:</p>
               {newSteps.map((s, i) => (
-                <div key={i} className="p-3 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
+                <div key={i} className={`p-3 rounded-lg border space-y-3 ${stepErrors[i] ? 'border-destructive/50 bg-destructive/5' : 'border-primary/30 bg-primary/5'}`}>
                   <div className="flex items-center justify-between">
                     <Badge variant="secondary" className="text-xs bg-primary/20 text-primary border-primary/30">Nova Etapa</Badge>
                     <Button size="icon" aria-label="Remover etapa" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => setNewSteps(newSteps.filter((_, idx) => idx !== i))}><Trash2 className="h-3 w-3" /></Button>
@@ -173,6 +217,16 @@ export function EditCadenceDialog({ cadence, open, onOpenChange }: EditCadenceDi
                     </div>
                   </div>
                   <div className="space-y-1"><Label className="text-xs">Título *</Label><Input value={s.title} onChange={(e) => { const u = [...newSteps]; u[i] = { ...s, title: e.target.value }; setNewSteps(u); }} className="h-8 text-sm bg-background/50" placeholder="Título da ação" /></div>
+                  {stepErrors[i] && (
+                    <div className="mt-1 space-y-0.5">
+                      {stepErrors[i].map((err, idx) => (
+                        <p key={idx} className="text-[10px] text-destructive flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-destructive" />
+                          {err}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
               <Button variant="glow" className="w-full h-8 text-xs font-medium" onClick={handleSaveNewSteps} disabled={createStep.isPending || newSteps.every(s => !s.title.trim())}>{createStep.isPending ? "Salvando..." : "Salvar Novas Etapas"}</Button>

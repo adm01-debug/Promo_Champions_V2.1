@@ -30,21 +30,31 @@ const actionTypes: { value: ActionType; label: string; icon: typeof Phone }[] = 
   { value: "other", label: "Outro", icon: MoreHorizontal },
 ];
 
+const stepInputSchema = z.object({
+  day_number: z.number().min(1, "Dia deve ser pelo menos 1"),
+  action_type: z.enum(["email", "call", "linkedin", "whatsapp", "task", "meeting", "other"]),
+  title: z.string().trim().min(3, "Título deve ter pelo menos 3 caracteres").max(100),
+  template_content: z.string().optional(),
+  needs_approval: z.boolean().default(false),
+  task_type: z.enum(['manual', 'automatic']).default('manual'),
+}).refine(data => {
+  // Se for automático, precisa ter conteúdo de template para ações de mensagem
+  if (data.task_type === 'automatic' && ["email", "whatsapp", "linkedin"].includes(data.action_type)) {
+    return !!data.template_content?.trim();
+  }
+  return true;
+}, {
+  message: "Ações automáticas de mensagem exigem um template preenchido",
+  path: ["template_content"]
+});
+
 const cadenceSchema = z.object({
   name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
   description: z.string().max(500, "Descrição deve ter no máximo 500 caracteres").optional(),
 });
 
 type CadenceFormData = z.infer<typeof cadenceSchema>;
-
-interface StepInput {
-  day_number: number;
-  action_type: ActionType;
-  title: string;
-  template_content: string;
-  needs_approval: boolean;
-  task_type: 'manual' | 'automatic';
-}
+type StepInput = z.infer<typeof stepInputSchema>;
 
 export function CreateCadenceDialog() {
   const [open, setOpen] = useState(false);
@@ -53,6 +63,7 @@ export function CreateCadenceDialog() {
   const [steps, setSteps] = useState<StepInput[]>([
     { day_number: 1, action_type: "email", title: "Email de introdução", template_content: "", needs_approval: false, task_type: "manual" },
   ]);
+  const [stepErrors, setStepErrors] = useState<Record<number, string[]>>({});
 
   const createCadence = useCreateCadence();
   const createStep = useCreateCadenceStep();
@@ -205,7 +216,9 @@ export function CreateCadenceDialog() {
               {steps.map((s, index) => (
                 <div
                   key={index}
-                  className="p-4 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/40 space-y-3 transition-colors"
+                  className={`p-4 rounded-lg border bg-muted/30 hover:bg-muted/40 space-y-3 transition-colors ${
+                    stepErrors[index] ? 'border-destructive/50 ring-1 ring-destructive/20' : 'border-border/50'
+                  }`}
                 >
                   <div className="flex items-center justify-between">
                     <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-accent/10 text-primary border border-primary/20">
@@ -309,9 +322,22 @@ export function CreateCadenceDialog() {
                       value={s.template_content}
                       onChange={(e) => updateStep(index, "template_content", e.target.value)}
                       placeholder="Instruções ou template da mensagem..."
-                      className="min-h-[80px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors font-mono"
+                      className={`min-h-[80px] text-sm resize-none bg-background/50 border-border/50 focus:border-primary transition-colors font-mono ${
+                        stepErrors[index]?.some(e => e.includes("template")) ? 'border-destructive/50' : ''
+                      }`}
                     />
                   </div>
+
+                  {stepErrors[index] && (
+                    <div className="mt-2 space-y-1">
+                      {stepErrors[index].map((err, i) => (
+                        <p key={i} className="text-[10px] text-destructive flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-destructive" />
+                          {err}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
