@@ -87,6 +87,20 @@ export default function Atividades() {
             </div>
           </TabsContent>
 
+          <TabsContent value="performance">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-0 animate-fade-in-up">
+              <ActivityLeaderboard />
+              <ActivityEffectiveness />
+              <ActivityChannelEffectiveness />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="goals" className="max-w-xl">
+            <div className="opacity-0 animate-fade-in-up">
+              <ActivityGoalForm />
+            </div>
+          </TabsContent>
+
           <TabsContent value="alerts" className="max-w-xl">
             <div className="opacity-0 animate-fade-in-up">
               <SDRAlertSettings />
