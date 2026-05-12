@@ -202,7 +202,7 @@ const Deduplication = () => {
                       </Badge>
                     </div>
                     <div className="flex gap-1">
-                      <Button size="sm" variant="default" className="h-7 text-xs gap-1" onClick={() => handleMerge(group)}>
+                      <Button size="sm" variant="default" className="h-7 text-xs gap-1 gradient-primary" onClick={() => handleOpenMerge(group)}>
                         <Merge className="h-3 w-3" /> Mesclar
                       </Button>
                       <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleDismiss(group.key)}>
@@ -213,14 +213,14 @@ const Deduplication = () => {
                   <div className="grid gap-2">
                     {group.clients.map((c, i) => (
                       <div key={c.id} className={cn(
-                        "flex items-center gap-3 p-2 rounded-lg text-xs",
-                        i === 0 ? "bg-primary/5 border border-primary/20" : "bg-muted/30"
+                        "flex items-center gap-3 p-2 rounded-lg text-xs transition-all",
+                        i === 0 ? "bg-primary/5 border border-primary/20" : "bg-white/5 border border-transparent"
                       )}>
-                        {i === 0 && <Badge variant="outline" className="text-[9px] shrink-0">Principal</Badge>}
-                        <span className="font-medium flex-1">{c.name}</span>
-                        <span className="text-muted-foreground">{c.email || "—"}</span>
-                        <span className="text-muted-foreground">{c.phone || "—"}</span>
-                        <span className="font-semibold text-status-success">
+                        {i === 0 && <Badge variant="outline" className="text-[9px] shrink-0 bg-primary/10 text-primary border-primary/20">Principal</Badge>}
+                        <span className="font-medium flex-1 truncate">{c.name}</span>
+                        <span className="text-muted-foreground truncate hidden md:block">{c.email || "—"}</span>
+                        <span className="text-muted-foreground truncate hidden md:block">{c.phone || "—"}</span>
+                        <span className="font-semibold text-primary/80">
                           {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(c.total_value)}
                         </span>
                       </div>
@@ -231,6 +231,16 @@ const Deduplication = () => {
             </motion.div>
           )}
         </div>
+
+        {selectedGroup && (
+          <MergeConflictsResolver
+            open={isResolverOpen}
+            onOpenChange={setIsResolverOpen}
+            clients={selectedGroup.clients}
+            onMerge={(targetId, duplicateIds, preferredFields) => mergeMutation.mutate({ targetId, duplicateIds, preferredFields })}
+            isMerging={mergeMutation.isPending}
+          />
+        )}
       </PageTransition>
     </>
   );
