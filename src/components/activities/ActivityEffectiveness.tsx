@@ -14,6 +14,8 @@ export function ActivityEffectiveness() {
   const badTiming = stats?.byOutcome.bad_timing ?? 0;
   const wrongPerson = stats?.byOutcome.wrong_person ?? 0;
   const unsubscribed = stats?.byOutcome.unsubscribed ?? 0;
+  const noAnswer = stats?.byOutcome.no_answer ?? 0;
+  const voicemail = stats?.byOutcome.voicemail ?? 0;
 
   const connectionRate = total > 0 ? (connected / total) * 100 : 0;
   const schedulingRate = connected > 0 ? (scheduled / connected) * 100 : 0;
@@ -84,17 +86,23 @@ export function ActivityEffectiveness() {
         ))}
         
         <div className="pt-2 border-t border-border/40">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Conversão Final</p>
-              <p className="text-lg font-bold font-display gradient-text">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="text-center p-2 rounded-lg bg-muted/20">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Conversão</p>
+              <p className="text-sm font-bold font-display gradient-text">
                 {total > 0 ? ((scheduled + qualified) / total * 100).toFixed(1) : "0.0"}%
               </p>
             </div>
-            <div className="text-center">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Média Duração</p>
-              <p className="text-lg font-bold font-display">
-                {(stats?.avgDuration ?? 0).toFixed(0)} min
+            <div className="text-center p-2 rounded-lg bg-muted/20">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Média Duração</p>
+              <p className="text-sm font-bold font-display">
+                {(stats?.avgDuration ?? 0).toFixed(0)}m
+              </p>
+            </div>
+            <div className="text-center p-2 rounded-lg bg-muted/20">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Perda (Ghost)</p>
+              <p className="text-sm font-bold font-display text-red-400">
+                {total > 0 ? ((noAnswer + voicemail) / total * 100).toFixed(1) : "0.0"}%
               </p>
             </div>
           </div>
