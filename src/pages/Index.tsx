@@ -60,7 +60,7 @@ const Index = () => {
   useDashboardRedirect();
   const [period, setPeriod] = useState<KPIPeriod>("current_month");
 
-  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period);
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period, salesperson?.id);
   const { data: goalsData } = useGoalsDashboard();
   const { data: salesTrend } = useSalesChartData("30d");
   const { salesperson } = useAuth();
