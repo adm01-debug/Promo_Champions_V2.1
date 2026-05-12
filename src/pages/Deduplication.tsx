@@ -44,7 +44,10 @@ function nameSimilarity(a: string, b: string): number {
 }
 
 const Deduplication = () => {
-  const [mergedIds, setMergedIds] = useState<Set<string>>(new Set());
+  const queryClient = useQueryClient();
+  const [selectedGroup, setSelectedGroup] = useState<DuplicateGroup | null>(null);
+  const [isResolverOpen, setIsResolverOpen] = useState(false);
+  const [ignoredKeys, setIgnoredKeys] = useState<Set<string>>(new Set());
 
   const { data: duplicates, isLoading } = useQuery<DuplicateGroup[]>({
     queryKey: ["deduplication-scan"],
@@ -53,32 +56,23 @@ const Deduplication = () => {
         .from("clients")
         .select("id, name, email, phone, company, total_value")
         .order("name")
-        .limit(500);
+        .limit(1000);
+      
       if (error) throw error;
       const clients = data || [];
       const groups: DuplicateGroup[] = [];
       const seen = new Set<string>();
 
-      // Email exact match
+      // Exact matches first (Email/Phone)
       const emailMap: Record<string, typeof clients> = {};
+      const phoneMap: Record<string, typeof clients> = {};
+
       clients.forEach((c) => {
         if (c.email) {
           const key = c.email.toLowerCase().trim();
           if (!emailMap[key]) emailMap[key] = [];
           emailMap[key].push(c);
         }
-      });
-      Object.entries(emailMap).forEach(([email, group]) => {
-        if (group.length > 1) {
-          const key = `email-${email}`;
-          groups.push({ key, clients: group, similarity: 1, match_type: "email" });
-          group.forEach((c) => seen.add(c.id));
-        }
-      });
-
-      // Phone exact match
-      const phoneMap: Record<string, typeof clients> = {};
-      clients.forEach((c) => {
         if (c.phone) {
           const normalized = c.phone.replace(/\D/g, "");
           if (normalized.length >= 8) {
@@ -88,22 +82,33 @@ const Deduplication = () => {
           }
         }
       });
-      Object.entries(phoneMap).forEach(([phone, group]) => {
-        if (group.length > 1 && !group.every((c) => seen.has(c.id))) {
-          groups.push({ key: `phone-${phone}`, clients: group, similarity: 0.95, match_type: "phone" });
-          group.forEach((c) => seen.add(c.id));
+
+      Object.entries(emailMap).forEach(([email, group]) => {
+        if (group.length > 1) {
+          groups.push({ key: `email-${email}`, clients: group, similarity: 1, match_type: "email" });
+          group.forEach(c => seen.add(c.id));
         }
       });
 
-      // Fuzzy name match
-      for (let i = 0; i < clients.length; i++) {
-        for (let j = i + 1; j < clients.length; j++) {
-          if (seen.has(clients[i].id) && seen.has(clients[j].id)) continue;
-          const sim = nameSimilarity(clients[i].name, clients[j].name);
-          if (sim >= 0.85) {
+      Object.entries(phoneMap).forEach(([phone, group]) => {
+        if (group.length > 1) {
+          const key = `phone-${phone}`;
+          if (!groups.some(g => g.key.includes(phone))) {
+             groups.push({ key, clients: group, similarity: 0.98, match_type: "phone" });
+             group.forEach(c => seen.add(c.id));
+          }
+        }
+      });
+
+      // Fuzzy Name Matching (only for those not already in exact groups)
+      const remainingClients = clients.filter(c => !seen.has(c.id));
+      for (let i = 0; i < remainingClients.length; i++) {
+        for (let j = i + 1; j < remainingClients.length; j++) {
+          const sim = nameSimilarity(remainingClients[i].name, remainingClients[j].name);
+          if (sim >= 0.88) {
             groups.push({
-              key: `name-${clients[i].id}-${clients[j].id}`,
-              clients: [clients[i], clients[j]],
+              key: `fuzzy-${remainingClients[i].id}-${remainingClients[j].id}`,
+              clients: [remainingClients[i], remainingClients[j]],
               similarity: Math.round(sim * 100) / 100,
               match_type: "name",
             });
@@ -113,30 +118,49 @@ const Deduplication = () => {
 
       return groups.sort((a, b) => b.similarity - a.similarity);
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
+    staleTime: 0, // Always fresh
   });
 
-  const handleMerge = useCallback((group: DuplicateGroup) => {
-    // Mark as merged (UI-only for now)
-    const newMerged = new Set(mergedIds);
-    group.clients.slice(1).forEach((c) => newMerged.add(c.id));
-    setMergedIds(newMerged);
-    toast.success(`${group.clients.length} registros mesclados em "${group.clients[0].name}"`);
-  }, [mergedIds]);
+  const mergeMutation = useMutation({
+    mutationFn: async ({ targetId, duplicateIds, preferredFields }: { targetId: string; duplicateIds: string[]; preferredFields: Record<string, string> }) => {
+      const { error } = await supabase.rpc('merge_clients', {
+        target_id: targetId,
+        duplicate_ids: duplicateIds,
+        preferred_fields: preferredFields
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deduplication-scan"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      toast.success("Registros mesclados com sucesso!");
+      setIsResolverOpen(false);
+      setSelectedGroup(null);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao mesclar: ${error.message}`);
+    }
+  });
+
+  const handleOpenMerge = useCallback((group: DuplicateGroup) => {
+    setSelectedGroup(group);
+    setIsResolverOpen(true);
+  }, []);
 
   const handleDismiss = useCallback((key: string) => {
-    toast.info("Duplicata ignorada");
+    setIgnoredKeys(prev => new Set([...prev, key]));
+    toast.info("Sugestão ignorada temporariamente");
   }, []);
 
   const activeDuplicates = useMemo(
-    () => (duplicates || []).filter((g) => !g.clients.every((c) => mergedIds.has(c.id))),
-    [duplicates, mergedIds]
+    () => (duplicates || []).filter((g) => !ignoredKeys.has(g.key)),
+    [duplicates, ignoredKeys]
   );
 
   const MATCH_COLORS = {
     email: "text-primary border-primary/30 bg-primary/10",
-    phone: "text-status-warning border-status-warning/30 bg-status-warning/10",
-    name: "text-info border-info/30 bg-info/10",
+    phone: "text-amber-400 border-amber-400/30 bg-amber-400/10",
+    name: "text-blue-400 border-blue-400/30 bg-blue-400/10",
   };
 
   return (
