@@ -7902,6 +7902,30 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_sales_summary: {
+        Row: {
+          deals: number | null
+          month: string
+          revenue: number | null
+          updated_at: string | null
+          won_deals: number | null
+        }
+        Insert: {
+          deals?: number | null
+          month: string
+          revenue?: number | null
+          updated_at?: string | null
+          won_deals?: number | null
+        }
+        Update: {
+          deals?: number | null
+          month?: string
+          revenue?: number | null
+          updated_at?: string | null
+          won_deals?: number | null
+        }
+        Relationships: []
+      }
       mood_entries: {
         Row: {
           created_at: string
@@ -17163,6 +17187,10 @@ export type Database = {
           _to: string
         }
         Returns: string
+      }
+      refresh_monthly_sales_summary: {
+        Args: { p_month: string }
+        Returns: undefined
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
