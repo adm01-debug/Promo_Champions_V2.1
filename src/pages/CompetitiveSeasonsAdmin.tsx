@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Flame, Plus, Calendar, Zap, Trophy, Clock } from "lucide-react";
+import { Flame, Plus, Calendar, Zap, Trophy, Clock, RotateCcw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -85,14 +85,30 @@ const CompetitiveSeasonsAdmin = () => {
       </Helmet>
       <PageTransition>
         <div className="container max-w-4xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
-          <motion.div variants={itemVariants} className="flex items-center justify-between">
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-page-title font-display">🔥 Temporadas Competitivas</h1>
               <p className="text-sm text-muted-foreground mt-1">Crie e gerencie temporadas com bônus de XP</p>
             </div>
-            <Button onClick={() => setShowCreate(!showCreate)} size="sm" className="gap-2">
-              <Plus className="h-4 w-4" /> Nova Temporada
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 border-destructive/20 text-destructive hover:bg-destructive/10"
+                onClick={async () => {
+                  if (confirm("Deseja realmente resetar as ligas e o ranking semanal agora? Esta ação não pode ser desfeita.")) {
+                    const { error } = await supabase.rpc('process_weekly_league_reset');
+                    if (error) toast.error("Erro ao resetar arena: " + error.message);
+                    else toast.success("Arena resetada com sucesso! Todos os placares semanais foram zerados.");
+                  }
+                }}
+              >
+                <RotateCcw className="h-4 w-4" /> Resetar Arena
+              </Button>
+              <Button onClick={() => setShowCreate(!showCreate)} size="sm" className="gap-2">
+                <Plus className="h-4 w-4" /> Nova Temporada
+              </Button>
+            </div>
           </motion.div>
 
           {showCreate && (
