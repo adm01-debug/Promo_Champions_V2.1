@@ -7,7 +7,9 @@ import { DollarSign, TrendingUp, Clock, CheckCircle2, XCircle, Wallet } from "lu
 import { useMyCommissions, type CommissionStatus } from "@/hooks/useCommissions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useMemo } from "react";
+import { CommissionCalculator } from "@/components/financeiro/CommissionCalculator";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 
 const formatBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n || 0);
