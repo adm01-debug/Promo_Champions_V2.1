@@ -80,6 +80,7 @@ export const useFunnelData = (timeframe: number = 30) => {
           value,
           conversionRate: Math.round(conversionRate * 10) / 10,
           averageTime: 0,
+          velocityScore: Math.round(Math.random() * 100), // Simulação inicial, será real no heatmap
           dropOffRate: Math.round(dropOffRate * 10) / 10,
         };
 
