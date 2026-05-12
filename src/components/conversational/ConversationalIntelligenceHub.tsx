@@ -220,27 +220,48 @@ export const ConversationalIntelligenceHub = () => {
                             <span className="text-xs font-black text-primary tabular-nums tracking-widest bg-primary/10 px-3 py-1 rounded-md border border-primary/20">00:12:45</span>
                           </div>
                           
-                          <h3 className="text-4xl font-black font-sora tracking-tighter uppercase italic text-white">Coaching Copilot <span className="text-primary">Live</span></h3>
+                          <h3 className="text-4xl font-black font-sora tracking-tighter uppercase italic text-white">Neural <span className="text-primary">Coaching</span> Copilot</h3>
                           <p className="text-sm text-muted-foreground max-w-md leading-relaxed font-medium">
                             Escaneando ondas sonoras via Twilio Bridge. Nossa rede neural está processando intenções e injetando battlecards estratégicos em tempo real.
                           </p>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-6 mt-16 w-full max-w-2xl">
-                          <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 w-full max-w-3xl">
+                          <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
+                          >
                             <div className="absolute top-0 left-0 w-1 h-0 group-hover:h-full bg-primary transition-all duration-500" />
-                            <p className="text-[10px] font-black uppercase text-primary/60 mb-2 tracking-widest flex items-center gap-2">
-                               <Mic className="size-3" /> Transmissão: Vendedor
+                            <p className="text-[10px] font-black uppercase text-primary mb-2 tracking-widest flex items-center gap-2">
+                               <Sparkles className="size-3 animate-pulse" /> IA Sugestão: Próxima Resposta
                             </p>
-                            <p className="text-xs font-bold italic text-white/90">"Com base na sua infraestrutura atual, o ROI projetado é de 42% no primeiro trimestre..."</p>
-                          </div>
-                          <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box">
-                            <div className="absolute top-0 right-0 w-1 h-0 group-hover:h-full bg-destructive transition-all duration-500" />
-                            <p className="text-[10px] font-black uppercase text-destructive/60 mb-2 tracking-widest flex items-center gap-2">
-                               <Headphones className="size-3" /> Transmissão: Cliente
+                            <p className="text-sm font-bold italic text-white leading-relaxed">
+                              "Entendo a preocupação com o CAPEX. Podemos estruturar o contrato como OPEX via nossa parceria de leasing para facilitar a aprovação imediata."
                             </p>
-                            <p className="text-xs font-bold italic text-white/90">"O ROI parece ótimo, mas preciso validar se isso se encaixa no CAPEX deste ano."</p>
-                          </div>
+                            <div className="mt-3 flex gap-2">
+                              <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] uppercase font-black">Contexto: CAPEX/Budget</Badge>
+                              <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] uppercase font-black">Prob. Sucesso: 88%</Badge>
+                            </div>
+                          </motion.div>
+
+                          <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
+                          >
+                            <div className="absolute top-0 right-0 w-1 h-0 group-hover:h-full bg-warning transition-all duration-500" />
+                            <p className="text-[10px] font-black uppercase text-warning mb-2 tracking-widest flex items-center gap-2">
+                               <Zap className="size-3" /> Battlecard: ROI vs Enterprise
+                            </p>
+                            <p className="text-xs font-medium text-white/90 leading-relaxed mb-3">
+                              Destaque que nossa implementação leva 15 dias vs 6 meses do concorrente mencionado. O custo de oportunidade da demora supera o desconto oferecido por eles.
+                            </p>
+                            <Button size="sm" variant="outline" className="h-6 text-[9px] font-black uppercase tracking-widest border-warning/20 text-warning hover:bg-warning/10">
+                              Ver Talking Points
+                            </Button>
+                          </motion.div>
                         </div>
                       </div>
                       
