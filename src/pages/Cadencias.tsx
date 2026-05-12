@@ -1,4 +1,5 @@
 import { useCadences, useCadenceSteps, useDeleteCadence, useCadenceStats, Cadence as CadenceRecord, ProspectCadence } from "@/hooks/useCadences";
+import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet-async";
 import { CreateCadenceDialog } from "@/components/cadences/CreateCadenceDialog";
 import { EnrollmentRulesDialog } from "@/components/cadences/EnrollmentRulesDialog";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText, ChevronDown, CheckCircle2 } from "lucide-react";
+import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText, ChevronDown, CheckCircle2, Sparkles } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
@@ -30,6 +31,7 @@ import { RuleAuditLogs } from "@/components/sales/cadence/RuleAuditLogs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
+import { EliteCadenceAnalytics } from "@/components/sales/cadence/EliteCadenceAnalytics";
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -39,6 +41,11 @@ export default function Cadencias() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const { data: allProspects } = useProspectCadences();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+
+  // Auto-process trigger
+  useState(() => {
+    supabase.functions.invoke('process-cadence-tasks').catch(console.error);
+  });
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
@@ -99,6 +106,10 @@ export default function Cadencias() {
               <TabsTrigger value="monitoring" className="data-[state=active]:bg-background">
                 <LayoutDashboard className="h-4 w-4 mr-2" />
                 Monitoramento
+              </TabsTrigger>
+              <TabsTrigger value="elite-analytics" className="data-[state=active]:bg-background">
+                <Sparkles className="h-4 w-4 mr-2 text-primary" />
+                Elite Analytics
               </TabsTrigger>
               <TabsTrigger value="strategy" className="data-[state=active]:bg-background">
                 <Settings2 className="h-4 w-4 mr-2" />
@@ -242,6 +253,10 @@ export default function Cadencias() {
                 </Card>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="elite-analytics" className="animate-in fade-in-50 duration-500">
+            <EliteCadenceAnalytics />
           </TabsContent>
 
           <TabsContent value="strategy" className="space-y-6 animate-in fade-in-50 duration-500">
