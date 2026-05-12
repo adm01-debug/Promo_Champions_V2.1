@@ -14,64 +14,40 @@ export interface CommissionRule {
   priority: number;
   is_active: boolean;
   created_at: string;
-  updated_at: string;
   salespeople?: { name: string } | null;
-}
-
-export interface CreateCommissionRuleInput {
-  name: string;
-  description?: string;
-  salesperson_id?: string | null;
-  category?: string | null;
-  percentage: number;
-  min_amount?: number;
-  max_amount?: number | null;
-  priority?: number;
-  is_active?: boolean;
 }
 
 export const useCommissionRules = () => {
   return useQuery({
-    queryKey: ["commission_rules"],
+    queryKey: ["commission-rules"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commission_rules")
         .select("*, salespeople(name)")
-        .order("priority", { ascending: false })
-        .order("created_at", { ascending: false });
+        .order("priority", { ascending: false });
       if (error) throw error;
-      return (data || []) as unknown as CommissionRule[];
+      return data as CommissionRule[];
     },
   });
 };
 
-export const useCreateCommissionRule = () => {
+export const useUpsertCommissionRule = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: CreateCommissionRuleInput) => {
-      const { error } = await supabase.from("commission_rules").insert([input]);
+    mutationFn: async (rule: any) => {
+      const { data, error } = await supabase
+        .from("commission_rules")
+        .upsert(rule)
+        .select()
+        .single();
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["commission_rules"] });
-      toast.success("Regra criada");
+      qc.invalidateQueries({ queryKey: ["commission-rules"] });
+      toast.success("Regra salva com sucesso");
     },
-    onError: (e: Error) => toast.error(e.message || "Erro ao criar regra"),
-  });
-};
-
-export const useUpdateCommissionRule = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<CreateCommissionRuleInput>) => {
-      const { error } = await supabase.from("commission_rules").update(updates).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["commission_rules"] });
-      toast.success("Regra atualizada");
-    },
-    onError: () => toast.error("Erro ao atualizar regra"),
+    onError: (error: any) => toast.error(`Erro ao salvar regra: ${error.message}`),
   });
 };
 
@@ -83,9 +59,9 @@ export const useDeleteCommissionRule = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["commission_rules"] });
+      qc.invalidateQueries({ queryKey: ["commission-rules"] });
       toast.success("Regra removida");
     },
-    onError: () => toast.error("Erro ao remover regra"),
+    onError: (error: any) => toast.error(`Erro ao remover regra: ${error.message}`),
   });
 };

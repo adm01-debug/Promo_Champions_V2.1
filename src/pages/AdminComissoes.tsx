@@ -1,230 +1,241 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Settings2, Plus, CheckCircle2, Trash2, Wallet, ShieldCheck } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { DollarSign, CheckCircle, XCircle, Clock, Filter, Search, FileText, Wallet, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAllCommissions, useUpdateCommissionStatus, type CommissionStatus } from "@/hooks/useCommissions";
-import { useCommissionRules, useCreateCommissionRule, useDeleteCommissionRule, useUpdateCommissionRule } from "@/hooks/useCommissionRules";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const formatBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n || 0);
 
-const statusBadge: Record<CommissionStatus, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
-  pending: { label: "Pendente", variant: "outline" },
-  approved: { label: "Aprovada", variant: "secondary" },
-  paid: { label: "Paga", variant: "default" },
-  cancelled: { label: "Cancelada", variant: "destructive" },
+const statusBadge: Record<CommissionStatus, { label: string; className: string }> = {
+  pending: { label: "Pendente", className: "bg-amber-500/10 text-amber-500 border-amber-500/20" },
+  approved: { label: "Aprovada", className: "bg-blue-500/10 text-blue-500 border-blue-500/20" },
+  paid: { label: "Paga", className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
+  cancelled: { label: "Cancelada", className: "bg-rose-500/10 text-rose-500 border-rose-500/20" },
 };
 
-function NewRuleDialog() {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [percentage, setPercentage] = useState(5);
-  const [category, setCategory] = useState("");
-  const [priority, setPriority] = useState(0);
-  const create = useCreateCommissionRule();
+export default function AdminComissoes() {
+  const [statusFilter, setStatusFilter] = useState<CommissionStatus | "all">("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCommission, setSelectedCommission] = useState<any>(null);
+  const [notes, setNotes] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || percentage <= 0) return;
-    create.mutate(
-      { name, percentage, category: category || null, priority },
-      {
-        onSuccess: () => {
-          setOpen(false);
-          setName(""); setPercentage(5); setCategory(""); setPriority(0);
-        },
-      },
-    );
+  const { data: commissions = [], isLoading } = useAllCommissions(statusFilter === "all" ? undefined : statusFilter);
+  const updateStatus = useUpdateCommissionStatus();
+
+  const filteredCommissions = commissions.filter(c => 
+    c.salespeople?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.sales?.client_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleAction = (commission: any, status: CommissionStatus) => {
+    setSelectedCommission({ ...commission, targetStatus: status });
+    setNotes(commission.payment_notes || "");
+    setIsDialogOpen(true);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button><Plus className="h-4 w-4 mr-1" />Nova regra</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader><DialogTitle>Nova regra de comissão</DialogTitle></DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <Label htmlFor="r-name">Nome</Label>
-            <Input id="r-name" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="r-pct">Percentual (%)</Label>
-              <Input id="r-pct" type="number" step="0.01" min="0" max="100" value={percentage} onChange={(e) => setPercentage(Number(e.target.value))} required />
-            </div>
-            <div>
-              <Label htmlFor="r-pri">Prioridade</Label>
-              <Input id="r-pri" type="number" value={priority} onChange={(e) => setPriority(Number(e.target.value))} />
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="r-cat">Categoria (opcional)</Label>
-            <Input id="r-cat" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Ex.: brindes, premium" />
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={create.isPending}>{create.isPending ? "Salvando…" : "Criar"}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function RulesPanel() {
-  const { data: rules = [], isLoading } = useCommissionRules();
-  const remove = useDeleteCommissionRule();
-  const update = useUpdateCommissionRule();
-  return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" />Regras de comissão</CardTitle>
-        <NewRuleDialog />
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
-        ) : rules.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">
-            Nenhuma regra criada. O padrão é <strong>5%</strong> sobre vendas concluídas.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {rules.map((r) => (
-              <div key={r.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium">{r.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {r.percentage}% · prioridade {r.priority}
-                    {r.salespeople?.name && ` · vendedor ${r.salespeople.name}`}
-                    {r.category && ` · categoria ${r.category}`}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={r.is_active}
-                    onCheckedChange={(checked) => update.mutate({ id: r.id, is_active: checked })}
-                    aria-label="Ativar regra"
-                  />
-                  <Button size="icon" variant="ghost" onClick={() => remove.mutate(r.id)} aria-label="Remover">
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function CommissionsList({ status }: { status?: CommissionStatus }) {
-  const { data: commissions = [], isLoading } = useAllCommissions(status);
-  const update = useUpdateCommissionStatus();
-
-  if (isLoading) return <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20" />)}</div>;
-  if (commissions.length === 0) return <Card className="p-8 text-center text-sm text-muted-foreground">Nenhuma comissão</Card>;
-
-  return (
-    <div className="space-y-3">
-      {commissions.map((c) => (
-        <Card key={c.id}>
-          <CardContent className="p-4 flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex-1 min-w-[200px]">
-              <p className="font-semibold">{c.salespeople?.name ?? "Vendedor"} → {c.sales?.client_name ?? "Cliente"}</p>
-              <p className="text-sm text-muted-foreground truncate">{c.sales?.product_name ?? "—"}</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {format(new Date(c.created_at), "dd MMM yyyy", { locale: ptBR })}
-                {" · "}Base: {formatBRL(c.base_amount)} · {c.percentage}%
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-lg font-bold font-display">{formatBRL(c.commission_amount)}</p>
-              <Badge variant={statusBadge[c.status].variant} className="mt-1">{statusBadge[c.status].label}</Badge>
-            </div>
-            <div className="flex flex-col gap-1">
-              {c.status === "pending" && (
-                <Button size="sm" variant="secondary" onClick={() => update.mutate({ id: c.id, status: "approved" })}>
-                  <ShieldCheck className="h-4 w-4 mr-1" />Aprovar
-                </Button>
-              )}
-              {c.status === "approved" && (
-                <Button size="sm" onClick={() => update.mutate({ id: c.id, status: "paid" })}>
-                  <CheckCircle2 className="h-4 w-4 mr-1" />Marcar como paga
-                </Button>
-              )}
-              {(c.status === "pending" || c.status === "approved") && (
-                <Button size="sm" variant="ghost" onClick={() => update.mutate({ id: c.id, status: "cancelled" })}>
-                  Cancelar
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-export default function AdminComissoes() {
-  const { data: all = [] } = useAllCommissions();
-  const totals = useMemo(() => {
-    const t = { pending: 0, approved: 0, paid: 0, count: all.length };
-    for (const c of all) {
-      if (c.status === "pending") t.pending += c.commission_amount;
-      else if (c.status === "approved") t.approved += c.commission_amount;
-      else if (c.status === "paid") t.paid += c.commission_amount;
-    }
-    return t;
-  }, [all]);
+  const confirmAction = async () => {
+    if (!selectedCommission) return;
+    await updateStatus.mutateAsync({
+      id: selectedCommission.id,
+      status: selectedCommission.targetStatus,
+      payment_notes: notes
+    });
+    setIsDialogOpen(false);
+  };
 
   return (
     <>
       <Helmet>
-        <title>Admin Comissões | Promo Champions</title>
-        <meta name="description" content="Gerenciamento de regras, aprovação e pagamento de comissões." />
+        <title>Gestão de Comissões | Admin</title>
       </Helmet>
 
-      <main className="container max-w-7xl py-6 space-y-6">
-        <header>
-          <h1 className="text-page-title flex items-center gap-2"><Wallet className="h-7 w-7 text-primary" />Admin Comissões</h1>
-          <p className="text-sm text-muted-foreground">Gerencie regras, aprove e marque como pagas</p>
-        </header>
+      <PageTransition>
+        <div className="container max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-page-title font-display italic uppercase tracking-tighter">Gestão de Comissões</h1>
+              <p className="text-sm text-muted-foreground">Aprovação e pagamento de comissões de vendas</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link to="/admin/regras-comissao">
+                <Button variant="outline" className="border-white/10 bg-white/5 text-xs font-black uppercase tracking-widest gap-2">
+                  <Settings className="h-4 w-4" /> Configurar Regras
+                </Button>
+              </Link>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Buscar vendedor ou cliente..." 
+                  className="pl-9 w-[250px] bg-white/5 border-white/10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </motion.div>
 
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">A aprovar</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold font-display">{formatBRL(totals.pending)}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">A pagar</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold font-display">{formatBRL(totals.approved)}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Pago no histórico</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold font-display">{formatBRL(totals.paid)}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground">Total registros</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold font-display">{totals.count}</p></CardContent></Card>
-        </section>
+          <motion.div variants={itemVariants}>
+            <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)} className="space-y-6">
+              <TabsList className="bg-white/5 border border-white/10 p-1">
+                <TabsTrigger value="all" className="text-xs font-black uppercase tracking-widest">Todas</TabsTrigger>
+                <TabsTrigger value="pending" className="text-xs font-black uppercase tracking-widest">Pendentes</TabsTrigger>
+                <TabsTrigger value="approved" className="text-xs font-black uppercase tracking-widest">Aprovadas</TabsTrigger>
+                <TabsTrigger value="paid" className="text-xs font-black uppercase tracking-widest">Pagas</TabsTrigger>
+              </TabsList>
 
-        <RulesPanel />
+              <Card className="glass border-white/5 overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-white/5">
+                    <TableRow className="border-white/5 hover:bg-transparent">
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest">Vendedor</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest">Cliente / Produto</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest">Data</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Valor Venda</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Comissão</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest">Status</TableHead>
+                      <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i} className="border-white/5">
+                          <TableCell colSpan={7}><Skeleton className="h-12 w-full" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : filteredCommissions.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-12 text-muted-foreground italic">
+                          Nenhuma comissão encontrada para os critérios selecionados.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredCommissions.map((c) => (
+                        <TableRow key={c.id} className="border-white/5 hover:bg-white/5 transition-colors group">
+                          <TableCell>
+                            <span className="font-bold text-sm">{c.salespeople?.name || "Vendedor"}</span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium">{c.sales?.client_name}</span>
+                              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{c.sales?.product_name}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {format(new Date(c.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                          </TableCell>
+                          <TableCell className="text-right text-xs">
+                            {formatBRL(c.base_amount)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className="font-black italic text-primary">{formatBRL(c.commission_amount)}</span>
+                            <span className="text-[9px] text-muted-foreground ml-1">({c.percentage}%)</span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-3 py-1", statusBadge[c.status].className)}>
+                              {statusBadge[c.status].label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {c.status === 'pending' && (
+                                <Button size="icon" variant="ghost" className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10" onClick={() => handleAction(c, 'approved')} title="Aprovar">
+                                  <CheckCircle className="h-4 w-4" />
+                                </Button>
+                              )}
+                              {c.status === 'approved' && (
+                                <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10" onClick={() => handleAction(c, 'paid')} title="Marcar como Paga">
+                                  <Wallet className="h-4 w-4" />
+                                </Button>
+                              )}
+                              {(c.status === 'pending' || c.status === 'approved') && (
+                                <Button size="icon" variant="ghost" className="h-8 w-8 text-rose-400 hover:text-rose-300 hover:bg-rose-400/10" onClick={() => handleAction(c, 'cancelled')} title="Cancelar">
+                                  <XCircle className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-white" onClick={() => { setSelectedCommission(c); setNotes(c.payment_notes || ""); setIsDialogOpen(true); }} title="Ver Detalhes">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </Card>
+            </Tabs>
+          </motion.div>
+        </div>
+      </PageTransition>
 
-        <Tabs defaultValue="pending">
-          <TabsList>
-            <TabsTrigger value="pending">A aprovar</TabsTrigger>
-            <TabsTrigger value="approved">A pagar</TabsTrigger>
-            <TabsTrigger value="paid">Pagas</TabsTrigger>
-            <TabsTrigger value="all">Todas</TabsTrigger>
-          </TabsList>
-          <TabsContent value="pending" className="mt-4"><CommissionsList status="pending" /></TabsContent>
-          <TabsContent value="approved" className="mt-4"><CommissionsList status="approved" /></TabsContent>
-          <TabsContent value="paid" className="mt-4"><CommissionsList status="paid" /></TabsContent>
-          <TabsContent value="all" className="mt-4"><CommissionsList /></TabsContent>
-        </Tabs>
-      </main>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="glass border-white/10 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-display italic uppercase tracking-tighter">
+              {selectedCommission?.targetStatus ? `Atualizar para ${statusBadge[selectedCommission.targetStatus as CommissionStatus].label}` : 'Detalhes da Comissão'}
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Vendedor: {selectedCommission?.salespeople?.name} | Valor: {formatBRL(selectedCommission?.commission_amount)}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Notas de Pagamento / Observações</label>
+              <Textarea 
+                placeholder="Insira notas sobre o pagamento, comprovantes ou justificativas..."
+                className="bg-white/5 border-white/10 min-h-[100px] text-sm"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                readOnly={!selectedCommission?.targetStatus}
+              />
+            </div>
+
+            {selectedCommission?.approved_at && (
+              <div className="p-3 rounded-lg bg-white/5 border border-white/5 text-[10px] space-y-1">
+                <p className="flex justify-between">
+                  <span className="text-muted-foreground uppercase tracking-widest">Aprovado em:</span>
+                  <span className="font-bold">{format(new Date(selectedCommission.approved_at), "dd/MM/yyyy HH:mm")}</span>
+                </p>
+                {selectedCommission.paid_at && (
+                  <p className="flex justify-between">
+                    <span className="text-muted-foreground uppercase tracking-widest">Pago em:</span>
+                    <span className="font-bold">{format(new Date(selectedCommission.paid_at), "dd/MM/yyyy HH:mm")}</span>
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsDialogOpen(false)} className="text-[10px] font-black uppercase tracking-widest">
+              Fechar
+            </Button>
+            {selectedCommission?.targetStatus && (
+              <Button onClick={confirmAction} disabled={updateStatus.isPending} className="gradient-primary text-[10px] font-black uppercase tracking-widest px-8">
+                Confirmar Alteração
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
