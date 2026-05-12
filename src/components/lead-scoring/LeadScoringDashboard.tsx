@@ -235,11 +235,6 @@ export function LeadScoringDashboard() {
         isOpen={!!selectedLeadId} 
         onClose={() => setSelectedLeadId(null)} 
       />
-      <LeadNeuralDossier 
-        lead={selectedLead} 
-        isOpen={!!selectedLeadId} 
-        onClose={() => setSelectedLeadId(null)} 
-      />
       {/* Real-time Global Sync Loading State */}
       {(isLoadingLeads || explainBatch.isPending) && (
         <div className="fixed top-0 left-0 w-full h-1 z-[100] overflow-hidden bg-primary/5">
