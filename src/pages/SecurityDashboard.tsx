@@ -8,9 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useSecurityStats, useLoginAttempts } from "@/hooks/useSecurityMonitoring";
 import { useCircuitBreakerStats, useCircuitBreakerHistory } from "@/hooks/useCircuitBreakerHistory";
-import { Shield, ShieldAlert, ShieldCheck, LogIn, LogOut, Ban, Activity, AlertTriangle, Check, X } from "lucide-react";
+import { Shield, ShieldAlert, ShieldCheck, LogIn, LogOut, Ban, Activity, AlertTriangle, Check, X, Globe } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { GeoBlockingMap } from "@/components/security/GeoBlockingMap";
 
 const SecurityDashboard = () => {
   const { data: stats, isLoading: statsLoading } = useSecurityStats();
