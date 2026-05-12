@@ -72,7 +72,12 @@ export default function AdminComissoes() {
               <h1 className="text-page-title font-display italic uppercase tracking-tighter">Gestão de Comissões</h1>
               <p className="text-sm text-muted-foreground">Aprovação e pagamento de comissões de vendas</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <Link to="/admin/regras-comissao">
+                <Button variant="outline" className="border-white/10 bg-white/5 text-xs font-black uppercase tracking-widest gap-2">
+                  <Settings className="h-4 w-4" /> Configurar Regras
+                </Button>
+              </Link>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
