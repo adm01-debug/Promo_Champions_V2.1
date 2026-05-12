@@ -50,16 +50,22 @@ export function useLeagues() {
       return (salespeople || []).map((sp) => {
         const member = members?.find((m) => m.salesperson_id === sp.id);
         const points = member?.weekly_xp || 0;
+        const leagueTier = member?.leagues?.tier;
+        const leagueKey = leagueTier === 5 ? "legendary" : 
+                        leagueTier === 4 ? "diamond" : 
+                        leagueTier === 3 ? "gold" : 
+                        leagueTier === 2 ? "silver" : "bronze";
+
         return {
           id: member?.id || sp.id,
           salesperson_id: sp.id,
           name: sp.name,
           avatar_url: sp.avatar_url,
-          league: getLeagueTier(points),
+          league: leagueKey as LeagueTier,
           points,
           league_id: member?.league_id || null,
-          promoted_at: null as string | null,
-          demoted_at: null as string | null,
+          promoted_at: member?.promoted_at || null,
+          demoted_at: member?.demoted_at || null,
         };
       }).sort((a, b) => b.points - a.points);
     },
