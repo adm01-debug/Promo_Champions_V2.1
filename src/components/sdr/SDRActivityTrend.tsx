@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine, CartesianGrid } from "recharts";
 import { Activity, Users, BarChart3, AlertTriangle, Download, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -151,7 +152,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                   <linearGradient key={key} id={`gradient-${key}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={color} stopOpacity={0.4} />
                     <stop offset="60%" stopColor={color} stopOpacity={0.1} />
-                    <stop offset="95%" stopColor={color} stopOpacity={0} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0} />
                   </linearGradient>
                 ))}
               </defs>
