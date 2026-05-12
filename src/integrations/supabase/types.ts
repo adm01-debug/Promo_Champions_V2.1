@@ -11684,6 +11684,7 @@ export type Database = {
           source: string | null
           status: string
           stock_reduced: boolean | null
+          territory_id: string | null
           updated_at: string
         }
         Insert: {
@@ -11712,6 +11713,7 @@ export type Database = {
           source?: string | null
           status?: string
           stock_reduced?: boolean | null
+          territory_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -11740,6 +11742,7 @@ export type Database = {
           source?: string | null
           status?: string
           stock_reduced?: boolean | null
+          territory_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -11797,6 +11800,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_territory_id_fkey"
+            columns: ["territory_id"]
+            isOneToOne: false
+            referencedRelation: "territories"
             referencedColumns: ["id"]
           },
         ]
