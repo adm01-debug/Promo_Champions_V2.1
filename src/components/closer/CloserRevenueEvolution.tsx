@@ -210,7 +210,7 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
                         return (
                           <div key={String(entry.dataKey)} className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" style={{ backgroundColor: String(entry.stroke ?? entry.color ?? '') }} />
-                            <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-wider truncate max-w-[120px]">{closer?.name || entry.dataKey}</span>
+                            <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-wider truncate max-w-[120px]">{closer?.name || String(entry.dataKey)}</span>
                             <span className="text-[10px] font-mono font-black ml-auto">R$ {Number(entry.value).toLocaleString('pt-BR')}</span>
                           </div>
                         );
