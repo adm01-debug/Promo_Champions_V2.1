@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingDown, TrendingUp, Target, Sparkles } from "lucide-react";
+import { TrendingDown, TrendingUp, Target, Sparkles, Brain, Cpu, Zap } from "lucide-react";
 import {
   formatCompactBRL,
   scenarioColor,
@@ -19,64 +19,138 @@ interface Props {
   index: number;
 }
 
-const ICONS: Record<ScenarioKey, typeof TrendingUp> = {
+const ICONS: Record<ScenarioKey, any> = {
   pessimistic: TrendingDown,
-  realistic: Target,
-  optimistic: TrendingUp,
+  realistic: Zap,
+  optimistic: Sparkles,
 };
 
-const SCENARIO_THEME: Record<ScenarioKey, string> = {
-  pessimistic: "border-warning/20 bg-warning/5 text-warning shadow-warning/5",
-  realistic: "border-primary/20 bg-primary/5 text-primary shadow-primary/5",
-  optimistic: "border-emerald-500/20 bg-emerald-500/5 text-emerald-500 shadow-emerald-500/5",
+const THEMES: Record<ScenarioKey, { 
+  border: string, 
+  bg: string, 
+  text: string, 
+  accent: string,
+  glow: string 
+}> = {
+  pessimistic: {
+    border: "border-orange-500/20",
+    bg: "bg-orange-500/5",
+    text: "text-orange-500",
+    accent: "bg-orange-500",
+    glow: "shadow-orange-500/20"
+  },
+  realistic: {
+    border: "border-primary/20",
+    bg: "bg-primary/5",
+    text: "text-primary",
+    accent: "bg-primary",
+    glow: "shadow-primary/20"
+  },
+  optimistic: {
+    border: "border-emerald-500/20",
+    bg: "bg-emerald-500/5",
+    text: "text-emerald-500",
+    accent: "bg-emerald-500",
+    glow: "shadow-emerald-500/20"
+  },
 };
 
 export const ScenarioCard: FC<Props> = ({ scenario, value, goal, index }) => {
   const Icon = ICONS[scenario];
   const delta = deltaPct(value, goal);
   const reachesGoal = value >= goal && goal > 0;
+  const theme = THEMES[scenario];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5, scale: 1.02 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Card className={cn("glass relative overflow-hidden group border-2", SCENARIO_THEME[scenario])}>
-        <div className={cn("absolute -right-6 -top-6 w-24 h-24 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700 rounded-full", SCENARIO_THEME[scenario].split(' ')[1].replace('/5', ''))} />
+      <Card className={cn(
+        "glass relative overflow-hidden group border-2 transition-all duration-500", 
+        theme.border,
+        theme.bg,
+        "hover:shadow-2xl",
+        theme.glow
+      )}>
+        {/* Abstract Neural Patterns */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
+          <svg className="w-full h-full" viewBox="0 0 100 100">
+            <path d="M0,50 Q25,0 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" className={theme.text} />
+            <path d="M0,30 Q25,80 50,30 T100,30" fill="none" stroke="currentColor" strokeWidth="0.5" className={theme.text} />
+          </svg>
+        </div>
         
-        <CardContent className="p-6 relative z-10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <div className={cn("p-1.5 rounded-lg bg-background/50 border border-white/10", SCENARIO_THEME[scenario].split(' ')[2])}>
-                <Icon className="h-4 w-4" />
+        <div className={cn(
+          "absolute -right-10 -top-10 w-32 h-32 blur-[60px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 rounded-full", 
+          theme.accent
+        )} />
+        
+        <CardContent className="p-7 relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "p-2.5 rounded-xl bg-background/60 border border-white/10 shadow-lg flex items-center justify-center", 
+                theme.text
+              )}>
+                <Icon className="h-5 w-5" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">
-                {scenarioLabel[scenario]}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] opacity-60">
+                  Cenário IA
+                </span>
+                <span className={cn("text-sm font-black uppercase tracking-tight", theme.text)}>
+                  {scenarioLabel[scenario]}
+                </span>
+              </div>
             </div>
             {goal > 0 && (
-              <Badge variant="outline" className={cn("text-[10px] h-5 border-white/10 font-bold", reachesGoal ? "bg-emerald-500/10 text-emerald-500" : "bg-white/5")}>
+              <Badge variant="outline" className={cn(
+                "text-[10px] h-6 px-3 border-white/10 font-black tracking-wider uppercase", 
+                reachesGoal ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/30" : "bg-white/5 text-muted-foreground"
+              )}>
                 {reachesGoal ? (
-                  <span className="flex items-center gap-1">
-                    <Sparkles className="h-3 w-3" />
-                    BATE META
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 animate-pulse" />
+                    Target OK
                   </span>
-                ) : `${delta.toFixed(0)}% VS META`}
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <TrendingDown className="h-3 w-3" />
+                    {Math.abs(delta).toFixed(0)}% GAP
+                  </span>
+                )}
               </Badge>
             )}
           </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold opacity-60">R$</span>
-            <CountUp value={value} className="text-4xl font-black font-display tracking-tighter" />
-          </div>
-          {goal > 0 && (
-            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-bold uppercase tracking-tighter opacity-60">
-              <span>Alvo Recomendado</span>
-              <span>{formatCompactBRL(goal)}</span>
+
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-black opacity-20">R$</span>
+              <CountUp value={value} className="text-5xl font-black font-display tracking-tighter leading-none" />
             </div>
-          )}
+          </div>
+
+          <div className="mt-8 space-y-3">
+            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: goal > 0 ? `${Math.min(100, (value/goal)*100)}%` : "0%" }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className={cn("h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]", theme.accent)} 
+              />
+            </div>
+            
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-50">
+              <div className="flex items-center gap-1.5">
+                <Target className="h-3 w-3" />
+                <span>Meta Horizonte</span>
+              </div>
+              <span className="font-mono">{formatCompactBRL(goal)}</span>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </motion.div>
@@ -89,7 +163,7 @@ const CountUp = ({ value, className }: { value: number; className?: string }) =>
   useEffect(() => {
     let start = 0;
     const end = value;
-    const duration = 2000;
+    const duration = 2500;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
