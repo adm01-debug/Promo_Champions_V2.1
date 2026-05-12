@@ -15,18 +15,27 @@ export interface ChatMessage {
   sender_avatar?: string | null;
 }
 
-export function useCompetitiveChat() {
+export function useCompetitiveChat(squadId?: string | null) {
   const queryClient = useQueryClient();
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ['competitive-chat'],
+    queryKey: ['competitive-chat', squadId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('competitive_chat_messages')
         .select('*, sender:salesperson_id(name, avatar_url)')
         .order('created_at', { ascending: false })
         .limit(50);
+      
+      if (squadId) {
+        query = query.eq('squad_id', squadId);
+      } else {
+        query = query.is('squad_id', null);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
+      
       return (data || []).map((m) => {
         const sender = m.sender as unknown as Record<string, string> | null;
         return {
@@ -44,17 +53,18 @@ export function useCompetitiveChat() {
   // Realtime
   useEffect(() => {
     const channel = supabase
-      .channel('competitive-chat-rt')
+      .channel(`competitive-chat-rt-${squadId || 'global'}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'competitive_chat_messages',
+        filter: squadId ? `squad_id=eq.${squadId}` : `squad_id=is.null`
       }, () => {
-        queryClient.invalidateQueries({ queryKey: ['competitive-chat'] });
+        queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
+  }, [queryClient, squadId]);
 
   const sendMessage = useMutation({
     mutationFn: async ({ salespersonId, message, type = 'chat', targetId, matchupId }: {
@@ -72,10 +82,11 @@ export function useCompetitiveChat() {
           message_type: type,
           target_salesperson_id: targetId || null,
           matchup_id: matchupId || null,
+          squad_id: squadId || null,
         });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['competitive-chat'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] }),
   });
 
   const addReaction = useMutation({
