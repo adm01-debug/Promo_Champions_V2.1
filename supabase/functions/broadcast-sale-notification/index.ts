@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
+
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 interface Payload {
   sale_id: string;
@@ -24,10 +27,7 @@ serve(async (req) => {
     const { sale_id, salesperson_id, salesperson_name, client_name, amount } = body;
 
     if (!sale_id || !salesperson_id || typeof amount !== "number") {
-      return new Response(
-        JSON.stringify({ error: "sale_id, salesperson_id e amount são obrigatórios" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      throw new Error("Missing required fields: sale_id, salesperson_id, amount");
     }
 
     const formattedAmount = new Intl.NumberFormat("pt-BR", {
@@ -35,82 +35,144 @@ serve(async (req) => {
       currency: "BRL",
     }).format(amount);
 
-    // Buscar vendedores ativos com user_id (exceto o vendedor da venda)
+    // 1. Calculate Rankings for the current month
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { data: salesStats, error: statsError } = await supabase
+      .from("sales")
+      .select("salesperson_id, amount")
+      .eq("status", "completed")
+      .gte("created_at", startOfMonth.toISOString());
+
+    if (statsError) throw statsError;
+
+    // Group sales by salesperson
+    const totals: Record<string, number> = {};
+    salesStats?.forEach(s => {
+      if (s.salesperson_id) {
+        totals[s.salesperson_id] = (totals[s.salesperson_id] || 0) + Number(s.amount);
+      }
+    });
+
+    // Create sorted ranking list
+    const ranking = Object.entries(totals)
+      .map(([id, total]) => ({ id, total }))
+      .sort((a, b) => b.total - a.total)
+      .map((item, index) => ({ ...item, rank: index + 1 }));
+
+    const sellerRank = ranking.find(r => r.id === salesperson_id)?.rank || 1;
+
+    // 2. Fetch all active salespeople with their preferences
     const { data: recipients, error: recipientsError } = await supabase
       .from("salespeople")
-      .select("id, user_id, name")
+      .select("id, auth_user_id, name, email, notify_sales_in_app, notify_sales_email")
       .eq("is_active", true)
-      .neq("id", salesperson_id)
-      .not("user_id", "is", null);
+      .neq("id", salesperson_id);
 
     if (recipientsError) throw recipientsError;
 
-    const userIds: string[] = (recipients ?? [])
-      .map((r: { user_id: string | null }) => r.user_id)
-      .filter((id): id is string => !!id);
+    const results = [];
 
-    if (userIds.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, notified: 0, pushed: 0, message: "No recipients" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    for (const recipient of (recipients || [])) {
+      const recipientRankInfo = ranking.find(r => r.id === recipient.id);
+      const recipientRank = recipientRankInfo?.rank || 0;
 
-    const title = `🔥 ${salesperson_name} fechou uma venda!`;
-    const message = `${client_name} — ${formattedAmount}`;
-    const metadata = { sale_id, amount, seller_id: salesperson_id };
+      const title = `🚀 ${salesperson_name} vendeu!`;
+      const message = `Fechou ${formattedAmount} com ${client_name}! Rank dele: #${sellerRank}. ` +
+                      (recipientRank > 0 ? `Seu rank: #${recipientRank}.` : "Você ainda não pontuou este mês.");
 
-    // 1. Notificações in-app via RPC send_notification (uma por destinatário)
-    const notifyResults = await Promise.allSettled(
-      userIds.map((uid) =>
-        supabase.rpc("send_notification", {
-          p_user_id: uid,
-          p_title: title,
-          p_message: message,
-          p_category: "sales",
-          p_priority: "medium",
-          p_action_url: "/vendas",
-          p_metadata: metadata,
-        }),
-      ),
-    );
-    const notified = notifyResults.filter((r) => r.status === "fulfilled").length;
-
-    // 2. Web push em chunks de 100
-    let pushed = 0;
-    const chunkSize = 100;
-    for (let i = 0; i < userIds.length; i += chunkSize) {
-      const chunk = userIds.slice(i, i + chunkSize);
-      try {
-        const { data: pushData, error: pushError } = await supabase.functions.invoke(
-          "send-push-notification",
-          {
-            body: {
-              user_ids: chunk,
-              title,
-              body: message,
-              tag: `sale-${sale_id}`,
-              url: "/vendas",
-              data: metadata,
-            },
-          },
-        );
-        if (!pushError && pushData?.sent) pushed += pushData.sent;
-      } catch (e) {
-        console.error("push chunk failed", e);
+      // A. In-App Notification
+      if (recipient.notify_sales_in_app && recipient.auth_user_id) {
+        try {
+          await supabase.rpc("send_notification", {
+            p_user_id: recipient.auth_user_id,
+            p_title: title,
+            p_message: message,
+            p_category: "gamification",
+            p_type: "sale_alert",
+            p_priority: "high",
+            p_metadata: {
+              sale_id,
+              seller_id: salesperson_id,
+              seller_rank: sellerRank,
+              recipient_rank: recipientRank,
+              is_competition_alert: true,
+              amount
+            }
+          });
+          
+          await supabase.from("sale_notifications_audit").insert({
+            sale_id,
+            seller_id: salesperson_id,
+            seller_name: salesperson_name,
+            sale_amount: amount,
+            seller_rank_at_time: sellerRank,
+            recipient_id: recipient.id,
+            recipient_rank_at_time: recipientRank,
+            notification_type: 'in-app',
+            channel: 'in-app',
+            message_sent: message,
+            status: 'success'
+          });
+        } catch (e) {
+          console.error(`In-app failed for ${recipient.id}:`, e);
+        }
       }
+
+      // B. Email Notification
+      if (recipient.notify_sales_email && recipient.email) {
+        try {
+          const emailSubject = `🔥 Venda fechada! ${salesperson_name} acelerou!`;
+          const emailHtml = `
+            <div style="font-family: sans-serif; padding: 20px; background: #0f0f23; color: white; border-radius: 10px;">
+              <h2 style="color: #f97316;">${title}</h2>
+              <p style="font-size: 18px;">${message}</p>
+              <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;" />
+              <p style="font-size: 14px; color: #888;">Vamos pra cima! A meta não para. 🚀</p>
+            </div>
+          `;
+
+          const emailResponse = await resend.emails.send({
+            from: "Vendas Elite <vendas@resend.dev>",
+            to: [recipient.email],
+            subject: emailSubject,
+            html: emailHtml,
+          });
+
+          await supabase.from("sale_notifications_audit").insert({
+            sale_id,
+            seller_id: salesperson_id,
+            seller_name: salesperson_name,
+            sale_amount: amount,
+            seller_rank_at_time: sellerRank,
+            recipient_id: recipient.id,
+            recipient_rank_at_time: recipientRank,
+            notification_type: 'email',
+            channel: 'email',
+            message_sent: message,
+            status: emailResponse.error ? 'failed' : 'success',
+            error_log: emailResponse.error ? JSON.stringify(emailResponse.error) : null
+          });
+        } catch (e) {
+          console.error(`Email failed for ${recipient.id}:`, e);
+        }
+      }
+
+      results.push({ id: recipient.id, name: recipient.name });
     }
 
     return new Response(
-      JSON.stringify({ success: true, notified, pushed, total: userIds.length }),
+      JSON.stringify({ success: true, notified: results.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("broadcast-sale-notification error:", msg);
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+
+  } catch (error: any) {
+    console.error("Broadcast error:", error.message);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   }
 });
