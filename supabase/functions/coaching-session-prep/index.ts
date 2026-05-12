@@ -140,7 +140,7 @@ Retorne apenas a lista de frases diretas.`;
           method: "POST",
           headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-2.0-flash", // Fast and efficient
+            model: "google/gemini-2.0-flash-lite", // Faster model variant
             messages: [{ role: "user", content: prompt }],
             temperature: 0.2,
           }),
