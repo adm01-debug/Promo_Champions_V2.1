@@ -3,6 +3,7 @@ import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
 import { AtRiskDealsPanel } from "@/components/pipeline/AtRiskDealsPanel";
 import { SLADashboard } from "@/components/pipeline/SLADashboard";
 import { InactivityPanel } from "@/components/pipeline/InactivityPanel";
+import { PipelineHealthScore } from "@/components/pipeline/PipelineHealthScore";
 import { Kanban, ChevronRight, Clock, AlertTriangle } from "lucide-react";
 import { usePipelineDeals } from "@/hooks/usePipeline";
 import { PipelineLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
@@ -31,21 +32,31 @@ export default function Pipeline() {
       <PageTransition>
         <div className="space-y-6">
           {/* Header */}
-          <motion.div 
-            className="flex items-center gap-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <motion.div 
+              className="flex items-center gap-3"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="p-3 rounded-xl gradient-primary">
+                <Kanban className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-page-title gradient-text">Pipeline de Vendas</h1>
+                <p className="text-muted-foreground">
+                  Arraste os deals entre as colunas para atualizar o status
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            <div className="p-3 rounded-xl gradient-primary">
-              <Kanban className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-page-title gradient-text">Pipeline de Vendas</h1>
-              <p className="text-muted-foreground">
-                Arraste os deals entre as colunas para atualizar o status
-              </p>
-            </div>
+            <PipelineHealthScore />
           </motion.div>
 
           {/* Content */}
