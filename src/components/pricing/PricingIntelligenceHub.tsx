@@ -90,45 +90,61 @@ export function PricingIntelligenceHub() {
   const k = data.kpis;
 
   return (
-    <div className="space-y-8 relative pb-20">
-      {/* Background Decor Imersivo */}
-      <div className="absolute top-[-10%] right-[-5%] -z-10 w-[600px] h-[600px] bg-primary/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[20%] left-[-5%] -z-10 w-[500px] h-[500px] bg-info/10 blur-[120px] rounded-full pointer-events-none animate-pulse" />
-      <div className="absolute top-[40%] left-[30%] -z-10 w-[300px] h-[300px] bg-success/5 blur-[100px] rounded-full pointer-events-none" />
+    <div className="space-y-10 relative pb-20">
+      {/* Background Decor Imersivo de Alta Performance */}
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-info/5 blur-[140px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-success/5 blur-[120px] rounded-full" />
+      </div>
 
-      {/* Header Premium */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-white/5 pb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black tracking-widest uppercase py-0.5">
-              Revenue Protection
-            </Badge>
-            <div className="flex items-center gap-1 text-[10px] text-success font-bold">
-              <ShieldCheck className="h-3 w-3" />
-              PRICE SHIELD ATIVO
+      {/* Header Premium com Efeito Glass e Floating Action */}
+      <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 border-b border-white/5 pb-10 relative z-20">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 backdrop-blur-xl shadow-inner group transition-all hover:scale-110">
+              <Sparkles className="h-5 w-5 text-primary group-hover:animate-spin" />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black tracking-[0.2em] uppercase py-0.5 px-2">
+                  Revenue Protection
+                </Badge>
+                <div className="flex items-center gap-1.5 text-[10px] text-success font-black tracking-wider">
+                  <ShieldCheck className="h-3.5 w-3.5 fill-current" />
+                  LINK NEURAL ATIVO
+                </div>
+              </div>
             </div>
           </div>
-          <h1 className="text-4xl font-black font-sora tracking-tighter bg-gradient-to-r from-foreground via-foreground to-foreground/50 bg-clip-text text-transparent">
-            Pricing Intelligence Hub
+          <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+            Pricing Hub <span className="text-primary/80">10/10</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-2 max-w-2xl font-medium leading-relaxed">
-            Cockpit avançado para proteção de margem e otimização de elasticidade. 
-            Utilize IA para identificar vazamentos de receita e ajustar sua estratégia de descontos em tempo real.
+          <p className="text-base text-muted-foreground/80 max-w-3xl font-medium leading-relaxed">
+            O cockpit definitivo para proteção de margem de elite. Nossa IA analisa curvas de elasticidade e vazamentos de receita em milissegundos para garantir sua dominância de mercado.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)} className="bg-white/5 p-1 rounded-lg border border-white/10">
-            <TabsList className="bg-transparent border-none">
-              <TabsTrigger value="7" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">7D</TabsTrigger>
-              <TabsTrigger value="30" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">30D</TabsTrigger>
-              <TabsTrigger value="90" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-bold px-4">90D</TabsTrigger>
+
+        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
+          <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)} className="bg-transparent border-none">
+            <TabsList className="bg-white/5 border-none p-1">
+              {([7, 30, 90] as const).map((d) => (
+                <TabsTrigger 
+                  key={d}
+                  value={String(d)} 
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg text-xs font-black px-5 py-2 rounded-lg transition-all"
+                >
+                  {d}D
+                </TabsTrigger>
+              ))}
             </TabsList>
           </Tabs>
-          <Button variant="outline" size="icon" className="rounded-lg border-white/10 bg-white/5 hover:bg-white/10">
-            <Zap className="h-4 w-4 text-primary" />
+          <div className="w-px h-8 bg-white/10 mx-1" />
+          <Button variant="outline" size="icon" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/15 hover:scale-105 transition-all group">
+            <Zap className="h-5 w-5 text-primary group-hover:animate-pulse" />
           </Button>
         </div>
-      </div>
+      </header>
 
       {/* Health banner Premium */}
       <motion.div
@@ -340,49 +356,63 @@ export function PricingIntelligenceHub() {
         </Card>
       </div>
 
-      {/* Listas Detalhadas com Visual Premium */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      {/* Listas Detalhadas com Visual Premium de Alta Performance */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Top discounters */}
-        <Card className="glass border-white/5">
-          <CardHeader className="border-b border-white/5 bg-white/5">
+        <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+          <CardHeader className="border-b border-white/5 bg-white/5 pb-6">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="font-sora text-lg font-bold">Top Discounters</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1">Vendedores com maior erosão de margem</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive">
+                  <TrendingDown className="h-6 w-6" />
+                </div>
+                <div>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">Top Discounters</CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">Vendedores com maior erosão de margem acumulada</p>
+                </div>
               </div>
-              <Target className="h-5 w-5 text-primary opacity-50" />
+              <Badge variant="outline" className="border-destructive/30 text-destructive bg-destructive/5 font-black text-[10px]">ALERTA DE MARGEM</Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {data.top_discounters.length === 0 ? (
-              <p className="p-8 text-center text-sm text-muted-foreground italic">Sem dados suficientes para análise.</p>
+              <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
+                <ShieldCheck className="h-12 w-12 text-success opacity-20" />
+                Sem erosão crítica detectada na equipe.
+              </div>
             ) : (
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Vendedor</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Desconto</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Leakage</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Performance</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Avg Discount</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Total Leakage</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.top_discounters.slice(0, 5).map((s) => (
-                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/5 transition-colors">
-                      <TableCell className="font-bold text-sm pl-6 py-4">{s.salesperson_name}</TableCell>
-                      <TableCell className="text-right py-4">
+                  {data.top_discounters.slice(0, 5).map((s, idx) => (
+                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                      <TableCell className="pl-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] font-black text-primary">
+                            {idx + 1}
+                          </div>
+                          <span className="font-black text-sm tracking-tight">{s.salesperson_name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right py-5">
                         <Badge
-                          variant="outline"
                           className={cn(
-                            "font-mono font-bold",
+                            "font-mono font-black text-[10px] px-3 py-1 border-none",
                             s.avg_discount_pct > 0.2
-                              ? "bg-destructive/10 text-destructive border-destructive/20"
-                              : "bg-warning/10 text-warning border-warning/20"
+                              ? "bg-destructive text-white shadow-[0_0_10px_rgba(239,68,68,0.4)]"
+                              : "bg-warning text-white shadow-[0_0_10px_rgba(245,158,11,0.4)]"
                           )}
                         >
                           {fmtPct(s.avg_discount_pct)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right font-mono font-bold text-destructive pr-6 py-4">
+                      <TableCell className="text-right font-mono font-black text-destructive/80 pr-8 py-5 text-sm">
                         {fmtCurrency(s.revenue_lost)}
                       </TableCell>
                     </TableRow>
@@ -390,49 +420,75 @@ export function PricingIntelligenceHub() {
                 </TableBody>
               </Table>
             )}
+            <div className="p-4 bg-white/5 border-t border-white/5">
+              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary hover:bg-transparent">
+                Ver Ranking Completo de Erosão
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Product recommendations */}
-        <Card className="glass border-white/5">
-          <CardHeader className="border-b border-white/5 bg-white/5">
+        <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+          <CardHeader className="border-b border-white/5 bg-white/5 pb-6">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="font-sora text-lg font-bold">IA Price Recommender</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1">Oportunidades de aumento de preço (Uplift)</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-success/10 border border-success/20 text-success">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">IA Price Recommender</CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">Oportunidades neurais de uplift e expansão de margem</p>
+                </div>
               </div>
-              <ArrowUpRight className="h-5 w-5 text-success opacity-50" />
+              <Badge className="bg-success text-white border-none font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(34,197,94,0.4)] animate-pulse">UPSELL OPORTUNIDADES</Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {data.product_recommendations.length === 0 ? (
-              <p className="p-8 text-center text-sm text-muted-foreground italic">Nenhuma oportunidade detectada no momento.</p>
+              <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
+                <Target className="h-12 w-12 text-primary opacity-20" />
+                A IA está recalibrando modelos de elasticidade.
+              </div>
             ) : (
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest pl-6">Produto</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest">Sugerido</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-6">Uplift</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Ativos Estratégicos</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Target Price</TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Uplift IA</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.product_recommendations.slice(0, 5).map((p) => (
-                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/5 transition-colors">
-                      <TableCell className="font-bold text-sm pl-6 py-4 max-w-[150px] truncate">{p.product_name}</TableCell>
-                      <TableCell className="text-right py-4 font-mono font-bold">
+                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                      <TableCell className="pl-8 py-5">
+                        <div className="flex flex-col">
+                          <span className="font-black text-sm tracking-tight group-hover/row:text-primary transition-colors">{p.product_name}</span>
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{p.deals_count} deals analisados</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right py-5 font-mono font-black text-sm text-foreground/90">
                         {fmtCurrency(p.recommended_price)}
                       </TableCell>
-                      <TableCell className="text-right pr-6 py-4">
-                        <Badge className="bg-success text-success-foreground border-none font-black text-[10px]">
-                          +{fmtPct(p.uplift_pct)}
-                        </Badge>
+                      <TableCell className="text-right pr-8 py-5">
+                        <div className="flex flex-col items-end">
+                          <Badge className="bg-success text-white border-none font-black text-[10px] px-2 py-0.5 rounded-sm">
+                            +{fmtPct(p.uplift_pct)}
+                          </Badge>
+                          <span className="text-[9px] text-success/70 font-bold mt-1 uppercase tracking-tighter">Baixa Elasticidade</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             )}
+            <div className="p-4 bg-white/5 border-t border-white/5">
+              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-success hover:bg-transparent">
+                Exportar Sugestões de Tabela de Preço
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -543,8 +599,8 @@ function KpiCard({
               <Icon className="h-4 w-4" />
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className={cn("text-3xl font-black font-display tracking-tight", accent)}>
+          <div className="flex flex-col relative">
+            <div className={cn("text-4xl font-black font-display tracking-tight drop-shadow-sm", accent)}>
               <CountUp 
                 value={numericValue} 
                 prefix={isCurrency ? "R$ " : ""} 
@@ -552,12 +608,20 @@ function KpiCard({
                 decimals={isPercent ? 1 : 0}
               />
             </div>
-            {isPercent && numericValue > 15 && (
-              <div className="flex items-center gap-1 mt-1 text-[10px] text-warning font-bold">
+            {isPercent && numericValue > 15 ? (
+              <div className="flex items-center gap-1.5 mt-2 text-[10px] text-destructive font-black tracking-widest animate-pulse">
                 <AlertTriangle className="h-3 w-3" />
-                ACIMA DO BENCHMARK
+                EROSÃO CRÍTICA
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 mt-2 text-[10px] text-success font-black tracking-widest opacity-80">
+                <ShieldCheck className="h-3 w-3" />
+                PROTEÇÃO ATIVA
               </div>
             )}
+            
+            {/* Neural Sync Spark */}
+            <div className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
           </div>
         </CardContent>
       </Card>

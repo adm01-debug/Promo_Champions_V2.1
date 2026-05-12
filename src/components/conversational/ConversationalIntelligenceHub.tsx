@@ -17,6 +17,9 @@ import { QuestionFeedPanel } from "./questions/QuestionFeedPanel";
 import { ObjectionLibraryPanel } from "./objections/ObjectionLibraryPanel";
 import { CoachingLeaderboardPanel } from "./coaching/CoachingLeaderboardPanel";
 import { LiveIntelligenceFeed } from "./LiveIntelligenceFeed";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { NeuralSoundwave } from "./NeuralSoundwave";
 
 const sentimentColor = (label: string | null) => {
   if (label === "positive") return "bg-success/10 text-success border-success/30";
@@ -25,9 +28,9 @@ const sentimentColor = (label: string | null) => {
 };
 
 export const ConversationalIntelligenceHub = () => {
-  const [horizon, setHorizon] = useState(30);
+  const [horizon, setHorizon] = useState<number | "live">(30);
   const [search, setSearch] = useState("");
-  const { data, isLoading } = useConversationalIntelligence(horizon);
+  const { data, isLoading } = useConversationalIntelligence(horizon === "live" ? 0 : horizon);
   const drawer = useRecordingSummaryDrawer();
 
   const filteredRecordings = useMemo(() => {
@@ -41,26 +44,53 @@ export const ConversationalIntelligenceHub = () => {
   }, [data, search]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-page-title font-bold flex items-center gap-2">
-            <Headphones className="size-7 text-primary" />
-            Conversational Intelligence
+    <div className="space-y-10 relative pb-20">
+      {/* Background Neural Matrix Decor */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] bg-info/5 blur-[100px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* Header Premium 10/10 */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 border-b border-white/5 pb-10">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-primary/10 border border-primary/20 shadow-inner group hover:scale-110 transition-transform">
+              <Headphones className="size-6 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black tracking-[0.2em] uppercase py-0.5 px-2">
+                  Neural Audio Analysis
+                </Badge>
+                {horizon === "live" && (
+                  <div className="flex items-center gap-1.5 text-[10px] text-destructive font-black tracking-wider animate-pulse">
+                    <div className="h-1.5 w-1.5 rounded-full bg-destructive animate-ping" />
+                    STREAMING LIVE
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+            Conversational <span className="text-primary/80">Intelligence</span>
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Insights de IA sobre suas chamadas: sentimento, talk ratio, objeções e próximos passos
+          <p className="text-base text-muted-foreground/80 max-w-2xl font-medium leading-relaxed">
+            Decifre cada palavra, tom e hesitação. Nossa IA neural processa milhões de parâmetros para transformar diálogos em fechamentos inevitáveis.
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+
+        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
           <CompetitorsAdminDialog />
-          <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
-            <TabsList>
-              <TabsTrigger value="7">7 dias</TabsTrigger>
-              <TabsTrigger value="30">30 dias</TabsTrigger>
-              <TabsTrigger value="90">90 dias</TabsTrigger>
-              <TabsTrigger value="live" className="text-primary font-bold">
-                <Zap className="size-3 mr-1 animate-pulse" /> LIVE
+          <div className="w-px h-8 bg-white/10 mx-1" />
+          <Tabs value={String(horizon)} onValueChange={(v) => setHorizon(v === 'live' ? 'live' : Number(v))} className="bg-transparent">
+            <TabsList className="bg-white/5 border-none p-1">
+              <TabsTrigger value="7" className="text-xs font-black px-4">7D</TabsTrigger>
+              <TabsTrigger value="30" className="text-xs font-black px-4">30D</TabsTrigger>
+              <TabsTrigger value="90" className="text-xs font-black px-4">90D</TabsTrigger>
+              <TabsTrigger value="live" className="text-xs font-black px-5 bg-destructive/10 text-destructive data-[state=active]:bg-destructive data-[state=active]:text-white transition-all gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                LIVE
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -75,22 +105,25 @@ export const ConversationalIntelligenceHub = () => {
         </div>
       ) : data ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <KPICard icon={Mic} label="Chamadas" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% analisadas pela IA`} trend="+12%" />
-            <KPICard icon={Clock} label="Tempo total" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" />
-            <KPICard icon={TrendingUp} label="Sentimento médio" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala -1 a +1" trend="+0.05" />
-            <KPICard icon={MessageSquare} label="Talk ratio (vendedor)" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} perguntas / call`} trend="Ideal" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <KPICard icon={Mic} label="Mapeamento de Voz" value={data.kpis.total_calls} hint={`${data.kpis.coverage_percent}% coverage`} trend="+12%" accent="text-primary" />
+            <KPICard icon={Clock} label="Tempo de Exposição" value={`${data.kpis.total_duration_minutes}m`} hint={`Média ${data.kpis.avg_duration_minutes}m / call`} trend="-5%" accent="text-info" />
+            <KPICard icon={TrendingUp} label="Neural Sentiment" value={data.kpis.avg_sentiment.toFixed(2)} hint="Escala de Empatia (-1 a +1)" trend="+0.05" accent="text-success" />
+            <KPICard icon={MessageSquare} label="Ratio de Persuasão" value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`} hint={`${data.kpis.avg_questions_per_call} Q/call`} trend="Ideal" accent="text-warning" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Sparkles className="size-4 text-primary" />
-                  Distribuição de sentimento
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Brain className="size-24" />
+              </div>
+              <CardHeader className="pb-6 border-b border-white/5 bg-white/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <Sparkles className="size-4 text-primary animate-pulse" />
+                  Distribuição de Sentimento
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-5 pt-8">
                 {(["positive", "neutral", "negative"] as const).map((k) => {
                   const v = data.sentiment_distribution[k];
                   const total =
@@ -98,52 +131,67 @@ export const ConversationalIntelligenceHub = () => {
                     data.sentiment_distribution.neutral +
                     data.sentiment_distribution.negative;
                   const pct = total > 0 ? Math.round((v / total) * 100) : 0;
+                  const color = k === "positive" ? "bg-success" : k === "negative" ? "bg-destructive" : "bg-muted-foreground";
+                  
                   return (
-                    <div key={k}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="capitalize">{k === "positive" ? "Positivo" : k === "negative" ? "Negativo" : "Neutro"}</span>
-                        <span className="text-muted-foreground">{v} ({pct}%)</span>
+                    <div key={k} className="space-y-2">
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
+                        <span className="flex items-center gap-1.5">
+                          <div className={cn("h-1.5 w-1.5 rounded-full", color)} />
+                          {k === "positive" ? "Positivo" : k === "negative" ? "Negativo" : "Neutro"}
+                        </span>
+                        <span className="text-muted-foreground">{v} unidades ({pct}%)</span>
                       </div>
-                      <Progress value={pct} className="h-2" />
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 1, ease: "circOut" }}
+                          className={cn("h-full rounded-full", color)} 
+                        />
+                      </div>
                     </div>
                   );
                 })}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <CardHeader className="pb-6 border-b border-white/5 bg-warning/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
                   <AlertTriangle className="size-4 text-warning" />
-                  Top objeções
+                  Barreiras de Fechamento
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-4 pt-6">
                 {data.top_objections.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhuma objeção registrada.</p>
+                  <p className="text-sm text-muted-foreground italic text-center py-10">Nenhuma barreira crítica registrada.</p>
                 ) : (
                   data.top_objections.map((o) => (
-                    <div key={o.label} className="flex justify-between items-center text-sm">
-                      <span className="truncate">{o.label}</span>
-                      <Badge variant="secondary">{o.count}</Badge>
+                    <div key={o.label} className="flex justify-between items-center p-3 rounded-xl border border-white/5 hover:bg-white/5 transition-all group/item">
+                      <span className="text-xs font-bold group-hover/item:text-warning transition-colors">{o.label}</span>
+                      <Badge className="bg-warning/20 text-warning border-none font-black text-[10px]">{o.count} ocorrências</Badge>
                     </div>
                   ))
                 )}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Top tópicos</CardTitle>
+            <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
+              <CardHeader className="pb-6 border-b border-white/5 bg-primary/5">
+                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <Brain className="size-4 text-primary" />
+                  Clusters de Interesse
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-4 pt-6">
                 {data.top_topics.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Nenhum tópico identificado.</p>
+                  <p className="text-sm text-muted-foreground italic text-center py-10">Processando tópicos neurais...</p>
                 ) : (
                   data.top_topics.map((t) => (
-                    <div key={t.label} className="flex justify-between items-center text-sm">
-                      <span className="truncate">{t.label}</span>
-                      <Badge variant="outline">{t.count}</Badge>
+                    <div key={t.label} className="flex justify-between items-center p-3 rounded-xl border border-white/5 hover:bg-white/5 transition-all group/item">
+                      <span className="text-xs font-bold group-hover/item:text-primary transition-colors">{t.label}</span>
+                      <Badge variant="outline" className="border-primary/20 text-primary font-black text-[10px]">{t.count} citações</Badge>
                     </div>
                   ))
                 )}
@@ -151,13 +199,42 @@ export const ConversationalIntelligenceHub = () => {
             </Card>
           </div>
 
-          {horizon === 0 || String(horizon) === 'live' ? (
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {horizon === 'live' ? (
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                   <Card className="h-[600px] flex flex-col items-center justify-center border-dashed">
-                      <Headphones className="size-16 opacity-10 mb-4 animate-bounce" />
-                      <p className="text-sm font-medium">Sincronizando áudio em tempo real...</p>
-                      <p className="text-xs text-muted-foreground mt-1">Conecte o discador Twilio ou Zoom para iniciar</p>
+                   <Card className="h-[600px] flex flex-col items-center justify-center border border-white/5 bg-slate-950/40 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.1),transparent)] animate-pulse" />
+                      
+                      <div className="relative z-10 flex flex-col items-center text-center px-10">
+                        <NeuralSoundwave active={true} color="bg-destructive" />
+                        
+                        <div className="mt-8 space-y-4">
+                          <div className="flex items-center justify-center gap-3">
+                            <Badge className="bg-destructive text-white border-none animate-bounce font-black text-xs px-4 py-1">LIVE STREAMING</Badge>
+                            <span className="text-xs font-bold text-muted-foreground">00:12:45</span>
+                          </div>
+                          
+                          <h3 className="text-3xl font-black font-sora tracking-tight">Análise Neural em Tempo Real</h3>
+                          <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+                            Ouvindo fluxo de áudio via Twilio Link. A IA está processando sentimentos, intenções e sugerindo battlecards instantaneamente.
+                          </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 mt-12 w-full">
+                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Vendedor</p>
+                            <p className="text-xs font-medium italic opacity-70">"Entendo sua preocupação com o preço, mas se olharmos para o ROI..."</p>
+                          </div>
+                          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Speaker: Cliente</p>
+                            <p className="text-xs font-medium italic opacity-70">"Pois é, o orçamento está bem apertado para este trimestre."</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Floating Particles */}
+                      <div className="absolute bottom-10 left-10 h-1 w-1 bg-primary rounded-full animate-ping" />
+                      <div className="absolute top-20 right-20 h-1.5 w-1.5 bg-destructive rounded-full animate-ping" style={{ animationDelay: '1s' }} />
                    </Card>
                 </div>
                 <div className="space-y-4">
@@ -274,34 +351,39 @@ const KPICard = ({
   value,
   hint,
   trend,
+  accent = "text-primary",
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   hint?: string;
   trend?: string;
+  accent?: string;
 }) => (
-  <Card className="glass border-border/40 hover:border-primary/30 transition-all duration-300 group">
-    <CardContent className="pt-6">
+  <Card className="glass border-white/5 hover:border-primary/30 transition-all duration-500 group relative overflow-hidden">
+    <div className={cn("absolute -right-4 -top-4 w-20 h-20 blur-2xl opacity-0 group-hover:opacity-10 transition-opacity", 
+      accent.includes("primary") ? "bg-primary" : accent.includes("success") ? "bg-success" : "bg-info"
+    )} />
+    <CardContent className="pt-8">
       <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+        <div className="space-y-2">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
           <div className="flex items-baseline gap-2">
-            <p className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">{value}</p>
+            <p className={cn("text-4xl font-black font-display tracking-tighter drop-shadow-sm", accent)}>{value}</p>
             {trend && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                trend.includes('+') ? 'bg-success/10 text-success' : 
-                trend.includes('-') ? 'bg-destructive/10 text-destructive' : 
-                'bg-primary/10 text-primary'
-              }`}>
+              <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-black tracking-tighter", 
+                trend.includes('+') ? 'bg-success/20 text-success' : 
+                trend.includes('-') ? 'bg-destructive/20 text-destructive' : 
+                'bg-primary/20 text-primary'
+              )}>
                 {trend}
               </span>
             )}
           </div>
-          {hint && <p className="text-[10px] text-muted-foreground font-medium">{hint}</p>}
+          {hint && <p className="text-[10px] text-muted-foreground font-bold tracking-tight">{hint}</p>}
         </div>
-        <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 shadow-sm shadow-primary/20">
-          <Icon className="size-5" />
+        <div className={cn("size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-500 shadow-xl group-hover:scale-110 group-hover:bg-white/10", accent)}>
+          <Icon className="size-6" />
         </div>
       </div>
     </CardContent>
