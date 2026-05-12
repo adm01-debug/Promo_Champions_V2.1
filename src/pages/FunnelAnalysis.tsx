@@ -302,8 +302,6 @@ const FunnelAnalysis = () => {
                   </Card>
                 </motion.div>
               </div>
-                </motion.div>
-              </div>
             </>
           )}
         </div>
