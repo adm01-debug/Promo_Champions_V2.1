@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, Linkedin, MessageCircle, Users, CheckSquare } from "lucide-react";
+import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, Linkedin, MessageCircle, Users, CheckSquare, Zap } from "lucide-react";
 import { CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
 import { MergeTagPicker } from "./MergeTagPicker";
 
@@ -56,12 +56,38 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({ step, onSave,
             </Select>
           </div>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+            <div className="space-y-0.5">
+              <Label className="text-[10px] font-medium">Aprovação</Label>
+              <p className="text-[9px] text-muted-foreground">Exigir manual</p>
+            </div>
+            <input 
+              type="checkbox" 
+              className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+              checked={editData.needs_approval ?? step.needs_approval}
+              onChange={(e) => setEditData(d => ({ ...d, needs_approval: e.target.checked }))}
+            />
+          </div>
+          <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
+            <div className="space-y-0.5">
+              <Label className="text-[10px] font-medium">Automática</Label>
+              <p className="text-[9px] text-muted-foreground">Execução robô</p>
+            </div>
+            <input 
+              type="checkbox" 
+              className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
+              checked={(editData.task_type ?? (step as any).task_type) === 'automatic'}
+              onChange={(e) => setEditData(d => ({ ...d, task_type: e.target.checked ? 'automatic' : 'manual' }))}
+            />
+          </div>
+        </div>
         <div className="space-y-1">
           <Label className="text-xs">Título</Label>
           <Input defaultValue={step.title} onChange={(e) => setEditData(d => ({ ...d, title: e.target.value }))} className="h-8 text-sm bg-background/50" />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">Descrição</Label>
+          <Label className="text-xs">Descrição / Instruções</Label>
           <Textarea defaultValue={step.description || ""} onChange={(e) => setEditData(d => ({ ...d, description: e.target.value }))} className="min-h-[50px] text-sm resize-none bg-background/50" />
         </div>
         <div className="space-y-1">
@@ -97,6 +123,8 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({ step, onSave,
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold text-primary bg-primary/15 px-1.5 py-0.5 rounded">Dia {step.day_number}</span>
             <span className="text-xs font-medium truncate">{step.title}</span>
+            {step.needs_approval && <Badge variant="outline" className="text-[8px] h-4 bg-status-warning/10 text-status-warning border-status-warning/20">Aprovação</Badge>}
+            {(step as any).task_type === 'automatic' && <Zap className="h-3 w-3 text-status-success animate-pulse" />}
           </div>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
