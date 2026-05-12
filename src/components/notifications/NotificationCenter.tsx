@@ -6,6 +6,7 @@ import {
   Bell, BellOff, Check, CheckCheck, Trash2, Archive,
   TrendingUp, Target, Trophy, Shield, Settings, Users,
   Sparkles, FileCheck, AlertCircle, History, Filter,
+  Mail, Settings2, Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -92,7 +93,7 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
     <div
       className={cn(
         "group relative flex gap-3 p-3 rounded-lg border-l-2 transition-colors cursor-pointer",
-        PRIORITY_STYLES[n.priority],
+        PRIORITY_STYLES[n.priority as NotificationPriority],
         isUnread ? "bg-accent/40 hover:bg-accent/60" : "bg-card hover:bg-accent/30"
       )}
       onClick={() => onClick(n)}
@@ -129,7 +130,7 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
 
         <div className="flex items-center gap-2 mt-1.5">
           <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4">
-            {CATEGORY_LABELS[n.category]}
+            {CATEGORY_LABELS[n.category] || n.category}
           </Badge>
           <span className="text-[10px] text-muted-foreground">
             {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ptBR })}
@@ -215,6 +216,65 @@ export function NotificationCenter() {
                  <CheckCheck className="h-4 w-4" />
                </Button>
              )}
+             
+             <Dialog>
+               <DialogTrigger asChild>
+                 <Button size="icon" variant="ghost" className="h-8 w-8" title="Configurações de alerta">
+                   <Settings2 className="h-4 w-4" />
+                 </Button>
+               </DialogTrigger>
+               <DialogContent className="glass border-primary/20">
+                 <DialogHeader>
+                   <DialogTitle className="flex items-center gap-2">
+                     <Settings className="h-4 w-4 text-primary" />
+                     Configurações de Alerta Elite
+                   </DialogTitle>
+                   <DialogDescription>
+                     Controle como você deseja ser notificado sobre as vendas do time.
+                   </DialogDescription>
+                 </DialogHeader>
+                 
+                 <div className="space-y-6 py-4">
+                   <div className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/5">
+                     <div className="space-y-0.5">
+                       <div className="flex items-center gap-2">
+                         <Bell className="h-4 w-4 text-primary" />
+                         <Label className="text-sm font-bold">Alertas no Dashboard</Label>
+                       </div>
+                       <p className="text-xs text-muted-foreground">Receba popups e notificações em tempo real no HUD.</p>
+                     </div>
+                     <Switch 
+                       checked={salesperson?.notify_sales_in_app ?? true} 
+                       onCheckedChange={(val) => salesperson && updateSalesperson.mutate({ id: salesperson.id, notify_sales_in_app: val })}
+                       disabled={updateSalesperson.isPending}
+                     />
+                   </div>
+
+                   <div className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/5">
+                     <div className="space-y-0.5">
+                       <div className="flex items-center gap-2">
+                         <Mail className="h-4 w-4 text-primary" />
+                         <Label className="text-sm font-bold">Alertas por E-mail</Label>
+                       </div>
+                       <p className="text-xs text-muted-foreground">Receba um resumo de cada venda fechada no seu e-mail.</p>
+                     </div>
+                     <Switch 
+                       checked={salesperson?.notify_sales_email ?? false} 
+                       onCheckedChange={(val) => salesperson && updateSalesperson.mutate({ id: salesperson.id, notify_sales_email: val })}
+                       disabled={updateSalesperson.isPending}
+                     />
+                   </div>
+                   
+                   {updateSalesperson.isPending && (
+                     <div className="flex items-center justify-center gap-2 text-xs text-primary animate-pulse">
+                       <Loader2 className="h-3 w-3 animate-spin" />
+                       Salvando preferências...
+                     </div>
+                   )}
+                 </div>
+               </DialogContent>
+             </Dialog>
+
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                    <Button size="icon" variant="ghost" className="h-8 w-8">
