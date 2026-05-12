@@ -9515,6 +9515,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          description: string | null
           id: string
           min_stock_level: number | null
           name: string
@@ -9529,6 +9530,7 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          description?: string | null
           id?: string
           min_stock_level?: number | null
           name: string
@@ -9543,6 +9545,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          description?: string | null
           id?: string
           min_stock_level?: number | null
           name?: string
@@ -17214,6 +17217,19 @@ export type Database = {
       }
       search_products_semantic: {
         Args: { _keywords: string[]; _limit?: number; _query?: string }
+        Returns: {
+          category: string
+          id: string
+          name: string
+          price: number
+          rating: number
+          sales_count: number
+          similarity_score: number
+          status: string
+        }[]
+      }
+      search_products_vector: {
+        Args: { _limit?: number; _query_embedding: string }
         Returns: {
           category: string
           id: string
