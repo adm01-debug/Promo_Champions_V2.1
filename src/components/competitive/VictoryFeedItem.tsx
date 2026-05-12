@@ -41,8 +41,21 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
   };
 
   return (
-    <Card className="border-none shadow-lg overflow-hidden group/card transition-all duration-300 hover:shadow-xl">
-      <div className={cn('bg-gradient-to-r', gradient)}>
+    <Card className={cn(
+      "border-none shadow-lg overflow-hidden group/card transition-all duration-300 hover:shadow-xl relative",
+      item.value >= 10000 && "ring-2 ring-rank-gold/50 shadow-rank-gold/20"
+    )}>
+      {item.value >= 10000 && (
+        <div className="absolute top-0 right-0 p-2 z-20">
+          <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+            <Trophy className="h-5 w-5 text-rank-gold drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+          </motion.div>
+        </div>
+      )}
+      <div className={cn('bg-gradient-to-r relative', gradient)}>
+        {item.value >= 10000 && (
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.15),transparent_50%)]" />
+        )}
         <CardContent className="p-5">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 shadow-inner border border-white/10 transition-transform duration-500 group-hover/card:rotate-12">
