@@ -41,7 +41,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
                 <button
                   onClick={() => !step.completed && navigate(step.route)}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-all whitespace-nowrap",
+                    "flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
                     step.completed
                       ? "bg-success/15 text-success"
                       : step === nextStep
