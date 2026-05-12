@@ -16950,6 +16950,14 @@ export type Database = {
           sample_size: number
         }[]
       }
+      get_historical_benchmark: {
+        Args: {
+          p_end_date: string
+          p_salesperson_id: string
+          p_start_date: string
+        }
+        Returns: Json
+      }
       get_mfa_status: {
         Args: never
         Returns: {
