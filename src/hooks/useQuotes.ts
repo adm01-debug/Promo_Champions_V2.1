@@ -26,7 +26,7 @@ export interface Quote {
   subtotal: number | null;
   discount_amount: number | null;
   discount_percent: number | null;
-  items: string | null; // JSONB stored as string
+  items: any; // JSONB stored as array or object
   external_quote_id: string | null;
   sync_status: string | null;
   pdf_url: string | null;
