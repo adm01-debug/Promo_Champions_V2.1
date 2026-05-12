@@ -32,7 +32,8 @@ describe('Competitive Message Formatting', () => {
   it('should format message correctly when seller is ahead of recipient', () => {
     const msg = formatSaleNotification('João', 5000, 2, 5);
     expect(msg).toContain('João');
-    expect(msg).toContain('R$ 5.000,00');
+    // Using a more flexible check for currency due to different space characters in toLocaleString
+    expect(msg).toMatch(/R\$.*5\.000,00/);
     expect(msg).toContain('2ª posição');
     expect(msg).toContain('3 posição(ões) à sua frente');
   });
