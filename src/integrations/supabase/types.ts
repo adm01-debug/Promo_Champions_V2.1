@@ -17028,6 +17028,14 @@ export type Database = {
         }[]
       }
       match_weekly_players: { Args: never; Returns: undefined }
+      merge_clients: {
+        Args: {
+          duplicate_ids: string[]
+          preferred_fields?: Json
+          target_id: string
+        }
+        Returns: undefined
+      }
       next_dialer_item: {
         Args: { _queue_id: string }
         Returns: {
