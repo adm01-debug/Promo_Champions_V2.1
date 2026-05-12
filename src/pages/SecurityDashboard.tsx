@@ -62,6 +62,52 @@ const SecurityDashboard = () => {
             </motion.div>
           )}
 
+          {/* Geo-Blocking Section */}
+          <motion.div variants={itemVariants}>
+            <Card className="glass border-border/40 overflow-hidden">
+              <div className="p-4 border-b border-border/30 flex items-center justify-between">
+                <h3 className="font-display font-semibold text-sm flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-primary" /> Gestão de Bloqueio Geográfico
+                </h3>
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-4">
+                  Active Shields
+                </Badge>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <GeoBlockingMap />
+                  </div>
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">Protocolo de Defesa</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                        O bloqueio geográfico impede qualquer requisição vinda de países marcados como suspeitos ou fora da sua zona de operação.
+                      </p>
+                      <div className="space-y-2">
+                         <div className="flex items-center justify-between text-[10px] border-b border-white/5 pb-2">
+                           <span className="text-muted-foreground">Latência de Bloqueio</span>
+                           <span className="font-mono text-status-success">~12ms</span>
+                         </div>
+                         <div className="flex items-center justify-between text-[10px] border-b border-white/5 pb-2">
+                           <span className="text-muted-foreground">Precisão por IP</span>
+                           <span className="font-mono text-status-success">99.8%</span>
+                         </div>
+                         <div className="flex items-center justify-between text-[10px]">
+                           <span className="text-muted-foreground">Proteção DDoS Ativa</span>
+                           <span className="font-mono text-status-success">L7 Shield</span>
+                         </div>
+                      </div>
+                    </div>
+                    <Button variant="outline" className="w-full h-12 border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-black uppercase tracking-widest rounded-xl transition-all">
+                      Ver Logs Detalhados
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Login Attempts */}
             <motion.div variants={itemVariants}>
