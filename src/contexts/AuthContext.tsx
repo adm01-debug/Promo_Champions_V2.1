@@ -18,6 +18,7 @@ interface AuthContextType {
   session: Session | null;
   salesperson: Salesperson | null;
   isLoading: boolean;
+  refreshSalesperson: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -32,9 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const fetchedRef = useRef<string | null>(null);
 
-  const fetchSalesperson = async (authUserId: string) => {
-    // Prevent duplicate fetches for same user
-    if (fetchedRef.current === authUserId) return;
+  const fetchSalesperson = async (authUserId: string, force = false) => {
+    // Prevent duplicate fetches for same user unless forced
+    if (!force && fetchedRef.current === authUserId) return;
     fetchedRef.current = authUserId;
 
     const { data, error } = await supabase
@@ -46,7 +47,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error && data) {
       setSalesperson(data);
     } else {
-      fetchedRef.current = null; // Allow retry on error
+      if (!force) fetchedRef.current = null; // Allow retry on error if not forced
+    }
+  };
+
+  const refreshSalesperson = async () => {
+    if (user?.id) {
+      await fetchSalesperson(user.id, true);
     }
   };
 
@@ -134,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, salesperson, isLoading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, salesperson, isLoading, refreshSalesperson, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

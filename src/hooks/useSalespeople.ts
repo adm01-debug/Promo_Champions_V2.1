@@ -163,7 +163,7 @@ export function useSalespeopleRanking(period: PeriodFilter = "month") {
   });
 }
 
-export function useUpdateSalesperson() {
+export function useUpdateSalesperson(onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<Salesperson>) => {
@@ -179,6 +179,7 @@ export function useUpdateSalesperson() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["salespeople"] });
       queryClient.invalidateQueries({ queryKey: ["salespeople_ranking"] });
+      onSuccess?.();
       toast.success("Vendedor atualizado!");
     },
     onError: (e: Error) => toast.error("Erro ao atualizar: " + e.message),
