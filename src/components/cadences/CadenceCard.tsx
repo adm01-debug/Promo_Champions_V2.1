@@ -150,6 +150,29 @@ function _CadenceCard({ cadence, steps, onDelete, onSelect, isSelected, isDeleti
             )}
           </div>
 
+          <div className="mt-2.5 space-y-2">
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium">
+              <span className="flex items-center gap-1">
+                <ChevronDown className="h-3 w-3 animate-bounce" />
+                Fluxo de Engajamento
+              </span>
+              <span className="text-primary font-bold">Performance Elite</span>
+            </div>
+            <div className="flex gap-1 h-1 w-full bg-muted/30 rounded-full overflow-hidden">
+              {steps.map((step, idx) => (
+                <div 
+                  key={step.id} 
+                  className={`h-full flex-1 transition-all duration-500 opacity-80 hover:opacity-100 ${
+                    idx === 0 ? 'bg-primary' : 
+                    idx === steps.length - 1 ? 'bg-success/60' : 
+                    'bg-primary/40'
+                  }`}
+                  title={`Etapa ${idx + 1}: ${step.title}`}
+                />
+              ))}
+            </div>
+          </div>
+
           {/* Expanded view */}
           {isExpanded && steps.length > 0 && (
             <div className="mt-3 pt-3 border-t border-border/40 space-y-2">
