@@ -3,7 +3,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
-  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook";
+  | "note" | "email_message" | "whatsapp_message" | "proposal" | "task" | "playbook" | "product";
 
 interface IndexRequest {
   entity_type: EntityType;
