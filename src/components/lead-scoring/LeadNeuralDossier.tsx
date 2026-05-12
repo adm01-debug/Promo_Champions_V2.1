@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LeadScoreExplainCard } from "./LeadScoreExplainCard";
 import { type ScoredLead } from "@/hooks/useLeadScoring";
 import { Badge } from "@/components/ui/badge";
-import { Target, Brain, ShieldAlert, Sparkles, TrendingUp, Info } from "lucide-react";
+import { Target, Brain, ShieldAlert, Sparkles, TrendingUp, Info, Download, FileText, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface LeadNeuralDossierProps {
   lead: ScoredLead | null;
@@ -13,13 +15,59 @@ interface LeadNeuralDossierProps {
 }
 
 export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierProps) => {
+  const [isExporting, setIsExporting] = useState(false);
+  const dossierRef = useRef<HTMLDivElement>(null);
+
   if (!lead) return null;
+
+  const exportDossierCSV = () => {
+    setIsExporting(true);
+    try {
+      const headers = ["Attribute", "Value"];
+      const rows = [
+        ["Lead Name", lead.name],
+        ["Company", lead.company || "N/A"],
+        ["Email", lead.email],
+        ["Neural Score", lead.score],
+        ["Category", lead.category],
+        ["Churn Risk Score", lead.churnRisk?.risk_score || 0],
+        ["Risk Level", lead.churnRisk?.risk_level || "low"],
+        ["Risk Factors", (lead.churnRisk?.factors || []).join("; ")],
+        ["Extraction Date", new Date().toISOString()]
+      ];
+      
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + headers.join(",") + "\n"
+        + rows.map(e => e.join(",")).join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `neural_dossier_${lead.name.replace(/\s+/g, '_').toLowerCase()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Dossiê Neural exportado com sucesso!");
+    } catch (error) {
+      toast.error("Erro na extração de dados.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const exportDossierPDF = () => {
+    toast.info("Preparando Dossiê Estratégico para impressão...");
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
 
   const saleId = lead.bestDealId || lead.id;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-xl border-white/5 shadow-2xl p-0 gap-0">
+        <div ref={dossierRef} className="contents">
         <DialogHeader className="p-6 border-b border-white/5 bg-gradient-to-r from-primary/10 to-transparent">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -44,7 +92,29 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
               </div>
             </div>
             
-            <div className="hidden md:flex items-center gap-6 pr-8">
+            <div className="flex items-center gap-2 pr-6">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={exportDossierCSV}
+                disabled={isExporting}
+                className="h-8 px-3 rounded-lg border-white/5 bg-white/5 text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all"
+              >
+                <Download className="h-3 w-3 mr-1.5" />
+                CSV
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={exportDossierPDF}
+                className="h-8 px-3 rounded-lg border-white/5 bg-white/5 text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+              >
+                <FileText className="h-3 w-3 mr-1.5" />
+                PDF
+              </Button>
+            </div>
+
+            <div className="hidden lg:flex items-center gap-6 pr-8">
               <div className="text-right">
                 <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1 opacity-60">Neural Rank</p>
                 <p className="font-display font-black text-2xl italic text-primary">#TOP TIER</p>
