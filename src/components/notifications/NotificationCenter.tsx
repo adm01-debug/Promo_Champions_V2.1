@@ -113,7 +113,7 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
                 <p className="text-xs font-black text-foreground">#{String(n.metadata.recipient_rank || '0')}</p>
              </div>
           </div>
-        )}
+        ) : null}
 
         <div className="flex items-center gap-2 mt-1.5">
           <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4">
