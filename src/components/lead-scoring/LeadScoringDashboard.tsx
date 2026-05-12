@@ -120,18 +120,6 @@ export function LeadScoringDashboard() {
       const [connectionStatus, setConnectionStatus] = useState<"connected" | "connecting" | "error">("connecting");
       const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-      const exportToCSV = useCallback(() => {
-        // ... implementation
-      }, [filteredLeads, allLeads]); // dependencies simplified for move
-
-      const exportToPDF = useCallback(() => {
-        setIsExporting(true);
-        toast.info("Otimizando layout para exportação PDF...");
-        setTimeout(() => {
-          window.print();
-          setIsExporting(false);
-        }, 800);
-      }, []);
 
   if (isLoading) {
     return (
