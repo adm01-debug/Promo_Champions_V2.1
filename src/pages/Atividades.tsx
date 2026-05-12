@@ -58,6 +58,12 @@ export default function Atividades() {
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="bg-muted/30 border border-border/40 p-1">
             <TabsTrigger value="overview" className="text-xs font-bold uppercase tracking-wider px-6">Visão Geral</TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs font-bold uppercase tracking-wider px-6 flex items-center gap-2">
+              <Trophy className="h-3 w-3" /> Ranking SDR
+            </TabsTrigger>
+            <TabsTrigger value="goals" className="text-xs font-bold uppercase tracking-wider px-6 flex items-center gap-2">
+              <Target className="h-3 w-3" /> Minhas Metas
+            </TabsTrigger>
             <TabsTrigger value="alerts" className="text-xs font-bold uppercase tracking-wider px-6 flex items-center gap-2">
               <Bell className="h-3 w-3" /> Configurar Alertas
             </TabsTrigger>
