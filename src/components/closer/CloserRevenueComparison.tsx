@@ -101,9 +101,6 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
 
   const periodLabel = period === "week" ? "ESTA SEMANA" : period === "month" ? "ESTE MÊS" : "ESTE TRIMESTRE";
 
-  const formatCurrency = (value: any) => 
-    `R$ ${(value / 1000).toFixed(0)}k`;
-
   const formatCurrencyFull = (value: any) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
@@ -158,7 +155,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={closers}
+              data={closers || []}
               layout="vertical"
               margin={{ top: 10, right: 80, left: -20, bottom: 10 }}
             >
@@ -207,7 +204,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                 radius={[0, 8, 8, 0]}
                 maxBarSize={24}
               >
-                {closers.map((_, index) => (
+                {closers?.map((_, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={COLORS[index % COLORS.length]}
@@ -235,7 +232,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
 
         {/* Competition Stats - Top 3 highlight */}
         <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-white/5">
-          {closers.slice(0, 3).map((closer, index) => (
+          {closers?.slice(0, 3).map((closer, index) => (
             <div 
               key={closer.id}
               className={`p-3 rounded-xl transition-all group/item hover:scale-105 ${
