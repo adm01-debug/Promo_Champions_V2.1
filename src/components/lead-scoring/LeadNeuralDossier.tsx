@@ -254,6 +254,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
              </div>
           </div>
         </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
