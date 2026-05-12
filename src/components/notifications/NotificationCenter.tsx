@@ -22,6 +22,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUpdateSalesperson } from "@/hooks/useSalespeople";
+import {
   useNotifications,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
@@ -155,6 +167,8 @@ function NotificationItem({ notification: n, onClick, onMarkRead, onArchive, onD
 
 export function NotificationCenter() {
   const navigate = useNavigate();
+  const { salesperson } = useAuth();
+  const updateSalesperson = useUpdateSalesperson();
   const [filter, setFilter] = useState<"all" | "unread" | "ranking" | "sales">("all");
   const { data: notifications = [], isLoading } = useNotifications({ limit: 100 });
   const markRead = useMarkNotificationRead();
