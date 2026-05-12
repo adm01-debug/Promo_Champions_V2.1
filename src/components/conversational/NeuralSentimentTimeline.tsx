@@ -112,7 +112,7 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
               <ShieldCheck className="size-3" />
               Marcadores de Objeção
             </h4>
-            <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {derivedIntents.length === 0 ? (
                 <div className="p-4 rounded-xl border border-dashed border-white/10 text-center">
                   <p className="text-xs text-muted-foreground italic">Nenhuma objeção crítica mapeada na timeline.</p>
@@ -124,22 +124,45 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                     key={i} 
-                    className="p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/5 transition-all flex items-start gap-3 group/item"
+                    className={cn(
+                      "p-3 rounded-xl border transition-all flex items-start gap-3 group/item relative overflow-hidden shadow-lg",
+                      intent.type === "objection" 
+                        ? "bg-warning/5 border-warning/20 hover:bg-warning/10" 
+                        : "bg-primary/5 border-primary/20 hover:bg-primary/10"
+                    )}
                   >
+                    <div className={cn(
+                      "absolute top-0 left-0 w-1 h-full",
+                      intent.type === "objection" ? "bg-warning" : "bg-primary"
+                    )} />
+                    
                     <div className={cn(
                       "mt-0.5 size-6 rounded-lg flex items-center justify-center border shrink-0",
                       intent.type === "objection" ? "bg-warning/10 border-warning/20 text-warning" : "bg-primary/10 border-primary/20 text-primary"
                     )}>
-                      <AlertTriangle className="size-3" />
+                      {intent.type === "objection" ? <AlertTriangle className="size-3" /> : <Sparkles className="size-3" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[11px] font-bold truncate group-hover/item:text-primary transition-colors">{intent.label}</span>
-                        <span className="text-[9px] font-mono text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-[11px] font-black uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
+                          {intent.label}
+                        </span>
+                        <span className="text-[9px] font-mono text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
                           {Math.floor(intent.timestamp_sec / 60)}:{(intent.timestamp_sec % 60).toString().padStart(2, "0")}
                         </span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{intent.excerpt}"</p>
+                      <p className="text-[10px] text-muted-foreground italic line-clamp-2 leading-relaxed">"{intent.excerpt}"</p>
+                      
+                      {intent.type === "objection" && (
+                        <div className="mt-3 p-2 rounded-lg bg-black/40 border border-warning/10 space-y-2">
+                           <p className="text-[9px] font-black text-warning uppercase tracking-widest flex items-center gap-1">
+                             <Zap className="size-2.5" /> Neural Recommendation
+                           </p>
+                           <p className="text-[10px] text-white/80 font-medium">
+                             O cliente demonstra hesitação financeira. <strong>Sugestão:</strong> Foque na "Proteção de Margem" e ofereça o plano trimestral antecipado com 12% off.
+                           </p>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))
