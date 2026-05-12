@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Zap, 
   Target, 
@@ -25,8 +26,7 @@ export function EliteCadenceAnalytics() {
       // Pareto Insight Logic: Analisando performance por tipo de ação
       const { data: stepStats } = await supabase
         .from('cadence_tasks')
-        .select('status, cadence_step:cadence_steps(action_type)')
-        .order('created_at', { ascending: false });
+        .select('status, cadence_step:cadence_steps(action_type)');
 
       const statsByChannel: Record<string, { total: number; completed: number }> = {};
       
