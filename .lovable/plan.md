@@ -19,16 +19,27 @@ O Conversational Intelligence Hub foi elevado ao estado de arte em análise de s
 
 ---
 
-### Novo Plano: Lead Intelligence Elite 10/10
+### Lead Intelligence Elite 10/10 [CONCLUÍDO]
 
-Transformar a gestão de leads em um Dossiê Neural de alta precisão.
+A gestão de leads foi elevada ao estado de arte com Dossiês Neurais e Explainable AI.
 
-#### Passo 1: Neural Lead Dossier (Detalhes do Lead)
-- **Modal de Detalhes**: Criar `src/components/leads/LeadNeuralDossier.tsx` exibindo score, churn risk (com gauge), fatores de impacto e recomendação clara.
-- **Explainable AI (XAI)**: Painel passo a passo destacando as variáveis que mais impactaram o score.
+- [x] **Neural Lead Dossier**: Implementado `src/components/lead-scoring/LeadNeuralDossier.tsx` com score, churn risk gauge e recomendações neurais.
+- [x] **Explainable AI (XAI)**: Painel "Neural Matrix" decompondo o score passo a passo em `LeadScoreExplainCard.tsx`.
+- [x] **Strategic Export Hub**: Exportação multiformato (CSV/PDF) integrada no Dashboard e no Dossiê Individual.
+- [x] **Real-time Sync States**: Indicadores de pulso de rede (Wifi/Neural Link) e loading states globais durante sincronização.
 
-#### Passo 2: Strategic Export Hub
-- **Exportação Multiformato**: Implementar exportação de Strategic Lead Ranking e Histogramas em CSV e PDF preservando filtros.
+---
 
-#### Passo 3: Real-time Sync States
-- **Status de Conexão**: Exibir indicadores de pulso de rede e estados de loading durante a sincronização do ranking.
+### Próximo Objetivo: Sales Funnel Analytics 10/10
+
+Transformar o funil de vendas em uma visualização de fluxo neural de alta performance.
+
+#### Passo 1: Neural Flow Visualization
+- **Visualização de Fluxo**: Criar/Melhorar visualização de funil com gradientes dinâmicos e "pulsação" de volume em `FunnelAnalysis.tsx`.
+- **Micro-conversão Tracking**: Adicionar indicadores de taxa de conversão entre cada etapa com análise de gargalo por IA.
+
+#### Passo 2: Funnel Velocity Heatmap
+- **Mapa de Velocidade**: Implementar visualização que destaca onde os leads estão "estacionados" por mais tempo.
+
+#### Passo 3: Predictive Funnel Forecast
+- **Projeção de Fechamento**: Adicionar barra de "Certeza IA" sobre o volume projetado para o fim do mês.
