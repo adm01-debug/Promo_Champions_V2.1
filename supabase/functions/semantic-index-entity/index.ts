@@ -50,6 +50,8 @@ function buildContent(type: EntityType, row: Record<string, unknown>): string {
       return j([row.title, row.description, row.status, row.priority]);
     case "playbook":
       return j([row.name, row.title, row.description, row.content, row.stage]);
+    case "product":
+      return j([row.name, row.category, row.sku, row.description as string, row.price ? `R$${row.price}` : null]);
     default:
       return "";
   }
