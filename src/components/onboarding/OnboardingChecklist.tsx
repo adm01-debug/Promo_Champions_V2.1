@@ -24,11 +24,14 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card to-accent/5 p-4 backdrop-blur-sm shadow-sm">
+      <div className="rounded-xl border border-primary/30 bg-black/40 backdrop-blur-md p-5 shadow-[0_0_30px_rgba(14,165,233,0.05)] group relative overflow-hidden">
+        {/* Animated accent line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+        
         {/* Compact Header — always visible */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/15 shrink-0">
-            <Rocket className="h-4 w-4 text-primary" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative z-10">
+          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+            <Rocket className="h-5 w-5 text-primary" />
           </div>
 
           {/* Step indicators */}
