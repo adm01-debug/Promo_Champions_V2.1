@@ -215,9 +215,9 @@ export function AppRoutes() {
                     <Route path="/admin/race-arena" element={<Admin><RaceArenaAdmin /></Admin>} />
                     <Route path="/desafios" element={<DesafiosSemanais />} />
                     <Route path="/desafios-diarios" element={<HistoricoDesafiosDiarios />} />
-                    <Route path="/feed-vitorias" element={<VictoryFeedPage />} />
-                    <Route path="/temporadas" element={<Manager><CompetitiveSeasonsAdmin /></Manager>} />
-                    <Route path="/feed-equipe" element={<TeamActivityFeed />} />
+                    <Route path="/victory-feed" element={<VictoryFeedPage />} />
+                    <Route path="/competitive-seasons" element={<Manager><CompetitiveSeasonsAdmin /></Manager>} />
+                    <Route path="/team-activity" element={<TeamActivityFeed />} />
 
                     {/* ─── Gestão ────────────────────────────────── */}
                     <Route path="/vendedores" element={<Manager><Vendedores /></Manager>} />
