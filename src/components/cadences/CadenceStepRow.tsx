@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,6 +36,24 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({ step, onSave,
   const Icon = ACTION_TYPES.find(a => a.value === step.action_type)?.icon || MoreHorizontal;
 
   const handleSave = () => {
+    // Validation before save
+    const currentTitle = editData.title ?? step.title;
+    const currentTaskType = editData.task_type ?? (step as any).task_type;
+    const currentActionType = editData.action_type ?? step.action_type;
+    const currentTemplate = editData.template_content ?? step.template_content;
+
+    if (!currentTitle || currentTitle.trim().length < 3) {
+      toast.error("Título deve ter pelo menos 3 caracteres");
+      return;
+    }
+
+    if (currentTaskType === 'automatic' && ["email", "whatsapp", "linkedin"].includes(currentActionType)) {
+      if (!currentTemplate || !currentTemplate.trim()) {
+        toast.error("Ações automáticas exigem template preenchido");
+        return;
+      }
+    }
+
     onSave(step, editData);
     setIsEditing(false);
     setEditData({});
