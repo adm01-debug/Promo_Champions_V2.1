@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-type Locale = "pt-BR" | "en";
+type Locale = "pt-BR" | "en" | "es";
 
 interface I18nContextType {
   locale: Locale;
@@ -134,6 +134,62 @@ const translations: Record<Locale, Record<string, string>> = {
     "common.yesterday": "Yesterday",
     "common.this_week": "This Week",
     "common.this_month": "This Month",
+  },
+  es: {
+    // Navigation
+    "nav.dashboard": "Panel de Control",
+    "nav.sales": "Ventas",
+    "nav.clients": "Clientes",
+    "nav.products": "Productos",
+    "nav.pipeline": "Pipeline",
+    "nav.goals": "Objetivos",
+    "nav.analytics": "Analítica",
+    "nav.activities": "Actividades",
+    "nav.notifications": "Notificaciones",
+    "nav.settings": "Configuración",
+    "nav.reports": "Informes",
+    "nav.ranking": "Ranking",
+    "nav.challenges": "Desafíos",
+    "nav.assistant": "Asistente IA",
+
+    // Dashboard
+    "dashboard.welcome": "Bienvenido de nuevo",
+    "dashboard.revenue": "Facturación",
+    "dashboard.sales": "Ventas",
+    "dashboard.clients": "Clientes",
+    "dashboard.conversion": "Conversión",
+    "dashboard.goal_progress": "Progreso del Objetivo",
+    "dashboard.recent_deals": "Negocios Recientes",
+    "dashboard.top_products": "Top Productos",
+
+    // Actions
+    "action.new_sale": "Nueva Venta",
+    "action.new_client": "Nuevo Cliente",
+    "action.save": "Guardar",
+    "action.cancel": "Cancelar",
+    "action.delete": "Eliminar",
+    "action.edit": "Editar",
+    "action.search": "Buscar",
+    "action.filter": "Filtrar",
+    "action.export": "Exportar",
+
+    // Gamification
+    "gamification.level_up": "¡Subiste de Nivel!",
+    "gamification.xp_earned": "XP Ganado",
+    "gamification.streak": "Racha",
+    "gamification.challenge": "Desafío",
+    "gamification.quiz": "Quiz Diario",
+    "gamification.mood": "¿Cómo estás hoy?",
+
+    // Common
+    "common.loading": "Cargando...",
+    "common.no_data": "Sin datos disponibles",
+    "common.error": "Ocurrió un error",
+    "common.success": "¡Éxito!",
+    "common.today": "Hoy",
+    "common.yesterday": "Ayer",
+    "common.this_week": "Esta Semana",
+    "common.this_month": "Este Mes",
   },
 };
 
