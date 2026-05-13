@@ -125,7 +125,7 @@ export function TodaysCadenceTasks() {
         try {
           await supabase
             .from("cadence_tasks")
-            .update({ call_result: callResult })
+            .update({ call_result: callResult } as any)
             .eq("id", notesTaskId);
             
           // Registrar log detalhado
