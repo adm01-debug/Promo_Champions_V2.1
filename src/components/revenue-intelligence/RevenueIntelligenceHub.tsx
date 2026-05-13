@@ -8,6 +8,7 @@ import { CoverageRatioGauge } from "./CoverageRatioGauge";
 import { WinRateBreakdownChart } from "./WinRateBreakdownChart";
 import { PipelineInspectionTable } from "./PipelineInspectionTable";
 import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
+import { BuyingCommitteeMap } from "./BuyingCommitteeMap";
 import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { WinProbabilityCalibratorPanel } from "./calibration/WinProbabilityCalibratorPanel";
