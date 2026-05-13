@@ -1,63 +1,29 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Settings2, Hash, RefreshCw, Download, FileText as FileTextIcon, Bell, History, Smartphone, Mail, Layout, AlertTriangle, Info } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Settings2, RefreshCw, Bell, AlertTriangle, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip as RechartsTooltip, 
-  ResponsiveContainer,
-  Cell
-} from "recharts";
 import { cn } from "@/lib/utils";
 import { SpeedometerSkeleton } from "./skeletons/SpeedometerSkeletons";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { IntegrationStatusPanel } from "./IntegrationStatusPanel";
 import { DashboardSection } from "./DashboardSection";
+import { Speedometer } from "./Speedometer";
 
 const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "current_month", label: "Mês Atual" },
@@ -66,44 +32,6 @@ const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: "year", label: "Ano" },
 ];
 
-interface SpeedometerProps {
-  value: number;
-  min?: number;
-  max: number;
-  label: string;
-  unit?: string;
-  formatValue?: (v: number) => string;
-  accent: "primary" | "success" | "warning" | "destructive";
-  icon: React.ComponentType<{ className?: string }>;
-  delta?: number;
-  size?: number;
-  ticksCount?: number;
-  drilldownData?: any[];
-  explanation?: string;
-}
-
-const accentMap = {
-  primary: { stroke: "hsl(var(--primary))", glow: "hsl(var(--primary) / 0.5)", text: "text-primary" },
-  success: { stroke: "hsl(var(--success))", glow: "hsl(var(--success) / 0.5)", text: "text-success" },
-  warning: { stroke: "hsl(var(--warning))", glow: "hsl(var(--warning) / 0.5)", text: "text-warning" },
-  destructive: { stroke: "hsl(var(--destructive))", glow: "hsl(var(--destructive) / 0.5)", text: "text-destructive" },
-};
-
-const Speedometer = ({ 
-  value, 
-  min = 0, 
-  max, 
-  label, 
-  unit = "", 
-  formatValue, 
-  accent, 
-  icon: Icon, 
-  delta, 
-  size = 280, 
-  ticksCount = 33,
-  drilldownData = [],
-  explanation = ""
-}: SpeedometerProps) => {
   const { theme } = useDashboardTheme();
   const [animatedValue, setAnimatedValue] = useState(min);
   const containerRef = useRef<HTMLDivElement>(null);
