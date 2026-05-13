@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
       .eq('is_active', true)
 
     if (existingChallenges && existingChallenges.length > 0) {
-      console.log('Daily challenges already exist for today:', today)
+      console.info('Daily challenges already exist for today:', today)
       return new Response(
         JSON.stringify({ message: 'Daily challenges already created for today', count: existingChallenges.length }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
       throw error
     }
 
-    console.log('Created daily challenges:', newChallenges?.length)
+    console.info('Created daily challenges:', newChallenges?.length)
 
     return new Response(
       JSON.stringify({ 

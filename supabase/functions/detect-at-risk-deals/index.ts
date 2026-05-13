@@ -178,7 +178,7 @@ ${JSON.stringify(context, null, 2)}`;
       };
     }
 
-    console.log("AI analysis result:", result);
+    console.info("AI analysis result:", result);
 
     return new Response(
       JSON.stringify({

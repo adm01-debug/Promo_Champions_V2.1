@@ -95,7 +95,7 @@ Retorne APENAS JSON válido, sem markdown.`;
       });
     }
 
-    console.log("Behavioral analysis completed", {
+    console.info("Behavioral analysis completed", {
       length: text.length,
       disc: analysis.disc?.primary,
       eq: analysis.emotional_intelligence?.score,

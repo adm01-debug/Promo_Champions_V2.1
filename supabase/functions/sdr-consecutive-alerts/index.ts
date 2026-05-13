@@ -15,7 +15,7 @@ interface UnderperformingSDR {
 }
 
 async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: number = 3): Promise<UnderperformingSDR[]> {
-  console.log("Fetching SDRs and their activity goals...");
+  console.info("Fetching SDRs and their activity goals...");
   
   // Get SDRs (role = 'sdr' or 'hybrid')
   const { data: sdrs, error: sdrsError } = await supabase
@@ -29,7 +29,7 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
     throw sdrsError;
   }
 
-  console.log(`Found ${sdrs?.length || 0} active SDRs`);
+  console.info(`Found ${sdrs?.length || 0} active SDRs`);
 
   // Get activity goals for SDRs
   const { data: goals, error: goalsError } = await supabase
@@ -65,7 +65,7 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
     throw activitiesError;
   }
 
-  console.log(`Found ${activities?.length || 0} activities in last 7 days`);
+  console.info(`Found ${activities?.length || 0} activities in last 7 days`);
 
   // Group activities by SDR and date
   const activityBySDRAndDate: Record<string, Record<string, number>> = {};
@@ -122,7 +122,7 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
     }
   }
 
-  console.log(`Found ${underperforming.length} underperforming SDRs`);
+  console.info(`Found ${underperforming.length} underperforming SDRs`);
   return underperforming;
 }
 
@@ -195,7 +195,7 @@ function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
 
 async function sendNotificationToSDR(sdr: UnderperformingSDR, supabase: any): Promise<void> {
   if (!sdr.email) {
-    console.log(`SDR ${sdr.name} has no email configured, skipping personal notification`);
+    console.info(`SDR ${sdr.name} has no email configured, skipping personal notification`);
     return;
   }
 
@@ -255,7 +255,7 @@ async function sendNotificationToSDR(sdr: UnderperformingSDR, supabase: any): Pr
       subject,
       html,
     });
-    console.log(`Personal notification sent to ${sdr.name} (${sdr.email})`);
+    console.info(`Personal notification sent to ${sdr.name} (${sdr.email})`);
     
     // Log successful email
     await supabase.from("email_logs").insert({
@@ -286,7 +286,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("Starting SDR consecutive alerts check...");
+    console.info("Starting SDR consecutive alerts check...");
 
     // Check if this is a manual trigger
     let triggeredBy = "cron";
@@ -299,7 +299,7 @@ const handler = async (req: Request): Promise<Response> => {
       // No body or invalid JSON, default to cron
     }
 
-    console.log(`Triggered by: ${triggeredBy}`);
+    console.info(`Triggered by: ${triggeredBy}`);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -315,12 +315,12 @@ const handler = async (req: Request): Promise<Response> => {
       .limit(1);
 
     const consecutiveThreshold = notifPrefs?.[0]?.consecutive_days_threshold || 3;
-    console.log(`Using consecutive threshold: ${consecutiveThreshold} days`);
+    console.info(`Using consecutive threshold: ${consecutiveThreshold} days`);
 
     const underperformingSDRs = await getUnderperformingSDRs(supabase, consecutiveThreshold);
 
     if (underperformingSDRs.length === 0) {
-      console.log("No underperforming SDRs found, no alerts needed");
+      console.info("No underperforming SDRs found, no alerts needed");
 
       // Still log the check for manual triggers
       if (triggeredBy === "manual") {
@@ -359,7 +359,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    console.log(`Found ${adminEmails.length} admin/manager emails for summary`);
+    console.info(`Found ${adminEmails.length} admin/manager emails for summary`);
 
     // Send summary to admins/managers
     if (adminEmails.length > 0) {
@@ -373,7 +373,7 @@ const handler = async (req: Request): Promise<Response> => {
           subject: summarySubject,
           html: summaryHtml,
         });
-        console.log("Summary email sent to admins/managers");
+        console.info("Summary email sent to admins/managers");
         
         // Log successful emails for each admin
         for (const email of adminEmails) {

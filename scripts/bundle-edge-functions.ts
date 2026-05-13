@@ -132,7 +132,7 @@ async function listFunctions(): Promise<Array<{ fn: string; indexPath: string }>
 }
 
 const targets = await listFunctions();
-console.log(`▶ Bundling ${targets.length} edge function(s) from ${FUNCTIONS_DIR}\n`);
+console.info(`▶ Bundling ${targets.length} edge function(s) from ${FUNCTIONS_DIR}\n`);
 
 const start = Date.now();
 const results: CheckResult[] = [];
@@ -151,7 +151,7 @@ async function worker() {
   }
 }
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));
-console.log(`\n\n⏱  Completed in ${((Date.now() - start) / 1000).toFixed(1)}s`);
+console.info(`\n\n⏱  Completed in ${((Date.now() - start) / 1000).toFixed(1)}s`);
 
 const importFailed = results.filter((r) => !r.ok && r.failureKind === "import")
   .sort((a, b) => a.fn.localeCompare(b.fn));
@@ -159,25 +159,25 @@ const typecheckFailed = results.filter((r) => !r.ok && r.failureKind === "typech
   .sort((a, b) => a.fn.localeCompare(b.fn));
 const passed = results.filter((r) => r.ok).length;
 
-console.log(
+console.info(
   `\n✅ ${passed} passed   ❌ ${importFailed.length} import failure(s)   ` +
     `⚠️  ${typecheckFailed.length} typecheck-only failure(s)   ` +
     `(total ${results.length})`,
 );
-console.log("Legend: '.' = ok   'F' = import failure (fails CI)   't' = typecheck-only (warning)");
+console.info("Legend: '.' = ok   'F' = import failure (fails CI)   't' = typecheck-only (warning)");
 
 if (importFailed.length > 0) {
-  console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("Import failures (block CI):");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  console.info("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.info("Import failures (block CI):");
+  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   for (const f of importFailed) {
-    console.log(`  ✗ ${f.fn}`);
-    console.log(`     import : ${f.failingImport ?? "(unable to extract — see stderr below)"}`);
+    console.info(`  ✗ ${f.fn}`);
+    console.info(`     import : ${f.failingImport ?? "(unable to extract — see stderr below)"}`);
     if (f.stderrHead) {
       const indented = f.stderrHead.split("\n").map((l) => `         ${l}`).join("\n");
-      console.log(`     stderr :\n${indented}`);
+      console.info(`     stderr :\n${indented}`);
     }
-    console.log("");
+    console.info("");
   }
 
   // Group by failing import to spot systemic outages (e.g. "esm.sh is down"
@@ -189,39 +189,39 @@ if (importFailed.length > 0) {
     byImport.get(key)!.push(f.fn);
   }
   if (byImport.size > 0) {
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("Grouped by failing import (systemic vs. one-off):");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.info("Grouped by failing import (systemic vs. one-off):");
+    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     const sorted = [...byImport.entries()].sort((a, b) => b[1].length - a[1].length);
     for (const [imp, fns] of sorted) {
-      console.log(`  ${fns.length}× ${imp}`);
-      for (const fn of fns.slice(0, 5)) console.log(`       - ${fn}`);
-      if (fns.length > 5) console.log(`       … and ${fns.length - 5} more`);
-      console.log("");
+      console.info(`  ${fns.length}× ${imp}`);
+      for (const fn of fns.slice(0, 5)) console.info(`       - ${fn}`);
+      if (fns.length > 5) console.info(`       … and ${fns.length - 5} more`);
+      console.info("");
     }
   }
 }
 
 if (typecheckFailed.length > 0) {
-  console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log(`Typecheck-only failures (do NOT block this CI step):`);
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-  console.log("These functions resolve all imports cleanly but have TypeScript");
-  console.log("errors. They are reported here for visibility but are owned by");
-  console.log("the regular tsc/lint pipeline, not the bundler check.\n");
+  console.info("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.info(`Typecheck-only failures (do NOT block this CI step):`);
+  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  console.info("These functions resolve all imports cleanly but have TypeScript");
+  console.info("errors. They are reported here for visibility but are owned by");
+  console.info("the regular tsc/lint pipeline, not the bundler check.\n");
   for (const f of typecheckFailed) {
-    console.log(`  ⚠ ${f.fn}`);
+    console.info(`  ⚠ ${f.fn}`);
     if (f.stderrHead) {
       const firstLine = f.stderrHead.split("\n")[0];
-      console.log(`     ${firstLine}`);
+      console.info(`     ${firstLine}`);
     }
   }
-  console.log("");
+  console.info("");
 }
 
 if (importFailed.length > 0) {
   Deno.exit(1);
 }
 
-console.log("\n🎉 All edge function imports resolve cleanly.");
+console.info("\n🎉 All edge function imports resolve cleanly.");
 Deno.exit(0);

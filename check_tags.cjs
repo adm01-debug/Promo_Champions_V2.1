@@ -30,15 +30,15 @@ lines.forEach((line, i) => {
       const tag = match[2];
       const last = stack.pop();
       if (last && last.tag !== tag) {
-        console.log(`Mismatch at line ${i + 1}: expected </${last.tag}> but found </${tag}> (opened at line ${last.line})`);
+        console.info(`Mismatch at line ${i + 1}: expected </${last.tag}> but found </${tag}> (opened at line ${last.line})`);
       } else if (!last) {
-        console.log(`Unexpected closing tag </${tag}> at line ${i + 1}`);
+        console.info(`Unexpected closing tag </${tag}> at line ${i + 1}`);
       }
     }
   }
 });
 
 if (stack.length > 0) {
-  console.log(`Unclosed tags:`);
-  stack.forEach(s => console.log(`  <${s.tag}> opened at line ${s.line}`));
+  console.info(`Unclosed tags:`);
+  stack.forEach(s => console.info(`  <${s.tag}> opened at line ${s.line}`));
 }

@@ -27,14 +27,14 @@ serve(async (req) => {
     }
 
     if (!expiringChallenges || expiringChallenges.length === 0) {
-      console.log("No challenges expiring today");
+      console.info("No challenges expiring today");
       return new Response(
         JSON.stringify({ message: "No challenges expiring today", notified: 0 }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`Found ${expiringChallenges.length} challenges expiring today`);
+    console.info(`Found ${expiringChallenges.length} challenges expiring today`);
 
     // Get all active salespeople
     const { data: salespeople, error: spError } = await supabase
@@ -89,7 +89,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Generated ${notifications.length} notifications`);
+    console.info(`Generated ${notifications.length} notifications`);
 
     // Log the notifications (in a real app, you'd send emails or push notifications here)
     // For now, we'll store them in the achievements table as reminders

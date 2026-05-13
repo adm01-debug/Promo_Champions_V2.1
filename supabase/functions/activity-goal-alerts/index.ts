@@ -22,7 +22,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Starting activity goal check...');
+    console.info('Starting activity goal check...');
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -37,7 +37,7 @@ serve(async (req) => {
     const dayEnd = new Date(today);
     dayEnd.setHours(23, 59, 59, 999);
 
-    console.log(`Checking activities for ${today.toISOString().split('T')[0]}`);
+    console.info(`Checking activities for ${today.toISOString().split('T')[0]}`);
 
     // Fetch active salespeople with emails
     const { data: salespeople, error: spError } = await supabase
@@ -80,7 +80,7 @@ serve(async (req) => {
       
       // Skip if no goals configured
       if (!spGoals) {
-        console.log(`${sp.name}: No goals configured, skipping`);
+        console.info(`${sp.name}: No goals configured, skipping`);
         continue;
       }
 
@@ -106,7 +106,7 @@ serve(async (req) => {
         ? (progressCalls + progressEmails + progressMeetings) / totalGoals
         : 100;
 
-      console.log(`${sp.name}: ${overallProgress.toFixed(0)}% progress`);
+      console.info(`${sp.name}: ${overallProgress.toFixed(0)}% progress`);
 
       // Alert if below 50%
       if (overallProgress < 50) {
@@ -120,7 +120,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Found ${alertList.length} salespeople below 50% progress`);
+    console.info(`Found ${alertList.length} salespeople below 50% progress`);
 
     // Send email alerts if there are any and Resend is configured
     if (alertList.length > 0 && resendApiKey) {
@@ -198,12 +198,12 @@ serve(async (req) => {
         });
 
         if (emailRes.ok) {
-          console.log(`Email alert sent to ${adminEmail}`);
+          console.info(`Email alert sent to ${adminEmail}`);
         } else {
           console.error('Error sending email:', errorMessage);
         }
       } else {
-        console.log('No admin email configured in notification_preferences');
+        console.info('No admin email configured in notification_preferences');
       }
     }
 

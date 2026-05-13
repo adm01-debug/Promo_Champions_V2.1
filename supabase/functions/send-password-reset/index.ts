@@ -56,7 +56,7 @@ serve(async (req: Request): Promise<Response> => {
       throw new Error("Email and requestId are required");
     }
 
-    console.log(`Processing password reset approval for: ${email}`);
+    console.info(`Processing password reset approval for: ${email}`);
 
     // Verify the request exists and is approved
     const { data: resetRequest, error: requestError } = await supabaseAdmin
@@ -85,7 +85,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const resetLink = resetData.properties?.action_link;
-    console.log("Reset link generated successfully");
+    console.info("Reset link generated successfully");
 
     // Send email with Resend if configured
     if (resendApiKey) {
@@ -143,9 +143,9 @@ serve(async (req: Request): Promise<Response> => {
         throw new Error(`Failed to send email: ${emailError.message}`);
       }
 
-      console.log("Email sent successfully");
+      console.info("Email sent successfully");
     } else {
-      console.log("RESEND_API_KEY not configured, skipping email send");
+      console.info("RESEND_API_KEY not configured, skipping email send");
     }
 
     // Update request status to completed

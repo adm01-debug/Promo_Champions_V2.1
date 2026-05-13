@@ -167,7 +167,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
       channel: 'phone',
       expectedImpact: 'Negociar condições finais enquanto o lead está quente.',
     });
-    console.log(`[Intent Log] Triggered: Multi-Price Clicks - Count: ${priceClicks.length}`);
+    console.info(`[Intent Log] Triggered: Multi-Price Clicks - Count: ${priceClicks.length}`);
   } else if (proposalViews.length > 0) {
     suggestions.unshift({
       title: 'Ligar Agora: Proposta Aberta',
@@ -180,7 +180,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
       channel: 'phone',
       expectedImpact: 'Aumentar taxa de conversão em 3.5x.',
     });
-    console.log(`[Intent Log] Triggered: Proposal View detected.`);
+    console.info(`[Intent Log] Triggered: Proposal View detected.`);
   }
 
   // Priorização baseada em histórico recente

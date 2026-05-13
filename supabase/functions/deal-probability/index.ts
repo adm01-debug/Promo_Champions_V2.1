@@ -126,7 +126,7 @@ serve(async (req) => {
       };
     }
 
-    console.log("Calculated probabilities for", Object.keys(probabilities).length, "deals");
+    console.info("Calculated probabilities for", Object.keys(probabilities).length, "deals");
 
     return new Response(
       JSON.stringify({ probabilities }),

@@ -41,7 +41,7 @@ serve(async (req) => {
     const { action, product_id } = await req.json();
 
     if (action === 'generate-forecasts') {
-      console.log('[Demand Forecast] Generating forecasts for all products...');
+      console.info('[Demand Forecast] Generating forecasts for all products...');
       
       // Get all products
       const { data: products, error: productsError } = await supabase
@@ -69,7 +69,7 @@ serve(async (req) => {
         .select('*');
 
       if (inventoryError && inventoryError.code !== 'PGRST116') {
-        console.log('[Demand Forecast] No inventory data yet');
+        console.info('[Demand Forecast] No inventory data yet');
       }
 
       const inventoryMap = new Map(
@@ -183,7 +183,7 @@ serve(async (req) => {
       const riskOrder = { critical: 0, high: 1, medium: 2, low: 3 };
       forecasts.sort((a, b) => riskOrder[a.risk_level] - riskOrder[b.risk_level]);
 
-      console.log(`[Demand Forecast] Generated ${forecasts.length} forecasts`);
+      console.info(`[Demand Forecast] Generated ${forecasts.length} forecasts`);
 
       return new Response(
         JSON.stringify({ 

@@ -56,7 +56,7 @@ interface SyncLogData {
 async function logSyncResult(supabase: SupabaseClient, logData: SyncLogData) {
   try {
     await supabase.from("bitrix24_sync_logs").insert(logData);
-    console.log("Sync log saved:", logData);
+    console.info("Sync log saved:", logData);
   } catch (error) {
     console.error("Error saving sync log:", error);
   }
@@ -76,7 +76,7 @@ async function getAccessToken(): Promise<string | null> {
       return tokenData.setting_value;
     }
 
-    console.log("No access token found. OAuth2 authorization required.");
+    console.info("No access token found. OAuth2 authorization required.");
     return null;
   } catch (error) {
     console.error("Error getting access token:", error);
@@ -110,7 +110,7 @@ async function bitrixApiCall(method: string, params: Record<string, unknown> = {
 }
 
 async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
-  console.log("Syncing companies from Bitrix24 to CRM...");
+  console.info("Syncing companies from Bitrix24 to CRM...");
   
   try {
     const companies = await bitrixApiCall("crm.company.list", {
@@ -118,7 +118,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
     }) as BitrixCompany[];
 
     if (!companies || !Array.isArray(companies)) {
-      console.log("No companies returned from Bitrix24");
+      console.info("No companies returned from Bitrix24");
       return 0;
     }
 
@@ -190,7 +190,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
       }
     }
 
-    console.log(`Synced ${companies.length} companies from Bitrix24`);
+    console.info(`Synced ${companies.length} companies from Bitrix24`);
     return companies.length;
   } catch (error) {
     console.error("Error syncing companies:", error);
@@ -199,7 +199,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
 }
 
 async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
-  console.log("Syncing deals from Bitrix24 to CRM...");
+  console.info("Syncing deals from Bitrix24 to CRM...");
   
   try {
     const deals = await bitrixApiCall("crm.deal.list", {
@@ -207,7 +207,7 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
     }) as BitrixDeal[];
 
     if (!deals || !Array.isArray(deals)) {
-      console.log("No deals returned from Bitrix24");
+      console.info("No deals returned from Bitrix24");
       return 0;
     }
 
@@ -266,7 +266,7 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
       }
     }
 
-    console.log(`Synced ${deals.length} deals from Bitrix24`);
+    console.info(`Synced ${deals.length} deals from Bitrix24`);
     return deals.length;
   } catch (error) {
     console.error("Error syncing deals:", error);
@@ -275,7 +275,7 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
 }
 
 async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> {
-  console.log("Syncing companies from CRM to Bitrix24...");
+  console.info("Syncing companies from CRM to Bitrix24...");
   
   try {
     const { data: clientsWithoutBitrix } = await supabase
@@ -337,7 +337,7 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
       }
     }
 
-    console.log(`Synced ${syncedCount} companies to Bitrix24`);
+    console.info(`Synced ${syncedCount} companies to Bitrix24`);
     return syncedCount;
   } catch (error) {
     console.error("Error syncing companies to Bitrix24:", error);
@@ -346,7 +346,7 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
 }
 
 async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
-  console.log("Syncing deals from CRM to Bitrix24...");
+  console.info("Syncing deals from CRM to Bitrix24...");
   
   try {
     const statusMapping: Record<string, string> = {
@@ -402,7 +402,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
       }
     }
 
-    console.log(`Synced ${syncedCount} deals to Bitrix24`);
+    console.info(`Synced ${syncedCount} deals to Bitrix24`);
     return syncedCount;
   } catch (error) {
     console.error("Error syncing deals to Bitrix24:", error);

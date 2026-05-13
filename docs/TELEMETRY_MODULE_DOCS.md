@@ -295,7 +295,7 @@ const { data: selectData, error: selectError, count } = await externalClient
   .range(offset, offset + limit - 1);
 const selectDuration = Math.round(performance.now() - selectStart);
 
-console.log(`Selected ${selectData?.length ?? 0} of ${count ?? 'n/a'} records from ${table}`);
+console.info(`Selected ${selectData?.length ?? 0} of ${count ?? 'n/a'} records from ${table}`);
 
 if (selectError) {
   emitTelemetry({

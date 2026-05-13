@@ -21,7 +21,7 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   });
   if (level === "error") console.error(line);
   else if (level === "warn") console.warn(line);
-  else console.log(line);
+  else console.info(line);
 }
 
 function jsonResponse(body: unknown, status = 200, requestId?: string): Response {

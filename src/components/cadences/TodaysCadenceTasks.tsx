@@ -82,7 +82,7 @@ export function TodaysCadenceTasks() {
           await supabase.from("prospect_cadences").update({ status: 'paused' }).eq("id", prospectCadenceId);
         } else if (rule.next_action === 'retry') {
           // Lógica de retry seria disparada por um cron ou worker baseado no retry_delay_hours
-          console.log(`Retry agendado em ${rule.retry_delay_hours}h`);
+          console.info(`Retry agendado em ${rule.retry_delay_hours}h`);
         }
         
         // 3. Registrar Log de Auditoria

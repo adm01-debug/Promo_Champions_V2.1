@@ -104,7 +104,7 @@ async function getAlertSettings(supabase: any): Promise<AlertSettings> {
       .single();
 
     if (error || !data) {
-      console.log("Using default settings (DB fetch failed):", error?.message);
+      console.info("Using default settings (DB fetch failed):", error?.message);
       return {
         spike_threshold: DEFAULT_SPIKE_THRESHOLD,
         time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
@@ -112,7 +112,7 @@ async function getAlertSettings(supabase: any): Promise<AlertSettings> {
       };
     }
 
-    console.log("Loaded settings from DB:", data);
+    console.info("Loaded settings from DB:", data);
     return {
       spike_threshold: data.spike_threshold,
       time_window_hours: data.time_window_hours,
@@ -134,7 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("Starting access denied spike check...");
+    console.info("Starting access denied spike check...");
     
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -142,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Get alert settings from database
     const settings = await getAlertSettings(supabase);
-    console.log("Using settings:", settings);
+    console.info("Using settings:", settings);
 
     // Calculate time window
     const timeWindowStart = new Date();
@@ -160,14 +160,14 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (!logs || logs.length === 0) {
-      console.log("No access denied attempts in the time window");
+      console.info("No access denied attempts in the time window");
       return new Response(
         JSON.stringify({ message: "No access denied attempts found", spikesDetected: [] }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    console.log(`Found ${logs.length} access denied attempts in the last ${settings.time_window_hours} hour(s)`);
+    console.info(`Found ${logs.length} access denied attempts in the last ${settings.time_window_hours} hour(s)`);
 
     // Group attempts by user
     const attemptsByUser: Record<string, AccessDeniedLog[]> = {};
@@ -194,7 +194,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (spikes.length === 0) {
-      console.log("No spikes detected (no user exceeded threshold)");
+      console.info("No spikes detected (no user exceeded threshold)");
       return new Response(
         JSON.stringify({ 
           message: "No spikes detected", 
@@ -206,7 +206,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Detected ${spikes.length} spike(s):`, spikes);
+    console.info(`Detected ${spikes.length} spike(s):`, spikes);
 
     // Get admin emails to notify
     const { data: adminRoles, error: rolesError } = await supabase
@@ -219,7 +219,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (!adminRoles || adminRoles.length === 0) {
-      console.log("No admin users found to notify");
+      console.info("No admin users found to notify");
       return new Response(
         JSON.stringify({ 
           message: "Spikes detected but no admins to notify", 
@@ -251,7 +251,7 @@ const handler = async (req: Request): Promise<Response> => {
     const allEmails = [...new Set([...adminEmails, ...notifEmails])];
 
     if (allEmails.length === 0) {
-      console.log("No email addresses found for admins");
+      console.info("No email addresses found for admins");
       return new Response(
         JSON.stringify({ 
           message: "Spikes detected but no admin emails configured", 
@@ -261,7 +261,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
+    console.info(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
 
     // Send alert email
     const subject = `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`;
@@ -277,7 +277,7 @@ const handler = async (req: Request): Promise<Response> => {
         subject,
         html: emailHtml,
       });
-      console.log("Spike alert email sent:", emailResponse);
+      console.info("Spike alert email sent:", emailResponse);
     } catch (emailError: any) {
       emailStatus = 'failed';
       errorMessage = emailError?.message || 'Unknown email error';
@@ -318,7 +318,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (historyError) {
       console.error("Failed to log alert history:", historyError);
     } else {
-      console.log("Alert logged to history");
+      console.info("Alert logged to history");
     }
 
     return new Response(
