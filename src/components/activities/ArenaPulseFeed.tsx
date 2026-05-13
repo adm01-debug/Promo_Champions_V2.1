@@ -16,7 +16,7 @@ interface PulseEvent {
   salesperson: string;
   message: string;
   time: string;
-  icon: any;
+  icon: React.ElementType;
   color: string;
   bgColor: string;
 }
