@@ -231,7 +231,7 @@ export function logQueryMetrics() {
     console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Error Rate: ${metrics.errorRate}%`);
+    console.info(`Error Rate: ${metrics.errorRate}%`);
   }
   
   if (Object.keys(metrics.byQueryKey).length > 0) {
