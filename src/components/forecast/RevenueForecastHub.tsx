@@ -35,6 +35,7 @@ import { ScenarioCard } from "./ScenarioCard";
 import { ForecastNarrativeCard } from "./ForecastNarrativeCard";
 import { PipelineContributionChart } from "./PipelineContributionChart";
 import { ForecastScenarioSimulator } from "./ForecastScenarioSimulator";
+import { CategoryForecastCard } from "./CategoryForecastCard";
 import { cn } from "@/lib/utils";
 
 export const RevenueForecastHub: FC = () => {
