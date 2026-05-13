@@ -35,7 +35,7 @@ interface TransformParams {
   activities: ActivityRecord[];
   previousActivities: { id: string }[];
   lastYearActivities: { id: string }[];
-  activityGoals: any | null; // Changed to any to handle extended goals if needed
+  activityGoals: ActivityGoals | null;
   allSDRs: { id: string; role: string }[];
   recentActivitiesData: { activity_type: string; contact_name: string | null; outcome: string; created_at: string }[];
   daysInPeriod: number;

@@ -1,14 +1,24 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, ChevronDown, ChevronUp, History, User, CheckCircle2 } from "lucide-react";
+import { Clock, ChevronDown, ChevronUp, History, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { formatDistanceToNow, differenceInMinutes, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
 import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
+
+interface AuditLog {
+  id: string;
+  activity_id: string;
+  action: string;
+  old_data: Record<string, unknown> | null;
+  new_data: Record<string, unknown> | null;
+  created_at: string;
+  user_id: string | null;
+}
 
 interface ActivityItemRowProps {
   activity: {
@@ -24,9 +34,9 @@ interface ActivityItemRowProps {
   salesperson?: { name: string; avatar_url: string | null } | null;
 }
 
-const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps) {
+const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProps) => {
   const [expanded, setExpanded] = useState(false);
-  const [auditLogs, setAuditLogs] = useState<Record<string, any>[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
   
   const Icon = activityIcons[activity.activity_type];
@@ -34,7 +44,7 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
   
   const isVeryRecent = differenceInMinutes(new Date(), new Date(activity.created_at)) < 5;
 
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = useCallback(async () => {
     setLoadingAudit(true);
     const { data, error } = await supabase
       .from('activity_audit_logs')
@@ -42,9 +52,9 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
       .eq('activity_id', activity.id)
       .order('created_at', { ascending: false });
     
-    if (!error && data) setAuditLogs(data);
+    if (!error && data) setAuditLogs(data as unknown as AuditLog[]);
     setLoadingAudit(false);
-  };
+  }, [activity.id]);
 
   const isSuccess = activity.outcome === 'scheduled' || activity.outcome === 'qualified';
   
@@ -92,25 +102,32 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
                   ) : auditLogs.length === 0 ? (
                     <div className="text-[10px] text-center py-4 text-muted-foreground">Nenhuma alteração registrada</div>
                   ) : (
-                    auditLogs.map((log) => (
-                      <div key={log.id} className="p-2 rounded bg-muted/30 border border-border/20 text-[10px] space-y-1">
-                        <div className="flex justify-between items-center text-muted-foreground">
-                          <span className="flex items-center gap-1 font-bold">
-                            <User className="h-2 w-2" />
-                            {log.action}
-                          </span>
-                          <span>{format(new Date(log.created_at), "dd/MM HH:mm")}</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 mt-1">
-                          <div className="p-1 rounded bg-red-500/5 border border-red-500/10 line-clamp-1 opacity-70">
-                            {JSON.stringify(log.old_data?.outcome || log.old_data?.notes)}
+                    auditLogs.map((log) => {
+                      const oldOutcome = (log.old_data as Record<string, unknown>)?.outcome;
+                      const oldNotes = (log.old_data as Record<string, unknown>)?.notes;
+                      const newOutcome = (log.new_data as Record<string, unknown>)?.outcome;
+                      const newNotes = (log.new_data as Record<string, unknown>)?.notes;
+                      
+                      return (
+                        <div key={log.id} className="p-2 rounded bg-muted/30 border border-border/20 text-[10px] space-y-1">
+                          <div className="flex justify-between items-center text-muted-foreground">
+                            <span className="flex items-center gap-1 font-bold">
+                              <User className="h-2 w-2" />
+                              {log.action}
+                            </span>
+                            <span>{format(new Date(log.created_at), "dd/MM HH:mm")}</span>
                           </div>
-                          <div className="p-1 rounded bg-green-500/5 border border-green-500/10 line-clamp-1">
-                            {JSON.stringify(log.new_data?.outcome || log.new_data?.notes)}
+                          <div className="grid grid-cols-2 gap-2 mt-1">
+                            <div className="p-1 rounded bg-red-500/5 border border-red-500/10 line-clamp-1 opacity-70">
+                              {JSON.stringify(oldOutcome || oldNotes)}
+                            </div>
+                            <div className="p-1 rounded bg-green-500/5 border border-green-500/10 line-clamp-1">
+                              {JSON.stringify(newOutcome || newNotes)}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </PopoverContent>
@@ -159,4 +176,4 @@ const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }:
     </div>
   );
 }
-export const ActivityItemRow = memo(ActivityItemRowInner);
+export const ActivityItemRow = memo(ActivityItemRowComponent);

@@ -39,7 +39,7 @@ export function useBITopClients() {
       const [salesRes, clientsRes, supplierOrdersRes, supplierOrderItemsRes, suppliersRes] = await Promise.all([
         supabase
           .from("sales")
-          .select("client_name, amount, status")
+          .select("client_name, amount, status, created_at")
           .eq("status", "completed")
           .gte("created_at", monthStart.toISOString())
           .lte("created_at", monthEnd.toISOString()),
