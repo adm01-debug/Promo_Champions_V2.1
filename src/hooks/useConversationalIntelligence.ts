@@ -17,6 +17,7 @@ export interface CIRecording {
   objections_count: number;
   next_steps_count: number;
   has_insights: boolean;
+  key_topics?: string[];
 }
 
 export interface CIData {

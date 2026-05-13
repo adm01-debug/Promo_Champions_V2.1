@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface Props {
   seller: number | null | undefined;
@@ -15,43 +17,58 @@ export function TalkRatioBar({ seller, client }: Props) {
   const tooMuch = s > 65;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between text-xs">
-        <span className="font-medium text-foreground">Talk Ratio</span>
-        {tooMuch ? (
-          <Badge variant="warning" size="sm">Vendedor falou demais</Badge>
-        ) : idealZone ? (
-          <Badge variant="success" size="sm">Zona ideal (40–55%)</Badge>
-        ) : (
-          <Badge variant="info" size="sm">Fora do ideal</Badge>
-        )}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Neural Talk Balance</span>
+          {tooMuch ? (
+            <Badge className="bg-destructive/10 text-destructive border-destructive/20 text-[8px] font-black py-0 h-4">OVER-TALKING DETECTED</Badge>
+          ) : idealZone ? (
+            <Badge className="bg-success/10 text-success border-success/20 text-[8px] font-black py-0 h-4">OPTIMAL ENGAGEMENT</Badge>
+          ) : (
+            <Badge className="bg-primary/10 text-primary border-primary/20 text-[8px] font-black py-0 h-4">UNBALANCED</Badge>
+          )}
+        </div>
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ideal: 40–55%</span>
       </div>
-      <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="absolute left-0 top-0 h-full bg-primary transition-all"
-          style={{ width: `${sPct}%` }}
-          title={`Vendedor ${s.toFixed(1)}%`}
-        />
-        <div
-          className="absolute top-0 h-full bg-accent transition-all"
-          style={{ left: `${sPct}%`, width: `${cPct}%` }}
-          title={`Cliente ${c.toFixed(1)}%`}
-        />
-        {/* benchmark zone marker 40-55% */}
-        <div
-          className="pointer-events-none absolute top-0 h-full border-x border-success/60"
-          style={{ left: "40%", width: "15%" }}
-        />
+      
+      <div className="relative h-6 w-full overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-1 group/ratio">
+        {/* Progress tracks */}
+        <div className="flex h-full w-full rounded-xl overflow-hidden relative">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${sPct}%` }}
+            className="h-full bg-primary relative group-hover/ratio:brightness-110 transition-all"
+            title={`Vendedor ${s.toFixed(1)}%`}
+          >
+             <div className="absolute inset-y-0 right-0 w-px bg-white/20" />
+          </motion.div>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${cPct}%` }}
+            className="h-full bg-accent relative group-hover/ratio:brightness-110 transition-all"
+            title={`Cliente ${c.toFixed(1)}%`}
+          />
+          
+          {/* Ideal Zone Overlay */}
+          <div
+            className="pointer-events-none absolute top-0 h-full border-x border-success/40 bg-success/5 z-10"
+            style={{ left: "40%", width: "15%" }}
+          >
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-success" />
+          </div>
+        </div>
       </div>
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>
-          <span className="inline-block h-2 w-2 rounded-full bg-primary mr-1" />
-          Vendedor {s.toFixed(1)}%
-        </span>
-        <span>
-          <span className="inline-block h-2 w-2 rounded-full bg-accent mr-1" />
-          Cliente {c.toFixed(1)}%
-        </span>
+
+      <div className="flex items-center justify-between text-[11px] font-black tracking-tight uppercase">
+        <div className="flex items-center gap-1.5 text-primary">
+          <div className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
+          Vendedor <span className="tabular-nums font-black opacity-80">{s.toFixed(1)}%</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-accent">
+          Cliente <span className="tabular-nums font-black opacity-80">{c.toFixed(1)}%</span>
+          <div className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]" />
+        </div>
       </div>
     </div>
   );
