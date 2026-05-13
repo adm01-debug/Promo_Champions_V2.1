@@ -109,7 +109,8 @@ export function getQueryMetrics() {
       avgDuration: 0,
       slowQueries: 0,
       errorRate: 0,
-      byQueryKey: {},
+      byQueryKey: {} as Record<string, { count: number; avgDuration: number; errors: number }>,
+      recentMetrics: [] as QueryMetrics[],
     };
   }
 
