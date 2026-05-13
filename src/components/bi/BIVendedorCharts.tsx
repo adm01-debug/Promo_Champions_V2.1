@@ -2,11 +2,13 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, ShoppingBag, Clock, Activity, Flame, Award } from "lucide-react";
+import { TrendingUp, ShoppingBag, Clock, Activity, Flame, Award, Sparkles, MessagesSquare, AlertTriangle } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from "recharts";
+import { SentimentDistributionCard } from "@/components/conversation-intelligence/SentimentDistributionCard";
+import { ObjectionsTrendChart } from "@/components/conversation-intelligence/ObjectionsTrendChart";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
