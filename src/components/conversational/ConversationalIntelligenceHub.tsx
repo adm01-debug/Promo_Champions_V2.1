@@ -42,7 +42,7 @@ export const ConversationalIntelligenceHub = () => {
         !search ||
         r.title.toLowerCase().includes(search.toLowerCase()) ||
         r.summary?.toLowerCase().includes(search.toLowerCase()) ||
-        r.key_topics?.some(t => t.toLowerCase().includes(search.toLowerCase()))
+        r.key_topics?.some((t: string) => t.toLowerCase().includes(search.toLowerCase()))
     );
   }, [data, search]);
 
