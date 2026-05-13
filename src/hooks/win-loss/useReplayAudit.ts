@@ -33,8 +33,9 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
         .eq("dead_letter_id", deadLetterId as string)
         .order("created_at", { ascending: false })
         .limit(50);
+        
       if (error) throw error;
-      return data ?? [];
+      return (data || []) as ReplayAuditEntry[];
     },
   });
 }
@@ -58,9 +59,11 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
         .in("dead_letter_id", deadLetterIds)
         .order("created_at", { ascending: false })
         .limit(500);
+
       if (error) throw error;
+      const entries = (data || []) as ReplayAuditEntry[];
       const map = new Map<string, ReplayAuditEntry>();
-      for (const r of data ?? []) {
+      for (const r of entries) {
         if (!r.dead_letter_id) continue;
         if (!map.has(r.dead_letter_id)) map.set(r.dead_letter_id, r);
       }

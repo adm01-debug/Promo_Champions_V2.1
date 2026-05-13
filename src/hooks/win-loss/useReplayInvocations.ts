@@ -30,8 +30,9 @@ export function useReplayInvocations(limit = 100) {
         .select("*")
         .order("created_at", { ascending: false })
         .limit(limit);
+      
       if (error) throw error;
-      return data ?? [];
+      return (data || []) as ReplayInvocation[];
     },
   });
 }
