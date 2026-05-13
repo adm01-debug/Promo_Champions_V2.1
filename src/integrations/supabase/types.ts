@@ -1008,11 +1008,13 @@ export type Database = {
       approval_workflows: {
         Row: {
           auto_approve_below: number | null
+          auto_approve_below_discount: number | null
           created_at: string
           created_by: string | null
           description: string | null
           id: string
           is_active: boolean
+          min_mrr_threshold: number | null
           name: string
           required_approvers: number
           threshold_amount: number | null
@@ -1022,11 +1024,13 @@ export type Database = {
         }
         Insert: {
           auto_approve_below?: number | null
+          auto_approve_below_discount?: number | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           is_active?: boolean
+          min_mrr_threshold?: number | null
           name: string
           required_approvers?: number
           threshold_amount?: number | null
@@ -1036,11 +1040,13 @@ export type Database = {
         }
         Update: {
           auto_approve_below?: number | null
+          auto_approve_below_discount?: number | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           is_active?: boolean
+          min_mrr_threshold?: number | null
           name?: string
           required_approvers?: number
           threshold_amount?: number | null
@@ -9677,6 +9683,47 @@ export type Database = {
           },
         ]
       }
+      pricing_rules: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          discount_percentage: number | null
+          id: string
+          min_quantity: number | null
+          name: string
+          product_id: string | null
+          rule_type: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          discount_percentage?: number | null
+          id?: string
+          min_quantity?: number | null
+          name: string
+          product_id?: string | null
+          rule_type: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          discount_percentage?: number | null
+          id?: string
+          min_quantity?: number | null
+          name?: string
+          product_id?: string | null
+          rule_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_rules_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prize_wheel_spins: {
         Row: {
           id: string
@@ -10522,6 +10569,63 @@ export type Database = {
           },
         ]
       }
+      quote_items: {
+        Row: {
+          billing_period: string | null
+          created_at: string | null
+          discount_amount: number | null
+          id: string
+          is_recurring: boolean | null
+          product_id: string | null
+          product_name: string
+          quantity: number
+          quote_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          billing_period?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          id?: string
+          is_recurring?: boolean | null
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          quote_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          billing_period?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          id?: string
+          is_recurring?: boolean | null
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          quote_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_sync_logs: {
         Row: {
           action: string
@@ -10558,14 +10662,19 @@ export type Database = {
       quotes: {
         Row: {
           approved_at: string | null
+          billing_status: string | null
           client_email: string | null
           client_name: string
           client_phone: string | null
+          contract_end_date: string | null
+          contract_start_date: string | null
           created_at: string
           created_by: string | null
+          currency: string | null
           description: string | null
           discount_amount: number | null
           discount_percent: number | null
+          exchange_rate: number | null
           external_quote_id: string | null
           external_reference: string | null
           id: string
@@ -10581,6 +10690,7 @@ export type Database = {
           sent_at: string | null
           source: string | null
           status: string
+          subscription_type: string | null
           subtotal: number | null
           sync_status: string | null
           synced_from_external: boolean | null
@@ -10591,14 +10701,19 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          billing_status?: string | null
           client_email?: string | null
           client_name: string
           client_phone?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string | null
           description?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
+          exchange_rate?: number | null
           external_quote_id?: string | null
           external_reference?: string | null
           id?: string
@@ -10614,6 +10729,7 @@ export type Database = {
           sent_at?: string | null
           source?: string | null
           status?: string
+          subscription_type?: string | null
           subtotal?: number | null
           sync_status?: string | null
           synced_from_external?: boolean | null
@@ -10624,14 +10740,19 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          billing_status?: string | null
           client_email?: string | null
           client_name?: string
           client_phone?: string | null
+          contract_end_date?: string | null
+          contract_start_date?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string | null
           description?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
+          exchange_rate?: number | null
           external_quote_id?: string | null
           external_reference?: string | null
           id?: string
@@ -10647,6 +10768,7 @@ export type Database = {
           sent_at?: string | null
           source?: string | null
           status?: string
+          subscription_type?: string | null
           subtotal?: number | null
           sync_status?: string | null
           synced_from_external?: boolean | null
