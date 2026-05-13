@@ -27,23 +27,7 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
     enabled: !!deadLetterId,
     staleTime: 10_000,
     queryFn: async () => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (col: string, v: string) => {
-              order: (
-                c: string,
-                o: { ascending: boolean },
-              ) => {
-                limit: (n: number) => Promise<{
-                  data: ReplayAuditEntry[] | null;
-                  error: Error | null;
-                }>;
-              };
-            };
-          };
-        };
-      })
+      const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
         .eq("dead_letter_id", deadLetterId as string)
@@ -68,23 +52,7 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
     enabled: deadLetterIds.length > 0,
     staleTime: 10_000,
     queryFn: async () => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            in: (col: string, vals: string[]) => {
-              order: (
-                c: string,
-                o: { ascending: boolean },
-              ) => {
-                limit: (n: number) => Promise<{
-                  data: ReplayAuditEntry[] | null;
-                  error: Error | null;
-                }>;
-              };
-            };
-          };
-        };
-      })
+      const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
         .in("dead_letter_id", deadLetterIds)
