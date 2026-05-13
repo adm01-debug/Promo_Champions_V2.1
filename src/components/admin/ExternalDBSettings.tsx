@@ -12,7 +12,7 @@ export function ExternalDBSettings() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<"success" | "error" | null>(null);
   const [table, setTable] = useState("salespeople");
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<unknown>(null);
 
   const handleTestConnection = async () => {
     setTesting(true);
