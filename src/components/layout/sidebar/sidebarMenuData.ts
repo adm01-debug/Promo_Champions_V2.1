@@ -23,7 +23,7 @@ export interface MenuGroup {
 export type ViewMode = 'sdr' | 'closer' | 'gestao';
 
 export const sdrMainItems: MenuItem[] = [
-  { title: "Dashboard", url: "/sdr", icon: LayoutDashboard },
+  { title: "Neural Dashboard", url: "/sdr", icon: Sparkles },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Clientes", url: "/clientes", icon: Users },
@@ -34,7 +34,7 @@ export const sdrMainItems: MenuItem[] = [
 ];
 
 export const closerMainItems: MenuItem[] = [
-  { title: "Dashboard", url: "/closer", icon: LayoutDashboard },
+  { title: "Neural Dashboard", url: "/closer", icon: Sparkles },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Cadências de Orçamento", url: "/cadencias-orcamentos", icon: FileText },
@@ -95,7 +95,7 @@ export const sdrGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "Competências", url: "/competencias", icon: Brain },
-      { title: "BI SDR", url: "/bi-sdr", icon: LineChart },
+      { title: "BI SDR (Neural)", url: "/bi-sdr", icon: Sparkles },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -142,7 +142,7 @@ export const closerGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "Competências", url: "/competencias", icon: Brain },
-      { title: "BI Closer", url: "/bi-closer", icon: LineChart },
+      { title: "BI Closer (Neural)", url: "/bi-closer", icon: Sparkles },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
@@ -171,7 +171,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     label: "Análises", icon: Gauge,
     items: [
       { title: "Competências", url: "/competencias", icon: Brain },
-      { title: "BI Gestão", url: "/bi-gestor", icon: LineChart },
+      { title: "BI Gestão (Neural)", url: "/bi-gestor", icon: Sparkles },
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Semântica", url: "/busca", icon: Sparkles },
       { title: "Agentes IA", url: "/agentes", icon: Bot },
@@ -179,7 +179,8 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Relatório de Funil", url: "/relatorios/funil", icon: Filter },
       { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
-      { title: "Forecast", url: "/forecast", icon: TrendingUp },
+      { title: "Neural Forecast Hub", url: "/revenue-forecast", icon: Brain },
+      { title: "Forecast Ponderado", url: "/forecast", icon: TrendingUp },
       { title: "Inteligência Preditiva", url: "/inteligencia-preditiva", icon: Brain },
       { title: "Inteligência de Compras", url: "/inteligencia-compras", icon: Flame },
       { title: "Saúde dos Deals", url: "/deal-intelligence", icon: HeartPulse },
