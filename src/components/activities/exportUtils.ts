@@ -33,7 +33,7 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
 };
 
 export const exportActivitiesToPDF = (activities: ActivityRecord[]) => {
-  const doc = new jsPDF() as any;
+  const doc = new jsPDF();
   
   doc.setFontSize(18);
   doc.text('Relatório de Atividades SDR', 14, 20);
