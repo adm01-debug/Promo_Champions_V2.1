@@ -187,7 +187,7 @@ export const useSDRLeaderboard = () => {
       
       const { data, error } = await supabase
         .from('activities')
-        .select('salesperson_id, salespeople:salesperson_id(name, avatar_url)')
+        .select('salesperson_id, salespeople:salespeople(name, avatar_url)')
         .gte('created_at', today);
       
       if (error) throw error;
