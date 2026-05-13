@@ -36,7 +36,7 @@ interface ActivityListProps {
   showFilters?: boolean;
 }
 
-function _ActivityList({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) {
+export function ActivityList({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) {
   const { data: activities, isLoading } = useRecentActivities(limit);
   const { data: salespeople } = useSalespeople();
 
