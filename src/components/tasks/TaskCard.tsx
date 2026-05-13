@@ -11,7 +11,9 @@ import {
   Mail, 
   FileText, 
   Clock,
-  MoreHorizontal 
+  MoreHorizontal,
+  Linkedin,
+  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,6 +31,8 @@ const typeConfig = {
   email: { label: 'E-mail', icon: Mail, color: 'text-secondary', bgClass: 'bg-secondary/15' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-primary', bgClass: 'bg-primary/15' },
   discount: { label: 'Desconto', icon: Check, color: 'text-status-success', bgClass: 'bg-status-success/15' },
+  linkedin: { label: 'LinkedIn', icon: Linkedin, color: 'text-status-info', bgClass: 'bg-status-info/15' },
+  whatsapp: { label: 'WhatsApp', icon: MessageCircle, color: 'text-status-success', bgClass: 'bg-status-success/15' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground', bgClass: 'bg-muted/40' },
 };
 
