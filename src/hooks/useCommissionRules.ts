@@ -39,7 +39,7 @@ export const useUpsertCommissionRule = () => {
     mutationFn: async (rule: CommissionRuleUpsert) => {
       const { data, error } = await supabase
         .from("commission_rules")
-        .upsert(rule)
+        .upsert([rule] as never)
         .select()
         .single();
       if (error) throw error;
