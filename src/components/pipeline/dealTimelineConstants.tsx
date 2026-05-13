@@ -37,14 +37,19 @@ export const STAGE_LABELS: Record<string, string> = {
 };
 
 export const TASK_TYPE_ICONS: Record<string, React.ReactNode> = {
-  call: <PhoneCall className="h-3.5 w-3.5" />, meeting: <Users className="h-3.5 w-3.5" />,
-  follow_up: <Reply className="h-3.5 w-3.5" />, email: <Mail className="h-3.5 w-3.5" />,
-  proposal: <FileText className="h-3.5 w-3.5" />, other: <CheckCircle2 className="h-3.5 w-3.5" />,
+  call: <PhoneCall className="h-3.5 w-3.5" />, 
+  meeting: <Users className="h-3.5 w-3.5" />,
+  follow_up: <Reply className="h-3.5 w-3.5" />, 
+  email: <Mail className="h-3.5 w-3.5" />,
+  proposal: <FileText className="h-3.5 w-3.5" />, 
+  linkedin: <Linkedin className="h-3.5 w-3.5" />,
+  whatsapp: <MessageCircle className="h-3.5 w-3.5" />,
+  other: <CheckCircle2 className="h-3.5 w-3.5" />,
 };
 
 export const TASK_TYPE_LABELS: Record<string, string> = {
   call: "Ligação", meeting: "Reunião", follow_up: "Follow-up",
-  email: "Email", proposal: "Proposta", other: "Outro",
+  email: "Email", proposal: "Proposta", linkedin: "LinkedIn", whatsapp: "WhatsApp", other: "Outro",
 };
 
 export const FILTER_TABS: { value: TimelineEventType | "all"; label: string; icon: React.ReactNode }[] = [
