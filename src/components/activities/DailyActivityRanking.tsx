@@ -45,7 +45,7 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
   return null;
 };
 
-function _DailyActivityRanking({ data }: DailyActivityRankingProps) {
+const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
   const { data: xpData } = useAllSalespeopleXP();
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"overall" | "calls" | "emails" | "meetings">("overall");
