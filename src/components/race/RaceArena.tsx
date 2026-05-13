@@ -5,7 +5,8 @@ import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
 import { RaceMiniMap } from './RaceMiniMap';
-import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
+import { CommentaryBubble } from './CommentaryBubble';
+import type { CommentaryLine } from './CommentaryBubble';
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
@@ -32,6 +33,7 @@ import { RankBadge } from './RankBadge';
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useRaceReplay } from '@/hooks/race/useRaceReplay';
+
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
