@@ -91,7 +91,13 @@ export default function AdminComercial() {
   });
 
   const createApprovalMutation = useMutation({
-    mutationFn: async ({ type, entityId, newValues, oldValues, justification }: any) => {
+    mutationFn: async ({ type, entityId, newValues, oldValues, justification }: {
+      type: "goal" | "scoring_rule" | "commission";
+      entityId: string;
+      newValues: Record<string, unknown>;
+      oldValues: Record<string, unknown>;
+      justification?: string;
+    }) => {
       const { error } = await supabase.from("commercial_approval_requests").insert({
         requester_id: user?.id,
         type,
