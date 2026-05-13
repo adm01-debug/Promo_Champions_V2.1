@@ -122,37 +122,39 @@ export default function AdminComercial() {
       if (fetchError) throw fetchError;
 
       if (status === "approved") {
-        const newValues = request.new_values as Record<string, number | string>;
         const entityId = request.entity_id as string;
         
         if (request.type === "goal") {
+          const values = request.new_values as { amount: number };
           await supabase.from("sales_goals").upsert([{ 
             salesperson_id: entityId, 
             month: request.competence_month, 
-            goal_amount: newValues.amount 
+            goal_amount: values.amount 
           }], { onConflict: "salesperson_id,month" });
         } else if (request.type === "scoring_rule") {
+          const values = request.new_values as { weight: number; points_per_unit: number; label: string };
           await supabase.from("race_scoring_rules").update({ 
-            weight: newValues.weight, 
-            points_per_unit: newValues.points_per_unit, 
-            label: newValues.label 
+            weight: values.weight, 
+            points_per_unit: values.points_per_unit, 
+            label: values.label 
           }).eq("id", entityId);
         } else if (request.type === "commission") {
+          const values = request.new_values as { rate: number };
           await supabase.from("salesperson_commission_configs").upsert([{ 
             salesperson_id: entityId, 
             month: request.competence_month, 
-            rate: newValues.rate 
+            rate: values.rate 
           }], { onConflict: "salesperson_id,month" });
         }
 
-        await supabase.from("audit_logs").insert({
+        await supabase.from("audit_logs").insert([{
           actor_id: user?.id,
           action: `approved_${request.type}`,
           entity_type: request.type,
           entity_id: request.entity_id,
-          changes: { from: request.old_values, to: request.new_values },
-          metadata: { approval_request_id: requestId, justification }
-        });
+          changes: { from: request.old_values as any, to: request.new_values as any },
+          metadata: { approval_request_id: requestId, justification } as any
+        }]);
       }
 
       const { error } = await supabase.from("commercial_approval_requests").update({ status, approver_id: user?.id }).eq("id", requestId);
