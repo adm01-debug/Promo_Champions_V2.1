@@ -222,27 +222,17 @@ export function logQueryMetrics() {
   const metrics = getQueryMetrics();
   
   console.group("📊 Query Performance Metrics");
-  if (import.meta.env.DEV) {
-    console.info(`Total Queries: ${metrics.totalQueries}`);
-  }
-  if (import.meta.env.DEV) {
-    console.info(`Avg Duration: ${metrics.avgDuration}ms`);
-  }
-  if (import.meta.env.DEV) {
-    console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
-  }
-  if (import.meta.env.DEV) {
-    console.info(`Error Rate: ${metrics.errorRate}%`);
-  }
+  console.info(`Total Queries: ${metrics.totalQueries}`);
+  console.info(`Avg Duration: ${metrics.avgDuration}ms`);
+  console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
+  console.info(`Error Rate: ${metrics.errorRate}%`);
   
   if (Object.keys(metrics.byQueryKey).length > 0) {
     console.group("By Query Key:");
     Object.entries(metrics.byQueryKey)
       .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
       .forEach(([key, data]) => {
-        if (import.meta.env.DEV) {
-          console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
-        }
+        console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
       });
     console.groupEnd();
   }

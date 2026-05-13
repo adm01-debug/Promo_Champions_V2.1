@@ -103,10 +103,12 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
                     <div className="text-[10px] text-center py-4 text-muted-foreground">Nenhuma alteração registrada</div>
                   ) : (
                     auditLogs.map((log) => {
-                      const oldOutcome = (log.old_data as Record<string, unknown>)?.outcome;
-                      const oldNotes = (log.old_data as Record<string, unknown>)?.notes;
-                      const newOutcome = (log.new_data as Record<string, unknown>)?.outcome;
-                      const newNotes = (log.new_data as Record<string, unknown>)?.notes;
+                      const oldData = log.old_data as Record<string, unknown> | null;
+                      const newData = log.new_data as Record<string, unknown> | null;
+                      const oldOutcome = oldData?.outcome;
+                      const oldNotes = oldData?.notes;
+                      const newOutcome = newData?.outcome;
+                      const newNotes = newData?.notes;
                       
                       return (
                         <div key={log.id} className="p-2 rounded bg-muted/30 border border-border/20 text-[10px] space-y-1">
