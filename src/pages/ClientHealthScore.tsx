@@ -259,7 +259,7 @@ function RenewalView() {
               <p className="font-bold text-sm">{(ren.clients as any)?.name}</p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                 <Calendar className="h-3.5 w-3.5" />
-                Expira em {format(parseISO(ren.contract_end_date), "dd 'de' MMM, yyyy", { locale: ptBR })}
+                Expira em {ren.contract_end_date ? format(parseISO(ren.contract_end_date), "dd 'de' MMM, yyyy", { locale: ptBR }) : 'N/A'}
               </div>
             </div>
           </div>
