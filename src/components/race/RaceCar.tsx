@@ -3,6 +3,8 @@ import { forwardRef, memo, useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
 import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
+import { CarExhaust } from './CarExhaust';
+
 
 interface RaceCarProps {
   /** Número do piloto. Quando ausente/null, nenhum numeral é renderizado no chassi. */
@@ -106,6 +108,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       onMouseLeave={onLeave}
       aria-describedby={pilotName ? tooltipId : undefined}
     >
+      <CarExhaust intensity={1} hidden={pitStop} />
       {pilotName && rank !== undefined && (
         <CarHelmetTooltip
           id={tooltipId}

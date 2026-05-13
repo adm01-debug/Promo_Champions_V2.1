@@ -26,27 +26,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
+import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
+import { getEventLabel } from "./webhookHelpers";
 
 interface Props {
   subscriptionId: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   url?: string;
-  /**
-   * Tempo (ms) que o status de cada linha (Reenviado/Falhou/Já entregue)
-   * permanece visível após o replay. `0` ou `Infinity` mantêm até reload.
-   * Default: 30s. Pode ser sobrescrito pelo usuário via seletor no header
-   * (persistido em localStorage).
-   */
   resultRetentionMs?: number;
 }
 
-import { toast } from "sonner";
-import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
-import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
-
 const MAX_REPLAY = MAX_REPLAY_IDS;
-
 const RETENTION_STORAGE_KEY = "winloss.replay.resultRetentionMs";
 const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
   { label: "10s", value: 10_000 },
@@ -57,28 +50,8 @@ const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
 ];
 const DEFAULT_RETENTION_MS = 30_000;
 
-// Mapeamento de event → rótulo amigável (PT-BR).
-// Eventos não mapeados (ou ausentes) caem no fallback "Evento desconhecido".
-const EVENT_LABELS: Record<string, string> = {
-  "winloss.deal.won": "Negócio ganho",
-  "winloss.deal.lost": "Negócio perdido",
-  "winloss.deal.updated": "Negócio atualizado",
-  "winloss.deal.stage_changed": "Mudança de estágio",
-  "winloss.deal.at_risk": "Negócio em risco",
-  "winloss.forecast.updated": "Forecast atualizado",
-  "winloss.battlecard.created": "Battlecard criado",
-  "quote.created": "Orçamento criado",
-  "quote.updated": "Orçamento atualizado",
-  "quote.accepted": "Orçamento aceito",
-  "quote.rejected": "Orçamento rejeitado",
-};
 
-function getEventLabel(event: string | null | undefined): string {
-  if (!event || event.trim().length === 0 || event === "unknown") {
-    return "Evento desconhecido";
-  }
-  return EVENT_LABELS[event] ?? event;
-}
+
 
 
 function readStoredRetention(): number | null {

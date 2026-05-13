@@ -5,7 +5,9 @@ import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
 import { RaceMiniMap } from './RaceMiniMap';
-import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
+import { CommentaryBubble } from './CommentaryBubble';
+import type { CommentaryLine } from './CommentaryBubble';
+
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
 import { Fireworks } from './Fireworks';
@@ -16,7 +18,6 @@ import { TrackTireMarks } from './track/TrackTireMarks';
 import { TrackDustParticles } from './track/TrackDustParticles';
 import { LeaderGapIndicator } from './LeaderGapIndicator';
 import { SlipstreamLines } from './SlipstreamLines';
-import { CarExhaust } from './CarExhaust';
 import { RaceCountdownBadge } from './RaceCountdownBadge';
 import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
 import { DRSZoneOverlay } from './DRSZoneOverlay';
@@ -29,14 +30,17 @@ import { RaceMuteToggle } from './RaceMuteToggle';
 import { RaceReplayButton } from './RaceReplayButton';
 import { RaceEasterEggs } from './RaceEasterEggs';
 import { RankBadge } from './RankBadge';
+
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useRaceReplay } from '@/hooks/race/useRaceReplay';
+
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
   SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
   getNextCornerInfo,
 } from './raceTrackHelpers';
+
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
@@ -677,11 +681,7 @@ export function RaceArena({
                 style={{ filter: 'blur(1.5px)' }}
                 pointerEvents="none"
               />
-              {/* Exhaust trail + chama (intensidade aumenta com posição/velocidade) */}
-              <CarExhaust
-                intensity={Math.max(0.4, 1 - idx * 0.08)}
-                hidden={pitStopCars.has(car.car_id)}
-              />
+              {/* RaceCar renders CarExhaust internally */}
               <RaceCar
                 primaryColor={car.primary_color}
                 secondaryColor={car.secondary_color}
