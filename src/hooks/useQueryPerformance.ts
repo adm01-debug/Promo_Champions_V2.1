@@ -240,7 +240,7 @@ export function logQueryMetrics() {
       .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
       .forEach(([key, data]) => {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
+          console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
         }
       });
     console.groupEnd();
