@@ -442,7 +442,7 @@ Deno.test("fixtures table: SUMMARY — included/failed counts by assert category
   const totalFailures = Object.values(categoryCounts).reduce((a, b) => a + b, 0);
 
   // deno-lint-ignore no-console
-  console.log(
+  console.info(
     [
       "",
       "╔════════════════════════════════════════════════════════════╗",

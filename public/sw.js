@@ -57,7 +57,7 @@ self.addEventListener('activate', (event) => {
         cacheNames.map((cacheName) => {
           // Delete ALL old caches to ensure clean state
           if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-            console.log('Deleting old cache:', cacheName);
+            console.info('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })

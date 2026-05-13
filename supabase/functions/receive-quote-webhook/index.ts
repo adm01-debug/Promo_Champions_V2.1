@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       timestamp?: string;
     };
 
-    console.log(`[receive-quote-webhook] action=${action} quote_number=${quote?.quote_number} ts=${timestamp}`);
+    console.info(`[receive-quote-webhook] action=${action} quote_number=${quote?.quote_number} ts=${timestamp}`);
 
     if (action !== "create_or_update_quote" || !quote) {
       return new Response(
@@ -171,7 +171,7 @@ Deno.serve(async (req) => {
 
         if (updateErr) throw updateErr;
         quoteId = existingQuote.id;
-        console.log(`[receive-quote-webhook] Updated existing quote ${quoteId}`);
+        console.info(`[receive-quote-webhook] Updated existing quote ${quoteId}`);
       } else {
         // Insert new quote
         quoteRecord.created_at = quote.created_at || now;
@@ -183,7 +183,7 @@ Deno.serve(async (req) => {
 
         if (insertErr) throw insertErr;
         quoteId = newQuote.id;
-        console.log(`[receive-quote-webhook] Created new quote ${quoteId}`);
+        console.info(`[receive-quote-webhook] Created new quote ${quoteId}`);
       }
 
       // ── Upload PDF if provided ──────────────────────────────────────
@@ -216,7 +216,7 @@ Deno.serve(async (req) => {
                 .from("quotes")
                 .update({ pdf_url: urlData.publicUrl })
                 .eq("id", quoteId);
-              console.log(`[receive-quote-webhook] PDF saved: ${urlData.publicUrl}`);
+              console.info(`[receive-quote-webhook] PDF saved: ${urlData.publicUrl}`);
             }
           }
         } catch (pdfErr) {
@@ -251,7 +251,7 @@ Deno.serve(async (req) => {
         if (saleUpdateErr) {
           console.error("[receive-quote-webhook] Error updating sale:", saleUpdateErr);
         } else {
-          console.log(`[receive-quote-webhook] Updated pipeline sale ${saleId}`);
+          console.info(`[receive-quote-webhook] Updated pipeline sale ${saleId}`);
         }
       } else {
         // Create new pipeline entry
@@ -277,7 +277,7 @@ Deno.serve(async (req) => {
             .from("quotes")
             .update({ sale_id: saleId })
             .eq("id", quoteId);
-          console.log(`[receive-quote-webhook] Created pipeline sale ${saleId} linked to quote ${quoteId}`);
+          console.info(`[receive-quote-webhook] Created pipeline sale ${saleId} linked to quote ${quoteId}`);
         }
       }
 

@@ -60,7 +60,7 @@ for (const s of SCENARIOS) {
 }
 
 if (FORMAT === "json") {
-  for (const row of rows) console.log(JSON.stringify(row));
+  for (const row of rows) console.info(JSON.stringify(row));
   Deno.exit(0);
 }
 
@@ -84,20 +84,20 @@ function pad(v: unknown, w: number): string {
 const header = cols.map((c) => pad(c.label, c.width)).join(" │ ");
 const sep = cols.map((c) => "─".repeat(c.width)).join("─┼─");
 
-console.log("");
-console.log("Ground-truth dump — computeDealRisk(scenario.deal, LOSS_PATTERNS_REALISTIC, NOW, threshold=0)");
-console.log(`Total scenarios: ${rows.length}    NOW: ${NOW.toISOString()}`);
-console.log("");
-console.log(header);
-console.log(sep);
+console.info("");
+console.info("Ground-truth dump — computeDealRisk(scenario.deal, LOSS_PATTERNS_REALISTIC, NOW, threshold=0)");
+console.info(`Total scenarios: ${rows.length}    NOW: ${NOW.toISOString()}`);
+console.info("");
+console.info(header);
+console.info(sep);
 
 for (const row of rows) {
   const flag = row.expectedIncluded === row.observedIncluded ? " " : "!";
   const line = cols.map((c) => pad(row[c.key], c.width)).join(" │ ");
-  console.log(`${flag} ${line}`);
+  console.info(`${flag} ${line}`);
 }
 
-console.log("");
-console.log("Legend: leading '!' = expected.included does NOT match observed (score>=40).");
-console.log("Tip:    FORMAT=json deno run … _dump_scenarios.ts  → JSONL for scripting");
-console.log("        ONLY=name1,name2 deno run … _dump_scenarios.ts  → filter by name");
+console.info("");
+console.info("Legend: leading '!' = expected.included does NOT match observed (score>=40).");
+console.info("Tip:    FORMAT=json deno run … _dump_scenarios.ts  → JSONL for scripting");
+console.info("        ONLY=name1,name2 deno run … _dump_scenarios.ts  → filter by name");

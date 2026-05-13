@@ -30,7 +30,7 @@ serve(async (req) => {
     const stagnantDate = new Date();
     stagnantDate.setDate(stagnantDate.getDate() - stagnantDays);
     
-    console.log(`Checking for deals stagnant for more than ${stagnantDays} days (since ${stagnantDate.toISOString()})`);
+    console.info(`Checking for deals stagnant for more than ${stagnantDays} days (since ${stagnantDate.toISOString()})`);
     
     // Get all deals that haven't been updated in X days and are not completed
     const { data: stagnantDeals, error: dealsError } = await supabase
@@ -45,7 +45,7 @@ serve(async (req) => {
       throw dealsError;
     }
     
-    console.log(`Found ${stagnantDeals?.length || 0} stagnant deals`);
+    console.info(`Found ${stagnantDeals?.length || 0} stagnant deals`);
     
     if (!stagnantDeals || stagnantDeals.length === 0) {
       return new Response(
@@ -74,7 +74,7 @@ serve(async (req) => {
     // Filter out deals that already have pending tasks
     const dealsNeedingTasks = stagnantDeals.filter(d => !existingDealIds.has(d.id));
     
-    console.log(`Creating tasks for ${dealsNeedingTasks.length} deals (${existingDealIds.size} already have tasks)`);
+    console.info(`Creating tasks for ${dealsNeedingTasks.length} deals (${existingDealIds.size} already have tasks)`);
     
     // Create follow-up tasks for stagnant deals
     const tasksToCreate = dealsNeedingTasks.map(deal => {
@@ -105,7 +105,7 @@ serve(async (req) => {
       }
     }
     
-    console.log(`Successfully created ${tasksToCreate.length} tasks`);
+    console.info(`Successfully created ${tasksToCreate.length} tasks`);
     
     return new Response(
       JSON.stringify({

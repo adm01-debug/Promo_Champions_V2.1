@@ -23,7 +23,7 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
     
     if (!ELEVENLABS_API_KEY) {
-      console.log('ElevenLabs API key not configured - returning placeholder response');
+      console.info('ElevenLabs API key not configured - returning placeholder response');
       return new Response(
         JSON.stringify({ 
           error: 'api_key_not_configured',
@@ -39,7 +39,7 @@ serve(async (req) => {
     // Default voice: Roger (professional male voice in PT-BR)
     const selectedVoiceId = voiceId || 'CwhRBWXzGAHq8TQ4Fs17';
 
-    console.log(`Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`);
+    console.info(`Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`);
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
@@ -87,7 +87,7 @@ serve(async (req) => {
 
     const audioBuffer = await response.arrayBuffer();
     const base64Audio = base64Encode(audioBuffer);
-    console.log(`TTS generated successfully, audio size: ${audioBuffer.byteLength} bytes`);
+    console.info(`TTS generated successfully, audio size: ${audioBuffer.byteLength} bytes`);
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),

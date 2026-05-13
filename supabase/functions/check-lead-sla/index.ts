@@ -19,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log("Starting SLA check...");
+    console.info("Starting SLA check...");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -108,7 +108,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Found ${violations.length} SLA violations`);
+    console.info(`Found ${violations.length} SLA violations`);
 
     // Send email if there are violations and we have email config
     if (violations.length > 0 && resendApiKey && notifyEmail) {
@@ -177,7 +177,7 @@ serve(async (req) => {
           html: emailHtml,
         });
 
-        console.log("Email sent:", emailResponse);
+        console.info("Email sent:", emailResponse);
       } catch (emailError: any) {
         emailStatus = 'failed';
         errorMessage = emailError?.message || 'Unknown email error';

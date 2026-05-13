@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('[auto-reassign-inactive] Starting automatic reassignment check...');
+    console.info('[auto-reassign-inactive] Starting automatic reassignment check...');
 
     // Fetch portfolio settings
     const { data: settings, error: settingsError } = await supabase
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     // Check if auto-reassign is enabled
     const autoReassign = settingsMap['auto_reassign_inactive'] === 'true';
     if (!autoReassign) {
-      console.log('[auto-reassign-inactive] Auto-reassignment is disabled. Exiting.');
+      console.info('[auto-reassign-inactive] Auto-reassignment is disabled. Exiting.');
       return new Response(JSON.stringify({ 
         message: 'Auto-reassignment is disabled',
         reassigned: 0 
@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     const rotationStrategy = settingsMap['rotation_strategy'] || 'top_performer';
     const minDaysBeforeReassign = parseInt(settingsMap['min_days_before_reassign'] || '30');
 
-    console.log(`[auto-reassign-inactive] Settings: threshold=${inactivityThresholdDays} days, strategy=${rotationStrategy}, minDays=${minDaysBeforeReassign}`);
+    console.info(`[auto-reassign-inactive] Settings: threshold=${inactivityThresholdDays} days, strategy=${rotationStrategy}, minDays=${minDaysBeforeReassign}`);
 
     // Calculate cutoff dates
     const inactivityCutoff = new Date();
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
       return new Date(c.last_purchase_date) < inactivityCutoff;
     });
 
-    console.log(`[auto-reassign-inactive] Found ${eligibleClients.length} eligible clients for reassignment`);
+    console.info(`[auto-reassign-inactive] Found ${eligibleClients.length} eligible clients for reassignment`);
 
     if (eligibleClients.length === 0) {
       return new Response(JSON.stringify({ 
@@ -187,8 +187,8 @@ Deno.serve(async (req) => {
         break;
     }
 
-    console.log(`[auto-reassign-inactive] Using strategy: ${rotationStrategy}`);
-    console.log(`[auto-reassign-inactive] Available salespeople:`, sortedSalespeople.map(s => `${s.name}(${s.total_sales})`));
+    console.info(`[auto-reassign-inactive] Using strategy: ${rotationStrategy}`);
+    console.info(`[auto-reassign-inactive] Available salespeople:`, sortedSalespeople.map(s => `${s.name}(${s.total_sales})`));
 
     let reassignedCount = 0;
     let spIndex = 0;
@@ -241,13 +241,13 @@ Deno.serve(async (req) => {
 
       const clientName = client.clients?.[0]?.name || client.client_id;
       const fromName = client.salespeople?.[0]?.name || 'Unknown';
-      console.log(`[auto-reassign-inactive] Reassigned client ${clientName} from ${fromName} to ${targetSp.name}`);
+      console.info(`[auto-reassign-inactive] Reassigned client ${clientName} from ${fromName} to ${targetSp.name}`);
       
       reassignedCount++;
       spIndex++;
     }
 
-    console.log(`[auto-reassign-inactive] Completed. Reassigned ${reassignedCount} clients.`);
+    console.info(`[auto-reassign-inactive] Completed. Reassigned ${reassignedCount} clients.`);
 
     return new Response(JSON.stringify({ 
       message: 'Auto-reassignment completed',

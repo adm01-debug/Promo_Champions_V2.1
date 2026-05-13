@@ -22,7 +22,7 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
     
     if (!ELEVENLABS_API_KEY) {
-      console.log('ElevenLabs API key not configured - returning placeholder response');
+      console.info('ElevenLabs API key not configured - returning placeholder response');
       return new Response(
         JSON.stringify({ 
           error: 'api_key_not_configured',
@@ -44,7 +44,7 @@ serve(async (req) => {
     formData.append('model_id', 'scribe_v1');
     formData.append('language_code', 'pt');
 
-    console.log(`Processing STT for audio (${audioBytes.length} bytes)`);
+    console.info(`Processing STT for audio (${audioBytes.length} bytes)`);
 
     const response = await fetch(
       'https://api.elevenlabs.io/v1/speech-to-text',
@@ -79,7 +79,7 @@ serve(async (req) => {
     }
 
     const result = await response.json();
-    console.log('STT result:', result);
+    console.info('STT result:', result);
 
     return new Response(
       JSON.stringify({ 

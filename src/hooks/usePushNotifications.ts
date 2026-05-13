@@ -35,7 +35,7 @@ export function usePushNotifications() {
         scope: '/'
       });
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.log('Service Worker registered:', registration);
+        if (import.meta.env.DEV) console.info('Service Worker registered:', registration);
       }
       return registration;
     } catch (error) {

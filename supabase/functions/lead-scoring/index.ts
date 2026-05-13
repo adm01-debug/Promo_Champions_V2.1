@@ -191,7 +191,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Calculated scores for ${Object.keys(scores).length} deals`);
+    console.info(`Calculated scores for ${Object.keys(scores).length} deals`);
 
     return new Response(
       JSON.stringify({ scores }),

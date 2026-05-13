@@ -25,7 +25,7 @@ Closes #
 - [ ] Nenhum secret/credencial no código-fonte
 - [ ] RLS policies atualizadas (se tabelas foram modificadas)
 - [ ] Inputs validados no backend (Edge Functions)
-- [ ] Sem `console.log` em código de produção (usar guard `import.meta.env.DEV`)
+- [ ] Sem `console.info` em código de produção (usar guard `import.meta.env.DEV`)
 - [ ] CORS restritivo em Edge Functions
 
 ## ⚡ Checklist de Performance

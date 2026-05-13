@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
   const threeDaysFromNow = new Date();
   threeDaysFromNow.setDate(now.getDate() + 3);
 
-  console.log(`Checking for quotes expiring between ${now.toISOString()} and ${threeDaysFromNow.toISOString()}`);
+  console.info(`Checking for quotes expiring between ${now.toISOString()} and ${threeDaysFromNow.toISOString()}`);
 
   // 1. Get quotes expiring within 3 days that are still in 'sent' status
   const { data: expiringQuotes, error: fetchError } = await supabase
@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: fetchError.message }), { status: 500 });
   }
 
-  console.log(`Found ${expiringQuotes?.length || 0} quotes expiring soon`);
+  console.info(`Found ${expiringQuotes?.length || 0} quotes expiring soon`);
 
   // 2. Create notifications for each expiring quote
   const notifications = expiringQuotes?.map(quote => ({
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     if (notifyError) {
       console.error("Error creating notifications:", notifyError);
     } else {
-      console.log(`Created ${notifications.length} notifications`);
+      console.info(`Created ${notifications.length} notifications`);
     }
   }
 

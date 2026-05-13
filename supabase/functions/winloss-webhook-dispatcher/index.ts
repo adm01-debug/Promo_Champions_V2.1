@@ -19,7 +19,7 @@ function structuredLog(level: LogLevel, data: Record<string, unknown>, requestId
   });
   if (level === "error") console.error(line);
   else if (level === "warn") console.warn(line);
-  else console.log(line);
+  else console.info(line);
 }
 
 function buildDeps(

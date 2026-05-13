@@ -222,16 +222,16 @@ export function logQueryMetrics() {
   
   console.group("📊 Query Performance Metrics");
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.log(`Total Queries: ${metrics.totalQueries}`);
+    if (import.meta.env.DEV) console.info(`Total Queries: ${metrics.totalQueries}`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.log(`Avg Duration: ${metrics.avgDuration}ms`);
+    if (import.meta.env.DEV) console.info(`Avg Duration: ${metrics.avgDuration}ms`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.log(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
+    if (import.meta.env.DEV) console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.log(`Error Rate: ${metrics.errorRate}%`);
+    if (import.meta.env.DEV) console.info(`Error Rate: ${metrics.errorRate}%`);
   }
   
   if (Object.keys(metrics.byQueryKey).length > 0) {
@@ -240,7 +240,7 @@ export function logQueryMetrics() {
       .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
       .forEach(([key, data]) => {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.log(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
+          if (import.meta.env.DEV) console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
         }
       });
     console.groupEnd();

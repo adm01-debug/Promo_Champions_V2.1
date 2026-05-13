@@ -46,7 +46,7 @@ const handler = async (req: Request): Promise<Response> => {
     const body: WebAuthnAction = await req.json();
     const rpId = body.rpId || req.headers.get(RP_ID_HEADER) || new URL(req.url).hostname;
     
-    console.log("WebAuthn action:", body.action, "RP ID:", rpId);
+    console.info("WebAuthn action:", body.action, "RP ID:", rpId);
 
     switch (body.action) {
       case 'register-options': {

@@ -92,7 +92,7 @@ const generateEmailHTML = (data: NewDeviceAlertRequest) => `
 `;
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log("New device alert function called");
+  console.info("New device alert function called");
 
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -138,7 +138,7 @@ const handler = async (req: Request): Promise<Response> => {
         .update({ last_seen_at: new Date().toISOString() })
         .eq("id", existingDevice.id);
 
-      console.log("Known device, updating last_seen");
+      console.info("Known device, updating last_seen");
       return new Response(
         JSON.stringify({ message: "Known device", is_new: false }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -184,7 +184,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Send email notification
-    console.log("Sending new device alert email to:", data.user_email);
+    console.info("Sending new device alert email to:", data.user_email);
     
     const emailResponse = await resend.emails.send({
       from: "PROMO CHAMPIONS Security <onboarding@resend.dev>",
@@ -193,7 +193,7 @@ const handler = async (req: Request): Promise<Response> => {
       html: generateEmailHTML(data),
     });
 
-    console.log("Email sent:", emailResponse);
+    console.info("Email sent:", emailResponse);
 
     // Update alert as sent
     if (alert) {
@@ -217,7 +217,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send push notification to user
     try {
-      console.log("Sending push notification for new device...");
+      console.info("Sending push notification for new device...");
       
       // Get user's push subscriptions
       const { data: subscriptions } = await supabase
@@ -254,9 +254,9 @@ const handler = async (req: Request): Promise<Response> => {
         );
         
         const pushResult = await pushResponse.json();
-        console.log("Push notification result:", pushResult);
+        console.info("Push notification result:", pushResult);
       } else {
-        console.log("No push subscriptions found for user");
+        console.info("No push subscriptions found for user");
       }
     } catch (pushError) {
       console.error("Error sending push notification:", pushError);

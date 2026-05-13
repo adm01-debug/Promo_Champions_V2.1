@@ -12,7 +12,7 @@ interface RequestBody {
 }
 
 function log(event: string, data: Record<string, unknown>) {
-  console.log(JSON.stringify({ fn: "detect-winloss-at-risk", event, ...data }));
+  console.info(JSON.stringify({ fn: "detect-winloss-at-risk", event, ...data }));
 }
 
 serve(async (req: Request) => {

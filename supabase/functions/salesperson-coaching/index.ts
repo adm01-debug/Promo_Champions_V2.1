@@ -111,7 +111,7 @@ serve(async (req) => {
         : 0
     };
 
-    console.log('Coaching context:', JSON.stringify(context, null, 2));
+    console.info('Coaching context:', JSON.stringify(context, null, 2));
 
     // Call AI for coaching insights
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');

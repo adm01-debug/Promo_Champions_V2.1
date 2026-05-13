@@ -232,14 +232,14 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       if (!preferences || preferences.length === 0) {
-        console.log("No active notification preferences found");
+        console.info("No active notification preferences found");
         return new Response(
           JSON.stringify({ message: "No active notification preferences", emailsSent: 0 }),
           { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
 
-      console.log(`Processing ${preferences.length} notification preferences`);
+      console.info(`Processing ${preferences.length} notification preferences`);
 
       for (const pref of preferences as NotificationPreference[]) {
         try {
@@ -261,7 +261,7 @@ const handler = async (req: Request): Promise<Response> => {
               html: emailHtml,
             });
 
-            console.log(`Email sent to ${pref.email}:`, emailResponse);
+            console.info(`Email sent to ${pref.email}:`, emailResponse);
             await logEmailToDatabase(supabase, pref.email, subject, 'sent', alerts.length, alerts);
             results.push({ email: pref.email, alertsSent: alerts.length, success: true });
           } catch (emailError: any) {
@@ -306,7 +306,7 @@ const handler = async (req: Request): Promise<Response> => {
       const alerts = await generateAlerts(supabase, defaultPref);
 
       if (alerts.length === 0) {
-        console.log("No critical alerts to send");
+        console.info("No critical alerts to send");
         return new Response(
           JSON.stringify({ message: "No critical alerts found", alertsSent: 0 }),
           { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -324,7 +324,7 @@ const handler = async (req: Request): Promise<Response> => {
           html: emailHtml,
         });
 
-        console.log("Email sent successfully:", emailResponse);
+        console.info("Email sent successfully:", emailResponse);
         await logEmailToDatabase(supabase, recipientEmail, subject, 'sent', alerts.length, alerts);
 
         return new Response(
