@@ -5,13 +5,29 @@ import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Settings2, RefreshCw, Bell, AlertTriangle, Info } from "lucide-react";
+import { Settings2, RefreshCw, Bell, AlertTriangle, Info, Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Hash, Download, FileText as FileTextIcon, History, Smartphone, Mail, Layout } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -40,14 +56,6 @@ const ME = "__me__";
 const isValidPeriod = (v: string | null): v is KPIPeriod =>
   v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
 
-
-const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";
-const SALESPERSON_STORAGE_KEY = "dashboard.speedometer.salesperson";
-const ALL_SALESPEOPLE = "__all__";
-const ME = "__me__";
-
-const isValidPeriod = (v: string | null): v is KPIPeriod =>
-  v === "current_month" || v === "last_month" || v === "quarter" || v === "year";
 
 export const FuturisticSpeedometerDashboard = () => {
   const { theme } = useDashboardTheme();
