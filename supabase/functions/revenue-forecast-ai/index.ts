@@ -10,6 +10,9 @@ interface ForecastRow {
   won_amount_90d: number;
   won_count_90d: number;
   monthly_goal: number;
+  commit_amount: number;
+  best_case_amount: number;
+  pipeline_amount: number;
   pessimistic_30d: number;
   realistic_30d: number;
   optimistic_30d: number;
@@ -46,6 +49,9 @@ Deno.serve(async (req) => {
         acc.won_amount_90d += Number(r.won_amount_90d) || 0;
         acc.won_count_90d += Number(r.won_count_90d) || 0;
         acc.monthly_goal += Number(r.monthly_goal) || 0;
+        acc.commit_amount += Number(r.commit_amount) || 0;
+        acc.best_case_amount += Number(r.best_case_amount) || 0;
+        acc.pipeline_amount += Number(r.pipeline_amount) || 0;
         acc.pessimistic += (Number(r.pessimistic_30d) || 0) * factor;
         acc.realistic += (Number(r.realistic_30d) || 0) * factor;
         acc.optimistic += (Number(r.optimistic_30d) || 0) * factor;
@@ -60,6 +66,9 @@ Deno.serve(async (req) => {
         won_amount_90d: 0,
         won_count_90d: 0,
         monthly_goal: 0,
+        commit_amount: 0,
+        best_case_amount: 0,
+        pipeline_amount: 0,
         pessimistic: 0,
         realistic: 0,
         optimistic: 0,
@@ -81,6 +90,12 @@ Deno.serve(async (req) => {
       optimistic: Math.round(agg.optimistic),
     };
 
+    const categories = {
+      commit: Math.round(agg.commit_amount),
+      best_case: Math.round(agg.best_case_amount),
+      pipeline: Math.round(agg.pipeline_amount),
+    };
+
     let narrative = "";
     let risks: string[] = [];
     let opportunities: string[] = [];
@@ -95,6 +110,7 @@ Deno.serve(async (req) => {
 - Ganho últimos 90d: R$ ${agg.won_amount_90d.toFixed(0)} (${agg.won_count_90d} deals)
 - Meta no horizonte: R$ ${goalForHorizon.toFixed(0)}
 - Cenário realista: R$ ${scenarios.realistic} | Pessimista: R$ ${scenarios.pessimistic} | Otimista: R$ ${scenarios.optimistic}
+- Categorias: Commit R$ ${categories.commit} | Best Case R$ ${categories.best_case} | Pipeline R$ ${categories.pipeline}
 - Gap vs meta: R$ ${gapToGoal.toFixed(0)}`;
 
         const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -159,6 +175,7 @@ Deno.serve(async (req) => {
           monthly_goal: Math.round(agg.monthly_goal),
           goal_for_horizon: Math.round(goalForHorizon),
           gap_to_goal: Math.round(gapToGoal),
+          categories,
         },
         per_owner: list,
         narrative,
