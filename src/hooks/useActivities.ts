@@ -277,7 +277,7 @@ export const useCreateActivity = () => {
     }) => {
       const { data, error } = await supabase
         .from('activities')
-        .insert([input as unknown as any])
+        .insert(input)
         .select()
         .single();
 
