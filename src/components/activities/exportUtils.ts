@@ -33,7 +33,7 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
 };
 
 export const exportActivitiesToPDF = (activities: ActivityRecord[]) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF() as jsPDF & { autoTable: (options: any) => void };
   
   doc.setFontSize(18);
   doc.text('Relatório de Atividades SDR', 14, 20);
