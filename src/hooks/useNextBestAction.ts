@@ -131,7 +131,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Lógica para Gatilhos de Intenção e Respostas do Lead
-  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && a.outcome === 'connected' as any);
+  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && (a.outcome as string) === 'connected');
   if (leadsWithResponse.length > 0) {
     suggestions.push({
       title: 'Responder lead interessado',
