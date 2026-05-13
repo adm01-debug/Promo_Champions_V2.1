@@ -26,27 +26,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
+import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
+import { getEventLabel } from "./webhookHelpers";
 
 interface Props {
   subscriptionId: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   url?: string;
-  /**
-   * Tempo (ms) que o status de cada linha (Reenviado/Falhou/Já entregue)
-   * permanece visível após o replay. `0` ou `Infinity` mantêm até reload.
-   * Default: 30s. Pode ser sobrescrito pelo usuário via seletor no header
-   * (persistido em localStorage).
-   */
   resultRetentionMs?: number;
 }
 
-import { toast } from "sonner";
-import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
-import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
-
 const MAX_REPLAY = MAX_REPLAY_IDS;
-
 const RETENTION_STORAGE_KEY = "winloss.replay.resultRetentionMs";
 const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
   { label: "10s", value: 10_000 },
@@ -57,7 +50,7 @@ const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
 ];
 const DEFAULT_RETENTION_MS = 30_000;
 
-import { getEventLabel } from "./webhookHelpers";
+
 
 
 
