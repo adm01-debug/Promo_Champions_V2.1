@@ -80,7 +80,7 @@ export function useAICopilot() {
         setIsDismissed(false);
       }
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Copilot error:', err);
+      console.error('Copilot error:', err);
     } finally {
       setIsLoading(false);
     }

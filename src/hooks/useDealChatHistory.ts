@@ -40,7 +40,7 @@ export function useDealChatHistory(dealId: string | null) {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error('Error fetching deal chat history:', error);
+          console.error('Error fetching deal chat history:', error);
         }
         return [];
       }

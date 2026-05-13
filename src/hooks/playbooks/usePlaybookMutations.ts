@@ -35,7 +35,7 @@ export const useTogglePlaybookItem = () => {
       queryClient.invalidateQueries({ queryKey: ["playbook-progress", variables.saleId] });
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error toggling playbook item:", error);
+      console.error("Error toggling playbook item:", error);
       toast.error("Erro ao atualizar checklist");
     },
   });
@@ -59,7 +59,7 @@ export const useCreatePlaybook = () => {
       toast.success("Playbook criado com sucesso");
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error creating playbook:", error);
+      console.error("Error creating playbook:", error);
       toast.error("Erro ao criar playbook");
     },
   });
@@ -117,7 +117,7 @@ export const useDuplicatePlaybook = () => {
       toast.success("Playbook duplicado com sucesso");
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error duplicating playbook:", error);
+      console.error("Error duplicating playbook:", error);
       toast.error("Erro ao duplicar playbook");
     },
   });
@@ -146,7 +146,7 @@ export const useCreatePlaybookItem = () => {
       toast.success("Item adicionado ao playbook");
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error creating playbook item:", error);
+      console.error("Error creating playbook item:", error);
       toast.error("Erro ao adicionar item");
     },
   });
@@ -171,7 +171,7 @@ export const useUpdatePlaybookItem = () => {
       toast.success("Item atualizado");
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error updating playbook item:", error);
+      console.error("Error updating playbook item:", error);
       toast.error("Erro ao atualizar item");
     },
   });
@@ -196,7 +196,7 @@ export const useReorderPlaybookItems = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error reordering items:", error);
+      console.error("Error reordering items:", error);
       toast.error("Erro ao reordenar itens");
     },
   });
@@ -218,7 +218,7 @@ export const useDeletePlaybookItem = () => {
       toast.success("Item removido do playbook");
     },
     onError: (error) => {
-      if (import.meta.env.DEV) console.error("Error deleting playbook item:", error);
+      console.error("Error deleting playbook item:", error);
       toast.error("Erro ao remover item");
     },
   });

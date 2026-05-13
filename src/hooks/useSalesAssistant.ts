@@ -77,7 +77,7 @@ export const useSalesAssistant = (
 
   const loadConversation = useCallback(async (conversationId: string) => {
     const { data, error } = await supabase.from('chat_messages').select('*').eq('conversation_id', conversationId).order('created_at', { ascending: true });
-    if (error) { if (import.meta.env.DEV) console.error('Error loading conversation:', error); return; }
+    if (error) { console.error('Error loading conversation:', error); return; }
     setMessages((data || []).map(msg => ({ id: msg.id, role: msg.role as 'user' | 'assistant', content: msg.content, timestamp: new Date(msg.created_at) })));
     setCurrentConversationId(conversationId);
   }, []);
@@ -86,7 +86,7 @@ export const useSalesAssistant = (
     if (!salespersonId) return null;
     const title = firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : '');
     const { data, error } = await supabase.from('chat_conversations').insert({ salesperson_id: salespersonId, title }).select().single();
-    if (error) { if (import.meta.env.DEV) console.error('Error creating conversation:', error); return null; }
+    if (error) { console.error('Error creating conversation:', error); return null; }
     setCurrentConversationId(data.id);
     refetchConversations();
     return data.id;
@@ -187,7 +187,7 @@ export const useSalesAssistant = (
   const searchConversations = useCallback(async (query: string): Promise<ConversationWithMatches[]> => {
     if (!salespersonId || !query.trim()) return [];
     const { data: messageResults, error: msgError } = await supabase.from('chat_messages').select('conversation_id, content').ilike('content', `%${query}%`);
-    if (msgError) { if (import.meta.env.DEV) console.error('Error searching messages:', msgError); return []; }
+    if (msgError) { console.error('Error searching messages:', msgError); return []; }
 
     const conversationMatches: Record<string, string[]> = {};
     messageResults?.forEach(msg => {
@@ -205,7 +205,7 @@ export const useSalesAssistant = (
     const convIds = Object.keys(conversationMatches);
     if (convIds.length === 0) return [];
     const { data: convs, error: convError } = await supabase.from('chat_conversations').select('*').eq('salesperson_id', salespersonId).in('id', convIds).order('updated_at', { ascending: false });
-    if (convError) { if (import.meta.env.DEV) console.error('Error fetching conversations:', convError); return []; }
+    if (convError) { console.error('Error fetching conversations:', convError); return []; }
 
     return (convs || []).map(conv => ({ ...conv, matchedMessages: conversationMatches[conv.id] || [] }));
   }, [salespersonId]);

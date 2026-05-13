@@ -33,7 +33,7 @@ export function useCurrentStreak(salespersonId?: string) {
       
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error('Error calculating streak:', error);
+          console.error('Error calculating streak:', error);
         }
         return 0;
       }
@@ -168,7 +168,7 @@ export function useCheckAndAwardStreakMilestone() {
     },
     onError: (error) => {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error checking streak milestones:', error);
+        console.error('Error checking streak milestones:', error);
       }
     },
   });

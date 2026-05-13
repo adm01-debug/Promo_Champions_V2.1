@@ -118,7 +118,7 @@ export function useEnrollQuoteInCadence() {
         toast.error("Este orçamento já está em uma cadência ativa");
       } else {
         toast.error("Erro ao iniciar follow-up");
-        if (import.meta.env.DEV) console.error(err);
+        console.error(err);
       }
     },
   });

@@ -42,7 +42,7 @@ export function useBitrix24() {
       
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error checking Bitrix24 status:", error);
+          console.error("Error checking Bitrix24 status:", error);
         }
         return { connected: false, needsReauth: false, domain: "" };
       }
@@ -63,7 +63,7 @@ export function useBitrix24() {
       
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error fetching sync logs:", error);
+          console.error("Error fetching sync logs:", error);
         }
         return [];
       }
@@ -107,7 +107,7 @@ export function useBitrix24() {
       setTimeout(() => clearInterval(pollInterval), 120000);
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error getting auth URL:", error);
+        console.error("Error getting auth URL:", error);
       }
       toast.error("Erro ao iniciar autorização");
     }

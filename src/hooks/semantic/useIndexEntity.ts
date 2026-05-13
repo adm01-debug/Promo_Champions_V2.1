@@ -11,7 +11,7 @@ export function useIndexEntity() {
       .invoke("semantic-index-entity", { body: { entity_type, entity_id } })
       .catch((err) => {
         // Silent: indexing is best-effort
-        if (import.meta.env.DEV) console.warn("[semantic-index] failed", err);
+        console.warn("[semantic-index] failed", err);
       });
   }, []);
   return { index };

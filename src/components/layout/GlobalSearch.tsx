@@ -108,7 +108,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       setAllData([...Array.from(clientsMap.values()), ...deals]);
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Search error:", error);
+        console.error("Search error:", error);
       }
     } finally {
       setIsLoading(false);

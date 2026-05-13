@@ -32,7 +32,7 @@ export function useCircuitBreakerHistory(circuitName?: string, limit = 50) {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error fetching circuit breaker history:", error);
+          console.error("Error fetching circuit breaker history:", error);
         }
         throw error;
       }
@@ -67,7 +67,7 @@ export function useLogCircuitBreakerEvent() {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error logging circuit breaker event:", error);
+          console.error("Error logging circuit breaker event:", error);
         }
         throw error;
       }
@@ -94,7 +94,7 @@ export function useDeleteOldCircuitBreakerEvents() {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error deleting old circuit breaker events:", error);
+          console.error("Error deleting old circuit breaker events:", error);
         }
         throw error;
       }
@@ -120,7 +120,7 @@ export function useCircuitBreakerStats() {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error fetching circuit breaker stats:", error);
+          console.error("Error fetching circuit breaker stats:", error);
         }
         throw error;
       }
@@ -175,7 +175,7 @@ export function useCircuitBreakerTrends(days = 7, circuitFilter?: string) {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error fetching circuit breaker trends:", error);
+          console.error("Error fetching circuit breaker trends:", error);
         }
         throw error;
       }
@@ -259,7 +259,7 @@ export function useCircuitBreakerNames(days = 30) {
 
       if (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error("Error fetching circuit names:", error);
+          console.error("Error fetching circuit names:", error);
         }
         throw error;
       }

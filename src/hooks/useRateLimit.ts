@@ -42,7 +42,7 @@ export function useRateLimitCheck() {
 
     if (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error checking rate limit:", error);
+        console.error("Error checking rate limit:", error);
       }
       return { allowed: true, remaining: 999, reset_at: new Date().toISOString() };
     }
