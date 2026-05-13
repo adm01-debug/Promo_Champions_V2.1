@@ -39,7 +39,80 @@ export interface AccountContact {
   linkedin_url: string | null;
   last_contacted_at: string | null;
   notes: string | null;
+export interface AccountPlan {
+  id: string;
+  account_id: string;
+  fiscal_year: string | null;
+  revenue_target: number | null;
+  executive_summary: string | null;
+  key_objectives: string[] | null;
+  main_challenges: string[] | null;
+  swot_strengths: string[] | null;
+  swot_weaknesses: string[] | null;
+  swot_opportunities: string[] | null;
+  swot_threats: string[] | null;
+  account_strategy: string | null;
+  action_plan: any;
+  created_at: string;
+  updated_at: string;
 }
+
+export const useAccountPlan = (accountId: string | null) => {
+  return useQuery({
+    queryKey: ["account-plan", accountId],
+    enabled: !!accountId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("account_plans")
+        .select("*")
+        .eq("account_id", accountId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data as AccountPlan | null;
+    },
+  });
+};
+
+export const useUpdateAccountPlan = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Partial<AccountPlan> & { account_id: string }) => {
+      const { account_id, ...rest } = payload;
+      
+      // Check if plan exists
+      const { data: existing } = await supabase
+        .from("account_plans")
+        .select("id")
+        .eq("account_id", account_id)
+        .maybeSingle();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from("account_plans")
+          .update(rest)
+          .eq("account_id", account_id)
+          .select()
+          .single();
+        if (error) throw error;
+        return data;
+      } else {
+        const { data, error } = await supabase
+          .from("account_plans")
+          .insert({ account_id, ...rest })
+          .select()
+          .single();
+        if (error) throw error;
+        return data;
+      }
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["account-plan", vars.account_id] });
+      toast.success("Plano de conta atualizado");
+    },
+    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
 
 export const useAccounts = () => {
   return useQuery({
