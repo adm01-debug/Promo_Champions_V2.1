@@ -193,7 +193,7 @@ export const RevenueForecastHub: FC = () => {
           </div>
 
           {/* Scenarios - Neural Layout */}
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <ScenarioCard
               scenario="pessimistic"
               value={data.scenarios.pessimistic}
@@ -211,6 +211,10 @@ export const RevenueForecastHub: FC = () => {
               value={data.scenarios.optimistic}
               goal={data.metrics.goal_for_horizon}
               index={2}
+            />
+            <CategoryForecastCard 
+              categories={data.metrics.categories}
+              goal={data.metrics.goal_for_horizon}
             />
           </div>
 
