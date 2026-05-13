@@ -62,7 +62,7 @@ export const MergeConflictsResolver = ({ open, onOpenChange, clients, onMerge, i
             <AlertTriangle className="h-5 w-5 text-status-warning shrink-0" />
             <p className="text-xs text-status-warning leading-relaxed">
               Selecione o registro mestre e escolha quais valores de campo deseja manter. 
-              Vendas, tarefas, notas, tags e históricos de todos os registros serão consolidados no mestre.
+              Vendas, tarefas, notas e históricos de todos os registros serão consolidados no mestre.
             </p>
           </div>
 
