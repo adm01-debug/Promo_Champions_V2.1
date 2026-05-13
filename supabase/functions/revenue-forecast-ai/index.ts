@@ -10,6 +10,9 @@ interface ForecastRow {
   won_amount_90d: number;
   won_count_90d: number;
   monthly_goal: number;
+  commit_amount: number;
+  best_case_amount: number;
+  pipeline_amount: number;
   pessimistic_30d: number;
   realistic_30d: number;
   optimistic_30d: number;
