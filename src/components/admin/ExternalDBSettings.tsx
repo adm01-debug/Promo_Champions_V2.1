@@ -86,7 +86,7 @@ export function ExternalDBSettings() {
             </div>
           </div>
 
-          {result && (
+          {result !== null && (
             <div className="mt-4">
               <Label className="text-sm text-muted-foreground mb-2 block">Resultado</Label>
               <pre className="bg-muted/50 rounded-lg p-4 text-xs overflow-auto max-h-48 font-mono">
