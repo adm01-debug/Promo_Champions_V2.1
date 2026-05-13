@@ -12,11 +12,11 @@ interface SLAIndicatorProps {
 }
 
 const SLA_LIMITS: Record<string, number> = {
-  lead: 2,
-  prospecting: 5,
-  qualified: 3,
-  proposal: 7,
-  negotiation: 10,
+  lead: 1, // 24h
+  qualified: 2, // 48h
+  proposal: 3, // 72h
+  negotiation: 4, // 96h
+  won: 7, // 168h
 };
 
 function SLAIndicatorComponent({ stageEnteredAt, stage, className }: SLAIndicatorProps) {
