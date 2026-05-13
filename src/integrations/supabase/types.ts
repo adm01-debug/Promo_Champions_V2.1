@@ -1397,6 +1397,50 @@ export type Database = {
         }
         Relationships: []
       }
+      buying_committee: {
+        Row: {
+          contact_name: string
+          created_at: string | null
+          id: string
+          influence_level: number | null
+          notes: string | null
+          role: string
+          sale_id: string | null
+          sentiment: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          contact_name: string
+          created_at?: string | null
+          id?: string
+          influence_level?: number | null
+          notes?: string | null
+          role: string
+          sale_id?: string | null
+          sentiment?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          contact_name?: string
+          created_at?: string | null
+          id?: string
+          influence_level?: number | null
+          notes?: string | null
+          role?: string
+          sale_id?: string | null
+          sentiment?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buying_committee_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       buying_committee_members: {
         Row: {
           committee_role: string
@@ -9301,6 +9345,59 @@ export type Database = {
           },
         ]
       }
+      pipeline_inspections: {
+        Row: {
+          amount_at_inspection: number | null
+          created_at: string | null
+          forecast_category_at_inspection:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
+          id: string
+          inspector_id: string | null
+          next_steps_agreed: string[] | null
+          notes: string | null
+          risk_signals: Json | null
+          sale_id: string | null
+          status_at_inspection: string | null
+        }
+        Insert: {
+          amount_at_inspection?: number | null
+          created_at?: string | null
+          forecast_category_at_inspection?:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
+          id?: string
+          inspector_id?: string | null
+          next_steps_agreed?: string[] | null
+          notes?: string | null
+          risk_signals?: Json | null
+          sale_id?: string | null
+          status_at_inspection?: string | null
+        }
+        Update: {
+          amount_at_inspection?: number | null
+          created_at?: string | null
+          forecast_category_at_inspection?:
+            | Database["public"]["Enums"]["forecast_category"]
+            | null
+          id?: string
+          inspector_id?: string | null
+          next_steps_agreed?: string[] | null
+          notes?: string | null
+          risk_signals?: Json | null
+          sale_id?: string | null
+          status_at_inspection?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_inspections_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_stages: {
         Row: {
           color: string
@@ -17142,10 +17239,13 @@ export type Database = {
       revenue_forecast_view: {
         Row: {
           avg_cycle_days: number | null
+          best_case_amount: number | null
+          commit_amount: number | null
           monthly_goal: number | null
           open_deals_count: number | null
           optimistic_30d: number | null
           pessimistic_30d: number | null
+          pipeline_amount: number | null
           realistic_30d: number | null
           salesperson_id: string | null
           total_open_pipeline: number | null
@@ -17305,6 +17405,7 @@ export type Database = {
           positive_factors: Json
         }[]
       }
+      calculate_deal_risk_score: { Args: { p_sale_id: string }; Returns: Json }
       calculate_lead_distribution: { Args: never; Returns: Json }
       calculate_performance_pace: {
         Args: { _salesperson_id: string }
