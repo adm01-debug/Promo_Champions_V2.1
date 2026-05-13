@@ -100,10 +100,10 @@ export default function SequencesPage() {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-              <Workflow className="h-7 w-7 text-primary" />Sequências
+              <Workflow className="h-7 w-7 text-primary" />Sequências <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase">10/10</Badge>
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Crie cadências multistep multicanal com pause-on-reply automático.
+              Motor de engajamento avançado: A/B testing, IA personalizada e otimização de envio.
             </p>
           </div>
           <div className="flex gap-2">
