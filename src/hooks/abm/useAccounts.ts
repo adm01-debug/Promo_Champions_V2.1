@@ -39,6 +39,8 @@ export interface AccountContact {
   linkedin_url: string | null;
   last_contacted_at: string | null;
   notes: string | null;
+}
+
 export interface AccountPlan {
   id: string;
   account_id: string;
@@ -79,7 +81,6 @@ export const useUpdateAccountPlan = () => {
     mutationFn: async (payload: Partial<AccountPlan> & { account_id: string }) => {
       const { account_id, ...rest } = payload;
       
-      // Check if plan exists
       const { data: existing } = await supabase
         .from("account_plans")
         .select("id")
@@ -112,7 +113,6 @@ export const useUpdateAccountPlan = () => {
     onError: (e: Error) => toast.error(`Erro: ${e.message}`),
   });
 };
-
 
 export const useAccounts = () => {
   return useQuery({
