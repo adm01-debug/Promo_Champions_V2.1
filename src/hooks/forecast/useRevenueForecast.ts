@@ -16,6 +16,11 @@ export interface RevenueForecastResponse {
     monthly_goal: number;
     goal_for_horizon: number;
     gap_to_goal: number;
+    categories: {
+      commit: number;
+      best_case: number;
+      pipeline: number;
+    };
   };
   per_owner: Array<{
     salesperson_id: string | null;
