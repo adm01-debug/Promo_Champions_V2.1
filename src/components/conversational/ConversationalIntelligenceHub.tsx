@@ -75,10 +75,10 @@ export const ConversationalIntelligenceHub = () => {
             </div>
           </div>
           <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
-            Conversational <span className="text-primary/80">Intelligence</span>
+            Conversational <span className="text-primary/80">Intelligence</span> <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase ml-2 align-middle">10/10</Badge>
           </h1>
           <p className="text-base text-muted-foreground/80 max-w-2xl font-medium leading-relaxed">
-            Decifre cada palavra, tom e hesitação. Nossa IA neural processa milhões de parâmetros para transformar diálogos em fechamentos inevitáveis.
+            Decifre cada palavra, tom e hesitação. Análise neural de voz com transcrição, diarização e coaching em tempo real integrada aos principais players do mercado.
           </p>
         </div>
 
