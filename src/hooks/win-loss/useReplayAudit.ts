@@ -26,31 +26,16 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
     queryKey: ["winloss-replay-audit", "dlq", deadLetterId],
     enabled: !!deadLetterId,
     staleTime: 10_000,
-    queryFn: async () => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (col: string, v: string) => {
-              order: (
-                c: string,
-                o: { ascending: boolean },
-              ) => {
-                limit: (n: number) => Promise<{
-                  data: ReplayAuditEntry[] | null;
-                  error: Error | null;
-                }>;
-              };
-            };
-          };
-        };
-      })
+    queryFn: async (): Promise<ReplayAuditEntry[]> => {
+      const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
         .eq("dead_letter_id", deadLetterId as string)
         .order("created_at", { ascending: false })
         .limit(50);
+        
       if (error) throw error;
-      return data ?? [];
+      return (data || []) as any[];
     },
   });
 }
@@ -67,32 +52,18 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
     queryKey: ["winloss-replay-audit", "latest-by-dlq", sortedKey],
     enabled: deadLetterIds.length > 0,
     staleTime: 10_000,
-    queryFn: async () => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            in: (col: string, vals: string[]) => {
-              order: (
-                c: string,
-                o: { ascending: boolean },
-              ) => {
-                limit: (n: number) => Promise<{
-                  data: ReplayAuditEntry[] | null;
-                  error: Error | null;
-                }>;
-              };
-            };
-          };
-        };
-      })
+    queryFn: async (): Promise<Map<string, ReplayAuditEntry>> => {
+      const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
         .in("dead_letter_id", deadLetterIds)
         .order("created_at", { ascending: false })
         .limit(500);
+
       if (error) throw error;
+      const entries = (data || []) as any[];
       const map = new Map<string, ReplayAuditEntry>();
-      for (const r of data ?? []) {
+      for (const r of entries) {
         if (!r.dead_letter_id) continue;
         if (!map.has(r.dead_letter_id)) map.set(r.dead_letter_id, r);
       }

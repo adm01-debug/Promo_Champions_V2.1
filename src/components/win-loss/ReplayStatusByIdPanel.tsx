@@ -37,22 +37,15 @@ function useDeadLetterById(id: string | null) {
     enabled: !!id && UUID_RE.test(id ?? ""),
     staleTime: 10_000,
     queryFn: async (): Promise<DeadLetterByIdRow | null> => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (col: string, v: string) => {
-              maybeSingle: () => Promise<{ data: DeadLetterByIdRow | null; error: Error | null }>;
-            };
-          };
-        };
-      })
+      const { data, error } = await supabase
         .from("winloss_webhook_dead_letters")
         .select("*, winloss_webhook_subscriptions(url)")
         .eq("id", id!)
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      return { ...data, subscription_url: data.winloss_webhook_subscriptions?.url ?? null };
+      const row = data as unknown as DeadLetterByIdRow & { winloss_webhook_subscriptions: { url: string } | null };
+      return { ...row, subscription_url: row.winloss_webhook_subscriptions?.url ?? null };
     },
   });
 }
@@ -294,8 +287,8 @@ export function ReplayStatusByIdPanel() {
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-foreground">
                 Trilha de auditoria de replays{" "}
-                {audit && audit.length > 0 && (
-                  <span className="text-muted-foreground">({audit.length})</span>
+                {audit && (audit as any[]).length > 0 && (
+                  <span className="text-muted-foreground">({(audit as any[]).length})</span>
                 )}
               </p>
               <ScrollArea className="max-h-72 rounded-md border bg-muted/10 p-2">
