@@ -220,7 +220,7 @@ export default function AccountBasedSelling() {
 
                     <TabsContent value="overview" className="space-y-6">
                       <div className="grid grid-cols-2 gap-4">
-                        <Card variant="outline">
+                        <Card variant="outlined">
                           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                             <Label className="text-xs text-muted-foreground mb-1">Health Status</Label>
                             <Badge variant={healthVariant(selected.health_status)} className="capitalize">
@@ -228,7 +228,7 @@ export default function AccountBasedSelling() {
                             </Badge>
                           </CardContent>
                         </Card>
-                        <Card variant="outline">
+                        <Card variant="outlined">
                           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                             <Label className="text-xs text-muted-foreground mb-1">Account Score</Label>
                             <span className="text-2xl font-bold text-primary">{selected.account_score}</span>
@@ -361,20 +361,20 @@ function AccountPlanSection({ accountId }: { accountId: string }) {
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Card className="p-4 bg-green-500/5">
+          <Card className="p-4 bg-green-500/5" variant="outlined">
             <Label className="text-green-700 flex items-center gap-2"><TrendingUp className="h-3 w-3" /> Forças</Label>
             <Textarea 
               defaultValue={plan?.swot_strengths?.[0] || ""} 
               onBlur={(e) => setForm({ ...form, swot_strengths: [e.target.value] })}
-              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0"
+              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0 shadow-none"
             />
           </Card>
-          <Card className="p-4 bg-red-500/5">
+          <Card className="p-4 bg-red-500/5" variant="outlined">
             <Label className="text-red-700 flex items-center gap-2"><Shield className="h-3 w-3" /> Fraquezas</Label>
             <Textarea 
               defaultValue={plan?.swot_weaknesses?.[0] || ""} 
               onBlur={(e) => setForm({ ...form, swot_weaknesses: [e.target.value] })}
-              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0"
+              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0 shadow-none"
             />
           </Card>
         </div>
