@@ -681,11 +681,7 @@ export function RaceArena({
                 style={{ filter: 'blur(1.5px)' }}
                 pointerEvents="none"
               />
-              {/* Exhaust trail + chama (intensidade aumenta com posição/velocidade) */}
-              <CarExhaust
-                intensity={Math.max(0.4, 1 - idx * 0.08)}
-                hidden={pitStopCars.has(car.car_id)}
-              />
+              {/* RaceCar renders CarExhaust internally */}
               <RaceCar
                 primaryColor={car.primary_color}
                 secondaryColor={car.secondary_color}
