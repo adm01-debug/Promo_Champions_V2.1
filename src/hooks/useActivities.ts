@@ -194,7 +194,7 @@ export const useSDRLeaderboard = () => {
       
       const counts: Record<string, { id: string; name: string; avatar: string | null; count: number }> = {};
       
-      (data || []).forEach((a: any) => {
+      (data || []).forEach((a) => {
         const id = a.salesperson_id;
         if (!id) return;
         if (!counts[id]) {
