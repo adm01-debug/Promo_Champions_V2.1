@@ -92,7 +92,7 @@ function addMetric(metric: QueryMetrics) {
 
   // Standard dev logging for moderately slow queries
   if (import.meta.env.DEV && metric.duration > SLOW_QUERY_THRESHOLD_MS && metric.duration <= alertConfig.threshold) {
-    if (import.meta.env.DEV) console.warn(
+    console.warn(
       `[SLOW QUERY] ${metric.queryKey} took ${metric.duration}ms`,
       metric
     );
