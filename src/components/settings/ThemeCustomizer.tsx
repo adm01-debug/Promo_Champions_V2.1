@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Moon, Sun, Monitor, Sparkles } from "lucide-react";
+import { Check, Moon, Sun, Monitor, Sparkles, Languages } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -35,7 +35,10 @@ const MODE_OPTIONS: { value: ThemeMode; label: string; icon: React.ReactNode }[]
   { value: "system", label: "Sistema", icon: <Monitor className="h-4 w-4" /> },
 ];
 
+import { useI18n } from "@/contexts/I18nContext";
+
 export function ThemeCustomizer() {
+  const { locale, setLocale } = useI18n();
   const {
     config,
     accentColors,
@@ -146,6 +149,39 @@ export function ThemeCustomizer() {
               checked={config.highContrast}
               onCheckedChange={setHighContrast}
             />
+          </div>
+        </div>
+
+        {/* Language Selection */}
+        <div className="space-y-4 pt-4 border-t border-border">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <Languages className="h-4 w-4" /> Language / Idioma
+          </Label>
+          <div className="flex gap-2">
+            <Button
+              variant={locale === "pt-BR" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setLocale("pt-BR")}
+              className="flex-1"
+            >
+              Português
+            </Button>
+            <Button
+              variant={locale === "en" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setLocale("en")}
+              className="flex-1"
+            >
+              English
+            </Button>
+            <Button
+              variant={locale === "es" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setLocale("es")}
+              className="flex-1"
+            >
+              Español
+            </Button>
           </div>
         </div>
 
