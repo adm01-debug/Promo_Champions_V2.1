@@ -2,7 +2,13 @@
 
 ## Overview
 
-SalesPro provides a comprehensive REST API for integration with external systems.
+O SalesPro fornece uma API REST completa para integração. Uma especificação OpenAPI (Swagger) completa é gerada automaticamente pelo Supabase.
+
+### Documentação Interativa (Swagger)
+A especificação OpenAPI pode ser acessada em:
+`https://[SUA_URL_SUPABASE].supabase.co/rest/v1/?apikey=[SUA_ANON_KEY]`
+
+Você pode importar esta URL em ferramentas como Postman, Insomnia ou Swagger UI para explorar todos os endpoints disponíveis, parâmetros e esquemas de dados.
 
 ## Authentication
 
