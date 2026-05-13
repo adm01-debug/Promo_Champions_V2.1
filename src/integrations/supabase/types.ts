@@ -196,6 +196,71 @@ export type Database = {
           },
         ]
       }
+      account_plans: {
+        Row: {
+          account_id: string
+          account_strategy: string | null
+          action_plan: Json | null
+          created_at: string | null
+          created_by: string | null
+          executive_summary: string | null
+          fiscal_year: string | null
+          id: string
+          key_objectives: string[] | null
+          main_challenges: string[] | null
+          revenue_target: number | null
+          swot_opportunities: string[] | null
+          swot_strengths: string[] | null
+          swot_threats: string[] | null
+          swot_weaknesses: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id: string
+          account_strategy?: string | null
+          action_plan?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          executive_summary?: string | null
+          fiscal_year?: string | null
+          id?: string
+          key_objectives?: string[] | null
+          main_challenges?: string[] | null
+          revenue_target?: number | null
+          swot_opportunities?: string[] | null
+          swot_strengths?: string[] | null
+          swot_threats?: string[] | null
+          swot_weaknesses?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string
+          account_strategy?: string | null
+          action_plan?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          executive_summary?: string | null
+          fiscal_year?: string | null
+          id?: string
+          key_objectives?: string[] | null
+          main_challenges?: string[] | null
+          revenue_target?: number | null
+          swot_opportunities?: string[] | null
+          swot_strengths?: string[] | null
+          swot_threats?: string[] | null
+          swot_weaknesses?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_plans_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       accounts: {
         Row: {
           account_score: number
