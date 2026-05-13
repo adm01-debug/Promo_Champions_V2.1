@@ -35,7 +35,7 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
         .limit(50);
         
       if (error) throw error;
-      return (data || []) as ReplayAuditEntry[];
+      return (data || []) as any[];
     },
   });
 }
