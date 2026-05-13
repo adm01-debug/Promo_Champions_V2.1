@@ -110,6 +110,7 @@ Deno.serve(async (req) => {
 - Ganho últimos 90d: R$ ${agg.won_amount_90d.toFixed(0)} (${agg.won_count_90d} deals)
 - Meta no horizonte: R$ ${goalForHorizon.toFixed(0)}
 - Cenário realista: R$ ${scenarios.realistic} | Pessimista: R$ ${scenarios.pessimistic} | Otimista: R$ ${scenarios.optimistic}
+- Categorias: Commit R$ ${categories.commit} | Best Case R$ ${categories.best_case} | Pipeline R$ ${categories.pipeline}
 - Gap vs meta: R$ ${gapToGoal.toFixed(0)}`;
 
         const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
