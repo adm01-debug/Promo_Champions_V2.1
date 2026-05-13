@@ -12,8 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Building2, Users, Plus, RefreshCw, Crown, Target, Heart, 
-  AlertTriangle, FileText, TrendingUp, Shield, Zap, Search,
-  Hierarchy, ChevronRight
+  AlertTriangle, FileText, TrendingUp, Shield, Zap, Search
 } from "lucide-react";
 import {
   useAccounts,
@@ -28,7 +27,6 @@ import {
   type BuyingRole,
   type AccountPlan
 } from "@/hooks/abm/useAccounts";
-
 
 const tierLabel: Record<AccountTier, string> = {
   strategic: "Estratégica",
@@ -159,7 +157,6 @@ export default function AccountBasedSelling() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Lista de contas */}
           <Card className="lg:col-span-1">
             <CardHeader><CardTitle>Contas ({accounts?.length ?? 0})</CardTitle></CardHeader>
             <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
@@ -186,7 +183,6 @@ export default function AccountBasedSelling() {
             </CardContent>
           </Card>
 
-          {/* Detalhes */}
           <Card className="lg:col-span-2">
             {!selected ? (
               <CardContent className="p-12 text-center text-muted-foreground">
@@ -272,36 +268,26 @@ export default function AccountBasedSelling() {
                           <p className="text-sm font-medium">{selected.employee_count || "—"}</p>
                         </div>
                       </div>
-
-                      {selected.notes && (
-                        <div className="bg-muted/30 p-4 rounded-lg border border-dashed">
-                          <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Contexto da Conta</Label>
-                          <p className="text-sm mt-2 whitespace-pre-wrap leading-relaxed">{selected.notes}</p>
-                        </div>
-                      )}
                     </TabsContent>
 
                     <TabsContent value="committee" className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <h3 className="font-semibold flex items-center gap-2">
-                            <Users className="h-4 w-4 text-primary" />
-                            Contatos Mapeados ({contacts?.length ?? 0})
-                          </h3>
-                          <p className="text-xs text-muted-foreground">Mapeamento de stakeholders e multi-threading.</p>
-                        </div>
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <Users className="h-4 w-4 text-primary" />
+                          Stakeholders ({contacts?.length ?? 0})
+                        </h3>
                         <Dialog open={newContactOpen} onOpenChange={setNewContactOpen}>
                           <DialogTrigger asChild>
                             <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Stakeholder</Button>
                           </DialogTrigger>
                           <DialogContent>
-                            <DialogHeader><DialogTitle>Adicionar ao Buying Committee</DialogTitle></DialogHeader>
+                            <DialogHeader><DialogTitle>Adicionar Stakeholder</DialogTitle></DialogHeader>
                             <div className="space-y-3">
                               <div><Label>Nome *</Label><Input value={ctForm.name} onChange={(e) => setCtForm({ ...ctForm, name: e.target.value })} /></div>
                               <div><Label>E-mail</Label><Input type="email" value={ctForm.email} onChange={(e) => setCtForm({ ...ctForm, email: e.target.value })} /></div>
                               <div><Label>Cargo</Label><Input value={ctForm.job_title} onChange={(e) => setCtForm({ ...ctForm, job_title: e.target.value })} /></div>
                               <div>
-                                <Label>Papel na decisão</Label>
+                                <Label>Papel</Label>
                                 <Select value={ctForm.buying_role} onValueChange={(v) => setCtForm({ ...ctForm, buying_role: v as BuyingRole })}>
                                   <SelectTrigger><SelectValue /></SelectTrigger>
                                   <SelectContent>
@@ -311,46 +297,26 @@ export default function AccountBasedSelling() {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div>
-                                <Label>Nível de Influência (1-5)</Label>
-                                <Input type="number" min={1} max={5} value={ctForm.influence_level} onChange={(e) => setCtForm({ ...ctForm, influence_level: Number(e.target.value) })} />
-                              </div>
                             </div>
                             <DialogFooter>
-                              <Button onClick={handleCreateContact} disabled={!ctForm.name || createContact.isPending}>Mapear Contato</Button>
+                              <Button onClick={handleCreateContact} disabled={!ctForm.name || createContact.isPending}>Mapear</Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
                       </div>
-
                       <div className="grid gap-3">
-                        {(!contacts || contacts.length === 0) && (
-                          <div className="text-center py-12 border-2 border-dashed rounded-xl">
-                            <Users className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">Nenhum stakeholder mapeado ainda.</p>
-                          </div>
-                        )}
                         {contacts?.map(c => (
-                          <div key={c.id} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:shadow-sm transition-all group">
+                          <div key={c.id} className="flex items-center justify-between p-4 rounded-xl border bg-card">
                             <div className="flex items-center gap-4">
                               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                                 {roleIcon[c.buying_role]}
                               </div>
                               <div>
-                                <p className="font-semibold text-sm group-hover:text-primary transition-colors">{c.name}</p>
-                                <p className="text-xs text-muted-foreground">{c.job_title || "Sem cargo"} · <span className="text-primary/70">{roleLabel[c.buying_role]}</span></p>
+                                <p className="font-semibold text-sm">{c.name}</p>
+                                <p className="text-xs text-muted-foreground">{c.job_title || "Sem cargo"} · {roleLabel[c.buying_role]}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="bg-muted/50">
-                                {c.influence_level}/5 Influência
-                              </Badge>
-                              {c.sentiment && (
-                                <Badge variant={c.sentiment === 'positive' ? 'default' : c.sentiment === 'negative' ? 'destructive' : 'secondary'} className="h-5 text-[10px]">
-                                  {c.sentiment === 'positive' ? 'Apoiador' : c.sentiment === 'negative' ? 'Detrator' : 'Neutro'}
-                                </Badge>
-                              )}
-                            </div>
+                            <Badge variant="outline">{c.influence_level}/5 Influência</Badge>
                           </div>
                         ))}
                       </div>
@@ -364,126 +330,62 @@ export default function AccountBasedSelling() {
               </>
             )}
           </Card>
-
         </div>
       </div>
     </>
   );
+}
+
 function AccountPlanSection({ accountId }: { accountId: string }) {
   const { data: plan, isLoading } = useAccountPlan(accountId);
   const updatePlan = useUpdateAccountPlan();
-  
-  const [form, setForm] = useState<Partial<AccountPlan>>({
-    executive_summary: "",
-    account_strategy: "",
-    revenue_target: 0
-  });
+  const [form, setForm] = useState<Partial<AccountPlan>>({});
 
-  const handleSave = () => {
-    updatePlan.mutate({ account_id: accountId, ...form });
-  };
+  const handleSave = () => updatePlan.mutate({ account_id: accountId, ...form });
 
-  if (isLoading) return <p>Carregando plano estratégico...</p>;
+  if (isLoading) return <p>Carregando plano...</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold flex items-center gap-2">
-          <FileText className="h-4 w-4 text-primary" />
-          Strategic Account Planning
-        </h3>
-        <Button size="sm" onClick={handleSave} disabled={updatePlan.isPending}>Salvar Alterações</Button>
+        <h3 className="font-semibold flex items-center gap-2"><FileText className="h-4 w-4" /> Account Plan</h3>
+        <Button size="sm" onClick={handleSave} disabled={updatePlan.isPending}>Salvar</Button>
       </div>
-
-      <div className="grid gap-6">
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <div>
           <Label>Sumário Executivo</Label>
           <Textarea 
-            placeholder="Visão de longo prazo para esta conta..." 
+            defaultValue={plan?.executive_summary || ""} 
+            onBlur={(e) => setForm({ ...form, executive_summary: e.target.value })} 
             className="min-h-[100px]"
-            defaultValue={plan?.executive_summary || ""}
-            onBlur={(e) => setForm({ ...form, executive_summary: e.target.value })}
           />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card variant="outline" className="border-green-500/20 bg-green-500/5">
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-green-700">
-                <TrendingUp className="h-4 w-4" /> Forças (Strengths)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <Textarea 
-                placeholder="Por que eles gostam de nós?" 
-                className="text-xs bg-transparent border-none focus-visible:ring-0 p-0 resize-none min-h-[60px]"
-                defaultValue={plan?.swot_strengths?.[0] || ""}
-                onBlur={(e) => setForm({ ...form, swot_strengths: [e.target.value] })}
-              />
-            </CardContent>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-4 bg-green-500/5">
+            <Label className="text-green-700 flex items-center gap-2"><TrendingUp className="h-3 w-3" /> Forças</Label>
+            <Textarea 
+              defaultValue={plan?.swot_strengths?.[0] || ""} 
+              onBlur={(e) => setForm({ ...form, swot_strengths: [e.target.value] })}
+              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0"
+            />
           </Card>
-
-          <Card variant="outline" className="border-red-500/20 bg-red-500/5">
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-red-700">
-                <Shield className="h-4 w-4" /> Fraquezas (Weaknesses)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <Textarea 
-                placeholder="Nossas vulnerabilidades..." 
-                className="text-xs bg-transparent border-none focus-visible:ring-0 p-0 resize-none min-h-[60px]"
-                defaultValue={plan?.swot_weaknesses?.[0] || ""}
-                onBlur={(e) => setForm({ ...form, swot_weaknesses: [e.target.value] })}
-              />
-            </CardContent>
-          </Card>
-
-          <Card variant="outline" className="border-blue-500/20 bg-blue-500/5">
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-700">
-                <Zap className="h-4 w-4" /> Oportunidades
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <Textarea 
-                placeholder="Áreas de expansão..." 
-                className="text-xs bg-transparent border-none focus-visible:ring-0 p-0 resize-none min-h-[60px]"
-                defaultValue={plan?.swot_opportunities?.[0] || ""}
-                onBlur={(e) => setForm({ ...form, swot_opportunities: [e.target.value] })}
-              />
-            </CardContent>
-          </Card>
-
-          <Card variant="outline" className="border-amber-500/20 bg-amber-500/5">
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-amber-700">
-                <AlertTriangle className="h-4 w-4" /> Ameaças (Threats)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <Textarea 
-                placeholder="Concorrência ou riscos externos..." 
-                className="text-xs bg-transparent border-none focus-visible:ring-0 p-0 resize-none min-h-[60px]"
-                defaultValue={plan?.swot_threats?.[0] || ""}
-                onBlur={(e) => setForm({ ...form, swot_threats: [e.target.value] })}
-              />
-            </CardContent>
+          <Card className="p-4 bg-red-500/5">
+            <Label className="text-red-700 flex items-center gap-2"><Shield className="h-3 w-3" /> Fraquezas</Label>
+            <Textarea 
+              defaultValue={plan?.swot_weaknesses?.[0] || ""} 
+              onBlur={(e) => setForm({ ...form, swot_weaknesses: [e.target.value] })}
+              className="mt-2 text-xs h-20 bg-transparent border-none focus-visible:ring-0"
+            />
           </Card>
         </div>
-
-        <div className="space-y-2">
-          <Label>Estratégia da Conta</Label>
+        <div>
+          <Label>Estratégia</Label>
           <Textarea 
-            placeholder="Como vamos vencer e expandir nesta conta?" 
-            defaultValue={plan?.account_strategy || ""}
-            onBlur={(e) => setForm({ ...form, account_strategy: e.target.value })}
+            defaultValue={plan?.account_strategy || ""} 
+            onBlur={(e) => setForm({ ...form, account_strategy: e.target.value })} 
           />
         </div>
       </div>
     </div>
   );
 }
-
-export default AccountBasedSelling;
-
