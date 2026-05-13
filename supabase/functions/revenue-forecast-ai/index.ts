@@ -175,6 +175,7 @@ Deno.serve(async (req) => {
           monthly_goal: Math.round(agg.monthly_goal),
           goal_for_horizon: Math.round(goalForHorizon),
           gap_to_goal: Math.round(gapToGoal),
+          categories,
         },
         per_owner: list,
         narrative,
