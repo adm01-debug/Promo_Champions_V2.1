@@ -108,6 +108,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       onMouseLeave={onLeave}
       aria-describedby={pilotName ? tooltipId : undefined}
     >
+      <CarExhaust intensity={1} hidden={pitStop} />
       {pilotName && rank !== undefined && (
         <CarHelmetTooltip
           id={tooltipId}
