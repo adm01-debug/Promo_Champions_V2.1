@@ -122,7 +122,7 @@ export default function AdminComercial() {
       if (fetchError) throw fetchError;
 
       if (status === "approved") {
-        const newValues = request.new_values as any;
+        const newValues = request.new_values as Record<string, number | string>;
         const entityId = request.entity_id as string;
         
         if (request.type === "goal") {
