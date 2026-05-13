@@ -31,7 +31,7 @@ export function ReplayAuditTrail({ deadLetterId }: ReplayAuditTrailProps) {
     );
   }
 
-  const entries = data ?? [];
+  const entries = (data ?? []) as ReplayAuditEntry[];
   if (entries.length === 0) {
     return (
       <p className="text-[11px] text-muted-foreground italic py-1">

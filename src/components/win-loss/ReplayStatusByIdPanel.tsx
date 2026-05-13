@@ -294,8 +294,8 @@ export function ReplayStatusByIdPanel() {
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-foreground">
                 Trilha de auditoria de replays{" "}
-                {audit && audit.length > 0 && (
-                  <span className="text-muted-foreground">({audit.length})</span>
+                {audit && (audit as any[]).length > 0 && (
+                  <span className="text-muted-foreground">({(audit as any[]).length})</span>
                 )}
               </p>
               <ScrollArea className="max-h-72 rounded-md border bg-muted/10 p-2">

@@ -92,7 +92,7 @@ export function ReplayInvocationsPanel() {
   const [filter, setFilter] = useState("");
 
   const filtered = useMemo(() => {
-    const list = data ?? [];
+    const list = (data ?? []) as ReplayInvocation[];
     const q = filter.trim().toLowerCase();
     if (!q) return list;
     return list.filter((i) =>
