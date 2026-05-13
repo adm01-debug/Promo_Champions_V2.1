@@ -115,7 +115,7 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
-    }: any,
+    }: RechartsPrimitive.TooltipProps<number, string>,
     ref,
   ) => {
     const payload = payloadProp as any[] | undefined;
