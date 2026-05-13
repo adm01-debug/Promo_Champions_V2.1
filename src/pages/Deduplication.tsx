@@ -16,7 +16,7 @@ import { MergeConflictsResolver } from "@/components/admin/MergeConflictsResolve
 
 interface DuplicateGroup {
   key: string;
-  clients: { id: string; name: string; email: string | null; phone: string | null; company: string | null; total_value: number }[];
+  clients: { id: string; name: string; email: string | null; phone: string | null; company: string | null; total_value: number; tags?: string[] }[];
   similarity: number;
   match_type: "email" | "phone" | "name";
 }
@@ -54,7 +54,7 @@ const Deduplication = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clients")
-        .select("id, name, email, phone, company, total_value")
+        .select("id, name, email, phone, company, total_value, tags")
         .order("name")
         .limit(1000);
       
