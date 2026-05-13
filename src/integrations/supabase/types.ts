@@ -3230,6 +3230,60 @@ export type Database = {
           },
         ]
       }
+      client_renewals: {
+        Row: {
+          client_id: string
+          contract_end_date: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          probability: number | null
+          renewal_value: number | null
+          risk_level: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_id: string
+          contract_end_date: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          renewal_value?: number | null
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string
+          contract_end_date?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          renewal_value?: number | null
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_renewals_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "client_renewals_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           company: string | null
@@ -4363,6 +4417,63 @@ export type Database = {
             columns: ["moment_id"]
             isOneToOne: false
             referencedRelation: "call_critical_moments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cs_tickets: {
+        Row: {
+          assigned_to: string | null
+          client_id: string | null
+          created_at: string | null
+          description: string | null
+          external_id: string | null
+          id: string
+          priority: string | null
+          source: string | null
+          status: string | null
+          subject: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          priority?: string | null
+          source?: string | null
+          status?: string | null
+          subject: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          priority?: string | null
+          source?: string | null
+          status?: string | null
+          subject?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cs_tickets_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "cs_tickets_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
         ]
@@ -8322,6 +8433,7 @@ export type Database = {
           sale_id: string | null
           salesperson_id: string | null
           score: number | null
+          score_ces: number | null
           sent_at: string | null
           status: string
           survey_type: string
@@ -8335,6 +8447,7 @@ export type Database = {
           sale_id?: string | null
           salesperson_id?: string | null
           score?: number | null
+          score_ces?: number | null
           sent_at?: string | null
           status?: string
           survey_type?: string
@@ -8348,6 +8461,7 @@ export type Database = {
           sale_id?: string | null
           salesperson_id?: string | null
           score?: number | null
+          score_ces?: number | null
           sent_at?: string | null
           status?: string
           survey_type?: string
@@ -9636,6 +9750,51 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_usage: {
+        Row: {
+          client_id: string
+          feature_name: string
+          id: string
+          last_used_at: string | null
+          period_end: string | null
+          period_start: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          client_id: string
+          feature_name: string
+          id?: string
+          last_used_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          client_id?: string
+          feature_name?: string
+          id?: string
+          last_used_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_usage_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "product_usage_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
         ]

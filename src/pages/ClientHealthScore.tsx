@@ -1,15 +1,21 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { HeartPulse, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Users } from "lucide-react";
-import { differenceInDays } from "date-fns";
+import { 
+  HeartPulse, TrendingUp, TrendingDown, AlertTriangle, 
+  CheckCircle, Users, Ticket, RefreshCw, Activity,
+  Zap, Calendar, BarChart3
+} from "lucide-react";
+import { differenceInDays, format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface ClientHealth {
   id: string;
@@ -102,105 +108,262 @@ const ClientHealthScore = () => {
   return (
     <>
       <Helmet>
-        <title>Health Score de Clientes | Promo Champions</title>
-        <meta name="description" content="Acompanhe a saúde do relacionamento com cada cliente." />
+        <title>Customer Success 360 | Promo Champions</title>
+        <meta name="description" content="Gestão completa de pós-venda, renovações, tickets e saúde do cliente." />
       </Helmet>
       <PageTransition>
-        <div className="container max-w-5xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+        <div className="container max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
           <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-page-title font-display">💓 Health Score</h1>
-              <p className="text-sm text-muted-foreground mt-1">Saúde do relacionamento com seus clientes</p>
+              <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
+                <HeartPulse className="h-8 w-8 text-primary" />
+                Customer Success 360
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Visão holística da saúde, renovações e engajamento da base.</p>
             </div>
             <div className="flex gap-2">
-              <Badge variant="outline" className="text-xs gap-1 text-status-success border-status-success/30">
-                <CheckCircle className="h-3 w-3" /> {summary.healthy} Saudáveis
+              <Badge variant="outline" className="bg-status-success/5 text-status-success border-status-success/30">
+                {summary.healthy} Saudáveis
               </Badge>
-              <Badge variant="outline" className="text-xs gap-1 text-status-warning border-status-warning/30">
-                <AlertTriangle className="h-3 w-3" /> {summary.atRisk} Em Risco
+              <Badge variant="outline" className="bg-status-warning/5 text-status-warning border-status-warning/30">
+                {summary.atRisk} Em Risco
               </Badge>
-              <Badge variant="outline" className="text-xs gap-1 text-destructive border-destructive/30">
-                <TrendingDown className="h-3 w-3" /> {summary.critical} Críticos
+              <Badge variant="outline" className="bg-destructive/5 text-destructive border-destructive/30">
+                {summary.critical} Críticos
               </Badge>
             </div>
           </motion.div>
 
-          {clientsLoading ? (
-            <div className="space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
-          ) : healthData.length === 0 ? (
-            <Card className="p-8 text-center glass border-border/40">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-              <p className="font-display font-semibold">Sem dados de clientes</p>
-            </Card>
-          ) : (
-            <div className="space-y-2">
-              {healthData.map(client => {
-                const cfg = tierConfig[client.tier];
-                const Icon = cfg.icon;
-                return (
-                  <motion.div key={client.id} variants={itemVariants}>
-                    <Card className={cn("p-4 glass border-border/40 hover-lift-sm transition-all", client.tier === "critical" && "border-destructive/15")}>
-                      <div className="flex items-center gap-4">
-                        {/* Score Circle */}
-                        <div className={cn("relative w-14 h-14 rounded-full flex items-center justify-center shrink-0", cfg.bg)}>
-                          <span className={cn("font-display font-bold text-lg", cfg.color)}>{client.score}</span>
-                          <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 56 56">
-                            <circle cx="28" cy="28" r="24" fill="none" stroke="hsl(var(--border) / 0.2)" strokeWidth="3" />
-                            <circle
-                              cx="28" cy="28" r="24" fill="none"
-                              stroke="currentColor"
-                              className={cfg.color}
-                              strokeWidth="3"
-                              strokeDasharray={`${(client.score / 100) * 150.8} 150.8`}
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                        </div>
+          <Tabs defaultValue="health" className="space-y-6">
+            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-[600px] h-auto p-1 bg-muted/50 rounded-xl">
+              <TabsTrigger value="health" className="rounded-lg py-2">Health Score</TabsTrigger>
+              <TabsTrigger value="renewals" className="rounded-lg py-2">Renovações</TabsTrigger>
+              <TabsTrigger value="usage" className="rounded-lg py-2">Adoção (Uso)</TabsTrigger>
+              <TabsTrigger value="support" className="rounded-lg py-2">Tickets</TabsTrigger>
+            </TabsList>
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm truncate">{client.name}</p>
-                            <Badge variant="outline" className={cn("text-[9px] gap-1", cfg.color, cfg.border)}>
-                              <Icon className="h-2.5 w-2.5" /> {cfg.label}
-                            </Badge>
-                          </div>
-                          {client.company && <p className="text-[10px] text-muted-foreground">{client.company}</p>}
-                          {/* Factor bars */}
-                          <div className="flex gap-3 mt-2">
-                            {client.factors.map(f => (
-                              <div key={f.label} className="flex-1">
-                                <div className="flex justify-between text-[9px] text-muted-foreground mb-0.5">
-                                  <span>{f.label}</span>
-                                  <span>{f.value}/{f.max}</span>
-                                </div>
-                                <div className="h-1 bg-muted/50 rounded-full overflow-hidden">
-                                  <div
-                                    className={cn("h-full rounded-full transition-all", f.value / f.max >= 0.7 ? "bg-status-success" : f.value / f.max >= 0.4 ? "bg-status-warning" : "bg-destructive")}
-                                    style={{ width: `${(f.value / f.max) * 100}%` }}
-                                  />
-                                </div>
+            <TabsContent value="health" className="space-y-4">
+              {clientsLoading ? (
+                <div className="space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
+              ) : healthData.length === 0 ? (
+                <Card className="p-12 text-center glass border-border/40">
+                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-20" />
+                  <p className="text-muted-foreground">Nenhum dado de saúde disponível ainda.</p>
+                </Card>
+              ) : (
+                <div className="grid gap-3">
+                  {healthData.map(client => {
+                    const cfg = tierConfig[client.tier];
+                    const Icon = cfg.icon;
+                    return (
+                      <motion.div key={client.id} variants={itemVariants}>
+                        <Card className={cn("p-4 glass border-border/40 hover:border-primary/20 transition-all group")}>
+                          <div className="flex items-center gap-4">
+                            <div className={cn("relative w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-inner", cfg.bg)}>
+                              <span className={cn("font-display font-bold text-lg", cfg.color)}>{client.score}</span>
+                              <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 56 56">
+                                <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" strokeWidth="3" className="opacity-10" />
+                                <motion.circle
+                                  cx="28" cy="28" r="24" fill="none"
+                                  stroke="currentColor"
+                                  className={cfg.color}
+                                  strokeWidth="3"
+                                  initial={{ strokeDasharray: "0 150.8" }}
+                                  animate={{ strokeDasharray: `${(client.score / 100) * 150.8} 150.8` }}
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-sm truncate">{client.name}</p>
+                                <Badge variant="outline" className={cn("text-[9px] font-bold h-4 px-1.5 uppercase", cfg.color, cfg.border)}>
+                                  {cfg.label}
+                                </Badge>
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                              <div className="flex gap-3 mt-2">
+                                {client.factors.map(f => (
+                                  <div key={f.label} className="flex-1">
+                                    <div className="flex justify-between text-[9px] text-muted-foreground mb-1">
+                                      <span>{f.label}</span>
+                                      <span className="font-bold">{f.value}</span>
+                                    </div>
+                                    <div className="h-1 bg-muted rounded-full overflow-hidden">
+                                      <div
+                                        className={cn("h-full rounded-full transition-all", f.value / f.max >= 0.7 ? "bg-status-success" : f.value / f.max >= 0.4 ? "bg-status-warning" : "bg-destructive")}
+                                        style={{ width: `${(f.value / f.max) * 100}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
 
-                        <div className="text-right shrink-0">
-                          <p className="font-display font-bold text-sm">
-                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(client.totalValue)}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">receita total</p>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
+                            <div className="text-right shrink-0">
+                              <p className="font-display font-bold text-sm text-primary">
+                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(client.totalValue)}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">LTV</p>
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="renewals">
+              <RenewalView />
+            </TabsContent>
+
+            <TabsContent value="usage">
+              <UsageAnalyticsView />
+            </TabsContent>
+
+            <TabsContent value="support">
+              <SupportTicketsView />
+            </TabsContent>
+          </Tabs>
         </div>
       </PageTransition>
     </>
   );
 };
 
+function RenewalView() {
+  const { data: renewals, isLoading } = useQuery({
+    queryKey: ["cs-renewals"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("client_renewals")
+        .select("*, clients(name)")
+        .order("contract_end_date", { ascending: true });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (isLoading) return <div className="space-y-2">{[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>;
+
+  return (
+    <div className="grid gap-4">
+      {renewals?.length === 0 && <p className="text-center text-muted-foreground py-12 border-2 border-dashed rounded-xl">Nenhuma renovação pendente.</p>}
+      {renewals?.map(ren => (
+        <Card key={ren.id} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors border-l-4 border-l-primary">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-primary/10 rounded-lg"><RefreshCw className="h-5 w-5 text-primary" /></div>
+            <div>
+              <p className="font-bold text-sm">{(ren.clients as any)?.name}</p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                <Calendar className="h-3.5 w-3.5" />
+                Expira em {ren.contract_end_date ? format(parseISO(ren.contract_end_date), "dd 'de' MMM, yyyy", { locale: ptBR }) : 'N/A'}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="text-right">
+              <p className="text-sm font-bold">R$ {ren.renewal_value?.toLocaleString()}</p>
+              <Badge variant={ren.risk_level === 'high' ? 'destructive' : ren.risk_level === 'medium' ? 'secondary' : 'outline'} className="text-[10px] h-4">
+                Risco {ren.risk_level}
+              </Badge>
+            </div>
+            <div className="w-16">
+              <p className="text-[10px] text-muted-foreground text-center mb-1 font-bold">{ren.probability}% Prob.</p>
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${ren.probability}%` }} />
+              </div>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function UsageAnalyticsView() {
+  const { data: usage, isLoading } = useQuery({
+    queryKey: ["cs-usage"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_usage")
+        .select("*, clients(name)")
+        .order("usage_count", { ascending: false });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (isLoading) return <div className="space-y-2">{[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {usage?.map(u => (
+        <Card key={u.id} className="p-4 space-y-4 glass border-border/40">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-amber-500" />
+              <p className="font-bold text-xs">{(u.clients as any)?.name}</p>
+            </div>
+            <Badge variant="secondary" className="text-[9px]">{u.feature_name}</Badge>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-2xl font-black tracking-tighter">{u.usage_count}</p>
+              <p className="text-[10px] text-muted-foreground font-bold">EVENTOS NO PERÍODO</p>
+            </div>
+            <BarChart3 className="h-8 w-8 text-primary/20" />
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function SupportTicketsView() {
+  const { data: tickets, isLoading } = useQuery({
+    queryKey: ["cs-tickets"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cs_tickets")
+        .select("*, clients(name)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (isLoading) return <div className="space-y-2">{[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>;
+
+  return (
+    <div className="grid gap-3">
+      {tickets?.map(t => (
+        <Card key={t.id} className="p-4 hover:bg-muted/20 transition-all border-l-4 border-l-amber-500">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex gap-3">
+              <Ticket className="h-5 w-5 text-muted-foreground mt-1" />
+              <div>
+                <p className="text-xs font-bold text-primary">{(t.clients as any)?.name} · {t.source}</p>
+                <h4 className="font-bold text-sm mt-0.5">{t.subject}</h4>
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.description}</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <Badge className={cn("text-[10px] uppercase font-black px-2", 
+                t.status === 'open' ? 'bg-amber-500' : 'bg-emerald-500'
+              )}>
+                {t.status}
+              </Badge>
+              <span className="text-[10px] text-muted-foreground">{t.created_at ? format(parseISO(t.created_at), "dd/MM HH:mm") : '—'}</span>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 export default ClientHealthScore;
+
