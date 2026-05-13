@@ -132,7 +132,8 @@ const BIVendedor = () => {
               totalAchievements={data?.totalAchievements}
               currentStreak={data?.currentStreak}
               bestStreak={data?.bestStreak}
-              activitiesByType={data?.activitiesByType}
+               activitiesByType={data?.activitiesByType}
+              conversationInsights={data?.conversationInsights}
             />
           </div>
         </div>

@@ -2,11 +2,13 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, ShoppingBag, Clock, Activity, Flame, Award } from "lucide-react";
+import { TrendingUp, ShoppingBag, Clock, Activity, Flame, Award, Sparkles, MessagesSquare, AlertTriangle } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from "recharts";
+import { SentimentDistributionCard } from "@/components/conversation-intelligence/SentimentDistributionCard";
+import { ObjectionsTrendChart } from "@/components/conversation-intelligence/ObjectionsTrendChart";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
@@ -26,11 +28,19 @@ interface BIVendedorChartsProps {
   currentStreak?: number;
   bestStreak?: number;
   activitiesByType?: { type: string; count: number }[];
+  conversationInsights?: {
+    total: number;
+    sentiment: { sentiment: string; label: string; value: number; color: string }[];
+    topObjections: { label: string; count: number }[];
+    buyingSignalsTotal: number;
+    riskSignalsTotal: number;
+  };
 }
 
 export const BIVendedorCharts = React.memo(function BIVendedorCharts({
   salesByDay, salesByCategory, dealsByStage, pipelineValue, avgDaysInPipeline,
   totalActivities, totalAchievements, currentStreak, bestStreak, activitiesByType,
+  conversationInsights,
 }: BIVendedorChartsProps) {
   const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" };
 
@@ -166,6 +176,45 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
           </CardContent>
         </Card>
       </div>
+
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Sparkles className="h-5 w-5 text-primary" />
+          </div>
+          <h3 className="text-xl font-bold font-display">Conversational Intelligence</h3>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-4">
+          <KpiCard icon={<MessagesSquare className="h-4 w-4" />} label="Conversas Analisadas" value={conversationInsights?.total || 0} />
+          <KpiCard icon={<TrendingUp className="h-4 w-4 text-status-success" />} label="Sinais de Compra" value={conversationInsights?.buyingSignalsTotal || 0} />
+          <KpiCard icon={<AlertTriangle className="h-4 w-4 text-status-warning" />} label="Sinais de Risco" value={conversationInsights?.riskSignalsTotal || 0} />
+          <KpiCard
+            icon={<Sparkles className="h-4 w-4 text-primary" />}
+            label="Sentimento Positivo"
+            value={`${conversationInsights?.total && conversationInsights.total > 0
+              ? Math.round(((conversationInsights.sentiment.find((s) => s.sentiment === "positive")?.value ?? 0) / conversationInsights.total) * 100)
+              : 0}%`}
+          />
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SentimentDistributionCard data={conversationInsights?.sentiment || []} />
+          <ObjectionsTrendChart data={conversationInsights?.topObjections || []} />
+        </div>
+      </div>
     </>
   );
 });
+
+const KpiCard = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | string }) => (
+  <Card className="glass-card">
+    <CardContent className="pt-5">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium uppercase tracking-wider">
+        {icon}
+        {label}
+      </div>
+      <div className="mt-1 text-2xl font-black font-display tracking-tight">{value}</div>
+    </CardContent>
+  </Card>
+);

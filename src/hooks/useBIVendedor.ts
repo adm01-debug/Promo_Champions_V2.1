@@ -6,6 +6,11 @@ import {
   computeRanking, computeActivitiesByType, computeStreak,
   computePipelineByStage, buildSalesByDay, buildSalesByCategory,
 } from "./biVendedorHelpers";
+import { 
+  sentimentDistribution, 
+  topObjectionsAcross,
+  type ConversationAnalysis 
+} from "@/components/conversation-intelligence/conversationHelpers";
 
 export interface BIVendedorData {
   // Performance metrics
@@ -49,6 +54,15 @@ export interface BIVendedorData {
   // Recent data for charts
   salesByDay: { day: string; value: number }[];
   salesByCategory: { category: string; value: number }[];
+
+  // Conversation Intelligence
+  conversationInsights: {
+    total: number;
+    sentiment: { sentiment: string; label: string; value: number; color: string }[];
+    topObjections: { label: string; count: number }[];
+    buyingSignalsTotal: number;
+    riskSignalsTotal: number;
+  };
 }
 
 export function useBIVendedor() {
@@ -77,7 +91,8 @@ export function useBIVendedor() {
         activityGoalsRes,
         achievementsRes,
         allSalespeopleRes,
-        pipelineRes
+        pipelineRes,
+        convRes
       ] = await Promise.all([
         // Current month completed sales
         supabase
@@ -147,7 +162,16 @@ export function useBIVendedor() {
           .from("sales")
           .select("id, amount, status, created_at")
           .eq("salesperson_id", salesperson.id)
-          .in("status", ["pending", "qualified", "proposal", "negotiation"])
+          .in("status", ["pending", "qualified", "proposal", "negotiation"]),
+
+        // Conversation Analyses
+        supabase
+          .from("conversation_analyses")
+          .select("*")
+          .eq("analyzed_by", salesperson.id)
+          .gte("created_at", monthStart.toISOString())
+          .order("created_at", { ascending: false })
+          .limit(100)
       ]);
       
       const currentSales = currentSalesRes.data || [];
@@ -159,6 +183,7 @@ export function useBIVendedor() {
       const achievements = achievementsRes.data || [];
       const allSalespeople = allSalespeopleRes.data || [];
       const pipelineDeals = pipelineRes.data || [];
+      const convAnalyses = (convRes.data || []) as unknown as ConversationAnalysis[];
       
       // Calculate revenue metrics
       const totalRevenue = currentSales.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -220,6 +245,14 @@ export function useBIVendedor() {
       const salesByDay = buildSalesByDay(currentSales);
       const salesByCategory = buildSalesByCategory(currentSales);
       
+      const conversationInsights = {
+        total: convAnalyses.length,
+        sentiment: sentimentDistribution(convAnalyses),
+        topObjections: topObjectionsAcross(convAnalyses, 6),
+        buyingSignalsTotal: convAnalyses.reduce((acc, i) => acc + (i.buying_signals?.length ?? 0), 0),
+        riskSignalsTotal: convAnalyses.reduce((acc, i) => acc + (i.risk_signals?.length ?? 0), 0),
+      };
+
       return {
         totalRevenue,
         previousRevenue,
@@ -248,7 +281,8 @@ export function useBIVendedor() {
         totalAchievements: achievements.length,
         recentAchievements: achievements.slice(0, 5).map(a => ({ type: a.achievement_type, date: a.achievement_date })),
         salesByDay,
-        salesByCategory
+        salesByCategory,
+        conversationInsights
       };
     },
     enabled: !!salesperson?.id,
