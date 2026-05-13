@@ -26,7 +26,7 @@ interface ActivityItemRowProps {
 
 const ActivityItemRowInner = function ActivityItemRow({ activity, salesperson }: ActivityItemRowProps) {
   const [expanded, setExpanded] = useState(false);
-  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [auditLogs, setAuditLogs] = useState<Record<string, any>[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
   
   const Icon = activityIcons[activity.activity_type];
