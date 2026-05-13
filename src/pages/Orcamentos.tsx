@@ -39,14 +39,45 @@ export default function Orcamentos() {
     client_name: "", 
     title: "", 
     description: "", 
-    total_value: "", 
+    total_value: "0", 
     external_reference: "", 
     valid_until: "", 
     notes: "",
     sale_id: "",
-    subtotal: "",
-    discount_amount: ""
+    subtotal: "0",
+    discount_amount: "0",
+    currency: "BRL",
+    subscription_type: "one-time"
   });
+
+  const [items, setItems] = useState<any[]>([]);
+  const [newItem, setNewItem] = useState({ product_name: "", quantity: 1, unit_price: 0 });
+
+  const addItem = () => {
+    if (!newItem.product_name || newItem.unit_price <= 0) return;
+    const total = newItem.quantity * newItem.unit_price;
+    const updatedItems = [...items, { ...newItem, total_price: total }];
+    setItems(updatedItems);
+    
+    const newSubtotal = updatedItems.reduce((acc, curr) => acc + curr.total_price, 0);
+    setForm(f => ({
+      ...f,
+      subtotal: String(newSubtotal),
+      total_value: String(newSubtotal - Number(f.discount_amount))
+    }));
+    setNewItem({ product_name: "", quantity: 1, unit_price: 0 });
+  };
+
+  const removeItem = (index: number) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+    const newSubtotal = updatedItems.reduce((acc, curr) => acc + curr.total_price, 0);
+    setForm(f => ({
+      ...f,
+      subtotal: String(newSubtotal),
+      total_value: String(newSubtotal - Number(f.discount_amount))
+    }));
+  };
 
   const handleCreate = () => {
     if (!form.client_name || !form.title || !form.total_value) return;
