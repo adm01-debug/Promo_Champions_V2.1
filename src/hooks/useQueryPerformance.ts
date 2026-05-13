@@ -65,7 +65,7 @@ function addMetric(metric: QueryMetrics) {
     
     // Log to console only in dev mode
     if (alertConfig.logToConsole && import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.warn(
+      console.warn(
         `⚠️ [SLOW QUERY ALERT] ${metric.queryKey} took ${metric.duration}ms (threshold: ${alertConfig.threshold}ms)`,
         {
           queryKey: metric.queryKey,
