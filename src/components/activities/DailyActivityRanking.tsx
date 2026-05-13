@@ -297,4 +297,4 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
   );
 }
 
-export const DailyActivityRanking = React.memo(_DailyActivityRanking);
+export const DailyActivityRanking = React.memo(DailyActivityRankingComponent);
