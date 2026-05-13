@@ -163,4 +163,4 @@ const StreakRankingComponent = () => {
   );
 }
 
-export const StreakRanking = React.memo(_StreakRanking);
+export const StreakRanking = React.memo(StreakRankingComponent);
