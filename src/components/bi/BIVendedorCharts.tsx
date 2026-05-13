@@ -28,11 +28,19 @@ interface BIVendedorChartsProps {
   currentStreak?: number;
   bestStreak?: number;
   activitiesByType?: { type: string; count: number }[];
+  conversationInsights?: {
+    total: number;
+    sentiment: { sentiment: string; label: string; value: number; color: string }[];
+    topObjections: { label: string; count: number }[];
+    buyingSignalsTotal: number;
+    riskSignalsTotal: number;
+  };
 }
 
 export const BIVendedorCharts = React.memo(function BIVendedorCharts({
   salesByDay, salesByCategory, dealsByStage, pipelineValue, avgDaysInPipeline,
   totalActivities, totalAchievements, currentStreak, bestStreak, activitiesByType,
+  conversationInsights,
 }: BIVendedorChartsProps) {
   const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" };
 
