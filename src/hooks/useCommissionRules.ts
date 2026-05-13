@@ -17,6 +17,8 @@ export interface CommissionRule {
   salespeople?: { name: string } | null;
 }
 
+export type CommissionRuleUpsert = Partial<Omit<CommissionRule, "salespeople" | "created_at">>;
+
 export const useCommissionRules = () => {
   return useQuery({
     queryKey: ["commission-rules"],
@@ -34,10 +36,10 @@ export const useCommissionRules = () => {
 export const useUpsertCommissionRule = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (rule: any) => {
+    mutationFn: async (rule: CommissionRuleUpsert) => {
       const { data, error } = await supabase
         .from("commission_rules")
-        .upsert(rule)
+        .upsert([rule] as never)
         .select()
         .single();
       if (error) throw error;
@@ -47,7 +49,7 @@ export const useUpsertCommissionRule = () => {
       qc.invalidateQueries({ queryKey: ["commission-rules"] });
       toast.success("Regra salva com sucesso");
     },
-    onError: (error: any) => toast.error(`Erro ao salvar regra: ${error.message}`),
+    onError: (error: Error) => toast.error(`Erro ao salvar regra: ${error.message}`),
   });
 };
 
@@ -62,6 +64,6 @@ export const useDeleteCommissionRule = () => {
       qc.invalidateQueries({ queryKey: ["commission-rules"] });
       toast.success("Regra removida");
     },
-    onError: (error: any) => toast.error(`Erro ao remover regra: ${error.message}`),
+    onError: (error: Error) => toast.error(`Erro ao remover regra: ${error.message}`),
   });
 };

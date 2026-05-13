@@ -88,7 +88,7 @@ export const usePredictDealVelocity = () => {
       qc.invalidateQueries({ queryKey: ["deal-velocity-prediction"] });
       qc.invalidateQueries({ queryKey: ["deal-velocity-batch"] });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       const msg = err?.message || "";
       if (msg.includes("429")) toast.error("Limite de requisições atingido");
       else if (msg.includes("402")) toast.error("Créditos de IA esgotados");
