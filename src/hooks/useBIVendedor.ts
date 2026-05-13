@@ -6,6 +6,11 @@ import {
   computeRanking, computeActivitiesByType, computeStreak,
   computePipelineByStage, buildSalesByDay, buildSalesByCategory,
 } from "./biVendedorHelpers";
+import { 
+  sentimentDistribution, 
+  topObjectionsAcross,
+  type ConversationAnalysis 
+} from "@/components/conversation-intelligence/conversationHelpers";
 
 export interface BIVendedorData {
   // Performance metrics
@@ -49,6 +54,15 @@ export interface BIVendedorData {
   // Recent data for charts
   salesByDay: { day: string; value: number }[];
   salesByCategory: { category: string; value: number }[];
+
+  // Conversation Intelligence
+  conversationInsights: {
+    total: number;
+    sentiment: { sentiment: string; label: string; value: number; color: string }[];
+    topObjections: { label: string; count: number }[];
+    buyingSignalsTotal: number;
+    riskSignalsTotal: number;
+  };
 }
 
 export function useBIVendedor() {
