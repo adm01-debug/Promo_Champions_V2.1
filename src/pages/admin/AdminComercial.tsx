@@ -98,16 +98,16 @@ export default function AdminComercial() {
       oldValues: Record<string, unknown>;
       justification?: string;
     }) => {
-      const { error } = await supabase.from("commercial_approval_requests").insert({
-        requester_id: user?.id,
+      const { error } = await supabase.from("commercial_approval_requests").insert([{
+        requester_id: user?.id as string,
         type,
         entity_id: entityId,
         competence_month: currentMonthDate,
-        new_values: newValues,
-        old_values: oldValues,
+        new_values: newValues as any,
+        old_values: oldValues as any,
         justification,
         status: "pending"
-      });
+      }]);
       if (error) throw error;
     },
     onSuccess: () => {
