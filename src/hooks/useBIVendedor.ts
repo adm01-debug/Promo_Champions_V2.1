@@ -91,7 +91,8 @@ export function useBIVendedor() {
         activityGoalsRes,
         achievementsRes,
         allSalespeopleRes,
-        pipelineRes
+        pipelineRes,
+        convRes
       ] = await Promise.all([
         // Current month completed sales
         supabase
@@ -161,7 +162,16 @@ export function useBIVendedor() {
           .from("sales")
           .select("id, amount, status, created_at")
           .eq("salesperson_id", salesperson.id)
-          .in("status", ["pending", "qualified", "proposal", "negotiation"])
+          .in("status", ["pending", "qualified", "proposal", "negotiation"]),
+
+        // Conversation Analyses
+        supabase
+          .from("conversation_analyses")
+          .select("*")
+          .eq("analyzed_by", salesperson.id)
+          .gte("created_at", monthStart.toISOString())
+          .order("created_at", { ascending: false })
+          .limit(100)
       ]);
       
       const currentSales = currentSalesRes.data || [];
@@ -173,6 +183,7 @@ export function useBIVendedor() {
       const achievements = achievementsRes.data || [];
       const allSalespeople = allSalespeopleRes.data || [];
       const pipelineDeals = pipelineRes.data || [];
+      const convAnalyses = (convRes.data || []) as unknown as ConversationAnalysis[];
       
       // Calculate revenue metrics
       const totalRevenue = currentSales.reduce((sum, s) => sum + Number(s.amount), 0);
