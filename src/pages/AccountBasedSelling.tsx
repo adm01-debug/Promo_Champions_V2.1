@@ -481,7 +481,10 @@ function AccountPlanSection({ accountId }: { accountId: string }) {
           />
         </div>
       </div>
+      </div>
     </div>
   );
 }
+
+export default AccountBasedSelling;
 
