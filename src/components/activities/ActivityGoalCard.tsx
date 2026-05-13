@@ -303,4 +303,4 @@ const ActivityGoalCardComponent = ({ data, onEdit }: ActivityGoalCardProps) => {
   );
 }
 
-export const ActivityGoalCard = React.memo(_ActivityGoalCard);
+export const ActivityGoalCard = React.memo(ActivityGoalCardComponent);
