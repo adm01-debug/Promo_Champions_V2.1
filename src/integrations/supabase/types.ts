@@ -1382,6 +1382,47 @@ export type Database = {
           },
         ]
       }
+      buying_signals: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          id: string
+          occurred_at: string | null
+          signal_description: string | null
+          signal_type: string
+          significance_score: number | null
+          source_url: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          occurred_at?: string | null
+          signal_description?: string | null
+          signal_type: string
+          significance_score?: number | null
+          source_url?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          occurred_at?: string | null
+          signal_description?: string | null
+          signal_type?: string
+          significance_score?: number | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buying_signals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "enriched_company_intelligence"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_ab_assignments: {
         Row: {
           ab_test_id: string
@@ -3129,13 +3170,16 @@ export type Database = {
           company: string | null
           created_at: string
           email: string | null
+          email_verified: boolean | null
           id: string
+          last_enrichment_id: string | null
           last_interaction_at: string | null
           lat: number | null
           lead_source: string | null
           lng: number | null
           name: string
           phone: string | null
+          phone_verified: boolean | null
           total_value: number
           updated_at: string
           user_id: string | null
@@ -3144,13 +3188,16 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          email_verified?: boolean | null
           id?: string
+          last_enrichment_id?: string | null
           last_interaction_at?: string | null
           lat?: number | null
           lead_source?: string | null
           lng?: number | null
           name: string
           phone?: string | null
+          phone_verified?: boolean | null
           total_value?: number
           updated_at?: string
           user_id?: string | null
@@ -3159,13 +3206,16 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          email_verified?: boolean | null
           id?: string
+          last_enrichment_id?: string | null
           last_interaction_at?: string | null
           lat?: number | null
           lead_source?: string | null
           lng?: number | null
           name?: string
           phone?: string | null
+          phone_verified?: boolean | null
           total_value?: number
           updated_at?: string
           user_id?: string | null
@@ -5789,6 +5839,57 @@ export type Database = {
           id?: string
           score?: number
           tier?: string
+        }
+        Relationships: []
+      }
+      enriched_company_intelligence: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          domain: string | null
+          estimated_annual_revenue: string | null
+          funding_stage: string | null
+          headcount_range: string | null
+          hq_location: string | null
+          id: string
+          industry: string | null
+          last_enriched_at: string | null
+          linkedin_url: string | null
+          tech_stack: string[] | null
+          total_funding: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name: string
+          created_at?: string | null
+          domain?: string | null
+          estimated_annual_revenue?: string | null
+          funding_stage?: string | null
+          headcount_range?: string | null
+          hq_location?: string | null
+          id?: string
+          industry?: string | null
+          last_enriched_at?: string | null
+          linkedin_url?: string | null
+          tech_stack?: string[] | null
+          total_funding?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          domain?: string | null
+          estimated_annual_revenue?: string | null
+          funding_stage?: string | null
+          headcount_range?: string | null
+          hq_location?: string | null
+          id?: string
+          industry?: string | null
+          last_enriched_at?: string | null
+          linkedin_url?: string | null
+          tech_stack?: string[] | null
+          total_funding?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -8819,6 +8920,48 @@ export type Database = {
           id?: string
           name?: string
           resource?: string
+        }
+        Relationships: []
+      }
+      person_intelligence: {
+        Row: {
+          created_at: string | null
+          current_title: string | null
+          email: string
+          full_name: string | null
+          id: string
+          job_change_detected_at: string | null
+          last_verified_at: string | null
+          linkedin_url: string | null
+          previous_titles: Json | null
+          promotion_detected_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_title?: string | null
+          email: string
+          full_name?: string | null
+          id?: string
+          job_change_detected_at?: string | null
+          last_verified_at?: string | null
+          linkedin_url?: string | null
+          previous_titles?: Json | null
+          promotion_detected_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_title?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          job_change_detected_at?: string | null
+          last_verified_at?: string | null
+          linkedin_url?: string | null
+          previous_titles?: Json | null
+          promotion_detected_at?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -15270,6 +15413,39 @@ export type Database = {
           secret?: string | null
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      website_visitor_logs: {
+        Row: {
+          company_name: string | null
+          domain: string | null
+          duration_seconds: number | null
+          id: string
+          identified_at: string | null
+          ip_address: string | null
+          page_viewed: string | null
+          referrer: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          domain?: string | null
+          duration_seconds?: number | null
+          id?: string
+          identified_at?: string | null
+          ip_address?: string | null
+          page_viewed?: string | null
+          referrer?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          domain?: string | null
+          duration_seconds?: number | null
+          id?: string
+          identified_at?: string | null
+          ip_address?: string | null
+          page_viewed?: string | null
+          referrer?: string | null
         }
         Relationships: []
       }
