@@ -8,6 +8,7 @@ import { CoverageRatioGauge } from "./CoverageRatioGauge";
 import { WinRateBreakdownChart } from "./WinRateBreakdownChart";
 import { PipelineInspectionTable } from "./PipelineInspectionTable";
 import { QBRGeneratorPanel } from "./QBRGeneratorPanel";
+import { BuyingCommitteeMap } from "./BuyingCommitteeMap";
 import { AIForecastPanel } from "./AIForecastPanel";
 import { WinProbabilityCalibrationPanel } from "./calibration/WinProbabilityCalibrationPanel";
 import { WinProbabilityCalibratorPanel } from "./calibration/WinProbabilityCalibratorPanel";
@@ -30,6 +31,7 @@ import { PipelineStrategicReview } from "@/components/intelligence/PipelineStrat
 export const RevenueIntelligenceHub: FC = () => {
   const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
   const [activeTab, setActiveTab] = useState("briefing");
+  const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const { data, isLoading } = useRevenueIntelligenceHub(90, dimension);
   const inspection = useRunPipelineInspection();
 
@@ -89,6 +91,7 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
           <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
           <TabsTrigger value="qbr">QBR Automático</TabsTrigger>
+          <TabsTrigger value="buying-committee">Buying Committee</TabsTrigger>
         </TabsList>
         <TabsContent value="briefing" className="mt-4">
           <BriefingHub />
@@ -152,6 +155,10 @@ export const RevenueIntelligenceHub: FC = () => {
             flagCounts={data.pipeline_inspection.flag_counts}
             onRunInspection={() => inspection.mutate()}
             isRunning={inspection.isPending}
+            onSelectSale={(id) => {
+              setSelectedSaleId(id);
+              setActiveTab("buying-committee");
+            }}
           />
         </TabsContent>
         <TabsContent value="quota" className="mt-4">
@@ -162,6 +169,15 @@ export const RevenueIntelligenceHub: FC = () => {
         </TabsContent>
         <TabsContent value="qbr" className="mt-4">
           <QBRGeneratorPanel />
+        </TabsContent>
+        <TabsContent value="buying-committee" className="mt-4">
+          {selectedSaleId ? (
+            <BuyingCommitteeMap saleId={selectedSaleId} />
+          ) : (
+            <div className="py-12 text-center text-sm text-muted-foreground bg-card/50 rounded-xl border border-dashed border-border">
+              Selecione um deal na aba "Pipeline Inspection" para visualizar o comitê de compra.
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </motion.div>

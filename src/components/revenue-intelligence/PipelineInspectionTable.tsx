@@ -11,6 +11,7 @@ interface Props {
   flagCounts: Record<string, number>;
   onRunInspection: () => void;
   isRunning: boolean;
+  onSelectSale?: (saleId: string) => void;
 }
 
 const flagLabels: Record<string, string> = {
@@ -26,7 +27,7 @@ const flagSeverity: Record<string, string> = {
   low: "bg-blue-500/10 text-blue-500 border-blue-500/30",
 };
 
-export const PipelineInspectionTable: FC<Props> = ({ data, flagCounts, onRunInspection, isRunning }) => {
+export const PipelineInspectionTable: FC<Props> = ({ data, flagCounts, onRunInspection, isRunning, onSelectSale }) => {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
@@ -62,7 +63,11 @@ export const PipelineInspectionTable: FC<Props> = ({ data, flagCounts, onRunInsp
               </TableHeader>
               <TableBody>
                 {data.map((d) => (
-                  <TableRow key={d.id}>
+                  <TableRow 
+                    key={d.id}
+                    className={onSelectSale ? "cursor-pointer hover:bg-muted/50" : ""}
+                    onClick={() => onSelectSale?.(d.sale_id)}
+                  >
                     <TableCell><Badge variant="outline">{d.stage}</Badge></TableCell>
                     <TableCell className={d.days_in_stage > 14 ? "text-destructive font-medium" : ""}>
                       {d.days_in_stage}d

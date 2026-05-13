@@ -12,9 +12,10 @@ import { categoryColor, categoryLabel, formatBRL } from "./forecastHelpers";
 
 interface Props {
   forecastId?: string;
+  onSelectSale?: (saleId: string) => void;
 }
 
-export const ForecastDealsTable: FC<Props> = ({ forecastId }) => {
+export const ForecastDealsTable: FC<Props> = ({ forecastId, onSelectSale }) => {
   const [filter, setFilter] = useState<ForecastCategory | "all">("all");
   const { data, isLoading } = useForecastContributions(forecastId);
   const rows = (data ?? []).filter((r) => filter === "all" || r.category === filter);
@@ -51,7 +52,11 @@ export const ForecastDealsTable: FC<Props> = ({ forecastId }) => {
               </TableHeader>
               <TableBody>
                 {rows.map((r) => (
-                  <TableRow key={r.id}>
+                  <TableRow 
+                    key={r.id}
+                    className={onSelectSale ? "cursor-pointer hover:bg-muted/50" : ""}
+                    onClick={() => onSelectSale?.(r.sale_id)}
+                  >
                     <TableCell>
                       <Badge variant="outline" className={categoryColor[r.category]}>
                         {categoryLabel[r.category]}
