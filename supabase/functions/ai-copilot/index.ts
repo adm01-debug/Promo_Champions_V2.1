@@ -154,13 +154,20 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ""}`;
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos insuficientes." }), {
-          status: 402,
+        return new Response(JSON.stringify({ error: "Créditos insuficientes.", suggestion: "" }), {
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
+      // Graceful fallback for 403 (AI disabled) and other 5xx — avoid blank screens
+      if (response.status === 403 || response.status >= 500) {
+        return new Response(
+          JSON.stringify({ suggestion: "", disabled: response.status === 403, fallback: true }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
       throw new Error(`AI gateway error: ${response.status}`);
     }
 
