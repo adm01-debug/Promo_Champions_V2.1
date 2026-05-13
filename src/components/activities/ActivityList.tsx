@@ -229,4 +229,4 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   );
 }
 
-export const ActivityList = React.memo(_ActivityList);
+export const ActivityList = React.memo(ActivityListComponent);
