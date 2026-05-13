@@ -18,7 +18,6 @@ import { TrackTireMarks } from './track/TrackTireMarks';
 import { TrackDustParticles } from './track/TrackDustParticles';
 import { LeaderGapIndicator } from './LeaderGapIndicator';
 import { SlipstreamLines } from './SlipstreamLines';
-import { CarExhaust } from './CarExhaust';
 import { RaceCountdownBadge } from './RaceCountdownBadge';
 import { RaceEventTicker, type RaceTickerEvent } from './RaceEventTicker';
 import { DRSZoneOverlay } from './DRSZoneOverlay';
@@ -31,6 +30,7 @@ import { RaceMuteToggle } from './RaceMuteToggle';
 import { RaceReplayButton } from './RaceReplayButton';
 import { RaceEasterEggs } from './RaceEasterEggs';
 import { RankBadge } from './RankBadge';
+
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useRaceReplay } from '@/hooks/race/useRaceReplay';
