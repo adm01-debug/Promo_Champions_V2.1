@@ -98,7 +98,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
             await supabase.from("tasks").insert([{
               title: `${action.params.title} - ${deal.client_name}`,
               priority: (action.params.priority || "medium") as "high" | "medium" | "low",
-              task_type: (action.params.task_type || "follow_up") as "call" | "email" | "follow_up" | "meeting" | "other" | "proposal",
+              task_type: (action.params.task_type || "follow_up") as "call" | "email" | "follow_up" | "meeting" | "other" | "proposal" | "linkedin" | "whatsapp",
               sale_id: deal.id,
               salesperson_id: deal.salesperson_id,
               due_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
