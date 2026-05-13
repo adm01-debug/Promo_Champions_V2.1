@@ -12,12 +12,12 @@ export interface SLAConfig {
 }
 
 export const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
-  { stage: "lead", maxHours: 4, escalationHours: 2, label: "Lead" },
-  { stage: "qualified", maxHours: 24, escalationHours: 8, label: "Qualificado" },
-  { stage: "proposal", maxHours: 48, escalationHours: 24, label: "Proposta" },
-  { stage: "negotiation", maxHours: 72, escalationHours: 48, label: "Negociação" },
-  { stage: "won", maxHours: 120, escalationHours: 72, label: "Ganho" },
-  { stage: "lost", maxHours: 240, escalationHours: 120, label: "Perdido" },
+  { stage: "lead", maxHours: 24, escalationHours: 12, label: "Lead" },
+  { stage: "qualified", maxHours: 48, escalationHours: 24, label: "Qualificado" },
+  { stage: "proposal", maxHours: 72, escalationHours: 36, label: "Proposta" },
+  { stage: "negotiation", maxHours: 96, escalationHours: 48, label: "Negociação" },
+  { stage: "won", maxHours: 168, escalationHours: 120, label: "Ganho" },
+  { stage: "lost", maxHours: 240, escalationHours: 168, label: "Perdido" },
 ];
 
 export interface DealSLAStatus {
