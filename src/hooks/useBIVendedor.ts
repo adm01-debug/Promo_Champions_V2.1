@@ -245,6 +245,14 @@ export function useBIVendedor() {
       const salesByDay = buildSalesByDay(currentSales);
       const salesByCategory = buildSalesByCategory(currentSales);
       
+      const conversationInsights = {
+        total: convAnalyses.length,
+        sentiment: sentimentDistribution(convAnalyses),
+        topObjections: topObjectionsAcross(convAnalyses, 6),
+        buyingSignalsTotal: convAnalyses.reduce((acc, i) => acc + (i.buying_signals?.length ?? 0), 0),
+        riskSignalsTotal: convAnalyses.reduce((acc, i) => acc + (i.risk_signals?.length ?? 0), 0),
+      };
+
       return {
         totalRevenue,
         previousRevenue,
@@ -273,7 +281,8 @@ export function useBIVendedor() {
         totalAchievements: achievements.length,
         recentAchievements: achievements.slice(0, 5).map(a => ({ type: a.achievement_type, date: a.achievement_date })),
         salesByDay,
-        salesByCategory
+        salesByCategory,
+        conversationInsights
       };
     },
     enabled: !!salesperson?.id,
