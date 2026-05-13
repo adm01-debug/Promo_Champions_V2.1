@@ -80,7 +80,14 @@ export const useCreateCoachingSession = () => {
       if (!user) throw new Error("Não autenticado");
       const { data, error } = await supabase
         .from("coaching_sessions")
-        .insert({ ...input, coach_id: user.id })
+        .insert({
+          salesperson_id: input.salesperson_id,
+          scheduled_at: input.scheduled_at,
+          duration_min: input.duration_min,
+          focus_skills: input.focus_skills,
+          agenda: input.agenda as any,
+          coach_id: user.id
+        })
         .select()
         .single();
       if (error) throw error;
@@ -109,7 +116,7 @@ export const useUpdateCoachingSession = () => {
     mutationFn: async ({ id, ...updates }: UpdateSessionInput) => {
       const { data, error } = await supabase
         .from("coaching_sessions")
-        .update(updates)
+        .update(updates as any)
         .eq("id", id)
         .select()
         .single();
