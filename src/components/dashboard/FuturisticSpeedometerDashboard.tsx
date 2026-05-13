@@ -88,8 +88,8 @@ export const FuturisticSpeedometerDashboard = () => {
 
   const targetSalespersonId = salespersonFilter === ME ? currentUser?.id : salespersonFilter === ALL_SALESPEOPLE ? undefined : salespersonFilter;
 
-  const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching, refetch: refetchKPIs } = useDashboardKPIsPeriod(period, targetSalespersonId);
-  const { data: goals } = useGoalsDashboard(targetSalespersonId);
+  const { data: kpis, isLoading: kpisLoading, isFetching: kpisFetching } = useDashboardKPIsPeriod(period, targetSalespersonId);
+  const { data: goals } = useGoalsDashboard();
 
   useEffect(() => {
     if (kpis) setLastUpdate(new Date());
@@ -187,16 +187,16 @@ export const FuturisticSpeedometerDashboard = () => {
     toast.info("Histórico de alertas removido");
   }, [user?.id]);
 
-  const revenue = kpis?.current.revenue ?? 0;
-  const prevRevenue = kpis?.previous.revenue ?? 0;
-  const sales = kpis?.current.salesCount ?? 0;
-  const prevSales = kpis?.previous.salesCount ?? 0;
+  const revenue = kpis?.current.totalRevenue ?? 0;
+  const prevRevenue = kpis?.previous.totalRevenue ?? 0;
+  const sales = kpis?.current.totalSales ?? 0;
+  const prevSales = kpis?.previous.totalSales ?? 0;
   const conversion = kpis?.current.conversionRate ?? 0;
   const ticket = kpis?.current.avgTicket ?? 0;
   const prevTicket = kpis?.previous.avgTicket ?? 0;
 
-  const goalAmount = customMax || goals?.monthly_revenue_goal || 100000;
-  const salesMax = customMax || goals?.monthly_sales_goal || 100;
+  const goalAmount = customMax || goals?.totalGoal || 100000;
+  const salesMax = customMax || (goals ? Math.round(goals.totalGoal / 1000) : 100); 
   const conversionMax = customMax || 50; 
   const ticketMax = customMax || 5000;
 
