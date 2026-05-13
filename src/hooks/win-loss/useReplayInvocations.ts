@@ -24,7 +24,7 @@ export function useReplayInvocations(limit = 100) {
   return useQuery<ReplayInvocation[]>({
     queryKey: ["winloss-replay-invocations", limit],
     staleTime: 15_000,
-    queryFn: async () => {
+    queryFn: async (): Promise<ReplayInvocation[]> => {
       const { data, error } = await supabase
         .from("winloss_webhook_replay_invocations")
         .select("*")
@@ -32,7 +32,7 @@ export function useReplayInvocations(limit = 100) {
         .limit(limit);
       
       if (error) throw error;
-      return (data || []) as ReplayInvocation[];
+      return (data || []) as any[];
     },
   });
 }

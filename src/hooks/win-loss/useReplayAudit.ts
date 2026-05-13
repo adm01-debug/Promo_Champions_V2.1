@@ -26,7 +26,7 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
     queryKey: ["winloss-replay-audit", "dlq", deadLetterId],
     enabled: !!deadLetterId,
     staleTime: 10_000,
-    queryFn: async () => {
+    queryFn: async (): Promise<ReplayAuditEntry[]> => {
       const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
@@ -52,7 +52,7 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
     queryKey: ["winloss-replay-audit", "latest-by-dlq", sortedKey],
     enabled: deadLetterIds.length > 0,
     staleTime: 10_000,
-    queryFn: async () => {
+    queryFn: async (): Promise<Map<string, ReplayAuditEntry>> => {
       const { data, error } = await supabase
         .from("winloss_webhook_replay_audit")
         .select("*")
@@ -61,7 +61,7 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
         .limit(500);
 
       if (error) throw error;
-      const entries = (data || []) as ReplayAuditEntry[];
+      const entries = (data || []) as any[];
       const map = new Map<string, ReplayAuditEntry>();
       for (const r of entries) {
         if (!r.dead_letter_id) continue;
