@@ -3,6 +3,8 @@ import { forwardRef, memo, useEffect, useRef, useState } from 'react';
 import { CarLiveryOverlay } from './CarLiveryOverlay';
 import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
+import { CarExhaust } from './CarExhaust';
+
 
 interface RaceCarProps {
   /** Número do piloto. Quando ausente/null, nenhum numeral é renderizado no chassi. */
