@@ -69,7 +69,7 @@ export const useStageBaselinesAll = () =>
   useQuery({
     queryKey: ["stage-baselines-all"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("stage_velocity_baselines")
         .select("*")
         .eq("segment", "all")
@@ -101,7 +101,7 @@ export const useStageBottlenecks = () =>
     queryKey: ["stage-bottlenecks"],
     queryFn: async () => {
       const [baselinesRes, alertsRes] = await Promise.all([
-        (supabase as any)
+        supabase
           .from("stage_velocity_baselines")
           .select("stage, p50_hours, p75_hours, p90_hours, sample_size")
           .eq("segment", "all"),

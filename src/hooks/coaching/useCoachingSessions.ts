@@ -31,14 +31,13 @@ export interface SessionPrep {
   suggested_focus_skills: string[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
+// Types are already provided by the auto-generated Supabase client
 
 export const useCoachingSessions = () => {
   return useQuery<CoachingSession[]>({
     queryKey: ["coaching-sessions"],
     queryFn: async () => {
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from("coaching_sessions")
         .select("*, salesperson:salespeople!coaching_sessions_salesperson_id_fkey(name, avatar_url)")
         .order("scheduled_at", { ascending: false })
@@ -79,9 +78,16 @@ export const useCreateCoachingSession = () => {
     mutationFn: async (input: CreateSessionInput) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Não autenticado");
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from("coaching_sessions")
-        .insert({ ...input, coach_id: user.id })
+        .insert({
+          salesperson_id: input.salesperson_id,
+          scheduled_at: input.scheduled_at,
+          duration_min: input.duration_min,
+          focus_skills: input.focus_skills,
+          agenda: input.agenda as any,
+          coach_id: user.id
+        })
         .select()
         .single();
       if (error) throw error;
@@ -108,9 +114,9 @@ export const useUpdateCoachingSession = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...updates }: UpdateSessionInput) => {
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from("coaching_sessions")
-        .update(updates)
+        .update(updates as any)
         .eq("id", id)
         .select()
         .single();

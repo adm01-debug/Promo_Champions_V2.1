@@ -84,7 +84,7 @@ export function CustomerSuccess360Hub() {
   const qbrs = data?.qbrs ?? [];
   const orders = data?.orders ?? [];
   const accountById = useMemo(() => {
-    const map = new Map<string, any>();
+    const map = new Map<string, typeof accounts[0]>();
     accounts.forEach(a => map.set(a.id, a));
     return map;
   }, [accounts]);
