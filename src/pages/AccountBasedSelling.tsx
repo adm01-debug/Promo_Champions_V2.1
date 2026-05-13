@@ -481,7 +481,6 @@ function AccountPlanSection({ accountId }: { accountId: string }) {
           />
         </div>
       </div>
-      </div>
     </div>
   );
 }
