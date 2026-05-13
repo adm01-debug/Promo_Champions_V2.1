@@ -90,6 +90,12 @@ Deno.serve(async (req) => {
       optimistic: Math.round(agg.optimistic),
     };
 
+    const categories = {
+      commit: Math.round(agg.commit_amount),
+      best_case: Math.round(agg.best_case_amount),
+      pipeline: Math.round(agg.pipeline_amount),
+    };
+
     let narrative = "";
     let risks: string[] = [];
     let opportunities: string[] = [];
