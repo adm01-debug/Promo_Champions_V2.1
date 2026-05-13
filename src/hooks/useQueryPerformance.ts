@@ -222,7 +222,7 @@ export function logQueryMetrics() {
   
   console.group("📊 Query Performance Metrics");
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Total Queries: ${metrics.totalQueries}`);
+    console.info(`Total Queries: ${metrics.totalQueries}`);
   }
   if (import.meta.env.DEV) {
     if (import.meta.env.DEV) console.info(`Avg Duration: ${metrics.avgDuration}ms`);
