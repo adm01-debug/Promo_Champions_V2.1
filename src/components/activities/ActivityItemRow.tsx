@@ -176,4 +176,4 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
     </div>
   );
 }
-export const ActivityItemRow = memo(ActivityItemRowInner);
+export const ActivityItemRow = memo(ActivityItemRowComponent);
