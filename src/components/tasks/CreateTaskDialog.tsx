@@ -38,7 +38,7 @@ const taskSchema = z.object({
   client_id: z.string().optional(),
   sale_id: z.string().optional(),
   priority: z.enum(["high", "medium", "low"]),
-  task_type: z.enum(["call", "meeting", "follow_up", "email", "proposal", "other"]),
+  task_type: z.enum(["call", "meeting", "follow_up", "email", "proposal", "linkedin", "whatsapp", "other"]),
   due_date: z.string().min(1, "Data é obrigatória"),
   due_time: z.string().optional(),
 });
@@ -186,6 +186,8 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                         <SelectItem value="follow_up">Follow-up</SelectItem>
                         <SelectItem value="email">E-mail</SelectItem>
                         <SelectItem value="proposal">Proposta</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
                         <SelectItem value="other">Outro</SelectItem>
                       </SelectContent>
                     </Select>
