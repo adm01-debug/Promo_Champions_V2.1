@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuotes, useQuoteSummary, useCreateQuote, useUpdateQuoteStatus, useDeleteQuote, QUOTE_STATUSES, useDealsForQuotes, type Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/contexts/AuthContext";
-import { FileText, Plus, Send, CheckCircle2, AlertTriangle } from "lucide-react";
+import { 
+  FileText, Plus, Send, CheckCircle2, AlertTriangle, 
+  ShoppingBag, Trash2, Calculator, Settings2, DollarSign,
+  TrendingUp, Activity
+} from "lucide-react";
 import { QuoteDetailDialog } from "@/components/quotes/QuoteDetailDialog";
 import { QuoteCard } from "@/components/quotes/QuoteCard";
 import { motion } from "framer-motion";
