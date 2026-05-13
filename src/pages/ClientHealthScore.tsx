@@ -356,7 +356,7 @@ function SupportTicketsView() {
               )}>
                 {t.status}
               </Badge>
-              <span className="text-[10px] text-muted-foreground">{format(parseISO(t.created_at), "dd/MM HH:mm")}</span>
+              <span className="text-[10px] text-muted-foreground">{t.created_at ? format(parseISO(t.created_at), "dd/MM HH:mm") : '—'}</span>
             </div>
           </div>
         </Card>
