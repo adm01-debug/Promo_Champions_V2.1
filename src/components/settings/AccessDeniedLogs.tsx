@@ -36,7 +36,7 @@ export function AccessDeniedLogs() {
         toast({ title: "Nenhum pico detectado", description: data?.message || "Não há picos de acesso negado no momento." });
       }
     } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error("Error testing alert:", error);
+      console.error("Error testing alert:", error);
       toast({ title: "Erro ao testar alerta", description: error instanceof Error ? error.message : "Não foi possível executar o teste.", variant: "destructive" });
     } finally {
       setIsTestingAlert(false);

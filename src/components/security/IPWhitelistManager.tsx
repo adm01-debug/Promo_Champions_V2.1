@@ -52,7 +52,7 @@ export function IPWhitelistManager() {
       setValidationError(null);
     },
     onError: (error: Error & { code?: string }) => {
-      if (import.meta.env.DEV) console.error("Error adding IP:", error);
+      console.error("Error adding IP:", error);
       toast.error(error.code === "23505" ? "Este IP já está no whitelist" : "Erro ao adicionar IP");
     },
   });
@@ -63,7 +63,7 @@ export function IPWhitelistManager() {
       if (error) throw error;
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["ip-whitelist"] }); toast.success("IP removido do whitelist"); },
-    onError: (error) => { if (import.meta.env.DEV) console.error("Error removing IP:", error); toast.error("Erro ao remover IP"); },
+    onError: (error) => { console.error("Error removing IP:", error); toast.error("Erro ao remover IP"); },
   });
 
   const handleAddIP = () => {

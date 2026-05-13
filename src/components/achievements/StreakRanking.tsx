@@ -44,7 +44,7 @@ const getRankBadge = (rank: number) => {
   return <span className="text-sm text-muted-foreground font-medium">#{rank}</span>;
 };
 
-function _StreakRanking() {
+const StreakRankingComponent = () => {
   const { data: ranking, isLoading } = useStreakRanking();
   const { data: xpData } = useAllSalespeopleXP();
 
@@ -163,4 +163,4 @@ function _StreakRanking() {
   );
 }
 
-export const StreakRanking = React.memo(_StreakRanking);
+export const StreakRanking = React.memo(StreakRankingComponent);

@@ -69,7 +69,7 @@ const getStreakDisplay = (current: number, best: number) => {
   };
 };
 
-function _ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
+const ActivityGoalCardComponent = ({ data, onEdit }: ActivityGoalCardProps) => {
   const { celebrate } = useCelebration();
   const { data: streakData } = useSalespersonStreak(data.salesperson_id);
   const currentStreak = streakData?.current ?? 0;
@@ -303,4 +303,4 @@ function _ActivityGoalCard({ data, onEdit }: ActivityGoalCardProps) {
   );
 }
 
-export const ActivityGoalCard = React.memo(_ActivityGoalCard);
+export const ActivityGoalCard = React.memo(ActivityGoalCardComponent);

@@ -83,7 +83,7 @@ export function useUpdatePortfolioSetting() {
     },
     onError: (error) => {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error updating setting:', error);
+        console.error('Error updating setting:', error);
       }
       toast.error('Erro ao salvar configuração');
     },

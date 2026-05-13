@@ -112,9 +112,9 @@ export function TodaysCadenceTasks() {
     if (!notesTaskId) return;
     
     const task = tasks?.find(t => t.id === notesTaskId);
-    const step = task?.cadence_step as any;
+    const step = task?.cadence_step as Record<string, unknown> | null;
     
-    const payload: any = { 
+    const payload = { 
       taskId: notesTaskId, 
       notes: noteText.trim() || undefined 
     };
@@ -125,21 +125,21 @@ export function TodaysCadenceTasks() {
         try {
           await supabase
             .from("cadence_tasks")
-            .update({ call_result: callResult })
+            .update({ call_result: callResult } as any)
             .eq("id", notesTaskId);
             
           // Registrar log detalhado
-          const prospectCadence = task?.prospect_cadence as any;
+          const prospectCadence = task?.prospect_cadence as Record<string, unknown> | null;
           if (prospectCadence?.sale_id) {
-            await applyOutcomeRules(callResult, prospectCadence.sale_id, prospectCadence.id);
+            await applyOutcomeRules(callResult, String(prospectCadence.sale_id), String(prospectCadence.id));
             
-            await supabase.from("lead_detailed_logs").insert({
-              client_id: prospectCadence.sale_id,
+            await supabase.from("lead_detailed_logs").insert([{
+              client_id: String(prospectCadence.sale_id),
               event_type: 'interaction',
               action: 'Call Logged',
-              details: { result: callResult, notes: noteText },
+              details: { result: callResult, notes: noteText } as any,
               created_by: (await supabase.auth.getUser()).data.user?.id
-            });
+            }]);
           }
         } catch (err) {
           console.error("Erro ao salvar resultado da ligação:", err);

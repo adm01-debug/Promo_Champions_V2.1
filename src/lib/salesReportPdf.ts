@@ -164,7 +164,7 @@ export async function generateSalesReport(data: ReportData) {
     doc.save(`relatorio-vendas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
     toast.success("Relatório PDF gerado com sucesso!");
   } catch (error) {
-    if (import.meta.env.DEV) console.error("PDF generation error:", error);
+    console.error("PDF generation error:", error);
     toast.error("Erro ao gerar relatório PDF");
   }
 }

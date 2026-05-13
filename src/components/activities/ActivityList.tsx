@@ -36,7 +36,7 @@ interface ActivityListProps {
   showFilters?: boolean;
 }
 
-function _ActivityList({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) {
+const ActivityListComponent = ({ limit = 100, showHeader = true, showPagination = true, showFilters = true }: ActivityListProps) => {
   const { data: activities, isLoading } = useRecentActivities(limit);
   const { data: salespeople } = useSalespeople();
 
@@ -229,4 +229,4 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
   );
 }
 
-export const ActivityList = React.memo(_ActivityList);
+export const ActivityList = React.memo(ActivityListComponent);

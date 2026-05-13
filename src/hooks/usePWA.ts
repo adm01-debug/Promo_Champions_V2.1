@@ -89,7 +89,7 @@ export function usePWA(): UsePWAReturn {
         })
         .catch((error) => {
           if (import.meta.env.DEV) {
-            if (import.meta.env.DEV) console.warn('Service Worker registration failed:', error);
+            console.warn('Service Worker registration failed:', error);
           }
         });
     }
@@ -113,7 +113,7 @@ export function usePWA(): UsePWAReturn {
   const installApp = useCallback(async (): Promise<boolean> => {
     if (!deferredPrompt) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.warn('No install prompt available');
+        console.warn('No install prompt available');
       }
       return false;
     }
@@ -132,7 +132,7 @@ export function usePWA(): UsePWAReturn {
       return false;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Install failed:', error);
+        console.error('Install failed:', error);
       }
       return false;
     }
@@ -151,7 +151,7 @@ export function usePWA(): UsePWAReturn {
     if (registration) {
       registration.update().catch((error) => {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error('Update check failed:', error);
+          console.error('Update check failed:', error);
         }
       });
     }

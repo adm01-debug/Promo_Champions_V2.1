@@ -25,7 +25,7 @@ export function useWebAuthn() {
       if (error) throw error;
       setCredentials(data.credentials || []);
     } catch (error) {
-      if (import.meta.env.DEV) console.error('Error loading credentials:', error);
+      console.error('Error loading credentials:', error);
     }
   }, [user?.id]);
 
@@ -52,7 +52,7 @@ export function useWebAuthn() {
       await loadCredentials();
       return true;
     } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Passkey registration error:', error);
+      console.error('Passkey registration error:', error);
       const err = error instanceof Error ? error : new Error('Unknown error');
       if (err.name === 'NotAllowedError') toast.error('Registro cancelado pelo usuário');
       else if (err.name === 'InvalidStateError') toast.error('Esta passkey já está registrada');
@@ -92,7 +92,7 @@ export function useWebAuthn() {
       toast.success('Login com passkey realizado!');
       return true;
     } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Passkey login error:', error);
+      console.error('Passkey login error:', error);
       const err = error instanceof Error ? error : new Error('Unknown error');
       if (err.name === 'NotAllowedError') toast.error('Autenticação cancelada pelo usuário');
       else toast.error(err.message || 'Erro ao fazer login com passkey');
@@ -110,7 +110,7 @@ export function useWebAuthn() {
       await loadCredentials();
       return true;
     } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Error deleting passkey:', error);
+      console.error('Error deleting passkey:', error);
       toast.error(error instanceof Error ? error.message : 'Erro ao remover passkey');
       return false;
     } finally { setIsLoading(false); }

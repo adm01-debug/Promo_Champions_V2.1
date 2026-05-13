@@ -52,7 +52,7 @@ export const useReauthentication = () => {
       return data.id;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error creating reauth request:', error);
+        console.error('Error creating reauth request:', error);
       }
       toast.error('Erro ao solicitar re-autenticação');
       return null;
@@ -92,7 +92,7 @@ export const useReauthentication = () => {
       return true;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error verifying password:', error);
+        console.error('Error verifying password:', error);
       }
       toast.error('Erro na verificação');
       return false;
@@ -131,7 +131,7 @@ export const useReauthentication = () => {
       setPendingRequest(null);
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error canceling reauth request:', error);
+        console.error('Error canceling reauth request:', error);
       }
     }
   }, [pendingRequest]);
@@ -151,7 +151,7 @@ export const useReauthentication = () => {
         return { success: true, result, requiresReauth: false };
       } catch (error) {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.error('Error executing protected action:', error);
+          console.error('Error executing protected action:', error);
         }
         return { success: false, requiresReauth: false };
       }

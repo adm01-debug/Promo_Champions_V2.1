@@ -27,7 +27,7 @@ export const useMFA = () => {
       setStatus(row as MFAStatus | null);
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error fetching MFA status:', error);
+        console.error('Error fetching MFA status:', error);
       }
     } finally {
       setIsLoading(false);
@@ -55,7 +55,7 @@ export const useMFA = () => {
       return { qrUrl };
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error initializing TOTP:', error);
+        console.error('Error initializing TOTP:', error);
       }
       toast.error('Erro ao inicializar TOTP');
       return null;
@@ -85,7 +85,7 @@ export const useMFA = () => {
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error verifying TOTP:', error);
+        console.error('Error verifying TOTP:', error);
       }
       toast.error('Erro ao verificar TOTP');
       return false;
@@ -104,7 +104,7 @@ export const useMFA = () => {
       return !!data;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error disabling TOTP:', error);
+        console.error('Error disabling TOTP:', error);
       }
       toast.error('Erro ao desativar TOTP');
       return false;
@@ -125,7 +125,7 @@ export const useMFA = () => {
       return !!data;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error setting up SMS:', error);
+        console.error('Error setting up SMS:', error);
       }
       toast.error('Erro ao configurar SMS');
       return false;
@@ -153,7 +153,7 @@ export const useMFA = () => {
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error verifying SMS:', error);
+        console.error('Error verifying SMS:', error);
       }
       toast.error('Erro ao verificar SMS');
       return false;
@@ -172,7 +172,7 @@ export const useMFA = () => {
       return !!data;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error disabling SMS:', error);
+        console.error('Error disabling SMS:', error);
       }
       toast.error('Erro ao desativar SMS');
       return false;
@@ -202,7 +202,7 @@ export const useMFA = () => {
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error verifying MFA:', error);
+        console.error('Error verifying MFA:', error);
       }
       toast.error('Erro na verificação MFA');
       return false;
@@ -221,7 +221,7 @@ export const useMFA = () => {
       return data as string[];
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error regenerating backup codes:', error);
+        console.error('Error regenerating backup codes:', error);
       }
       toast.error('Erro ao regenerar códigos');
       return null;
@@ -243,7 +243,7 @@ export const useMFA = () => {
       return !!data;
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error('Error setting preferred method:', error);
+        console.error('Error setting preferred method:', error);
       }
       return false;
     }

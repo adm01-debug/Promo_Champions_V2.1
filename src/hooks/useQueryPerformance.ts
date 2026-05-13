@@ -65,7 +65,7 @@ function addMetric(metric: QueryMetrics) {
     
     // Log to console only in dev mode
     if (alertConfig.logToConsole && import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.warn(
+      console.warn(
         `⚠️ [SLOW QUERY ALERT] ${metric.queryKey} took ${metric.duration}ms (threshold: ${alertConfig.threshold}ms)`,
         {
           queryKey: metric.queryKey,
@@ -92,7 +92,7 @@ function addMetric(metric: QueryMetrics) {
 
   // Standard dev logging for moderately slow queries
   if (import.meta.env.DEV && metric.duration > SLOW_QUERY_THRESHOLD_MS && metric.duration <= alertConfig.threshold) {
-    if (import.meta.env.DEV) console.warn(
+    console.warn(
       `[SLOW QUERY] ${metric.queryKey} took ${metric.duration}ms`,
       metric
     );
@@ -222,16 +222,16 @@ export function logQueryMetrics() {
   
   console.group("📊 Query Performance Metrics");
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Total Queries: ${metrics.totalQueries}`);
+    console.info(`Total Queries: ${metrics.totalQueries}`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Avg Duration: ${metrics.avgDuration}ms`);
+    console.info(`Avg Duration: ${metrics.avgDuration}ms`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
+    console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
   }
   if (import.meta.env.DEV) {
-    if (import.meta.env.DEV) console.info(`Error Rate: ${metrics.errorRate}%`);
+    console.info(`Error Rate: ${metrics.errorRate}%`);
   }
   
   if (Object.keys(metrics.byQueryKey).length > 0) {
@@ -240,7 +240,7 @@ export function logQueryMetrics() {
       .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
       .forEach(([key, data]) => {
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
+          console.info(`${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`);
         }
       });
     console.groupEnd();

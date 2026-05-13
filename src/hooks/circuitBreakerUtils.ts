@@ -68,7 +68,7 @@ export async function logCircuitEvent(
     }]);
   } catch (error) {
     if (import.meta.env.DEV) {
-      if (import.meta.env.DEV) console.warn('[CircuitBreaker] Failed to log event:', error);
+      console.warn('[CircuitBreaker] Failed to log event:', error);
     }
   }
 }
@@ -138,7 +138,7 @@ export function withCircuitBreaker<T>(
       } else if (circuit.failures >= failureThreshold) {
         circuit.state = 'OPEN';
         if (import.meta.env.DEV) {
-          if (import.meta.env.DEV) console.warn(`[CircuitBreaker] "${circuitName}" opened after ${circuit.failures} failures`);
+          console.warn(`[CircuitBreaker] "${circuitName}" opened after ${circuit.failures} failures`);
         }
         toast.warning(`Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s...`);
         if (persistEvents) {

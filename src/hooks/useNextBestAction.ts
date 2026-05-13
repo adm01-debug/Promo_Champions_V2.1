@@ -131,7 +131,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Lógica para Gatilhos de Intenção e Respostas do Lead
-  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && a.outcome === 'connected' as any);
+  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && (a.outcome as string) === 'connected');
   if (leadsWithResponse.length > 0) {
     suggestions.push({
       title: 'Responder lead interessado',
@@ -184,7 +184,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Priorização baseada em histórico recente
-  const lastResponse = allActivities.find(a => a.activity_type === 'email' && a.outcome === 'connected' as any);
+  const lastResponse = allActivities.find(a => a.activity_type === 'email' && (a.outcome as string) === 'connected');
   if (lastResponse && (now - new Date(lastResponse.created_at).getTime()) / 86400000 < 1) {
     suggestions.unshift({
       title: 'Follow-up Imediato: Resposta Recebida',

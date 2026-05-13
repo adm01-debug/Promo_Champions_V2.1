@@ -187,21 +187,22 @@ export const useSDRLeaderboard = () => {
       
       const { data, error } = await supabase
         .from('activities')
-        .select('salesperson_id, salespeople:salesperson_id(name, avatar_url)')
+        .select('salesperson_id, salespeople:salespeople(name, avatar_url)')
         .gte('created_at', today);
       
       if (error) throw error;
       
       const counts: Record<string, { id: string; name: string; avatar: string | null; count: number }> = {};
       
-      (data || []).forEach((a: any) => {
+      (data || []).forEach((a) => {
         const id = a.salesperson_id;
         if (!id) return;
+        const salespeople = a.salespeople as unknown as { name: string; avatar_url: string | null } | null;
         if (!counts[id]) {
           counts[id] = { 
             id, 
-            name: a.salespeople?.name || 'Vendedor', 
-            avatar: a.salespeople?.avatar_url,
+            name: salespeople?.name || 'Vendedor', 
+            avatar: salespeople?.avatar_url || null,
             count: 0 
           };
         }
@@ -276,7 +277,7 @@ export const useCreateActivity = () => {
     }) => {
       const { data, error } = await supabase
         .from('activities')
-        .insert([input as any])
+        .insert([input as unknown as any])
         .select()
         .single();
 

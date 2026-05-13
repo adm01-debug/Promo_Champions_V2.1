@@ -84,7 +84,7 @@ async function captureChart(selector: string): Promise<string | null> {
     });
     return canvas.toDataURL("image/png");
   } catch (e) {
-    if (import.meta.env.DEV) console.error("chart capture failed", selector, e);
+    console.error("chart capture failed", selector, e);
     return null;
   }
 }
@@ -190,7 +190,7 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     doc.save(`relatorio-vendas-${format(new Date(), "yyyy-MM-dd")}.pdf`);
     toast.success("Relatório PDF gerado com sucesso!");
   } catch (error) {
-    if (import.meta.env.DEV) console.error("PDF generation error:", error);
+    console.error("PDF generation error:", error);
     toast.error("Erro ao gerar relatório PDF");
   }
 }

@@ -40,7 +40,7 @@ export function useEnrollInCadence() {
         toast.error("Erro ao inscrever na cadência");
       }
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });
@@ -71,7 +71,7 @@ export function usePauseCadence() {
     onError: (error) => {
       toast.error("Erro ao pausar cadência");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });
@@ -102,7 +102,7 @@ export function useResumeCadence() {
     onError: (error) => {
       toast.error("Erro ao retomar cadência");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });
@@ -136,7 +136,7 @@ export function useCancelCadence() {
     onError: (error) => {
       toast.error("Erro ao cancelar cadência");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error(error);
+        console.error(error);
       }
     },
   });

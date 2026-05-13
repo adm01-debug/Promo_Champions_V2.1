@@ -121,7 +121,7 @@ export function useUpdateICPData() {
     onError: (error) => {
       toast.error("Erro ao atualizar dados ICP");
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error updating ICP data:", error);
+        console.error("Error updating ICP data:", error);
       }
     },
   });

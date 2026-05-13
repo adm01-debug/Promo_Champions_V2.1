@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
 import { useSalespeople } from "@/hooks/useSalespeople";
 import { useClients } from "@/hooks/useClients";
-import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText, ExternalLink, Send } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[] = [

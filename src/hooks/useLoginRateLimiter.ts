@@ -61,7 +61,7 @@ export function useLoginRateLimiter() {
 
     if (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Erro ao verificar tentativas de login:", error);
+        console.error("Erro ao verificar tentativas de login:", error);
       }
       return { canAttempt: true, lockoutStatus: { isLocked: false, remainingSeconds: 0, attempts: 0 } };
     }

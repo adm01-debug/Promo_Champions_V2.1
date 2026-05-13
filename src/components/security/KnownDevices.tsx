@@ -51,7 +51,7 @@ export const KnownDevices = () => {
       setDevices(data || []);
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error fetching devices:", error);
+        console.error("Error fetching devices:", error);
       }
     } finally {
       setIsLoading(false);
@@ -75,7 +75,7 @@ export const KnownDevices = () => {
       fetchDevices();
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error updating device:", error);
+        console.error("Error updating device:", error);
       }
       toast.error("Erro ao atualizar dispositivo");
     }
@@ -94,7 +94,7 @@ export const KnownDevices = () => {
       fetchDevices();
     } catch (error) {
       if (import.meta.env.DEV) {
-        if (import.meta.env.DEV) console.error("Error removing device:", error);
+        console.error("Error removing device:", error);
       }
       toast.error("Erro ao remover dispositivo");
     }
