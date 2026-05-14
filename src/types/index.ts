@@ -309,7 +309,7 @@ export interface AuditLog {
   changes: {
     from: any;
     to: any;
-  };
-  metadata?: Record<string, any>;
+  } | any;
+  metadata?: Record<string, any> | any;
   created_at: string;
 }

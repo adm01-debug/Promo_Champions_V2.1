@@ -46,7 +46,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("salesperson_commission_configs").select("*").eq("month", currentMonthDate);
       if (error) throw error;
-      return data as CommissionConfig[];
+      return (data || []) as unknown as CommissionConfig[];
     },
   });
 
@@ -55,7 +55,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("sales_goals").select("*").eq("month", currentMonthDate);
       if (error) throw error;
-      return data as CommercialGoal[];
+      return (data || []) as unknown as CommercialGoal[];
     },
   });
 
@@ -67,9 +67,9 @@ export default function AdminComercial() {
       
       if (!data || data.length === 0) {
         const { data: defaultRules } = await supabase.from("race_scoring_rules").select("*").is("month", null).order("created_at", { ascending: true });
-        return (defaultRules || []) as ScoringRule[];
+        return (defaultRules || []) as unknown as ScoringRule[];
       }
-      return data as ScoringRule[];
+      return data as unknown as ScoringRule[];
     },
   });
 
@@ -78,7 +78,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("commercial_approval_requests").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      return data as ApprovalRequest[];
+      return (data || []) as unknown as ApprovalRequest[];
     },
   });
 
@@ -87,7 +87,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("audit_logs").select("*").in("entity_type", ["goal", "scoring_rule", "commission"]).order("created_at", { ascending: false }).limit(50);
       if (error) throw error;
-      return data as AuditLog[];
+      return (data || []) as unknown as AuditLog[];
     },
   });
 
