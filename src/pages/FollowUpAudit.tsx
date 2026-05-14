@@ -95,8 +95,7 @@ const FollowUpAudit = () => {
         .from('follow_up_audit_logs')
         .update({ 
           retry_count: (log.retry_count || 0) + 1,
-          status: 'sent',
-          updated_at: new Date().toISOString()
+          status: 'sent'
         })
         .eq('id', log.id);
         
