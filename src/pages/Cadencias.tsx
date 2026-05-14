@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText, ChevronDown, CheckCircle2, Sparkles } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
@@ -43,9 +43,19 @@ export default function Cadencias() {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
   // Auto-process trigger
-  useState(() => {
-    supabase.functions.invoke('process-cadence-tasks').catch(console.error);
-  });
+  useEffect(() => {
+    let isMounted = true;
+    const triggerProcess = async () => {
+      try {
+        await supabase.functions.invoke('process-cadence-tasks');
+      } catch (error) {
+        if (isMounted) console.error("Erro ao processar tarefas de cadência:", error);
+      }
+    };
+    
+    triggerProcess();
+    return () => { isMounted = false; };
+  }, []);
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 

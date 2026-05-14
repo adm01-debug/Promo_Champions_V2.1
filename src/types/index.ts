@@ -258,3 +258,58 @@ export interface ApiError {
 export type DealStatus = Deal['status'];
 export type ActivityType = Activity['type'];
 export type UserRole = User['role'];
+
+// ===== COMMERCIAL & APPROVALS =====
+
+export interface CommercialGoal {
+  id: string;
+  salesperson_id: string;
+  month: string;
+  goal_amount: number;
+  created_at?: string;
+}
+
+export interface ScoringRule {
+  id: string;
+  label: string;
+  weight: number;
+  points_per_unit: number;
+  month: string | null;
+  created_at?: string;
+}
+
+export interface CommissionConfig {
+  id: string;
+  salesperson_id: string;
+  month: string;
+  rate: number;
+  created_at?: string;
+}
+
+export interface ApprovalRequest {
+  id: string;
+  requester_id: string;
+  approver_id?: string;
+  type: 'goal' | 'scoring_rule' | 'commission';
+  entity_id: string;
+  competence_month: string;
+  new_values: Record<string, any>;
+  old_values?: Record<string, any>;
+  justification?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
+
+export interface AuditLog {
+  id: string;
+  actor_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  changes: {
+    from: any;
+    to: any;
+  };
+  metadata?: Record<string, any>;
+  created_at: string;
+}

@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { CommercialDiffViewer } from "@/components/admin/commercial/CommercialDiffViewer";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ApprovalRequest, AuditLog, CommercialGoal, CommissionConfig, ScoringRule } from "@/types";
 
 
 export default function AdminComercial() {
@@ -45,7 +46,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("salesperson_commission_configs").select("*").eq("month", currentMonthDate);
       if (error) throw error;
-      return data;
+      return data as CommissionConfig[];
     },
   });
 
@@ -54,7 +55,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("sales_goals").select("*").eq("month", currentMonthDate);
       if (error) throw error;
-      return data;
+      return data as CommercialGoal[];
     },
   });
 
@@ -66,9 +67,9 @@ export default function AdminComercial() {
       
       if (!data || data.length === 0) {
         const { data: defaultRules } = await supabase.from("race_scoring_rules").select("*").is("month", null).order("created_at", { ascending: true });
-        return defaultRules || [];
+        return (defaultRules || []) as ScoringRule[];
       }
-      return data;
+      return data as ScoringRule[];
     },
   });
 
@@ -77,7 +78,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("commercial_approval_requests").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data as ApprovalRequest[];
     },
   });
 
@@ -86,7 +87,7 @@ export default function AdminComercial() {
     queryFn: async () => {
       const { data, error } = await supabase.from("audit_logs").select("*").in("entity_type", ["goal", "scoring_rule", "commission"]).order("created_at", { ascending: false }).limit(50);
       if (error) throw error;
-      return data;
+      return data as AuditLog[];
     },
   });
 
