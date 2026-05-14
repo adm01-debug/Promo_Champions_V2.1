@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { GitBranch, Zap, Clock, CheckCircle, Search, Filter, PauseCircle, LayoutDashboard, Settings2, FileText, ChevronDown, CheckCircle2, Sparkles } from "lucide-react";
 import { CadenciasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
@@ -43,9 +43,19 @@ export default function Cadencias() {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
   // Auto-process trigger
-  useState(() => {
-    supabase.functions.invoke('process-cadence-tasks').catch(console.error);
-  });
+  useEffect(() => {
+    let isMounted = true;
+    const triggerProcess = async () => {
+      try {
+        await supabase.functions.invoke('process-cadence-tasks');
+      } catch (error) {
+        if (isMounted) console.error("Erro ao processar tarefas de cadência:", error);
+      }
+    };
+    
+    triggerProcess();
+    return () => { isMounted = false; };
+  }, []);
 
   const activeCadences = cadences?.filter(c => c.is_active) || [];
 
@@ -293,14 +303,14 @@ export default function Cadencias() {
                 <CardContent className="p-0">
                   <ScrollArea className="h-[500px]">
                     <div className="p-2 space-y-1">
-                      {allProspects?.map((p: any) => (
+                      {allProspects?.map((p) => (
                         <Button
                           key={p.id}
                           variant={selectedLeadId === p.sale_id ? "secondary" : "ghost"}
                           className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
                           onClick={() => setSelectedLeadId(p.sale_id)}
                         >
-                          <span className="font-bold">{(p as any).sale?.client_name || (p as any).client_name || "Lead sem nome"}</span>
+                          <span className="font-bold">{p.sale?.client_name || p.client_name || "Lead sem nome"}</span>
                           <span className="text-[10px] text-muted-foreground">Status: {p.status} | Etapa: {p.funnel_stage}</span>
                         </Button>
                       ))}
@@ -318,7 +328,7 @@ export default function Cadencias() {
                 {selectedLeadId ? (
                   <LeadDetailedAuditLogs 
                     clientId={selectedLeadId} 
-                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name || "Lead"} 
+                    clientName={allProspects?.find(p => p.sale_id === selectedLeadId)?.sale?.client_name || allProspects?.find(p => p.sale_id === selectedLeadId)?.client_name || "Lead"} 
                   />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">

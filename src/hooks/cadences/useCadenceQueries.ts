@@ -42,6 +42,11 @@ export interface ProspectCadence {
   completed_at: string | null;
   created_at: string;
   updated_at: string;
+  sale?: {
+    client_name: string;
+    [key: string]: any;
+  };
+  client_name?: string;
 }
 
 export interface CadenceTask {
@@ -94,7 +99,10 @@ export function useProspectCadences(saleId?: string) {
     queryFn: async () => {
       let query = supabase
         .from("prospect_cadences")
-        .select("*")
+        .select(`
+          *,
+          sale:sales(client_name)
+        `)
         .order("created_at", { ascending: false });
 
       if (saleId) {
