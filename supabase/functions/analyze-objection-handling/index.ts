@@ -1,9 +1,7 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+
 
 type Turn = { speaker: "seller" | "client" | string; text: string; start?: number; end?: number };
 type ObjType = "price" | "timing" | "authority" | "need" | "competition" | "trust" | "other";

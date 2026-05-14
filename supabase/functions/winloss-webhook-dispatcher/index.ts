@@ -1,13 +1,10 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Expose-Headers": "x-request-id",
-};
+
 
 function structuredLog(level: LogLevel, data: Record<string, unknown>, requestId?: string) {
   const line = JSON.stringify({

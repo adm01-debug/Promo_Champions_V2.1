@@ -1,9 +1,7 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+
 
 const PALETTE = [
   { p: '#ef4444', s: '#fff' }, { p: '#22c55e', s: '#fff' }, { p: '#f97316', s: '#fff' },

@@ -1,3 +1,4 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
@@ -15,10 +16,7 @@ function describeError(e: unknown): { error_name: string; error: string; error_s
   return { error_name: "UnknownError", error: String(e), error_stack: null };
 }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+
 
 function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   const line = JSON.stringify({ fn: "winloss-webhook-replay", level, ts: new Date().toISOString(), ...data });

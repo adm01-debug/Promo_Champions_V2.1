@@ -1,3 +1,4 @@
+import { corsHeaders } from "../_shared/cors.ts";
 // NLQ — Natural Language Queries against CRM data via Lovable AI tool calling.
 // Auth required (verify_jwt = true). Uses caller JWT so RLS applies.
 // deno-lint-ignore-file no-explicit-any
@@ -9,11 +10,7 @@ import {
   queryTopClients,
 } from "./queryResolvers.ts";
 
-const corsHeaders: Record<string, string> = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+
 
 const TOOLS = [
   {

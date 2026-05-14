@@ -1,3 +1,4 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import {
   BatchBodySchema,
@@ -6,11 +7,7 @@ import {
   MAX_CHUNK_SIZE,
 } from "./schema.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-request-id",
-};
+
 
 function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   const line = JSON.stringify({
