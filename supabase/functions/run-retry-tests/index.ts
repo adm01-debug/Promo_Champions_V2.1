@@ -1,3 +1,4 @@
+import { corsHeaders } from "../_shared/cors.ts";
 // Executes the test cases declared in supabase/functions/winloss-webhook-dispatcher/retry_test.ts
 // in-process, by overriding the global Deno.test API to capture (instead of run) the registered
 // tests, then awaiting each one with timing. Returns a structured JSON suitable for a dashboard.
@@ -7,11 +8,7 @@
 //
 // CORS enabled. No auth required at the function layer (route is admin-gated in the UI).
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+
 
 type CapturedTest = {
   name: string;

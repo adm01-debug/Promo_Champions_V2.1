@@ -1,9 +1,7 @@
+import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+
 
 const SENIORITY_WEIGHT: Record<string, number> = {
   c_level: 1.5, vp: 1.3, director: 1.15, manager: 1.0, ic: 0.8,
