@@ -18,6 +18,7 @@
 - [CHANGELOG.md](./CHANGELOG.md) - Histórico de mudanças
 - [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Código de conduta
 - [SECURITY.md](./SECURITY.md) - Política de segurança
+- [AUDIT_REPORT.md](./AUDIT_REPORT.md) - **Relatório de Auditoria Enterprise** ([PDF aqui](./AUDIT_REPORT.pdf))
 
 ---
 
