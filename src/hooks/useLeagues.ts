@@ -42,10 +42,13 @@ export function useLeagues() {
       if (spErr) throw spErr;
 
       // Try to get league members from new table
-      const { data: members } = await supabase
+      const { data: members, error: membersErr } = await supabase
         .from("league_members")
-        .select("*, leagues(*)")
-        .order("weekly_xp", { ascending: false });
+        .select("*, leagues(*)");
+      
+      if (membersErr) {
+        console.error("Error fetching league members:", membersErr);
+      }
 
       return (salespeople || []).map((sp) => {
         const member = members?.find((m) => m.salesperson_id === sp.id);
