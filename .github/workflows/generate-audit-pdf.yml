@@ -1,0 +1,27 @@
+name: Generate Audit PDF
+
+on:
+  push:
+    paths:
+      - 'AUDIT_REPORT.md'
+  workflow_dispatch:
+
+jobs:
+  generate-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install md-to-pdf
+        run: npm install -g md-to-pdf
+        
+      - name: Generate PDF
+        run: md-to-pdf AUDIT_REPORT.md
+        
+      - name: Commit and Push PDF
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add AUDIT_REPORT.pdf
+          git commit -m "docs: auto-generate AUDIT_REPORT.pdf" || echo "No changes to commit"
+          git push
