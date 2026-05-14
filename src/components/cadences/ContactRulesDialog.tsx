@@ -30,7 +30,7 @@ export function ContactRulesDialog() {
     const { data: sp } = await supabase
       .from("salespeople")
       .select("id")
-      .eq("user_id", user.id)
+      .eq("auth_user_id", user.id)
       .maybeSingle();
 
     if (!sp) return;
@@ -55,7 +55,7 @@ export function ContactRulesDialog() {
       const { data: sp } = await supabase
         .from("salespeople")
         .select("id")
-        .eq("user_id", user.id)
+        .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (!sp) throw new Error("Vendedor não encontrado");

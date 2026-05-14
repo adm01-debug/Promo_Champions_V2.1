@@ -27,7 +27,7 @@ export function PredictiveSuccessMap() {
       const { data: salesperson } = await supabase
         .from("salespeople")
         .select("id")
-        .eq("user_id", user.id)
+        .eq("auth_user_id", user.id)
         .single();
 
       if (!salesperson) return;
