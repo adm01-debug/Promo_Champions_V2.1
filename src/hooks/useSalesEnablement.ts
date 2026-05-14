@@ -175,7 +175,7 @@ export const usePlaybookProgress = (playbookId?: string, saleId?: string) => {
       const { data, error } = await supabase
         .from("playbook_progress")
         .select("*")
-        .eq("playbook_id", playbookId!)
+        .eq("playbook_item_id", playbookId!)
         .eq("sale_id", saleId!)
         .maybeSingle();
       

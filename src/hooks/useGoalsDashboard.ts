@@ -68,7 +68,7 @@ export function useGoalsDashboard() {
         supabase
           .from("quota_attainment_predictions")
           .select("*")
-          .eq("period_date", currentMonth),
+          .eq("period_start", currentMonth),
       ]);
 
       if (salespeopleResult.error) throw salespeopleResult.error;
