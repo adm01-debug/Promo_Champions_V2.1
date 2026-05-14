@@ -303,14 +303,14 @@ export default function Cadencias() {
                 <CardContent className="p-0">
                   <ScrollArea className="h-[500px]">
                     <div className="p-2 space-y-1">
-                      {allProspects?.map((p: any) => (
+                      {allProspects?.map((p) => (
                         <Button
                           key={p.id}
                           variant={selectedLeadId === p.sale_id ? "secondary" : "ghost"}
                           className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
                           onClick={() => setSelectedLeadId(p.sale_id)}
                         >
-                          <span className="font-bold">{(p as any).sale?.client_name || (p as any).client_name || "Lead sem nome"}</span>
+                          <span className="font-bold">{p.sale?.client_name || p.client_name || "Lead sem nome"}</span>
                           <span className="text-[10px] text-muted-foreground">Status: {p.status} | Etapa: {p.funnel_stage}</span>
                         </Button>
                       ))}
@@ -328,7 +328,7 @@ export default function Cadencias() {
                 {selectedLeadId ? (
                   <LeadDetailedAuditLogs 
                     clientId={selectedLeadId} 
-                    clientName={(allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.sale?.client_name || (allProspects?.find((p: any) => p.sale_id === selectedLeadId) as any)?.client_name || "Lead"} 
+                    clientName={allProspects?.find(p => p.sale_id === selectedLeadId)?.sale?.client_name || allProspects?.find(p => p.sale_id === selectedLeadId)?.client_name || "Lead"} 
                   />
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-12 glass border border-dashed rounded-xl border-border/40 text-muted-foreground">
