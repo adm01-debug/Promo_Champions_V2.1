@@ -268,7 +268,7 @@ export const FeatureComparison = () => {
                             </DialogHeader>
                             <div className="p-8">
                               <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                                <img src={item.image} alt="Evidência do concorrente" className="w-full h-auto" />
+                                <img src={item.image} alt="Evidência do concorrente" className="w-full h-auto" loading="lazy" />
                               </div>
                               <div className="mt-6 flex items-center justify-between">
                                 <p className="text-xs text-muted-foreground italic font-medium">Captura realizada em ramper.com.br/prospect</p>
