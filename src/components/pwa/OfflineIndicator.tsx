@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { WifiOff, Wifi } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
 
 interface OfflineIndicatorProps {
   className?: string;
