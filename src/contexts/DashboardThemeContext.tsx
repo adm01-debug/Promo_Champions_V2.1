@@ -34,8 +34,10 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
     root.classList.add(`${theme}-mode`);
   }, [theme]);
 
+  const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);
+
   return (
-    <DashboardThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <DashboardThemeContext.Provider value={value}>
       {children}
     </DashboardThemeContext.Provider>
   );
