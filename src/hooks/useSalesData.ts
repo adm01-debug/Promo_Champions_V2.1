@@ -88,6 +88,10 @@ export const useSalesData = (searchTerm?: string) => {
         product_id: sale.product_id,
         salesperson_id: sale.salesperson_id,
         sku: sale.sku || (sale as any).product?.sku,
+        ai_prediction_score: sale.ai_prediction_score,
+        ai_prediction_reasoning: sale.ai_prediction_reasoning,
+        whatsapp_status: sale.whatsapp_status,
+        whatsapp_last_interaction: sale.whatsapp_last_interaction,
       }));
     },
   });
