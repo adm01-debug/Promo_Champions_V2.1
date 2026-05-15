@@ -17,6 +17,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
+import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
 
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
