@@ -50,8 +50,15 @@ export default function Orcamentos() {
     subscription_type: "one-time"
   });
 
-  const [items, setItems] = useState<any[]>([]);
-  const [newItem, setNewItem] = useState({ product_name: "", quantity: 1, unit_price: 0 });
+  interface QuoteItem {
+    product_name: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+  }
+
+  const [items, setItems] = useState<QuoteItem[]>([]);
+  const [newItem, setNewItem] = useState<{ product_name: string; quantity: number; unit_price: number }>({ product_name: "", quantity: 1, unit_price: 0 });
 
   const addItem = () => {
     if (!newItem.product_name || newItem.unit_price <= 0) return;

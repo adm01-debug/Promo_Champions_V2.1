@@ -180,7 +180,7 @@ function NewEventDialog() {
   );
 }
 
-function EventCard({ event }: { event: AgendaEvent }) {
+function EventCard({ event }: { event: AgendaEvent & { client?: { name: string }, sale?: { product_name: string } } }) {
   const complete = useCompleteAgendaEvent();
   const remove = useDeleteAgendaEvent();
   return (
@@ -195,17 +195,17 @@ function EventCard({ event }: { event: AgendaEvent }) {
             </div>
             {event.description && <p className="text-sm text-muted-foreground mt-1">{event.description}</p>}
             
-            {(event as any).client?.name && (
+            {event.client?.name && (
               <div className="flex items-center gap-1 mt-2 text-[10px] font-bold text-primary uppercase tracking-widest">
                 <Users className="h-3 w-3" />
-                {(event as any).client.name}
+                {event.client.name}
               </div>
             )}
 
-            {(event as any).sale?.product_name && (
+            {event.sale?.product_name && (
               <div className="flex items-center gap-1 mt-1 text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
                 <ShoppingCart className="h-3 w-3" />
-                {(event as any).sale.product_name}
+                {event.sale.product_name}
               </div>
             )}
 

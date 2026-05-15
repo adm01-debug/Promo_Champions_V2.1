@@ -15,7 +15,7 @@ import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 
-const actionIcons: Record<string, any> = {
+const actionIcons: Record<string, { icon: React.ElementType, color: string, label: string }> = {
   "whatsapp_sent": { icon: MessageCircle, color: "text-green-500", label: "WhatsApp Enviado" },
   "whatsapp_attempt": { icon: Send, color: "text-blue-400", label: "Tentativa WhatsApp" },
   "task_created": { icon: UserPlus, color: "text-blue-500", label: "Tarefa Criada" },
@@ -58,7 +58,7 @@ const FollowUpAudit = () => {
       ];
 
       let query = supabase
-        .from("follow_up_audit_view" as any)
+        .from("follow_up_audit_view")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -81,7 +81,7 @@ const FollowUpAudit = () => {
     },
   });
 
-  const handleRetry = async (log: any) => {
+  const handleRetry = async (log: { action_type: string, details: any, retry_count: number, id: string }) => {
     if (log.action_type === 'whatsapp_sent') {
       toast.info("Re-enviando WhatsApp...");
       
@@ -207,13 +207,14 @@ const FollowUpAudit = () => {
                       </TableRow>
                     ) : (
                       logs.map((log: any) => {
-                        const action = actionIcons[log.action_type] || { icon: History, color: "text-muted-foreground", label: log.action_type };
+                        const actionKey = log.action_type || "unknown";
+                        const action = actionIcons[actionKey] || { icon: History, color: "text-muted-foreground", label: actionKey };
                         const ActionIcon = action.icon;
                         
                         return (
                           <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">
                             <TableCell className="text-xs font-medium">
-                              {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                              {log.created_at ? format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "-"}
                             </TableCell>
                             <TableCell className="font-semibold">{log.lead_name}</TableCell>
                             <TableCell>
@@ -240,13 +241,13 @@ const FollowUpAudit = () => {
                             </TableCell>
                             <TableCell className="text-right text-xs">
                               <div className="flex items-center justify-end gap-2">
-                                {log.retry_count > 0 && (
+                                {log.retry_count && log.retry_count > 0 && (
                                   <Badge variant="outline" className="text-[10px]">
                                     {log.retry_count} retentativas
                                   </Badge>
                                 )}
                                 {log.action_type === 'whatsapp_sent' && (
-                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleRetry(log)}>
+                                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleRetry(log as any)}>
                                     <RotateCw className="h-3.5 w-3.5" />
                                   </Button>
                                 )}

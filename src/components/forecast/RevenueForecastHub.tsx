@@ -20,7 +20,8 @@ import {
   BarChart3,
   CalendarDays,
   Microchip,
-  Waves
+  Waves,
+  LucideIcon
 } from "lucide-react";
 import { useRevenueForecast } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
@@ -144,14 +145,19 @@ export const RevenueForecastHub: FC = () => {
               size="sm" 
               className="h-9 px-4 text-[10px] font-black uppercase tracking-widest gap-2 rounded-xl"
               onClick={async () => {
-                 const { error } = await (supabase as any).from('forecast_snapshots').insert({
-                   horizon_days: horizon,
-                   pessimistic_value: data.scenarios.pessimistic,
-                   realistic_value: data.scenarios.realistic,
-                   optimistic_value: data.scenarios.optimistic,
-                   confidence_at_time: data.confidence,
-                   metadata: { source: 'manual_trigger' }
-                 });
+                 const start = new Date().toISOString().split('T')[0];
+                 const end = new Date(Date.now() + horizon * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                 const { error } = await supabase.from('forecast_snapshots').insert([{
+                   period_start: start,
+                   period_end: end,
+                   commit_amount: data.scenarios.pessimistic,
+                   weighted_amount: data.scenarios.realistic,
+                   best_case_amount: data.scenarios.optimistic,
+                   forecast_amount: data.scenarios.realistic,
+                   forecast_deals: data.metrics.open_deals_count,
+                   source: 'manual_trigger',
+                   segment: 'all'
+                 }]);
                  if (!error) refetch();
               }}
             >
@@ -370,7 +376,7 @@ function ForecastKpiCard({
   value: number;
   subtitle?: string;
   isCurrency?: boolean;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }) {
   return (

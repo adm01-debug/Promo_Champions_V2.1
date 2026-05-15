@@ -25,7 +25,7 @@ const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qual
 const BIGestor = () => {
   const { data, isLoading } = useBIGestor();
   const navigate = useNavigate();
-  const formatCurrency = (value: any) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  const formatCurrency = (value: number | string) => `R$ ${Number(value).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (

@@ -10,7 +10,16 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface WebhookDeliveryItemProps {
-  delivery: any;
+  delivery: {
+    id: string;
+    event: string;
+    status: number | null;
+    succeeded: boolean;
+    attempt: number;
+    duration_ms: number;
+    error_message: string | null;
+    created_at: string;
+  };
   isProcessing: boolean;
   isChecked: boolean;
   checkboxDisabled: boolean;
