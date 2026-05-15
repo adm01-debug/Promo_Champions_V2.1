@@ -19,14 +19,14 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
     return "cyber";
   });
 
-  const setTheme = (newTheme: DashboardTheme) => {
+  const setTheme = useCallback((newTheme: DashboardTheme) => {
     setThemeState(newTheme);
     window.localStorage.setItem("dashboard-style-theme", newTheme);
-  };
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === "standard" ? "cyber" : "standard");
-  };
+  const toggleTheme = useCallback(() => {
+    setThemeState(prev => prev === "standard" ? "cyber" : "standard");
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
