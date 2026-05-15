@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit",
     "health": "tsc --noEmit && eslint src/ && vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:report": "bun run scripts/generate-quality-report.ts",
     "build:analyze": "vite build && node -e \"const fs=require('fs');const p='dist/assets/';const files=fs.readdirSync(p).filter(f=>f.endsWith('.js'));let total=0;files.forEach(f=>{const s=fs.statSync(p+f).size;total+=s;console.info(f+': '+(s/1024).toFixed(1)+'KB')});console.info('\\nTotal JS: '+(total/1024).toFixed(1)+'KB')\"",
     "prepare": "husky"
   },
