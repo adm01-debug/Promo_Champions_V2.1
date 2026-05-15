@@ -261,7 +261,7 @@ export default function Estoque() {
                                     <span className="font-display font-black text-sm uppercase tracking-tighter group-hover:text-primary transition-colors">
                                       {item.products?.name || "UNIDENTIFIED UNIT"}
                                     </span>
-                                    <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">SKU: {(item.products as any)?.sku || "—"}</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">SKU: {(item.products as { sku?: string })?.sku || "—"}</span>
                                   </div>
                                 </td>
                                 <td className="p-4">

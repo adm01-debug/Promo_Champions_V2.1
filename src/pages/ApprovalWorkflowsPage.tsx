@@ -100,11 +100,11 @@ const ApprovalWorkflowsPage = () => {
     if (!wfForm.name) return;
     createWorkflow.mutate({
       name: wfForm.name,
-      workflow_type: wfForm.workflow_type,
+      workflow_type: wfForm.workflow_type as any,
       threshold_amount: parseFloat(wfForm.threshold_amount) || null,
       required_approvers: parseInt(wfForm.required_approvers) || 1,
       description: wfForm.description || null,
-    } as any, {
+    }, {
       onSuccess: () => {
         setNewWorkflowOpen(false);
         setWfForm({ name: "", workflow_type: "discount", threshold_amount: "", required_approvers: "1", description: "" });
