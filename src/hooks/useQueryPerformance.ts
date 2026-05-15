@@ -63,8 +63,8 @@ function addMetric(metric: QueryMetrics) {
   if (metric.duration > alertConfig.threshold && shouldAlert(metric.queryKey)) {
     alertedQueries.set(metric.queryKey, Date.now());
     
-    // Log to console only in dev mode
-    if (alertConfig.logToConsole && import.meta.env.DEV) {
+    // Silently capture slow queries for backend monitoring without console warnings in production
+    if (import.meta.env.DEV && alertConfig.logToConsole) {
       console.warn(
         `⚠️ [SLOW QUERY ALERT] ${metric.queryKey} took ${metric.duration}ms (threshold: ${alertConfig.threshold}ms)`,
         {

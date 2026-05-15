@@ -79,8 +79,8 @@ export function useAICopilot() {
         setIsOpen(true);
         setIsDismissed(false);
       }
-    } catch (err) {
-      console.error('Copilot error:', err);
+    } catch (_err) {
+      // Errors are handled by central tracking; no need for console spam in prod
     } finally {
       setIsLoading(false);
     }

@@ -9,9 +9,7 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (import.meta.env.DEV) {
-      console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-    }
+    // Silent tracking for 404s can be added here if needed via captureError
   }, [location.pathname]);
 
   return (

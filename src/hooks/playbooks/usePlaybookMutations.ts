@@ -34,8 +34,7 @@ export const useTogglePlaybookItem = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["playbook-progress", variables.saleId] });
     },
-    onError: (error) => {
-      console.error("Error toggling playbook item:", error);
+    onError: (_error) => {
       toast.error("Erro ao atualizar checklist");
     },
   });
@@ -58,8 +57,7 @@ export const useCreatePlaybook = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
       toast.success("Playbook criado com sucesso");
     },
-    onError: (error) => {
-      console.error("Error creating playbook:", error);
+    onError: (_error) => {
       toast.error("Erro ao criar playbook");
     },
   });
@@ -116,8 +114,7 @@ export const useDuplicatePlaybook = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
       toast.success("Playbook duplicado com sucesso");
     },
-    onError: (error) => {
-      console.error("Error duplicating playbook:", error);
+    onError: (_error) => {
       toast.error("Erro ao duplicar playbook");
     },
   });
@@ -145,8 +142,7 @@ export const useCreatePlaybookItem = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
       toast.success("Item adicionado ao playbook");
     },
-    onError: (error) => {
-      console.error("Error creating playbook item:", error);
+    onError: (_error) => {
       toast.error("Erro ao adicionar item");
     },
   });
@@ -170,8 +166,7 @@ export const useUpdatePlaybookItem = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
       toast.success("Item atualizado");
     },
-    onError: (error) => {
-      console.error("Error updating playbook item:", error);
+    onError: (_error) => {
       toast.error("Erro ao atualizar item");
     },
   });
@@ -195,8 +190,7 @@ export const useReorderPlaybookItems = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
     },
-    onError: (error) => {
-      console.error("Error reordering items:", error);
+    onError: (_error) => {
       toast.error("Erro ao reordenar itens");
     },
   });
@@ -217,8 +211,7 @@ export const useDeletePlaybookItem = () => {
       queryClient.invalidateQueries({ queryKey: ["playbooks"] });
       toast.success("Item removido do playbook");
     },
-    onError: (error) => {
-      console.error("Error deleting playbook item:", error);
+    onError: (_error) => {
       toast.error("Erro ao remover item");
     },
   });

@@ -293,8 +293,8 @@ export interface ApprovalRequest {
   type: 'goal' | 'scoring_rule' | 'commission';
   entity_id: string;
   competence_month: string;
-  new_values: Record<string, any>;
-  old_values?: Record<string, any>;
+  new_values: Record<string, string | number | boolean | null | undefined>;
+  old_values?: Record<string, string | number | boolean | null | undefined>;
   justification?: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
@@ -307,9 +307,9 @@ export interface AuditLog {
   entity_type: string;
   entity_id: string;
   changes: {
-    from: Record<string, any>;
-    to: Record<string, any>;
+    from: Record<string, string | number | boolean | null | undefined>;
+    to: Record<string, string | number | boolean | null | undefined>;
   };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean | null | undefined>;
   created_at: string;
 }

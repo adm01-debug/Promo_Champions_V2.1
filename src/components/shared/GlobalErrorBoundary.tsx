@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { logError } from "@/services/ErrorMonitoring";
+import { captureError } from "@/lib/errorTracking";
 
 interface Props {
   children: ReactNode;
@@ -23,11 +23,9 @@ export class GlobalErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    logError({
-      message: error.message,
-      stack_trace: error.stack,
+    captureError(error, {
       severity: "critical",
-      category: "crash",
+      category: "ui",
       component: "GlobalErrorBoundary",
       metadata: {
         componentStack: errorInfo.componentStack,
