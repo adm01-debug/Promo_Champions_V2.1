@@ -123,6 +123,7 @@ export function useSalespersonXP(salespersonId?: string) {
     enabled: !!salespersonId,
     staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
+  });
 }
 
 export function useAllSalespeopleXP() {
@@ -142,6 +143,7 @@ export function useAllSalespeopleXP() {
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
+  });
 }
 
 export function useXPHistory(salespersonId?: string) {
@@ -163,6 +165,7 @@ export function useXPHistory(salespersonId?: string) {
     enabled: !!salespersonId,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
+  });
 }
 
 export function useAddXP() {
@@ -185,7 +188,7 @@ export function useAddXP() {
       salespersonName?: string;
     }) => {
       // Get or create XP record
-      let { data: xpRecord, error: fetchError } = await supabase // eslint-disable-line prefer-const -- reassigned below
+      let { data: xpRecord, error: fetchError } = await supabase
         .from("salesperson_xp")
         .select("*")
         .eq("salesperson_id", salespersonId)
