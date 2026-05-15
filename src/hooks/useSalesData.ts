@@ -26,6 +26,10 @@ export interface Sale {
   salesperson_id: string | null;
   created_at: string;
   updated_at: string;
+  ai_prediction_score: number | null;
+  ai_prediction_reasoning: string | null;
+  whatsapp_status: string | null;
+  whatsapp_last_interaction: string | null;
 }
 
 export interface CreateSaleInput {
@@ -84,6 +88,10 @@ export const useSalesData = (searchTerm?: string) => {
         product_id: sale.product_id,
         salesperson_id: sale.salesperson_id,
         sku: sale.sku || (sale as any).product?.sku,
+        ai_prediction_score: sale.ai_prediction_score,
+        ai_prediction_reasoning: sale.ai_prediction_reasoning,
+        whatsapp_status: sale.whatsapp_status,
+        whatsapp_last_interaction: sale.whatsapp_last_interaction,
       }));
     },
   });

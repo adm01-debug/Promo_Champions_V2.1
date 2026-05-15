@@ -851,6 +851,41 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_sales_insights: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          id: string
+          insight_content: Json
+          insight_type: string
+          sale_id: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          insight_content: Json
+          insight_type: string
+          sale_id?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          insight_content?: Json
+          insight_type?: string
+          sale_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_sales_insights_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_tokens: {
         Row: {
           company_name: string
@@ -12333,6 +12368,8 @@ export type Database = {
       sales: {
         Row: {
           account_id: string | null
+          ai_prediction_reasoning: string | null
+          ai_prediction_score: number | null
           amount: number
           broadcast_sent_at: string | null
           category: string
@@ -12359,9 +12396,13 @@ export type Database = {
           stock_reduced: boolean | null
           territory_id: string | null
           updated_at: string
+          whatsapp_last_interaction: string | null
+          whatsapp_status: string | null
         }
         Insert: {
           account_id?: string | null
+          ai_prediction_reasoning?: string | null
+          ai_prediction_score?: number | null
           amount: number
           broadcast_sent_at?: string | null
           category?: string
@@ -12388,9 +12429,13 @@ export type Database = {
           stock_reduced?: boolean | null
           territory_id?: string | null
           updated_at?: string
+          whatsapp_last_interaction?: string | null
+          whatsapp_status?: string | null
         }
         Update: {
           account_id?: string | null
+          ai_prediction_reasoning?: string | null
+          ai_prediction_score?: number | null
           amount?: number
           broadcast_sent_at?: string | null
           category?: string
@@ -12417,6 +12462,8 @@ export type Database = {
           stock_reduced?: boolean | null
           territory_id?: string | null
           updated_at?: string
+          whatsapp_last_interaction?: string | null
+          whatsapp_status?: string | null
         }
         Relationships: [
           {
@@ -16012,6 +16059,50 @@ export type Database = {
             columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_conversations: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          direction: string | null
+          external_message_id: string | null
+          id: string
+          sale_id: string | null
+          sender_id: string | null
+          sent_at: string | null
+          status: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          direction?: string | null
+          external_message_id?: string | null
+          id?: string
+          sale_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          direction?: string | null
+          external_message_id?: string | null
+          id?: string
+          sale_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_conversations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
             referencedColumns: ["id"]
           },
         ]

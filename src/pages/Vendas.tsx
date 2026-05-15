@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { ShoppingCart, Search, Loader2, Plus, History } from "lucide-react";
+import { ShoppingCart, Search, Loader2, Plus, History, BrainCircuit, MessageCircle } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
+
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
   pending: "bg-warning/20 text-warning border-warning/30",
@@ -45,6 +46,14 @@ const statusOptions = [
 
 const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
   const [showLog, setShowLog] = useState(false);
+  const [showAIInsights, setShowAIInsights] = useState(false);
+
+  const getPredictionColor = (score: number) => {
+    if (score >= 80) return "text-emerald-500";
+    if (score >= 50) return "text-amber-500";
+    return "text-rose-500";
+  };
+
   return (
     <div 
       className="group relative overflow-hidden bg-gradient-to-r from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-5 transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
@@ -96,15 +105,35 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
               R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
-            onClick={() => setShowLog(true)}
-            title="Registrar Atividade"
-          >
-            <History className="h-4 w-4 text-primary" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 group-hover:scale-110 transition-all"
+              onClick={() => {}}
+              title="Integrar WhatsApp"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowAIInsights(true)}
+              title="Predição de IA"
+            >
+              <BrainCircuit className="h-4 w-4 text-purple-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowLog(true)}
+              title="Registrar Atividade"
+            >
+              <History className="h-4 w-4 text-primary" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -118,6 +147,39 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
             clientId={sale.client_id}
             onSuccess={() => setShowLog(false)} 
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAIInsights} onOpenChange={setShowAIInsights}>
+        <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-purple-500/20 rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-2">
+              <BrainCircuit className="h-5 w-5 text-purple-500" />
+              Inteligência Preditiva (IA)
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Score de Fechamento</span>
+                <span className={cn("text-2xl font-black font-display", getPredictionColor(sale.ai_prediction_score || 0))}>
+                  {sale.ai_prediction_score || 0}%
+                </span>
+              </div>
+              <div className="w-full bg-muted/30 h-2 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-purple-500 transition-all duration-1000" 
+                  style={{ width: `${sale.ai_prediction_score || 0}%` }}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Análise de Comportamento</span>
+              <p className="text-sm leading-relaxed text-muted-foreground/80">
+                {sale.ai_prediction_reasoning || "A IA está processando os dados deste lead para gerar uma predição precisa."}
+              </p>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

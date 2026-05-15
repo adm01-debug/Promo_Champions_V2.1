@@ -27,6 +27,7 @@ export const AVAILABLE_WIDGETS: { type: string; title: string; description: stri
   { type: "forecast_summary", title: "Forecast", description: "Previsão de receita ponderada", icon: "🔮", defaultW: 1, defaultH: 1 },
   { type: "calendar_preview", title: "Calendário", description: "Próximas atividades agendadas", icon: "📅", defaultW: 2, defaultH: 2 },
   { type: "custom_report", title: "Relatório Customizado", description: "Embute um relatório do Builder no dashboard", icon: "📑", defaultW: 2, defaultH: 2 },
+  { type: "ai_sales_coach", title: "IA Sales Coach", description: "Insights e dicas táticas da IA em tempo real", icon: "🧠", defaultW: 2, defaultH: 1 },
 ];
 
 const DEFAULT_LAYOUT: WidgetConfig[] = [
