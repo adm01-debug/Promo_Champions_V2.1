@@ -45,8 +45,8 @@ export const useAutomationRules = () => {
       if (error) throw error;
       return (data || []) as unknown as AutomationRule[];
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
@@ -64,8 +64,8 @@ export const useAutomationLogs = (workflowId?: string, limit = 100) => {
       if (error) throw error;
       return (data || []) as unknown as AutomationRunLog[];
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
