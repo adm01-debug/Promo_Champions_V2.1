@@ -87,10 +87,8 @@ export function usePWA(): UsePWAReturn {
             }
           });
         })
-        .catch((error) => {
-          if (import.meta.env.DEV) {
-            console.warn('Service Worker registration failed:', error);
-          }
+        .catch((_error) => {
+          // Failure handled silently in production to avoid user-facing logs
         });
     }
   }, []);
@@ -112,9 +110,6 @@ export function usePWA(): UsePWAReturn {
   // Install app
   const installApp = useCallback(async (): Promise<boolean> => {
     if (!deferredPrompt) {
-      if (import.meta.env.DEV) {
-        console.warn('No install prompt available');
-      }
       return false;
     }
 
@@ -130,10 +125,7 @@ export function usePWA(): UsePWAReturn {
       }
       
       return false;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Install failed:', error);
-      }
+    } catch (_error) {
       return false;
     }
   }, [deferredPrompt]);
@@ -149,10 +141,8 @@ export function usePWA(): UsePWAReturn {
   // Check for updates
   const checkForUpdates = useCallback(() => {
     if (registration) {
-      registration.update().catch((error) => {
-        if (import.meta.env.DEV) {
-          console.error('Update check failed:', error);
-        }
+      registration.update().catch((_error) => {
+        // Update check failed silently
       });
     }
   }, [registration]);
