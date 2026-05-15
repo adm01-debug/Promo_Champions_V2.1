@@ -28,9 +28,9 @@ interface CategoryData {
   totalSales: number;
 }
 
-const CustomTooltip = ({ active, payload }: RechartsTooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload as CategoryData;
+  const data = payload[0].payload as unknown as CategoryData;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-semibold text-foreground">{data.category}</p>
