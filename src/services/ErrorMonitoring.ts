@@ -8,7 +8,7 @@ interface ErrorLogParams {
   severity?: ErrorSeverity;
   category?: string;
   component?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export const logError = async ({
