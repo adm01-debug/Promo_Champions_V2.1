@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
   );
 };
 
-export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
+export const SalesChart = React.memo(React.forwardRef<HTMLDivElement>((_, ref) => {
   const [period, setPeriod] = useState<Period>("90d");
   const { data: liveData, isLoading } = useSalesChartData(period);
 
@@ -147,5 +147,5 @@ export const SalesChart = React.forwardRef<HTMLDivElement>((_, ref) => {
       </CardContent>
     </Card>
   );
-});
+}));
 SalesChart.displayName = "SalesChart";
