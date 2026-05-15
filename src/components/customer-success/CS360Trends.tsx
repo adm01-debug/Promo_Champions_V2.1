@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts";
 import { formatBRL } from "./cs360Helpers";
+import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 interface EvolutionData {
   name: string;
@@ -31,7 +32,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
               <YAxis tickFormatter={(val) => `R$${val / 1000}k`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(val: number) => [formatBRL(val), "LTV"]} 
+                formatter={(val: ValueType) => [formatBRL(Number(val)), "LTV"]} 
               />
               <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -54,7 +55,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
               <YAxis tickFormatter={(val) => `R$${val}`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(val: number) => [formatBRL(val), "Ticket Médio"]} 
+                formatter={(val: ValueType) => [formatBRL(Number(val)), "Ticket Médio"]} 
               />
               <Line type="monotone" dataKey="ticket" stroke="hsl(var(--success))" strokeWidth={3} dot={{ r: 4, fill: "hsl(var(--success))" }} />
             </LineChart>
