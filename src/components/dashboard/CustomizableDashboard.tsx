@@ -55,6 +55,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   team_ranking: TeamRankingWidget,
   forecast_summary: ForecastWidget,
   calendar_preview: CalendarPreviewWidget,
+  ai_sales_coach: AISalesCoachWidget,
 };
 
 function RealWidget({ config, onEdit }: { config: WidgetConfig; onEdit?: () => void }) {
