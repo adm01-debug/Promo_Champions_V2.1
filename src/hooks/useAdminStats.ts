@@ -75,7 +75,3 @@ export function useAdminStats() {
   });
 }
 
-/** @deprecated Use useAdminStats instead, edgeStatus is now part of the main stats query */
-export function useEdgeFunctionsStatus() {
-  return { data: undefined, isLoading: false };
-}

@@ -60,41 +60,53 @@ export function useSalesRealtime(currentSalespersonId?: string, currentSalespers
       .channel("sales-realtime")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "sales" }, async (payload) => {
         const newSale = payload.new as SalePayload;
-        if (newSale.status !== "completed") return;
+        if (newSale.status !== "completed" || !newSale.salesperson_id) return;
 
-        if (newSale.salesperson_id) {
-          const { data: salesperson } = await supabase.from("salespeople").select("name, avatar_url, role").eq("id", newSale.salesperson_id).single();
-          if (!salesperson) return;
+        // Fetch salesperson data with internal cache check or efficient query
+        const salesperson = await queryClient.fetchQuery({
+          queryKey: ["salesperson-details", newSale.salesperson_id],
+          queryFn: async () => {
+            const { data, error } = await supabase
+              .from("salespeople")
+              .select("name, avatar_url, role")
+              .eq("id", newSale.salesperson_id!)
+              .single();
+            if (error) throw error;
+            return data;
+          },
+          staleTime: 5 * 60 * 1000 // 5 minutes cache
+        });
 
-          if (!shouldReceiveNotification(salesperson.role as SalespersonRole | null)) {
-            invalidateQueries();
-            return;
+        if (!salesperson) return;
+
+        if (!shouldReceiveNotification(salesperson.role as SalespersonRole | null)) {
+          invalidateQueries();
+          return;
+        }
+
+        const formattedAmount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(newSale.amount);
+
+        playSound();
+        playSoundForCategory('newSale');
+        triggerConfetti(newSale.amount);
+
+        const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
+        if (xpFromSale > 0) {
+          const levelUpResult = await awardSaleXP(newSale.salesperson_id!, xpFromSale, newSale.id, newSale.amount, salesperson.name);
+          if (levelUpResult?.leveledUp) {
+            const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
+            setTimeout(() => celebrationRef.current.celebrateLevelUp(salesperson.name, levelUpResult.newLevel, newLevelInfo.title, newLevelInfo.emoji), 1500);
           }
+        }
 
-          const formattedAmount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(newSale.amount);
+        toast.success(`🔥 ${salesperson.name} fechou uma venda!`, { description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`, duration: 8000 });
 
-          playSound();
-          playSoundForCategory('newSale');
-          triggerConfetti(newSale.amount);
-
-          const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
-          if (xpFromSale > 0) {
-            const levelUpResult = await awardSaleXP(newSale.salesperson_id, xpFromSale, newSale.id, newSale.amount, salesperson.name);
-            if (levelUpResult?.leveledUp) {
-              const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
-              setTimeout(() => celebrationRef.current.celebrateLevelUp(salesperson.name, levelUpResult.newLevel, newLevelInfo.title, newLevelInfo.emoji), 1500);
-            }
-          }
-
-          toast.success(`🔥 ${salesperson.name} fechou uma venda!`, { description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`, duration: 8000 });
-
-          if (currentSalespersonId !== newSale.salesperson_id && "Notification" in window && Notification.permission === "granted") {
-            new Notification(`🔥 ${salesperson.name} fechou uma venda!`, {
-              body: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
-              icon: salesperson.avatar_url || "/placeholder.svg",
-              tag: `sale-${newSale.id}`,
-            });
-          }
+        if (currentSalespersonId !== newSale.salesperson_id && "Notification" in window && Notification.permission === "granted") {
+          new Notification(`🔥 ${salesperson.name} fechou uma venda!`, {
+            body: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
+            icon: salesperson.avatar_url || "/placeholder.svg",
+            tag: `sale-${newSale.id}`,
+          });
         }
 
         invalidateQueries();

@@ -51,7 +51,7 @@ export function IntegrationHealthCard({ connection }: { connection: IntegrationC
     if (isPersisted !== historyOpen) {
       setHistoryOpenState(isPersisted);
     }
-  }, [connection.id]);
+  }, [connection.id, historyOpen]);
   // First pass: no polling until we know status. Then adapt based on last check.
   const initial = useIntegrationHealth(connection.id, 10);
   const lastStatus = initial.data?.[0]?.status;

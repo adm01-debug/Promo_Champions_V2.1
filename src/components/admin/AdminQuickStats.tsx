@@ -18,10 +18,8 @@ interface AdminQuickStatsProps {
 }
 
 export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
-  const animatedUsers = useCountUp(stats.totalUsers);
   const animatedSalespeople = useCountUp(stats.totalSalespeople);
   const animatedAccessDenied = useCountUp(stats.accessDeniedCount);
-  const animatedAlerts = useCountUp(stats.securityAlertsCount + stats.sdrAlertsCount);
   const animatedRevenue = useCountUp(stats.totalRevenue);
   const animatedApprovals = useCountUp(stats.pendingApprovals);
 

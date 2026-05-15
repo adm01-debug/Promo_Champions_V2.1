@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, Star, MessageCircle, Heart, ThumbsUp, PartyPopper } from "lucide-react";
+import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, MessageCircle, ThumbsUp, PartyPopper } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
