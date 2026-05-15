@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Settings2, History as HistoryIcon, RefreshCw } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ interface DashboardSettingsProps {
   setIsAlertHistoryOpen: (v: boolean) => void;
 }
 
-export const DashboardSettings = ({
+export const DashboardSettings = memo(({
   isSyncing,
   minVal,
   setMinVal,
@@ -200,4 +201,6 @@ export const DashboardSettings = ({
       </PopoverContent>
     </Popover>
   );
-};
+});
+
+DashboardSettings.displayName = "DashboardSettings";

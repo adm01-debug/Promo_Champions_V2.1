@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, memo } from "react";
 import { motion } from "framer-motion";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -71,7 +71,7 @@ const accentMap = {
   destructive: { stroke: "hsl(var(--destructive))", glow: "hsl(var(--destructive) / 0.5)", text: "text-destructive" },
 };
 
-export const Speedometer = ({
+export const Speedometer = memo(({
   value,
   min = 0,
   max,
@@ -182,7 +182,7 @@ export const Speedometer = ({
   const dashArc = circumference * arcRatio;
   const dashOffset = dashArc * (1 - animatedPct);
 
-  const ticks = useMemo(() => {
+  const tickStructure = useMemo(() => {
     return Array.from({ length: ticksCount }).map((_, i) => {
       const tickPct = i / (ticksCount - 1);
       const angle = (startAngle + arcLength * tickPct) * (Math.PI / 180);
@@ -191,18 +191,26 @@ export const Speedometer = ({
       const outer = arcRadius - 4 * (s / 280);
       const labelRadius = arcRadius - 32 * (s / 280);
       return {
+        tickPct,
+        angle,
         x1: cx + inner * Math.cos(angle),
         y1: cy + inner * Math.sin(angle),
         x2: cx + outer * Math.cos(angle),
         y2: cy + outer * Math.sin(angle),
         labelX: cx + labelRadius * Math.cos(angle),
         labelY: cy + labelRadius * Math.sin(angle),
-        active: tickPct <= animatedPct,
         major: isMajor,
         labelValue: min + range * tickPct,
       };
     });
-  }, [arcRadius, cx, cy, startAngle, arcLength, animatedPct, min, range, ticksCount, s]);
+  }, [arcRadius, cx, cy, startAngle, arcLength, min, range, ticksCount, s]);
+
+  const ticks = useMemo(() => {
+    return tickStructure.map(t => ({
+      ...t,
+      active: t.tickPct <= animatedPct
+    }));
+  }, [tickStructure, animatedPct]);
 
   useEffect(() => {
     if (!drilldownData.length) return;
@@ -577,7 +585,9 @@ export const Speedometer = ({
       </Dialog>
     </motion.div>
   );
-};
+});
+
+Speedometer.displayName = "Speedometer";
 
 // Re-add these constants as they are needed by the component
 import { Zap, Activity, Target as LucideTarget } from "lucide-react";
