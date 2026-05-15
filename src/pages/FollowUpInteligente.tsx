@@ -74,7 +74,7 @@ const FollowUpInteligente = () => {
     queryFn: async () => {
       if (!selectedLeadForAudit?.id) return [];
       const { data, error } = await supabase
-        .from('follow_up_audit_view' as any)
+        .from('follow_up_audit_view')
         .select('*')
         .eq('sale_id', selectedLeadForAudit.id)
         .order('created_at', { ascending: false });
@@ -115,7 +115,7 @@ const FollowUpInteligente = () => {
       if (tasksError) throw tasksError;
 
       const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
-      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
+      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t: any) => {
         if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
         return acc;
       }, {});
@@ -141,8 +141,8 @@ const FollowUpInteligente = () => {
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
-          const score = (deal.lead_scores as any)?.[0]?.score || 0;
-          const probability = (deal.deal_probability_scores as any)?.[0]?.calibrated_probability || undefined;
+          const score = (deal as any).lead_scores?.[0]?.score || 0;
+          const probability = (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
           
           return {
             ...deal,
@@ -285,7 +285,7 @@ const FollowUpInteligente = () => {
   }, [coldLeads]);
 
   const logAction = useMutation({
-    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: any, status?: string }) => {
+    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: Record<string, Json>, status?: string }) => {
       const { error } = await supabase
         .from('follow_up_audit_logs')
         .insert({
