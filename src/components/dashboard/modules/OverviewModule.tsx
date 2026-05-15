@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { MyGoalAlertCard } from "@/components/dashboard/MyGoalAlertCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
@@ -12,7 +13,7 @@ interface OverviewModuleProps {
   kpis: any;
 }
 
-export const OverviewModule = ({ goalsData, kpis }: OverviewModuleProps) => {
+export const OverviewModule = memo(({ goalsData, kpis }: OverviewModuleProps) => {
   return (
     <motion.div 
       className="space-y-6"
@@ -55,4 +56,6 @@ export const OverviewModule = ({ goalsData, kpis }: OverviewModuleProps) => {
       </motion.div>
     </motion.div>
   );
-};
+});
+
+OverviewModule.displayName = "OverviewModule";
