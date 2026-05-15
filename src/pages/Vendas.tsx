@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { ShoppingCart, Search, Loader2, Plus, History } from "lucide-react";
+import { ShoppingCart, Search, Loader2, Plus, History, BrainCircuit, MessageCircle } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
