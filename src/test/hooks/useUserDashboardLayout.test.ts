@@ -9,7 +9,7 @@ import React from "react";
 // State shared by mocks
 let authUser: { id: string } | null = { id: "user-1" };
 let storedRow: { layout: string[] } | null = null;
-let upsertSpy: ReturnType<typeof vi.fn>;
+let upsertSpy: any;
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
