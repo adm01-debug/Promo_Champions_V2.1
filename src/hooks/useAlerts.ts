@@ -136,6 +136,7 @@ export const useAlerts = () => {
       });
     },
     staleTime: 5 * 60 * 1000,
-    refetchInterval: 10 * 60 * 1000, // Refetch every 10 minutes
+    gcTime: 15 * 60 * 1000,
+    refetchInterval: false, // Optimize: only refetch on demand or when stale, 10m is too frequent for heavy queries if not changing fast
   });
 };
