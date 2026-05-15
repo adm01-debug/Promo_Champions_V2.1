@@ -100,7 +100,7 @@ const BIGestor = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                         <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                         <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                        <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", boxShadow: "var(--shadow-lg)" }} formatter={(value: number) => [formatCurrency(value), "Receita"]} />
+                        <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", boxShadow: "var(--shadow-lg)" }} formatter={(value: any) => [formatCurrency(value), "Receita"]} />
                         <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -114,7 +114,7 @@ const BIGestor = () => {
                   {data?.abcClients && data.abcClients.length > 0 ? (
                     <>
                       <ResponsiveContainer width="100%" height={160}>
-                        <PieChart><Pie data={data.abcClients} cx="50%" cy="50%" innerRadius={35} outerRadius={60} paddingAngle={3} dataKey="revenue">{data.abcClients.map((entry) => <Cell key={entry.classification} fill={ABC_COLORS[entry.classification as keyof typeof ABC_COLORS]} />)}</Pie><Tooltip formatter={(value: number) => [formatCurrency(value)]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" }} /></PieChart>
+                        <PieChart><Pie data={data.abcClients} cx="50%" cy="50%" innerRadius={35} outerRadius={60} paddingAngle={3} dataKey="revenue">{data.abcClients.map((entry) => <Cell key={entry.classification} fill={ABC_COLORS[entry.classification as keyof typeof ABC_COLORS]} />)}</Pie><Tooltip formatter={(value: any) => [formatCurrency(value)]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" }} /></PieChart>
                       </ResponsiveContainer>
                       <div className="space-y-2">
                         {data.abcClients.map(abc => (
@@ -162,7 +162,7 @@ const BIGestor = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                         <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                         <YAxis type="category" dataKey="source" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} />
-                        <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" }} formatter={(value: number) => [formatCurrency(value), "Valor"]} />
+                        <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" }} formatter={(value: any) => [formatCurrency(value), "Valor"]} />
                         <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 8, 8, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
