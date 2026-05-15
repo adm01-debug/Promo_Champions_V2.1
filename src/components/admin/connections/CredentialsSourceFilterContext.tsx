@@ -63,8 +63,12 @@ export function CredentialsSourceFilterProvider({ children }: { children: ReactN
   return <CredentialsSourceContext.Provider value={value}>{children}</CredentialsSourceContext.Provider>;
 }
 
-export function useCredentialsSource() {
+/**
+ * Hook to use the credentials source filter context.
+ */
+export const useCredentialsSource = () => {
   const ctx = useContext(CredentialsSourceContext);
   if (!ctx) throw new Error("useCredentialsSource must be used inside CredentialsSourceFilterProvider");
   return ctx;
-}
+};
+
