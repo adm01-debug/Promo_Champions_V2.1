@@ -74,8 +74,8 @@ export const useAchievements = (limit?: number) => {
       if (error) throw error;
       return (data || []) as AchievementRecord[];
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
@@ -132,8 +132,8 @@ export const useStreakRanking = () => {
       
       return rankings;
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 5 * 60 * 1000, // Optimize: Ranking doesn't need to be hyper-reactive
+    gcTime: 15 * 60 * 1000,
   });
 };
 
@@ -159,8 +159,8 @@ export const useSalespersonStreak = (salespersonId?: string) => {
       
       return { current, best, lastAchievementDate };
     },
-    staleTime: CACHE_TIMES.STALE_TIME,
-    gcTime: CACHE_TIMES.GC_TIME,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
