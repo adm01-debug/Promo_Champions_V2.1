@@ -16,6 +16,7 @@ import { CommercialDiffViewer } from "@/components/admin/commercial/CommercialDi
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ApprovalRequest, AuditLog, CommercialGoal, CommissionConfig, ScoringRule } from "@/types";
+import type { Json } from "@/integrations/supabase/types";
 
 
 export default function AdminComercial() {

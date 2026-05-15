@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 interface LeadScoreFactors {
   companySize: number;
@@ -115,7 +116,7 @@ export const useLeadScoring = (leadId?: string) => {
         .select('*')
         .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']) as any; // Cast for types compatibility if needed
 
-      const riskMap = new Map((riskData || []).map(r => [r.sale_id, r]));
+      const riskMap = new Map((riskData || []).map((r: any) => [r.sale_id, r]));
 
       return clients.map(client => {
         const dealIds = clientSalesMap.get(client.id) || [];
