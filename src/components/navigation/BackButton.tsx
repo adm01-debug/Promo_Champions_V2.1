@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ interface BackButtonProps {
   className?: string;
 }
 
-export const BackButton: FC<BackButtonProps> = ({ 
+export const BackButton: FC<BackButtonProps> = memo(({ 
   label = 'Voltar', 
   fallbackPath = '/',
   className 
@@ -44,4 +44,6 @@ export const BackButton: FC<BackButtonProps> = ({
       <span className="text-sm">{label}</span>
     </Button>
   );
-};
+});
+
+BackButton.displayName = "BackButton";
