@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { Upload, Download, FileSpreadsheet, Check, AlertCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useLogAuditEvent } from "@/hooks/useAuditLogs";
 
 type ImportStep = "upload" | "mapping" | "preview" | "complete";
 
@@ -39,6 +40,7 @@ const ImportExport = () => {
   const [importedCount, setImportedCount] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const { mutate: logAudit } = useLogAuditEvent();
 
   const handleFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,6 +120,17 @@ const ImportExport = () => {
     const { data } = await supabase.from("clients").select("name, email, phone, company, total_value").limit(1000);
     if (!data?.length) { toast.error("Nenhum dado para exportar"); return; }
 
+    // Log the audit event
+    logAudit({
+      action: "EXPORT_DATA",
+      entity_type: "clients",
+      metadata: {
+        record_count: data.length,
+        format: "CSV",
+        fields: ["name", "email", "phone", "company", "total_value"]
+      }
+    });
+
     const csvHeaders = Object.keys(data[0]);
     const csvRows = data.map((r) => csvHeaders.map((h) => `"${(r as Record<string, unknown>)[h] ?? ""}"`).join(","));
     const csv = [csvHeaders.join(","), ...csvRows].join("\n");
@@ -130,7 +143,7 @@ const ImportExport = () => {
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Exportação concluída!");
-  }, []);
+  }, [logAudit]);
 
   return (
     <>

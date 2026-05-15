@@ -15,6 +15,7 @@ import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount
 import type { GlobalSearchHandle } from "./GlobalSearch";
 import { useMemo } from "react";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
+import { SystemHealthBadge } from "./SystemHealthBadge";
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
@@ -185,6 +186,7 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           <div className="w-px h-5 bg-border/50 mx-1.5" />
 
           {/* Settings cluster */}
+          <SystemHealthBadge />
           <LanguageToggle />
           <ThemeToggle />
         </div>
