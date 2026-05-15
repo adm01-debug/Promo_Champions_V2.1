@@ -106,7 +106,8 @@ export function useCompetitiveRanking() {
         };
       });
     },
-    refetchInterval: 60000, // Refresh every 60 seconds (optimized from 15s)
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchInterval: false, // Optimize: manual refresh or on-stale only
+    staleTime: 60 * 1000, 
+    gcTime: 10 * 60 * 1000,
   });
 }
