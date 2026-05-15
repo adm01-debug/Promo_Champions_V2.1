@@ -121,7 +121,8 @@ export function useSalespersonXP(salespersonId?: string) {
       return data as SalespersonXP | null;
     },
     enabled: !!salespersonId,
-  });
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
 }
 
 export function useAllSalespeopleXP() {
@@ -139,7 +140,8 @@ export function useAllSalespeopleXP() {
       if (error) throw error;
       return data;
     },
-  });
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
 }
 
 export function useXPHistory(salespersonId?: string) {
@@ -159,7 +161,8 @@ export function useXPHistory(salespersonId?: string) {
       return data as XPHistory[];
     },
     enabled: !!salespersonId,
-  });
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
 }
 
 export function useAddXP() {
