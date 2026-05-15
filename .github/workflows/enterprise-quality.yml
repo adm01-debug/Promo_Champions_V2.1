@@ -1,0 +1,58 @@
+name: Enterprise Quality Assurance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Code Quality (Lint)
+        run: npm run lint
+        
+      - name: Integrity Check (Typecheck)
+        run: npm run typecheck
+        
+      - name: Unit & Integration Tests
+        run: npm run test
+        
+      - name: Coverage Check
+        run: |
+          npm run test:coverage
+          # Block if coverage is below 80% (example gate)
+          # Note: this requires vitest coverage to be configured with thresholds
+          
+      - name: Build Verification
+        run: npm run build
+        
+      - name: Security Audit
+        run: npm audit --audit-level=high
+
+  e2e-simulation:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run E2E Journeys
+        run: npx vitest run tests/e2e
