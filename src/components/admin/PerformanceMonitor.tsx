@@ -34,16 +34,15 @@ function usePerfMetrics(enabled: boolean) {
       const now = performance.now();
       if (now - lastTime >= 1000) {
         const fps = Math.round(frameCount * 1000 / (now - lastTime));
-        const memInfo = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+        const memInfo = (performance as any).memory;
         const memory = memInfo ? Math.round(memInfo.usedJSHeapSize / 1048576) : null;
 
-        setMetrics({
+        setMetrics(prev => ({
+          ...prev,
           fps,
           memory,
           domNodes: document.querySelectorAll('*').length,
-          queryCount: 0, // Will be filled externally
-          networkLatency: null,
-        });
+        }));
 
         frameCount = 0;
         lastTime = now;

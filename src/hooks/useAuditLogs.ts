@@ -58,8 +58,8 @@ export function useLogAuditEvent() {
         _action: params.action,
         _entity_type: params.entity_type,
         _entity_id: params.entity_id,
-        _changes: (params.changes ?? {}) as never,
-        _metadata: (params.metadata ?? {}) as never,
+        _changes: (params.changes ?? {}) as any,
+        _metadata: (params.metadata ?? {}) as any,
       });
       if (error) throw error;
       return data;

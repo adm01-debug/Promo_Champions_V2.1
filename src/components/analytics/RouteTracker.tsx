@@ -3,7 +3,7 @@
  * Placed once in the app layout. Listens to route changes and
  * delegates to the analytics lib.
  */
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -56,7 +56,7 @@ function getPageTitle(pathname: string): string {
   return segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : "Página";
 }
 
-export function RouteTracker(): null {
+export const RouteTracker = memo(function RouteTracker(): null {
   const location = useLocation();
   const { salesperson } = useAuth();
   const prevPathRef = useRef<string | null>(null);
@@ -83,4 +83,6 @@ export function RouteTracker(): null {
   }, []);
 
   return null; // Invisible component
-}
+});
+
+RouteTracker.displayName = "RouteTracker";

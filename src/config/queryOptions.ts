@@ -7,8 +7,8 @@ import { UI } from '@/config/constants';
 
 /** Frequently changing data (sales, activities) — short cache, background refetch */
 export const REALTIME_QUERY_OPTIONS = {
-  staleTime: 30 * 1000,          // 30s
-  gcTime: 5 * 60 * 1000,         // 5min
+  staleTime: 60 * 1000,          // 1min (optimized for performance)
+  gcTime: 10 * 60 * 1000,         // 10min
   refetchOnWindowFocus: true,
   refetchOnReconnect: true,
 } as const;
@@ -30,13 +30,13 @@ export const CONFIG_QUERY_OPTIONS = {
 /** Analytics/BI data — moderate cache, no background refetch */
 export const ANALYTICS_QUERY_OPTIONS = {
   staleTime: 5 * 60 * 1000,      // 5min
-  gcTime: 15 * 60 * 1000,        // 15min
+  gcTime: 10 * 60 * 1000,        // 10min
   refetchOnWindowFocus: false,
 } as const;
 
 /** User-specific data (XP, streaks, preferences) */
 export const USER_DATA_QUERY_OPTIONS = {
-  staleTime: 2 * 60 * 1000,      // 2min
+  staleTime: 60 * 1000,      // 1min
   gcTime: 10 * 60 * 1000,        // 10min
   refetchOnWindowFocus: true,
 } as const;

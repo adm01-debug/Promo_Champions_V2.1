@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -60,12 +60,15 @@ const PageLoadingFallback = () => (
 export { PageLoadingFallback };
 
 // Helper to wrap admin-only routes
-const Admin = ({ children }: { children: React.ReactNode }) => (
+const Admin = React.memo(({ children }: { children: React.ReactNode }) => (
   <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>
-);
-const Manager = ({ children }: { children: React.ReactNode }) => (
+));
+Admin.displayName = "AdminWrapper";
+
+const Manager = React.memo(({ children }: { children: React.ReactNode }) => (
   <ProtectedRoute requireAdminOrManager>{children}</ProtectedRoute>
-);
+));
+Manager.displayName = "ManagerWrapper";
 
 export function AppRoutes() {
   return (

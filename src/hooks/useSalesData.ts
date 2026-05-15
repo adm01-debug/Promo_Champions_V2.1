@@ -75,11 +75,11 @@ export const useSalesData = (searchTerm?: string) => {
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data || []).map((sale) => ({
+      return (data || []).map((sale: any) => ({
         id: sale.id.substring(0, 8).toUpperCase(),
         fullId: sale.id,
-        cliente: (sale as any).client?.name || sale.client_name,
-        produto: (sale as any).product?.name || sale.product_name,
+        cliente: sale.client?.name || sale.client_name,
+        produto: sale.product?.name || sale.product_name,
         valor: Number(sale.amount),
         status: sale.status,
         statusLabel: statusMap[sale.status] || sale.status,
@@ -87,13 +87,15 @@ export const useSalesData = (searchTerm?: string) => {
         client_id: sale.client_id,
         product_id: sale.product_id,
         salesperson_id: sale.salesperson_id,
-        sku: sale.sku || (sale as any).product?.sku,
+        sku: sale.sku || sale.product?.sku,
         ai_prediction_score: sale.ai_prediction_score,
         ai_prediction_reasoning: sale.ai_prediction_reasoning,
         whatsapp_status: sale.whatsapp_status,
         whatsapp_last_interaction: sale.whatsapp_last_interaction,
       }));
     },
+    staleTime: 30000, // Optimize: Keep data fresh for 30s
+    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
   });
 };
 

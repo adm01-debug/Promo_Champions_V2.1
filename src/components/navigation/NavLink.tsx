@@ -1,5 +1,5 @@
+import React, { forwardRef, useCallback, useRef, memo } from "react";
 import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef, useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 // Route-to-lazy-import mapping for prefetch
@@ -50,7 +50,7 @@ interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
   pendingClassName?: string;
 }
 
-const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
+const NavLink = memo(forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -85,8 +85,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
         {...props}
       />
     );
-  },
-);
+}));
 
 NavLink.displayName = "NavLink";
 

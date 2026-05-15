@@ -23,8 +23,8 @@ initErrorTracking();
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: UI.STALE_TIME_MS,
-      gcTime: UI.GC_TIME_MS,
+      staleTime: 60 * 1000, // 1 minute
+      gcTime: 1000 * 60 * 10, // 10 minutes
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       retry: 1,

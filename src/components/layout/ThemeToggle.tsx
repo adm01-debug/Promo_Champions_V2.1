@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import React, { forwardRef, memo } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/useTheme";
@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_props, ref) {
+export const ThemeToggle = memo(forwardRef<HTMLDivElement>(function ThemeToggle(_props, ref) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -44,6 +44,6 @@ export const ThemeToggle = forwardRef<HTMLDivElement>(function ThemeToggle(_prop
       </Tooltip>
     </div>
   );
-});
+}));
 
 ThemeToggle.displayName = "ThemeToggle";

@@ -80,7 +80,7 @@ export function useSystemSoundSettings() {
     if (soundType === 'none' || volume === 0) return;
 
     try {
-      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const now = audioContext.currentTime;
       
       const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3, type: OscillatorType = 'sine') => {
@@ -148,7 +148,7 @@ export function useSystemSoundSettings() {
     if (!preferences.ready.enabled || volume === 0) return;
     
     try {
-      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       

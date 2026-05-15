@@ -64,8 +64,8 @@ export const UI = {
   ANIMATION_DURATION_MS: 200,
   PAGE_SIZE_DEFAULT: 20,
   PAGE_SIZE_MAX: 100,
-  STALE_TIME_MS: 3 * 60 * 1000,
-  GC_TIME_MS: 15 * 60 * 1000,
+  STALE_TIME_MS: 1 * 60 * 1000,
+  GC_TIME_MS: 10 * 60 * 1000,
 } as const;
 
 // ── Churn & Analytics ──

@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { Badge } from "@/components/ui/badge";
 import { Crown, ShieldCheck, User, Loader2 } from "lucide-react";
@@ -24,7 +25,7 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; colo
   },
 };
 
-export function UserRoleBadge() {
+export const UserRoleBadge = memo(function UserRoleBadge() {
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
   if (isLoadingCurrentRole) {
@@ -51,4 +52,6 @@ export function UserRoleBadge() {
       </TooltipContent>
     </Tooltip>
   );
-}
+});
+
+UserRoleBadge.displayName = "UserRoleBadge";

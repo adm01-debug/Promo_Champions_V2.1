@@ -1,18 +1,18 @@
+import React, { memo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WifiOff, Wifi } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
 
 interface OfflineIndicatorProps {
   className?: string;
   showOnlineMessage?: boolean;
 }
 
-export function OfflineIndicator({ 
+export const OfflineIndicator = memo(({ 
   className,
   showOnlineMessage = true 
-}: OfflineIndicatorProps) {
+}: OfflineIndicatorProps) => {
   const { isOnline } = usePWA();
   const [showOnlineNotification, setShowOnlineNotification] = useState(false);
   const [wasOffline, setWasOffline] = useState(false);
@@ -71,4 +71,6 @@ export function OfflineIndicator({
       )}
     </AnimatePresence>
   );
-}
+});
+
+OfflineIndicator.displayName = "OfflineIndicator";
