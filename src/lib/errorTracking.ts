@@ -58,7 +58,7 @@ async function flushErrors(): Promise<void> {
         severity: e.severity,
         category: e.category,
         component: e.component ?? null,
-        metadata: (e.metadata ?? {}) as Record<string, string>,
+        metadata: (e.metadata ?? {}) as Record<string, unknown>,
         url: e.url ?? window.location.href,
         user_agent: e.userAgent ?? navigator.userAgent,
       }))
