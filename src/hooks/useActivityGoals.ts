@@ -179,11 +179,8 @@ export function useUpsertActivityGoal() {
       queryClient.invalidateQueries({ queryKey: ["activity-goal-progress"] });
       toast.success("Metas de atividades atualizadas!");
     },
-    onError: (error) => {
+    onError: (_error) => {
       toast.error("Erro ao salvar metas");
-      if (import.meta.env.DEV) {
-        console.error("Error saving activity goals:", error);
-      }
     },
   });
 }
