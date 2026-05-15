@@ -108,8 +108,8 @@ export const StatCard = React.memo(({
           />
           {/* Cyber-coordinates decoration */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-8 pointer-events-none opacity-10">
-            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LN: {Math.random().toFixed(4)}</span>
-            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LT: {Math.random().toFixed(4)}</span>
+            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LN: 0.1234</span>
+            <span className="text-[6px] font-mono text-primary font-bold tracking-[0.5em]">LT: 0.5678</span>
           </div>
         </>
       )}
