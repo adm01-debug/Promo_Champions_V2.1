@@ -20,7 +20,8 @@ import {
   BarChart3,
   CalendarDays,
   Microchip,
-  Waves
+  Waves,
+  LucideIcon
 } from "lucide-react";
 import { useRevenueForecast } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
@@ -144,14 +145,14 @@ export const RevenueForecastHub: FC = () => {
               size="sm" 
               className="h-9 px-4 text-[10px] font-black uppercase tracking-widest gap-2 rounded-xl"
               onClick={async () => {
-                 const { error } = await (supabase as any).from('forecast_snapshots').insert({
+                 const { error } = await supabase.from('forecast_snapshots').insert([{
                    horizon_days: horizon,
                    pessimistic_value: data.scenarios.pessimistic,
                    realistic_value: data.scenarios.realistic,
                    optimistic_value: data.scenarios.optimistic,
                    confidence_at_time: data.confidence,
-                   metadata: { source: 'manual_trigger' }
-                 });
+                   metadata: { source: 'manual_trigger' } as any
+                 }]);
                  if (!error) refetch();
               }}
             >
@@ -370,7 +371,7 @@ function ForecastKpiCard({
   value: number;
   subtitle?: string;
   isCurrency?: boolean;
-  icon: any;
+  icon: LucideIcon;
   color: string;
 }) {
   return (

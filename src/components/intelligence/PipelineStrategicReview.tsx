@@ -96,7 +96,15 @@ export const PipelineStrategicReview = () => {
   );
 };
 
-const SummaryStat = ({ label, value, trend, trendType, icon: Icon }: any) => (
+interface SummaryStatProps {
+  label: string;
+  value: string;
+  trend: string;
+  trendType: 'positive' | 'negative';
+  icon: React.ElementType;
+}
+
+const SummaryStat = ({ label, value, trend, trendType, icon: Icon }: SummaryStatProps) => (
   <div className="p-4 rounded-xl border bg-card/50 space-y-2">
     <div className="flex items-center justify-between">
       <div className="size-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
@@ -114,12 +122,18 @@ const SummaryStat = ({ label, value, trend, trendType, icon: Icon }: any) => (
   </div>
 );
 
-const InsightCard = ({ type, title, description }: any) => {
+interface InsightCardProps {
+  type: 'opportunity' | 'warning' | 'info';
+  title: string;
+  description: string;
+}
+
+const InsightCard = ({ type, title, description }: InsightCardProps) => {
   const styles = {
     opportunity: "border-success/20 bg-success/5 text-success",
     warning: "border-warning/20 bg-warning/5 text-warning",
     info: "border-primary/20 bg-primary/5 text-primary",
-  }[type as "opportunity" | "warning" | "info"];
+  }[type];
 
   return (
     <div className={`p-3 rounded-lg border flex gap-3 ${styles}`}>
