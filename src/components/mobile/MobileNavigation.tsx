@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
   Kanban, 
@@ -17,7 +17,7 @@ interface MobileNavigationProps {
   className?: string;
 }
 
-export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
+export const MobileNavigation: FC<MobileNavigationProps> = memo(({ className }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -25,7 +25,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
   
   if (!isMobile) return null;
   
-  const navItems = [
+  const navItems = useMemo(() => [
     {
       icon: <Home className="h-5 w-5" />,
       filledIcon: <Home className="h-5 w-5 fill-current" />,
@@ -63,7 +63,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
       isActive: false,
       onClick: () => setIsDrawerOpen(true),
     }
-  ];
+  ], [location.pathname, unreadCount]);
 
   return (
     <>
@@ -77,4 +77,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({ className }) => {
       />
     </>
   );
-};
+});
+
+MobileNavigation.displayName = "MobileNavigation";
