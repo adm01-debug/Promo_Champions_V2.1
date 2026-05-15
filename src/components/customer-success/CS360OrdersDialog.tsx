@@ -13,7 +13,7 @@ interface Order {
   id: string;
   order_number: string;
   created_at: string;
-  total_amount: number;
+  total: number;
   status: string;
   account_id: string;
 }
@@ -106,7 +106,7 @@ export function CS360OrdersDialog({
                   <TableHead className="cursor-pointer hover:text-primary transition-colors" onClick={() => toggleSort("created_at")}>
                     Data <ArrowUpDown className="inline h-3 w-3 ml-1" />
                   </TableHead>
-                  <TableHead className="text-right cursor-pointer hover:text-primary transition-colors" onClick={() => toggleSort("total_amount")}>
+                  <TableHead className="text-right cursor-pointer hover:text-primary transition-colors" onClick={() => toggleSort("total")}>
                     Valor <ArrowUpDown className="inline h-3 w-3 ml-1" />
                   </TableHead>
                 </TableRow>
@@ -129,7 +129,7 @@ export function CS360OrdersDialog({
                         {format(new Date(o.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                       </TableCell>
                       <TableCell className="text-right font-bold text-xs">
-                        {formatBRL(o.total_amount)}
+                        {formatBRL(o.total)}
                       </TableCell>
                     </TableRow>
                   ))

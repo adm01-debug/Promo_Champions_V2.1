@@ -163,7 +163,7 @@ export function CustomerSuccess360Hub() {
     (filteredData?.orders || []).forEach(o => {
       const s = o.status === "paid" || o.status === "delivered" ? "delivered" : o.status === "cancelled" ? "cancelled" : "pending";
       statusMap[s].count += 1;
-      statusMap[s].value += Number(o.total_amount);
+      statusMap[s].value += Number(o.total);
     });
 
     return Object.values(statusMap);
