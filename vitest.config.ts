@@ -14,6 +14,12 @@ export default defineConfig((configEnv) => {
         coverage: {
           provider: 'v8',
           reporter: ['text', 'json', 'html', 'lcov'],
+          thresholds: {
+            statements: 80,
+            branches: 75,
+            functions: 80,
+            lines: 80,
+          },
           exclude: [
             'node_modules/',
             'src/test/setup.ts',
@@ -21,6 +27,7 @@ export default defineConfig((configEnv) => {
             '**/*.test.ts',
             '**/*.test.tsx',
             'dist/**',
+            'tests/**',
           ],
         },
         include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.{test,spec}.{ts,tsx}'],
