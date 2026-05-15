@@ -1,4 +1,4 @@
-export async function exportToPDF<T extends Record<string, any>>(
+export async function exportToPDF<T extends Record<string, string | number | boolean | null | undefined>>(
   data: T[],
   filename: string,
   title: string,
