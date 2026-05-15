@@ -88,7 +88,7 @@ export const useLeadScoring = (leadId?: string) => {
 
       if (allDealIds.length > 0) {
         try {
-          const { data: edgeResult, error: edgeError } = await supabase.functions.invoke('lead-scoring', {
+          const { data: edgeResult, error: edgeError } = await supabase.functions.invoke<{ scores: Record<string, { score: number; factors: ServerScoreFactors; labels: Record<string, string> }> }>('lead-scoring', {
             body: { dealIds: allDealIds.slice(0, 50) }, // Limit batch size
           });
 
@@ -113,7 +113,7 @@ export const useLeadScoring = (leadId?: string) => {
       const { data: riskData } = await supabase
         .from('lead_churn_risk')
         .select('*')
-        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']);
+        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']) as any; // Cast for types compatibility if needed
 
       const riskMap = new Map((riskData || []).map(r => [r.sale_id, r]));
 
@@ -194,7 +194,7 @@ export const useCalculateLeadScores = () => {
     mutationFn: async (saleIds: string[]) => {
       if (saleIds.length === 0) return {};
 
-      const { data, error } = await supabase.functions.invoke('lead-scoring', {
+      const { data, error } = await supabase.functions.invoke<{ scores: Record<string, any> }>('lead-scoring', {
         body: { dealIds: saleIds },
       });
 

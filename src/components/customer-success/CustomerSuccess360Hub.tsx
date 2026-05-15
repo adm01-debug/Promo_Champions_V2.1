@@ -81,7 +81,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       start = subDays(now, parseInt(period));
     }
 
-    const filterByDate = (item: { created_at?: string; renewal_date?: string; responded_at?: string }, dateField: string = "created_at") => {
+    const filterByDate = (item: { created_at?: string | null; renewal_date?: string | null; responded_at?: string | null }, dateField: string = "created_at") => {
       try {
         const dateStr = item[dateField as keyof typeof item];
         if (!dateStr) return true;
