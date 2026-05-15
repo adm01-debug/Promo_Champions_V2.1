@@ -46,7 +46,8 @@ export function useSalesRealtime(currentSalespersonId?: string, currentSalespers
   const invalidateQueries = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["sales"] });
     queryClient.invalidateQueries({ queryKey: ["goals-dashboard"] });
-    queryClient.invalidateQueries({ queryKey: ["salespeople-ranking"] });
+    queryClient.invalidateQueries({ queryKey: ["competitive-ranking"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard-kpis-period"] });
     queryClient.invalidateQueries({ queryKey: ["salesperson-xp"] });
     queryClient.invalidateQueries({ queryKey: ["all-salespeople-xp"] });
   }, [queryClient]);
