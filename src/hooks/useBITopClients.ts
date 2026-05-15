@@ -137,7 +137,8 @@ export function useBITopClients() {
 
       return { topClients, supplierSales, topCompanies };
     },
-    staleTime: 60000,
-    refetchInterval: 60000,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchInterval: false, // Optimize: manual/automatic refresh on stale, no forced polling every 60s unless necessary
   });
 }
