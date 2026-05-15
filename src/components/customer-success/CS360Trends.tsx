@@ -32,7 +32,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
               <YAxis tickFormatter={(val) => `R$${val / 1000}k`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(val: ValueType) => [formatBRL(Number(val)), "LTV"]} 
+                formatter={(val: ValueType | undefined) => val !== undefined ? [formatBRL(Number(val)), "LTV"] : ["", "LTV"]} 
               />
               <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -55,7 +55,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
               <YAxis tickFormatter={(val) => `R$${val}`} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip 
                 contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(val: ValueType) => [formatBRL(Number(val)), "Ticket Médio"]} 
+                formatter={(val: ValueType | undefined) => val !== undefined ? [formatBRL(Number(val)), "Ticket Médio"] : ["", "Ticket Médio"]} 
               />
               <Line type="monotone" dataKey="ticket" stroke="hsl(var(--success))" strokeWidth={3} dot={{ r: 4, fill: "hsl(var(--success))" }} />
             </LineChart>
