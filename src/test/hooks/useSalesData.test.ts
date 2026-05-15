@@ -2,21 +2,23 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import { useSalesData, useCreateSale } from "@/hooks/useSalesData";
 
-// Mock Supabase
-const mockSupabase = {
-  from: vi.fn().mockReturnThis(),
-  select: vi.fn().mockReturnThis(),
-  order: vi.fn().mockReturnThis(),
-  limit: vi.fn().mockReturnThis(),
-  or: vi.fn().mockReturnThis(),
-  insert: vi.fn().mockReturnThis(),
-  single: vi.fn(),
-  functions: {
-    invoke: vi.fn().mockResolvedValue({ data: null, error: null }),
-  },
-};
+const { mockSupabase } = vi.hoisted(() => {
+  return {
+    mockSupabase: {
+      from: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      single: vi.fn(),
+      functions: {
+        invoke: vi.fn().mockResolvedValue({ data: null, error: null }),
+      },
+    }
+  };
+});
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: mockSupabase,
@@ -40,6 +42,8 @@ vi.mock("sonner", () => ({
     error: vi.fn()
   }
 }));
+
+import { useSalesData, useCreateSale } from "@/hooks/useSalesData";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
@@ -73,8 +77,7 @@ describe("useSalesData", () => {
       }
     ];
 
-    // Ensure the mock returns data
-    (mockSupabase as any).limit.mockResolvedValue({ data: mockData, error: null });
+    (mockSupabase.limit as any).mockResolvedValue({ data: mockData, error: null });
 
     const { result } = renderHook(() => useSalesData(), { wrapper });
 
@@ -90,7 +93,7 @@ describe("useSalesData", () => {
 
 describe("useCreateSale", () => {
   it("successfully creates a sale and invalidates queries", async () => {
-    (mockSupabase as any).single.mockResolvedValue({ 
+    (mockSupabase.single as any).mockResolvedValue({ 
       data: { id: "new-id", status: "completed" }, 
       error: null 
     });
@@ -103,7 +106,6 @@ describe("useCreateSale", () => {
       amount: 500,
     });
 
-    // Verify success behavior
     const { toast } = await import("sonner");
     expect(toast.success).toHaveBeenCalledWith("Venda criada com sucesso!");
   });
