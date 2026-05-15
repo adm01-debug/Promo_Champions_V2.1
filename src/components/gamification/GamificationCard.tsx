@@ -86,7 +86,7 @@ function _GamificationCard({
             <div className={cn("rounded-full p-0.5 bg-gradient-to-br", levelColor, "shadow-lg")}>
               <div className={cn("rounded-full overflow-hidden bg-background", avatarSizes[size])}>
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
+                  <img src={avatarUrl} alt={name} className="h-full w-full object-cover" loading="lazy" />
                 ) : (
                   <div className={cn("h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-display font-bold", size === "sm" ? "text-sm" : size === "md" ? "text-lg" : "text-xl")}>
                     {name.charAt(0).toUpperCase()}
