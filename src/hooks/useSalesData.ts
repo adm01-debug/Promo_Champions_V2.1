@@ -26,6 +26,10 @@ export interface Sale {
   salesperson_id: string | null;
   created_at: string;
   updated_at: string;
+  ai_prediction_score: number | null;
+  ai_prediction_reasoning: string | null;
+  whatsapp_status: string | null;
+  whatsapp_last_interaction: string | null;
 }
 
 export interface CreateSaleInput {
