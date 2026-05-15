@@ -48,6 +48,7 @@ const statusOptions = [
 const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
   const [showLog, setShowLog] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
+  const [showAIEmail, setShowAIEmail] = useState(false);
 
   const getPredictionColor = (score: number) => {
     if (score >= 80) return "text-emerald-500";
@@ -107,6 +108,15 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
             </span>
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowAIEmail(true)}
+              title="Hyper-Personalização Email"
+            >
+              <Mail className="h-4 w-4 text-blue-500" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -183,6 +193,12 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AIEmailDialog 
+        open={showAIEmail} 
+        onOpenChange={setShowAIEmail} 
+        sale={sale} 
+      />
     </div>
   );
 };
