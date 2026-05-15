@@ -4,7 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
-import Index from "@/pages/Index";
+const Index = lazy(() => import("@/pages/Index"));
 import { RaceTransitionWrapper } from "@/components/race";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
 const RaceSpectator = lazy(() => import("@/pages/RaceSpectator"));

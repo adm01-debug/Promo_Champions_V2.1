@@ -1,5 +1,5 @@
 /* sidebar v3 — grouped submenus */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRight, Crown } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -38,7 +38,7 @@ export function AppSidebar() {
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
-  const getUserType = (): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
+  const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';
@@ -46,20 +46,20 @@ export function AppSidebar() {
     if (name.includes('sdr')) return 'sdr';
     if (name.includes('closer')) return 'closer';
     return 'salesperson';
-  };
+  }, [currentUserRole, salesperson]);
 
-  const userType = getUserType();
-  const isAdminOrManager = ['admin', 'manager'].includes(userType);
+  const isAdminOrManager = useMemo(() => ['admin', 'manager'].includes(userType), [userType]);
 
-  const getDefaultViewMode = (): ViewMode => {
+  const defaultViewMode = useMemo((): ViewMode => {
     if (userType === 'sdr') return 'sdr';
     if (userType === 'closer') return 'closer';
     return 'gestao';
-  };
+  }, [userType]);
 
-  const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
-  const mainItems = getMainItems(viewMode);
-  const groupedItems = getGroupedItems(viewMode);
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode);
+  
+  const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
+  const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
 
   const renderMenuItem = (item: MenuItem) => {
     const isNotifications = item.title === "Notificações";
@@ -165,11 +165,11 @@ export function AppSidebar() {
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
-          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map(item => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
+          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           <Separator className="my-2 bg-border/30" />
-          <SidebarGroup><div className="space-y-1">{groupedItems.map((group) => renderGroupedMenu(group))}</div></SidebarGroup>
+          <SidebarGroup><div className="space-y-1">{groupedItems.map((group: MenuGroup) => renderGroupedMenu(group))}</div></SidebarGroup>
           <Separator className="my-2 bg-border/30" />
-          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{systemItems.map(item => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
+          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{systemItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           {userType === 'admin' && (
             <>
               <Separator className="my-2 bg-border/30" />
@@ -187,7 +187,7 @@ export function AppSidebar() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType])}>
+                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
                   {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               </TooltipTrigger>
@@ -202,7 +202,7 @@ export function AppSidebar() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
-                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType])}>
+                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
                     {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">

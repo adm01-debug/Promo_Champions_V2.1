@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode, useMemo } from "react";
 
 type Locale = "pt-BR" | "en" | "es";
 
@@ -215,8 +215,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return translations[locale]?.[key] || fallback || key;
   }, [locale]);
 
+  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
+  
   return (
-    <I18nContext.Provider value={{ locale, setLocale, t }}>
+    <I18nContext.Provider value={value}>
       {children}
     </I18nContext.Provider>
   );

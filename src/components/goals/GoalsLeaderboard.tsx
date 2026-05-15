@@ -149,6 +149,7 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
                         src={withGoals[0].avatar_url || "/placeholder.svg"} 
                         alt={withGoals[0].name}
                         className="h-full w-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-rank-gold text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-2xl border-2 border-white/20 animate-bounce">

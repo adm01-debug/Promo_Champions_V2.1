@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 
 type DashboardTheme = "standard" | "cyber";
 
@@ -19,14 +19,14 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
     return "cyber";
   });
 
-  const setTheme = (newTheme: DashboardTheme) => {
+  const setTheme = useCallback((newTheme: DashboardTheme) => {
     setThemeState(newTheme);
     window.localStorage.setItem("dashboard-style-theme", newTheme);
-  };
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === "standard" ? "cyber" : "standard");
-  };
+  const toggleTheme = useCallback(() => {
+    setThemeState(prev => prev === "standard" ? "cyber" : "standard");
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -34,8 +34,10 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
     root.classList.add(`${theme}-mode`);
   }, [theme]);
 
+  const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);
+
   return (
-    <DashboardThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <DashboardThemeContext.Provider value={value}>
       {children}
     </DashboardThemeContext.Provider>
   );

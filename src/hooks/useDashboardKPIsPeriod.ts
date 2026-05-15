@@ -83,65 +83,102 @@ const getRanges = (period: KPIPeriod) => {
   }
 };
 
-const fetchPeriod = async (
-  start: Date,
-  end: Date,
+const change = (cur: number, prev: number): number => {
+  if (prev === 0) return cur > 0 ? 100 : 0;
+  return Number((((cur - prev) / prev) * 100).toFixed(1));
+};
+
+const fetchData = async (
+  curStart: Date,
+  curEnd: Date,
+  prevStart: Date,
+  prevEnd: Date,
   salespersonId?: string | null
-): Promise<KPIData> => {
-  const s = format(start, "yyyy-MM-dd");
-  const e = format(end, "yyyy-MM-dd");
+): Promise<KPIPeriodResult> => {
+  const sCur = format(curStart, "yyyy-MM-dd");
+  const eCur = format(curEnd, "yyyy-MM-dd");
+  const sPrev = format(prevStart, "yyyy-MM-dd");
+  const ePrev = format(prevEnd, "yyyy-MM-dd");
+
+  // Fetch all data for both periods in parallel requests but combined ranges
+  // Find the overall start and end
+  const allStart = prevStart < curStart ? sPrev : sCur;
+  const allEnd = prevEnd > curEnd ? ePrev + "T23:59:59" : eCur + "T23:59:59";
 
   let salesQuery = supabase
     .from("sales")
-    .select("amount, status")
-    .gte("created_at", s)
-    .lte("created_at", e + "T23:59:59");
+    .select("amount, status, created_at")
+    .gte("created_at", allStart)
+    .lte("created_at", allEnd);
+    
   if (salespersonId) salesQuery = salesQuery.eq("salesperson_id", salespersonId);
 
   const [salesRes, metricsRes] = await Promise.all([
     salesQuery,
     supabase
       .from("daily_metrics")
-      .select("new_clients, conversion_rate")
-      .gte("date", s)
-      .lte( "date", e)
+      .select("new_clients, conversion_rate, date")
+      .gte("date", allStart)
+      .lte("date", allEnd.split('T')[0])
   ]);
 
-  const all = salesRes.data ?? [];
-  const metrics = metricsRes.data ?? [];
-  
-  const completed = all.filter((s) => s.status === "completed");
-  const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
-  const totalSales = completed.length;
-  const newClients = metrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
+  const allSales = salesRes.data ?? [];
+  const allMetrics = metricsRes.data ?? [];
 
-  let conversionRate = 0;
-  if (salespersonId) {
-    conversionRate = all.length > 0 ? (completed.length / all.length) * 100 : 0;
-  } else {
-    conversionRate = metrics.length
-      ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length
-      : 0;
-  }
-  const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
-  return { totalRevenue, totalSales, newClients, conversionRate, avgTicket };
-};
+  const processPeriod = (start: Date, end: Date): KPIData => {
+    const sStr = format(start, "yyyy-MM-dd");
+    const eStr = format(end, "yyyy-MM-dd") + "T23:59:59";
+    const eMetricStr = format(end, "yyyy-MM-dd");
 
-const change = (cur: number, prev: number): number => {
-  if (prev === 0) return cur > 0 ? 100 : 0;
-  return Number((((cur - prev) / prev) * 100).toFixed(1));
+    const periodSales = allSales.filter(s => s.created_at >= sStr && s.created_at <= eStr);
+    const periodMetrics = allMetrics.filter(m => m.date >= sStr && m.date <= eMetricStr);
+
+    const completed = periodSales.filter((s) => s.status === "completed");
+    const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
+    const totalSales = completed.length;
+    const newClients = periodMetrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
+
+    let conversionRate = 0;
+    if (salespersonId) {
+      conversionRate = periodSales.length > 0 ? (completed.length / periodSales.length) * 100 : 0;
+    } else {
+      conversionRate = periodMetrics.length
+        ? periodMetrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / periodMetrics.length
+        : 0;
+    }
+    const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
+    return { totalRevenue, totalSales, newClients, conversionRate, avgTicket };
+  };
+
+  const current = processPeriod(curStart, curEnd);
+  const previous = processPeriod(prevStart, prevEnd);
+
+  return {
+    current,
+    previous,
+    changes: {
+      revenue: change(current.totalRevenue, previous.totalRevenue),
+      sales: change(current.totalSales, previous.totalSales),
+      clients: change(current.newClients, previous.newClients),
+      conversion: change(current.conversionRate, previous.conversionRate),
+      avgTicket: change(current.avgTicket, previous.avgTicket),
+    },
+  };
 };
 
 export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string | null) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    // Only subscribe once per salesperson
+    const channelName = `dashboard-kpis-${salespersonId ?? 'all'}`;
     const channel = supabase
-      .channel('dashboard-kpis-period-realtime')
+      .channel(channelName)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'sales' },
         () => {
+          // Debounce invalidation locally to avoid multiple fetches on rapid sales
           queryClient.invalidateQueries({ queryKey: ["dashboard-kpis-period"] });
         }
       )
@@ -150,29 +187,16 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, salespersonId]);
 
   return useQuery({
     queryKey: ["dashboard-kpis-period", period, salespersonId ?? "all"],
-    queryFn: async (): Promise<KPIPeriodResult> => {
+    queryFn: () => {
       const { curStart, curEnd, prevStart, prevEnd } = getRanges(period);
-      const [current, previous] = await Promise.all([
-        fetchPeriod(curStart, curEnd, salespersonId),
-        fetchPeriod(prevStart, prevEnd, salespersonId),
-      ]);
-      return {
-        current,
-        previous,
-        changes: {
-          revenue: change(current.totalRevenue, previous.totalRevenue),
-          sales: change(current.totalSales, previous.totalSales),
-          clients: change(current.newClients, previous.newClients),
-          conversion: change(current.conversionRate, previous.conversionRate),
-          avgTicket: change(current.avgTicket, previous.avgTicket),
-        },
-      };
+      return fetchData(curStart, curEnd, prevStart, prevEnd, salespersonId);
     },
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 };
 

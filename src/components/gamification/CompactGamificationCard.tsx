@@ -54,7 +54,7 @@ export function CompactGamificationCard({
         <div className={cn("h-10 w-10 rounded-full p-0.5 bg-gradient-to-br", levelColor)}>
           <div className="h-full w-full rounded-full overflow-hidden bg-background">
             {avatarUrl ? (
-              <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
+              <img src={avatarUrl} alt={name} className="h-full w-full object-cover" loading="lazy" />
             ) : (
               <div className="h-full w-full flex items-center justify-center bg-muted text-sm font-bold">{name.charAt(0)}</div>
             )}
