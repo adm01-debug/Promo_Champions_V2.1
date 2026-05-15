@@ -186,6 +186,7 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
           <div className="w-px h-5 bg-border/50 mx-1.5" />
 
           {/* Settings cluster */}
+          <SystemHealthBadge />
           <LanguageToggle />
           <ThemeToggle />
         </div>
