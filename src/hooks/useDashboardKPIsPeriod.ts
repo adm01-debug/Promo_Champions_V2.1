@@ -170,7 +170,8 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Only subscribe once per salesperson
+    if (!salespersonId && salespersonId !== null) return;
+
     const channelName = `dashboard-kpis-${salespersonId ?? 'all'}`;
     const channel = supabase
       .channel(channelName)
@@ -178,7 +179,6 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
         'postgres_changes',
         { event: '*', schema: 'public', table: 'sales' },
         () => {
-          // Debounce invalidation locally to avoid multiple fetches on rapid sales
           queryClient.invalidateQueries({ queryKey: ["dashboard-kpis-period"] });
         }
       )
@@ -195,8 +195,8 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
       const { curStart, curEnd, prevStart, prevEnd } = getRanges(period);
       return fetchData(curStart, curEnd, prevStart, prevEnd, salespersonId);
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    staleTime: 60 * 1000, // Optimize: Reduced from 5m to 1m for better reactivity without over-fetching
+    gcTime: 10 * 60 * 1000,
   });
 };
 
