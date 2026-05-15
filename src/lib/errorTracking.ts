@@ -3,6 +3,7 @@
  * Captures, categorizes, and persists errors for monitoring.
  */
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 type ErrorSeverity = "low" | "medium" | "high" | "critical";
 type ErrorCategory = "runtime" | "network" | "auth" | "database" | "ui" | "unknown";
@@ -58,7 +59,7 @@ async function flushErrors(): Promise<void> {
         severity: e.severity,
         category: e.category,
         component: e.component ?? null,
-        metadata: (e.metadata ?? {}) as Record<string, unknown>,
+        metadata: (e.metadata ?? {}) as Json,
         url: e.url ?? window.location.href,
         user_agent: e.userAgent ?? navigator.userAgent,
       }))

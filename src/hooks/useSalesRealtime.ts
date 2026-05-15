@@ -63,14 +63,15 @@ export function useSalesRealtime(currentSalespersonId?: string, currentSalespers
         if (newSale.status !== "completed" || !newSale.salesperson_id) return;
 
         // Fetch salesperson data with internal cache check or efficient query
-        const { data: salesperson } = await queryClient.fetchQuery({
+        const salesperson = await queryClient.fetchQuery({
           queryKey: ["salesperson-details", newSale.salesperson_id],
           queryFn: async () => {
-            const { data } = await supabase
+            const { data, error } = await supabase
               .from("salespeople")
               .select("name, avatar_url, role")
-              .eq("id", newSale.salesperson_id)
+              .eq("id", newSale.salesperson_id!)
               .single();
+            if (error) throw error;
             return data;
           },
           staleTime: 5 * 60 * 1000 // 5 minutes cache
@@ -91,7 +92,7 @@ export function useSalesRealtime(currentSalespersonId?: string, currentSalespers
 
         const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
         if (xpFromSale > 0) {
-          const levelUpResult = await awardSaleXP(newSale.salesperson_id, xpFromSale, newSale.id, newSale.amount, salesperson.name);
+          const levelUpResult = await awardSaleXP(newSale.salesperson_id!, xpFromSale, newSale.id, newSale.amount, salesperson.name);
           if (levelUpResult?.leveledUp) {
             const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
             setTimeout(() => celebrationRef.current.celebrateLevelUp(salesperson.name, levelUpResult.newLevel, newLevelInfo.title, newLevelInfo.emoji), 1500);
