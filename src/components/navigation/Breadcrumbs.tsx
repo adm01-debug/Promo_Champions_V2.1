@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React, { forwardRef, memo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -61,7 +61,7 @@ const routeLabels: Record<string, string> = {
   'vendedor': 'Vendedor Dashboard',
 };
 
-export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, ref) {
+export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_props, ref) {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   
@@ -125,6 +125,6 @@ export const Breadcrumbs = forwardRef<HTMLElement>(function Breadcrumbs(_props, 
       </nav>
     </div>
   );
-});
+}));
 
 Breadcrumbs.displayName = "Breadcrumbs";
