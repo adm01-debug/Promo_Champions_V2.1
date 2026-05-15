@@ -19,21 +19,21 @@ export const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.08,
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
     }
   }
 };
 
 export const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  hidden: { opacity: 0, y: 12, scale: 0.99 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: { 
-      duration: 0.35, 
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0.3, 
+      ease: [0.16, 1, 0.3, 1],
     }
   }
 };
