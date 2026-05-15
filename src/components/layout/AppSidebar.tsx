@@ -1,5 +1,5 @@
 /* sidebar v3 — grouped submenus */
-import { useState, useMemo } from "react";
+import React, { useState, useMemo, memo } from "react";
 import { ChevronRight, Crown } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
@@ -30,7 +30,7 @@ const userTypeAccentClasses = {
   salesperson: 'bg-muted text-muted-foreground',
 } as const;
 
-export function AppSidebar() {
+export const AppSidebar = memo(function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
@@ -226,4 +226,6 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+});
+
+AppSidebar.displayName = "AppSidebar";
