@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Tabs } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import Papa from "papaparse";
@@ -10,6 +10,7 @@ import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, 
 import { ptBR } from "date-fns/locale";
 
 import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSuccess360";
+import { useFilteredCS360Data } from "@/hooks/customer-success/useFilteredCS360Data";
 import { formatBRL } from "./cs360Helpers";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,7 +21,7 @@ import { CS360OrdersDialog } from "./CS360OrdersDialog";
 
 const fadeIn = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } };
 
-export function CustomerSuccess360Hub() {
+export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   const { data, isLoading, isError, error } = useCustomerSuccess360();
   const { toast } = useToast();
   
@@ -60,46 +61,12 @@ export function CustomerSuccess360Hub() {
   const orders = data?.orders ?? [];
 
   const accountById = useMemo(() => {
-    const map = new Map<string, any>();
+    const map = new Map<string, typeof accounts[0]>();
     accounts.forEach(a => map.set(a.id, a));
     return map;
   }, [accounts]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return null;
-    const now = new Date();
-    let start: Date;
-    let end = now;
-
-    if (period === "custom") {
-      start = startDate ? parseISO(startDate) : subDays(now, 30);
-      end = endDate ? parseISO(endDate) : now;
-      if (isAfter(start, end)) [start, end] = [end, start];
-    } else if (period === "0") {
-      start = new Date(0);
-    } else {
-      start = subDays(now, parseInt(period));
-    }
-
-    const filterByDate = (item: any, dateField: string = "created_at") => {
-      try {
-        const dateStr = item[dateField];
-        if (!dateStr) return true;
-        const date = parseISO(dateStr);
-        return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
-      } catch (e) {
-        return true;
-      }
-    };
-
-    return {
-      tickets: tickets.filter(t => filterByDate(t)),
-      expansion: expansion.filter(e => filterByDate(e)),
-      surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
-      renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
-      orders: orders.filter(o => filterByDate(o)),
-    };
-  }, [data, period, startDate, endDate, tickets, expansion, surveys, renewals, orders]);
+  const filteredData = useFilteredCS360Data(data, period, startDate, endDate);
 
   const evolutionData = useMemo(() => {
     const months: Record<string, { ltv: number; count: number }> = {};
@@ -126,7 +93,7 @@ export function CustomerSuccess360Hub() {
     const firstOrderMap = new Map<string, string>();
 
     orders.forEach(o => {
-      const accId = (o as any).account_id || o.user_id;
+      const accId = (o as any).account_id || (o as any).user_id;
       const currentFirst = firstOrderMap.get(accId);
       if (!currentFirst || isAfter(parseISO(currentFirst), parseISO(o.created_at))) {
         firstOrderMap.set(accId, o.created_at);
@@ -185,7 +152,7 @@ export function CustomerSuccess360Hub() {
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
 
   const sortedAndPaginatedOrders = useMemo(() => {
-    const sorted = [...filteredModalOrders].sort((a, b) => {
+    const sorted = [...filteredModalOrders].sort((a: any, b: any) => {
       let valA: any = a[orderSortField as keyof typeof a];
       let valB: any = b[orderSortField as keyof typeof b];
 
@@ -320,4 +287,4 @@ export function CustomerSuccess360Hub() {
       />
     </motion.div>
   );
-}
+});

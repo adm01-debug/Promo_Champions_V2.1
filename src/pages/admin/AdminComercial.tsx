@@ -16,6 +16,7 @@ import { CommercialDiffViewer } from "@/components/admin/commercial/CommercialDi
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ApprovalRequest, AuditLog, CommercialGoal, CommissionConfig, ScoringRule } from "@/types";
+import type { Json } from "@/integrations/supabase/types";
 
 
 export default function AdminComercial() {
@@ -104,8 +105,8 @@ export default function AdminComercial() {
         type,
         entity_id: entityId,
         competence_month: currentMonthDate,
-        new_values: newValues as any,
-        old_values: oldValues as any,
+        new_values: newValues as Record<string, Json>,
+        old_values: oldValues as Record<string, Json>,
         justification,
         status: "pending"
       }]);
@@ -153,8 +154,8 @@ export default function AdminComercial() {
           action: `approved_${request.type}`,
           entity_type: request.type,
           entity_id: request.entity_id,
-          changes: { from: request.old_values as any, to: request.new_values as any },
-          metadata: { approval_request_id: requestId, justification } as any
+          changes: { from: request.old_values as Record<string, Json>, to: request.new_values as Record<string, Json> },
+          metadata: { approval_request_id: requestId, justification } as unknown as Json
         }]);
       }
 

@@ -21,7 +21,7 @@ export const useCreateTask = () => {
     }) => {
       const { data, error } = await supabase
         .from('tasks')
-        .insert({
+        .insert([{
           title: input.title,
           description: input.description || null,
           task_type: (input.task_type || 'other') as any,
@@ -32,7 +32,7 @@ export const useCreateTask = () => {
           client_id: input.client_id || null,
           salesperson_id: input.salesperson_id || null,
           status: 'pending',
-        } as any)
+        }])
         .select()
         .single();
 

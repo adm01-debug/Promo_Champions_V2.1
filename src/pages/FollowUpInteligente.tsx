@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -25,8 +25,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import type { Json } from '@/integrations/supabase/types';
 
-const FollowUpInteligente = () => {
+const FollowUpInteligente = memo(() => {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [filterTemp, setFilterTemp] = useState('all');
@@ -74,7 +75,7 @@ const FollowUpInteligente = () => {
     queryFn: async () => {
       if (!selectedLeadForAudit?.id) return [];
       const { data, error } = await supabase
-        .from('follow_up_audit_view' as any)
+        .from('follow_up_audit_view')
         .select('*')
         .eq('sale_id', selectedLeadForAudit.id)
         .order('created_at', { ascending: false });
@@ -87,7 +88,6 @@ const FollowUpInteligente = () => {
   const { data: coldLeads = [], isLoading } = useQuery({
     queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
     queryFn: async () => {
-      // Fetch deals
       const { data: deals, error: dealsError } = await supabase
         .from('sales')
         .select(`
@@ -106,7 +106,6 @@ const FollowUpInteligente = () => {
 
       if (dealsError) throw dealsError;
 
-      // Fetch tasks (both pending and completed) to track cadence
       const { data: allTasks, error: tasksError } = await supabase
         .from('tasks')
         .select('sale_id, status, completed_at')
@@ -115,12 +114,11 @@ const FollowUpInteligente = () => {
       if (tasksError) throw tasksError;
 
       const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
-      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
+      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t: any) => {
         if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
         return acc;
       }, {});
 
-      // Fetch last activity for each deal
       const { data: activities, error: activitiesError } = await supabase
         .from('activities')
         .select('sale_id, notes, created_at, activity_type')
@@ -141,8 +139,8 @@ const FollowUpInteligente = () => {
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
-          const score = (deal.lead_scores as any)?.[0]?.score || 0;
-          const probability = (deal.deal_probability_scores as any)?.[0]?.calibrated_probability || undefined;
+          const score = (deal as any).lead_scores?.[0]?.score || 0;
+          const probability = (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
           
           return {
             ...deal,
@@ -167,17 +165,31 @@ const FollowUpInteligente = () => {
     staleTime: 2 * 60 * 1000,
   });
 
+  const logAction = useMutation({
+    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: Record<string, any>, status?: string }) => {
+      const { error } = await supabase
+        .from('follow_up_audit_logs')
+        .insert({
+          sale_id: saleId,
+          user_id: salesperson?.id,
+          action_type: actionType,
+          details,
+          status
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['follow-up-audit-logs'] });
+    }
+  });
+
   const createFollowUpTask = useMutation({
     mutationFn: async (lead: ColdLead) => {
       setCreatingLeadId(lead.id);
-      
-      // Prevenção de duplicidade
       if (lead.has_pending_task) {
         toast.info("Este lead já possui uma tarefa pendente.");
         return;
       }
-
-      // Permissions check
       if (lead.temperature === 'frozen' && lead.score !== undefined && lead.score >= 80 && !isAdmin) {
         toast.error("Apenas administradores podem gerenciar leads Classe A congelados.");
         return;
@@ -195,7 +207,6 @@ const FollowUpInteligente = () => {
       
       if (taskError) throw taskError;
 
-      // Log the task creation automatically
       await logAction.mutateAsync({
         saleId: lead.id,
         actionType: 'task_created',
@@ -231,7 +242,6 @@ const FollowUpInteligente = () => {
       const { data: insertedTasks, error } = await supabase.from('tasks').insert(tasks).select();
       if (error) throw error;
 
-      // Log each task creation
       if (insertedTasks) {
         for (const task of insertedTasks) {
           if (task.sale_id) {
@@ -284,24 +294,6 @@ const FollowUpInteligente = () => {
     setSelectedLeads(criticalIds);
   }, [coldLeads]);
 
-  const logAction = useMutation({
-    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: any, status?: string }) => {
-      const { error } = await supabase
-        .from('follow_up_audit_logs')
-        .insert({
-          sale_id: saleId,
-          user_id: salesperson?.id,
-          action_type: actionType,
-          details,
-          status
-        });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['follow-up-audit-logs'] });
-    }
-  });
-
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [currentLeadForWA, setCurrentLeadForWA] = useState<ColdLead | null>(null);
   const [missingVariables, setMissingVariables] = useState<string[]>([]);
@@ -310,7 +302,7 @@ const FollowUpInteligente = () => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      .filter(v => !(lead as any)[v]);
+      .filter(v => !(lead as Record<string, any>)[v]);
     return missing;
   }, []);
 
@@ -337,7 +329,7 @@ const FollowUpInteligente = () => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     vars.forEach(v => {
       const key = v.replace(/{{|}}/g, '');
-      message = message.replace(v, (lead as any)[key] || '');
+      message = message.replace(v, (lead as Record<string, any>)[key] || '');
     });
 
     logAction.mutate({
@@ -359,15 +351,13 @@ const FollowUpInteligente = () => {
       if (!reactivateLead) return;
       if (!isAdmin) throw new Error("Apenas administradores podem reativar leads Classe A.");
 
-      // 1. Log the action
       await logAction.mutateAsync({
         saleId: reactivateLead.id,
         actionType: 'lead_reactivated',
         details: { reason: reactivationReason, next_follow_up: reactivationDate }
       });
 
-      // 2. Create a task
-      await supabase.from('tasks').insert({
+      await supabase.from('tasks').insert([{
         title: `Follow-up Reativação: ${reactivateLead.client_name}`,
         description: `Lead Classe A reativado. Motivo: ${reactivationReason}`,
         task_type: 'follow_up',
@@ -375,9 +365,8 @@ const FollowUpInteligente = () => {
         due_date: new Date(reactivationDate).toISOString(),
         sale_id: reactivateLead.id,
         salesperson_id: reactivateLead.salesperson_id || salesperson?.id
-      });
+      }]);
 
-      // 3. Update deal updated_at to reset inactivity
       await supabase.from('sales').update({ updated_at: new Date().toISOString() }).eq('id', reactivateLead.id);
     },
     onSuccess: () => {
@@ -386,7 +375,7 @@ const FollowUpInteligente = () => {
       setReactivationReason('');
       queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error("Erro ao reativar: " + error.message);
     }
   });
@@ -416,7 +405,6 @@ const FollowUpInteligente = () => {
 
             <FollowUpValueAtRisk leads={coldLeads} onSelectCritical={handleSelectCritical} />
 
-            {/* Leads List */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">
@@ -464,7 +452,6 @@ const FollowUpInteligente = () => {
         </PageTransition>
       </SkeletonTransition>
 
-      {/* Reativação de Lead Classe A Dialog */}
       <Dialog open={isReactivateModalOpen} onOpenChange={setIsReactivateModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -510,7 +497,6 @@ const FollowUpInteligente = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Histórico Auditável Dialog */}
       <Dialog open={isAuditModalOpen} onOpenChange={setIsAuditModalOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -559,7 +545,6 @@ const FollowUpInteligente = () => {
           </ScrollArea>
         </DialogContent>
       </Dialog>
-      {/* WhatsApp Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -617,9 +602,10 @@ const FollowUpInteligente = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </>
   );
-};
+});
+
+FollowUpInteligente.displayName = "FollowUpInteligente";
 
 export default FollowUpInteligente;

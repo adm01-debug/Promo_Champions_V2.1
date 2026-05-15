@@ -85,7 +85,7 @@ export const useCreateCoachingSession = () => {
           scheduled_at: input.scheduled_at,
           duration_min: input.duration_min,
           focus_skills: input.focus_skills,
-          agenda: input.agenda as any,
+          agenda: (input.agenda ?? {}) as any,
           coach_id: user.id
         })
         .select()
@@ -116,7 +116,7 @@ export const useUpdateCoachingSession = () => {
     mutationFn: async ({ id, ...updates }: UpdateSessionInput) => {
       const { data, error } = await supabase
         .from("coaching_sessions")
-        .update(updates as any)
+        .update(updates as Record<string, any>)
         .eq("id", id)
         .select()
         .single();
