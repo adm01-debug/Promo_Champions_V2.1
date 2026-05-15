@@ -83,6 +83,11 @@ const getRanges = (period: KPIPeriod) => {
   }
 };
 
+const change = (cur: number, prev: number): number => {
+  if (prev === 0) return cur > 0 ? 100 : 0;
+  return Number((((cur - prev) / prev) * 100).toFixed(1));
+};
+
 const fetchData = async (
   curStart: Date,
   curEnd: Date,
