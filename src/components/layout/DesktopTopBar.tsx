@@ -1,6 +1,6 @@
-import { RefObject } from "react";
+import React, { RefObject, useMemo } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Bell, Sparkles, FileText } from "lucide-react";
+import { Bell, Sparkles, FileText, Search } from "lucide-react";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -13,7 +13,6 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
-import { useMemo } from "react";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
 import { SystemHealthBadge } from "./SystemHealthBadge";
 
@@ -54,7 +53,7 @@ interface DesktopTopBarProps {
   searchRef: RefObject<GlobalSearchHandle>;
 }
 
-export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
+export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
   const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
@@ -193,4 +192,6 @@ export function DesktopTopBar({ searchRef }: DesktopTopBarProps) {
       </TooltipProvider>
     </div>
   );
-}
+});
+
+DesktopTopBar.displayName = "DesktopTopBar";
