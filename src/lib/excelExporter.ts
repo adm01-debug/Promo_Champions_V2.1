@@ -1,4 +1,4 @@
-export async function exportToExcel<T extends Record<string, string | number | boolean | null | undefined>>(data: T[], filename: string, sheetName: string = 'Dados') {
+export async function exportToExcel<T extends Record<string, any>>(data: T[], filename: string, sheetName: string = 'Dados') {
   const ExcelJS = (await import('exceljs')).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);

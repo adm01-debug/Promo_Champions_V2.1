@@ -1,4 +1,4 @@
-export async function exportToCSV<T extends Record<string, string | number | boolean | null | undefined>>(data: T[], filename: string) {
+export async function exportToCSV<T extends Record<string, any>>(data: T[], filename: string) {
   const Papa = (await import('papaparse')).default;
   const csv = Papa.unparse(data);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
