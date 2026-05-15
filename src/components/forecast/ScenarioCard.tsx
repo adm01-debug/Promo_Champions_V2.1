@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingDown, TrendingUp, Target, Sparkles, Brain, Cpu, Zap } from "lucide-react";
+import { TrendingDown, TrendingUp, Target, Sparkles, Brain, Cpu, Zap, LucideIcon } from "lucide-react";
 import {
   formatCompactBRL,
   scenarioColor,
@@ -19,7 +19,7 @@ interface Props {
   index: number;
 }
 
-const ICONS: Record<ScenarioKey, any> = {
+const ICONS: Record<ScenarioKey, LucideIcon> = {
   pessimistic: TrendingDown,
   realistic: Zap,
   optimistic: Sparkles,

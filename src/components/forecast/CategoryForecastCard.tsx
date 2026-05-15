@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Layers, CheckCircle2, Star, Timer } from "lucide-react";
+import { Layers, CheckCircle2, Star, Timer, LucideIcon } from "lucide-react";
 import { formatCompactBRL } from "./forecastHelpers";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -80,7 +80,16 @@ export const CategoryForecastCard: FC<Props> = ({ categories, goal }) => {
   );
 };
 
-function CategoryItem({ label, value, total, color, icon: Icon, iconColor }: any) {
+interface CategoryItemProps {
+  label: string;
+  value: number;
+  total: number;
+  color: string;
+  icon: LucideIcon;
+  iconColor: string;
+}
+
+function CategoryItem({ label, value, total, color, icon: Icon, iconColor }: CategoryItemProps) {
   const percentage = total > 0 ? (value / total) * 100 : 0;
   
   return (
