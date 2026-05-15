@@ -15,6 +15,7 @@ import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount
 import type { GlobalSearchHandle } from "./GlobalSearch";
 import { useMemo } from "react";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
+import { SystemHealthBadge } from "./SystemHealthBadge";
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
