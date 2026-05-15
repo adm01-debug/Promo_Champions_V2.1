@@ -64,7 +64,7 @@ const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-accent p-0.5 shadow-lg shadow-primary/20">
                 <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center overflow-hidden">
                    {salesperson?.avatar_url ? (
-                     <img src={salesperson.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                     <img src={salesperson.avatar_url} alt="Profile" className="w-full h-full object-cover" loading="lazy" />
                    ) : (
                      <span className="text-xl font-bold text-primary">
                        {salesperson?.name?.substring(0, 2).toUpperCase() || "JD"}
