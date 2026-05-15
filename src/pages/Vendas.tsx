@@ -18,6 +18,7 @@ import { TablePagination } from "@/components/shared/TablePagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
+import { WhatsAppDialog } from "@/components/sales/WhatsAppDialog";
 
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
@@ -49,6 +50,7 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
   const [showLog, setShowLog] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
   const [showAIEmail, setShowAIEmail] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
 
   const getPredictionColor = (score: number) => {
     if (score >= 80) return "text-emerald-500";
@@ -121,7 +123,7 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 group-hover:scale-110 transition-all"
-              onClick={() => {}}
+              onClick={() => setShowWhatsApp(true)}
               title="Integrar WhatsApp"
             >
               <MessageCircle className="h-4 w-4 text-emerald-500" />
@@ -198,6 +200,12 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
         open={showAIEmail} 
         onOpenChange={setShowAIEmail} 
         sale={sale} 
+      />
+
+      <WhatsAppDialog
+        open={showWhatsApp}
+        onOpenChange={setShowWhatsApp}
+        sale={sale}
       />
     </div>
   );
