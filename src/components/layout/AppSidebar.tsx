@@ -187,7 +187,7 @@ export function AppSidebar() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType])}>
+                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
                   {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
               </TooltipTrigger>
