@@ -307,9 +307,9 @@ export interface AuditLog {
   entity_type: string;
   entity_id: string;
   changes: {
-    from: any;
-    to: any;
-  } | any;
-  metadata?: Record<string, any> | any;
+    from: Record<string, any>;
+    to: Record<string, any>;
+  };
+  metadata?: Record<string, any>;
   created_at: string;
 }
