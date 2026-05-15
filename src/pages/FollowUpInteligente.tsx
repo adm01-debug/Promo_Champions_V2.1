@@ -26,7 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const FollowUpInteligente = () => {
+const FollowUpInteligente = memo(() => {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [filterTemp, setFilterTemp] = useState('all');
@@ -285,7 +285,7 @@ const FollowUpInteligente = () => {
   }, [coldLeads]);
 
   const logAction = useMutation({
-    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: Record<string, Json>, status?: string }) => {
+    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: Record<string, any>, status?: string }) => {
       const { error } = await supabase
         .from('follow_up_audit_logs')
         .insert({
@@ -310,7 +310,7 @@ const FollowUpInteligente = () => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      .filter(v => !(lead as any)[v]);
+      .filter(v => !(lead as Record<string, any>)[v]);
     return missing;
   }, []);
 
@@ -621,5 +621,7 @@ const FollowUpInteligente = () => {
     </>
   );
 };
+
+});
 
 export default FollowUpInteligente;
