@@ -9,8 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { BarChart3, Package, TrendingUp } from "lucide-react";
-import type { TooltipProps as RechartsTooltipProps } from "recharts";
-import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 const COLORS = [
   "hsl(var(--primary))",
