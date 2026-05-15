@@ -9,7 +9,7 @@ export function useExplainBatch() {
       if (saleIds.length === 0) return { results: [] };
       const chunks: string[][] = [];
       for (let i = 0; i < saleIds.length; i += 50) chunks.push(saleIds.slice(i, i + 50));
-      const all: any[] = [];
+      const all: Record<string, unknown>[] = [];
       for (const chunk of chunks) {
         const { data, error } = await supabase.functions.invoke(
           "predictive-scoring-explain",
