@@ -202,7 +202,7 @@ export function AppSidebar() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
-                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType])}>
+                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
                     {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
