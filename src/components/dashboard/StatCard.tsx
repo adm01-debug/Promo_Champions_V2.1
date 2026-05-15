@@ -40,7 +40,7 @@ export const StatCard = React.memo(({
   const isPositive = change >= 0;
 
   const animatedNum = useCountUp(numericValue ?? 0, {
-    duration: 1400,
+    duration: hero ? 2000 : 1200, // Slightly longer for hero
     decimals: value.includes("%") ? 1 : 0,
     enabled: numericValue !== undefined,
   });
@@ -83,7 +83,7 @@ export const StatCard = React.memo(({
 
   return (
     <motion.div
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
       className="h-full"
     >
       <Card className={cn(
@@ -211,8 +211,8 @@ export const StatCard = React.memo(({
                 <MiniSparkline
                   data={sparklineData}
                   className={sparklineColors[variant]}
-                  width={60}
-                  height={24}
+                  width={hero ? 120 : 60}
+                  height={hero ? 32 : 24}
                 />
               </div>
             )}
