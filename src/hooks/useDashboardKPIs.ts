@@ -122,7 +122,8 @@ export const useDashboardKPIs = () => {
         },
       };
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
@@ -256,6 +257,7 @@ export const useDetailedKPIs = () => {
 
       return kpis;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
