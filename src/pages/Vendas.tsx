@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { ShoppingCart, Search, Loader2, Plus, History, BrainCircuit, MessageCircle } from "lucide-react";
+import { ShoppingCart, Search, Loader2, Plus, History, BrainCircuit, MessageCircle, Mail } from "lucide-react";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ import { usePagination } from "@/hooks/usePagination";
 import { TablePagination } from "@/components/shared/TablePagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
+import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
+import { WhatsAppDialog } from "@/components/sales/WhatsAppDialog";
 
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
@@ -47,6 +49,8 @@ const statusOptions = [
 const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
   const [showLog, setShowLog] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
+  const [showAIEmail, setShowAIEmail] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
 
   const getPredictionColor = (score: number) => {
     if (score >= 80) return "text-emerald-500";
@@ -109,8 +113,17 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
             <Button
               variant="ghost"
               size="icon"
+              className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowAIEmail(true)}
+              title="Hyper-Personalização Email"
+            >
+              <Mail className="h-4 w-4 text-blue-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 group-hover:scale-110 transition-all"
-              onClick={() => {}}
+              onClick={() => setShowWhatsApp(true)}
               title="Integrar WhatsApp"
             >
               <MessageCircle className="h-4 w-4 text-emerald-500" />
@@ -182,6 +195,18 @@ const SaleHUDCard = ({ sale, index }: { sale: any; index: number }) => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AIEmailDialog 
+        open={showAIEmail} 
+        onOpenChange={setShowAIEmail} 
+        sale={sale} 
+      />
+
+      <WhatsAppDialog
+        open={showWhatsApp}
+        onOpenChange={setShowWhatsApp}
+        sale={sale}
+      />
     </div>
   );
 };
