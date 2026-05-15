@@ -13,17 +13,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { TrendingUp, TrendingDown, ArrowRight, Calendar, Minus } from "lucide-react";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { TooltipProps as RechartsTooltipProps } from "recharts";
-import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { RechartsTooltipProps } from "@/types/recharts";
 
 type Period = "mom" | "qoq" | "yoy";
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-medium text-foreground mb-1">{label}</p>
-      {payload.map((entry: any, i: number) => (
+      {payload.map((entry, i) => (
         <p key={i} style={{ color: entry.color }} className="text-muted-foreground">
           {entry.name}: <span className="font-semibold text-foreground">
             {typeof entry.value === "number" ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(entry.value) : entry.value}

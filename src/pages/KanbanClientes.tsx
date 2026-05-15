@@ -10,11 +10,16 @@ export default function KanbanClientes() {
   const [taskModal, setTaskModal] = useState<{ open: boolean; clientId?: string; clientName?: string }>({ open: false });
 
   useEffect(() => {
-    const handleCreateTask = (e: any) => {
-      setTaskModal({ open: true, clientId: e.detail.clientId, clientName: e.detail.clientName });
+    const handleCreateTask = (e: Event) => {
+      const customEvent = e as CustomEvent<{ clientId: string; clientName: string }>;
+      setTaskModal({ 
+        open: true, 
+        clientId: customEvent.detail.clientId, 
+        clientName: customEvent.detail.clientName 
+      });
     };
-    window.addEventListener('create-task-modal', handleCreateTask);
-    return () => window.removeEventListener('create-task-modal', handleCreateTask);
+    window.addEventListener('create-task-modal', handleCreateTask as EventListener);
+    return () => window.removeEventListener('create-task-modal', handleCreateTask as EventListener);
   }, []);
 
   return (
