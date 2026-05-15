@@ -90,6 +90,11 @@ describe("useSalesData", () => {
 
 describe("useCreateSale", () => {
   it("successfully creates a sale and invalidates queries", async () => {
+    (mockSupabase as any).single.mockResolvedValue({ 
+      data: { id: "new-id", status: "completed" }, 
+      error: null 
+    });
+
     const { result } = renderHook(() => useCreateSale(), { wrapper });
 
     await result.current.mutateAsync({
