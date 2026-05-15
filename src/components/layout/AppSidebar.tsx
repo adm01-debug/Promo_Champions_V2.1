@@ -38,7 +38,7 @@ export function AppSidebar() {
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
 
-  const getUserType = (): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
+  const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';
@@ -46,20 +46,20 @@ export function AppSidebar() {
     if (name.includes('sdr')) return 'sdr';
     if (name.includes('closer')) return 'closer';
     return 'salesperson';
-  };
+  }, [currentUserRole, salesperson]);
 
-  const userType = getUserType();
-  const isAdminOrManager = ['admin', 'manager'].includes(userType);
+  const isAdminOrManager = useMemo(() => ['admin', 'manager'].includes(userType), [userType]);
 
-  const getDefaultViewMode = (): ViewMode => {
+  const defaultViewMode = useMemo((): ViewMode => {
     if (userType === 'sdr') return 'sdr';
     if (userType === 'closer') return 'closer';
     return 'gestao';
-  };
+  }, [userType]);
 
-  const [viewMode, setViewMode] = useState<ViewMode>(getDefaultViewMode());
-  const mainItems = getMainItems(viewMode);
-  const groupedItems = getGroupedItems(viewMode);
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode);
+  
+  const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
+  const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
 
   const renderMenuItem = (item: MenuItem) => {
     const isNotifications = item.title === "Notificações";
