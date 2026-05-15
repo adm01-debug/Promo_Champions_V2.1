@@ -42,6 +42,7 @@ import { CustomReportWidget } from "./widgets/CustomReportWidget";
 import { CustomReportWidgetEditor } from "./widgets/CustomReportWidgetEditor";
 import { Pencil } from "lucide-react";
 import { DashboardEmptyState } from "./DashboardEmptyState";
+import { AISalesCoachWidget } from "./widgets/AISalesCoachWidget";
 
 const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   revenue_kpi: RevenueKpiWidget,
