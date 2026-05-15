@@ -5,39 +5,34 @@ import React from "react";
 import { useSalesData, useCreateSale } from "@/hooks/useSalesData";
 
 // Mock Supabase
-vi.mock("@/integrations/supabase/client", () => {
-  return {
-    supabase: {
-      from: vi.fn(() => ({
-        select: vi.fn(() => ({
-          order: vi.fn(() => ({
-            limit: vi.fn(() => ({
-              or: vi.fn(() => Promise.resolve({ data: [
-                {
-                  id: "12345678-1234-1234-1234-123456789012",
-                  client_name: "Test Client",
-                  product_name: "Test Product",
-                  amount: 1000,
-                  status: "pending",
-                  created_at: new Date().toISOString(),
-                  client_id: "c1",
-                  product_id: "p1",
-                  salesperson_id: "s1",
-                  sku: "SKU-001"
-                }
-              ], error: null }))
-            }))
-          }))
-        })),
-        insert: vi.fn(() => ({
-          select: vi.fn(() => ({
-            single: vi.fn(() => Promise.resolve({ data: { id: "new-id" }, error: null }))
-          }))
-        }))
-      }))
-    }
-  };
-});
+const mockSupabase = {
+  from: vi.fn().mockReturnThis(),
+  select: vi.fn().mockReturnThis(),
+  order: vi.fn().mockReturnThis(),
+  limit: vi.fn().mockReturnThis(),
+  or: vi.fn().mockReturnThis(),
+  insert: vi.fn().mockReturnThis(),
+  single: vi.fn(),
+  functions: {
+    invoke: vi.fn().mockResolvedValue({ data: null, error: null }),
+  },
+};
+
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: mockSupabase,
+}));
+
+vi.mock("@/hooks/semantic/useIndexEntity", () => ({
+  useIndexEntity: () => ({ index: vi.fn() }),
+}));
+
+vi.mock("@/hooks/race/useRaceTrigger", () => ({
+  triggerRaceEvent: vi.fn(),
+}));
+
+vi.mock("@/hooks/useSystemSoundSettings", () => ({
+  useSystemSoundSettings: () => ({ playSoundForCategory: vi.fn() }),
+}));
 
 vi.mock("sonner", () => ({
   toast: {
