@@ -17,6 +17,6 @@ export const SearchTrigger = memo(forwardRef<HTMLButtonElement, { onClick: () =>
       </button>
     );
   }
-}));
+));
 
 SearchTrigger.displayName = "SearchTrigger";

@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -25,7 +26,7 @@ const sizeStyles = {
   lg: "h-6 min-w-6 text-xs px-2",
 };
 
-export function NotificationBadge({
+export const NotificationBadge = memo(function NotificationBadge({
   count,
   max = 99,
   showZero = false,
@@ -58,7 +59,9 @@ export function NotificationBadge({
       )}
     </AnimatePresence>
   );
-}
+});
+
+NotificationBadge.displayName = "NotificationBadge";
 
 // Dot variant for simpler indicator
 interface NotificationDotProps {
@@ -75,7 +78,7 @@ const dotSizeStyles = {
   lg: "h-3 w-3",
 };
 
-export function NotificationDot({
+export const NotificationDot = memo(function NotificationDot({
   visible = true,
   variant = "destructive",
   size = "md",
@@ -101,4 +104,6 @@ export function NotificationDot({
       )}
     </AnimatePresence>
   );
-}
+});
+
+NotificationDot.displayName = "NotificationDot";
