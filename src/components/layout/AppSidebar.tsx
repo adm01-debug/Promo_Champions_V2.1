@@ -165,11 +165,11 @@ export function AppSidebar() {
 
       <SidebarContent className="px-3 py-2">
         <ScrollArea className="flex-1">
-          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map(item => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
+          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           <Separator className="my-2 bg-border/30" />
-          <SidebarGroup><div className="space-y-1">{groupedItems.map((group) => renderGroupedMenu(group))}</div></SidebarGroup>
+          <SidebarGroup><div className="space-y-1">{groupedItems.map((group: MenuGroup) => renderGroupedMenu(group))}</div></SidebarGroup>
           <Separator className="my-2 bg-border/30" />
-          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{systemItems.map(item => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
+          <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{systemItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           {userType === 'admin' && (
             <>
               <Separator className="my-2 bg-border/30" />
