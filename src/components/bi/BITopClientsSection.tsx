@@ -1,4 +1,4 @@
-import { FC } from "react";
+import React, { FC, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -188,7 +188,7 @@ const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = 
   </Card>
 );
 
-export const BITopClientsSection: FC<{ className?: string }> = ({ className }) => {
+export const BITopClientsSection = memo(({ className }: { className?: string }) => {
   const { data, isLoading } = useBITopClients();
 
   if (isLoading) {
@@ -230,4 +230,6 @@ export const BITopClientsSection: FC<{ className?: string }> = ({ className }) =
       <TopCompaniesCard companies={topCompanies} maxValue={maxCompanyValue} />
     </div>
   );
-};
+});
+
+BITopClientsSection.displayName = "BITopClientsSection";
