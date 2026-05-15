@@ -24,15 +24,15 @@ export const useCreateTask = () => {
         .insert({
           title: input.title,
           description: input.description || null,
-          task_type: (input.task_type || 'other') as any,
-          priority: (input.priority || 'medium') as any,
+          task_type: input.task_type || 'other',
+          priority: input.priority || 'medium',
           due_date: input.due_date,
           due_time: input.due_time || null,
           sale_id: input.sale_id || null,
           client_id: input.client_id || null,
           salesperson_id: input.salesperson_id || null,
           status: 'pending',
-        } as any)
+        })
         .select()
         .single();
 
@@ -60,8 +60,8 @@ export const useUpdateTask = () => {
 
       if (updates.title !== undefined) updateData.title = updates.title;
       if (updates.description !== undefined) updateData.description = updates.description;
-      if (updates.task_type !== undefined) updateData.task_type = updates.task_type as any;
-      if (updates.priority !== undefined) updateData.priority = updates.priority as any;
+      if (updates.task_type !== undefined) updateData.task_type = updates.task_type;
+      if (updates.priority !== undefined) updateData.priority = updates.priority;
       if (updates.status !== undefined) updateData.status = updates.status;
       if (updates.due_date !== undefined) updateData.due_date = updates.due_date;
       if (updates.due_time !== undefined) updateData.due_time = updates.due_time;
