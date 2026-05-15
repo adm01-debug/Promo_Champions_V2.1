@@ -26,7 +26,7 @@ interface DashboardSettingsProps {
   setIsAlertHistoryOpen: (v: boolean) => void;
 }
 
-export const DashboardSettings = ({
+export const DashboardSettings = memo(({
   isSyncing,
   minVal,
   setMinVal,
@@ -200,4 +200,6 @@ export const DashboardSettings = ({
       </PopoverContent>
     </Popover>
   );
-};
+});
+
+DashboardSettings.displayName = "DashboardSettings";
