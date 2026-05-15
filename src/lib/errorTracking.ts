@@ -20,9 +20,18 @@ interface TrackedError {
 }
 
 const ERROR_BUFFER: TrackedError[] = [];
+const BREADCRUMBS: { message: string; timestamp: number; category?: string; data?: any }[] = [];
+const MAX_BREADCRUMBS = 20;
 const FLUSH_INTERVAL = 30_000; // 30s
 const MAX_BUFFER = 50;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
+
+export function addBreadcrumb(message: string, category?: string, data?: any): void {
+  BREADCRUMBS.push({ message, timestamp: Date.now(), category, data });
+  if (BREADCRUMBS.length > MAX_BREADCRUMBS) {
+    BREADCRUMBS.shift();
+  }
+}
 
 function classifyError(error: Error | string): { severity: ErrorSeverity; category: ErrorCategory } {
   const msg = typeof error === "string" ? error : error.message;
@@ -92,7 +101,10 @@ export function captureError(
     severity: options?.severity ?? severity,
     category: options?.category ?? category,
     component: options?.component,
-    metadata: options?.metadata,
+    metadata: {
+      ...(options?.metadata ?? {}),
+      breadcrumbs: [...BREADCRUMBS],
+    },
     url: window.location.href,
     userAgent: navigator.userAgent,
   };
