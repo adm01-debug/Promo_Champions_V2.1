@@ -114,7 +114,7 @@ const FollowUpInteligente = memo(() => {
       if (tasksError) throw tasksError;
 
       const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
-      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t: any) => {
+      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
         if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
         return acc;
       }, {});
@@ -126,7 +126,7 @@ const FollowUpInteligente = memo(() => {
 
       if (activitiesError) throw activitiesError;
 
-      const activitiesMap = (activities || []).reduce((acc: Record<string, any>, act) => {
+      const activitiesMap = (activities || []).reduce((acc: Record<string, typeof activities[0]>, act) => {
         if (act.sale_id && !acc[act.sale_id]) acc[act.sale_id] = act;
         return acc;
       }, {});
@@ -139,8 +139,8 @@ const FollowUpInteligente = memo(() => {
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
-          const score = (deal as any).lead_scores?.[0]?.score || 0;
-          const probability = (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
+          const score = (deal as unknown as { lead_scores: { score: number }[] }).lead_scores?.[0]?.score || 0;
+          const probability = (deal as unknown as { deal_probability_scores: { calibrated_probability: number }[] }).deal_probability_scores?.[0]?.calibrated_probability || undefined;
           
           return {
             ...deal,
@@ -302,7 +302,7 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      .filter(v => !(lead as Record<string, any>)[v]);
+      .filter(v => !((lead as unknown as Record<string, string | number | undefined>)[v]));
     return missing;
   }, []);
 
@@ -329,7 +329,7 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     vars.forEach(v => {
       const key = v.replace(/{{|}}/g, '');
-      message = message.replace(v, (lead as Record<string, any>)[key] || '');
+      message = message.replace(v, String((lead as unknown as Record<string, string | number | undefined>)[key] || ''));
     });
 
     logAction.mutate({
