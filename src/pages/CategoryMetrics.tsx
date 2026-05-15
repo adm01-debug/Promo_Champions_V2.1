@@ -22,9 +22,9 @@ const COLORS = [
   "hsl(var(--destructive))",
 ];
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload }: RechartsTooltipProps<ValueType, NameType>) => {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
+  const data = payload[0].payload as { category: string; count: number; revenue: number };
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-semibold text-foreground">{data.category}</p>
