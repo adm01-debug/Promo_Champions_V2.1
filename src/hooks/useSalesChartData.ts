@@ -70,6 +70,7 @@ export function useSalesChartData(period: Period) {
 
       return Array.from(grouped.entries()).map(([name, value]) => ({ name, value }));
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 }
