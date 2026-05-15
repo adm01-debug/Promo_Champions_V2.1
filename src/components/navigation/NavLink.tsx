@@ -23,6 +23,23 @@ const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
   '/multichannel': () => import('@/pages/Multichannel'),
   '/calendario': () => import('@/pages/Calendario'),
   '/nps': () => import('@/pages/NPSDashboard'),
+  '/dashboard/visao-geral': () => import('@/pages/Index'),
+  '/dashboard/performance': () => import('@/pages/Index'),
+  '/dashboard/analises': () => import('@/pages/Index'),
+  '/dashboard/competicao': () => import('@/pages/Index'),
+  '/dashboard/inteligencia': () => import('@/pages/Index'),
+  '/dashboard/engajamento': () => import('@/pages/Index'),
+  '/sdr': () => import('@/pages/SDRDashboard'),
+  '/closer': () => import('@/pages/CloserDashboard'),
+  '/orcamentos': () => import('@/pages/Orcamentos'),
+  '/assinatura-digital': () => import('@/pages/AssinaturaDigital'),
+  '/fornecedores': () => import('@/pages/Fornecedores'),
+  '/comissoes': () => import('@/pages/Comissoes'),
+  '/tarefas': () => import('@/pages/Tarefas'),
+  '/relatorios': () => import('@/pages/Relatorios'),
+  '/estoque': () => import('@/pages/Estoque'),
+  '/notificacoes': () => import('@/pages/Notificacoes'),
+  '/admin': () => import('@/pages/AdminDashboard'),
 };
 
 const prefetched = new Set<string>();
