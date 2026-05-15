@@ -32,8 +32,8 @@ export function useWhatsApp() {
 
       toast.success("Mensagem enviada via WhatsApp!");
       return true;
-    } catch (err) {
-      console.error("WhatsApp Error:", err);
+    } catch (_err) {
+      // Errors are tracked via edge function logs and RLS audit if necessary
       toast.error("Falha ao enviar mensagem via WhatsApp");
       return false;
     } finally {
