@@ -53,7 +53,29 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe("useSalesData", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("fetches and transforms sales data correctly", async () => {
+    const mockData = [
+      {
+        id: "12345678-1234-1234-1234-123456789012",
+        client_name: "Test Client",
+        product_name: "Test Product",
+        amount: 1000,
+        status: "pending",
+        created_at: new Date().toISOString(),
+        client_id: "c1",
+        product_id: "p1",
+        salesperson_id: "s1",
+        sku: "SKU-001"
+      }
+    ];
+
+    // Ensure the mock returns data
+    (mockSupabase as any).limit.mockResolvedValue({ data: mockData, error: null });
+
     const { result } = renderHook(() => useSalesData(), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
