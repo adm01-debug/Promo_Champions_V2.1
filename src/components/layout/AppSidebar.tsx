@@ -1,5 +1,5 @@
 /* sidebar v3 — grouped submenus */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRight, Crown } from "lucide-react";
 import { NavLink } from "@/components/navigation/NavLink";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
