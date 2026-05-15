@@ -10,6 +10,7 @@ import { format, subDays, startOfMonth, parseISO, isWithinInterval, startOfDay, 
 import { ptBR } from "date-fns/locale";
 
 import { useCustomerSuccess360 } from "@/hooks/customer-success/useCustomerSuccess360";
+import { useFilteredCS360Data } from "@/hooks/customer-success/useFilteredCS360Data";
 import { formatBRL } from "./cs360Helpers";
 import { useToast } from "@/hooks/use-toast";
 
@@ -65,41 +66,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
     return map;
   }, [accounts]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return null;
-    const now = new Date();
-    let start: Date;
-    let end = now;
-
-    if (period === "custom") {
-      start = startDate ? parseISO(startDate) : subDays(now, 30);
-      end = endDate ? parseISO(endDate) : now;
-      if (isAfter(start, end)) [start, end] = [end, start];
-    } else if (period === "0") {
-      start = new Date(0);
-    } else {
-      start = subDays(now, parseInt(period));
-    }
-
-    const filterByDate = (item: { created_at?: string | null; renewal_date?: string | null; responded_at?: string | null }, dateField: string = "created_at") => {
-      try {
-        const dateStr = item[dateField as keyof typeof item];
-        if (!dateStr) return true;
-        const date = parseISO(dateStr);
-        return isWithinInterval(date, { start: startOfDay(start), end: endOfDay(end) });
-      } catch (e) {
-        return true;
-      }
-    };
-
-    return {
-      tickets: tickets.filter(t => filterByDate(t)),
-      expansion: expansion.filter(e => filterByDate(e)),
-      surveys: surveys.filter(s => s.responded_at ? filterByDate(s, "responded_at") : false),
-      renewals: renewals.filter(r => filterByDate(r, "renewal_date")),
-      orders: orders.filter(o => filterByDate(o)),
-    };
-  }, [data, period, startDate, endDate, tickets, expansion, surveys, renewals, orders]);
+  const filteredData = useFilteredCS360Data(data, period, startDate, endDate);
 
   const evolutionData = useMemo(() => {
     const months: Record<string, { ltv: number; count: number }> = {};
