@@ -23,7 +23,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { event_type, payload, webhook_id }: DispatchRequest = await req.json();
+    const body = await req.json();
+    const { event_type, payload, webhook_id }: DispatchRequest = body;
+
+    if (!event_type || !payload) {
+      return new Response(JSON.stringify({ error: "event_type and payload are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,

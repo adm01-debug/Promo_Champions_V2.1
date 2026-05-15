@@ -20,13 +20,15 @@ serve(async (req) => {
     const { dealIds } = await req.json();
     
     const errors = collectErrors([
-      validateArray(dealIds, "dealIds", { required: true, maxLength: 200 }),
+      validateArray(dealIds, "dealIds", { required: true, maxLength: 500 }),
     ]);
-    if (errors.length > 0 || !Array.isArray(dealIds) || dealIds.length === 0) {
-      return validationErrorResponse(
-        errors.length > 0 ? errors : [{ field: "dealIds", message: "dealIds array is required" }],
-        corsHeaders
-      );
+
+    if (errors.length > 0) {
+      return validationErrorResponse(errors, corsHeaders);
+    }
+
+    if (!Array.isArray(dealIds) || dealIds.length === 0) {
+      return validationErrorResponse([{ field: "dealIds", message: "O array dealIds não pode estar vazio" }], corsHeaders);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
