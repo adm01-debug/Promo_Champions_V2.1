@@ -23,8 +23,8 @@ export function useApiTokens() {
       const { data: tokenStr, error: genErr } = await supabase.rpc("generate_api_token");
       if (genErr) throw genErr;
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Não autenticado");
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error("Não autenticado");
 
       const { data, error } = await supabase.from("api_tokens").insert({
         token: tokenStr,

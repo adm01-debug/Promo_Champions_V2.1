@@ -112,7 +112,7 @@ export function BackendAutomationMonitor() {
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
-        {AUTOMATION_JOBS.map((job) => {
+        {AUTOMATION_JOBS.map((job: AutomationJob) => {
           const result = results[job.edgeFunctionName];
           const isRunning = runJob.isPending && runJob.variables === job.edgeFunctionName;
 

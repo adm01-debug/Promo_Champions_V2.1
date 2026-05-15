@@ -94,7 +94,7 @@ export function useSecurityStats() {
       ]);
 
       const activeBlocked =
-        blockedIPs?.filter((ip) => {
+        blockedIPs?.filter((ip: any) => {
           if (ip.is_permanent) return true;
           if (!ip.expires_at) return true;
           return new Date(ip.expires_at) > now;

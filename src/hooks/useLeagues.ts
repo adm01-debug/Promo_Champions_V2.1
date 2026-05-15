@@ -39,7 +39,10 @@ export function useLeagues() {
         .from("salespeople")
         .select("id, name, avatar_url")
         .eq("is_active", true);
-      if (spErr) throw spErr;
+      if (spErr) {
+        console.error("Error fetching salespeople:", spErr);
+        throw spErr;
+      }
 
       // Try to get league members from new table
       const { data: members, error: membersErr } = await supabase
@@ -50,8 +53,8 @@ export function useLeagues() {
         console.error("Error fetching league members:", membersErr);
       }
 
-      return (salespeople || []).map((sp) => {
-        const member = members?.find((m) => m.salesperson_id === sp.id);
+      return (salespeople || []).map((sp: any) => {
+        const member = members?.find((m: any) => m.salesperson_id === sp.id);
         const points = member?.weekly_xp || 0;
         const leagueTier = member?.leagues?.tier;
         const leagueKey = leagueTier === 5 ? "legendary" : 
