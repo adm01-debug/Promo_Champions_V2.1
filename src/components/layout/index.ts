@@ -1,6 +1,11 @@
-export { MainLayout } from './MainLayout';
-export { AppSidebar } from './AppSidebar';
-export { GlobalSearch } from './GlobalSearch';
-export { ThemeToggle } from './ThemeToggle';
-export { UserRoleBadge } from './UserRoleBadge';
-export { SlideOverPanel } from './SlideOverPanel';
+export { MainLayout } from '../templates/MainLayout';
+export { AppSidebar } from '../organisms/AppSidebar';
+export { GlobalSearch } from '../molecules/GlobalSearch';
+export { ThemeToggle } from '../atoms/ThemeToggle';
+export { UserRoleBadge } from '../molecules/UserRoleBadge';
+export { SlideOverPanel } from '../molecules/SlideOverPanel';
+export { LanguageToggle } from '../atoms/LanguageToggle';
+export { SystemHealthBadge } from '../atoms/SystemHealthBadge';
+export { SearchTrigger } from '../atoms/SearchTrigger';
+export { RoleAwareSidebar } from './RoleAwareSidebar';
+export { LayoutRealtimeEffects } from './LayoutRealtimeEffects';
