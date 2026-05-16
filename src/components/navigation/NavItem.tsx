@@ -43,12 +43,8 @@ export const NavItem: FC<NavItemProps> = memo(({
           aria-current={window.location.pathname === url ? "page" : undefined}
         >
           {window.location.pathname === url && (
-            <motion.div
-              layoutId="nav-glow"
+            <div
               className="absolute inset-0 bg-primary/5 z-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
             />
           )}
           

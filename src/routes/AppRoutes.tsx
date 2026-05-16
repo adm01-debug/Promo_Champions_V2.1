@@ -17,31 +17,10 @@ import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied,
   // Dashboards
-  SDRDashboard, CloserDashboard, DashboardCustom, VendedorDashboard,
+  SDRDashboard, CloserDashboard, DashboardCustom, VendedorDashboard, Docs,
   // CRM Core
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
-  // Prospecção & Atividades
-  Atividades, Cadencias, QuoteCadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, FollowUpAudit, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
-  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
-  // Vendas & Comercial
-  Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, CommissionRules, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
-  // Analytics & BI
-  Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
-  RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
-  ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage, DealVelocityPage, EvolutionCurvesPage, ObjectionsLibraryPage, WinLossAnalysisPage, EmailAnalyticsPage, GamifiedProfilePage, BadgesGalleryPage, Intelligence,
-  // Gamificação & Social
-  RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, RaceArenaCareer, DesafiosSemanais, HistoricoDesafiosDiarios,
-  VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
-  // Gestão
-  Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
-  NPSDashboard, Deduplication, ImportExport, OnboardingTracking, InactivityTriggers, Bitrix24,
-  // Ferramentas & IA
-  Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
-  // Admin
-  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
-  AdminComercial, Competencias,
-  CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
+...
   CustomerSuccess360Page,
 } from "./lazyPages";
 
@@ -118,6 +97,8 @@ export function AppRoutes() {
                       <Route path="/closer" element={<CloserDashboard />} />
                       <Route path="/dashboard-custom" element={<DashboardCustom />} />
                       <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+
+                      <Route path="/docs" element={<Docs />} />
 
                       {/* ─── CRM Core ─────────────────────────────── */}
                       <Route path="/vendas" element={<Vendas />} />
