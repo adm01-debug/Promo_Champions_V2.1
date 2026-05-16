@@ -4,7 +4,8 @@ import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMediaQuery';
-import { motion, useDragControls, PanInfo } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface MobilePageHeaderProps {
   title: string;
