@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { motion, AnimatePresence } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface BackButtonProps {
   label?: string;
