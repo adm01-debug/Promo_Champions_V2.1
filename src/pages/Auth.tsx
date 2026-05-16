@@ -16,24 +16,17 @@ import { Crown, Zap, Trophy, Target, Flame, Eye, EyeOff, Loader2, ArrowRight, Sp
 
 const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
-const nameSchema = z.string().min(2, "Nome deve ter pelo menos 2 caracteres");
-
-type Mode = "login" | "signup";
 
 export default function Auth() {
-  const [mode, setMode] = useState<Mode>("login");
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupName, setSignupName] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
@@ -70,16 +63,6 @@ export default function Auth() {
     } else { await recordLoginAttempt(loginEmail, true); toast.success("Bem-vindo de volta, campeão! 🏆"); navigate("/"); }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try { emailSchema.parse(signupEmail); passwordSchema.parse(signupPassword); nameSchema.parse(signupName); }
-    catch (err) { if (err instanceof z.ZodError) { toast.error(err.errors[0].message); return; } }
-    setIsLoading(true);
-    const { error } = await signUp(signupEmail, signupPassword, signupName);
-    setIsLoading(false);
-    if (error) toast.error(error.message.includes("already registered") ? "Email já cadastrado" : error.message);
-    else { toast.success("Conta criada! Entrando na Arena! 🚀"); navigate("/"); }
-  };
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
