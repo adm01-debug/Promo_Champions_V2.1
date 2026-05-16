@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react';
-import { FixedSizeList } from 'react-window';
+import * as ReactWindow from 'react-window';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +49,7 @@ export function VirtualizedList<T>({
 
   return (
     <div className={cn("w-full overflow-hidden rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm", className)}>
-      <FixedSizeList
+      <ReactWindow.FixedSizeList
         height={height}
         itemCount={items.length}
         itemSize={itemHeight}
@@ -57,7 +57,7 @@ export function VirtualizedList<T>({
         className="scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent"
       >
         {Row}
-      </FixedSizeList>
+      </ReactWindow.FixedSizeList>
     </div>
   );
 }
