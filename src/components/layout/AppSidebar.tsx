@@ -38,6 +38,7 @@ export const AppSidebar = memo(function AppSidebar() {
   const alertCount = alerts?.length || 0;
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
