@@ -11,30 +11,30 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 20 : -20,
-    scale: 0.98,
-    filter: "blur(4px)",
+    x: direction > 0 ? 30 : -30,
+    scale: 0.96,
+    filter: "blur(12px) brightness(1.5)",
   }),
   in: {
     opacity: 1,
     x: 0,
     scale: 1,
-    filter: "blur(0px)",
+    filter: "blur(0px) brightness(1)",
     transition: {
-      duration: 0.45,
-      ease: [0.23, 1, 0.32, 1], // Custom cubic-bezier for premium feel
-      staggerChildren: 0.08,
+      duration: 0.6,
+      ease: [0.16, 1, 0.3, 1], // Smooth expo ease-out
+      staggerChildren: 0.1,
       when: "beforeChildren",
     }
   },
   out: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -20 : 20,
-    scale: 1.02,
-    filter: "blur(4px)",
+    x: direction > 0 ? -30 : 30,
+    scale: 1.04,
+    filter: "blur(12px) brightness(0.8)",
     transition: {
-      duration: 0.3,
-      ease: [0.23, 1, 0.32, 1],
+      duration: 0.4,
+      ease: [0.16, 1, 0.3, 1],
     }
   }),
 };
