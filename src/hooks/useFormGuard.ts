@@ -36,7 +36,7 @@ export function useFormGuard(isDirty: boolean, message: string = 'Você tem alte
   // If navigation is blocked, show a notification/dialog
   useEffect(() => {
     if (blocker.state === 'blocked') {
-      triggerHaptic('warning');
+      triggerHaptic('medium');
       const confirmLeave = window.confirm(message);
       if (confirmLeave) {
         triggerHaptic('success');
