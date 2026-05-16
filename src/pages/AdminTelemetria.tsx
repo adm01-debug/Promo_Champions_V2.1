@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
-import { MainLayout } from "@/components/layout/MainLayout";
+import { MainLayout } from "@/components/templates/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
