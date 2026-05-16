@@ -152,7 +152,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="flex-1">
             {children}
           </div>
-        </main>
+        </motion.main>
         
         <Suspense fallback={null}>
           <MobileNavigation />
