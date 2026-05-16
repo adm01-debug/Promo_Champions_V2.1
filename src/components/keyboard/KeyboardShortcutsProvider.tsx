@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useRef } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode, useRef, useEffect } from "react";
 import { useGlobalKeyboardShortcuts, useKeyboardShortcutHint } from "@/hooks/useGlobalKeyboardShortcuts";
 import { useTheme } from "next-themes";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Keyboard, Search, Plus, Moon, Command } from "lucide-react";
+import { Keyboard, Search, Plus, Moon, Command, ArrowRight } from "lucide-react";
+import { triggerHaptic } from "@/lib/haptics";
 
 interface KeyboardShortcutsContextType {
   openSearch: () => void;
