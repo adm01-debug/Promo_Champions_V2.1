@@ -42,19 +42,8 @@ export function useGlobalKeyboardShortcuts({
       key: "Escape",
       description: "Voltar / Fechar",
       action: () => {
-        // Only navigate back if not in an input to avoid annoying behavior
-        const target = document.activeElement as HTMLElement;
-        const isInputElement = 
-          target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.isContentEditable;
-        
-        if (!isInputElement) {
-          // If we are in a sub-path, go back. If at root dashboard, don't.
-          if (window.location.pathname !== '/' && window.location.pathname !== '/dashboard') {
-            navigate(-1);
-          }
-        }
+        // BackButton component now handles Esc globally when not in inputs
+        // This hook can focus on other global actions
       },
     },
     {

@@ -136,7 +136,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="flex items-center gap-1.5 max-w-full overflow-hidden bg-background/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-border/20 shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/30 hover:bg-background/60 group/nav">
+      <div className="flex items-center gap-1.5 max-w-full overflow-hidden bg-background/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-border/20 shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/30 hover:bg-background/60 group/nav ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <nav 
           ref={ref}
           aria-label="Breadcrumb" 

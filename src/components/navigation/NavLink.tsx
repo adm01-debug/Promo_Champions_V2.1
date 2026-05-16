@@ -1,6 +1,7 @@
 import React, { forwardRef, useCallback, useRef, memo } from "react";
 import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { triggerHaptic } from "@/lib/haptics";
 
 // Route-to-lazy-import mapping for prefetch
 const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
@@ -61,9 +62,12 @@ const NavLink = memo(forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
         const loader = ROUTE_MODULES[path];
         if (loader) {
           prefetched.add(path);
-          loader();
+          loader().catch(() => {
+            // Silently handle chunk loading errors on prefetch
+            prefetched.delete(path);
+          });
         }
-      }, 100);
+      }, 50);
     }, [to]);
 
     const handleMouseLeave = useCallback(() => {
@@ -79,8 +83,14 @@ const NavLink = memo(forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
         to={to}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={() => triggerHaptic('light')}
         className={({ isActive, isPending }) =>
-          cn(className, isActive && activeClassName, isPending && pendingClassName)
+          cn(
+            className, 
+            isActive && activeClassName, 
+            isPending && pendingClassName,
+            "transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md"
+          )
         }
         {...props}
       />
