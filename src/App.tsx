@@ -64,8 +64,9 @@ const App = () => {
             </XPToastProvider>
           </PageErrorBoundary>
         </TooltipProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+      </MotionConfig>
+    </QueryClientProvider>
+  </HelmetProvider>
   );
 };
 
