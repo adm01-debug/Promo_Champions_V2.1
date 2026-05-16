@@ -128,7 +128,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
             <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-primary/30 bg-primary/10 px-1.5 font-mono text-[10px] font-medium text-primary/70">
               ⌘⇧F
             </kbd>
-          </button>
+          </motion.button>
 
           <Tooltip>
             <TooltipTrigger asChild>
