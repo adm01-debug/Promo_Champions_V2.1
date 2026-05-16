@@ -165,7 +165,29 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                     className="flex items-center gap-1.5"
                   >
                     {index > 0 && (
-                      <ChevronRight className="h-3 w-3 text-muted-foreground/20 shrink-0 group-hover/nav:text-primary/30 transition-colors duration-300" aria-hidden="true" />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="h-4 w-4 flex items-center justify-center text-muted-foreground/20 hover:text-primary/40 transition-colors">
+                            <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-48 p-1 glass">
+                          <DropdownMenuLabel className="text-[9px] uppercase tracking-widest opacity-50 px-2 py-1.5">Mudar para</DropdownMenuLabel>
+                          {getSiblings(item.href).map(([slug, label]) => (
+                            <DropdownMenuItem 
+                              key={slug} 
+                              onClick={() => {
+                                triggerHaptic('light');
+                                navigate(`/${slug}`);
+                              }}
+                              className="text-xs gap-2 cursor-pointer"
+                            >
+                              <LayoutGrid className="h-3 w-3" />
+                              {label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                     
                     {isLast ? (
