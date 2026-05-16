@@ -58,7 +58,10 @@ export const FilterPopover = ({
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => onSortChange(option.value)}
+                  onClick={() => {
+                    triggerHaptic('light');
+                    onSortChange(option.value);
+                  }}
                   className={cn(
                     "w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors",
                     currentSort === option.value
@@ -84,7 +87,10 @@ export const FilterPopover = ({
               </div>
               <div className="space-y-1">
                 <button
-                  onClick={() => filter.onChange("")}
+                  onClick={() => {
+                    triggerHaptic('light');
+                    filter.onChange("");
+                  }}
                   className={cn(
                     "w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors",
                     filter.value === ""
@@ -98,7 +104,10 @@ export const FilterPopover = ({
                 {filter.options.map((option) => (
                   <button
                     key={option.value}
-                    onClick={() => filter.onChange(option.value)}
+                    onClick={() => {
+                      triggerHaptic('light');
+                      filter.onChange(option.value);
+                    }}
                     className={cn(
                       "w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors",
                       filter.value === option.value
