@@ -21,6 +21,11 @@ interface MobileBottomNavProps {
 
 const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   const displayIcon = item.isActive && item.filledIcon ? item.filledIcon : item.icon;
+  
+  const handleInteraction = useCallback(() => {
+    triggerHaptic('light');
+    if (item.onClick) item.onClick();
+  }, [item]);
 
   const content = (
     <>
