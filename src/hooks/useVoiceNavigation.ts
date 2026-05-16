@@ -71,11 +71,17 @@ export function useVoiceNavigation() {
 
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
+          window.dispatchEvent(new CustomEvent('voice-nav:listening', { detail: false }));
           handleCommand(transcript);
         };
 
         recognition.onerror = () => {
+          window.dispatchEvent(new CustomEvent('voice-nav:listening', { detail: false }));
           toast.error('Erro ao reconhecer voz');
+        };
+
+        recognition.onend = () => {
+          window.dispatchEvent(new CustomEvent('voice-nav:listening', { detail: false }));
         };
       }
     };
