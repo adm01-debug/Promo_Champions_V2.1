@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useRef } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode, useRef, useEffect } from "react";
 import { useGlobalKeyboardShortcuts, useKeyboardShortcutHint } from "@/hooks/useGlobalKeyboardShortcuts";
 import { useTheme } from "next-themes";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Keyboard, Search, Plus, Moon, Command } from "lucide-react";
+import { Keyboard, Search, Plus, Moon, Command, ArrowRight } from "lucide-react";
+import { triggerHaptic } from "@/lib/haptics";
+import { NavigationHud } from "./NavigationHud";
 
 interface KeyboardShortcutsContextType {
   openSearch: () => void;
@@ -38,6 +41,9 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
   const [shortcutsDialogOpen, setShortcutsDialogOpen] = useState(false);
   const { setTheme, theme } = useTheme();
   const { formatShortcut, isMac } = useKeyboardShortcutHint();
+  const navigate = useNavigate();
+  const [isGKeyDown, setIsGKeyDown] = useState(false);
+  const gTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handler refs for dynamic registration
   const searchHandlerRef = useRef<(() => void) | null>(null);
@@ -76,6 +82,52 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
     newClientHandlerRef.current = handler;
   }, []);
 
+  // Listen for "G" key sequences
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key.toLowerCase() === 'g') {
+        setIsGKeyDown(true);
+        if (gTimerRef.current) clearTimeout(gTimerRef.current);
+        gTimerRef.current = setTimeout(() => setIsGKeyDown(false), 1500); // 1.5s window
+        return;
+      }
+
+      if (isGKeyDown) {
+        const key = e.key.toLowerCase();
+        let targetPath = '';
+
+        switch (key) {
+          case 'd': targetPath = '/dashboard'; break;
+          case 'v': targetPath = '/vendas'; break;
+          case 'c': targetPath = '/clientes'; break;
+          case 'p': targetPath = '/pipeline'; break;
+          case 'm': targetPath = '/metas'; break;
+          case 'a': targetPath = '/atividades'; break;
+          case 'r': targetPath = '/ranking'; break;
+          case 'i': targetPath = '/assistente'; break;
+          case 's': targetPath = '/configuracoes'; break;
+        }
+
+        if (targetPath) {
+          e.preventDefault();
+          triggerHaptic('light');
+          navigate(targetPath);
+          setIsGKeyDown(false);
+          if (gTimerRef.current) clearTimeout(gTimerRef.current);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (gTimerRef.current) clearTimeout(gTimerRef.current);
+    };
+  }, [isGKeyDown, navigate]);
+
   // Initialize global keyboard shortcuts
   useGlobalKeyboardShortcuts({
     onSearch: openSearch,
@@ -88,30 +140,35 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
 
   const shortcutGroups = [
     {
-      title: "Navegação Rápida",
+      title: "Ir para (Sequência G + ...)",
       shortcuts: [
-        { key: "G", description: "Ir para Dashboard" },
-        { key: "V", description: "Ir para Vendas" },
-        { key: "C", description: "Ir para Clientes" },
-        { key: "P", description: "Ir para Pipeline" },
-        { key: "M", description: "Ir para Metas" },
+        { key: "G + D", description: "Dashboard" },
+        { key: "G + V", description: "Vendas" },
+        { key: "G + C", description: "Clientes" },
+        { key: "G + P", description: "Pipeline" },
+        { key: "G + M", description: "Metas" },
+        { key: "G + A", description: "Atividades" },
+        { key: "G + R", description: "Ranking" },
+        { key: "G + I", description: "IA Assistente" },
+        { key: "G + S", description: "Configurações" },
       ],
     },
     {
-      title: "Ações",
+      title: "Navegação por Teclado",
+      shortcuts: [
+        { key: "Alt + ←", description: "Voltar (Smart Back)" },
+        { key: "Esc", description: "Fechar modal / Voltar" },
+        { key: "?", description: "Mostrar atalhos", icon: Keyboard },
+      ],
+    },
+    {
+      title: "Ações Globais",
       shortcuts: [
         { key: formatShortcut("K", { ctrl: true }), description: "Abrir busca global", icon: Search },
         { key: "/", description: "Abrir busca global (alternativo)", icon: Search },
         { key: formatShortcut("N", { ctrl: true }), description: "Nova venda", icon: Plus },
         { key: formatShortcut("J", { ctrl: true }), description: "Novo cliente", icon: Plus },
-      ],
-    },
-    {
-      title: "Sistema",
-      shortcuts: [
         { key: formatShortcut("\\", { ctrl: true }), description: "Alternar tema", icon: Moon },
-        { key: "?", description: "Mostrar atalhos", icon: Keyboard },
-        { key: "Esc", description: "Fechar modal / Voltar" },
       ],
     },
   ];
@@ -129,6 +186,8 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
       }}
     >
       {children}
+
+      <NavigationHud isVisible={isGKeyDown} baseKey="G" />
 
       {/* Shortcuts Dialog */}
       <Dialog open={shortcutsDialogOpen} onOpenChange={setShortcutsDialogOpen}>
