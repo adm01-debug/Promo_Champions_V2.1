@@ -11,29 +11,26 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 20 : -20,
-    scale: 0.99,
-    filter: 'blur(4px)',
+    x: direction > 0 ? 10 : -10,
+    scale: 0.995,
   }),
   in: {
     opacity: 1,
     x: 0,
     scale: 1,
-    filter: 'blur(0px)',
     transition: {
-      duration: 0.4,
-      ease: [0.23, 1, 0.32, 1],
+      duration: 0.35,
+      ease: [0.16, 1, 0.3, 1],
       staggerChildren: 0.05,
     }
   },
   out: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -20 : 20,
-    scale: 1.01,
-    filter: 'blur(4px)',
+    x: direction > 0 ? -10 : 10,
+    scale: 1.005,
     transition: {
-      duration: 0.3,
-      ease: [0.23, 1, 0.32, 1],
+      duration: 0.25,
+      ease: [0.16, 1, 0.3, 1],
     }
   }),
 };
@@ -100,7 +97,7 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
         animate="in"
         exit="out"
         variants={pageVariants}
-        className={cn("w-full min-h-full will-change-transform", className)}
+        className={cn("w-full min-h-full", className)}
       >
         {children}
       </motion.div>
