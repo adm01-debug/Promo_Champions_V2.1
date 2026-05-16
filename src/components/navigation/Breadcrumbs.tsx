@@ -145,10 +145,14 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                             <MoreHorizontal className="h-3.5 w-3.5" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
+                        <DropdownMenuContent align="end" className="w-48 backdrop-blur-xl bg-background/90 border-border/40">
+                          <DropdownMenuItem onClick={handleCopyLink} className="gap-2 focus:bg-primary focus:text-primary-foreground transition-colors cursor-pointer">
                             {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-                            <span>Copiar Link</span>
+                            <span className="font-medium">Copiar Link</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.print()} className="gap-2 focus:bg-primary focus:text-primary-foreground transition-colors cursor-pointer">
+                            <FileText className="h-3.5 w-3.5" />
+                            <span className="font-medium">Imprimir Página</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
