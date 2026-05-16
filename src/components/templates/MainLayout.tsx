@@ -91,7 +91,8 @@ export function MainLayout({ children }: MainLayoutProps) {
       </Suspense>
       
       <SkipLinks />
-      <div className="min-h-screen flex w-full bg-background">
+      <CyberArenaBackground />
+      <div className="min-h-screen flex w-full bg-background/50">
         <ErrorBoundary fallback={sidebarFallback}>
           <Suspense fallback={sidebarFallback}>
             <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
