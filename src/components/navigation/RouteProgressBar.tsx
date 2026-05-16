@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const RouteProgressBar = () => {
+/**
+ * RouteProgressBar - Top progress bar with neon aesthetics.
+ * Uses memoization to prevent unnecessary re-renders during app state changes.
+ */
+export const RouteProgressBar = React.memo(() => {
   const location = useLocation();
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -23,7 +27,7 @@ export const RouteProgressBar = () => {
         setIsVisible(false);
       }, 300);
       return () => clearTimeout(timer4);
-    }, 500);
+    }, 450); // Optimized duration
 
     return () => {
       clearTimeout(timer1);
@@ -31,6 +35,10 @@ export const RouteProgressBar = () => {
       clearTimeout(timer3);
     };
   }, [location.pathname]);
+
+  const progressBarStyles = useMemo(() => ({
+    width: `${progress}%`
+  }), [progress]);
 
   return (
     <AnimatePresence>
@@ -43,12 +51,12 @@ export const RouteProgressBar = () => {
         >
           <motion.div
             initial={{ width: '0%' }}
-            animate={{ width: `${progress}%` }}
+            animate={progressBarStyles}
             transition={{ 
               width: { type: "spring", stiffness: 100, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            className="h-full bg-gradient-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative"
+            className="h-full bg-gradient-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative will-change-[width]"
           >
             <motion.div 
               animate={{ x: ['-100%', '200%'] }}
@@ -60,5 +68,6 @@ export const RouteProgressBar = () => {
       )}
     </AnimatePresence>
   );
-};
+});
 
+RouteProgressBar.displayName = "RouteProgressBar";
