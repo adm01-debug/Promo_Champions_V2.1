@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useCallback } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, Copy, Check, MoreHorizontal } from 'lucide-react';
+import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BackButton } from './BackButton';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,13 +20,13 @@ interface BreadcrumbItem {
 
 const routeLabels: Record<string, string> = {
   '': 'Início',
-  'dashboard': 'Dashboard',
-  'performance': 'Performance',
-  'analises': 'Análises',
-  'competicao': 'Competição',
-  'inteligencia': 'Inteligência',
-  'engajamento': 'Engajamento',
-  'visao-geral': 'Visão Geral',
+  'visao-geral': 'Resumo Geral',
+  'performance': 'Minha Performance',
+  'analises': 'Tendências e Insights',
+  'competicao': 'Arena e Rankings',
+  'inteligencia': 'Inteligência IA',
+  'engajamento': 'Clima e Feedback',
+  'dashboard': 'Painel',
   'pipeline': 'Pipeline',
   'vendas': 'Vendas',
   'clientes': 'Clientes',
@@ -145,10 +145,14 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                             <MoreHorizontal className="h-3.5 w-3.5" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={handleCopyLink} className="gap-2">
+                        <DropdownMenuContent align="end" className="w-48 backdrop-blur-xl bg-background/90 border-border/40">
+                          <DropdownMenuItem onClick={handleCopyLink} className="gap-2 focus:bg-primary focus:text-primary-foreground transition-colors cursor-pointer">
                             {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-                            <span>Copiar Link</span>
+                            <span className="font-medium">Copiar Link</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.print()} className="gap-2 focus:bg-primary focus:text-primary-foreground transition-colors cursor-pointer">
+                            <FileText className="h-3.5 w-3.5" />
+                            <span className="font-medium">Imprimir Página</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

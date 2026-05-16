@@ -112,10 +112,13 @@ export const BackButton: FC<BackButtonProps> = memo(({
                       <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-56">
-                    <div className="flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-muted-foreground border-b border-border/50 mb-1">
-                      <History className="h-3 w-3" />
-                      Histórico Recente
+                  <DropdownMenuContent align="start" className="w-64 max-h-[80vh] overflow-y-auto backdrop-blur-xl bg-background/95 border-border/50 shadow-2xl">
+                    <div className="flex items-center justify-between px-3 py-2 text-xs font-bold text-primary border-b border-border/50 mb-1 sticky top-0 bg-background/95 backdrop-blur-md z-10">
+                      <div className="flex items-center gap-2">
+                        <History className="h-3.5 w-3.5" />
+                        Histórico de Navegação
+                      </div>
+                      <span className="text-[10px] opacity-50 font-normal">Sessão atual</span>
                     </div>
                     {historyItems.map((item, i) => (
                       <DropdownMenuItem 
