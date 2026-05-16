@@ -15,8 +15,14 @@ export const PerformanceMonitor = memo(() => {
   const [renderTime, setRenderTime] = useState(0);
   const [transitionTime, setTransitionTime] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<number[]>([]);
   const [hasAlert, setHasAlert] = useState(false);
+  
+  // Custom thresholds
+  const [fpsThreshold, setFpsThreshold] = useState(DEFAULT_FPS_THRESHOLD);
+  const [renderThreshold, setRenderThreshold] = useState(DEFAULT_RENDER_THRESHOLD);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   
   const frameCount = useRef(0);
   const lastTime = useRef(performance.now());
@@ -36,11 +42,11 @@ export const PerformanceMonitor = memo(() => {
         setHistory(prev => [...prev.slice(-20), currentFps]);
         
         // Performance Alert Logic
-        if (currentFps < FPS_THRESHOLD && now - lastAlertTime.current > 10000) {
+        if (notificationsEnabled && currentFps < fpsThreshold && now - lastAlertTime.current > 15000) {
           setHasAlert(true);
           toast.warning("Performance Drop Detected", {
-            description: `System running at ${currentFps} FPS. Heavy operations may be occurring.`,
-            duration: 3000
+            description: `System running at ${currentFps} FPS. Threshold is ${fpsThreshold}.`,
+            duration: 4000
           });
           lastAlertTime.current = now;
           setTimeout(() => setHasAlert(false), 3000);
@@ -57,11 +63,11 @@ export const PerformanceMonitor = memo(() => {
          setRenderTime(smoothedRenderTime);
 
          // Render time alert
-         if (smoothedRenderTime > RENDER_THRESHOLD && now - lastAlertTime.current > 10000) {
+         if (notificationsEnabled && smoothedRenderTime > renderThreshold && now - lastAlertTime.current > 15000) {
             setHasAlert(true);
             toast.error("High Render Latency", {
-              description: `Frame processing took ${smoothedRenderTime}ms. UI may feel sluggish.`,
-              duration: 3000
+              description: `Frame took ${smoothedRenderTime}ms. Threshold is ${renderThreshold}ms.`,
+              duration: 4000
             });
             lastAlertTime.current = now;
             setTimeout(() => setHasAlert(false), 3000);
@@ -76,7 +82,7 @@ export const PerformanceMonitor = memo(() => {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [renderTime]);
+  }, [renderTime, fpsThreshold, renderThreshold, notificationsEnabled]);
 
   // Track page transition time via performance entries
   useEffect(() => {
@@ -96,13 +102,18 @@ export const PerformanceMonitor = memo(() => {
   const getStatusColor = (val: number, type: 'fps' | 'render') => {
     if (type === 'fps') {
       if (val >= 55) return 'text-emerald-400';
-      if (val >= FPS_THRESHOLD) return 'text-amber-400';
+      if (val >= fpsThreshold) return 'text-amber-400';
       return 'text-rose-400';
     }
     if (val <= 16.7) return 'text-emerald-400';
-    if (val <= RENDER_THRESHOLD) return 'text-amber-400';
+    if (val <= renderThreshold) return 'text-amber-400';
     return 'text-rose-400';
   };
+
+  const toggleSettings = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowSettings(!showSettings);
+  }, [showSettings]);
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none">
@@ -135,97 +146,174 @@ export const PerformanceMonitor = memo(() => {
                 transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
-            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-muted-foreground/80">Engine Health 2.0</span>
+            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-muted-foreground/80">Engine Health 2.1</span>
           </div>
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 hover:bg-primary/10 rounded-lg transition-all duration-300 hover:scale-110 active:scale-95 pointer-events-auto"
-          >
-            {isExpanded ? <Minimize2 className="w-3.5 h-3.5 text-primary/70" /> : <Maximize2 className="w-3.5 h-3.5 text-primary/70" />}
-          </button>
+          <div className="flex items-center gap-1 pointer-events-auto">
+            <button 
+              onClick={toggleSettings}
+              className={cn(
+                "p-1.5 hover:bg-primary/10 rounded-lg transition-all duration-300",
+                showSettings && "bg-primary/20 text-primary"
+              )}
+              title="Settings"
+            >
+              <Settings2 className="w-3.5 h-3.5" />
+            </button>
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-1.5 hover:bg-primary/10 rounded-lg transition-all duration-300 hover:scale-110 active:scale-95"
+            >
+              {isExpanded ? <Minimize2 className="w-3.5 h-3.5 text-primary/70" /> : <Maximize2 className="w-3.5 h-3.5 text-primary/70" />}
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3">
-          <div className="flex items-center justify-between group">
-            <div className="flex items-center gap-2">
-              <Zap className={cn("w-3.5 h-3.5 group-hover:animate-pulse", fps < FPS_THRESHOLD ? "text-rose-500" : "text-amber-400")} />
-              <span className="text-[11px] font-mono font-medium text-muted-foreground">FPS</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {fps < FPS_THRESHOLD && (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" 
-                />
-              )}
-              <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(fps, 'fps'))}>
-                {fps}
-              </span>
-            </div>
-          </div>
-
-          {isExpanded && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+        <AnimatePresence mode="wait">
+          {showSettings ? (
+            <motion.div
+              key="settings"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
               className="space-y-3"
             >
-              <div className="h-12 flex items-end gap-0.5 px-1.5 py-1 bg-black/40 rounded-lg border border-white/5 overflow-hidden">
-                {history.map((val, i) => (
-                  <motion.div 
-                    key={i} 
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    className={cn(
-                      "flex-1 rounded-t-[1px] transition-colors duration-300",
-                      val >= 55 ? "bg-emerald-500/50" : val >= FPS_THRESHOLD ? "bg-amber-500/50" : "bg-rose-500/50"
-                    )} 
-                    style={{ height: `${Math.max(5, (val / 60) * 100)}%` }}
-                  />
-                ))}
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase text-muted-foreground">Alerts</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={cn("h-6 w-6 rounded-md", notificationsEnabled ? "text-primary bg-primary/10" : "text-muted-foreground")}
+                  onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                >
+                  <Bell className="h-3 w-3" />
+                </Button>
               </div>
               
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                  <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Stability</div>
-                  <div className={cn("text-xs font-mono font-bold", fps >= 58 ? 'text-emerald-400' : fps >= FPS_THRESHOLD ? 'text-amber-400' : 'text-rose-400')}>
-                    {fps >= 58 ? 'ULTRA' : fps >= FPS_THRESHOLD ? 'STABLE' : 'JITTER'}
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-mono uppercase text-muted-foreground block">FPS Threshold</label>
+                <div className="flex items-center gap-2">
+                  <Input 
+                    type="number" 
+                    value={fpsThreshold} 
+                    onChange={(e) => setFpsThreshold(Number(e.target.value))}
+                    className="h-7 text-[10px] font-mono bg-black/40 border-white/10"
+                  />
+                  <span className="text-[10px] font-mono text-muted-foreground">MIN</span>
                 </div>
-                <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                  <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Load</div>
-                  <div className={cn("text-xs font-mono font-bold", renderTime < 8 ? 'text-blue-400' : renderTime < RENDER_THRESHOLD ? 'text-amber-400' : 'text-rose-400')}>
-                    {renderTime < 8 ? 'LIGHT' : renderTime < RENDER_THRESHOLD ? 'OPTIMAL' : 'CRITICAL'}
-                  </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-mono uppercase text-muted-foreground block">Render Threshold (ms)</label>
+                <div className="flex items-center gap-2">
+                  <Input 
+                    type="number" 
+                    value={renderThreshold} 
+                    onChange={(e) => setRenderThreshold(Number(e.target.value))}
+                    className="h-7 text-[10px] font-mono bg-black/40 border-white/10"
+                  />
+                  <span className="text-[10px] font-mono text-muted-foreground">MAX</span>
                 </div>
+              </div>
+
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full h-7 text-[10px] uppercase font-bold tracking-widest border-primary/20 hover:bg-primary/10"
+                onClick={() => setShowSettings(false)}
+              >
+                Close Settings
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="metrics"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 gap-3"
+            >
+              <div className="flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <Zap className={cn("w-3.5 h-3.5 group-hover:animate-pulse", fps < fpsThreshold ? "text-rose-500" : "text-amber-400")} />
+                  <span className="text-[11px] font-mono font-medium text-muted-foreground">FPS</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {fps < fpsThreshold && (
+                    <motion.div 
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" 
+                    />
+                  )}
+                  <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(fps, 'fps'))}>
+                    {fps}
+                  </span>
+                </div>
+              </div>
+
+              {isExpanded && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  className="space-y-3"
+                >
+                  <div className="h-12 flex items-end gap-0.5 px-1.5 py-1 bg-black/40 rounded-lg border border-white/5 overflow-hidden">
+                    {history.map((val, i) => (
+                      <motion.div 
+                        key={i} 
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        className={cn(
+                          "flex-1 rounded-t-[1px] transition-colors duration-300",
+                          val >= 55 ? "bg-emerald-500/50" : val >= fpsThreshold ? "bg-amber-500/50" : "bg-rose-500/50"
+                        )} 
+                        style={{ height: `${Math.max(5, (val / 60) * 100)}%` }}
+                      />
+                    ))}
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                      <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Stability</div>
+                      <div className={cn("text-xs font-mono font-bold", fps >= 58 ? 'text-emerald-400' : fps >= fpsThreshold ? 'text-amber-400' : 'text-rose-400')}>
+                        {fps >= 58 ? 'ULTRA' : fps >= fpsThreshold ? 'STABLE' : 'JITTER'}
+                      </div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                      <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Load</div>
+                      <div className={cn("text-xs font-mono font-bold", renderTime < 8 ? 'text-blue-400' : renderTime < renderThreshold ? 'text-amber-400' : 'text-rose-400')}>
+                        {renderTime < 8 ? 'LIGHT' : renderTime < renderThreshold ? 'OPTIMAL' : 'CRITICAL'}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <div className="flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <Clock className={cn("w-3.5 h-3.5 group-hover:rotate-12 transition-transform", renderTime > renderThreshold ? "text-rose-500" : "text-blue-400")} />
+                  <span className="text-[11px] font-mono font-medium text-muted-foreground">LATENCY</span>
+                </div>
+                <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(renderTime, 'render'))}>
+                  {renderTime}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <div className="relative w-3.5 h-3.5">
+                    <div className="absolute inset-0 rounded-full border border-primary/20" />
+                    <div className="absolute inset-0 rounded-full border border-t-primary animate-spin" />
+                  </div>
+                  <span className="text-[11px] font-mono font-medium text-muted-foreground">ROUTE</span>
+                </div>
+                <span className="text-sm font-mono font-black tabular-nums tracking-tighter text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.4)]">
+                  {transitionTime > 0 ? `${transitionTime}` : '--'}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
+                </span>
               </div>
             </motion.div>
           )}
-
-          <div className="flex items-center justify-between group">
-            <div className="flex items-center gap-2">
-              <Clock className={cn("w-3.5 h-3.5 group-hover:rotate-12 transition-transform", renderTime > RENDER_THRESHOLD ? "text-rose-500" : "text-blue-400")} />
-              <span className="text-[11px] font-mono font-medium text-muted-foreground">LATENCY</span>
-            </div>
-            <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(renderTime, 'render'))}>
-              {renderTime}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between group">
-            <div className="flex items-center gap-2">
-              <div className="relative w-3.5 h-3.5">
-                <div className="absolute inset-0 rounded-full border border-primary/20" />
-                <div className="absolute inset-0 rounded-full border border-t-primary animate-spin" />
-              </div>
-              <span className="text-[11px] font-mono font-medium text-muted-foreground">ROUTE</span>
-            </div>
-            <span className="text-sm font-mono font-black tabular-nums tracking-tighter text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.4)]">
-              {transitionTime > 0 ? `${transitionTime}` : '--'}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
-            </span>
-          </div>
-        </div>
+        </AnimatePresence>
       </motion.div>
     </div>
   );
