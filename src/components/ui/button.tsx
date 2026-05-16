@@ -2,7 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Loader2 } from "lucide-react";
-
+import { triggerHaptic } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
@@ -52,11 +52,27 @@ export interface ButtonProps
 }
 
 const Button = React.memo(React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, loadingText, children, disabled, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, loadingText, children, disabled, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!disabled && !loading) {
+        triggerHaptic(variant === 'destructive' ? 'medium' : 'light');
+      }
+      onClick?.(e);
+    };
+
     if (asChild) {
-      return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>{children}</Comp>;
+      return (
+        <Comp 
+          className={cn(buttonVariants({ variant, size, className }))} 
+          ref={ref} 
+          onClick={onClick}
+          {...props}
+        >
+          {children}
+        </Comp>
+      );
     }
     
     return (
@@ -68,12 +84,13 @@ const Button = React.memo(React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref} 
         disabled={disabled || loading}
         aria-busy={loading || undefined}
+        onClick={handleClick}
         {...props}
       >
         {loading && (
           <Loader2 className="h-4 w-4 animate-spin absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
         )}
-        <span className={cn(loading && !loadingText && "opacity-0")}>
+        <span className={cn(loading && !loadingText && "opacity-0", "flex items-center gap-2")}>
           {loading && loadingText ? loadingText : children}
         </span>
       </Comp>

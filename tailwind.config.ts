@@ -455,18 +455,23 @@ export default {
   					transform: 'rotate(360deg)'
   				}
   			},
-  			'ping-slow': {
-  				'0%': {
-  					transform: 'scale(1)',
-  					opacity: '1'
-  				},
-  				'75%, 100%': {
-  					transform: 'scale(1.5)',
-  					opacity: '0'
-  				}
-  			}
-  		},
-  		animation: {
+			'ping-slow': {
+				'0%': {
+					transform: 'scale(1)',
+					opacity: '1'
+				},
+				'75%, 100%': {
+					transform: 'scale(1.5)',
+					opacity: '0'
+				}
+			},
+			scan: {
+				'0%': { backgroundPosition: '200% 0' },
+				'100%': { backgroundPosition: '-200% 0' }
+			}
+		},
+		animation: {
+			scan: 'scan 4s linear infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			'pulse-ring': 'pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
