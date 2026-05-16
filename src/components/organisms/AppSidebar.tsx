@@ -1,5 +1,5 @@
 /* sidebar v3 — grouped submenus */
-import React, { useState, useMemo, memo, useEffect, useRef } from "react";
+import React, { useState, useMemo, memo, useEffect, useRef, useCallback } from "react";
 import { Crown, LogOut, LayoutGrid, LayoutList, ShieldCheck } from "lucide-react";
 import { NavItem, NavGroup } from "@/components/navigation";
 import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
@@ -76,9 +76,8 @@ export const AppSidebar = memo(function AppSidebar() {
   const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
   const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
 
-  const renderMenuItem = (item: MenuItem) => {
+  const renderMenuItem = useCallback((item: MenuItem) => {
     const isNotifications = item.title === "Notificações";
-    const hasAlerts = isNotifications && alertCount > 0;
     
     return (
       <NavItem
@@ -91,9 +90,9 @@ export const AppSidebar = memo(function AppSidebar() {
         badgeVariant={isNotifications ? "warning" : "default"}
       />
     );
-  };
+  }, [isCollapsed, alertCount]);
 
-  const renderGroupedMenu = (group: MenuGroup) => {
+  const renderGroupedMenu = useCallback((group: MenuGroup) => {
     const currentPath = window.location.pathname;
     const hasActiveChild = group.items.some((item: MenuItem) => 
       currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url + '/'))
@@ -110,7 +109,7 @@ export const AppSidebar = memo(function AppSidebar() {
         {group.items.map((item: MenuItem) => renderMenuItem(item))}
       </NavGroup>
     );
-  };
+  }, [isCollapsed, renderMenuItem]);
 
   if (isLoadingCurrentRole) {
     return (

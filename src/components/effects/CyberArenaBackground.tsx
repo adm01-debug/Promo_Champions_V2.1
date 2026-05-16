@@ -1,19 +1,62 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 
 export const CyberArenaBackground = React.memo(() => {
   const { theme } = useDashboardTheme();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const particles = useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 2 + 1,
-    duration: Math.random() * 10 + 10,
-    delay: Math.random() * 5,
-    hue: Math.random() > 0.5 ? "#22d3ee" : Math.random() > 0.5 ? "#a855f7" : "#ec4899",
-  })), []);
+  useEffect(() => {
+    if (theme !== "cyber" || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const particles: any[] = Array.from({ length: 40 }).map(() => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 0.5,
+      speedY: -(Math.random() * 0.5 + 0.2),
+      opacity: Math.random() * 0.5 + 0.2,
+      color: Math.random() > 0.5 ? "34, 211, 238" : Math.random() > 0.5 ? "168, 85, 247" : "236, 72, 153",
+    }));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      
+      particles.forEach(p => {
+        p.y += p.speedY;
+        if (p.y < -10) p.y = height + 10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+        ctx.shadowBlur = p.size * 4;
+        ctx.shadowColor = `rgb(${p.color})`;
+        ctx.fill();
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', handleResize);
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [theme]);
 
   if (theme !== "cyber") return null;
 
@@ -27,50 +70,35 @@ export const CyberArenaBackground = React.memo(() => {
         maskImage: "radial-gradient(ellipse at center, black 20%, transparent 90%)",
       }} />
 
-      {/* Animated orbs */}
+      <canvas 
+        ref={canvasRef} 
+        className="absolute inset-0 w-full h-full"
+      />
+
+      {/* Animated orbs - optimized with static blur if possible, but keeping motion for premium feel with lower frequency */}
       <motion.div
-        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[140px] opacity-20"
+        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[140px] opacity-15 will-change-transform"
         style={{ background: "radial-gradient(circle, #22d3ee, transparent)" }}
         animate={{ 
-          scale: [1, 1.1, 1], 
-          x: [0, 30, 0], 
-          y: [0, 20, 0] 
+          scale: [1, 1.05, 1], 
+          x: [0, 20, 0], 
+          y: [0, 15, 0] 
         }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -bottom-40 -right-40 w-[700px] h-[700px] rounded-full blur-[160px] opacity-20"
+        className="absolute -bottom-40 -right-40 w-[700px] h-[700px] rounded-full blur-[160px] opacity-15 will-change-transform"
         style={{ background: "radial-gradient(circle, #a855f7, transparent)" }}
         animate={{ 
-          scale: [1.1, 1, 1.1], 
-          x: [0, -30, 0], 
-          y: [0, -20, 0] 
+          scale: [1.05, 1, 1.05], 
+          x: [0, -20, 0], 
+          y: [0, -15, 0] 
         }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Floating particles */}
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`, top: `${p.y}%`,
-            width: p.size, height: p.size,
-            background: p.hue,
-            boxShadow: `0 0 ${p.size * 5}px ${p.hue}`,
-          }}
-          animate={{ 
-            y: [0, -100, 0], 
-            opacity: [0, 0.8, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
-        />
-      ))}
-
       {/* Scanlines */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{
         backgroundImage: "repeating-linear-gradient(0deg, #fff, #fff 1px, transparent 1px, transparent 4px)"
       }} />
     </div>

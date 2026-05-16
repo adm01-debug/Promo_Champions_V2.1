@@ -21,7 +21,7 @@ export const NavGroup: FC<NavGroupProps> = memo(({
 }) => {
   return (
     <Collapsible defaultOpen={defaultOpen} className="group/collapsible">
-      <CollapsibleTrigger className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.2em] font-black group-data-[state=open]/collapsible:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group/trigger">
+      <CollapsibleTrigger className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.2em] font-black group-data-[state=open]/collapsible:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group/trigger will-change-[background-color,color]">
         <div className="p-1.5 rounded-lg bg-muted/40 group-data-[state=open]/collapsible:bg-primary/10 transition-colors group-hover/trigger:bg-primary/5">
           <Icon className="h-3.5 w-3.5 flex-shrink-0 group-data-[state=open]/collapsible:text-primary transition-colors" />
         </div>
