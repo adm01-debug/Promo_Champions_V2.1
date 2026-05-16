@@ -102,9 +102,9 @@ export const StatCard = React.memo(({
           </div>
           {/* Scanning line for Hero */}
           <motion.div 
-            className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+            className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none will-change-[top]"
             animate={{ top: ["0%", "100%", "0%"] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
           {/* Cyber-coordinates decoration */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-8 pointer-events-none opacity-10">

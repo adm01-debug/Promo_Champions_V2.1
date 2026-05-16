@@ -103,7 +103,7 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
         animate="in"
         exit="out"
         variants={pageVariants}
-        className={cn("w-full min-h-full will-change-[transform,opacity,filter]", className)}
+        className={cn("w-full min-h-full will-change-[transform,opacity]", className)}
       >
         {/* Futurist loading line decoration */}
         <motion.div 
