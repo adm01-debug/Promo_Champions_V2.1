@@ -33,6 +33,7 @@ const userTypeAccentClasses = {
 } as const;
 
 export const AppSidebar = memo(function AppSidebar() {
+  const { theme } = useDashboardTheme();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
