@@ -35,47 +35,7 @@ export function useGlobalKeyboardShortcuts({
 
   // Define all shortcuts
   shortcutsRef.current = [
-    // Navigation shortcuts
-    {
-      key: "g",
-      description: "Ir para Dashboard",
-      action: () => {
-        navigate("/");
-        toast.info("Dashboard", { description: "Navegando para o dashboard..." });
-      },
-    },
-    {
-      key: "v",
-      description: "Ir para Vendas",
-      action: () => {
-        navigate("/vendas");
-        toast.info("Vendas", { description: "Navegando para vendas..." });
-      },
-    },
-    {
-      key: "c",
-      description: "Ir para Clientes",
-      action: () => {
-        navigate("/clientes");
-        toast.info("Clientes", { description: "Navegando para clientes..." });
-      },
-    },
-    {
-      key: "p",
-      description: "Ir para Pipeline",
-      action: () => {
-        navigate("/pipeline");
-        toast.info("Pipeline", { description: "Navegando para pipeline..." });
-      },
-    },
-    {
-      key: "m",
-      description: "Ir para Metas",
-      action: () => {
-        navigate("/metas");
-        toast.info("Metas", { description: "Navegando para metas..." });
-      },
-    },
+    // Navigation shortcuts - Seq G sequences handled in KeyboardShortcutsProvider
     
     // Back navigation shortcuts
     {
@@ -89,8 +49,11 @@ export function useGlobalKeyboardShortcuts({
           target.tagName === "TEXTAREA" ||
           target.isContentEditable;
         
-        if (!isInputElement && window.history.length > 1) {
-          navigate(-1);
+        if (!isInputElement) {
+          // If we are in a sub-path, go back. If at root dashboard, don't.
+          if (window.location.pathname !== '/' && window.location.pathname !== '/dashboard') {
+            navigate(-1);
+          }
         }
       },
     },
