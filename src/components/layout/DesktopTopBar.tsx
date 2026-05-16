@@ -186,7 +186,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
                     variant="info"
                     className="absolute -top-1 -right-1"
                   />
-                </Link>
+                </PreloadLink>
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p>Tarefas de cadência de orçamento para hoje ({quoteTasksCount})</p>
