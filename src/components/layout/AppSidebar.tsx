@@ -125,49 +125,56 @@ export const AppSidebar = memo(function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar/95 backdrop-blur-sm">
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-info flex items-center justify-center flex-shrink-0 shadow-lg shadow-info/25">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
             <Crown className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-base font-semibold text-foreground tracking-normal">Promo Champions</span>
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">Realize seus sonhos!</span>
+              <span className="text-base font-bold text-foreground tracking-tight italic">PROMO CHAMPIONS</span>
+              <span className="text-[9px] uppercase tracking-widest text-primary font-black opacity-80 animate-pulse">Execute Excellence</span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
       {isAdminOrManager && !isCollapsed && (
-        <div className="px-3 pb-3">
-          <div className="flex gap-1 p-1 bg-sidebar-background/80 rounded-xl border border-sidebar-border/50 relative overflow-hidden">
-            {viewModes.map((vm) => {
-              const isActive = viewMode === vm.mode;
-              return (
-                <Button 
-                  key={vm.mode} 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setViewMode(vm.mode)}
-                  className={cn(
-                    "flex-1 h-8 text-[11px] font-bold rounded-lg transition-all duration-300 gap-1.5 px-2 relative z-10",
-                    isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50"
-                  )}
-                >
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-view-mode"
-                        className="absolute inset-0 bg-gradient-to-r from-primary to-primary/90 rounded-lg -z-10 shadow-md shadow-primary/20"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
+        <div className="px-3 pb-3 mt-4">
+          <div className="flex flex-col gap-1.5 p-1 bg-muted/20 rounded-2xl border border-border/50">
+            <p className="px-2 pt-1 pb-0.5 text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Modo de Visualização</p>
+            <div className="flex gap-1 relative overflow-hidden">
+              {viewModes.map((vm) => {
+                const isActive = viewMode === vm.mode;
+                const Icon = vm.mode === 'gestao' ? ShieldCheck : vm.mode === 'sdr' ? LayoutGrid : LayoutList;
+                return (
+                  <Button 
+                    key={vm.mode} 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      triggerHaptic('medium');
+                      setViewMode(vm.mode);
+                    }}
+                    className={cn(
+                      "flex-1 h-9 text-[10px] font-black rounded-xl transition-all duration-300 gap-1.5 px-2 relative z-10",
+                      isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                     )}
-                  </AnimatePresence>
-                  <vm.icon className={cn("h-3.5 w-3.5 transition-colors duration-300", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
-                  <span className="truncate">{vm.label}</span>
-                </Button>
-              );
-            })}
+                  >
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          layoutId="active-view-mode"
+                          className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
+                          initial={false}
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </AnimatePresence>
+                    <Icon className={cn("h-3.5 w-3.5", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
+                    <span className="truncate uppercase tracking-tighter">{vm.label}</span>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
