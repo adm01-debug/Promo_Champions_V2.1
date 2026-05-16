@@ -108,6 +108,11 @@ export const CreateSaleDialog = () => {
   };
 
   const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && isDirty) {
+      const confirmClose = window.confirm("Existem alterações não salvas. Deseja realmente fechar?");
+      if (!confirmClose) return;
+    }
+    
     setOpen(isOpen);
     if (!isOpen) {
       form.reset();
