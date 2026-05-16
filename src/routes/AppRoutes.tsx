@@ -98,11 +98,12 @@ export function AppRoutes() {
         {/* Race Arena Spectator — público, sem dados sensíveis */}
         <Route path="/race-arena/spectator/:seasonId" element={<RaceSpectator />} />
 
-        {/* App routes within MainLayout */}
+        {/* App routes within MainLayout — globally protected */}
         <Route
           path="/*"
           element={
-            <MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
               <ErrorBoundary>
                 <Suspense fallback={null}>
                   <PageTransition>
@@ -284,9 +285,10 @@ export function AppRoutes() {
                 </Suspense>
               </ErrorBoundary>
             </MainLayout>
-          }
-        />
-      </Routes>
-    </Suspense>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  </Suspense>
   );
 }
