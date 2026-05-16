@@ -103,7 +103,7 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
       aria-current={item.isActive ? 'page' : undefined}
     >
       {content}
-    </NavLink>
+    </PreloadLink>
   );
 };
 
