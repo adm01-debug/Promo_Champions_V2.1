@@ -6,21 +6,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { FocusModeToggle } from "@/components/focus/FocusModeToggle";
-import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { LanguageToggle } from "@/components/atoms/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { NotificationPopover } from "@/components/notifications";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { BackButton } from "@/components/navigation/BackButton";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
-import type { GlobalSearchHandle } from "./GlobalSearch";
+import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
-import { SystemHealthBadge } from "./SystemHealthBadge";
+import { SystemHealthBadge } from "@/components/atoms/SystemHealthBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { UserRoleBadge } from "./UserRoleBadge";
+import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',

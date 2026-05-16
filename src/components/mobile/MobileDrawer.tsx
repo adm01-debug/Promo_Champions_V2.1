@@ -23,7 +23,7 @@ import {
   type MenuItem,
   type MenuGroup
 } from '@/components/layout/sidebar/sidebarMenuData';
-import { UserRoleBadge } from '@/components/layout/UserRoleBadge';
+import { UserRoleBadge } from '@/components/molecules/UserRoleBadge';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
