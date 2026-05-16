@@ -35,12 +35,17 @@ export function useFormGuard(isDirty: boolean, message: string = 'Você tem alte
   // If navigation is blocked, show a notification/dialog
   useEffect(() => {
     if (blocker.state === 'blocked') {
+      triggerHaptic('warning');
       const confirmLeave = window.confirm(message);
       if (confirmLeave) {
+        triggerHaptic('success');
         blocker.proceed();
       } else {
+        triggerHaptic('light');
         blocker.reset();
-        toast.info('Navegação cancelada para proteger seus dados.');
+        toast.info('Navegação cancelada para proteger seus dados.', {
+          icon: '🛡️',
+        });
       }
     }
   }, [blocker, message]);

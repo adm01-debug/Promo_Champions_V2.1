@@ -64,23 +64,45 @@ export const BackButton: FC<BackButtonProps> = memo(({
 
   const handleBack = useCallback(() => {
     triggerHaptic('light');
+    
+    // Check if there are modals open before going back
+    const modals = document.querySelectorAll('[role="dialog"]');
+    if (modals.length > 0) {
+      // In a real scenario, we might want to close the top modal
+      // but here we follow the standard behavior of many apps
+      return;
+    }
+
     if (window.history.length > 2) {
       navigate(-1);
     } else {
       navigate(fallbackPath);
     }
-  }, [navigate, fallbackPath, triggerHaptic]);
+  }, [navigate, fallbackPath]);
 
-  // Keyboard shortcut listener
+  // Keyboard shortcut listener (Alt + Left and Esc)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey && e.key === 'ArrowLeft') {
+      // Ignore if user is in an input
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      if (isInput) return;
+
+      if ((e.altKey && e.key === 'ArrowLeft') || e.key === 'Escape') {
+        if (e.key === 'Escape') {
+          // If at home, don't do anything
+          if (isHomePage) return;
+          // If there's a modal, let the modal handle it (it usually does by default)
+          if (document.querySelectorAll('[role="dialog"]').length > 0) return;
+        }
+        
+        e.preventDefault();
         handleBack();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleBack]);
+  }, [handleBack, isHomePage]);
 
   if (isHomePage) return null;
 
