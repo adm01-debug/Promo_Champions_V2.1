@@ -101,8 +101,6 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   });
 
   const getSiblings = (path: string) => {
-    const parentPath = path.split('/').slice(0, -1).join('/') || '/';
-    // Mocking siblings based on routeLabels for now
     // In a real app, this would be a lookup of the route tree
     return Object.entries(routeLabels)
       .filter(([key]) => key !== '' && key !== path.split('/').pop())
