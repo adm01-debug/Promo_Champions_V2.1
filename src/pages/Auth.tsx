@@ -279,35 +279,16 @@ export default function Auth() {
                     <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
                     <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">ACESSO À ARENA</span>
                   </div>
-                  <h2 className="text-3xl font-black">
-                    {mode === "login" ? "Pronto para vencer?" : "Junte-se à elite"}
-                  </h2>
-                  <p className="text-sm text-white/50 mt-1">
-                    {mode === "login" ? "Entre e suba no ranking agora." : "Crie sua conta e comece a fechar deals."}
-                  </p>
+                  <h2 className="text-3xl font-black">Pronto para vencer?</h2>
+                  <p className="text-sm text-white/50 mt-1">Entre e suba no ranking agora.</p>
                 </div>
 
-                {/* Mode switcher */}
-                <div className="relative grid grid-cols-2 p-1 rounded-xl bg-white/5 border border-white/5 mb-6">
-                  <motion.div
-                    className="absolute inset-y-1 w-[calc(50%-4px)] rounded-lg"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(34,211,238,0.2), rgba(168,85,247,0.2))",
-                      boxShadow: "0 0 20px rgba(34,211,238,0.3), inset 0 0 0 1px rgba(34,211,238,0.4)",
-                    }}
-                    animate={{ x: mode === "login" ? 4 : "calc(100% + 4px)" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                  {(["login", "signup"] as Mode[]).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setMode(m)}
-                      className={`relative z-10 py-2.5 text-sm font-bold tracking-wider transition-colors ${mode === m ? "text-white" : "text-white/40 hover:text-white/70"}`}
-                    >
-                      {m === "login" ? "ENTRAR" : "CADASTRAR"}
-                    </button>
-                  ))}
+                {/* Restricted access notice */}
+                <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
+                  <Sparkles className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
+                  <p className="text-[11px] text-white/60 leading-relaxed">
+                    Sistema de uso <span className="text-cyan-300 font-bold">exclusivo</span> da Promo Brindes. Acesso liberado apenas pelo administrador.
+                  </p>
                 </div>
 
                 {/* Google */}
@@ -338,31 +319,16 @@ export default function Auth() {
                   </div>
                 </div>
 
-                {/* Form Logic */}
-                <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-4">
-                  {mode === "signup" && (
-                    <div className="space-y-1.5">
-                      <Label htmlFor="name" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Nome de Guerra</Label>
-                      <div className="relative group/field">
-                        <Input
-                          id="name"
-                          placeholder="Ex: Maverick"
-                          value={signupName}
-                          onChange={(e) => setSignupName(e.target.value)}
-                          className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  )}
-
+                {/* Login Form */}
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Email de Combate</Label>
                     <Input
                       id="email"
                       type="email"
                       placeholder="seu@email.com"
-                      value={mode === "login" ? loginEmail : signupEmail}
-                      onChange={(e) => mode === "login" ? setLoginEmail(e.target.value) : setSignupEmail(e.target.value)}
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
                       className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
                     />
                   </div>
@@ -370,37 +336,35 @@ export default function Auth() {
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between ml-1">
                       <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Criptografia</Label>
-                      {mode === "login" && (
-                        <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-                          <DialogTrigger asChild>
-                            <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
-                          </DialogTrigger>
-                          <DialogContent className="bg-[#0a0b1a] border-white/10 text-white">
-                            <DialogHeader>
-                              <DialogTitle className="text-xl font-black italic">RECUPERAR ACESSO</DialogTitle>
-                            </DialogHeader>
-                            <form onSubmit={handlePasswordReset} className="space-y-4 pt-4">
-                              <Input
-                                placeholder="Email cadastrado"
-                                value={resetEmail}
-                                onChange={(e) => setResetEmail(e.target.value)}
-                                className="bg-white/5 border-white/10"
-                              />
-                              <Button type="submit" disabled={isResetLoading} className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest">
-                                {isResetLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar Resgate"}
-                              </Button>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
-                      )}
+                      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                        <DialogTrigger asChild>
+                          <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-[#0a0b1a] border-white/10 text-white">
+                          <DialogHeader>
+                            <DialogTitle className="text-xl font-black italic">RECUPERAR ACESSO</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handlePasswordReset} className="space-y-4 pt-4">
+                            <Input
+                              placeholder="Email cadastrado"
+                              value={resetEmail}
+                              onChange={(e) => setResetEmail(e.target.value)}
+                              className="bg-white/5 border-white/10"
+                            />
+                            <Button type="submit" disabled={isResetLoading} className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest">
+                              {isResetLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar Resgate"}
+                            </Button>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div className="relative group/field">
                       <Input
                         id="password"
                         type={showPwd ? "text" : "password"}
                         placeholder="••••••••"
-                        value={mode === "login" ? loginPassword : signupPassword}
-                        onChange={(e) => mode === "login" ? setLoginPassword(e.target.value) : setSignupPassword(e.target.value)}
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
                         className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl pr-10"
                       />
                       <button
@@ -415,7 +379,7 @@ export default function Auth() {
 
                   <Button
                     type="submit"
-                    disabled={mode === "login" ? isLoginDisabled : isLoading}
+                    disabled={isLoginDisabled}
                     className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden group/btn shadow-[0_0_20px_rgba(34,211,238,0.4)]"
                   >
                     <motion.div
@@ -428,7 +392,7 @@ export default function Auth() {
                         <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
                         <>
-                          {mode === "login" ? "INVASÃO DE SISTEMA" : "ALISTAR NA ELITE"}
+                          INVASÃO DE SISTEMA
                           <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                         </>
                       )}
@@ -436,7 +400,7 @@ export default function Auth() {
                   </Button>
                 </form>
 
-                {lockoutStatus.isLocked && mode === "login" && (
+                {lockoutStatus.isLocked && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
