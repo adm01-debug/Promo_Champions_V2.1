@@ -29,14 +29,14 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(({
   // Don't show on homepage or if not mobile
   if (!isMobile) return null;
   
-  const isHomePage = location.pathname === '/';
+  const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
   const canGoBack = !isHomePage && window.history.length > 1;
 
   const handleBack = () => {
     if (canGoBack) {
       navigate(-1);
     } else {
-      navigate('/');
+      navigate('/dashboard');
     }
   };
 
@@ -50,14 +50,14 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(({
     >
       <div className="flex items-center justify-between px-4 h-14">
         {/* Left Section */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
           {showBack && !isHomePage && (
             <Button
               variant="ghost"
-              size="icon" aria-label="Voltar"
+              size="icon" 
+              aria-label="Voltar"
               onClick={handleBack}
-              className="h-10 w-10 shrink-0 -ml-2"
-             
+              className="h-10 w-10 shrink-0 -ml-2 hover:bg-accent/10 active:scale-90 transition-transform"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

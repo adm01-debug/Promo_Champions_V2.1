@@ -413,13 +413,26 @@
   /* Smooth theme transitions */
   html {
     transition: color-scheme 0.4s ease;
+    scroll-behavior: smooth;
+  }
+
+  /* Global Navigation Loading Bar */
+  .route-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.3s ease;
   }
 
   *,
   *::before,
   *::after {
     transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity, transform, filter;
-    transition-duration: 300ms;
+    transition-duration: 250ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -431,13 +444,12 @@
   [role="button"],
   .interactive {
     transition-duration: 150ms;
+    @apply active:scale-[0.98] transition-transform;
   }
 
-  .no-transition,
-  .no-transition *,
-  [data-no-transition],
-  [data-no-transition] * {
-    transition: none !important;
+  /* Focus rings perfection */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   @media (prefers-reduced-motion: reduce) {

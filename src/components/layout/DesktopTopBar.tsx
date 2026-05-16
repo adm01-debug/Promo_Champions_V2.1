@@ -63,21 +63,28 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const pageTitle = useMemo(() => PAGE_TITLES[location.pathname] ?? null, [location.pathname]);
   return (
     <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
-      {/* LEFT CLUSTER: Sidebar Toggle + Breadcrumbs */}
+      {/* LEFT CLUSTER: Back Button + Sidebar Toggle + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <SidebarTrigger className="h-9 w-9 shrink-0 rounded-lg hover:bg-muted/80 transition-colors" />
-            </TooltipTrigger>
-            <TooltipContent side="bottom"><p>Alternar menu lateral</p></TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex items-center">
+          <BackButton showLabel={false} className="mr-1" />
+          
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarTrigger className="h-9 w-9 shrink-0 rounded-lg hover:bg-muted/80 transition-colors focus-ring" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom"><p>Alternar menu lateral</p></TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
         {/* Page title chip (top-level) or Breadcrumbs (nested) */}
-        <div className="min-w-0 overflow-hidden">
+        <div className="min-w-0 overflow-hidden flex items-center">
           {isTopLevel && pageTitle ? (
-            <span className="text-sm font-semibold text-foreground">{pageTitle}</span>
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-4 bg-primary rounded-full" />
+              <span className="text-sm font-bold text-foreground tracking-tight">{pageTitle}</span>
+            </div>
           ) : (
             <Breadcrumbs />
           )}
