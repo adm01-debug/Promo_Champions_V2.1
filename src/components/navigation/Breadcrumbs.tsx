@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect } from 'react';
+import React, { forwardRef, memo, useCallback, useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, Search, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
