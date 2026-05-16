@@ -180,22 +180,22 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
             <Separator className="mx-4 my-4 bg-primary/5" />
 
             <div className="px-2 pb-6">
-              <Link
+              <PreloadLink
                 to="/notificacoes"
-                onClick={() => { triggerHaptic('light'); onClose(); }}
+                onClick={onClose}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted/50 transition-all"
               >
                 <Bell className="h-5 w-5" />
                 <span className="text-sm font-medium">Notificações</span>
-              </Link>
-              <Link
+              </PreloadLink>
+              <PreloadLink
                 to="/configuracoes"
-                onClick={() => { triggerHaptic('light'); onClose(); }}
+                onClick={onClose}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted/50 transition-all"
               >
                 <Settings className="h-5 w-5" />
                 <span className="text-sm font-medium">Configurações</span>
-              </Link>
+              </PreloadLink>
               <button
                 onClick={() => {
                   triggerHaptic('error');
