@@ -38,6 +38,12 @@ interface MainLayoutProps {
 export function MainLayout({ children }: MainLayoutProps) {
   useVoiceNavigation(); // Enable futuristic voice control
   const isMobile = useIsMobile();
+  const location = useLocation();
+
+  // Unified Scroll to Top logic with premium feel
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
