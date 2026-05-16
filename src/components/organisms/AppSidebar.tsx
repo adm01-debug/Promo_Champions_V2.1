@@ -143,7 +143,7 @@ export const AppSidebar = memo(function AppSidebar() {
           <div className="flex flex-col gap-1.5 p-1 bg-muted/20 rounded-2xl border border-border/50">
             <p className="px-2 pt-1 pb-0.5 text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Modo de Visualização</p>
             <div className="flex gap-1 relative overflow-hidden">
-              {viewModes.map((vm) => {
+              {viewModes.map((vm: { mode: ViewMode; label: string }) => {
                 const isActive = viewMode === vm.mode;
                 const Icon = vm.mode === 'gestao' ? ShieldCheck : vm.mode === 'sdr' ? LayoutGrid : LayoutList;
                 return (
@@ -194,7 +194,7 @@ export const AppSidebar = memo(function AppSidebar() {
               <Separator className="my-2 bg-border/30" />
               <SidebarGroup>
                 <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">Administração</p>
-                <SidebarGroupContent><SidebarMenu className="space-y-1">{adminOnlyItems.map(item => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent>
+                <SidebarGroupContent><SidebarMenu className="space-y-1">{adminOnlyItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent>
               </SidebarGroup>
             </>
           )}
