@@ -42,6 +42,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
 
+  // Unified Scroll to Top logic with premium feel
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
   // Dynamic Title Sync for excellence
   useEffect(() => {
     const baseTitle = "Promo Champions";

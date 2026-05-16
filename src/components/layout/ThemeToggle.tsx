@@ -1,7 +1,8 @@
-import React, { forwardRef, memo } from "react";
+import React, { forwardRef, memo, useCallback } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/useTheme";
+import { triggerHaptic } from "@/lib/haptics";
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +12,11 @@ import {
 export const ThemeToggle = memo(forwardRef<HTMLDivElement>(function ThemeToggle(_props, ref) {
   const { theme, toggleTheme } = useTheme();
 
+  const handleToggle = useCallback(() => {
+    triggerHaptic('medium');
+    toggleTheme();
+  }, [toggleTheme]);
+
   return (
     <div ref={ref}>
       <Tooltip>
@@ -18,7 +24,7 @@ export const ThemeToggle = memo(forwardRef<HTMLDivElement>(function ThemeToggle(
           <Button
             variant="ghost"
             size="icon" aria-label="Tema claro"
-            onClick={toggleTheme}
+            onClick={handleToggle}
             className="h-9 w-9 rounded-lg relative overflow-hidden hover-scale-lg"
           >
             <Sun 

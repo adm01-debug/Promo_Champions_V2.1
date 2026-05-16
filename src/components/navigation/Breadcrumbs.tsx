@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useState, useEffect } from 'react';
+import React, { forwardRef, memo, useCallback, useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, Search, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -101,8 +101,6 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   });
 
   const getSiblings = (path: string) => {
-    const parentPath = path.split('/').slice(0, -1).join('/') || '/';
-    // Mocking siblings based on routeLabels for now
     // In a real app, this would be a lookup of the route tree
     return Object.entries(routeLabels)
       .filter(([key]) => key !== '' && key !== path.split('/').pop())
@@ -110,18 +108,18 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   };
 
   const handleCopyLink = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    toast.success('Link copiado com sucesso!', {
+    toast.success('Link copiado!', {
       description: 'Endereço pronto para compartilhamento.',
       duration: 3000,
     });
     setTimeout(() => setCopied(false), 2000);
-  }, [triggerHaptic]);
+  }, []);
 
   const handleShare = useCallback(async () => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (navigator.share) {
       try {
         await navigator.share({
@@ -134,7 +132,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
     } else {
       handleCopyLink();
     }
-  }, [handleCopyLink, triggerHaptic]);
+  }, [handleCopyLink]);
 
   return (
     <TooltipProvider delayDuration={300}>
