@@ -18,6 +18,7 @@ interface UseGlobalKeyboardShortcutsOptions {
   onNewSale?: () => void;
   onNewClient?: () => void;
   onToggleTheme?: () => void;
+  onShowShortcuts?: () => void;
   enabled?: boolean;
 }
 
@@ -26,6 +27,7 @@ export function useGlobalKeyboardShortcuts({
   onNewSale,
   onNewClient,
   onToggleTheme,
+  onShowShortcuts,
   enabled = true,
 }: UseGlobalKeyboardShortcutsOptions = {}) {
   const navigate = useNavigate();
@@ -148,10 +150,7 @@ export function useGlobalKeyboardShortcuts({
       shift: true,
       description: "Mostrar atalhos",
       action: () => {
-        toast.info("Atalhos de Teclado", {
-          description: "Pressione ? para ver todos os atalhos",
-          duration: 5000,
-        });
+        onShowShortcuts?.();
       },
     },
   ];

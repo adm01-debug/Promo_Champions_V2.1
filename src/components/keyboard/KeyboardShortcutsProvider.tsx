@@ -82,6 +82,7 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
     onNewSale: openNewSale,
     onNewClient: openNewClient,
     onToggleTheme: toggleTheme,
+    onShowShortcuts: showShortcutsDialog,
     enabled: true,
   });
 
