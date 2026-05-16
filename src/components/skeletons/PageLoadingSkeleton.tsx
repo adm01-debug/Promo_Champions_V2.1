@@ -13,27 +13,46 @@ export { SkeletonCard, TableSkeleton, PageHeaderSkeleton } from './SkeletonPrimi
 
 // Dashboard loading skeleton — content-faithful shimmer
 export const DashboardLoadingSkeleton: FC = () => (
-  <div className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6" aria-busy="true" aria-label="Carregando dashboard">
+  <StaggeredContainer className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6" aria-busy="true" aria-label="Carregando dashboard">
     <div className="flex items-center justify-between">
-      <div className="space-y-2"><Shimmer className="h-8 w-56 rounded-lg" /><Shimmer className="h-4 w-80 rounded-md" /></div>
+      <div className="space-y-2">
+        <Shimmer className="h-8 w-56 rounded-lg" />
+        <Shimmer className="h-4 w-80 rounded-md" />
+      </div>
       <Shimmer className="h-9 w-28 rounded-lg" />
     </div>
+    
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6">
       <div className="col-span-2"><KPICardSkeleton hero /></div>
-      <KPICardSkeleton /><KPICardSkeleton /><KPICardSkeleton />
+      <KPICardSkeleton />
+      <KPICardSkeleton />
+      <KPICardSkeleton />
     </div>
+    
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6">
-      <ChartCardSkeleton className="lg:col-span-2" /><GoalCardSkeleton />
+      <ChartCardSkeleton className="lg:col-span-2" />
+      <GoalCardSkeleton />
     </div>
+    
     <div className="space-y-2">
-      <div className="flex items-center gap-2 py-2"><Shimmer className="h-4 w-4 rounded" /><Shimmer className="h-5 w-24 rounded-md" /><Shimmer className="h-5 w-12 rounded-full" /></div>
+      <div className="flex items-center gap-2 py-2">
+        <Shimmer className="h-4 w-4 rounded" />
+        <Shimmer className="h-5 w-24 rounded-md" />
+        <Shimmer className="h-5 w-12 rounded-full" />
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}><CardContent className="p-4 space-y-3"><Shimmer className="h-4 w-20" /><Shimmer className="h-24 w-full rounded-lg" /><Shimmer className="h-3 w-3/4" /></CardContent></Card>
+          <Card key={i} className="border-primary/5 bg-background/20">
+            <CardContent className="p-4 space-y-3">
+              <Shimmer className="h-4 w-20" />
+              <Shimmer className="h-24 w-full rounded-lg" />
+              <Shimmer className="h-3 w-3/4" />
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
-  </div>
+  </StaggeredContainer>
 );
 
 export const VendedorDashboardLoadingSkeleton: FC = () => (
