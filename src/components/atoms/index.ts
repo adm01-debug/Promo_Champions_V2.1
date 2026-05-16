@@ -8,3 +8,4 @@ export * from './LanguageToggle';
 export * from './SystemHealthBadge';
 export * from './SearchTrigger';
 export * from './SmartImage';
+export * from './LazySection';
