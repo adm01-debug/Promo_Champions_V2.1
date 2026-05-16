@@ -4,13 +4,11 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   base: "/",
   server: {
     port: 8080,
     host: "::",
-    // Clear cache on server start to avoid React version conflicts
     force: mode === "development",
   },
   plugins: [
@@ -28,7 +26,7 @@ export default defineConfig(({ mode }) => ({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-api',
-              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
+              expiration: { maxEntries: 100, maxAgeSeconds: 86400 },
             },
           },
         ],
@@ -53,72 +51,23 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    // Dedupe ALL React-related packages to prevent multiple instances
     dedupe: [
-      "react", 
-      "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "@radix-ui/react-tooltip",
-      "@radix-ui/react-dialog",
-      "@radix-ui/react-popover",
-      "@radix-ui/react-dropdown-menu",
-      "@radix-ui/react-select",
-      "@radix-ui/react-tabs",
-      "@radix-ui/react-toast",
-      "@tanstack/react-query",
-      "framer-motion",
-      "react-router-dom",
-      "react-hook-form",
-      "next-themes",
+      "react", "react-dom", "react-router-dom", "framer-motion", "@tanstack/react-query"
     ],
-  },
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-    ],
-    // Force re-bundling of deps when needed
-    force: mode === "development",
   },
   build: {
     target: "esnext",
-    outDir: "dist",
-    assetsDir: "assets",
-    sourcemap: mode === "development",
-    cssCodeSplit: true,
     minify: "esbuild",
-    chunkSizeWarningLimit: 1000,
-    reportCompressedSize: false,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-core': ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-          'ui-framework': [
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-checkbox',
-            '@radix-ui/react-label',
-            '@radix-ui/react-scroll-area',
-            '@radix-ui/react-separator',
-            '@radix-ui/react-slot',
-            '@radix-ui/react-toast',
-            'lucide-react',
-          ],
-          'data-viz': ['recharts', 'date-fns'],
-          'backend-core': ['@supabase/supabase-js', '@tanstack/react-query'],
-          'utilities': ['zod', 'react-hook-form', 'clsx', 'tailwind-merge'],
-          'heavy-libs': ['jspdf', 'jspdf-autotable', 'exceljs', 'papaparse', 'canvas-confetti'],
+          'vendor-react': ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
+          'vendor-ui': ['lucide-react', 'clsx', 'tailwind-merge'],
+          'vendor-utils': ['date-fns', 'zod', 'react-hook-form'],
+          'vendor-query': ['@tanstack/react-query', '@supabase/supabase-js'],
         },
       },
     },
   },
-  // Test configuration removed - see Issue #25 to recreate tests
 }));
