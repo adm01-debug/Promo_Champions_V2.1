@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { useLocation } from "react-router-dom";
 import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
+import { CyberArenaBackground } from "@/components/effects/CyberArenaBackground";
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() => import("@/components/molecules/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
