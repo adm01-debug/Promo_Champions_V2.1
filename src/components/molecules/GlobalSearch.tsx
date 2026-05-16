@@ -149,7 +149,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   const deals = results.filter((r) => r.type === "deal");
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog open={open} onOpenChange={setOpen} className="bg-[#0d1117]/90 backdrop-blur-2xl border-primary/20 shadow-[0_0_50px_rgba(var(--primary),0.2)]">
       <CommandInput
         placeholder="Buscar deals, clientes ou ações... (Ctrl+K)"
         value={query}
