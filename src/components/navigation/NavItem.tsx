@@ -1,4 +1,5 @@
 import React, { FC, memo } from "react";
+import { useLocation } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { PreloadLink } from "./PreloadLink";
@@ -31,7 +32,8 @@ export const NavItem: FC<NavItemProps> = memo(({
     "bg-primary text-primary-foreground"
   );
 
-  const isActive = window.location.pathname === url;
+  const location = useLocation();
+  const isActive = location.pathname === url;
 
   return (
     <SidebarMenuItem>

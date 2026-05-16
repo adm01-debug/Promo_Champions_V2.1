@@ -17,6 +17,7 @@ import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcu
 import { AppRoutes } from "@/routes/AppRoutes";
 import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
 import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
+import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
 import { initErrorTracking } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
@@ -55,6 +56,7 @@ const App = () => {
                         <CommandPalette />
                         <RouteProgressBar />
                         <AppRoutes />
+                        <PerformanceMonitor />
                         <LGPDConsentBanner />
                       </DashboardThemeProvider>
                     </I18nProvider>

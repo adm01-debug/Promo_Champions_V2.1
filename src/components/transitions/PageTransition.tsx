@@ -11,30 +11,30 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 30 : -30,
-    scale: 0.96,
-    filter: "blur(12px) brightness(1.5)",
+    x: direction > 0 ? 20 : -20,
+    scale: 0.98,
+    filter: "blur(8px)",
   }),
   in: {
     opacity: 1,
     x: 0,
     scale: 1,
-    filter: "blur(0px) brightness(1)",
+    filter: "blur(0px)",
     transition: {
-      duration: 0.6,
-      ease: [0.16, 1, 0.3, 1], // Smooth expo ease-out
-      staggerChildren: 0.1,
+      duration: 0.4,
+      ease: [0.23, 1, 0.32, 1], // Quartic ease out
+      staggerChildren: 0.08,
       when: "beforeChildren",
     }
   },
   out: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -30 : 30,
-    scale: 1.04,
-    filter: "blur(12px) brightness(0.8)",
+    x: direction > 0 ? -20 : 20,
+    scale: 1.02,
+    filter: "blur(8px)",
     transition: {
-      duration: 0.4,
-      ease: [0.16, 1, 0.3, 1],
+      duration: 0.3,
+      ease: [0.23, 1, 0.32, 1],
     }
   }),
 };
@@ -44,22 +44,21 @@ export const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.02,
+      staggerChildren: 0.05,
+      delayChildren: 0.01,
     }
   }
 };
 
 export const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 15, scale: 0.98 },
+  hidden: { opacity: 0, y: 10, scale: 0.99 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: { 
-      type: "spring",
-      stiffness: 300,
-      damping: 24,
+      duration: 0.3,
+      ease: "easeOut"
     }
   }
 };
