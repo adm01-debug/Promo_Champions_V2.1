@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useBlocker } from 'react-router-dom';
 import { toast } from 'sonner';
+import { triggerHaptic } from '@/lib/haptics';
 
 /**
  * useFormGuard - Prevents navigation away from a page if a form is dirty.
