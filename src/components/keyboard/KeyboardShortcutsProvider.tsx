@@ -139,30 +139,35 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
 
   const shortcutGroups = [
     {
-      title: "Navegação Rápida",
+      title: "Ir para (Sequência G + ...)",
       shortcuts: [
-        { key: "G", description: "Ir para Dashboard" },
-        { key: "V", description: "Ir para Vendas" },
-        { key: "C", description: "Ir para Clientes" },
-        { key: "P", description: "Ir para Pipeline" },
-        { key: "M", description: "Ir para Metas" },
+        { key: "G + D", description: "Dashboard" },
+        { key: "G + V", description: "Vendas" },
+        { key: "G + C", description: "Clientes" },
+        { key: "G + P", description: "Pipeline" },
+        { key: "G + M", description: "Metas" },
+        { key: "G + A", description: "Atividades" },
+        { key: "G + R", description: "Ranking" },
+        { key: "G + I", description: "IA Assistente" },
+        { key: "G + S", description: "Configurações" },
       ],
     },
     {
-      title: "Ações",
+      title: "Navegação por Teclado",
+      shortcuts: [
+        { key: "Alt + ←", description: "Voltar (Smart Back)" },
+        { key: "Esc", description: "Fechar modal / Voltar" },
+        { key: "?", description: "Mostrar atalhos", icon: Keyboard },
+      ],
+    },
+    {
+      title: "Ações Globais",
       shortcuts: [
         { key: formatShortcut("K", { ctrl: true }), description: "Abrir busca global", icon: Search },
         { key: "/", description: "Abrir busca global (alternativo)", icon: Search },
         { key: formatShortcut("N", { ctrl: true }), description: "Nova venda", icon: Plus },
         { key: formatShortcut("J", { ctrl: true }), description: "Novo cliente", icon: Plus },
-      ],
-    },
-    {
-      title: "Sistema",
-      shortcuts: [
         { key: formatShortcut("\\", { ctrl: true }), description: "Alternar tema", icon: Moon },
-        { key: "?", description: "Mostrar atalhos", icon: Keyboard },
-        { key: "Esc", description: "Fechar modal / Voltar" },
       ],
     },
   ];
