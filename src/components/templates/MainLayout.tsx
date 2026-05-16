@@ -1,26 +1,26 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { SearchTrigger } from "./SearchTrigger";
-import { ThemeToggle } from "./ThemeToggle";
+import { SearchTrigger } from "@/components/atoms/SearchTrigger";
+import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { Sparkles } from "lucide-react";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import { SkipLinks } from "@/components/accessibility/SkipLinks";
 import { FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
-import { DesktopTopBar } from "@/components/layout/DesktopTopBar";
+import { DesktopTopBar } from "@/components/organisms/DesktopTopBar";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { cn } from "@/lib/utils";
-import type { GlobalSearchHandle } from "./GlobalSearch";
+import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { useLocation } from "react-router-dom";
 import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
 
 // Lazy load non-critical components
-const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
-const RoleAwareSidebar = lazy(() => import("./RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
-const LayoutRealtimeEffects = lazy(() => import("./LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
+const GlobalSearch = lazy(() => import("@/components/molecules/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
+const RoleAwareSidebar = lazy(() => import("@/components/layout/RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
+const LayoutRealtimeEffects = lazy(() => import("@/components/layout/LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
 const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
 const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
