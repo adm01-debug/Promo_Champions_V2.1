@@ -268,8 +268,8 @@ export default function Auth() {
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl opacity-60"
                 style={{ background: "linear-gradient(135deg, #22d3ee, #a855f7, #ec4899, #22d3ee)", backgroundSize: "300% 300%" }}
-                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
+                transition={{ duration: 6, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
               />
 
               <div className="relative rounded-2xl bg-[#0a0b1a]/95 backdrop-blur-xl p-7 sm:p-9 border border-white/5">
