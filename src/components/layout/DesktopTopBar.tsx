@@ -67,14 +67,14 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
       {/* LEFT CLUSTER: Back Button + Sidebar Toggle + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div className="flex items-center">
-          <BackButton showLabel={false} className="mr-1" />
+          <BackButton showLabel={false} className="mr-2" />
           
           <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <SidebarTrigger className="h-9 w-9 shrink-0 rounded-lg hover:bg-muted/80 transition-colors focus-ring" />
               </TooltipTrigger>
-              <TooltipContent side="bottom"><p>Alternar menu lateral</p></TooltipContent>
+              <TooltipContent side="bottom" className="text-[10px] font-medium">Alternar menu (⌘B)</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
