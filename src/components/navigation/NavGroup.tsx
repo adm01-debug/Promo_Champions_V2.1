@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, memo } from "react";
+import React, { FC, ReactNode, memo, useCallback } from "react";
 import { LucideIcon, ChevronRight } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarMenu } from "@/components/ui/sidebar";
@@ -19,9 +19,23 @@ export const NavGroup: FC<NavGroupProps> = memo(({
   isCollapsed = false,
   defaultOpen = false 
 }) => {
+  const handleMouseEnter = useCallback(() => {
+    // Look for PreloadLinks in children and trigger their prefetch
+    // This is a bit of a hack but efficient for grouped prefetching
+    // The children are already rendered, so we just need to find the components
+    React.Children.forEach(children, (child: any) => {
+      if (child?.props?.component?.prefetch) {
+        child.props.component.prefetch();
+      }
+    });
+  }, [children]);
+
   return (
     <Collapsible defaultOpen={defaultOpen} className="group/collapsible">
-      <CollapsibleTrigger className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.2em] font-black group-data-[state=open]/collapsible:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group/trigger will-change-[background-color,color]">
+      <CollapsibleTrigger 
+        onMouseEnter={handleMouseEnter}
+        className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.2em] font-black group-data-[state=open]/collapsible:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group/trigger will-change-[background-color,color]"
+      >
         <div className="p-1.5 rounded-lg bg-muted/40 group-data-[state=open]/collapsible:bg-primary/10 transition-colors group-hover/trigger:bg-primary/5">
           <Icon className="h-3.5 w-3.5 flex-shrink-0 group-data-[state=open]/collapsible:text-primary transition-colors" />
         </div>
