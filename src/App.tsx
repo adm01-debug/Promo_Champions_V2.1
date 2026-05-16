@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { motion, MotionConfig } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { I18nProvider } from "@/contexts/I18nContext";
 import { DashboardThemeProvider } from "@/contexts/DashboardThemeContext";
@@ -40,7 +41,8 @@ const App = () => {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={0}>
+        <MotionConfig transition={{ type: "spring", stiffness: 300, damping: 30, restDelta: 0.001 }}>
+          <TooltipProvider delayDuration={0}>
           <PageErrorBoundary>
             <XPToastProvider>
               <Toaster />
@@ -62,8 +64,9 @@ const App = () => {
             </XPToastProvider>
           </PageErrorBoundary>
         </TooltipProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+      </MotionConfig>
+    </QueryClientProvider>
+  </HelmetProvider>
   );
 };
 

@@ -414,6 +414,9 @@
   html {
     transition: color-scheme 0.4s ease;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   /* Global Navigation Loading Bar */
