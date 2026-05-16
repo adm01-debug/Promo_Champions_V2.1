@@ -39,6 +39,17 @@ export const AppSidebar = memo(function AppSidebar() {
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  // Auto-scroll to active item for excellence
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const activeItem = scrollAreaRef.current.querySelector('[aria-current="page"]');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [location.pathname]);
 
   const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
