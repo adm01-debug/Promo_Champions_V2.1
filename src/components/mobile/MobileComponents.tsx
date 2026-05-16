@@ -1,5 +1,5 @@
 import { FC, ReactNode, useCallback } from 'react';
-import { NavLink } from '@/components/navigation/NavLink';
+import { PreloadLink } from '@/components/navigation/PreloadLink';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
