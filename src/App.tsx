@@ -51,6 +51,7 @@ const App = () => {
                     <I18nProvider>
                       <DashboardThemeProvider>
                         <CommandPalette />
+                        <RouteProgressBar />
                         <AppRoutes />
                         <LGPDConsentBanner />
                       </DashboardThemeProvider>
