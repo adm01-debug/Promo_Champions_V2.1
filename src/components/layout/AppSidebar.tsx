@@ -94,7 +94,7 @@ export const AppSidebar = memo(function AppSidebar() {
   const renderGroupedMenu = (group: MenuGroup) => {
     const currentPath = window.location.pathname;
     const hasActiveChild = group.items.some(item => 
-      currentPath === item.url || currentPath.startsWith(item.url + '/')
+      currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url + '/'))
     );
     
     return (
