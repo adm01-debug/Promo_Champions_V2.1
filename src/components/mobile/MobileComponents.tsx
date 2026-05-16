@@ -97,7 +97,7 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   return (
     <PreloadLink
       to={item.href}
-      onClick={() => triggerHaptic('light')}
+      onClick={item.onClick}
       className={baseClasses}
       aria-label={item.label}
       aria-current={item.isActive ? 'page' : undefined}
