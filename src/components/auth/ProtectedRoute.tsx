@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 
 interface ProtectedRouteProps {
   children: ReactNode;
