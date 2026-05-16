@@ -116,7 +116,9 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
       <TooltipProvider delayDuration={300}>
         <div className="flex items-center gap-0.5">
           {/* Search — visually prominent */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(var(--primary),0.3)" }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search"
