@@ -2,7 +2,7 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Crown, LogOut, LayoutGrid, LayoutList, ShieldCheck } from "lucide-react";
 import { NavItem, NavGroup } from "@/components/navigation";
-import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
+import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useUserRoles } from "@/hooks/useUserRoles";
@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   type ViewMode, type MenuItem, type MenuGroup,
   getMainItems, getGroupedItems, viewModes, systemItems, adminOnlyItems,
-} from "./sidebar/sidebarMenuData";
+} from "../layout/sidebar/sidebarMenuData";
 
 const userTypeAccentClasses = {
   sdr: 'bg-info/15 text-info',
