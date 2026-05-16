@@ -109,6 +109,18 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
       <TooltipProvider delayDuration={300}>
         <div className="flex items-center gap-0.5">
           {/* Search — visually prominent */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search"
+          >
+            <Sparkles className="h-4 w-4 group-hover/search:scale-110 transition-transform" />
+            <span className="text-xs font-bold uppercase tracking-widest hidden lg:inline">IA Assistant</span>
+            <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-primary/30 bg-primary/10 px-1.5 font-mono text-[10px] font-medium text-primary/70">
+              ⌘⇧F
+            </kbd>
+          </button>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <button
