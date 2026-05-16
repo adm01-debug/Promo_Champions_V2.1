@@ -62,15 +62,8 @@ export const BackButton: FC<BackButtonProps> = memo(({
     });
   }, [location.pathname, isHomePage]);
 
-  // Haptic feedback function
-  const triggerHaptic = useCallback(() => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-  }, []);
-
   const handleBack = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (window.history.length > 2) {
       navigate(-1);
     } else {
