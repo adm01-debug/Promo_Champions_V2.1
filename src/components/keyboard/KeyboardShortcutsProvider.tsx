@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Keyboard, Search, Plus, Moon, Command, ArrowRight } from "lucide-react";
 import { triggerHaptic } from "@/lib/haptics";
+import { NavigationHud } from "./NavigationHud";
 
 interface KeyboardShortcutsContextType {
   openSearch: () => void;
