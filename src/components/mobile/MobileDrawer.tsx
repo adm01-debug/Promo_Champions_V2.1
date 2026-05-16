@@ -61,7 +61,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
   const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
 
   const renderMenuItem = (item: MenuItem) => {
-    const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
+    const isActive = location.pathname === item.url || (item.url !== '/' && location.pathname.startsWith(item.url));
     
     return (
       <Link
