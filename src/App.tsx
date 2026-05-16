@@ -41,7 +41,8 @@ const App = () => {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={0}>
+        <MotionConfig transition={{ type: "spring", stiffness: 300, damping: 30, restDelta: 0.001 }}>
+          <TooltipProvider delayDuration={0}>
           <PageErrorBoundary>
             <XPToastProvider>
               <Toaster />
