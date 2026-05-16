@@ -38,6 +38,20 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
+  const location = useLocation();
+
+  // Dynamic Title Sync for excellence
+  useEffect(() => {
+    const baseTitle = "Promo Champions";
+    const pageTitle = currentPageInfo.title;
+    const pageSubtitle = currentPageInfo.subtitle;
+    
+    if (pageTitle && pageTitle !== baseTitle) {
+      document.title = `${pageTitle}${pageSubtitle ? ` | ${pageSubtitle}` : ''} | ${baseTitle}`;
+    } else {
+      document.title = baseTitle;
+    }
+  }, [currentPageInfo]);
 
   const sidebarFallback = (
     <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
