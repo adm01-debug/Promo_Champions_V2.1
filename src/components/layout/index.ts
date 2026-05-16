@@ -7,5 +7,5 @@ export { SlideOverPanel } from '../molecules/SlideOverPanel';
 export { LanguageToggle } from '../atoms/LanguageToggle';
 export { SystemHealthBadge } from '../atoms/SystemHealthBadge';
 export { SearchTrigger } from '../atoms/SearchTrigger';
-export { RoleAwareSidebar } from './RoleAwareSidebar';
-export { LayoutRealtimeEffects } from './LayoutRealtimeEffects';
+export { RoleAwareSidebar } from '../organisms/RoleAwareSidebar';
+export { LayoutRealtimeEffects } from '../organisms/LayoutRealtimeEffects';
