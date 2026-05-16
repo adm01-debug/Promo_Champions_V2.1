@@ -10,7 +10,7 @@ interface PreloadLinkProps {
   replace?: boolean;
   onClick?: () => void;
   'aria-label'?: string;
-  'aria-current'?: string;
+  'aria-current'?: "date" | "false" | "location" | "page" | "step" | "time" | "true" | boolean;
 }
 
 /**
