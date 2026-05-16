@@ -1,6 +1,6 @@
-import React, { RefObject, useMemo } from "react";
+import React, { RefObject, useMemo, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Bell, Sparkles, FileText, Search } from "lucide-react";
+import { Bell, Sparkles, FileText, Search, Mic } from "lucide-react";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
