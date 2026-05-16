@@ -1,5 +1,5 @@
 // MainLayout - primary layout wrapper (performance-optimized)
-import { useRef, lazy, Suspense } from "react";
+import { useRef, lazy, Suspense, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "./SearchTrigger";
 import { ThemeToggle } from "./ThemeToggle";
@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { cn } from "@/lib/utils";
 import type { GlobalSearchHandle } from "./GlobalSearch";
+import { useLocation } from "react-router-dom";
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
