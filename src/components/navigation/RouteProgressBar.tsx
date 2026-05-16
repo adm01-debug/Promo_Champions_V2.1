@@ -48,7 +48,7 @@ export const RouteProgressBar = () => {
               width: { type: "spring", stiffness: 100, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            className="h-full bg-gradient-to-r from-primary/60 via-primary to-accent/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] relative"
+            className="h-full bg-gradient-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative"
           >
             <motion.div 
               animate={{ x: ['-100%', '200%'] }}
