@@ -270,9 +270,9 @@ export const adminOnlyItems: MenuItem[] = [
 ];
 
 export const viewModes: { mode: ViewMode; label: string; icon: LucideIcon; color: string }[] = [
-  { mode: 'sdr', label: 'SDR', icon: Phone, color: 'text-info' },
-  { mode: 'closer', label: 'Closer', icon: Handshake, color: 'text-success' },
-  { mode: 'gestao', label: 'Gestão', icon: Building2, color: 'text-primary' },
+  { mode: 'sdr', label: 'SDR / Prospect', icon: Phone, color: 'text-info' },
+  { mode: 'closer', label: 'Closer / Vendas', icon: Handshake, color: 'text-success' },
+  { mode: 'gestao', label: 'Gestão / Admin', icon: Building2, color: 'text-primary' },
 ];
 
 export function getMainItems(viewMode: ViewMode): MenuItem[] {

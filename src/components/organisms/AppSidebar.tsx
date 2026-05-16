@@ -28,6 +28,7 @@ import * as Pages from "@/routes/lazyPages";
 const userTypeAccentClasses = {
   sdr: 'bg-info/15 text-info',
   closer: 'bg-success/15 text-success',
+  hybrid: 'bg-purple-500/15 text-purple-500',
   admin: 'bg-destructive/15 text-destructive',
   manager: 'bg-primary/15 text-primary',
   salesperson: 'bg-muted text-muted-foreground',
@@ -84,13 +85,14 @@ export const AppSidebar = memo(function AppSidebar() {
     }
   }, [location.pathname]);
 
-  const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
+  const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'hybrid' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';
-    const name = salesperson?.name?.toLowerCase() || '';
-    if (name.includes('sdr')) return 'sdr';
-    if (name.includes('closer')) return 'closer';
+    const salespersonRole = salesperson?.role;
+    if (salespersonRole === 'sdr') return 'sdr';
+    if (salespersonRole === 'closer') return 'closer';
+    if (salespersonRole === 'hybrid') return 'hybrid';
     return 'salesperson';
   }, [currentUserRole, salesperson]);
 
@@ -98,7 +100,7 @@ export const AppSidebar = memo(function AppSidebar() {
 
   const defaultViewMode = useMemo((): ViewMode => {
     if (userType === 'sdr') return 'sdr';
-    if (userType === 'closer') return 'closer';
+    if (userType === 'closer' || userType === 'hybrid') return 'closer';
     return 'gestao';
   }, [userType]);
 
@@ -174,7 +176,7 @@ export const AppSidebar = memo(function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {isAdminOrManager && !isCollapsed && (
+      {(isAdminOrManager || userType === 'hybrid') && !isCollapsed && (
         <div className="px-3 pb-3 mt-4">
           <div className="flex flex-col gap-1.5 p-1 bg-muted/20 rounded-2xl border border-border/50">
             <p className="px-2 pt-1 pb-0.5 text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Modo de Visualização</p>
