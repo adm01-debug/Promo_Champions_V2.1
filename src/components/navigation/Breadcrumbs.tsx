@@ -272,9 +272,8 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                     ) : (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Link
+                          <PreloadLink
                             to={item.href}
-                            onClick={() => triggerHaptic('light')}
                             className={cn(
                               "hover:text-primary transition-all duration-300 flex items-center gap-1 px-2 py-0.5 rounded-lg hover:bg-primary/5 active:scale-95 group/item",
                               isFirst && "text-muted-foreground/60"
@@ -285,7 +284,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                             ) : (
                               <span className="font-medium">{item.label}</span>
                             )}
-                          </Link>
+                          </PreloadLink>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="text-[10px] font-medium">Ir para {item.label}</TooltipContent>
                       </Tooltip>
