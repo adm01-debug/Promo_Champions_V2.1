@@ -1,6 +1,6 @@
 import React, { RefObject, useMemo, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Bell, Sparkles, FileText, Search, Mic } from "lucide-react";
+import { Bell, Sparkles, FileText, Search, Mic, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -17,6 +17,9 @@ import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount
 import type { GlobalSearchHandle } from "./GlobalSearch";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
 import { SystemHealthBadge } from "./SystemHealthBadge";
+import { useAuth } from "@/contexts/AuthContext";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { UserRoleBadge } from "./UserRoleBadge";
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
@@ -60,6 +63,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
   const [isVoiceListening, setIsVoiceListening] = useState(false);
   const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
+  const { salesperson, signOut } = useAuth();
 
   useEffect(() => {
     const handleVoiceNav = (e: any) => setIsVoiceListening(e.detail);
@@ -227,6 +231,38 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
           <SystemHealthBadge />
           <LanguageToggle />
           <ThemeToggle />
+
+          {/* User Account & Logout */}
+          <div className="w-px h-5 bg-border/50 mx-1.5" />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 p-1 rounded-lg hover:bg-muted/80 transition-colors outline-none group">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shadow-inner border border-primary/10 group-hover:border-primary/30 transition-all">
+                  {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 mt-1">
+              <DropdownMenuLabel className="p-3 pb-2">
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold leading-none truncate">{salesperson?.name || "Usuário"}</p>
+                    <UserRoleBadge />
+                  </div>
+                  <p className="text-xs leading-none text-muted-foreground truncate">{salesperson?.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => signOut()}
+                className="p-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="font-semibold">Sair do sistema</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </TooltipProvider>
     </div>

@@ -1,6 +1,6 @@
 /* sidebar v3 — grouped submenus */
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Crown } from "lucide-react";
+import { Crown, LogOut } from "lucide-react";
 import { NavItem, NavGroup } from "@/components/navigation";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,7 +35,7 @@ export const AppSidebar = memo(function AppSidebar() {
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
   const alertCount = alerts?.length || 0;
-  const { salesperson } = useAuth();
+  const { salesperson, signOut } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -194,46 +194,52 @@ export const AppSidebar = memo(function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3 border-t border-border/30">
-        {isCollapsed ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
-                  {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p className="font-medium">{salesperson?.name || "Usuário"}</p>
-                <p className="text-xs text-muted-foreground">{salesperson?.email}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ) : (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
-                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
+        <div className="flex flex-col gap-2">
+          {isCollapsed ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
                     {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-                  <div className="flex-1 min-w-0 overflow-hidden">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <p className="text-sm font-semibold truncate max-w-[110px]" title={salesperson?.name || "Usuário"}>{salesperson?.name || "Usuário"}</p>
-                      <div className="flex-shrink-0">
-                        <UserRoleBadge />
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="font-medium">{salesperson?.name || "Usuário"}</p>
+                  <p className="text-xs text-muted-foreground">{salesperson?.email}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
+              <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm", userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses])}>
+                {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <p className="text-sm font-semibold truncate max-w-[110px]" title={salesperson?.name || "Usuário"}>{salesperson?.name || "Usuário"}</p>
+                  <div className="flex-shrink-0">
+                    <UserRoleBadge />
                   </div>
                 </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px]">
-                <p className="font-medium">{salesperson?.name || "Usuário"}</p>
-                <p className="text-xs text-muted-foreground">{salesperson?.email || ""}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
+                <p className="text-[11px] text-muted-foreground truncate">{salesperson?.email || ""}</p>
+              </div>
+            </div>
+          )}
+
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "sm"}
+            onClick={() => signOut()}
+            className={cn(
+              "w-full text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors group",
+              isCollapsed ? "justify-center" : "justify-start px-2.5"
+            )}
+            title="Sair do sistema"
+          >
+            <LogOut className={cn("h-4 w-4 shrink-0", isCollapsed ? "" : "mr-2")} />
+            {!isCollapsed && <span className="text-xs font-semibold">Sair do sistema</span>}
+          </Button>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
