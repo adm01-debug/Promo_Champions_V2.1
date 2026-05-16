@@ -56,7 +56,15 @@ export const DashboardLoadingSkeleton: FC = () => (
 );
 
 export const VendedorDashboardLoadingSkeleton: FC = () => (
-  <div className="space-y-6 p-6"><PageHeaderSkeleton /><StatsGridSkeleton count={6} /><div className="grid grid-cols-1 lg:grid-cols-3 gap-6"><ChartSkeleton /><ChartSkeleton /><ChartSkeleton /></div></div>
+  <StaggeredContainer className="space-y-6 p-6">
+    <PageHeaderSkeleton />
+    <StatsGridSkeleton count={6} />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <ChartSkeleton />
+      <ChartSkeleton />
+      <ChartSkeleton />
+    </div>
+  </StaggeredContainer>
 );
 
 export const AnalyticsLoadingSkeleton: FC = () => (
