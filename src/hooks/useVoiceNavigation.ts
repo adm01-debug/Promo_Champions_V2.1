@@ -60,6 +60,8 @@ export function useVoiceNavigation() {
         
         const recognition = new SpeechRecognition();
         recognition.lang = 'pt-BR';
+        
+        window.dispatchEvent(new CustomEvent('voice-nav:listening', { detail: true }));
         recognition.start();
         
         toast.info('IA ouvindo comandos...', {
