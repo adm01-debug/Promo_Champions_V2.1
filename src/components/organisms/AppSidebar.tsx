@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   type ViewMode, type MenuItem, type MenuGroup,
   getMainItems, getGroupedItems, viewModes, systemItems, adminOnlyItems,
-} from "./sidebar/sidebarMenuData";
+} from "../layout/sidebar/sidebarMenuData";
 
 const userTypeAccentClasses = {
   sdr: 'bg-info/15 text-info',
