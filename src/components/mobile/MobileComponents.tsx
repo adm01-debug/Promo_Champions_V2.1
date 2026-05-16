@@ -95,14 +95,15 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   }
 
   return (
-    <Link
+    <NavLink
       to={item.href}
+      onClick={() => triggerHaptic('light')}
       className={baseClasses}
       aria-label={item.label}
       aria-current={item.isActive ? 'page' : undefined}
     >
       {content}
-    </Link>
+    </NavLink>
   );
 };
 
