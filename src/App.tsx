@@ -15,6 +15,7 @@ import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
 import { AppRoutes } from "@/routes/AppRoutes";
 import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
+import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
 import { initErrorTracking } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
