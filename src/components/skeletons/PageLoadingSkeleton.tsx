@@ -5,6 +5,8 @@ import {
   Shimmer, SkeletonCard, StatsGridSkeleton, ChartSkeleton, TableSkeleton,
   PageHeaderSkeleton, KPICardSkeleton, ChartCardSkeleton, GoalCardSkeleton,
 } from './SkeletonPrimitives';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { StaggeredContainer } from '@/components/transitions/PageTransition';
 
 // Re-export primitives for backward compatibility
 export { SkeletonCard, TableSkeleton, PageHeaderSkeleton } from './SkeletonPrimitives';
