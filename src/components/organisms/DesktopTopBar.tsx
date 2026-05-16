@@ -19,6 +19,7 @@ import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
 import { SystemHealthBadge } from "@/components/atoms/SystemHealthBadge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 
@@ -60,6 +61,7 @@ interface DesktopTopBarProps {
 }
 
 export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
+  const { theme } = useDashboardTheme();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
   const [isVoiceListening, setIsVoiceListening] = useState(false);
@@ -76,7 +78,12 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const isTopLevel = pathSegments.length < 2;
   const pageTitle = useMemo(() => PAGE_TITLES[location.pathname] ?? null, [location.pathname]);
   return (
-    <div className="sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl bg-background/70 border-b border-border/50 transition-all duration-200">
+    <div className={cn(
+      "sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl transition-all duration-500",
+      theme === "cyber" 
+        ? "bg-[#0a0b1a]/70 border-b border-cyan-500/20 shadow-[0_4px_20px_rgba(34,211,238,0.05)]" 
+        : "bg-background/70 border-b border-border/50"
+    )}>
       {/* LEFT CLUSTER: Back Button + Sidebar Toggle + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div className="flex items-center">

@@ -6,6 +6,7 @@ import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { cn } from "@/lib/utils";
 import { triggerHaptic } from "@/lib/haptics";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const userTypeAccentClasses = {
 } as const;
 
 export const AppSidebar = memo(function AppSidebar() {
+  const { theme } = useDashboardTheme();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { data: alerts } = useAlerts();
@@ -123,7 +125,10 @@ export const AppSidebar = memo(function AppSidebar() {
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar/95 backdrop-blur-sm">
+    <Sidebar collapsible="icon" className={cn(
+      "border-r border-border/30 backdrop-blur-sm transition-all duration-500",
+      theme === "cyber" ? "bg-[#0a0b1a]/95 border-cyan-500/20 shadow-[0_0_20px_rgba(34,211,238,0.05)]" : "bg-sidebar/95"
+    )}>
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">

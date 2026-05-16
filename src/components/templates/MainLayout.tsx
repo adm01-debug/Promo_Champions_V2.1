@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { useLocation } from "react-router-dom";
 import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
+import { CyberArenaBackground } from "@/components/effects/CyberArenaBackground";
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() => import("@/components/molecules/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
@@ -90,7 +91,8 @@ export function MainLayout({ children }: MainLayoutProps) {
       </Suspense>
       
       <SkipLinks />
-      <div className="min-h-screen flex w-full bg-background">
+      <CyberArenaBackground />
+      <div className="min-h-screen flex w-full bg-background/50">
         <ErrorBoundary fallback={sidebarFallback}>
           <Suspense fallback={sidebarFallback}>
             <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
