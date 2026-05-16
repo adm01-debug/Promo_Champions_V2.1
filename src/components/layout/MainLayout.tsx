@@ -36,6 +36,7 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
+  useVoiceNavigation(); // Enable futuristic voice control
   const isMobile = useIsMobile();
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
