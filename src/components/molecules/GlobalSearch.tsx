@@ -149,7 +149,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   const deals = results.filter((r) => r.type === "deal");
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog open={open} onOpenChange={setOpen} className="bg-[#0d1117]/90 backdrop-blur-2xl border-primary/20 shadow-[0_0_50px_rgba(var(--primary),0.2)]">
       <CommandInput
         placeholder="Buscar deals, clientes ou ações... (Ctrl+K)"
         value={query}
@@ -160,7 +160,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
           {isLoading ? "Buscando..." : "Nenhum resultado encontrado."}
         </CommandEmpty>
 
-        <CommandGroup heading="Ações Rápidas">
+        <CommandGroup heading={<span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Ações Rápidas</span>}>
           <CommandItem onSelect={() => { setOpen(false); navigate("/"); }} className="cursor-pointer">
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Ir para Dashboard</span>
