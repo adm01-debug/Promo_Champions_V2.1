@@ -1,7 +1,7 @@
 import React, { RefObject, useMemo, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { PreloadLink } from "@/components/navigation/PreloadLink";
-import { Bell, Sparkles, FileText, Mic, LogOut } from "lucide-react";
+import { Bell, Sparkles, FileText, Mic, LogOut, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
