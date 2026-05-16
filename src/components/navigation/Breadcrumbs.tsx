@@ -110,18 +110,18 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   };
 
   const handleCopyLink = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    toast.success('Link copiado com sucesso!', {
+    toast.success('Link copiado!', {
       description: 'Endereço pronto para compartilhamento.',
       duration: 3000,
     });
     setTimeout(() => setCopied(false), 2000);
-  }, [triggerHaptic]);
+  }, []);
 
   const handleShare = useCallback(async () => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (navigator.share) {
       try {
         await navigator.share({
@@ -134,7 +134,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
     } else {
       handleCopyLink();
     }
-  }, [handleCopyLink, triggerHaptic]);
+  }, [handleCopyLink]);
 
   return (
     <TooltipProvider delayDuration={300}>
