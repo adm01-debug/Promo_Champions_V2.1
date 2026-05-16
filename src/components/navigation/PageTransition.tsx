@@ -22,8 +22,9 @@ const pageVariants = {
 
 const pageTransition = {
   type: "spring" as const,
-  stiffness: 300,
-  damping: 30,
+  stiffness: 260,
+  damping: 26,
+  mass: 0.8
 };
 
 interface PageTransitionProps {

@@ -112,13 +112,18 @@ export const BackButton: FC<BackButtonProps> = memo(({
                       <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-64 max-h-[80vh] overflow-y-auto backdrop-blur-xl bg-background/95 border-border/50 shadow-2xl">
-                    <div className="flex items-center justify-between px-3 py-2 text-xs font-bold text-primary border-b border-border/50 mb-1 sticky top-0 bg-background/95 backdrop-blur-md z-10">
-                      <div className="flex items-center gap-2">
-                        <History className="h-3.5 w-3.5" />
-                        Histórico de Navegação
+                  <DropdownMenuContent 
+                    align="start" 
+                    className="w-72 max-h-[85vh] overflow-y-auto backdrop-blur-2xl bg-background/80 border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-in fade-in zoom-in-95 duration-200"
+                  >
+                    <div className="flex items-center justify-between px-4 py-3 text-[11px] font-bold text-primary border-b border-primary/10 mb-2 sticky top-0 bg-background/80 backdrop-blur-xl z-20">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1 rounded-md bg-primary/10">
+                          <History className="h-3.5 w-3.5" />
+                        </div>
+                        LINHA DO TEMPO
                       </div>
-                      <span className="text-[10px] opacity-50 font-normal">Sessão atual</span>
+                      <span className="text-[9px] opacity-40 font-mono tracking-tighter uppercase">Recent activity</span>
                     </div>
                     {historyItems.map((item, i) => (
                       <DropdownMenuItem 
