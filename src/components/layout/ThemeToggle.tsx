@@ -1,7 +1,8 @@
-import React, { forwardRef, memo } from "react";
+import React, { forwardRef, memo, useCallback } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/useTheme";
+import { triggerHaptic } from "@/lib/haptics";
 import {
   Tooltip,
   TooltipContent,
