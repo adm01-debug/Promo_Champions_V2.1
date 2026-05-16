@@ -60,6 +60,11 @@ export const CreateSaleDialog = () => {
     },
   });
 
+  const { isDirty } = form.formState;
+  
+  // Guard against navigation while form is dirty AND dialog is open
+  useFormGuard(isDirty && open, "Você tem dados de venda preenchidos. Deseja realmente sair sem salvar?");
+
   const selectedProductId = form.watch("product_id");
   const { data: recommendations, isLoading: loadingRecs } = useProductRecommendations(selectedProductId);
 
