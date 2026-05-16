@@ -31,14 +31,8 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(({
   const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
   const canGoBack = !isHomePage && window.history.length > 1;
 
-  const triggerHaptic = useCallback(() => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-  }, []);
-
   const handleBack = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (canGoBack) {
       navigate(-1);
     } else {
