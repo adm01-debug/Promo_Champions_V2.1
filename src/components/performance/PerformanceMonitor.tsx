@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
-import { Activity, Zap, Clock, Maximize2, Minimize2, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
+import { Activity, Zap, Clock, Maximize2, Minimize2, AlertTriangle, Settings2, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
-// Configurable thresholds
-const FPS_THRESHOLD = 45;
-const RENDER_THRESHOLD = 32; // ~2 frames at 60fps
+// Configurable thresholds defaults
+const DEFAULT_FPS_THRESHOLD = 45;
+const DEFAULT_RENDER_THRESHOLD = 32; // ~2 frames at 60fps
 
 export const PerformanceMonitor = memo(() => {
   const [fps, setFps] = useState(0);
