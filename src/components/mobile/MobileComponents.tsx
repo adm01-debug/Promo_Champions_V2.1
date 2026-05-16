@@ -1,7 +1,8 @@
-import { FC, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { FC, ReactNode, useCallback } from 'react';
+import { NavLink } from '@/components/navigation/NavLink';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface NavItem {
   icon: ReactNode;
