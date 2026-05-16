@@ -138,6 +138,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setSalesperson(null);
+    setUser(null);
+    setSession(null);
+    fetchedRef.current = null;
+    window.location.href = "/auth";
   };
 
   const value = useMemo(() => ({ 
