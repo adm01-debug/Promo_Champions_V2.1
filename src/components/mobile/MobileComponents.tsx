@@ -84,7 +84,7 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   if (item.onClick) {
     return (
       <button
-        onClick={item.onClick}
+        onClick={handleInteraction}
         type="button"
         className={baseClasses}
         aria-label={item.label}
