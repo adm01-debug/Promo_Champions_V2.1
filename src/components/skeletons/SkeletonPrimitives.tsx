@@ -12,7 +12,8 @@ export const Shimmer: FC<{ className?: string; style?: React.CSSProperties }> = 
     )}
     style={style}
   >
-    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-foreground/[0.04] to-transparent" />
+    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/[0.08] to-transparent" />
+    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-pulse" />
   </div>
 );
 
