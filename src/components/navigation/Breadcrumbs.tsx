@@ -86,18 +86,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   const navigate = useNavigate();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const [copied, setCopied] = useState(false);
-  const [isHapticEnabled, setIsHapticEnabled] = useState(false);
 
-  useEffect(() => {
-    setIsHapticEnabled('vibrate' in navigator);
-  }, []);
-
-  const triggerHaptic = useCallback(() => {
-    if (isHapticEnabled) {
-      navigator.vibrate(5);
-    }
-  }, [isHapticEnabled]);
-  
   if (pathSegments.length < 1) return null;
   
   const breadcrumbs: BreadcrumbItem[] = [
@@ -110,6 +99,15 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
     const label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
     breadcrumbs.push({ label, href: currentPath });
   });
+
+  const getSiblings = (path: string) => {
+    const parentPath = path.split('/').slice(0, -1).join('/') || '/';
+    // Mocking siblings based on routeLabels for now
+    // In a real app, this would be a lookup of the route tree
+    return Object.entries(routeLabels)
+      .filter(([key]) => key !== '' && key !== path.split('/').pop())
+      .slice(0, 8);
+  };
 
   const handleCopyLink = useCallback(() => {
     triggerHaptic();
