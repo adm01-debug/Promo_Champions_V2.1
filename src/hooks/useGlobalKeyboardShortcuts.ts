@@ -75,6 +75,34 @@ export function useGlobalKeyboardShortcuts({
       },
     },
     
+    // Back navigation shortcuts
+    {
+      key: "Escape",
+      description: "Voltar / Fechar",
+      action: () => {
+        // Only navigate back if not in an input to avoid annoying behavior
+        const target = document.activeElement as HTMLElement;
+        const isInputElement = 
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable;
+        
+        if (!isInputElement && window.history.length > 1) {
+          navigate(-1);
+        }
+      },
+    },
+    {
+      key: "ArrowLeft",
+      alt: true,
+      description: "Voltar",
+      action: () => {
+        if (window.history.length > 1) {
+          navigate(-1);
+        }
+      },
+    },
+    
     // Action shortcuts with Ctrl/Cmd
     {
       key: "k",
@@ -124,15 +152,6 @@ export function useGlobalKeyboardShortcuts({
           description: "Pressione ? para ver todos os atalhos",
           duration: 5000,
         });
-      },
-    },
-    
-    // Escape to go back
-    {
-      key: "Escape",
-      description: "Voltar / Fechar",
-      action: () => {
-        // This will be handled by individual modals/dialogs
       },
     },
   ];
