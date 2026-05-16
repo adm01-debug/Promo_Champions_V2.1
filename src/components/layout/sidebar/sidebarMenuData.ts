@@ -121,6 +121,17 @@ export const closerGroupedItems: MenuGroup[] = [
     ],
   },
   {
+    label: "Prospecção (SDR)", icon: Search,
+    items: [
+      { title: "Cadências", url: "/cadencias", icon: Activity },
+      { title: "Sequências", url: "/sequences", icon: Activity },
+      { title: "Composer IA (massa)", url: "/engagement/bulk-composer", icon: Sparkles },
+      { title: "Power Dialer", url: "/engagement/dialer", icon: Phone },
+      { title: "Email Scoring", url: "/engagement/email-scoring", icon: Flame },
+      { title: "ABM (Contas)", url: "/engagement/abm", icon: Building2 },
+    ],
+  },
+  {
     label: "Comunidade & Elite", icon: PartyPopper,
     items: [
       { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
@@ -136,6 +147,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Kanban Clientes", url: "/kanban-clientes", icon: Columns },
       { title: "Mapa Clientes", url: "/mapa-clientes", icon: MapPin },
       { title: "Calendário", url: "/calendario", icon: Calendar },
+      { title: "Tarefas", url: "/tarefas", icon: Target },
     ],
   },
   {
@@ -147,9 +159,6 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
-      { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
-      { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
-      { title: "Busca Semântica", url: "/busca", icon: Sparkles },
       { title: "Agentes IA", url: "/agentes", icon: Bot },
     ],
   },
