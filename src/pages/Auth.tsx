@@ -162,8 +162,8 @@ export default function Auth() {
             <div className="flex items-center gap-3">
               <motion.div
                 className="relative p-3 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600"
-                animate={{ boxShadow: ["0 0 20px #22d3ee", "0 0 40px #a855f7", "0 0 20px #22d3ee"] }}
-                transition={{ duration: 3, repeat: Infinity }}
+                animate={{ boxShadow: ["0 0 20px #22d3ee", "0 0 40px #a855f7"] }}
+                transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
               >
                 <Crown className="h-7 w-7 text-white" />
               </motion.div>
