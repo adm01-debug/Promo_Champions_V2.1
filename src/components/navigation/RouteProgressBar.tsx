@@ -39,18 +39,22 @@ export const RouteProgressBar = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed top-0 left-0 right-0 h-[4px] bg-background/20 z-[9999] overflow-hidden backdrop-blur-sm"
+          className="fixed top-0 left-0 right-0 h-[3px] bg-background/10 z-[9999] overflow-hidden backdrop-blur-md"
         >
           <motion.div
             initial={{ width: '0%' }}
             animate={{ width: `${progress}%` }}
             transition={{ 
-              width: { type: "spring", stiffness: 120, damping: 25 },
+              width: { type: "spring", stiffness: 100, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            className="h-full bg-gradient-to-r from-primary/40 via-primary to-accent shadow-[0_0_20px_rgba(var(--primary-rgb),0.6),0_0_10px_rgba(var(--accent-rgb),0.4)] relative"
+            className="h-full bg-gradient-to-r from-primary/60 via-primary to-accent/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] relative"
           >
-            <div className="absolute top-0 right-0 h-full w-24 bg-gradient-to-r from-transparent to-white/30 blur-sm" />
+            <motion.div 
+              animate={{ x: ['-100%', '200%'] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"
+            />
           </motion.div>
         </motion.div>
       )}

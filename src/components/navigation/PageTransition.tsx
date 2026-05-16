@@ -5,26 +5,30 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 const pageVariants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 20 : -20,
-    filter: 'blur(4px)',
+    x: direction > 0 ? 30 : -30,
+    scale: 0.98,
+    filter: 'blur(8px)',
   }),
   in: {
     opacity: 1,
     x: 0,
+    scale: 1,
     filter: 'blur(0px)',
   },
   out: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -20 : 20,
-    filter: 'blur(4px)',
+    x: direction > 0 ? -30 : 30,
+    scale: 1.02,
+    filter: 'blur(8px)',
   }),
 };
 
 const pageTransition = {
   type: "spring" as const,
-  stiffness: 260,
-  damping: 26,
-  mass: 0.8
+  stiffness: 300,
+  damping: 30,
+  mass: 1,
+  restDelta: 0.001
 };
 
 interface PageTransitionProps {
