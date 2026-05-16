@@ -45,15 +45,24 @@ import {
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="space-y-4 w-full max-w-md p-8">
-      <Skeleton className="h-8 w-3/4 mx-auto" />
-      <Skeleton className="h-4 w-1/2 mx-auto" />
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        <Skeleton className="h-24 rounded-xl" />
-        <Skeleton className="h-24 rounded-xl" />
+  <div className="min-h-[400px] w-full bg-background/50 animate-in fade-in duration-500">
+    <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64 rounded-lg" />
+        <Skeleton className="h-4 w-96 rounded-md" />
       </div>
-      <Skeleton className="h-64 rounded-xl mt-4" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Skeleton className="h-32 rounded-xl" />
+        <Skeleton className="h-32 rounded-xl" />
+        <Skeleton className="h-32 rounded-xl" />
+      </div>
+      <div className="space-y-4">
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-48 w-full rounded-2xl" />
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
+      </div>
     </div>
   </div>
 );
