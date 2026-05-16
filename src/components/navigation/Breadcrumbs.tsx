@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useCallback, useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink } from 'lucide-react';
+import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, Search, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface BreadcrumbItem {
   label: string;
