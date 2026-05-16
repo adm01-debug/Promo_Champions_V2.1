@@ -4,8 +4,9 @@ import { MainLayout } from "@/components/templates/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageTransition } from "@/components/transitions/PageTransition";
+import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";
 import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
+import { Shimmer, KPICardSkeleton, ChartCardSkeleton, SkeletonCard } from "@/components/skeletons/SkeletonPrimitives";
 const Index = lazy(() => import("@/pages/Index"));
 import { RaceTransitionWrapper } from "@/components/race";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
@@ -46,26 +47,26 @@ import {
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
-  <div className="min-h-[400px] w-full bg-background/50 animate-in fade-in duration-500">
+  <StaggeredContainer className="min-h-[400px] w-full bg-background/50">
     <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
       <div className="space-y-2">
-        <Skeleton className="h-8 w-64 rounded-lg" />
-        <Skeleton className="h-4 w-96 rounded-md" />
+        <Shimmer className="h-8 w-64 rounded-lg" />
+        <Shimmer className="h-4 w-96 rounded-md" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Skeleton className="h-32 rounded-xl" />
-        <Skeleton className="h-32 rounded-xl" />
-        <Skeleton className="h-32 rounded-xl" />
+        <KPICardSkeleton />
+        <KPICardSkeleton />
+        <KPICardSkeleton />
       </div>
       <div className="space-y-4">
-        <Skeleton className="h-64 w-full rounded-2xl" />
+        <ChartCardSkeleton className="w-full" />
         <div className="grid grid-cols-2 gap-4">
-          <Skeleton className="h-48 w-full rounded-2xl" />
-          <Skeleton className="h-48 w-full rounded-2xl" />
+          <SkeletonCard className="w-full" />
+          <SkeletonCard className="w-full" />
         </div>
       </div>
     </div>
-  </div>
+  </StaggeredContainer>
 );
 
 export { PageLoadingFallback };
