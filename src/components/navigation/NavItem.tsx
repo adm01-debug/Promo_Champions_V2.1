@@ -38,7 +38,7 @@ export const NavItem: FC<NavItemProps> = memo(({
           to={url} 
           className={cn(
             "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden",
-            window.location.pathname === url && "bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10"
+            window.location.pathname === url && "bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
           )}
           aria-current={window.location.pathname === url ? "page" : undefined}
         >
