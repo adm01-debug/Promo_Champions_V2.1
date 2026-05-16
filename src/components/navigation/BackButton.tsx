@@ -77,11 +77,11 @@ export const BackButton: FC<BackButtonProps> = memo(({
   const historyItems = history.filter(item => item.path !== location.pathname);
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center group">
       <TooltipProvider delayDuration={400}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center -space-x-px">
+            <div className="flex items-center -space-x-px bg-background/50 backdrop-blur-md rounded-xl border border-border/30 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/30 group-hover:scale-[1.02]">
               <Button
                 variant={variant}
                 size={showLabel ? "sm" : "icon-sm"}

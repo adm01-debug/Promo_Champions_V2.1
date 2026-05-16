@@ -32,15 +32,27 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
         />
       )}
       <motion.div
-        animate={item.isActive ? { scale: 1.1, y: -1 } : { scale: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        animate={item.isActive ? { 
+          scale: [1, 1.25, 1.1], 
+          y: [-2, -6, -2],
+          rotate: [0, -5, 5, 0]
+        } : { scale: 1, y: 0, rotate: 0 }}
+        transition={{ 
+          type: 'spring', 
+          stiffness: 400, 
+          damping: 15,
+          duration: 0.4
+        }}
         className="relative"
       >
         {displayIcon}
-        {/* Notification badge */}
+        {/* Notification badge with ping animation */}
         {item.badge && item.badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold leading-none">
-            {item.badge > 99 ? '99+' : item.badge}
+          <span className="absolute -top-1.5 -right-2 flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-destructive opacity-75"></span>
+            <span className="relative min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold leading-none shadow-sm">
+              {item.badge > 99 ? '99+' : item.badge}
+            </span>
           </span>
         )}
       </motion.div>

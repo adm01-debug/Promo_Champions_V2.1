@@ -105,13 +105,13 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   }, []);
 
   return (
-    <div className="flex items-center gap-2 max-w-full overflow-hidden">
+    <div className="flex items-center gap-2 max-w-full overflow-hidden bg-background/50 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-border/20 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20">
       <nav 
         ref={ref}
         aria-label="Breadcrumb" 
         className="flex items-center gap-1 text-sm text-muted-foreground overflow-hidden"
       >
-        <ol className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap px-1">
+        <ol className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap">
           <AnimatePresence mode="popLayout">
             {breadcrumbs.map((item, index) => {
               const isLast = index === breadcrumbs.length - 1;
@@ -132,7 +132,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                   className="flex items-center gap-1.5"
                 >
                   {index > 0 && (
-                    <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" aria-hidden="true" />
+                    <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0 group-hover:text-primary/40 transition-colors" aria-hidden="true" />
                   )}
                   
                   {isLast ? (
