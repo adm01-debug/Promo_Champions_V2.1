@@ -36,9 +36,14 @@ export function VirtualizedList<T>({
         onClick={() => onItemClick?.(item)}
       >
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
+          initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.2, delay: (index % 5) * 0.05 }}
+          transition={{ 
+            duration: 0.25, 
+            delay: (index % 8) * 0.03, // Tighter stagger for faster feel
+            ease: "easeOut" 
+          }}
+          className="will-change-transform"
         >
           {renderItem(item, index)}
         </motion.div>
