@@ -205,7 +205,7 @@ export const AppSidebar = memo(function AppSidebar() {
 
       <Separator className="bg-border/30" />
 
-      <SidebarContent className="px-3 py-2">
+      <SidebarContent className="px-3 py-2" ref={scrollAreaRef}>
         <ScrollArea className="flex-1">
           <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           <Separator className="my-2 bg-border/30" />
