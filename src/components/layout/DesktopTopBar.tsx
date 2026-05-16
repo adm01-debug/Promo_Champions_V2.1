@@ -125,15 +125,10 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
             <TooltipTrigger asChild>
               <button
                 onClick={() => searchRef.current?.open()}
-                className="h-8 flex items-center gap-2 px-3 rounded-lg bg-muted/50 hover:bg-muted/80 border border-border/40 text-muted-foreground hover:text-foreground transition-all duration-200 text-xs"
+                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
                 aria-label="Pesquisar no sistema"
-                aria-keyshortcuts="Control+K"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <span className="hidden lg:inline">Buscar...</span>
-                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-border/50 bg-background/80 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/70" aria-hidden="true">
-                  ⌘K
-                </kbd>
+                <Search className="h-4 w-4 text-muted-foreground" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
