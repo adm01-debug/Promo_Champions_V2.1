@@ -17,13 +17,11 @@ interface PreloadLinkProps {
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace }) => {
+export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, ...props }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const preloadRoute = useCallback(() => {
-    // Basic route preloading logic
-    // In a more advanced setup, this could trigger a query prefetch or a dynamic import
     const link = document.createElement('link');
     link.rel = 'prefetch';
     link.href = to;
@@ -31,12 +29,24 @@ export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, rep
   }, [to]);
 
   const handleClick = (e: React.MouseEvent) => {
-    if (location.pathname === to) return;
+    // If it's an external link or a hash, let the browser handle it
+    if (to.startsWith('http') || to.startsWith('#')) {
+      if (props.onClick) props.onClick();
+      return;
+    }
+
+    if (location.pathname === to) {
+      e.preventDefault();
+      return;
+    }
     
     e.preventDefault();
     triggerHaptic('light');
+    if (props.onClick) props.onClick();
     navigate(to, { replace });
   };
+
+  const { onClick: _onClick, ...rest } = props;
 
   return (
     <motion.a
@@ -46,6 +56,7 @@ export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, rep
       onTouchStart={preloadRoute}
       className={className}
       whileTap={{ scale: 0.98 }}
+      {...rest}
     >
       {children}
     </motion.a>
