@@ -10,6 +10,7 @@ import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { NotificationBadge } from "@/components/ui/NotificationBadge";
 import { NotificationPopover } from "@/components/notifications";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import { BackButton } from "@/components/navigation/BackButton";
 import { cn } from "@/lib/utils";
 import { useUnreadNotificationsCount } from "@/hooks/useUnreadNotificationsCount";
 import type { GlobalSearchHandle } from "./GlobalSearch";
