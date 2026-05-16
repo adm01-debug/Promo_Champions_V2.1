@@ -70,19 +70,33 @@ export const AppSidebar = memo(function AppSidebar() {
       <SidebarMenuItem key={item.title + item.url}>
         <SidebarMenuButton asChild tooltip={item.title}>
           <NavLink to={item.url} end
-            className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-muted/40 group/item"
-            activeClassName="bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-semibold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
+            className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden"
+            activeClassName="bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
           >
-            <span className="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-gradient-to-b from-primary to-primary/70 opacity-0 scale-y-0 transition-all duration-300 shadow-sm shadow-primary/30" />
-            <div className="relative">
-              <item.icon className={cn("h-[18px] w-[18px] flex-shrink-0 transition-all duration-200 group-hover/item:scale-110", hasAlerts && "text-warning")} />
+            <motion.span 
+              className="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-gradient-to-b from-primary to-primary/70 opacity-0 scale-y-0 transition-all duration-300 shadow-sm shadow-primary/30" 
+              layoutId="nav-pill"
+            />
+            <div className="relative z-10">
+              <item.icon className={cn("h-[18px] w-[18px] flex-shrink-0 transition-all duration-300 group-hover/item:scale-110", hasAlerts && "text-warning")} />
               {hasAlerts && (
                 <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground flex items-center justify-center animate-pulse ring-2 ring-sidebar">
                   {alertCount > 9 ? "9+" : alertCount}
                 </span>
               )}
             </div>
-            {!isCollapsed && <span className="text-[13px] font-medium tracking-tight">{item.title}</span>}
+            {!isCollapsed && (
+              <motion.span 
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-[13px] font-medium tracking-tight relative z-10"
+              >
+                {item.title}
+              </motion.span>
+            )}
+            
+            {/* Subtle glow effect on hover */}
+            <div className="absolute inset-0 bg-primary/0 group-hover/item:bg-primary/[0.03] transition-colors duration-500" />
           </NavLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
