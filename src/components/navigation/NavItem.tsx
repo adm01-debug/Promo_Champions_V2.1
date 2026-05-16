@@ -66,7 +66,7 @@ export const NavItem: FC<NavItemProps> = memo(({
           
           {/* Subtle glow effect on hover */}
           <div className="absolute inset-0 bg-primary/0 group-hover/item:bg-primary/[0.03] transition-colors duration-500" />
-        </NavLink>
+        </PreloadLink>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
