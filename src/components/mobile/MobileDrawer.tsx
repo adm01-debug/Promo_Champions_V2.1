@@ -65,7 +65,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
     const isActive = location.pathname === item.url || (item.url !== '/' && location.pathname.startsWith(item.url));
     
     return (
-      <Link
+      <PreloadLink
         key={item.url}
         to={item.url}
         onClick={() => {
