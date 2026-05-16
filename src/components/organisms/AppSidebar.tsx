@@ -176,7 +176,7 @@ export const AppSidebar = memo(function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      {isAdminOrManager && !isCollapsed && (
+      {(isAdminOrManager || userType === 'hybrid') && !isCollapsed && (
         <div className="px-3 pb-3 mt-4">
           <div className="flex flex-col gap-1.5 p-1 bg-muted/20 rounded-2xl border border-border/50">
             <p className="px-2 pt-1 pb-0.5 text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Modo de Visualização</p>
