@@ -26,8 +26,8 @@ export function useFormGuard(isDirty: boolean, message: string = 'Você tem alte
   // Handle SPA navigation (React Router)
   const blocker = useBlocker(
     useCallback(
-      ({ currentValue, nextValue }) =>
-        isDirty && currentValue.pathname !== nextValue.pathname,
+      ({ currentLocation, nextLocation }) =>
+        isDirty && currentLocation.pathname !== nextLocation.pathname,
       [isDirty]
     )
   );
