@@ -40,6 +40,9 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
   const [shortcutsDialogOpen, setShortcutsDialogOpen] = useState(false);
   const { setTheme, theme } = useTheme();
   const { formatShortcut, isMac } = useKeyboardShortcutHint();
+  const navigate = useNavigate();
+  const [isGKeyDown, setIsGKeyDown] = useState(false);
+  const gTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handler refs for dynamic registration
   const searchHandlerRef = useRef<(() => void) | null>(null);
