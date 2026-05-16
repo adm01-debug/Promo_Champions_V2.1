@@ -140,8 +140,8 @@ export default function Auth() {
               background: p.hue,
               boxShadow: `0 0 ${p.size * 4}px ${p.hue}`,
             }}
-            animate={{ y: [0, -80, 0], opacity: [0, 1, 0] }}
-            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+            animate={{ y: [0, -80], opacity: [0, 1] }}
+            transition={{ duration: p.duration, repeat: Infinity, repeatType: "reverse", delay: p.delay, ease: "easeInOut" }}
           />
         ))}
 
