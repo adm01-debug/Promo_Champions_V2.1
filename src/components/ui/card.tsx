@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { triggerHaptic } from "@/lib/haptics";
 
 const cardVariants = cva(
   "rounded-xl border text-card-foreground transition-all duration-300",
@@ -37,17 +38,38 @@ export interface CardProps
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, hover = true, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        cardVariants({ variant }),
-        !hover && "hover:transform-none hover:shadow-none",
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, variant, hover = true, onClick, ...props }, ref) => {
+    const isInteractive = variant === 'interactive' || !!onClick;
+    
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isInteractive) {
+        triggerHaptic('light');
+      }
+      onClick?.(e);
+    };
+
+    return (
+      <div
+        ref={ref}
+        role={isInteractive ? "button" : undefined}
+        tabIndex={isInteractive ? 0 : undefined}
+        className={cn(
+          cardVariants({ variant }),
+          !hover && "hover:transform-none hover:shadow-none",
+          isInteractive && "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+          className
+        )}
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            handleClick(e as any);
+          }
+        }}
+        {...props}
+      />
+    );
+  }
 );
 Card.displayName = "Card";
 

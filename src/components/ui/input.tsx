@@ -1,4 +1,5 @@
 import * as React from "react";
+import { triggerHaptic } from "@/lib/haptics";
 
 import { cn } from "@/lib/utils";
 
@@ -7,21 +8,25 @@ export interface InputProps extends React.ComponentProps<"input"> {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, error, ...props }, ref) => {
+  ({ className, type, error, onFocus, ...props }, ref) => {
     return (
       <input
         type={type}
-          className={cn(
-            "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-sans",
-            "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
-            "placeholder:text-muted-foreground/60",
-            "hover:border-border/80 hover:bg-background/80",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            "transition-all duration-200",
-            error && "border-destructive focus-visible:ring-destructive/30 animate-shake",
+        className={cn(
+          "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-sans",
+          "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
+          "placeholder:text-muted-foreground/60",
+          "hover:border-border/80 hover:bg-background/80",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          "transition-all duration-200",
+          error && "border-destructive focus-visible:ring-destructive/30 animate-shake",
           className,
         )}
+        onFocus={(e) => {
+          triggerHaptic('light');
+          onFocus?.(e);
+        }}
         ref={ref}
         {...props}
       />

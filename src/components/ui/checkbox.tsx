@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
-(({ className, onCheckedChange, ...props }, ref) => {
+>(({ className, onCheckedChange, ...props }, ref) => {
   const handleChange = (checked: boolean | 'indeterminate') => {
     triggerHaptic('light');
     onCheckedChange?.(checked);
@@ -23,11 +23,12 @@ const Checkbox = React.forwardRef<
       onCheckedChange={handleChange}
       {...props}
     >
-    <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-current")}>
-      <Check className="h-4 w-4" />
-    </CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
-));
+      <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-current")}>
+        <Check className="h-4 w-4" />
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  );
+});
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
 export { Checkbox };
