@@ -120,10 +120,15 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
               return (
                 <motion.li 
                   key={item.href}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  initial={{ opacity: 0, scale: 0.95, x: -15 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, x: 15 }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 25,
+                    delay: index * 0.04 
+                  }}
                   className="flex items-center gap-1.5"
                 >
                   {index > 0 && (
