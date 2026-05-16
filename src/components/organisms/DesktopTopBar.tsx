@@ -19,6 +19,7 @@ import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
 import { StreakIndicator } from "@/components/competitive/StreakIndicator";
 import { SystemHealthBadge } from "@/components/atoms/SystemHealthBadge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 
