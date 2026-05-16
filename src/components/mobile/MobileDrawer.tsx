@@ -1,5 +1,6 @@
 import { FC, useState, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { PreloadLink } from '@/components/navigation/PreloadLink';
 import { 
   ChevronRight, 
   Crown,
