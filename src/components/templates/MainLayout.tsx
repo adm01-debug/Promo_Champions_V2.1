@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "@/components/atoms/SearchTrigger";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
