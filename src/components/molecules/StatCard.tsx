@@ -83,13 +83,19 @@ export const StatCard = React.memo(({
 
   return (
     <motion.div
-      whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
+      whileHover={{ 
+        y: -6, 
+        scale: 1.01,
+        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } 
+      }}
+      whileTap={{ scale: 0.98 }}
       className="h-full"
     >
       <Card className={cn(
-        "group relative h-full overflow-hidden transition-all duration-300",
+        "group relative h-full overflow-hidden transition-all duration-500",
         theme === "cyber" ? variantStyles[variant] : "bg-card border-border/40 hover:border-primary/20",
         heroStyles,
+        "hover:shadow-[0_0_30px_rgba(var(--primary),0.15)]"
       )}>
       {/* Decorative cyber-elements */}
       {hero && (
