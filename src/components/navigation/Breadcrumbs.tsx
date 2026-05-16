@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useCallback } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, Copy, Check, MoreHorizontal } from 'lucide-react';
+import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BackButton } from './BackButton';
 import { motion, AnimatePresence } from 'framer-motion';
