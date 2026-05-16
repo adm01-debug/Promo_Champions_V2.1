@@ -9,6 +9,7 @@ interface PreloadLinkProps {
   className?: string;
   replace?: boolean;
   onClick?: () => void;
+  component?: any; // For lazy prefetching
   'aria-label'?: string;
   'aria-current'?: "date" | "false" | "location" | "page" | "step" | "time" | "true" | boolean;
 }
@@ -17,16 +18,22 @@ interface PreloadLinkProps {
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, ...props }) => {
+export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, component, ...props }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const preloadRoute = useCallback(() => {
+    // 1. Browser prefetch hint
     const link = document.createElement('link');
     link.rel = 'prefetch';
     link.href = to;
     document.head.appendChild(link);
-  }, [to]);
+
+    // 2. Component prefetch (React Lazy)
+    if (component?.prefetch) {
+      component.prefetch();
+    }
+  }, [to, component]);
 
   const handleClick = (e: React.MouseEvent) => {
     // If it's an external link or a hash, let the browser handle it
