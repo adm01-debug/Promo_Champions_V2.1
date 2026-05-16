@@ -37,20 +37,20 @@ export const AICopilotFab: FC = () => {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className={cn(
-              "fixed z-[60] bg-card border border-border/60 rounded-2xl shadow-2xl",
-              "backdrop-blur-xl overflow-hidden",
+              "fixed z-[60] bg-[#0d1117]/80 border border-primary/20 rounded-2xl shadow-[0_0_30px_rgba(var(--primary),0.15)]",
+              "backdrop-blur-2xl overflow-hidden",
               isMobile
                 ? "bottom-24 right-4 left-4"
                 : "bottom-20 right-6 w-80"
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 bg-primary/5">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-primary/10 bg-primary/5">
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
+                <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary via-primary-glow to-primary flex items-center justify-center shadow-[0_0_10px_rgba(var(--primary),0.4)]">
+                  <Sparkles className="h-4 w-4 text-primary-foreground animate-pulse-gentle" />
                 </div>
-                <span className="text-sm font-semibold text-foreground">Copilot</span>
+                <span className="text-sm font-black uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Arena Copilot</span>
               </div>
               <Button
                 variant="ghost"
@@ -83,7 +83,7 @@ export const AICopilotFab: FC = () => {
 
             {/* Quick Ask Input */}
             <form onSubmit={handleSubmit} className="px-3 pb-3">
-              <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2">
+              <div className="flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-xl px-3 py-2.5 focus-within:border-primary/40 focus-within:bg-primary/10 transition-all">
                 <input
                   ref={inputRef}
                   type="text"
@@ -113,8 +113,9 @@ export const AICopilotFab: FC = () => {
         onClick={toggle}
         className={cn(
           "fixed z-[60] rounded-full shadow-lg transition-colors",
-          "bg-gradient-to-br from-primary to-primary-glow text-primary-foreground",
-          "hover:shadow-xl active:scale-95",
+          "bg-gradient-to-br from-primary via-primary-glow to-primary text-primary-foreground",
+          "hover:shadow-[0_0_20px_rgba(var(--primary),0.5)] active:scale-95",
+          "border border-white/20",
           "flex items-center justify-center",
           isMobile ? "bottom-20 right-4 h-12 w-12" : "bottom-6 right-6 h-12 w-12"
         )}
