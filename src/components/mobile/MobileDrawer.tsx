@@ -1,24 +1,33 @@
-import { FC } from 'react';
+import { FC, useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, ShoppingBag, BarChart3, Settings, Target, Zap, Trophy } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Crown,
+  LogOut,
+  Settings,
+  Bell,
+  Search,
+  Zap,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-
-interface MobileDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
-  { icon: ShoppingBag, label: 'Vendas', href: '/vendas' },
-  { icon: Users, label: 'Clientes', href: '/clientes' },
-  { icon: Target, label: 'Metas', href: '/metas-atividades' },
-  { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-  { icon: Trophy, label: 'Ranking', href: '/ranking' },
-  { icon: Zap, label: 'Desafios', href: '/desafios' },
-  { icon: Settings, label: 'Configurações', href: '/configuracoes' },
-];
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { 
+  getMainItems, 
+  getGroupedItems, 
+  viewModes, 
+  type ViewMode,
+  type MenuItem,
+  type MenuGroup
+} from '@/components/layout/sidebar/sidebarMenuData';
+import { UserRoleBadge } from '@/components/layout/UserRoleBadge';
+import { Separator } from '@/components/ui/separator';
+import { motion, AnimatePresence } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
