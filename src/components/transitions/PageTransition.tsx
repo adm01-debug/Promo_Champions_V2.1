@@ -88,8 +88,10 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
 
     prevPathRef.current = location.pathname;
     
-    // Smooth scroll to top on every page change
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    // Optimized scroll to top
+    if (window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }, [location.pathname, navigationType]);
 
   return (

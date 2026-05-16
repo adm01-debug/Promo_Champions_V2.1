@@ -5,6 +5,7 @@ export const Auth = lazy(() => import("@/pages/Auth"));
 export const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 export const NotFound = lazy(() => import("@/pages/NotFound"));
 export const AccessDenied = lazy(() => import("@/pages/AccessDenied"));
+export const Docs = lazy(() => import("@/pages/Docs"));
 
 // ─── Dashboards ─────────────────────────────────────────────────────
 export const SDRDashboard = lazy(() => import("@/pages/SDRDashboard"));

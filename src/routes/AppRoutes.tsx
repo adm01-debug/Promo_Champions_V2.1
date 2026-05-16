@@ -15,7 +15,7 @@ const OrderDetailPage = lazy(() => import("@/pages/OrderDetailPage"));
 const SalesReportPage = lazy(() => import("@/pages/SalesReportPage"));
 import {
   // Auth & System
-  Auth, ResetPassword, NotFound, AccessDenied,
+  Auth, ResetPassword, NotFound, AccessDenied, Docs,
   // Dashboards
   SDRDashboard, CloserDashboard, DashboardCustom, VendedorDashboard,
   // CRM Core
@@ -118,6 +118,8 @@ export function AppRoutes() {
                       <Route path="/closer" element={<CloserDashboard />} />
                       <Route path="/dashboard-custom" element={<DashboardCustom />} />
                       <Route path="/vendedor/:id" element={<VendedorDashboard />} />
+
+                      <Route path="/docs" element={<Docs />} />
 
                       {/* ─── CRM Core ─────────────────────────────── */}
                       <Route path="/vendas" element={<Vendas />} />
