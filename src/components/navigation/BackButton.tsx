@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useState, useRef, useEffect } from 'react';
+import React, { FC, memo, useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ChevronDown, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BackButtonProps {
   label?: string;
@@ -19,7 +20,6 @@ interface BackButtonProps {
   showLabel?: boolean;
 }
 
-// Simple history tracker for the session
 const SESSION_HISTORY_KEY = 'app_nav_history';
 
 export const BackButton: FC<BackButtonProps> = memo(({ 
@@ -34,24 +34,21 @@ export const BackButton: FC<BackButtonProps> = memo(({
   const [history, setHistory] = useState<{path: string, title: string}[]>([]);
   const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
 
-  // Load history from session storage
+  // Load and update history
   useEffect(() => {
     try {
       const stored = sessionStorage.getItem(SESSION_HISTORY_KEY);
-      if (stored) {
-        setHistory(JSON.parse(stored).slice(0, 10));
-      }
+      const parsedHistory = stored ? JSON.parse(stored) : [];
+      setHistory(parsedHistory.slice(0, 10));
     } catch (e) {
       console.error("Failed to load history", e);
     }
   }, []);
 
-  // Update history when location changes
   useEffect(() => {
     if (isHomePage) return;
     
     setHistory(prev => {
-      // Don't add if same as current top
       if (prev.length > 0 && prev[0].path === location.pathname) return prev;
       
       const newHistory = [{
@@ -64,13 +61,32 @@ export const BackButton: FC<BackButtonProps> = memo(({
     });
   }, [location.pathname, isHomePage]);
 
+  // Haptic feedback function
+  const triggerHaptic = useCallback(() => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
+  }, []);
+
   const handleBack = useCallback(() => {
+    triggerHaptic();
     if (window.history.length > 2) {
       navigate(-1);
     } else {
       navigate(fallbackPath);
     }
-  }, [navigate, fallbackPath]);
+  }, [navigate, fallbackPath, triggerHaptic]);
+
+  // Keyboard shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === 'ArrowLeft') {
+        handleBack();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleBack]);
 
   if (isHomePage) return null;
 
@@ -81,18 +97,22 @@ export const BackButton: FC<BackButtonProps> = memo(({
       <TooltipProvider delayDuration={400}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center -space-x-px bg-background/50 backdrop-blur-md rounded-xl border border-border/30 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/30 group-hover:scale-[1.02]">
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center -space-x-px bg-background/50 backdrop-blur-md rounded-xl border border-border/30 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/30 group-hover:scale-[1.02]"
+            >
               <Button
                 variant={variant}
                 size={showLabel ? "sm" : "icon-sm"}
                 onClick={handleBack}
                 className={cn(
-                  "gap-1.5 transition-all duration-200 active:scale-95 z-10",
-                  showLabel ? "rounded-r-none pr-2" : "rounded-r-none",
+                  "gap-1.5 transition-all duration-200 active:scale-95 z-10 h-10 w-10 md:h-9 md:w-auto",
+                  showLabel ? "rounded-r-none pr-3" : "rounded-r-none",
                   variant === "ghost" && "text-muted-foreground hover:text-foreground hover:bg-accent/10",
                   className
                 )}
-                aria-label={label}
+                aria-label={`${label} (Alt + Seta Esquerda)`}
               >
                 <ArrowLeft className={cn("h-4 w-4", showLabel && "mr-0.5")} />
                 {showLabel && <span className="text-xs font-medium">{label}</span>}
@@ -105,16 +125,16 @@ export const BackButton: FC<BackButtonProps> = memo(({
                       variant={variant}
                       size="icon-sm"
                       className={cn(
-                        "h-8 w-5 px-0 rounded-l-none border-l border-border/20 transition-all duration-200 opacity-60 hover:opacity-100",
+                        "h-10 w-6 md:h-9 md:w-5 px-0 rounded-l-none border-l border-border/20 transition-all duration-200 opacity-60 hover:opacity-100",
                         variant === "ghost" && "hover:bg-accent/10"
                       )}
                     >
-                      <ChevronDown className="h-3 w-3" />
+                      <ChevronDown className="h-3.5 w-3.5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
                     align="start" 
-                    className="w-72 max-h-[85vh] overflow-y-auto backdrop-blur-2xl bg-background/80 border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-in fade-in zoom-in-95 duration-200"
+                    className="w-72 max-h-[85vh] overflow-y-auto backdrop-blur-2xl bg-background/80 border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
                   >
                     <div className="flex items-center justify-between px-4 py-3 text-[11px] font-bold text-primary border-b border-primary/10 mb-2 sticky top-0 bg-background/80 backdrop-blur-xl z-20">
                       <div className="flex items-center gap-2.5">
@@ -123,25 +143,33 @@ export const BackButton: FC<BackButtonProps> = memo(({
                         </div>
                         LINHA DO TEMPO
                       </div>
-                      <span className="text-[9px] opacity-40 font-mono tracking-tighter uppercase">Recent activity</span>
+                      <span className="text-[9px] opacity-40 font-mono tracking-tighter uppercase">Histórico Recente</span>
                     </div>
-                    {historyItems.map((item, i) => (
-                      <DropdownMenuItem 
-                        key={`${item.path}-${i}`}
-                        onClick={() => navigate(item.path)}
-                        className="text-xs flex flex-col items-start gap-0.5"
-                      >
-                        <span className="font-medium truncate w-full">{item.title}</span>
-                        <span className="text-[10px] text-muted-foreground truncate w-full">{item.path}</span>
-                      </DropdownMenuItem>
-                    ))}
+                    <AnimatePresence>
+                      {historyItems.map((item, i) => (
+                        <DropdownMenuItem 
+                          key={`${item.path}-${i}`}
+                          onClick={() => {
+                            triggerHaptic();
+                            navigate(item.path);
+                          }}
+                          className="text-xs flex flex-col items-start gap-0.5 p-2.5 focus:bg-primary/5 cursor-pointer"
+                        >
+                          <span className="font-medium truncate w-full flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                            {item.title}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground truncate w-full pl-3.5">{item.path}</span>
+                        </DropdownMenuItem>
+                      ))}
+                    </AnimatePresence>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-            </div>
+            </motion.div>
           </TooltipTrigger>
-          <TooltipContent side="bottom" className="text-xs">
-            {label} (Voltar)
+          <TooltipContent side="bottom" className="text-[10px] font-medium">
+            {label} (Alt + ←)
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
