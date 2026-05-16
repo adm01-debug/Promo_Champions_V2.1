@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { useFormGuard } from "@/hooks/useFormGuard";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -58,6 +60,11 @@ export const CreateSaleDialog = () => {
     },
   });
 
+  const { isDirty } = form.formState;
+  
+  // Guard against navigation while form is dirty AND dialog is open
+  useFormGuard(isDirty && open, "Você tem dados de venda preenchidos. Deseja realmente sair sem salvar?");
+
   const selectedProductId = form.watch("product_id");
   const { data: recommendations, isLoading: loadingRecs } = useProductRecommendations(selectedProductId);
 
@@ -101,6 +108,11 @@ export const CreateSaleDialog = () => {
   };
 
   const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && isDirty) {
+      const confirmClose = window.confirm("Existem alterações não salvas. Deseja realmente fechar?");
+      if (!confirmClose) return;
+    }
+    
     setOpen(isOpen);
     if (!isOpen) {
       form.reset();

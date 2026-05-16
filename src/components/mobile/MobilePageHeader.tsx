@@ -4,7 +4,8 @@ import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMediaQuery';
-import { motion, useDragControls, PanInfo } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface MobilePageHeaderProps {
   title: string;
@@ -30,14 +31,8 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(({
   const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
   const canGoBack = !isHomePage && window.history.length > 1;
 
-  const triggerHaptic = useCallback(() => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-  }, []);
-
   const handleBack = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (canGoBack) {
       navigate(-1);
     } else {

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { motion, AnimatePresence } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface BackButtonProps {
   label?: string;
@@ -61,15 +62,8 @@ export const BackButton: FC<BackButtonProps> = memo(({
     });
   }, [location.pathname, isHomePage]);
 
-  // Haptic feedback function
-  const triggerHaptic = useCallback(() => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-  }, []);
-
   const handleBack = useCallback(() => {
-    triggerHaptic();
+    triggerHaptic('light');
     if (window.history.length > 2) {
       navigate(-1);
     } else {
@@ -150,7 +144,7 @@ export const BackButton: FC<BackButtonProps> = memo(({
                         <DropdownMenuItem 
                           key={`${item.path}-${i}`}
                           onClick={() => {
-                            triggerHaptic();
+                            triggerHaptic('light');
                             navigate(item.path);
                           }}
                           className="text-xs flex flex-col items-start gap-0.5 p-2.5 focus:bg-primary/5 cursor-pointer"

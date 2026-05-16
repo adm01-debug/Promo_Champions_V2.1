@@ -5,6 +5,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageTransition } from "@/components/navigation/PageTransition";
+import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 const Index = lazy(() => import("@/pages/Index"));
 import { RaceTransitionWrapper } from "@/components/race";
 const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
@@ -82,7 +83,7 @@ Manager.displayName = "ManagerWrapper";
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<PageLoadingFallback />}>
+    <Suspense fallback={<SmartSkeleton />}>
       <Routes>
         {/* Public auth routes */}
         <Route path="/auth" element={<Auth />} />
@@ -103,7 +104,7 @@ export function AppRoutes() {
           element={
             <MainLayout>
               <ErrorBoundary>
-                <Suspense fallback={<PageLoadingFallback />}>
+                <Suspense fallback={<SmartSkeleton />}>
                   <PageTransition>
                     <Routes>
                       {/* ─── Dashboards ────────────────────────────── */}
