@@ -207,7 +207,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                                 <Button 
                                   variant="ghost" 
                                   size="icon-sm" 
-                                  onClick={triggerHaptic}
+                                  onClick={() => triggerHaptic('light')}
                                   className="h-7 w-7 opacity-40 hover:opacity-100 hover:bg-primary/10 transition-all duration-300 rounded-md"
                                 >
                                   <MoreHorizontal className="h-3.5 w-3.5" />
