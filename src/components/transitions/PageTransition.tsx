@@ -101,7 +101,7 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
         animate="in"
         exit="out"
         variants={pageVariants}
-        className={cn("w-full min-h-full", className)}
+        className={cn("w-full min-h-full will-change-transform", className)}
       >
         {children}
       </motion.div>
