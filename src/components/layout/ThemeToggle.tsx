@@ -12,6 +12,11 @@ import {
 export const ThemeToggle = memo(forwardRef<HTMLDivElement>(function ThemeToggle(_props, ref) {
   const { theme, toggleTheme } = useTheme();
 
+  const handleToggle = useCallback(() => {
+    triggerHaptic('medium');
+    toggleTheme();
+  }, [toggleTheme]);
+
   return (
     <div ref={ref}>
       <Tooltip>
@@ -19,7 +24,7 @@ export const ThemeToggle = memo(forwardRef<HTMLDivElement>(function ThemeToggle(
           <Button
             variant="ghost"
             size="icon" aria-label="Tema claro"
-            onClick={toggleTheme}
+            onClick={handleToggle}
             className="h-9 w-9 rounded-lg relative overflow-hidden hover-scale-lg"
           >
             <Sun 
