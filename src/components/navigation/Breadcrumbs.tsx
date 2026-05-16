@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, useCallback, useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink } from 'lucide-react';
+import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, Search, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface BreadcrumbItem {
   label: string;
@@ -85,18 +86,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
   const navigate = useNavigate();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const [copied, setCopied] = useState(false);
-  const [isHapticEnabled, setIsHapticEnabled] = useState(false);
 
-  useEffect(() => {
-    setIsHapticEnabled('vibrate' in navigator);
-  }, []);
-
-  const triggerHaptic = useCallback(() => {
-    if (isHapticEnabled) {
-      navigator.vibrate(5);
-    }
-  }, [isHapticEnabled]);
-  
   if (pathSegments.length < 1) return null;
   
   const breadcrumbs: BreadcrumbItem[] = [
@@ -109,6 +99,15 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
     const label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
     breadcrumbs.push({ label, href: currentPath });
   });
+
+  const getSiblings = (path: string) => {
+    const parentPath = path.split('/').slice(0, -1).join('/') || '/';
+    // Mocking siblings based on routeLabels for now
+    // In a real app, this would be a lookup of the route tree
+    return Object.entries(routeLabels)
+      .filter(([key]) => key !== '' && key !== path.split('/').pop())
+      .slice(0, 8);
+  };
 
   const handleCopyLink = useCallback(() => {
     triggerHaptic();
@@ -166,7 +165,29 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                     className="flex items-center gap-1.5"
                   >
                     {index > 0 && (
-                      <ChevronRight className="h-3 w-3 text-muted-foreground/20 shrink-0 group-hover/nav:text-primary/30 transition-colors duration-300" aria-hidden="true" />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="h-4 w-4 flex items-center justify-center text-muted-foreground/20 hover:text-primary/40 transition-colors">
+                            <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-48 p-1 glass">
+                          <DropdownMenuLabel className="text-[9px] uppercase tracking-widest opacity-50 px-2 py-1.5">Mudar para</DropdownMenuLabel>
+                          {getSiblings(item.href).map(([slug, label]) => (
+                            <DropdownMenuItem 
+                              key={slug} 
+                              onClick={() => {
+                                triggerHaptic('light');
+                                navigate(`/${slug}`);
+                              }}
+                              className="text-xs gap-2 cursor-pointer"
+                            >
+                              <LayoutGrid className="h-3 w-3" />
+                              {label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                     
                     {isLast ? (
@@ -186,7 +207,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                                 <Button 
                                   variant="ghost" 
                                   size="icon-sm" 
-                                  onClick={triggerHaptic}
+                                  onClick={() => triggerHaptic('light')}
                                   className="h-7 w-7 opacity-40 hover:opacity-100 hover:bg-primary/10 transition-all duration-300 rounded-md"
                                 >
                                   <MoreHorizontal className="h-3.5 w-3.5" />
@@ -254,7 +275,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                         <TooltipTrigger asChild>
                           <Link
                             to={item.href}
-                            onClick={triggerHaptic}
+                            onClick={() => triggerHaptic('light')}
                             className={cn(
                               "hover:text-primary transition-all duration-300 flex items-center gap-1 px-2 py-0.5 rounded-lg hover:bg-primary/5 active:scale-95 group/item",
                               isFirst && "text-muted-foreground/60"

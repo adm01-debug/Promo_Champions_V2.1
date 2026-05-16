@@ -1,6 +1,7 @@
-import React, { RefObject, useMemo } from "react";
+import React, { RefObject, useMemo, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Bell, Sparkles, FileText, Search } from "lucide-react";
+import { Bell, Sparkles, FileText, Search, Mic } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -57,7 +58,14 @@ interface DesktopTopBarProps {
 export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
   const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
+
+  useEffect(() => {
+    const handleVoiceNav = (e: any) => setIsVoiceListening(e.detail);
+    window.addEventListener('voice-nav:listening', handleVoiceNav);
+    return () => window.removeEventListener('voice-nav:listening', handleVoiceNav);
+  }, []);
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const isTopLevel = pathSegments.length < 2;
@@ -111,6 +119,26 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
             </TooltipTrigger>
             <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
           </Tooltip>
+
+          {/* Voice Navigation Status */}
+          <AnimatePresence>
+            {isVoiceListening && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary mr-2"
+              >
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <Mic className="h-3.5 w-3.5" />
+                </motion.div>
+                <span className="text-[10px] font-black uppercase tracking-widest animate-pulse">IA Ouvindo...</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Semantic Search trigger */}
           <Tooltip>

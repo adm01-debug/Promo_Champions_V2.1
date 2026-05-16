@@ -1,7 +1,8 @@
-import { FC, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { FC, ReactNode, useCallback } from 'react';
+import { NavLink } from '@/components/navigation/NavLink';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { triggerHaptic } from '@/lib/haptics';
 
 interface NavItem {
   icon: ReactNode;
@@ -20,6 +21,11 @@ interface MobileBottomNavProps {
 
 const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   const displayIcon = item.isActive && item.filledIcon ? item.filledIcon : item.icon;
+  
+  const handleInteraction = useCallback(() => {
+    triggerHaptic('light');
+    if (item.onClick) item.onClick();
+  }, [item]);
 
   const content = (
     <>
@@ -78,7 +84,7 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   if (item.onClick) {
     return (
       <button
-        onClick={item.onClick}
+        onClick={handleInteraction}
         type="button"
         className={baseClasses}
         aria-label={item.label}
@@ -89,14 +95,15 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   }
 
   return (
-    <Link
+    <NavLink
       to={item.href}
+      onClick={() => triggerHaptic('light')}
       className={baseClasses}
       aria-label={item.label}
       aria-current={item.isActive ? 'page' : undefined}
     >
       {content}
-    </Link>
+    </NavLink>
   );
 };
 

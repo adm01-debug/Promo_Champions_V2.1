@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -39,6 +40,17 @@ export const AppSidebar = memo(function AppSidebar() {
   const { salesperson } = useAuth();
   const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  // Auto-scroll to active item for excellence
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const activeItem = scrollAreaRef.current.querySelector('[aria-current="page"]');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [location.pathname]);
 
   const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
@@ -193,7 +205,7 @@ export const AppSidebar = memo(function AppSidebar() {
 
       <Separator className="bg-border/30" />
 
-      <SidebarContent className="px-3 py-2">
+      <SidebarContent className="px-3 py-2" ref={scrollAreaRef}>
         <ScrollArea className="flex-1">
           <SidebarGroup><SidebarGroupContent><SidebarMenu className="space-y-1">{mainItems.map((item: MenuItem) => renderMenuItem(item))}</SidebarMenu></SidebarGroupContent></SidebarGroup>
           <Separator className="my-2 bg-border/30" />

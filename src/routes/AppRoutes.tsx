@@ -4,7 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PageTransition } from "@/components/navigation/PageTransition";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 const Index = lazy(() => import("@/pages/Index"));
 import { RaceTransitionWrapper } from "@/components/race";
