@@ -38,25 +38,44 @@ export const NavItem: FC<NavItemProps> = memo(({
           to={url} 
           className={cn(
             "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden",
-            window.location.pathname === url && "bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
+            window.location.pathname === url && "bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20"
           )}
           aria-current={window.location.pathname === url ? "page" : undefined}
         >
+          {window.location.pathname === url && (
+            <motion.div
+              layoutId="nav-glow"
+              className="absolute inset-0 bg-primary/5 z-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+          )}
+          
           <motion.span 
-            className="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-gradient-to-b from-primary to-primary/70 opacity-0 scale-y-0 transition-all duration-300 shadow-sm shadow-primary/30" 
-            layoutId="nav-pill"
+            className={cn(
+              "nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(var(--primary),0.8)]",
+              window.location.pathname === url ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
+            )} 
           />
-          <div className="relative z-10">
+          
+          <div className="relative z-10 flex items-center justify-center">
             <Icon className={cn(
-              "h-[18px] w-[18px] flex-shrink-0 transition-all duration-300 group-hover/item:scale-110",
+              "h-[18px] w-[18px] flex-shrink-0 transition-all duration-500 group-hover/item:scale-125 group-hover/item:rotate-[5deg]",
+              window.location.pathname === url ? "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)]" : "text-muted-foreground",
               badgeVariant === "warning" && hasBadge && "text-warning"
             )} />
             {hasBadge && (
-              <span className={badgeClasses}>
+              <motion.span 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className={badgeClasses}
+              >
                 {badgeCount > 9 ? "9+" : badgeCount}
-              </span>
+              </motion.span>
             )}
           </div>
+          
           {!isCollapsed && (
             <motion.span 
               initial={{ opacity: 0, x: -5 }}
@@ -67,8 +86,14 @@ export const NavItem: FC<NavItemProps> = memo(({
             </motion.span>
           )}
           
-          {/* Subtle glow effect on hover */}
-          <div className="absolute inset-0 bg-primary/0 group-hover/item:bg-primary/[0.03] transition-colors duration-500" />
+          {/* Subtle neon pulse on active */}
+          {window.location.pathname === url && (
+            <motion.div 
+              className="absolute inset-0 border-r-2 border-primary/30 z-0"
+              animate={{ opacity: [0.1, 0.4, 0.1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          )}
         </PreloadLink>
       </SidebarMenuButton>
     </SidebarMenuItem>
