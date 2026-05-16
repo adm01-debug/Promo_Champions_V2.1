@@ -8,6 +8,9 @@ interface PreloadLinkProps {
   children: React.ReactNode;
   className?: string;
   replace?: boolean;
+  onClick?: () => void;
+  'aria-label'?: string;
+  'aria-current'?: string;
 }
 
 /**
