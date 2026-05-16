@@ -59,13 +59,23 @@ export default defineConfig(({ mode }) => ({
     target: "esnext",
     minify: "esbuild",
     cssCodeSplit: true,
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-          'vendor-ui': ['lucide-react', 'clsx', 'tailwind-merge'],
-          'vendor-utils': ['date-fns', 'zod', 'react-hook-form'],
-          'vendor-query': ['@tanstack/react-query', '@supabase/supabase-js'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('framer-motion')) {
+              return 'vendor-core';
+            }
+            if (id.includes('lucide-react') || id.includes('radix-ui')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('supabase') || id.includes('tanstack')) {
+              return 'vendor-data';
+            }
+            return 'vendor';
+          }
         },
       },
     },
