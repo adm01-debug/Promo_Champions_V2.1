@@ -144,7 +144,7 @@ export const BackButton: FC<BackButtonProps> = memo(({
                         <DropdownMenuItem 
                           key={`${item.path}-${i}`}
                           onClick={() => {
-                            triggerHaptic();
+                            triggerHaptic('light');
                             navigate(item.path);
                           }}
                           className="text-xs flex flex-col items-start gap-0.5 p-2.5 focus:bg-primary/5 cursor-pointer"
