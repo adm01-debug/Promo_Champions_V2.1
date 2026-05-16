@@ -1,6 +1,6 @@
 /* sidebar v3 — grouped submenus */
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Crown, LogOut } from "lucide-react";
+import { Crown, LogOut, LayoutGrid, LayoutList, ShieldCheck } from "lucide-react";
 import { NavItem, NavGroup } from "@/components/navigation";
 import { UserRoleBadge } from "@/components/layout/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
