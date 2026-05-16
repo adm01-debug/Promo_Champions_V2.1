@@ -19,7 +19,7 @@ const pageVariants = {
 
 const pageTransition = {
   duration: 0.3,
-  ease: [0.43, 0.13, 0.23, 0.96] // Custom cubic-bezier for smoothness
+  ease: "easeInOut"
 };
 
 interface PageTransitionProps {
