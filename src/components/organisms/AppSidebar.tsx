@@ -6,6 +6,7 @@ import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { cn } from "@/lib/utils";
 import { triggerHaptic } from "@/lib/haptics";
 import { Button } from "@/components/ui/button";
