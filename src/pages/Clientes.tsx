@@ -141,44 +141,58 @@ const Clientes = () => {
           {sortedClients.length > 0 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {paginatedItems.map((client) => {
-                  const prediction = predictions[client.id];
-                  return (
-                    <div key={client.id} className="group relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                      <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setView360Client(client)}><BarChart3 className="h-4 w-4" /></Button>
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setTimelineClient(client)}><History className="h-4 w-4" /></Button>
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setEditingClient(client)}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-destructive/20 hover:text-destructive" onClick={() => setDeletingClient(client)}><Trash2 className="h-4 w-4" /></Button>
-                      </div>
-                      <div className="flex items-start gap-4 mb-6">
-                        <Avatar className="h-14 w-14 rounded-2xl ring-2 ring-background group-hover:ring-primary/20 transition-all"><AvatarFallback className="bg-gradient-to-br from-primary/10 to-accent/10 text-primary font-black uppercase">{client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}</AvatarFallback></Avatar>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-display font-black text-base uppercase tracking-tighter truncate group-hover:text-primary transition-colors">{client.name}</h3>
-                          <div className="flex items-center gap-2"><p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">{client.company || "OPERATIVA INDEPENDENTE"}</p><ICPBadge icpData={icpMap.get(client.id)} size="sm" /></div>
+                <AnimatePresence mode="popLayout">
+                  {paginatedItems.map((client, index) => {
+                    const prediction = predictions[client.id];
+                    return (
+                      <motion.div 
+                        key={client.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                        transition={{ 
+                          duration: 0.4, 
+                          delay: index * 0.05,
+                          ease: [0.23, 1, 0.32, 1] 
+                        }}
+                        className="group relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30 will-change-transform"
+                      >
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
+                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setView360Client(client)}><BarChart3 className="h-4 w-4" /></Button>
+                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setTimelineClient(client)}><History className="h-4 w-4" /></Button>
+                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-primary/20 hover:text-primary" onClick={() => setEditingClient(client)}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl bg-background/50 border-border/50 hover:bg-destructive/20 hover:text-destructive" onClick={() => setDeletingClient(client)}><Trash2 className="h-4 w-4" /></Button>
                         </div>
-                      </div>
-                      {prediction && prediction.nextPurchaseDate && (
-                        <div className={cn("mb-4 p-3 rounded-xl border flex items-center gap-3 animate-fade-in", prediction.urgency === 'high' ? "bg-rose-500/10 border-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/10 border-amber-500/20" : "bg-emerald-500/5 border-emerald-500/20")}>
-                          <div className={cn("p-2 rounded-lg", prediction.urgency === 'high' ? "bg-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/20" : "bg-emerald-500/10")}><BrainCircuit className={cn("h-4 w-4", prediction.urgency === 'high' ? "text-rose-500 animate-pulse" : prediction.urgency === 'medium' ? "text-amber-500" : "text-emerald-500")} /></div>
-                          <div><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Previsão</p><p className="text-xs font-bold">{prediction.daysToNextPurchase <= 0 ? "Expectativa Hoje!" : `Em ~${prediction.daysToNextPurchase} dias`}</p></div>
-                          <div className="ml-auto text-right"><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Confiança</p><p className="text-xs font-bold text-primary">{Math.round(prediction.confidence * 100)}%</p></div>
+                        <div className="flex items-start gap-4 mb-6">
+                          <Avatar className="h-14 w-14 rounded-2xl ring-2 ring-background group-hover:ring-primary/20 transition-all"><AvatarFallback className="bg-gradient-to-br from-primary/10 to-accent/10 text-primary font-black uppercase">{client.name.split(" ").map(n => n[0]).join("").slice(0, 2)}</AvatarFallback></Avatar>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-display font-black text-base uppercase tracking-tighter truncate group-hover:text-primary transition-colors">{client.name}</h3>
+                            <div className="flex items-center gap-2"><p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">{client.company || "OPERATIVA INDEPENDENTE"}</p><ICPBadge icpData={icpMap.get(client.id)} size="sm" /></div>
+                          </div>
                         </div>
-                      )}
-                      <div className="space-y-3 mb-6">
-                        {client.email && <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10"><Mail className="h-3.5 w-3.5 text-primary" /><span className="text-xs font-medium text-muted-foreground truncate">{client.email}</span></div>}
-                        {client.phone && <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10"><Phone className="h-3.5 w-3.5 text-indigo-500" /><span className="text-xs font-medium text-muted-foreground">{client.phone}</span></div>}
-                      </div>
-                      <div className="pt-4 border-t border-border/10">
-                        <div className="flex justify-between items-end">
-                          <div className="space-y-0.5"><span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">LTV Total</span><div className="flex items-baseline gap-1"><TotalValueDisplay value={Number(client.total_value || 0)} /><span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span></div></div>
-                          <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
+                        {prediction && prediction.nextPurchaseDate && (
+                          <div className={cn("mb-4 p-3 rounded-xl border flex items-center gap-3 animate-fade-in", prediction.urgency === 'high' ? "bg-rose-500/10 border-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/10 border-amber-500/20" : "bg-emerald-500/5 border-emerald-500/20")}>
+                            <div className={cn("p-2 rounded-lg", prediction.urgency === 'high' ? "bg-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/20" : "bg-emerald-500/10")}><BrainCircuit className={cn("h-4 w-4", prediction.urgency === 'high' ? "text-rose-500 animate-pulse" : prediction.urgency === 'medium' ? "text-amber-500" : "text-emerald-500")} /></div>
+                            <div><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Previsão</p><p className="text-xs font-bold">{prediction.daysToNextPurchase <= 0 ? "Expectativa Hoje!" : `Em ~${prediction.daysToNextPurchase} dias`}</p></div>
+                            <div className="ml-auto text-right"><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Confiança</p><p className="text-xs font-bold text-primary">{Math.round(prediction.confidence * 100)}%</p></div>
+                          </div>
+                        )}
+                        <div className="space-y-3 mb-6">
+                          {client.email && <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10"><Mail className="h-3.5 w-3.5 text-primary" /><span className="text-xs font-medium text-muted-foreground truncate">{client.email}</span></div>}
+                          {client.phone && <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-accent/20 border border-white/5 group-hover:border-primary/10"><Phone className="h-3.5 w-3.5 text-indigo-500" /><span className="text-xs font-medium text-muted-foreground">{client.phone}</span></div>}
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                        <div className="pt-4 border-t border-border/10">
+                          <div className="flex justify-between items-end">
+                            <div className="space-y-0.5"><span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">LTV Total</span><div className="flex items-baseline gap-1"><TotalValueDisplay value={Number(client.total_value || 0)} /><span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span></div></div>
+                            <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
               </div>
               <TablePagination currentPage={currentPage} totalPages={totalPages} onPageChange={goToPage} startIndex={startIndex} endIndex={endIndex} totalItems={totalItems} itemsPerPage={itemsPerPage} onItemsPerPageChange={setItemsPerPage} itemsPerPageOptions={itemsPerPageOptions} />
             </div>
