@@ -348,72 +348,126 @@ export default function Auth() {
                   )}
                 </Button>
 
-                <div className="relative my-5">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-                  <div className="relative flex justify-center"><span className="bg-[#0a0b1a] px-3 text-[10px] tracking-[0.3em] text-white/40 font-bold">OU COM EMAIL</span></div>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+                  <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+                    <span className="bg-[#0a0b1a] px-3 text-white/30">ou via credenciais</span>
+                  </div>
                 </div>
 
-                {/* Forms */}
-                {mode === "login" ? (
-                  <motion.form key="login" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleLogin} className="space-y-4">
-                    <NeonField label="Email" id="lemail" type="email" value={loginEmail} onChange={setLoginEmail} placeholder="seu@email.com" autoComplete="email" />
-                    <NeonField label="Senha" id="lpwd" type={showPwd ? "text" : "password"} value={loginPassword} onChange={setLoginPassword} placeholder="••••••••" autoComplete="current-password"
-                      suffix={
-                        <button type="button" onClick={() => setShowPwd(!showPwd)} className="text-white/40 hover:text-cyan-400 transition-colors">
-                          {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      }
-                    />
-
-                    <div className="flex justify-end">
-                      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-                        <DialogTrigger asChild>
-                          <button type="button" className="text-xs text-cyan-300/80 hover:text-cyan-300 transition-colors font-medium">
-                            Esqueci minha senha
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-[#0a0b1a] border-cyan-500/30 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-white">Recuperar senha</DialogTitle>
-                          </DialogHeader>
-                          <form onSubmit={handlePasswordReset} className="space-y-4">
-                            <NeonField label="Email" id="remail" type="email" value={resetEmail} onChange={setResetEmail} placeholder="seu@email.com" />
-                            <Button type="submit" disabled={isResetLoading} className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 text-white font-bold">
-                              {isResetLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar link de recuperação"}
-                            </Button>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-
-                    {lockoutStatus.isLocked && countdown > 0 && (
-                      <div className="text-xs text-pink-400 text-center font-semibold">
-                        Bloqueado · libera em {formatRemainingTime(countdown)}
+                {/* Form Logic */}
+                <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="space-y-4">
+                  {mode === "signup" && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Nome de Guerra</Label>
+                      <div className="relative group/field">
+                        <Input
+                          id="name"
+                          placeholder="Ex: Maverick"
+                          value={signupName}
+                          onChange={(e) => setSignupName(e.target.value)}
+                          className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
+                        />
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    <NeonSubmit disabled={isLoginDisabled} loading={isLoading} label="ENTRAR NA ARENA" />
-                  </motion.form>
-                ) : (
-                  <motion.form key="signup" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSignup} className="space-y-4">
-                    <NeonField label="Nome completo" id="sname" value={signupName} onChange={setSignupName} placeholder="Seu nome" autoComplete="name" />
-                    <NeonField label="Email" id="semail" type="email" value={signupEmail} onChange={setSignupEmail} placeholder="seu@email.com" autoComplete="email" />
-                    <NeonField label="Senha" id="spwd" type={showPwd ? "text" : "password"} value={signupPassword} onChange={setSignupPassword} placeholder="Mínimo 8 caracteres" autoComplete="new-password"
-                      suffix={
-                        <button type="button" onClick={() => setShowPwd(!showPwd)} className="text-white/40 hover:text-cyan-400 transition-colors">
-                          {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      }
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Email de Combate</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={mode === "login" ? loginEmail : signupEmail}
+                      onChange={(e) => mode === "login" ? setLoginEmail(e.target.value) : setSignupEmail(e.target.value)}
+                      className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
                     />
-                    <NeonSubmit disabled={isLoading} loading={isLoading} label="CRIAR CONTA E COMPETIR" />
-                  </motion.form>
-                )}
+                  </div>
 
-                <p className="text-[10px] text-center text-white/30 mt-6 leading-relaxed">
-                  Ao continuar, você concorda com os <span className="text-cyan-300/70">Termos</span> e <span className="text-cyan-300/70">Política de Privacidade</span>.
-                </p>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between ml-1">
+                      <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Criptografia</Label>
+                      {mode === "login" && (
+                        <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                          <DialogTrigger asChild>
+                            <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-[#0a0b1a] border-white/10 text-white">
+                            <DialogHeader>
+                              <DialogTitle className="text-xl font-black italic">RECUPERAR ACESSO</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handlePasswordReset} className="space-y-4 pt-4">
+                              <Input
+                                placeholder="Email cadastrado"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                className="bg-white/5 border-white/10"
+                              />
+                              <Button type="submit" disabled={isResetLoading} className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest">
+                                {isResetLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar Resgate"}
+                              </Button>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    </div>
+                    <div className="relative group/field">
+                      <Input
+                        id="password"
+                        type={showPwd ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={mode === "login" ? loginPassword : signupPassword}
+                        onChange={(e) => mode === "login" ? setLoginPassword(e.target.value) : setSignupPassword(e.target.value)}
+                        className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPwd(!showPwd)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 transition-colors"
+                      >
+                        {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={mode === "login" ? isLoginDisabled : isLoading}
+                    className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden group/btn shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-white/10 translate-x-[-100%]"
+                      whileHover={{ translateX: "100%" }}
+                      transition={{ duration: 0.6 }}
+                    />
+                    <div className="relative flex items-center justify-center gap-2">
+                      {isLoading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          {mode === "login" ? "INVASÃO DE SISTEMA" : "ALISTAR NA ELITE"}
+                          <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </div>
+                  </Button>
+                </form>
+
+                {lockoutStatus.isLocked && mode === "login" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold text-center uppercase tracking-widest"
+                  >
+                    SISTEMA BLOQUEADO · AGUARDE {countdown}S
+                  </motion.div>
+                )}
               </div>
             </div>
+
+            <p className="mt-6 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.3em]">
+              © 2026 PROMO CHAMPIONS · ALL SYSTEMS NOMINAL
+            </p>
           </motion.div>
         </div>
       </div>
