@@ -83,7 +83,7 @@ Manager.displayName = "ManagerWrapper";
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<PageLoadingFallback />}>
+    <Suspense fallback={<SmartSkeleton />}>
       <Routes>
         {/* Public auth routes */}
         <Route path="/auth" element={<Auth />} />
