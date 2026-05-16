@@ -19,8 +19,8 @@ import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() => import("@/components/molecules/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
-const RoleAwareSidebar = lazy(() => import("@/components/layout/RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
-const LayoutRealtimeEffects = lazy(() => import("@/components/layout/LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
+const RoleAwareSidebar = lazy(() => import("@/components/organisms/RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
+const LayoutRealtimeEffects = lazy(() => import("@/components/organisms/LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
 const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
 const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
