@@ -61,6 +61,7 @@ interface DesktopTopBarProps {
 }
 
 export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
+  const { theme } = useDashboardTheme();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
   const [isVoiceListening, setIsVoiceListening] = useState(false);
