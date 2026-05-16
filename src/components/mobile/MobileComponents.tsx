@@ -95,7 +95,7 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   }
 
   return (
-    <NavLink
+    <PreloadLink
       to={item.href}
       onClick={() => triggerHaptic('light')}
       className={baseClasses}
