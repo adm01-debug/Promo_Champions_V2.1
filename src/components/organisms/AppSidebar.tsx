@@ -93,7 +93,7 @@ export const AppSidebar = memo(function AppSidebar() {
 
   const renderGroupedMenu = (group: MenuGroup) => {
     const currentPath = window.location.pathname;
-    const hasActiveChild = group.items.some(item => 
+    const hasActiveChild = group.items.some((item: MenuItem) => 
       currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url + '/'))
     );
     
@@ -105,7 +105,7 @@ export const AppSidebar = memo(function AppSidebar() {
         isCollapsed={isCollapsed}
         defaultOpen={hasActiveChild}
       >
-        {group.items.map(item => renderMenuItem(item))}
+        {group.items.map((item: MenuItem) => renderMenuItem(item))}
       </NavGroup>
     );
   };
