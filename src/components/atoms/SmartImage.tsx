@@ -68,8 +68,6 @@ export const SmartImage = React.memo(({
             className
           )}
           loading="lazy"
-          onLoad={() => setIsLoaded(true)}
-          {...props}
         />
       )}
 
