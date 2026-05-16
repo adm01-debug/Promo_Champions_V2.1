@@ -36,7 +36,10 @@ export const NavItem: FC<NavItemProps> = memo(({
       <SidebarMenuButton asChild tooltip={title}>
         <PreloadLink 
           to={url} 
-          className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden"
+          className={cn(
+            "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden",
+            window.location.pathname === url && "bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10"
+          )}
           aria-current={window.location.pathname === url ? "page" : undefined}
         >
           <motion.span 
