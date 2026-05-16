@@ -1,6 +1,7 @@
 import React, { RefObject, useMemo, useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
-import { Bell, Sparkles, FileText, Search, Mic, LogOut } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { PreloadLink } from "@/components/navigation/PreloadLink";
+import { Bell, Sparkles, FileText, Mic, LogOut, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTodaysQuoteCadenceTasks } from "@/hooks/cadences/useTodaysQuoteCadenceTasks";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -108,19 +109,26 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
       <TooltipProvider delayDuration={300}>
         <div className="flex items-center gap-0.5">
           {/* Search — visually prominent */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search"
+          >
+            <Sparkles className="h-4 w-4 group-hover/search:scale-110 transition-transform" />
+            <span className="text-xs font-bold uppercase tracking-widest hidden lg:inline">IA Assistant</span>
+            <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-primary/30 bg-primary/10 px-1.5 font-mono text-[10px] font-medium text-primary/70">
+              ⌘⇧F
+            </kbd>
+          </button>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={() => searchRef.current?.open()}
-                className="h-8 flex items-center gap-2 px-3 rounded-lg bg-muted/50 hover:bg-muted/80 border border-border/40 text-muted-foreground hover:text-foreground transition-all duration-200 text-xs"
+                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
                 aria-label="Pesquisar no sistema"
-                aria-keyshortcuts="Control+K"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <span className="hidden lg:inline">Buscar...</span>
-                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-border/50 bg-background/80 px-1.5 font-mono text-[10px] font-medium text-muted-foreground/70" aria-hidden="true">
-                  ⌘K
-                </kbd>
+                <Search className="h-4 w-4 text-muted-foreground" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom"><p>Buscar (⌘K)</p></TooltipContent>
@@ -146,21 +154,6 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
             )}
           </AnimatePresence>
 
-          {/* Semantic Search trigger */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
-                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
-                aria-label="Busca semântica avançada com IA"
-                aria-keyshortcuts="Control+Shift+F"
-              >
-                <Sparkles className="h-4 w-4 text-primary" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom"><p>Busca semântica (⌘⇧F)</p></TooltipContent>
-          </Tooltip>
 
           {/* Streak Indicator */}
           <StreakIndicator />
@@ -172,7 +165,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
           {quoteTasksCount > 0 && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link
+                <PreloadLink
                   to="/cadencias-orcamentos?filter=today"
                   className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-ring outline-none"
                   aria-label={`${quoteTasksCount} tarefa${quoteTasksCount > 1 ? "s" : ""} de cadência de orçamento para hoje`}
@@ -185,7 +178,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
                     variant="info"
                     className="absolute -top-1 -right-1"
                   />
-                </Link>
+                </PreloadLink>
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p>Tarefas de cadência de orçamento para hoje ({quoteTasksCount})</p>

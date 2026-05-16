@@ -443,8 +443,8 @@
   textarea,
   [role="button"],
   .interactive {
-    transition-duration: 150ms;
-    @apply active:scale-[0.98] transition-transform;
+    transition-duration: 200ms;
+    @apply active:scale-[0.96] transition-transform;
   }
 
   /* Focus rings perfection */

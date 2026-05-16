@@ -1,7 +1,7 @@
 import React, { FC, memo } from "react";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { PreloadLink } from "./PreloadLink";
+import { NavLink } from "../navigation/NavLink";
 import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -34,13 +34,11 @@ export const NavItem: FC<NavItemProps> = memo(({
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={title}>
-        <PreloadLink 
+        <NavLink 
           to={url} 
-          className={cn(
-            "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden",
-            window.location.pathname === url && "bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
-          )}
-          aria-current={window.location.pathname === url ? "page" : undefined}
+          end
+          className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden"
+          activeClassName="bg-gradient-to-r from-primary/12 to-primary/6 text-primary font-bold shadow-sm border border-primary/10 [&>.nav-indicator]:opacity-100 [&>.nav-indicator]:scale-y-100"
         >
           <motion.span 
             className="nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-gradient-to-b from-primary to-primary/70 opacity-0 scale-y-0 transition-all duration-300 shadow-sm shadow-primary/30" 
@@ -69,7 +67,7 @@ export const NavItem: FC<NavItemProps> = memo(({
           
           {/* Subtle glow effect on hover */}
           <div className="absolute inset-0 bg-primary/0 group-hover/item:bg-primary/[0.03] transition-colors duration-500" />
-        </PreloadLink>
+        </NavLink>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );

@@ -29,16 +29,16 @@ export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(({
   const isMobile = useIsMobile();
   
   const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
-  const canGoBack = !isHomePage && window.history.length > 1;
+  const canGoBack = !isHomePage && window.history.length > 2;
 
   const handleBack = useCallback(() => {
     triggerHaptic('light');
     if (canGoBack) {
       navigate(-1);
     } else {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
-  }, [canGoBack, navigate, triggerHaptic]);
+  }, [canGoBack, navigate]);
 
   // Swipe to back logic
   const handleDragEnd = (_: any, info: PanInfo) => {

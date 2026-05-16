@@ -3,6 +3,7 @@ import { useRef, lazy, Suspense, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "./SearchTrigger";
 import { ThemeToggle } from "./ThemeToggle";
+import { Sparkles } from "lucide-react";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -112,7 +113,14 @@ export function MainLayout({ children }: MainLayoutProps) {
             title={currentPageInfo.title}
             subtitle={currentPageInfo.subtitle}
             rightAction={
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+                  className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 active:scale-90 transition-all touch-none"
+                  aria-label="Busca IA"
+                >
+                  <Sparkles className="h-5 w-5" />
+                </button>
                 <SearchTrigger onClick={() => searchRef.current?.open()} />
                 <ThemeToggle />
               </div>

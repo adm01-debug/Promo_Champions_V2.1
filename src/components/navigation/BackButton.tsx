@@ -68,15 +68,16 @@ export const BackButton: FC<BackButtonProps> = memo(({
     // Check if there are modals open before going back
     const modals = document.querySelectorAll('[role="dialog"]');
     if (modals.length > 0) {
-      // In a real scenario, we might want to close the top modal
-      // but here we follow the standard behavior of many apps
+      // Find the active close button or use the ESC behavior
       return;
     }
 
+    // Advanced history management: go back, but ensure we stay within the app context
     if (window.history.length > 2) {
       navigate(-1);
     } else {
-      navigate(fallbackPath);
+      // Safe fallback if history is lost
+      navigate(fallbackPath, { replace: true });
     }
   }, [navigate, fallbackPath]);
 

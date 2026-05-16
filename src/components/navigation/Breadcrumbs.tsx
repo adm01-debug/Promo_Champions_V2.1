@@ -1,6 +1,7 @@
 import React, { forwardRef, memo, useCallback, useState } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, Search, LayoutGrid } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { PreloadLink } from './PreloadLink';
+import { ChevronRight, Home, Copy, Check, MoreHorizontal, FileText, Share2, Printer, ExternalLink, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -271,9 +272,8 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                     ) : (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Link
+                          <PreloadLink
                             to={item.href}
-                            onClick={() => triggerHaptic('light')}
                             className={cn(
                               "hover:text-primary transition-all duration-300 flex items-center gap-1 px-2 py-0.5 rounded-lg hover:bg-primary/5 active:scale-95 group/item",
                               isFirst && "text-muted-foreground/60"
@@ -284,7 +284,7 @@ export const Breadcrumbs = memo(forwardRef<HTMLElement>(function Breadcrumbs(_pr
                             ) : (
                               <span className="font-medium">{item.label}</span>
                             )}
-                          </Link>
+                          </PreloadLink>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="text-[10px] font-medium">Ir para {item.label}</TooltipContent>
                       </Tooltip>

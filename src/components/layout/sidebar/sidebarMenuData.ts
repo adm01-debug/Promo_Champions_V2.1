@@ -5,7 +5,7 @@ import {
   MailSearch, LayoutGrid, Columns, MailCheck, DollarSign, Swords, MapPin,
   Briefcase, Search, Gauge, MessageSquare, Package, Upload, Merge, Rocket,
   Filter, PartyPopper, Flag, Shield, Crown, ArrowUpDown, PieChart, Flame,
-  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow, Brain, BookOpen,
+  Timer, HeartPulse, Rss, Wallet, CalendarClock, Webhook, ScrollText, Route, Workflow, Brain, BookOpen, Star,
 } from "lucide-react";
 
 export interface MenuItem {
@@ -23,7 +23,7 @@ export interface MenuGroup {
 export type ViewMode = 'sdr' | 'closer' | 'gestao';
 
 export const sdrMainItems: MenuItem[] = [
-  { title: "Neural Dashboard", url: "/sdr", icon: Sparkles },
+  { title: "Neural Dashboard", url: "/sdr", icon: Star },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Atividades", url: "/atividades", icon: Activity },
   { title: "Clientes", url: "/clientes", icon: Users },
@@ -34,7 +34,7 @@ export const sdrMainItems: MenuItem[] = [
 ];
 
 export const closerMainItems: MenuItem[] = [
-  { title: "Neural Dashboard", url: "/closer", icon: Sparkles },
+  { title: "Neural Dashboard", url: "/closer", icon: Star },
   { title: "Pipeline", url: "/pipeline", icon: Kanban },
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Cadências de Orçamento", url: "/cadencias-orcamentos", icon: FileText },

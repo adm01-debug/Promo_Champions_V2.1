@@ -21,14 +21,14 @@ export const NavGroup: FC<NavGroupProps> = memo(({
 }) => {
   return (
     <Collapsible defaultOpen={defaultOpen} className="group/collapsible">
-      <CollapsibleTrigger className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.15em] font-black group-data-[state=open]/collapsible:text-foreground/70 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-        <div className="p-1.5 rounded-lg bg-muted/40 group-data-[state=open]/collapsible:bg-primary/10 transition-colors">
+      <CollapsibleTrigger className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/20 transition-all duration-300 text-[10px] uppercase tracking-[0.2em] font-black group-data-[state=open]/collapsible:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group/trigger">
+        <div className="p-1.5 rounded-lg bg-muted/40 group-data-[state=open]/collapsible:bg-primary/10 transition-colors group-hover/trigger:bg-primary/5">
           <Icon className="h-3.5 w-3.5 flex-shrink-0 group-data-[state=open]/collapsible:text-primary transition-colors" />
         </div>
         {!isCollapsed && (
           <>
             <span className="flex-1 text-left transition-colors truncate">{label}</span>
-            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90 opacity-40 group-hover/collapsible:opacity-100" />
+            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90 opacity-40 group-hover/trigger:opacity-100 group-hover/trigger:text-primary" />
           </>
         )}
       </CollapsibleTrigger>

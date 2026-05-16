@@ -1,5 +1,5 @@
 import { FC, ReactNode, useCallback } from 'react';
-import { NavLink } from '@/components/navigation/NavLink';
+import { PreloadLink } from '@/components/navigation/PreloadLink';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
@@ -95,15 +95,15 @@ const NavButton: FC<{ item: NavItem; index: number }> = ({ item }) => {
   }
 
   return (
-    <NavLink
+    <PreloadLink
       to={item.href}
-      onClick={() => triggerHaptic('light')}
+      onClick={item.onClick}
       className={baseClasses}
       aria-label={item.label}
       aria-current={item.isActive ? 'page' : undefined}
     >
       {content}
-    </NavLink>
+    </PreloadLink>
   );
 };
 

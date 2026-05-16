@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -46,15 +46,7 @@ export function ProtectedRoute({
 
   // Show loading state while checking auth and roles
   if (isAuthLoading || isLoadingCurrentRole) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="space-y-4 w-full max-w-md p-8">
-          <Skeleton className="h-8 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="h-32 w-full" />
-        </div>
-      </div>
-    );
+    return <SmartSkeleton />;
   }
 
   // Redirect to auth if not logged in

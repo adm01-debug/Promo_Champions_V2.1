@@ -77,10 +77,10 @@ export function useMobileNavigation() {
   }, [location.pathname]);
 
   const goBack = useCallback(() => {
-    if (window.history.length > 1) {
+    if (window.history.length > 2) {
       navigate(-1);
     } else {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [navigate]);
 
