@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState, memo, useMemo } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -68,7 +68,7 @@ export const itemVariants: Variants = {
  * Unified PageTransition - Handles smart direction detection (back/forward)
  * and providing a premium app-like feel.
  */
-export const PageTransition: FC<PageTransitionProps> = ({ children, className }) => {
+export const PageTransition: FC<PageTransitionProps> = memo(({ children, className }) => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const [direction, setDirection] = useState(1);
@@ -94,6 +94,10 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
     }
   }, [location.pathname, navigationType]);
 
+  const transitionDivStyles = useMemo(() => 
+    cn("w-full min-h-full will-change-[transform,opacity]", className), 
+  [className]);
+
   return (
     <AnimatePresence mode="wait" initial={false} custom={direction}>
       <motion.div
@@ -103,7 +107,7 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
         animate="in"
         exit="out"
         variants={pageVariants}
-        className={cn("w-full min-h-full will-change-[transform,opacity]", className)}
+        className={transitionDivStyles}
       >
         {/* Futurist loading line decoration */}
         <motion.div 
@@ -116,30 +120,36 @@ export const PageTransition: FC<PageTransitionProps> = ({ children, className })
       </motion.div>
     </AnimatePresence>
   );
-};
+});
 
-export const StaggeredContainer: FC<{ children: ReactNode; className?: string; delay?: number }> = ({ 
+PageTransition.displayName = "PageTransition";
+
+export const StaggeredContainer: FC<{ children: ReactNode; className?: string; delay?: number }> = memo(({ 
   children, 
   className,
   delay = 0 
 }) => {
+  const containerVariantsLocal = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: delay
+      }
+    }
+  }), [delay]);
+
   return (
     <motion.div
       initial="hidden"
       animate="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.05,
-            delayChildren: delay
-          }
-        }
-      }}
+      variants={containerVariantsLocal}
       className={cn(className)}
     >
       {children}
     </motion.div>
   );
-};
+});
+
+StaggeredContainer.displayName = "StaggeredContainer";

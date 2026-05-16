@@ -31,6 +31,8 @@ export const NavItem: FC<NavItemProps> = memo(({
     "bg-primary text-primary-foreground"
   );
 
+  const isActive = window.location.pathname === url;
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={title}>
@@ -38,11 +40,11 @@ export const NavItem: FC<NavItemProps> = memo(({
           to={url} 
           className={cn(
             "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden will-change-transform",
-            window.location.pathname === url && "bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20"
+            isActive && "bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20"
           )}
-          aria-current={window.location.pathname === url ? "page" : undefined}
+          aria-current={isActive ? "page" : undefined}
         >
-          {window.location.pathname === url && (
+          {isActive && (
             <div
               className="absolute inset-0 bg-primary/5 z-0"
             />
@@ -51,14 +53,14 @@ export const NavItem: FC<NavItemProps> = memo(({
           <motion.span 
             className={cn(
               "nav-indicator absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(var(--primary),0.8)]",
-              window.location.pathname === url ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
+              isActive ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
             )} 
           />
           
           <div className="relative z-10 flex items-center justify-center">
             <Icon className={cn(
               "h-[18px] w-[18px] flex-shrink-0 transition-all duration-500 group-hover/item:scale-125 group-hover/item:rotate-[5deg]",
-              window.location.pathname === url ? "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)]" : "text-muted-foreground",
+              isActive ? "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)]" : "text-muted-foreground",
               badgeVariant === "warning" && hasBadge && "text-warning"
             )} />
             {hasBadge && (
@@ -83,9 +85,9 @@ export const NavItem: FC<NavItemProps> = memo(({
           )}
           
           {/* Subtle neon pulse on active */}
-          {window.location.pathname === url && (
+          {isActive && (
             <motion.div 
-              className="absolute inset-0 border-r-2 border-primary/30 z-0"
+              className="absolute inset-0 border-r-2 border-primary/30 z-0 will-change-opacity"
               animate={{ opacity: [0.1, 0.4, 0.1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
