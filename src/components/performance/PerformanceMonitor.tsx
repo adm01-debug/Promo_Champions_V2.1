@@ -110,8 +110,8 @@ export const PerformanceMonitor = memo(() => {
         animate={{ 
           opacity: 1, 
           y: 0,
-          scale: hasAlert ? [1, 1.05, 1] : 1,
-          borderColor: hasAlert ? "rgba(239, 68, 68, 0.5)" : "rgba(var(--primary), 0.3)"
+          scale: hasAlert ? [1, 1.05] : 1,
+          borderColor: hasAlert ? "#ef4444" : "rgba(34, 211, 238, 0.3)"
         }}
         className={cn(
           "pointer-events-auto bg-background/90 backdrop-blur-2xl border rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-4 flex flex-col gap-4 min-w-[160px] transition-all duration-500",
