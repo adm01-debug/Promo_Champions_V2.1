@@ -187,6 +187,8 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
     >
       {children}
 
+      <NavigationHud isVisible={isGKeyDown} baseKey="G" />
+
       {/* Shortcuts Dialog */}
       <Dialog open={shortcutsDialogOpen} onOpenChange={setShortcutsDialogOpen}>
         <DialogContent className="max-w-lg">
