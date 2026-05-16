@@ -14,6 +14,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { cn } from "@/lib/utils";
 import type { GlobalSearchHandle } from "./GlobalSearch";
 import { useLocation } from "react-router-dom";
+import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
