@@ -95,20 +95,30 @@ export function MainLayout({ children }: MainLayoutProps) {
       <div className="min-h-screen flex w-full bg-background/50">
         <ErrorBoundary fallback={sidebarFallback}>
           <Suspense fallback={sidebarFallback}>
-            <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
+            <motion.nav 
+              id="main-navigation" 
+              className="hidden md:block" 
+              aria-label="Navegação principal"
+              initial={{ x: -280, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            >
               <RoleAwareSidebar />
-            </nav>
+            </motion.nav>
           </Suspense>
         </ErrorBoundary>
         
-        <main 
+        <motion.main 
           id="main-content" 
           className={cn(
-            "flex-1 relative flex flex-col bg-background",
+            "flex-1 relative flex flex-col bg-background/40 backdrop-blur-[2px]",
             isMobile && "pb-[calc(5rem+env(safe-area-inset-bottom,0px))]"
           )}
           role="main"
           aria-label="Conteúdo principal"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Mobile Header */}
           <MobilePageHeader 
