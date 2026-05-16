@@ -3,6 +3,7 @@ import { useRef, lazy, Suspense, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "./SearchTrigger";
 import { ThemeToggle } from "./ThemeToggle";
+import { Sparkles } from "lucide-react";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
