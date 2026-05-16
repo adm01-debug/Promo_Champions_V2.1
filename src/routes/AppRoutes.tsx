@@ -104,7 +104,7 @@ export function AppRoutes() {
           element={
             <MainLayout>
               <ErrorBoundary>
-                <Suspense fallback={<PageLoadingFallback />}>
+                <Suspense fallback={<SmartSkeleton />}>
                   <PageTransition>
                     <Routes>
                       {/* ─── Dashboards ────────────────────────────── */}
