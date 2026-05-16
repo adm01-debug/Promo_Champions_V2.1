@@ -11,9 +11,13 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 20 : -20,
-    scale: 0.98,
-    filter: "blur(8px)",
+    x: direction > 0 ? 15 : -15,
+    scale: 0.99,
+    filter: "blur(4px)",
+    transition: {
+      duration: 0.2,
+      ease: [0.33, 1, 0.68, 1], // Cubic ease out for snappier start
+    }
   }),
   in: {
     opacity: 1,
@@ -21,19 +25,19 @@ const pageVariants: Variants = {
     scale: 1,
     filter: "blur(0px)",
     transition: {
-      duration: 0.4,
+      duration: 0.35,
       ease: [0.23, 1, 0.32, 1], // Quartic ease out
-      staggerChildren: 0.08,
+      staggerChildren: 0.05,
       when: "beforeChildren",
     }
   },
   out: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -20 : 20,
-    scale: 1.02,
-    filter: "blur(8px)",
+    x: direction > 0 ? -15 : 15,
+    scale: 1.01,
+    filter: "blur(4px)",
     transition: {
-      duration: 0.3,
+      duration: 0.25,
       ease: [0.23, 1, 0.32, 1],
     }
   }),

@@ -75,64 +75,111 @@ export const PerformanceMonitor = memo(() => {
     <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none">
       <motion.div 
         layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "pointer-events-auto bg-background/80 backdrop-blur-xl border border-primary/20 rounded-xl shadow-2xl p-3 flex flex-col gap-3 min-w-[140px]",
-          isExpanded ? "w-64" : "w-auto"
+          "pointer-events-auto bg-background/90 backdrop-blur-2xl border border-primary/30 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-4 flex flex-col gap-4 min-w-[160px] transition-all duration-500",
+          isExpanded ? "w-72" : "w-auto"
         )}
       >
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-mono font-bold tracking-tighter uppercase text-muted-foreground">System Metrics</span>
+          <div className="flex items-center gap-2.5">
+            <div className="relative">
+              <Activity className="w-4 h-4 text-primary" />
+              <motion.div 
+                className="absolute inset-0 bg-primary/20 rounded-full"
+                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </div>
+            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-muted-foreground/80">Engine Health</span>
           </div>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1 hover:bg-primary/10 rounded-md transition-colors"
+            className="p-1.5 hover:bg-primary/10 rounded-lg transition-all duration-300 hover:scale-110 active:scale-95"
           >
-            {isExpanded ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+            {isExpanded ? <Minimize2 className="w-3.5 h-3.5 text-primary/70" /> : <Maximize2 className="w-3.5 h-3.5 text-primary/70" />}
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Zap className="w-3 h-3 text-amber-400" />
-              <span className="text-[10px] font-mono text-muted-foreground">FPS</span>
+        <div className="grid grid-cols-1 gap-3">
+          <div className="flex items-center justify-between group">
+            <div className="flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-amber-400 group-hover:animate-pulse" />
+              <span className="text-[11px] font-mono font-medium text-muted-foreground">FPS</span>
             </div>
-            <span className={cn("text-xs font-mono font-bold", getStatusColor(fps, 'fps'))}>
-              {fps}
-            </span>
+            <div className="flex items-center gap-2">
+              {fps < 50 && (
+                <motion.div 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" 
+                />
+              )}
+              <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(fps, 'fps'))}>
+                {fps}
+              </span>
+            </div>
           </div>
 
           {isExpanded && (
-            <div className="h-8 flex items-end gap-0.5 px-1 bg-black/20 rounded border border-white/5">
-              {history.map((val, i) => (
-                <div 
-                  key={i} 
-                  className="flex-1 bg-primary/40 rounded-t-sm" 
-                  style={{ height: `${Math.min(100, (val / 60) * 100)}%` }}
-                />
-              ))}
-            </div>
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              className="space-y-3"
+            >
+              <div className="h-12 flex items-end gap-0.5 px-1.5 py-1 bg-black/40 rounded-lg border border-white/5 overflow-hidden">
+                {history.map((val, i) => (
+                  <motion.div 
+                    key={i} 
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    className={cn(
+                      "flex-1 rounded-t-[1px] transition-colors duration-300",
+                      val >= 55 ? "bg-emerald-500/50" : val >= 30 ? "bg-amber-500/50" : "bg-rose-500/50"
+                    )} 
+                    style={{ height: `${Math.max(5, (val / 60) * 100)}%` }}
+                  />
+                ))}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Stability</div>
+                  <div className="text-xs font-mono font-bold text-emerald-400">
+                    {fps >= 58 ? 'ULTRA' : fps >= 45 ? 'STABLE' : 'JITTER'}
+                  </div>
+                </div>
+                <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Load</div>
+                  <div className="text-xs font-mono font-bold text-blue-400">
+                    {renderTime < 8 ? 'LIGHT' : renderTime < 16 ? 'OPTIMAL' : 'HEAVY'}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3 h-3 text-blue-400" />
-              <span className="text-[10px] font-mono text-muted-foreground">RENDER</span>
+          <div className="flex items-center justify-between group">
+            <div className="flex items-center gap-2">
+              <Clock className="w-3.5 h-3.5 text-blue-400 group-hover:rotate-12 transition-transform" />
+              <span className="text-[11px] font-mono font-medium text-muted-foreground">LATENCY</span>
             </div>
-            <span className={cn("text-xs font-mono font-bold", getStatusColor(renderTime, 'render'))}>
-              {renderTime}ms
+            <span className={cn("text-sm font-mono font-black tabular-nums tracking-tighter", getStatusColor(renderTime, 'render'))}>
+              {renderTime}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full border border-primary/40 border-t-primary animate-spin" />
-              <span className="text-[10px] font-mono text-muted-foreground">TRANSITION</span>
+          <div className="flex items-center justify-between group">
+            <div className="flex items-center gap-2">
+              <div className="relative w-3.5 h-3.5">
+                <div className="absolute inset-0 rounded-full border border-primary/20" />
+                <div className="absolute inset-0 rounded-full border border-t-primary animate-spin" />
+              </div>
+              <span className="text-[11px] font-mono font-medium text-muted-foreground">ROUTE</span>
             </div>
-            <span className="text-xs font-mono font-bold text-primary">
-              {transitionTime > 0 ? `${transitionTime}ms` : '--'}
+            <span className="text-sm font-mono font-black tabular-nums tracking-tighter text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.4)]">
+              {transitionTime > 0 ? `${transitionTime}` : '--'}<span className="text-[10px] ml-0.5 opacity-70">ms</span>
             </span>
           </div>
         </div>
