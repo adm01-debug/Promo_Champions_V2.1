@@ -57,7 +57,14 @@ interface DesktopTopBarProps {
 export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
   const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
+
+  useEffect(() => {
+    const handleVoiceNav = (e: any) => setIsVoiceListening(e.detail);
+    window.addEventListener('voice-nav:listening', handleVoiceNav);
+    return () => window.removeEventListener('voice-nav:listening', handleVoiceNav);
+  }, []);
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const isTopLevel = pathSegments.length < 2;
