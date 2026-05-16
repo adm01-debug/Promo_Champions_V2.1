@@ -1,7 +1,7 @@
 import React, { FC, memo } from "react";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { NavLink } from "./NavLink";
+import { PreloadLink } from "./PreloadLink";
 import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
