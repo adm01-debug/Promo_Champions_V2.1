@@ -112,7 +112,14 @@ export function MainLayout({ children }: MainLayoutProps) {
             title={currentPageInfo.title}
             subtitle={currentPageInfo.subtitle}
             rightAction={
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+                  className="h-9 w-9 flex items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 active:scale-90 transition-all"
+                  aria-label="Busca IA"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </button>
                 <SearchTrigger onClick={() => searchRef.current?.open()} />
                 <ThemeToggle />
               </div>
