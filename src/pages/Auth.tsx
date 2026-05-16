@@ -113,20 +113,20 @@ export default function Auth() {
         <motion.div
           className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-[120px] opacity-40"
           style={{ background: "radial-gradient(circle, #22d3ee, transparent)" }}
-          animate={{ scale: [1, 1.2, 1], x: [0, 60, 0], y: [0, 40, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ scale: [1, 1.2], x: [0, 60], y: [0, 40] }}
+          transition={{ duration: 12, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
         />
         <motion.div
           className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[140px] opacity-40"
           style={{ background: "radial-gradient(circle, #a855f7, transparent)" }}
-          animate={{ scale: [1.1, 1, 1.1], x: [0, -50, 0], y: [0, -30, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ scale: [1.1, 1], x: [0, -50], y: [0, -30] }}
+          transition={{ duration: 14, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
         />
         <motion.div
           className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full blur-[120px] opacity-30"
           style={{ background: "radial-gradient(circle, #ec4899, transparent)" }}
-          animate={{ scale: [1, 1.3, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ scale: [1, 1.3] }}
+          transition={{ duration: 10, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
         />
 
         {/* Floating particles */}
