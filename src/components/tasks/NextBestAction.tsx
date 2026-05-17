@@ -1,4 +1,5 @@
 // NextBestAction - AI-powered action suggestions
+// NextBestAction - AI-powered action suggestions
 import { useState } from 'react';
 import { useNextBestAction } from '@/hooks/useNextBestAction';
 import { useSalespeople } from '@/hooks/useSalespeople';
@@ -24,7 +25,10 @@ import {
   FileText, 
   MoreHorizontal,
   Plus,
-  Lightbulb
+  Lightbulb,
+  Zap,
+  Linkedin,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +38,8 @@ interface ActionSuggestion {
   actionType: string;
   priority: 'high' | 'medium' | 'low';
   dealName?: string;
+  dealId?: string;
+  channel?: string;
 }
 
 const priorityConfig = {
@@ -44,11 +50,14 @@ const priorityConfig = {
 
 const actionTypeConfig = {
   call: { label: 'Ligação', icon: Phone, color: 'text-status-info' },
+  call_now: { label: 'Ligar Agora', icon: Zap, color: 'text-status-error animate-pulse' },
   meeting: { label: 'Reunião', icon: Users, color: 'text-status-purple' },
   email: { label: 'E-mail', icon: Mail, color: 'text-primary' },
   follow_up: { label: 'Follow-up', icon: Clock, color: 'text-status-warning' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-accent' },
   discount: { label: 'Desconto', icon: Sparkles, color: 'text-status-success' },
+  linkedin: { label: 'LinkedIn', icon: Linkedin, color: 'text-[#0077B5]' },
+  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'text-[#25D366]' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };
 
@@ -65,9 +74,18 @@ export function NextBestAction() {
   };
 
   const handleCreateTask = (suggestion: ActionSuggestion) => {
-    const taskType = ['call', 'email', 'meeting', 'follow_up', 'proposal', 'discount', 'other'].includes(suggestion.actionType)
-      ? (suggestion.actionType as 'call' | 'email' | 'meeting' | 'follow_up' | 'proposal' | 'other')
-      : 'other';
+    // Map suggestion action types to supported TaskTypes
+    let taskType: any = 'other';
+    const type = suggestion.actionType;
+    
+    if (type === 'call' || type === 'call_now') taskType = 'call';
+    else if (type === 'email') taskType = 'email';
+    else if (type === 'meeting') taskType = 'meeting';
+    else if (type === 'follow_up') taskType = 'follow_up';
+    else if (type === 'proposal') taskType = 'proposal';
+    else if (type === 'discount') taskType = 'discount';
+    else if (type === 'linkedin') taskType = 'linkedin';
+    else if (type === 'whatsapp') taskType = 'whatsapp';
 
     createTask.mutate({
       title: suggestion.title,
@@ -76,6 +94,7 @@ export function NextBestAction() {
       task_type: taskType,
       priority: suggestion.priority === 'high' ? 'high' : suggestion.priority === 'medium' ? 'medium' : 'low',
       salesperson_id: selectedSalesperson || undefined,
+      sale_id: suggestion.dealId || undefined,
     });
   };
 
@@ -86,7 +105,7 @@ export function NextBestAction() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-display">
           <Sparkles className="h-5 w-5 text-primary" />
-          Próxima Melhor Ação
+          IA: Próxima Melhor Ação
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -113,12 +132,12 @@ export function NextBestAction() {
             {nextBestAction.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Gerando...
+                Analisando...
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4 mr-2" />
-                Gerar Sugestões
+                Gerar Insights
               </>
             )}
           </Button>
@@ -130,12 +149,12 @@ export function NextBestAction() {
               <div className="p-1.5 rounded-lg bg-primary/20">
                 <Lightbulb className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-sm text-foreground font-medium">{nextBestAction.data.insight}</p>
+              <p className="text-sm text-foreground font-medium italic">"{nextBestAction.data.insight}"</p>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-sm font-display font-medium text-muted-foreground uppercase tracking-wider">
-                Próximas ações recomendadas para <span className="gradient-text">{selectedPerson?.name}</span>:
+              <h4 className="text-xs font-display font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                Ações Recomendadas para <span className="text-primary">{selectedPerson?.name}</span>:
               </h4>
               
               {nextBestAction.data.suggestions.map((suggestion, index) => {
@@ -146,34 +165,48 @@ export function NextBestAction() {
                 return (
                   <div
                     key={index}
-                    className="glass rounded-xl p-4 border border-border/40 hover-lift transition-all"
+                    className={cn(
+                      "glass rounded-xl p-4 border border-border/40 hover-lift transition-all",
+                      suggestion.actionType === 'call_now' && "border-status-error/40 bg-status-error/5"
+                    )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1">
                         <div className={cn("p-2 rounded-lg bg-muted/50", actionType.color)}>
-                          <ActionIcon className="h-4 w-4" />
+                          <ActionIcon className={cn("h-4 w-4", suggestion.actionType === 'call_now' && "animate-pulse")} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h5 className="font-medium text-sm">{suggestion.title}</h5>
-                            <Badge variant="outline" className={cn("text-xs", priority.className)}>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h5 className="font-bold text-sm">{suggestion.title}</h5>
+                            <Badge variant="outline" className={cn("text-[10px] h-5 py-0", priority.className)}>
                               {priority.label}
                             </Badge>
+                            {suggestion.actionType === 'call_now' && (
+                              <Badge className="bg-status-error text-white text-[10px] h-5 py-0 animate-pulse border-none">
+                                GATILHO AGORA
+                              </Badge>
+                            )}
                           </div>
-                          <p className="text-xs text-muted-foreground">{suggestion.description}</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.description}</p>
                           {suggestion.dealName && (
-                            <p className="text-xs text-primary mt-1">Deal: {suggestion.dealName}</p>
+                            <div className="flex items-center gap-1 mt-2">
+                              <span className="text-[10px] text-muted-foreground uppercase">Oportunidade:</span>
+                              <span className="text-[10px] font-semibold text-primary">{suggestion.dealName}</span>
+                            </div>
                           )}
                         </div>
                       </div>
                       <Button
-                        variant="ghost"
+                        variant={suggestion.actionType === 'call_now' ? "default" : "secondary"}
                         size="sm"
-                        className="shrink-0"
+                        className={cn(
+                          "shrink-0 text-xs h-8",
+                          suggestion.actionType === 'call_now' && "bg-status-error hover:bg-status-error/90"
+                        )}
                         onClick={() => handleCreateTask(suggestion)}
                       >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Criar Tarefa
+                        <Plus className="h-3.5 w-3.5 mr-1" />
+                        Agendar
                       </Button>
                     </div>
                   </div>
