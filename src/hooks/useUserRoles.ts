@@ -15,7 +15,7 @@ export interface UserRole {
 }
 
 export function useUserRoles() {
-  const { user } = useAuth();
+  const { user, salesperson } = useAuth();
   const queryClient = useQueryClient();
 
   // Get current user's role
@@ -95,6 +95,7 @@ export function useUserRoles() {
   // Helper functions
   const isAdmin = currentUserRole?.role === "admin";
   const isManager = currentUserRole?.role === "manager";
+  const isHybrid = salesperson?.role === "hybrid";
   const isAdminOrManager = isAdmin || isManager;
 
   const hasRole = (role: AppRole) => currentUserRole?.role === role;
@@ -113,6 +114,7 @@ export function useUserRoles() {
     isUpdatingRole: updateRoleMutation.isPending,
     isAdmin,
     isManager,
+    isHybrid,
     isAdminOrManager,
     hasRole,
     canManageRoles,

@@ -1,6 +1,7 @@
 // MainLayout - primary layout wrapper (performance-optimized)
-import { useRef, lazy, Suspense, useEffect } from "react";
+import { useRef, lazy, Suspense, useEffect, useMemo } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 import { SearchTrigger } from "@/components/atoms/SearchTrigger";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { Sparkles } from "lucide-react";
@@ -45,9 +46,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
 
+  const smartSkeleton = useMemo(() => <SmartSkeleton />, []);
+
   // Unified Scroll to Top logic with premium feel
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
   // Dynamic Title Sync for excellence
@@ -180,11 +183,11 @@ export function MainLayout({ children }: MainLayoutProps) {
           <ConsentBanner />
         </Suspense>
         
-        <Suspense fallback={null}>
+        <Suspense fallback={smartSkeleton}>
           <PerformanceMonitor />
         </Suspense>
 
-        <Suspense fallback={null}>
+        <Suspense fallback={smartSkeleton}>
           <SemanticSearchMount />
         </Suspense>
       </div>
