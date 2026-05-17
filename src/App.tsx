@@ -38,6 +38,34 @@ const queryClient = new QueryClient({
       refetchInterval: false,
       networkMode: "offlineFirst",
     },
+    mutations: {
+      retry: (failureCount, error: any) => {
+        // Only retry idempotent-looking network errors or 5xx
+        const status = error?.status;
+        const message = error?.message?.toLowerCase() || "";
+        const isNetworkError = message.includes("network") || message.includes("fetch") || message.includes("timeout");
+        const isServerError = status >= 500 && status <= 599;
+        
+        if (failureCount < 2 && (isNetworkError || isServerError)) {
+          return true;
+        }
+        return false;
+      },
+      onError: (error: any) => {
+        captureException(error, "GlobalMutationError");
+        
+        // Don't toast for cancelled or auth errors (handled by auth logic)
+        if (error?.status === 401 || error?.status === 403 || error?.name === "AbortError") {
+          return;
+        }
+
+        const message = error?.message || "Ocorreu um erro ao processar sua solicitação.";
+        Sonner.error("Erro na operação", {
+          description: message,
+          duration: 5000,
+        });
+      },
+    },
   },
 });
 
