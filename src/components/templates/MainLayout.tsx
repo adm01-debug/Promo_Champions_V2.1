@@ -1,5 +1,5 @@
 // MainLayout - primary layout wrapper (performance-optimized)
-import { useRef, lazy, Suspense, useEffect } from "react";
+import { useRef, lazy, Suspense, useEffect, useMemo } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SearchTrigger } from "@/components/atoms/SearchTrigger";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
@@ -44,6 +44,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
+
+  const smartSkeleton = useMemo(() => <SmartSkeleton />, []);
 
   // Unified Scroll to Top logic with premium feel
   useEffect(() => {
