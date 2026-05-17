@@ -71,11 +71,9 @@ const Vendas = () => {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "date_desc":
-          return new Date(b.data.split("/").reverse().join("-")).getTime() - 
-                 new Date(a.data.split("/").reverse().join("-")).getTime();
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case "date_asc":
-          return new Date(a.data.split("/").reverse().join("-")).getTime() - 
-                 new Date(b.data.split("/").reverse().join("-")).getTime();
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case "value_desc":
           return b.valor - a.valor;
         case "value_asc":
