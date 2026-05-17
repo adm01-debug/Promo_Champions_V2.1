@@ -92,7 +92,7 @@ export const SalesChart = React.memo(React.forwardRef<HTMLDivElement>((_, ref) =
             <p className="font-mono text-[10px] uppercase tracking-widest">No spectral data detected</p>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
