@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
@@ -206,6 +206,13 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
             <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-indigo-500/10 text-indigo-500 border-none">
               <Users className="h-2.5 w-2.5 mr-0.5" />
               ICP ALVO
+            </Badge>
+          )}
+
+          {deal.sdr_id && !deal.salesperson_id && (
+            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-amber-500/10 text-amber-500 border-none">
+              <UserPlus className="h-2.5 w-2.5 mr-0.5" />
+              AGUARDANDO CLOSER
             </Badge>
           )}
         </div>
