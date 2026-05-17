@@ -41,25 +41,26 @@ export function useCompetitiveRanking() {
 
       const firstPlaceSales = data[0]?.total_sales || 0;
 
-      return data.map((sp, index) => {
-        const rank = sp.rank;
-        const titleInfo = RANK_TITLES[rank] || null;
-        const nextSales = index > 0 ? data[index - 1].total_sales : sp.total_sales;
+      return (data || []).map((sp, index) => {
+        const rank = sp.rank || (index + 1);
+        const titleInfo = RANK_TITLES[rank as number] || null;
+        const nextSales = index > 0 ? (data[index - 1].total_sales || 0) : (sp.total_sales || 0);
+        const currentSales = sp.total_sales || 0;
         
         return {
-          id: sp.id,
-          name: sp.name,
+          id: sp.id as string,
+          name: sp.name as string,
           avatar_url: sp.avatar_url,
-          role: sp.role,
-          totalSales: sp.total_sales,
-          dealsCount: sp.deals_count,
-          leadsCount: sp.leads_count,
-          rank,
+          role: sp.role as string,
+          totalSales: currentSales,
+          dealsCount: sp.deals_count || 0,
+          leadsCount: sp.leads_count || 0,
+          rank: rank as number,
           title: titleInfo?.title || null,
           emoji: titleInfo?.emoji || null,
           color: titleInfo?.color || null,
-          gapToFirst: firstPlaceSales - sp.total_sales,
-          gapToNext: nextSales - sp.total_sales,
+          gapToFirst: firstPlaceSales - currentSales,
+          gapToNext: nextSales - currentSales,
         };
       });
     },
