@@ -80,10 +80,11 @@ export const useSalesData = (searchTerm?: string) => {
         fullId: sale.id,
         cliente: sale.client?.name || sale.client_name,
         produto: sale.product?.name || sale.product_name,
-        valor: Number(sale.amount),
+        valor: Number(sale.amount || 0),
         status: sale.status,
         statusLabel: statusMap[sale.status] || sale.status,
         data: format(new Date(sale.created_at), "dd/MM/yyyy", { locale: ptBR }),
+        created_at: sale.created_at, // Preserving raw ISO date for robust sorting
         client_id: sale.client_id,
         product_id: sale.product_id,
         salesperson_id: sale.salesperson_id,

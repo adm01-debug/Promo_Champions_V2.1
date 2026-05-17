@@ -1,7 +1,7 @@
 import { UI } from "@/config/constants";
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as SonnerComponent, toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ import { AppRoutes } from "@/routes/AppRoutes";
 import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
 import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
-import { initErrorTracking } from "@/lib/errorTracking";
+import { initErrorTracking, captureException } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
 initErrorTracking();
@@ -38,6 +38,34 @@ const queryClient = new QueryClient({
       refetchInterval: false,
       networkMode: "offlineFirst",
     },
+    mutations: {
+      retry: (failureCount, error: any) => {
+        // Only retry idempotent-looking network errors or 5xx
+        const status = error?.status;
+        const message = error?.message?.toLowerCase() || "";
+        const isNetworkError = message.includes("network") || message.includes("fetch") || message.includes("timeout");
+        const isServerError = status >= 500 && status <= 599;
+        
+        if (failureCount < 2 && (isNetworkError || isServerError)) {
+          return true;
+        }
+        return false;
+      },
+      onError: (error: any) => {
+        captureException(error, "GlobalMutationError");
+        
+        // Don't toast for cancelled or auth errors (handled by auth logic)
+        if (error?.status === 401 || error?.status === 403 || error?.name === "AbortError") {
+          return;
+        }
+
+        const message = error?.message || "Ocorreu um erro ao processar sua solicitação.";
+        toast.error("Erro na operação", {
+          description: message,
+          duration: 5000,
+        });
+      },
+    },
   },
 });
 
@@ -51,7 +79,7 @@ const App = () => {
               <GlobalErrorBoundary>
                 <XPToastProvider>
                   <Toaster />
-                  <Sonner 
+                  <SonnerComponent 
                     position="top-right" 
                     closeButton 
                     richColors 
