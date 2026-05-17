@@ -39,32 +39,38 @@ export function useSalesChartData(period: Period) {
         }
         sales.forEach(s => {
           const key = format(parseISO(s.created_at), 'EEE', { locale: ptBR });
-          grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));
-        });
-      } else if (period === '30d') {
-        // Group by week
-        for (let i = 3; i >= 0; i--) {
-          grouped.set(`Sem ${4 - i}`, 0);
-        }
-        sales.forEach(s => {
-          const weekStart = startOfWeek(parseISO(s.created_at), { weekStartsOn: 1 });
-          const weeksDiff = Math.floor((now.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
-          const weekNum = Math.max(1, 4 - weeksDiff);
-          const key = `Sem ${weekNum}`;
           if (grouped.has(key)) {
             grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));
           }
         });
+      } else if (period === '30d') {
+        // Group by week (last 4 weeks)
+        for (let i = 3; i >= 0; i--) {
+          grouped.set(`Sem ${4 - i}`, 0);
+        }
+        sales.forEach(s => {
+          const saleDate = parseISO(s.created_at);
+          const weekStart = startOfWeek(saleDate, { weekStartsOn: 1 });
+          const nowWeekStart = startOfWeek(now, { weekStartsOn: 1 });
+          const weeksDiff = Math.floor((nowWeekStart.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          
+          if (weeksDiff >= 0 && weeksDiff <= 3) {
+            const key = `Sem ${4 - weeksDiff}`;
+            grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));
+          }
+        });
       } else {
-        // Group by month
-        for (let i = 0; i < 3; i++) {
-          const d = subDays(now, (2 - i) * 30);
+        // Group by month (last 3 months)
+        for (let i = 2; i >= 0; i--) {
+          const d = startOfMonth(subDays(now, i * 30));
           const key = format(d, 'MMM', { locale: ptBR });
           grouped.set(key, 0);
         }
         sales.forEach(s => {
           const key = format(parseISO(s.created_at), 'MMM', { locale: ptBR });
-          grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));
+          if (grouped.has(key)) {
+            grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));
+          }
         });
       }
 
