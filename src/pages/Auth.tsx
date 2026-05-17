@@ -47,22 +47,46 @@ export default function Auth() {
     }
   }, [lockoutStatus.isLocked, lockoutStatus.remainingSeconds, loginEmail, checkLoginAttempts]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { emailSchema.parse(loginEmail); passwordSchema.parse(loginPassword); }
+    try { 
+      emailSchema.parse(loginEmail); 
+      passwordSchema.parse(loginPassword); 
+      if (authMode === 'signup' && !name) {
+        toast.error("Por favor, insira seu nome.");
+        return;
+      }
+    }
     catch (err) { if (err instanceof z.ZodError) { toast.error(err.errors[0].message); return; } }
-    const { canAttempt } = await checkLoginAttempts(loginEmail);
-    if (!canAttempt) { toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`); return; }
-    setIsLoading(true);
-    const { error } = await signIn(loginEmail, loginPassword);
-    setIsLoading(false);
-    if (error) {
-      await recordLoginAttempt(loginEmail, false, error.message);
-      if (error.message.includes("Invalid login credentials")) {
-        const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
-        toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
-      } else toast.error(error.message);
-    } else { await recordLoginAttempt(loginEmail, true); toast.success("Bem-vindo de volta, campeão! 🏆"); navigate("/"); }
+    
+    if (authMode === 'login') {
+      const { canAttempt } = await checkLoginAttempts(loginEmail);
+      if (!canAttempt) { toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`); return; }
+      setIsLoading(true);
+      const { error } = await signIn(loginEmail, loginPassword);
+      setIsLoading(false);
+      if (error) {
+        await recordLoginAttempt(loginEmail, false, error.message);
+        if (error.message.includes("Invalid login credentials")) {
+          const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
+          toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
+        } else toast.error(error.message);
+      } else { 
+        await recordLoginAttempt(loginEmail, true); 
+        toast.success("Bem-vindo de volta, campeão! 🏆"); 
+        navigate("/"); 
+      }
+    } else {
+      setIsLoading(true);
+      const { error } = await signUp(loginEmail, loginPassword, name);
+      setIsLoading(false);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Conta criada com sucesso! 🚀");
+        setAuthMode('login');
+      }
+    }
   };
 
 
