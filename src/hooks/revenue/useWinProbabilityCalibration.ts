@@ -76,7 +76,7 @@ export function useDealProbabilityScores(limit = 200) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("deal_probability_scores")
-        .select("*, sales:sale_id(id, amount, status, salesperson_id, salespeople:salesperson_id(name))")
+        .select("*, sales:sale_id(id, amount, status, salesperson_id, salespeople:salespeople!salesperson_id(name))")
         .order("calculated_at", { ascending: false })
         .limit(limit);
       if (error) throw error;

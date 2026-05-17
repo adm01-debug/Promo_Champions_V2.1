@@ -36,7 +36,7 @@ export const useLeadsFullView = (options: UseLeadsFullViewOptions = {}) => {
     queryFn: async (): Promise<LeadFullView[]> => {
       let query = supabase
         .from('sales')
-        .select('*, salespeople:salesperson_id(name)')
+        .select('*, salespeople:salespeople!salesperson_id(name)')
         .order('created_at', { ascending: false })
         .limit(limit);
 
