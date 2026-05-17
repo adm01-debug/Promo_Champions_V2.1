@@ -84,6 +84,7 @@ export interface PortfolioStats {
   active: number;
   inactive: number;
   unassigned: number;
+  activatedCount: number;
   // Aliases for component compatibility
   totalClients: number;
   activeClients: number;
