@@ -19,6 +19,7 @@ export interface Commission {
   paid_at: string | null;
   paid_by: string | null;
   payment_notes: string | null;
+  is_first_sale?: boolean;
   created_at: string;
   updated_at: string;
   sales?: {

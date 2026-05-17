@@ -16,6 +16,7 @@ interface Sale {
   status: string;
   category: string;
   created_at: string;
+  is_first_sale: boolean;
 }
 
 interface DailyMetric {
@@ -115,6 +116,8 @@ export function useReportMetrics(dateRange: DateRange) {
     if (!salesQuery.data || salesQuery.data.length === 0) {
       return {
         totalRevenue: 0,
+        activationRevenue: 0,
+        portfolioRevenue: 0,
         newClients: 0,
         conversionRate: 0,
         avgTicket: 0,
@@ -127,6 +130,8 @@ export function useReportMetrics(dateRange: DateRange) {
 
     const completedSales = salesQuery.data.filter(s => s.status === "completed");
     const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
+    const activationRevenue = completedSales.filter(s => s.is_first_sale).reduce((sum, s) => sum + Number(s.amount), 0);
+    const portfolioRevenue = totalRevenue - activationRevenue;
     const avgTicket = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
     
     // Get unique clients
@@ -160,6 +165,8 @@ export function useReportMetrics(dateRange: DateRange) {
     
     return {
       totalRevenue,
+      activationRevenue,
+      portfolioRevenue,
       newClients: uniqueClients.size,
       conversionRate: salesQuery.data.length > 0 
         ? (completedSales.length / salesQuery.data.length) * 100 

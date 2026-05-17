@@ -17,6 +17,7 @@ interface RankingGridItemProps {
   goalAmount: number;
   goalProgress: number;
   completedSales: number;
+  role?: string;
   index: number;
 }
 
@@ -66,6 +67,7 @@ export const RankingGridItem = React.memo(function RankingGridItem({
   goalAmount,
   goalProgress,
   completedSales,
+  role,
   index,
 }: RankingGridItemProps) {
   const decor = getRankDecor(rank);
@@ -123,9 +125,18 @@ export const RankingGridItem = React.memo(function RankingGridItem({
             </div>
           </div>
           
-          <div className="flex items-center gap-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-            <span className="flex items-center gap-1"><Trophy className="h-2.5 w-2.5" /> {completedSales} sales</span>
-            <span className="flex items-center gap-1"><Swords className="h-2.5 w-2.5" /> 14 duels</span>
+          <div className="flex items-center gap-2 mb-2">
+            {role && (
+              <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-1.5 h-4 border-none", 
+                role === 'sdr' ? "bg-info/10 text-info" : 
+                role === 'closer' ? "bg-success/10 text-success" : "bg-primary/10 text-primary")}>
+                {role}
+              </Badge>
+            )}
+            <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <span className="flex items-center gap-1"><Trophy className="h-2.5 w-2.5" /> {completedSales} sales</span>
+              <span className="flex items-center gap-1"><Swords className="h-2.5 w-2.5" /> 14 duels</span>
+            </div>
           </div>
 
           {/* Mini progress */}

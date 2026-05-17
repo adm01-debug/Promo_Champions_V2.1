@@ -18336,6 +18336,10 @@ export type Database = {
           total_revenue: number
         }[]
       }
+      check_is_first_activation: {
+        Args: { p_client_id: string; p_sale_id: string }
+        Returns: boolean
+      }
       check_is_first_sale: { Args: { p_client_id: string }; Returns: boolean }
       check_performance_bets_completion: {
         Args: { p_salesperson_id: string }
