@@ -110,25 +110,39 @@ const fetchData = async (
 
   let salesQuery = supabase
     .from("sales")
-    .select("amount, status, created_at, salesperson_id")
+    .select("amount, status, created_at, salesperson_id, sdr_id, closer_id")
     .gte("created_at", allStart)
     .lte("created_at", allEnd);
     
-  if (salespersonId) salesQuery = salesQuery.eq("salesperson_id", salespersonId);
+  if (salespersonId) {
+    if (role === 'sdr') {
+      salesQuery = salesQuery.eq("sdr_id", salespersonId);
+    } else if (role === 'closer') {
+      salesQuery = salesQuery.eq("closer_id", salespersonId);
+    } else {
+      salesQuery = salesQuery.eq("salesperson_id", salespersonId);
+    }
+  }
 
-  // If role is SDR, we also need prospecting metrics
-  // This is a simplified fetch; in a real scenario, we'd query leads/activities
-  const [salesRes, metricsRes] = await Promise.all([
+  const tasksQuery = supabase
+    .from("tasks")
+    .select("id, task_type, created_at, salesperson_id")
+    .gte("created_at", allStart)
+    .lte("created_at", allEnd);
+
+  const [salesRes, metricsRes, tasksRes] = await Promise.all([
     salesQuery,
     supabase
       .from("daily_metrics")
       .select("new_clients, conversion_rate, date")
       .gte("date", allStart)
-      .lte("date", allEnd.split('T')[0])
+      .lte("date", allEnd.split('T')[0]),
+    tasksQuery
   ]);
 
   const allSales = salesRes.data ?? [];
   const allMetrics = metricsRes.data ?? [];
+  const allTasks = tasksRes.data ?? [];
 
   const processPeriod = (start: Date, end: Date): KPIData => {
     const sStr = format(start, "yyyy-MM-dd");
@@ -137,15 +151,25 @@ const fetchData = async (
 
     const periodSales = allSales.filter(s => s.created_at >= sStr && s.created_at <= eStr);
     const periodMetrics = allMetrics.filter(m => m.date >= sStr && m.date <= eMetricStr);
+    const periodTasks = allTasks.filter(t => t.created_at >= sStr && t.created_at <= eStr);
 
     const completed = periodSales.filter((s) => s.status === "completed");
     const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
     const totalSales = completed.length;
-    const newClients = periodMetrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
+    const newClients = role === 'sdr' 
+      ? periodSales.length // For SDR, "new clients" are new leads they brought in
+      : periodMetrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
 
     let conversionRate = 0;
     if (salespersonId) {
-      conversionRate = periodSales.length > 0 ? (completed.length / periodSales.length) * 100 : 0;
+      if (role === 'sdr') {
+        const qualifiedCount = periodSales.filter(s => 
+          ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
+        ).length;
+        conversionRate = periodSales.length > 0 ? (qualifiedCount / periodSales.length) * 100 : 0;
+      } else {
+        conversionRate = periodSales.length > 0 ? (completed.length / periodSales.length) * 100 : 0;
+      }
     } else {
       conversionRate = periodMetrics.length
         ? periodMetrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / periodMetrics.length
@@ -153,10 +177,13 @@ const fetchData = async (
     }
     const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
 
-    // Additional metrics for SDR/Closer if applicable
-    // In a real app, these would come from specialized tables
-    const meetingsScheduled = role === 'sdr' ? Math.floor(totalSales * 1.5) : undefined;
-    const qualifiedLeads = role === 'sdr' ? Math.floor(totalSales * 3) : undefined;
+    const meetingsScheduled = periodTasks.filter(t => 
+      t.task_type === 'meeting' && (salespersonId ? t.salesperson_id === salespersonId : true)
+    ).length;
+
+    const qualifiedLeads = periodSales.filter(s => 
+      ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
+    ).length;
 
     return { 
       totalRevenue, 
