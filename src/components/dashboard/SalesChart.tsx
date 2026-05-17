@@ -16,11 +16,11 @@ const periodLabels: Record<Period, string> = {
 const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-2xl border-2 border-white/20 bg-black/99 backdrop-blur-[200px] px-8 py-6 shadow-[0_0_100px_rgba(0,0,0,1)] border-l-[8px] border-l-primary ring-2 ring-white/20">
+    <div className="rounded-xl border-2 border-white/10 bg-black/95 backdrop-blur-xl px-4 py-3 shadow-2xl border-l-4 border-l-primary ring-1 ring-white/10">
       <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">{label}</p>
       <div className="flex items-center gap-2">
         <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
-        <p className="text-lg font-mono font-black text-primary tracking-tighter tabular-nums">
+        <p className="text-base font-mono font-black text-primary tracking-tighter tabular-nums">
           R$ {payload[0].value.toLocaleString("pt-BR")}
         </p>
       </div>
@@ -42,7 +42,7 @@ export const SalesChart = React.memo(React.forwardRef<HTMLDivElement>((_, ref) =
         <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-primary/20 group-hover:border-primary/40 transition-colors" />
       </div>
 
-      <CardHeader className="pb-4 relative z-10">
+      <CardHeader className="pb-2 pt-4 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
             <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
@@ -69,7 +69,7 @@ export const SalesChart = React.memo(React.forwardRef<HTMLDivElement>((_, ref) =
         </div>
       </CardHeader>
 
-      <CardContent className="pb-6 relative z-10">
+      <CardContent className="pb-4 pt-0 relative z-10">
         {/* Futuristic grid background for the chart area */}
         <div className="absolute inset-x-6 top-0 bottom-6 opacity-[0.03] pointer-events-none border border-white/10 rounded-xl"
              style={{
@@ -128,7 +128,7 @@ export const SalesChart = React.memo(React.forwardRef<HTMLDivElement>((_, ref) =
                 type="monotone"
                 dataKey="value"
                 stroke="hsl(var(--primary))"
-                strokeWidth={10}
+                strokeWidth={4}
                 fillOpacity={1}
                 fill="url(#colorValue)"
                 animationDuration={2000}
