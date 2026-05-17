@@ -38,29 +38,46 @@ export async function triggerConfetti(saleAmount: number) {
 }
 
 export async function awardSaleXP(
-  salespersonId: string, xpAmount: number, saleId: string, saleAmount: number, salespersonName: string
+  salespersonId: string, 
+  xpAmount: number, 
+  saleId: string, 
+  saleAmount: number, 
+  salespersonName: string
 ): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
-  const { data: xpRecord } = await supabase
-    .from("salesperson_xp").select("*").eq("salesperson_id", salespersonId).maybeSingle();
+  const formattedAmount = new Intl.NumberFormat("pt-BR", { 
+    style: "currency", 
+    currency: "BRL", 
+    minimumFractionDigits: 0 
+  }).format(saleAmount);
 
-  const previousLevel = xpRecord?.current_level || 1;
-  const newTotalXP = (xpRecord?.total_xp || 0) + xpAmount;
-  const levelInfo = calculateLevelFromXP(newTotalXP);
+  try {
+    const { data, error } = await supabase.rpc('award_salesperson_xp', {
+      p_salesperson_id: salespersonId,
+      p_xp_amount: xpAmount,
+      p_description: `Venda de ${formattedAmount}`,
+      p_source_type: 'sale',
+      p_source_id: saleId
+    });
 
-  if (!xpRecord) {
-    await supabase.from("salesperson_xp").insert({ salesperson_id: salespersonId, total_xp: newTotalXP, current_level: levelInfo.level, xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel });
-  } else {
-    await supabase.from("salesperson_xp").update({ total_xp: newTotalXP, current_level: levelInfo.level, xp_to_next_level: levelInfo.xpToNext - levelInfo.xpInLevel }).eq("id", xpRecord.id);
+    if (error) throw error;
+
+    const result = data as { leveled_up: boolean; new_level: number; previous_level?: number };
+    
+    if (result.leveled_up) {
+      const newLevelInfo = getLevelInfo(result.new_level);
+      toast.success(`${newLevelInfo.emoji} ${salespersonName} subiu para o nível ${result.new_level}!`, { 
+        description: `Novo título: ${newLevelInfo.title}`, 
+        duration: 6000 
+      });
+    }
+
+    return { 
+      leveledUp: result.leveled_up, 
+      newLevel: result.new_level, 
+      previousLevel: result.previous_level || (result.new_level - (result.leveled_up ? 1 : 0)) 
+    };
+  } catch (error) {
+    console.error("Failed to award XP via RPC:", error);
+    return null;
   }
-
-  const formattedAmount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 }).format(saleAmount);
-  await supabase.from("xp_history").insert({ salesperson_id: salespersonId, xp_amount: xpAmount, source_type: "sale", source_id: saleId, description: `Venda de ${formattedAmount}` });
-
-  const leveledUp = levelInfo.level > previousLevel;
-  if (leveledUp) {
-    const newLevelInfo = getLevelInfo(levelInfo.level);
-    toast.success(`${newLevelInfo.emoji} ${salespersonName} subiu para o nível ${levelInfo.level}!`, { description: `Novo título: ${newLevelInfo.title}`, duration: 6000 });
-  }
-
-  return { leveledUp, newLevel: levelInfo.level, previousLevel };
 }

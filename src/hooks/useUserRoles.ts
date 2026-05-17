@@ -95,6 +95,7 @@ export function useUserRoles() {
   // Helper functions
   const isAdmin = currentUserRole?.role === "admin";
   const isManager = currentUserRole?.role === "manager";
+  const isHybrid = salesperson?.role === "hybrid";
   const isAdminOrManager = isAdmin || isManager;
 
   const hasRole = (role: AppRole) => currentUserRole?.role === role;

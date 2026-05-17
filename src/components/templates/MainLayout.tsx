@@ -47,7 +47,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   // Unified Scroll to Top logic with premium feel
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
   // Dynamic Title Sync for excellence
