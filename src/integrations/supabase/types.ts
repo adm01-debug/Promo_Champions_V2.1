@@ -18656,7 +18656,9 @@ export type Database = {
           qr_url: string
         }[]
       }
-      is_admin_or_manager: { Args: { _user_id: string }; Returns: boolean }
+      is_admin_or_manager:
+        | { Args: never; Returns: boolean }
+        | { Args: { _user_id: string }; Returns: boolean }
       is_authenticated: { Args: never; Returns: boolean }
       is_country_blocked: {
         Args: { check_country_code: string }
