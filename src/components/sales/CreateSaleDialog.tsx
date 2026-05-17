@@ -34,7 +34,9 @@ const saleSchema = z.object({
     const num = parseFloat(val);
     return !isNaN(num) && num > 0;
   }, "Valor deve ser maior que zero"),
-  salesperson_id: z.string().optional(),
+  sdr_id: z.string().optional(),
+  closer_id: z.string().optional(),
+  is_first_sale: z.boolean().default(true),
   source: z.string().default("other"),
 });
 
@@ -55,7 +57,9 @@ export const CreateSaleDialog = () => {
       product_id: "",
       product_name: "",
       amount: "",
-      salesperson_id: "",
+      sdr_id: "",
+      closer_id: "",
+      is_first_sale: true,
       source: "other",
     },
   });
@@ -76,7 +80,9 @@ export const CreateSaleDialog = () => {
         product_id: data.product_id || undefined,
         product_name: data.product_name,
         amount: parseFloat(data.amount),
-        salesperson_id: data.salesperson_id || undefined,
+        sdr_id: data.sdr_id || undefined,
+        closer_id: data.closer_id || undefined,
+        is_first_sale: data.is_first_sale,
         source: data.source,
         status: "pending",
         sku: products?.find(p => p.id === data.product_id || p.name === data.product_name)?.sku
@@ -258,27 +264,76 @@ export const CreateSaleDialog = () => {
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="sdr_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SDR (Ativação)</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="bg-muted/50 border-border/50">
+                          <SelectValue placeholder="Selecione o SDR" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {salespeople?.filter(sp => sp.role === 'sdr' || sp.role === 'hybrid').map((sp) => (
+                            <SelectItem key={sp.id} value={sp.id}>
+                              {sp.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="closer_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Closer (Fechamento)</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className="bg-muted/50 border-border/50">
+                          <SelectValue placeholder="Selecione o Closer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {salespeople?.filter(sp => sp.role === 'closer' || sp.role === 'hybrid').map((sp) => (
+                            <SelectItem key={sp.id} value={sp.id}>
+                              {sp.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
             <FormField
               control={form.control}
-              name="salesperson_id"
+              name="is_first_sale"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Vendedor</FormLabel>
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/50 p-3 bg-muted/30">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm">Primeira Ativação?</FormLabel>
+                    <p className="text-[10px] text-muted-foreground italic">
+                      Se ativado, ambos (SDR e Closer) recebem comissão.
+                    </p>
+                  </div>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="bg-muted/50 border-border/50">
-                        <SelectValue placeholder="Selecione um vendedor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {salespeople?.map((sp) => (
-                          <SelectItem key={sp.id} value={sp.id}>
-                            {sp.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      checked={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />

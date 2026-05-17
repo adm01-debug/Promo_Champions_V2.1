@@ -42,7 +42,10 @@ export interface CreateSaleInput {
   category?: string;
   source?: string;
   salesperson_id?: string;
+  sdr_id?: string;
+  closer_id?: string;
   sku?: string;
+  is_first_sale?: boolean;
 }
 
 const statusMap: Record<string, string> = {
