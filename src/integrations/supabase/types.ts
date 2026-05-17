@@ -12895,6 +12895,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id: string
+          is_first_sale: boolean | null
           lost_to_competitor_id: string | null
           pipeline_id: string | null
           product_id: string | null
@@ -12930,6 +12931,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id?: string
+          is_first_sale?: boolean | null
           lost_to_competitor_id?: string | null
           pipeline_id?: string | null
           product_id?: string | null
@@ -12965,6 +12967,7 @@ export type Database = {
             | Database["public"]["Enums"]["forecast_category"]
             | null
           id?: string
+          is_first_sale?: boolean | null
           lost_to_competitor_id?: string | null
           pipeline_id?: string | null
           product_id?: string | null
