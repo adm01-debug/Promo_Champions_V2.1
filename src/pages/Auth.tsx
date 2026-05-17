@@ -18,6 +18,8 @@ const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
 
 export default function Auth() {
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [name, setName] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function Auth() {
   const [resetEmail, setResetEmail] = useState("");
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const { signIn, user } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
@@ -45,22 +47,46 @@ export default function Auth() {
     }
   }, [lockoutStatus.isLocked, lockoutStatus.remainingSeconds, loginEmail, checkLoginAttempts]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { emailSchema.parse(loginEmail); passwordSchema.parse(loginPassword); }
+    try { 
+      emailSchema.parse(loginEmail); 
+      passwordSchema.parse(loginPassword); 
+      if (authMode === 'signup' && !name) {
+        toast.error("Por favor, insira seu nome.");
+        return;
+      }
+    }
     catch (err) { if (err instanceof z.ZodError) { toast.error(err.errors[0].message); return; } }
-    const { canAttempt } = await checkLoginAttempts(loginEmail);
-    if (!canAttempt) { toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`); return; }
-    setIsLoading(true);
-    const { error } = await signIn(loginEmail, loginPassword);
-    setIsLoading(false);
-    if (error) {
-      await recordLoginAttempt(loginEmail, false, error.message);
-      if (error.message.includes("Invalid login credentials")) {
-        const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
-        toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
-      } else toast.error(error.message);
-    } else { await recordLoginAttempt(loginEmail, true); toast.success("Bem-vindo de volta, campeão! 🏆"); navigate("/"); }
+    
+    if (authMode === 'login') {
+      const { canAttempt } = await checkLoginAttempts(loginEmail);
+      if (!canAttempt) { toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`); return; }
+      setIsLoading(true);
+      const { error } = await signIn(loginEmail, loginPassword);
+      setIsLoading(false);
+      if (error) {
+        await recordLoginAttempt(loginEmail, false, error.message);
+        if (error.message.includes("Invalid login credentials")) {
+          const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
+          toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
+        } else toast.error(error.message);
+      } else { 
+        await recordLoginAttempt(loginEmail, true); 
+        toast.success("Bem-vindo de volta, campeão! 🏆"); 
+        navigate("/"); 
+      }
+    } else {
+      setIsLoading(true);
+      const { error } = await signUp(loginEmail, loginPassword, name);
+      setIsLoading(false);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Conta criada com sucesso! 🚀");
+        setAuthMode('login');
+      }
+    }
   };
 
 
@@ -277,17 +303,21 @@ export default function Auth() {
                 <div className="mb-7">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
-                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">ACESSO À ARENA</span>
+                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">{authMode === 'login' ? 'ACESSO À ARENA' : 'CADASTRO NA ARENA'}</span>
                   </div>
-                  <h2 className="text-3xl font-black">Pronto para vencer?</h2>
-                  <p className="text-sm text-white/50 mt-1">Entre e suba no ranking agora.</p>
+                  <h2 className="text-3xl font-black">{authMode === 'login' ? 'Pronto para vencer?' : 'Comece sua jornada'}</h2>
+                  <p className="text-sm text-white/50 mt-1">{authMode === 'login' ? 'Entre e suba no ranking agora.' : 'Crie seu perfil de elite.'}</p>
                 </div>
 
-                {/* Restricted access notice */}
+                {/* Toggle link */}
                 <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
                   <Sparkles className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
                   <p className="text-[11px] text-white/60 leading-relaxed">
-                    Sistema de uso <span className="text-cyan-300 font-bold">exclusivo</span> da Promo Brindes. Acesso liberado apenas pelo administrador.
+                    {authMode === 'login' ? (
+                      <>Novo na arena? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button></>
+                    ) : (
+                      <>Já tem uma conta? <button onClick={() => setAuthMode('login')} className="text-cyan-300 font-bold hover:underline">Faça login</button></>
+                    )}
                   </p>
                 </div>
 
@@ -320,7 +350,22 @@ export default function Auth() {
                 </div>
 
                 {/* Login Form */}
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleAuth} className="space-y-4">
+                  {authMode === 'signup' && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Nome de Guerra</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Seu nome"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
+                        required
+                      />
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Email de Combate</Label>
                     <Input
@@ -392,7 +437,7 @@ export default function Auth() {
                         <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
                         <>
-                          INVASÃO DE SISTEMA
+                          {authMode === 'login' ? 'INVASÃO DE SISTEMA' : 'INICIAR JORNADA'}
                           <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                         </>
                       )}
