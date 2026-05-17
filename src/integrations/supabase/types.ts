@@ -3483,11 +3483,13 @@ export type Database = {
       }
       clients: {
         Row: {
+          activated_at: string | null
           company: string | null
           created_at: string
           email: string | null
           email_verified: boolean | null
           id: string
+          is_activated: boolean | null
           last_enrichment_id: string | null
           last_interaction_at: string | null
           lat: number | null
@@ -3501,11 +3503,13 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          activated_at?: string | null
           company?: string | null
           created_at?: string
           email?: string | null
           email_verified?: boolean | null
           id?: string
+          is_activated?: boolean | null
           last_enrichment_id?: string | null
           last_interaction_at?: string | null
           lat?: number | null
@@ -3519,11 +3523,13 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          activated_at?: string | null
           company?: string | null
           created_at?: string
           email?: string | null
           email_verified?: boolean | null
           id?: string
+          is_activated?: boolean | null
           last_enrichment_id?: string | null
           last_interaction_at?: string | null
           lat?: number | null
