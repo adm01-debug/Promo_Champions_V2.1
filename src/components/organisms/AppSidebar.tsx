@@ -104,7 +104,17 @@ export const AppSidebar = memo(function AppSidebar() {
     return 'gestao';
   }, [userType]);
 
-  const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode);
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const saved = localStorage.getItem("sidebar_view_mode");
+    if (saved && ['gestao', 'sdr', 'closer'].includes(saved)) {
+      return saved as ViewMode;
+    }
+    return defaultViewMode;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebar_view_mode", viewMode);
+  }, [viewMode]);
   
   const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
   const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
