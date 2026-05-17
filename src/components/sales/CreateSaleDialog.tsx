@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormGuard } from "@/hooks/useFormGuard";
 import { toast } from "sonner";
+import { useCelebration } from "@/hooks/useCelebration";
 import {
   Form,
   FormControl,
