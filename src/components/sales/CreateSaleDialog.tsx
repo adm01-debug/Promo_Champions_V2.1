@@ -91,6 +91,9 @@ export const CreateSaleDialog = () => {
       },
       {
         onSuccess: () => {
+          if (data.is_first_sale) {
+            celebrateActivation(data.client_name, parseFloat(data.amount));
+          }
           form.reset();
           setOpen(false);
         },
