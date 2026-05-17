@@ -50,42 +50,59 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   const isPositive = change >= 0;
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-1">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-          <TrendingUp className="h-3.5 w-3.5 text-primary" />
+    <Card className="h-full border-primary/10 bg-gradient-to-br from-primary/5 via-transparent to-transparent hover:border-primary/20 transition-all duration-300">
+      <CardHeader className="pb-0 pt-3 px-4">
+        <CardTitle className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <TrendingUp className="h-3 w-3 text-primary/70" />
           Taxa de Conversão
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="px-4 pb-3 space-y-1">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-metric">{rate.toFixed(1)}%</p>
-            <div className={cn("flex items-center gap-1 text-xs", isPositive ? "text-success" : "text-destructive")}>
-              {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-              {isPositive ? "+" : ""}{change}%
+            <p className="text-xl font-extrabold text-foreground tracking-tight">{rate.toFixed(1)}%</p>
+            <div className={cn("flex items-center gap-1 text-[10px] font-medium", isPositive ? "text-success/90" : "text-destructive/90")}>
+              {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+              {isPositive ? "+" : ""}{change}% <span className="text-muted-foreground/60 font-normal ml-0.5">vs anterior</span>
             </div>
           </div>
         </div>
 
-        {/* Mini Area Chart */}
         {trend && trend.length > 0 && (
-          <ResponsiveContainer width="100%" height={60}>
-            <AreaChart data={trend} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="week" hide />
-              <Tooltip
-                contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}
-                formatter={(v: any) => [`${v}%`, "Conversão"]}
-              />
-              <Area type="monotone" dataKey="rate" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#convGrad)" dot={false} activeDot={{ r: 3 }} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[50px] w-full mt-2">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trend} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
+                <defs>
+                  <linearGradient id="convGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="week" hide />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background/95 border border-border/50 p-1.5 rounded-lg shadow-xl backdrop-blur-sm">
+                          <p className="text-[10px] font-bold text-foreground">{payload[0].value}%</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="rate" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2} 
+                  fill="url(#convGrad)" 
+                  dot={false} 
+                  activeDot={{ r: 3, strokeWidth: 0, fill: "hsl(var(--primary))" }} 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </CardContent>
     </Card>
