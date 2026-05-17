@@ -23,9 +23,10 @@ export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, rep
   const location = useLocation();
 
   const preloadRoute = useCallback(() => {
-    // 1. Browser prefetch hint
+    // 1. Browser prefetch hint (using modulepreload for JS chunks for better performance)
     const link = document.createElement('link');
-    link.rel = 'prefetch';
+    const isJs = to.endsWith('.js') || !to.includes('.');
+    link.rel = isJs ? 'modulepreload' : 'prefetch';
     link.href = to;
     document.head.appendChild(link);
 
