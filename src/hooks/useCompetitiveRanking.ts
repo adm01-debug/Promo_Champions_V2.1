@@ -28,81 +28,38 @@ export function useCompetitiveRanking() {
   return useQuery({
     queryKey: ["competitive-ranking"],
     queryFn: async (): Promise<RankedSalesperson[]> => {
-      const now = new Date();
-      const monthStart = startOfMonth(now);
-      const monthEnd = endOfMonth(now);
+      // Use the optimized materialized view
+      const { data, error } = await supabase
+        .from("mv_competitive_ranking")
+        .select("*")
+        .order("rank", { ascending: true });
 
-      // Fetch all data in parallel for better performance
-      const [salespeopleResult, salesResult, leadsResult] = await Promise.all([
-        supabase
-          .from("salespeople")
-          .select("id, name, avatar_url, role")
-          .eq("is_active", true),
-        supabase
-          .from("sales")
-          .select("salesperson_id, amount")
-          .eq("status", "completed")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
-        supabase
-          .from("sales")
-          .select("salesperson_id")
-          .neq("status", "completed")
-          .neq("status", "lost"),
-      ]);
+      if (error) {
+        console.error("Error fetching competitive ranking from view:", error);
+        throw error;
+      }
 
-      if (salespeopleResult.error) throw salespeopleResult.error;
-      if (salesResult.error) throw salesResult.error;
-      if (leadsResult.error) throw leadsResult.error;
+      const firstPlaceSales = data[0]?.total_sales || 0;
 
-      const salespeople = salespeopleResult.data;
-      const sales = salesResult.data;
-      const leads = leadsResult.data;
-
-      // Calculate stats per salesperson
-      const statsMap = new Map<string, { totalSales: number; dealsCount: number; leadsCount: number }>();
-      
-      (salespeople || []).forEach(sp => {
-        const spSales = (sales || []).filter(s => s.salesperson_id === sp.id);
-        const spLeads = (leads || []).filter(l => l.salesperson_id === sp.id);
-        
-        statsMap.set(sp.id, {
-          totalSales: spSales.reduce((sum, s) => sum + Number(s.amount), 0),
-          dealsCount: spSales.length,
-          leadsCount: spLeads.length,
-        });
-      });
-
-      // Sort by total sales and assign ranks
-      const sorted = (salespeople || [])
-        .map(sp => {
-          const stats = statsMap.get(sp.id) || { totalSales: 0, dealsCount: 0, leadsCount: 0 };
-          return {
-            id: sp.id,
-            name: sp.name,
-            avatar_url: sp.avatar_url,
-            role: sp.role,
-            ...stats,
-          };
-        })
-        .sort((a, b) => b.totalSales - a.totalSales);
-
-      const firstPlaceSales = sorted[0]?.totalSales || 0;
-
-      return sorted.map((sp, index) => {
-        const rank = index + 1;
+      return data.map((sp, index) => {
+        const rank = sp.rank;
         const titleInfo = RANK_TITLES[rank] || null;
-        const nextSales = index > 0 ? sorted[index - 1].totalSales : sp.totalSales;
+        const nextSales = index > 0 ? data[index - 1].total_sales : sp.total_sales;
         
         return {
-          ...sp,
+          id: sp.id,
+          name: sp.name,
+          avatar_url: sp.avatar_url,
+          role: sp.role,
+          totalSales: sp.total_sales,
+          dealsCount: sp.deals_count,
+          leadsCount: sp.leads_count,
           rank,
           title: titleInfo?.title || null,
           emoji: titleInfo?.emoji || null,
           color: titleInfo?.color || null,
-          gapToFirst: firstPlaceSales - sp.totalSales,
-          gapToNext: nextSales - sp.totalSales,
-          leadsCount: sp.leadsCount,
+          gapToFirst: firstPlaceSales - sp.total_sales,
+          gapToNext: nextSales - sp.total_sales,
         };
       });
     },
