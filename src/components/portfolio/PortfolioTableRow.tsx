@@ -25,8 +25,15 @@ export const PortfolioTableRow = React.memo(function PortfolioTableRow({
   return (
     <TableRow className="group">
       <TableCell>
-        <div>
-          <p className="font-medium">{item.client?.name || "—"}</p>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <p className="font-medium">{item.client?.name || "—"}</p>
+            {item.client?.is_activated && (
+              <Badge variant="outline" className="h-4 text-[8px] px-1 py-0 bg-primary/10 text-primary border-primary/20">
+                ATIVADO
+              </Badge>
+            )}
+          </div>
           {item.client?.company && <p className="text-sm text-muted-foreground">{item.client.company}</p>}
         </div>
       </TableCell>

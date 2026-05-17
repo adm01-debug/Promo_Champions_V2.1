@@ -264,9 +264,18 @@ export function useCelebration() {
     );
   }, [playSound, triggerLevelUpConfetti, sendPushNotification]);
 
+  const celebrateActivation = useCallback((clientName: string, amount: number) => {
+    playSound();
+    triggerConfetti();
+    sendPushNotification(
+      '🚀 NOVA ATIVAÇÃO!',
+      `O cliente ${clientName} foi ativado com sucesso! Valor: R$ ${amount.toLocaleString('pt-BR')}`
+    );
+  }, [playSound, triggerConfetti, sendPushNotification]);
+
   const resetCelebration = useCallback((id: string) => {
     hasPlayedRef.current.delete(id);
   }, []);
 
-  return { celebrate, celebrateLevelUp, resetCelebration, sendPushNotification, triggerLevelUpConfetti };
+  return { celebrate, celebrateLevelUp, celebrateActivation, resetCelebration, sendPushNotification, triggerLevelUpConfetti };
 }

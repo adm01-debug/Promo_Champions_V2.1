@@ -41,6 +41,8 @@ export interface Client {
   lat?: number;
   lng?: number;
   lead_source?: string;
+  is_activated?: boolean;
+  activated_at?: string;
   created_at: string;
   updated_at: string;
   last_contact_date?: string;

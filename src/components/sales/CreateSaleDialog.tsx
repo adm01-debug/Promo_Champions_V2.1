@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormGuard } from "@/hooks/useFormGuard";
 import { toast } from "sonner";
+import { useCelebration } from "@/hooks/useCelebration";
 import {
   Form,
   FormControl,
@@ -48,6 +49,7 @@ export const CreateSaleDialog = () => {
   const { data: salespeople } = useSalespeople();
   const { data: products } = useProducts();
   const { data: clients } = useClients();
+  const { celebrateActivation } = useCelebration();
 
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
@@ -89,6 +91,9 @@ export const CreateSaleDialog = () => {
       },
       {
         onSuccess: () => {
+          if (data.is_first_sale) {
+            celebrateActivation(data.client_name, parseFloat(data.amount));
+          }
           form.reset();
           setOpen(false);
         },

@@ -14,7 +14,15 @@ export interface ClientPortfolioItem {
   assigned_by: string | null;
   created_at: string;
   updated_at: string;
-  client?: { name: string; email?: string; phone?: string; company?: string; total_value?: number };
+  client?: { 
+    name: string; 
+    email?: string; 
+    phone?: string; 
+    company?: string; 
+    total_value?: number;
+    is_activated?: boolean;
+    activated_at?: string;
+  };
   salesperson?: { name: string };
 }
 
@@ -24,7 +32,7 @@ export const useClientPortfolio = (salespersonId?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('client_portfolio')
-        .select('*, client:clients(name, email, phone, company, total_value), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+        .select('*, client:clients(name, email, phone, company, total_value, is_activated, activated_at), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
 
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
@@ -76,6 +84,7 @@ export interface PortfolioStats {
   active: number;
   inactive: number;
   unassigned: number;
+  activatedCount: number;
   // Aliases for component compatibility
   totalClients: number;
   activeClients: number;
@@ -111,6 +120,7 @@ export const usePortfolioStats = (salespersonId?: string) => {
   const total = portfolio?.length || 0;
   const active = portfolio?.filter((p) => p.status === 'active').length || 0;
   const inactive = portfolio?.filter((p) => p.status === 'inactive').length || 0;
+  const activatedCount = portfolio?.filter((p) => p.client?.is_activated).length || 0;
   const unassignedCount = unassigned?.length || 0;
 
   const totalValue = (portfolio || []).reduce((sum, item) => sum + (item.client?.total_value || 0), 0);
@@ -125,6 +135,7 @@ export const usePortfolioStats = (salespersonId?: string) => {
     active,
     inactive,
     unassigned: unassignedCount,
+    activatedCount,
     totalClients: total,
     activeClients: active,
     inactiveClients: inactive,

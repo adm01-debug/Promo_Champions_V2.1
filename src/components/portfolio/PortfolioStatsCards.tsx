@@ -1,6 +1,6 @@
 import React from "react";
 // PortfolioStatsCards - aligned with PortfolioStats interface
-import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash } from "lucide-react";
+import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PortfolioStats } from "@/hooks/useClientPortfolio";
@@ -33,6 +33,14 @@ function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
       icon: UserX,
       iconWrapperClass: "bg-status-warning/10",
       iconClass: "text-status-warning",
+    },
+    {
+      title: "Clientes Ativados",
+      value: stats?.activatedCount || 0,
+      icon: Zap,
+      iconWrapperClass: "bg-amber-500/10",
+      iconClass: "text-amber-500",
+      tooltip: "Clientes que já realizaram a primeira compra (ativação)",
     },
     {
       title: "Valor Total",
@@ -75,7 +83,7 @@ function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
     <TooltipProvider>
       <div className="space-y-4">
         {/* Main Stats */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {cards.map((card) => (
             <Card key={card.title} className="glass hover-lift">
               <CardContent className="pt-6">
