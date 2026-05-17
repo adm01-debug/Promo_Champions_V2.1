@@ -17462,6 +17462,16 @@ export type Database = {
         Args: { p_salesperson_id: string; p_type: string }
         Returns: undefined
       }
+      award_salesperson_xp: {
+        Args: {
+          p_description: string
+          p_salesperson_id: string
+          p_source_id: string
+          p_source_type: string
+          p_xp_amount: number
+        }
+        Returns: Json
+      }
       bulk_approve_assignments: {
         Args: { _ids: string[]; _xp_overrides?: Json }
         Returns: number
