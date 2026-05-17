@@ -158,8 +158,20 @@ const Index = () => {
                 animate="visible"
                 className="grid grid-cols-1 md:grid-cols-3 gap-6"
               >
+                {/* Hero Stat - Logic adapted for SDR or Closer */}
                 <motion.div variants={itemVariants} className="md:col-span-3">
-                  {hasRevenue ? (
+                  {isSDR ? (
+                    <StatCard
+                      title="Taxa de Agendamento"
+                      value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                      numericValue={kpis?.current.conversionRate ?? 0}
+                      change={kpis?.changes.conversion ?? 0}
+                      icon={TrendingUp}
+                      variant="primary"
+                      hero
+                      subtitle="Leads → Reuniões"
+                    />
+                  ) : hasRevenue ? (
                     <StatCard
                       title="Faturamento Total"
                       value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
@@ -177,8 +189,18 @@ const Index = () => {
                 </motion.div>
                 
                 <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3">
+                  {/* Card 1: Vendas or Reuniões */}
                   <motion.div variants={itemVariants}>
-                    {hasSales ? (
+                    {isSDR ? (
+                      <StatCard
+                        title="Reuniões Agendadas"
+                        value={String(kpis?.current.meetingsScheduled ?? 0)}
+                        numericValue={kpis?.current.meetingsScheduled ?? 0}
+                        change={kpis?.changes.meetings ?? 0}
+                        icon={Calendar}
+                        variant="success"
+                      />
+                    ) : hasSales ? (
                       <StatCard
                         title="Vendas Realizadas"
                         value={String(kpis?.current.totalSales ?? 0)}
@@ -192,8 +214,18 @@ const Index = () => {
                     )}
                   </motion.div>
                   
+                  {/* Card 2: Ticket Médio or Leads Qualificados */}
                   <motion.div variants={itemVariants}>
-                    {kpis?.current.avgTicket ? (
+                    {isSDR ? (
+                      <StatCard
+                        title="Leads Qualificados"
+                        value={String(kpis?.current.qualifiedLeads ?? 0)}
+                        numericValue={kpis?.current.qualifiedLeads ?? 0}
+                        change={kpis?.changes.qualified ?? 0}
+                        icon={Users}
+                        variant="primary"
+                      />
+                    ) : kpis?.current.avgTicket ? (
                       <StatCard
                         title="Ticket Médio"
                         value={formatCurrency(kpis?.current.avgTicket ?? 0)}
@@ -209,31 +241,33 @@ const Index = () => {
                     )}
                   </motion.div>
 
+                  {/* Card 3: Novos Clientes or Leads Ativos */}
                   <motion.div variants={itemVariants}>
                     {hasClients ? (
                       <StatCard
-                        title="Novos Clientes"
+                        title={isSDR ? "Novos Leads" : "Novos Clientes"}
                         value={String(kpis?.current.newClients ?? 0)}
                         numericValue={kpis?.current.newClients ?? 0}
                         change={kpis?.changes.clients ?? 0}
                         previousValue={kpis ? String(kpis.previous.newClients) : undefined}
                         icon={Users}
-                        variant="success"
+                        variant={isSDR ? "warning" : "success"}
                       />
                     ) : (
                       <DashboardEmptyState type="clients" />
                     )}
                   </motion.div>
 
+                  {/* Card 4: Taxa de Conversão */}
                   <motion.div variants={itemVariants}>
                     {hasConversion ? (
                       <StatCard
-                        title="Taxa de Conversão"
+                        title="Conversão Global"
                         value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
                         numericValue={kpis?.current.conversionRate ?? 0}
                         change={kpis?.changes.conversion ?? 0}
                         previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
-                        icon={TrendingUp}
+                        icon={Zap}
                         variant="warning"
                       />
                     ) : (
@@ -241,6 +275,7 @@ const Index = () => {
                     )}
                   </motion.div>
                 </motion.div>
+              </motion.div>
               </motion.div>
             )}
 
