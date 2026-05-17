@@ -14,7 +14,15 @@ export interface ClientPortfolioItem {
   assigned_by: string | null;
   created_at: string;
   updated_at: string;
-  client?: { name: string; email?: string; phone?: string; company?: string; total_value?: number };
+  client?: { 
+    name: string; 
+    email?: string; 
+    phone?: string; 
+    company?: string; 
+    total_value?: number;
+    is_activated?: boolean;
+    activated_at?: string;
+  };
   salesperson?: { name: string };
 }
 
