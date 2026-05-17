@@ -61,7 +61,7 @@ const Index = () => {
   const [period, setPeriod] = useState<KPIPeriod>("current_month");
   const { salesperson } = useAuth();
 
-  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period, salesperson?.id);
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period, salesperson?.id, salesperson?.role);
   const { data: goalsData } = useGoalsDashboard();
   const { data: salesTrend } = useSalesChartData("30d");
   const priorities = useDashboardPriorities();
@@ -79,6 +79,9 @@ const Index = () => {
 
   const formatCurrency = (value: number) => 
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+
+  const isSDR = salesperson?.role === 'sdr';
+  const isCloser = salesperson?.role === 'closer' || salesperson?.role === 'hybrid';
 
   const hasRevenue = (kpis?.current.totalRevenue ?? 0) > 0;
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;
