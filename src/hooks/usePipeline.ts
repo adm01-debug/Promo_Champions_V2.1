@@ -34,6 +34,7 @@ export interface Deal {
   status: string;
   category: string;
   salesperson_id: string | null;
+  sdr_id: string | null;
   source: string | null;
   created_at: string;
   updated_at: string;

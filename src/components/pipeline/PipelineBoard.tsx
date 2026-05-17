@@ -73,6 +73,7 @@ export const PipelineBoard = () => {
         status: d.status,
         category: d.category,
         salesperson_id: d.salesperson_id,
+        sdr_id: (d as any).sdr_id || null,
         source: d.source,
         created_at: d.created_at,
         updated_at: d.updated_at,

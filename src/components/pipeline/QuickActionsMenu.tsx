@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { Deal, PipelineStageId } from "@/hooks/usePipeline";
 
 interface MacroConfig {
@@ -81,6 +82,45 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
   const queryClient = useQueryClient();
   const [executing, setExecuting] = useState(false);
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const { data: salespeople } = useSalespeopleList();
+
+  const closers = salespeople?.filter(s => s.role === 'closer' || s.role === 'hybrid') || [];
+
+  const assignToCloser = useMutation({
+    mutationFn: async (closerId: string) => {
+      setExecuting(true);
+      const { error } = await supabase
+        .from("sales")
+        .update({ 
+          salesperson_id: closerId, 
+          status: 'qualified',
+          updated_at: new Date().toISOString() 
+        })
+        .eq("id", deal.id);
+      
+      if (error) throw error;
+
+      // Log activity
+      await supabase.from("activities").insert([{
+        activity_type: "meeting",
+        outcome: "scheduled",
+        notes: `Handoff: SDR encaminhou lead para Closer.`,
+        sale_id: deal.id,
+        salesperson_id: closerId,
+        contact_name: deal.client_name,
+      }]);
+    },
+    onSuccess: () => {
+      toast.success("Lead encaminhado para o Closer com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["pipeline-deals"] });
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      setExecuting(false);
+    },
+    onError: () => {
+      toast.error("Erro ao encaminhar lead");
+      setExecuting(false);
+    }
+  });
 
   const executeMacro = useMutation({
     mutationFn: async (macro: MacroConfig) => {
@@ -147,9 +187,29 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="text-xs text-muted-foreground flex items-center gap-1">
-          <Zap className="h-3 w-3" /> Macros
+          <Zap className="h-3 w-3" /> Macros SDR/Closer
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        
+        {closers.length > 0 && !deal.salesperson_id && (
+          <>
+            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-2 py-1">
+              Encaminhar para Closer
+            </DropdownMenuLabel>
+            {closers.map((closer) => (
+              <DropdownMenuItem
+                key={closer.id}
+                onClick={() => assignToCloser.mutate(closer.id)}
+                className="flex items-center gap-2 py-2 cursor-pointer"
+              >
+                <UserCheck className="h-4 w-4 text-emerald-500" />
+                <span className="text-xs font-medium">{closer.name}</span>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+          </>
+        )}
+
         {MACROS.map((macro) => {
           const Icon = macro.icon;
           return (

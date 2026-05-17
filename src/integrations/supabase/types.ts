@@ -4077,6 +4077,7 @@ export type Database = {
           commission_amount: number
           created_at: string
           id: string
+          is_first_sale: boolean | null
           paid_at: string | null
           paid_by: string | null
           payment_notes: string | null
@@ -4084,6 +4085,7 @@ export type Database = {
           rule_id: string | null
           sale_id: string
           salesperson_id: string
+          sdr_commission_amount: number | null
           status: string
           updated_at: string
         }
@@ -4094,6 +4096,7 @@ export type Database = {
           commission_amount: number
           created_at?: string
           id?: string
+          is_first_sale?: boolean | null
           paid_at?: string | null
           paid_by?: string | null
           payment_notes?: string | null
@@ -4101,6 +4104,7 @@ export type Database = {
           rule_id?: string | null
           sale_id: string
           salesperson_id: string
+          sdr_commission_amount?: number | null
           status?: string
           updated_at?: string
         }
@@ -4111,6 +4115,7 @@ export type Database = {
           commission_amount?: number
           created_at?: string
           id?: string
+          is_first_sale?: boolean | null
           paid_at?: string | null
           paid_by?: string | null
           payment_notes?: string | null
@@ -4118,6 +4123,7 @@ export type Database = {
           rule_id?: string | null
           sale_id?: string
           salesperson_id?: string
+          sdr_commission_amount?: number | null
           status?: string
           updated_at?: string
         }
@@ -18327,6 +18333,7 @@ export type Database = {
           total_revenue: number
         }[]
       }
+      check_is_first_sale: { Args: { p_client_id: string }; Returns: boolean }
       check_performance_bets_completion: {
         Args: { p_salesperson_id: string }
         Returns: undefined
