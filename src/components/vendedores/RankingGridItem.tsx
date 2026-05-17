@@ -113,12 +113,13 @@ export const RankingGridItem = React.memo(function RankingGridItem({
         {/* Info */}
         <div className="flex-1 min-w-0 relative z-10">
           <div className="flex items-center justify-between mb-1">
-            <p className="font-black text-sm truncate group-hover:text-primary transition-colors tracking-tight uppercase italic">
+            <p className="font-black text-sm truncate group-hover:text-primary transition-colors tracking-tight uppercase italic flex items-center gap-2">
               {name}
+              {goalProgress >= 100 && <Flame className="h-3 w-3 text-streak animate-pulse" />}
             </p>
             <div className="flex items-center gap-1">
                <Zap className="h-3 w-3 text-primary animate-pulse" />
-               <span className="text-[10px] font-black text-primary">LVL 42</span>
+               <span className="text-[10px] font-black text-primary">XP {Math.floor(totalSales / 100)}</span>
             </div>
           </div>
           
