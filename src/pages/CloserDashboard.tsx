@@ -21,6 +21,7 @@ import {
   FileText
 } from "lucide-react";
 import { LazySection } from "@/components/atoms/LazySection";
+import { CloserHandoffs } from "@/components/closer/CloserHandoffs";
 
 export default function CloserDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
@@ -158,6 +159,11 @@ export default function CloserDashboard() {
                 subtitle="Ação necessária"
                 highlight
               />
+            </motion.div>
+
+            {/* New Handoffs Section */}
+            <motion.div variants={itemVariants} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <CloserHandoffs />
             </motion.div>
 
             {/* Main Grid */}
