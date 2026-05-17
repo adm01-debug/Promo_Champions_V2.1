@@ -120,6 +120,7 @@ export const usePortfolioStats = (salespersonId?: string) => {
   const total = portfolio?.length || 0;
   const active = portfolio?.filter((p) => p.status === 'active').length || 0;
   const inactive = portfolio?.filter((p) => p.status === 'inactive').length || 0;
+  const activatedCount = portfolio?.filter((p) => p.client?.is_activated).length || 0;
   const unassignedCount = unassigned?.length || 0;
 
   const totalValue = (portfolio || []).reduce((sum, item) => sum + (item.client?.total_value || 0), 0);
