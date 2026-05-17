@@ -15,20 +15,20 @@ export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
   const isPositive = change >= 0;
 
   return (
-    <Card className="h-full border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-      <CardHeader className="pb-1">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-          <DollarSign className="h-3.5 w-3.5 text-primary" />
+    <Card className="h-full border-primary/10 bg-gradient-to-br from-primary/5 via-transparent to-transparent hover:border-primary/20 transition-all duration-300">
+      <CardHeader className="pb-0 pt-3 px-4">
+        <CardTitle className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <DollarSign className="h-3 w-3 text-primary/70" />
           Receita do Mês
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-2xl font-bold text-primary">
+      <CardContent className="px-4 pb-3">
+        <p className="text-xl font-extrabold text-foreground tracking-tight">
           R$ {revenue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
         </p>
-        <div className={cn("flex items-center gap-1 text-xs mt-1", isPositive ? "text-success" : "text-destructive")}>
-          {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-          {isPositive ? "+" : ""}{change}% vs mês anterior
+        <div className={cn("flex items-center gap-1 text-[10px] font-medium mt-0.5", isPositive ? "text-success/90" : "text-destructive/90")}>
+          {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+          {isPositive ? "+" : ""}{change}% <span className="text-muted-foreground/60 font-normal">vs anterior</span>
         </div>
       </CardContent>
     </Card>
