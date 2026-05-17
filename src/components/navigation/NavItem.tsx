@@ -14,6 +14,7 @@ interface NavItemProps {
   badgeCount?: number;
   badgeVariant?: "default" | "warning" | "destructive";
   component?: any; // Passed for prefetching
+  id?: string;
 }
 
 export const NavItem: FC<NavItemProps> = memo(({ 
@@ -23,7 +24,8 @@ export const NavItem: FC<NavItemProps> = memo(({
   isCollapsed = false,
   badgeCount = 0,
   badgeVariant = "default",
-  component
+  component,
+  id
 }) => {
   const hasBadge = badgeCount > 0;
   
@@ -43,6 +45,7 @@ export const NavItem: FC<NavItemProps> = memo(({
         <PreloadLink 
           to={url} 
           component={component}
+          id={id}
           className={cn(
             "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden will-change-transform",
             isActive && "bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20"

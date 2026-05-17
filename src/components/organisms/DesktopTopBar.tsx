@@ -121,7 +121,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
             whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 outline-none"
           >
             <Sparkles className="h-4 w-4 group-hover/search:scale-110 transition-transform" />
             <span className="text-xs font-bold uppercase tracking-widest hidden lg:inline">IA Assistant</span>

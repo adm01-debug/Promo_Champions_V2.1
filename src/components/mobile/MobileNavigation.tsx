@@ -70,6 +70,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = memo(({ className }) 
       <MobileBottomNav 
         items={navItems} 
         className={cn("safe-area-inset-bottom", className)} 
+        aria-label="Navegação móvel"
       />
       <MobileDrawer 
         isOpen={isDrawerOpen} 

@@ -51,6 +51,9 @@ export function ConsentBanner() {
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:max-w-md z-50"
+          role="dialog"
+          aria-labelledby="consent-title"
+          aria-describedby="consent-description"
         >
           <div className="bg-popover border border-border rounded-2xl shadow-2xl p-5 backdrop-blur-xl">
             <div className="flex items-start gap-3">
@@ -59,18 +62,19 @@ export function ConsentBanner() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display font-bold text-sm">Privacidade & Cookies</h3>
+                  <h3 id="consent-title" className="font-display font-bold text-sm">Privacidade & Cookies</h3>
                   <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1" onClick={handleRejectAll}>
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p id="consent-description" className="text-xs text-muted-foreground mt-1">
                   Usamos cookies para melhorar sua experiência. Conforme LGPD, você pode gerenciar suas preferências.
                 </p>
 
                 {/* Expandable details */}
                 <button
                   onClick={() => setExpanded(!expanded)}
+                  aria-expanded={expanded}
                   className="flex items-center gap-1 text-[10px] text-primary mt-2 hover:underline"
                 >
                   Personalizar {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}

@@ -100,6 +100,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
         >
           <button
             onClick={handleDismiss}
+            aria-label="Dispensar sugestão de instalação"
             className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
           >
             <X className="h-4 w-4 text-muted-foreground" />
@@ -172,6 +173,7 @@ export const InstallPrompt = forwardRef<HTMLDivElement, InstallPromptProps>(({
             </Button>
             <button
               onClick={handleDismiss}
+              aria-label="Dispensar sugestão de instalação"
               className="p-1 rounded-full hover:bg-primary-foreground/10 transition-colors"
             >
               <X className="h-4 w-4" />
