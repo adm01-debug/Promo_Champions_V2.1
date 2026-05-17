@@ -39,7 +39,7 @@ interface ActionSuggestion {
   priority: 'high' | 'medium' | 'low';
   dealName?: string;
   dealId?: string | null;
-  channel?: string;
+  channel?: string | null;
 }
 
 const priorityConfig = {
