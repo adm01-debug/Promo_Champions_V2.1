@@ -21,7 +21,7 @@ export function CloserHandoffs() {
       const { data: sp } = await supabase
         .from("salespeople")
         .select("id")
-        .eq("auth_user_id", user?.id)
+        .eq("auth_user_id", user?.id || "")
         .single();
 
       if (!sp) return [];
