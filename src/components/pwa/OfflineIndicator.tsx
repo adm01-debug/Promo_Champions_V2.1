@@ -44,6 +44,8 @@ export const OfflineIndicator = memo(({
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
+          role="alert"
+          aria-live="assertive"
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
             "bg-rank-gold text-rank-gold-foreground shadow-lg",
@@ -74,6 +76,8 @@ export const OfflineIndicator = memo(({
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
+          role="status"
+          aria-live="polite"
           className={cn(
             "fixed top-0 left-0 right-0 z-[100]",
             "bg-success text-primary-foreground shadow-lg shadow-success/20",
