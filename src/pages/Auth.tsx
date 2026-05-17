@@ -303,10 +303,10 @@ export default function Auth() {
                 <div className="mb-7">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
-                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">ACESSO À ARENA</span>
+                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">{authMode === 'login' ? 'ACESSO À ARENA' : 'CADASTRO NA ARENA'}</span>
                   </div>
-                  <h2 className="text-3xl font-black">Pronto para vencer?</h2>
-                  <p className="text-sm text-white/50 mt-1">Entre e suba no ranking agora.</p>
+                  <h2 className="text-3xl font-black">{authMode === 'login' ? 'Pronto para vencer?' : 'Comece sua jornada'}</h2>
+                  <p className="text-sm text-white/50 mt-1">{authMode === 'login' ? 'Entre e suba no ranking agora.' : 'Crie seu perfil de elite.'}</p>
                 </div>
 
                 {/* Sign up link for new users */}
