@@ -106,6 +106,13 @@ export type Database = {
             foreignKeyName: "account_activities_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_activities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -339,6 +346,13 @@ export type Database = {
             foreignKeyName: "accounts_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -388,6 +402,13 @@ export type Database = {
             foreignKeyName: "achievements_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "achievements_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -432,6 +453,13 @@ export type Database = {
           source?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "active_power_ups_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "active_power_ups_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -565,6 +593,13 @@ export type Database = {
             foreignKeyName: "activities_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -654,6 +689,13 @@ export type Database = {
             foreignKeyName: "activity_goals_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -735,6 +777,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -1290,6 +1339,13 @@ export type Database = {
             foreignKeyName: "available_spins_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "available_spins_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -1333,6 +1389,13 @@ export type Database = {
             columns: ["battle_id"]
             isOneToOne: false
             referencedRelation: "sales_battles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "battle_participants_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -2249,6 +2312,13 @@ export type Database = {
             foreignKeyName: "call_critical_moments_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_critical_moments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -2780,6 +2850,13 @@ export type Database = {
             foreignKeyName: "call_recordings_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_recordings_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -2950,6 +3027,13 @@ export type Database = {
             foreignKeyName: "challenge_progress_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_progress_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3059,6 +3143,13 @@ export type Database = {
             foreignKeyName: "channel_interactions_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_interactions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3101,6 +3192,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "chat_conversations_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "chat_conversations_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -3275,6 +3373,13 @@ export type Database = {
             foreignKeyName: "client_portfolio_assigned_by_fkey"
             columns: ["assigned_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portfolio_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3297,6 +3402,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portfolio_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -3487,6 +3599,13 @@ export type Database = {
             foreignKeyName: "coaching_actions_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_actions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3543,6 +3662,13 @@ export type Database = {
           team_benchmark?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "coaching_opportunities_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "coaching_opportunities_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -3636,6 +3762,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "coaching_sessions_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -3796,6 +3929,13 @@ export type Database = {
             foreignKeyName: "combo_tracking_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combo_tracking_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3910,6 +4050,13 @@ export type Database = {
             foreignKeyName: "commission_rules_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_rules_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -3987,6 +4134,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -4140,6 +4294,13 @@ export type Database = {
             foreignKeyName: "competitive_chat_messages_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitive_chat_messages_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -4148,6 +4309,13 @@ export type Database = {
             columns: ["salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitive_chat_messages_target_salesperson_id_fkey"
+            columns: ["target_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -4689,6 +4857,13 @@ export type Database = {
             foreignKeyName: "daily_challenge_progress_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_challenge_progress_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -4809,6 +4984,13 @@ export type Database = {
             foreignKeyName: "daily_streak_achievements_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_streak_achievements_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -4844,6 +5026,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "dashboard_layouts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "dashboard_layouts_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -4894,6 +5083,13 @@ export type Database = {
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_chat_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -5105,6 +5301,13 @@ export type Database = {
             foreignKeyName: "deal_outcomes_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_outcomes_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -5190,6 +5393,13 @@ export type Database = {
           signal_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "deal_risk_signals_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "deal_risk_signals_resolved_by_fkey"
             columns: ["resolved_by"]
@@ -5654,6 +5864,13 @@ export type Database = {
             foreignKeyName: "digital_signatures_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "digital_signatures_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -6014,6 +6231,13 @@ export type Database = {
             foreignKeyName: "email_tracking_events_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_tracking_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -6290,6 +6514,13 @@ export type Database = {
             foreignKeyName: "expansion_opportunities_owner_salesperson_id_fkey"
             columns: ["owner_salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expansion_opportunities_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -6418,6 +6649,13 @@ export type Database = {
             foreignKeyName: "feed_comments_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_comments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -6458,6 +6696,13 @@ export type Database = {
             columns: ["feed_item_id"]
             isOneToOne: false
             referencedRelation: "victory_feed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_reactions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -7439,6 +7684,13 @@ export type Database = {
             foreignKeyName: "kudos_from_salesperson_id_fkey"
             columns: ["from_salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_from_salesperson_id_fkey"
+            columns: ["from_salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -7447,6 +7699,13 @@ export type Database = {
             columns: ["from_salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_to_salesperson_id_fkey"
+            columns: ["to_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -7506,6 +7765,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_assignments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -7684,6 +7950,13 @@ export type Database = {
             foreignKeyName: "lead_routing_log_from_salesperson_id_fkey"
             columns: ["from_salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_routing_log_from_salesperson_id_fkey"
+            columns: ["from_salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -7692,6 +7965,13 @@ export type Database = {
             columns: ["from_salesperson_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_routing_log_to_salesperson_id_fkey"
+            columns: ["to_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -7978,6 +8258,13 @@ export type Database = {
             foreignKeyName: "league_history_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -8036,6 +8323,13 @@ export type Database = {
             columns: ["league_id"]
             isOneToOne: false
             referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_members_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -8222,6 +8516,13 @@ export type Database = {
             foreignKeyName: "message_templates_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_templates_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -8315,6 +8616,13 @@ export type Database = {
             foreignKeyName: "mood_entries_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mood_entries_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -8380,6 +8688,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "mql_qualifications_qualified_by_fkey"
+            columns: ["qualified_by"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "mql_qualifications_qualified_by_fkey"
             columns: ["qualified_by"]
@@ -8563,6 +8878,13 @@ export type Database = {
             foreignKeyName: "nps_surveys_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nps_surveys_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -8658,6 +8980,13 @@ export type Database = {
             foreignKeyName: "objections_library_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "objections_library_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -8716,6 +9045,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_journeys_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -9010,6 +9346,13 @@ export type Database = {
             foreignKeyName: "page_analytics_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_analytics_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -9117,6 +9460,13 @@ export type Database = {
           xp_wagered?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "performance_bets_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "performance_bets_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -9591,6 +9941,13 @@ export type Database = {
             foreignKeyName: "playbook_progress_completed_by_fkey"
             columns: ["completed_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "playbook_progress_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -9889,6 +10246,13 @@ export type Database = {
             foreignKeyName: "prize_wheel_spins_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prize_wheel_spins_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10150,6 +10514,13 @@ export type Database = {
             foreignKeyName: "progressive_goals_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progressive_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10253,6 +10624,13 @@ export type Database = {
             foreignKeyName: "prospect_cadences_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10337,6 +10715,13 @@ export type Database = {
             foreignKeyName: "qbr_reports_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qbr_reports_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10392,6 +10777,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qbr_schedule_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -10542,6 +10934,13 @@ export type Database = {
             foreignKeyName: "quota_attainment_alerts_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quota_attainment_alerts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10610,6 +11009,13 @@ export type Database = {
           weighted_open?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "quota_attainment_forecasts_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quota_attainment_forecasts_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -10685,6 +11091,13 @@ export type Database = {
           weighted_pipeline?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "quota_attainment_predictions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quota_attainment_predictions_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -10914,6 +11327,13 @@ export type Database = {
             foreignKeyName: "quotes_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -10956,6 +11376,13 @@ export type Database = {
           season_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_badges_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -11043,6 +11470,13 @@ export type Database = {
           victory_quote?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_cars_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -11150,6 +11584,13 @@ export type Database = {
             foreignKeyName: "race_events_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_events_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -11239,6 +11680,13 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_powerups_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_powerups_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -11490,6 +11938,13 @@ export type Database = {
           winner_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_seasons_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_seasons_winner_id_fkey"
             columns: ["winner_id"]
@@ -11753,6 +12208,13 @@ export type Database = {
             foreignKeyName: "rank_change_notifications_overtaken_by_id_fkey"
             columns: ["overtaken_by_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rank_change_notifications_overtaken_by_id_fkey"
+            columns: ["overtaken_by_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -11761,6 +12223,13 @@ export type Database = {
             columns: ["overtaken_by_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rank_change_notifications_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -11820,6 +12289,13 @@ export type Database = {
           total_sales?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "ranking_notifications_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ranking_notifications_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -11990,6 +12466,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "renewals_owner_salesperson_id_fkey"
+            columns: ["owner_salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -12237,6 +12720,13 @@ export type Database = {
             foreignKeyName: "revenue_forecasts_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenue_forecasts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12332,6 +12822,13 @@ export type Database = {
             foreignKeyName: "sale_notifications_audit_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12347,6 +12844,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_notifications_audit_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -12512,6 +13016,13 @@ export type Database = {
             foreignKeyName: "sales_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12579,6 +13090,13 @@ export type Database = {
             foreignKeyName: "sales_battles_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_battles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12587,6 +13105,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_battles_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -12683,6 +13208,13 @@ export type Database = {
             foreignKeyName: "sales_goals_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_goals_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12724,6 +13256,13 @@ export type Database = {
           xp_multiplier?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_streaks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_streaks_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -12778,6 +13317,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sales_territories_current_owner_id_fkey"
+            columns: ["current_owner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sales_territories_current_owner_id_fkey"
             columns: ["current_owner_id"]
@@ -12887,6 +13433,13 @@ export type Database = {
             foreignKeyName: "salesperson_badges_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_badges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -12977,6 +13530,13 @@ export type Database = {
             foreignKeyName: "salesperson_commission_configs_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_commission_configs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -13023,6 +13583,13 @@ export type Database = {
             columns: ["field_id"]
             isOneToOne: false
             referencedRelation: "team_custom_fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_custom_field_values_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -13076,6 +13643,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "salesperson_leagues_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "salesperson_leagues_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -13158,6 +13732,13 @@ export type Database = {
             foreignKeyName: "salesperson_preferences_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesperson_preferences_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -13199,6 +13780,13 @@ export type Database = {
           xp_to_next_level?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "salesperson_xp_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "salesperson_xp_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -13444,6 +14032,13 @@ export type Database = {
             columns: ["api_token_id"]
             isOneToOne: false
             referencedRelation: "api_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_change_logs_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -14080,6 +14675,13 @@ export type Database = {
             foreignKeyName: "skill_assessments_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_assessments_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -14133,6 +14735,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "skill_development_tracks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "skill_development_tracks_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -15035,6 +15644,13 @@ export type Database = {
             foreignKeyName: "tasks_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -15074,6 +15690,13 @@ export type Database = {
           team_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "team_closers_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "team_closers_closer_id_fkey"
             columns: ["closer_id"]
@@ -15171,6 +15794,13 @@ export type Database = {
             foreignKeyName: "teams_sdr_id_fkey"
             columns: ["sdr_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -15212,6 +15842,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "territories_current_owner_id_fkey"
+            columns: ["current_owner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "territories_current_owner_id_fkey"
             columns: ["current_owner_id"]
@@ -15260,6 +15897,13 @@ export type Database = {
           territory_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "territory_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "territory_history_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -15334,6 +15978,13 @@ export type Database = {
             foreignKeyName: "tournament_matches_player1_id_fkey"
             columns: ["player1_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_player1_id_fkey"
+            columns: ["player1_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -15342,6 +15993,13 @@ export type Database = {
             columns: ["player1_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_player2_id_fkey"
+            columns: ["player2_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -15363,6 +16021,13 @@ export type Database = {
             columns: ["tournament_id"]
             isOneToOne: false
             referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_matches_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -15413,6 +16078,13 @@ export type Database = {
           tournament_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tournament_participants_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tournament_participants_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -15486,6 +16158,13 @@ export type Database = {
           xp_reward?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "tournaments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tournaments_created_by_fkey"
             columns: ["created_by"]
@@ -15717,6 +16396,13 @@ export type Database = {
           value?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "victory_feed_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "victory_feed_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -16023,6 +16709,13 @@ export type Database = {
             foreignKeyName: "weekly_matchups_salesperson_a_id_fkey"
             columns: ["salesperson_a_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_matchups_salesperson_a_id_fkey"
+            columns: ["salesperson_a_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -16037,6 +16730,13 @@ export type Database = {
             foreignKeyName: "weekly_matchups_salesperson_b_id_fkey"
             columns: ["salesperson_b_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_matchups_salesperson_b_id_fkey"
+            columns: ["salesperson_b_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -16045,6 +16745,13 @@ export type Database = {
             columns: ["salesperson_b_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_matchups_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
             referencedColumns: ["id"]
           },
           {
@@ -16894,6 +17601,13 @@ export type Database = {
             foreignKeyName: "workflow_rules_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_rules_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -17028,6 +17742,13 @@ export type Database = {
             foreignKeyName: "xp_history_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xp_history_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
             referencedRelation: "salespeople"
             referencedColumns: ["id"]
           },
@@ -17093,6 +17814,13 @@ export type Database = {
           session_id: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "coaching_sessions_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "coaching_sessions_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -17222,6 +17950,19 @@ export type Database = {
         }
         Relationships: []
       }
+      mv_competitive_ranking: {
+        Row: {
+          avatar_url: string | null
+          deals_count: number | null
+          id: string | null
+          leads_count: number | null
+          name: string | null
+          rank: number | null
+          role: Database["public"]["Enums"]["salesperson_role"] | null
+          total_sales: number | null
+        }
+        Relationships: []
+      }
       race_leaderboard_view: {
         Row: {
           activities_count: number | null
@@ -17244,6 +17985,13 @@ export type Database = {
           total_sales: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_cars_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -17311,6 +18059,13 @@ export type Database = {
           total_sales: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "race_cars_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: true
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_cars_salesperson_id_fkey"
             columns: ["salesperson_id"]
@@ -18030,6 +18785,7 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_competitive_ranking: { Args: never; Returns: undefined }
       refresh_monthly_sales_summary: {
         Args: { p_month: string }
         Returns: undefined
