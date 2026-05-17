@@ -12879,6 +12879,7 @@ export type Database = {
           category: string
           client_id: string | null
           client_name: string
+          closer_id: string | null
           competitor_price_at_deal: number | null
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
@@ -12894,6 +12895,7 @@ export type Database = {
           product_name: string
           salesperson_id: string | null
           script_variant: string | null
+          sdr_id: string | null
           sku: string | null
           source: string | null
           status: string
@@ -12912,6 +12914,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           client_name: string
+          closer_id?: string | null
           competitor_price_at_deal?: number | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
@@ -12927,6 +12930,7 @@ export type Database = {
           product_name: string
           salesperson_id?: string | null
           script_variant?: string | null
+          sdr_id?: string | null
           sku?: string | null
           source?: string | null
           status?: string
@@ -12945,6 +12949,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           client_name?: string
+          closer_id?: string | null
           competitor_price_at_deal?: number | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
@@ -12960,6 +12965,7 @@ export type Database = {
           product_name?: string
           salesperson_id?: string | null
           script_variant?: string | null
+          sdr_id?: string | null
           sku?: string | null
           source?: string | null
           status?: string
@@ -12989,6 +12995,27 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
           },
           {
@@ -13029,6 +13056,27 @@ export type Database = {
           {
             foreignKeyName: "sales_salesperson_id_fkey"
             columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
             isOneToOne: false
             referencedRelation: "salespeople_public"
             referencedColumns: ["id"]
