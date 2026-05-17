@@ -95,6 +95,8 @@ export function useUserRoles() {
   // Helper functions
   const isAdmin = currentUserRole?.role === "admin";
   const isManager = currentUserRole?.role === "manager";
+  const isSDR = salesperson?.role === "sdr";
+  const isCloser = salesperson?.role === "closer";
   const isHybrid = salesperson?.role === "hybrid";
   const isAdminOrManager = isAdmin || isManager;
 
@@ -114,6 +116,8 @@ export function useUserRoles() {
     isUpdatingRole: updateRoleMutation.isPending,
     isAdmin,
     isManager,
+    isSDR,
+    isCloser,
     isHybrid,
     isAdminOrManager,
     hasRole,
