@@ -28,6 +28,8 @@ interface KPIData {
   avgTicket: number;
   meetingsScheduled?: number;
   qualifiedLeads?: number;
+  firstSaleRevenue?: number;
+  recurringRevenue?: number;
 }
 
 export interface KPIPeriodResult {
@@ -41,6 +43,8 @@ export interface KPIPeriodResult {
     avgTicket: number;
     meetings?: number;
     qualified?: number;
+    firstSaleRevenue?: number;
+    recurringRevenue?: number;
   };
 }
 
@@ -110,7 +114,7 @@ const fetchData = async (
 
   let salesQuery = supabase
     .from("sales")
-    .select("amount, status, created_at, salesperson_id, sdr_id, closer_id")
+    .select("amount, status, created_at, salesperson_id, sdr_id, closer_id, is_first_sale")
     .gte("created_at", allStart)
     .lte("created_at", allEnd);
     
@@ -155,6 +159,10 @@ const fetchData = async (
 
     const completed = periodSales.filter((s) => s.status === "completed");
     const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
+    const firstSaleRevenue = completed
+      .filter(s => s.is_first_sale)
+      .reduce((sum, s) => sum + Number(s.amount), 0);
+    const recurringRevenue = totalRevenue - firstSaleRevenue;
     const totalSales = completed.length;
     const newClients = role === 'sdr' 
       ? periodSales.length // For SDR, "new clients" are new leads they brought in
@@ -192,7 +200,9 @@ const fetchData = async (
       conversionRate, 
       avgTicket,
       meetingsScheduled,
-      qualifiedLeads
+      qualifiedLeads,
+      firstSaleRevenue,
+      recurringRevenue
     };
   };
 
@@ -210,6 +220,8 @@ const fetchData = async (
       avgTicket: change(current.avgTicket, previous.avgTicket),
       meetings: role === 'sdr' ? change(current.meetingsScheduled || 0, previous.meetingsScheduled || 0) : undefined,
       qualified: role === 'sdr' ? change(current.qualifiedLeads || 0, previous.qualifiedLeads || 0) : undefined,
+      firstSaleRevenue: change(current.firstSaleRevenue || 0, previous.firstSaleRevenue || 0),
+      recurringRevenue: change(current.recurringRevenue || 0, previous.recurringRevenue || 0),
     },
   };
 };
