@@ -62,20 +62,20 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
           </div>
         ) : (
           <>
-            <div className="relative">
+            <div className="relative mb-2">
               {/* Extra glow for progress ring */}
-              <div className="absolute inset-0 blur-[100px] opacity-100 bg-primary rounded-full animate-pulse transition-opacity duration-1000 scale-125" />
+              <div className="absolute inset-0 blur-[80px] opacity-100 bg-primary/80 rounded-full animate-pulse transition-opacity duration-1000 scale-125" />
               <ProgressRing
                 value={percentage}
-                size={160}
-                strokeWidth={12}
+                size={120}
+                strokeWidth={10}
                 variant={variant}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-5xl font-black font-display tracking-tighter text-foreground" style={{ textShadow: `0 0 25px hsl(var(--${variant}))` }}>
-                  {Math.round(percentage)}<span className="text-sm opacity-60">%</span>
+                <span className="text-3xl font-black font-display tracking-tighter text-foreground" style={{ textShadow: `0 0 15px hsl(var(--${variant}))` }}>
+                  {Math.round(percentage)}<span className="text-xs opacity-60">%</span>
                 </span>
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">Complete</span>
+                <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-muted-foreground">Complete</span>
               </div>
             </div>
 
