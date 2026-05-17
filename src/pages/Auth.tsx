@@ -350,7 +350,22 @@ export default function Auth() {
                 </div>
 
                 {/* Login Form */}
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleAuth} className="space-y-4">
+                  {authMode === 'signup' && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Nome de Guerra</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Seu nome"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
+                        required
+                      />
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Email de Combate</Label>
                     <Input
