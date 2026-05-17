@@ -64,7 +64,14 @@ export default function Comissoes() {
               <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex-1 min-w-[200px] ml-2">
-                  <p className="font-bold text-sm uppercase tracking-tight">{c.sales?.client_name ?? "Cliente"}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-sm uppercase tracking-tight">{c.sales?.client_name ?? "Cliente"}</p>
+                    {c.is_first_sale && (
+                      <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/20 text-[8px] font-black uppercase tracking-tighter h-4 px-1">
+                        Ativação
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground truncate uppercase font-medium">{c.sales?.product_name ?? "—"}</p>
                   <p className="text-[10px] text-muted-foreground/60 mt-1 font-mono">
                     {format(new Date(c.created_at), "dd MMM yyyy", { locale: ptBR })}
