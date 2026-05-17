@@ -10,6 +10,8 @@ interface KPIData {
   newClients: number;
   conversionRate: number;
   avgTicket: number;
+  firstSaleRevenue?: number;
+  recurringRevenue?: number;
 }
 
 interface KPIWithComparison {
@@ -33,7 +35,7 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
     const [salesResult, metricsResult] = await Promise.all([
       supabase
         .from("sales")
-        .select("amount, status")
+        .select("amount, status, is_first_sale")
         .gte("created_at", start)
         .lte("created_at", end),
       supabase
@@ -51,6 +53,10 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
 
     const completedSales = sales.filter(s => s.status === "completed");
     const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
+    const firstSaleRevenue = completedSales
+      .filter(s => s.is_first_sale)
+      .reduce((sum, s) => sum + Number(s.amount), 0);
+    const recurringRevenue = totalRevenue - firstSaleRevenue;
     const totalSales = completedSales.length;
     
     const newClients = metrics.reduce((sum, m) => sum + m.new_clients, 0);
@@ -65,6 +71,8 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
       newClients,
       conversionRate: avgConversion,
       avgTicket,
+      firstSaleRevenue,
+      recurringRevenue,
     };
   } catch (error) {
     captureException(error, "fetchPeriodData");
