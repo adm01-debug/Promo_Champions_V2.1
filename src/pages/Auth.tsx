@@ -18,6 +18,8 @@ const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
 
 export default function Auth() {
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [name, setName] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function Auth() {
   const [resetEmail, setResetEmail] = useState("");
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const { signIn, user } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
