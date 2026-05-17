@@ -135,14 +135,14 @@ export const StatCard = React.memo(({
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-3xl font-black tabular-nums font-display tracking-tighter will-change-contents",
-              hero && "text-5xl sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 lg:py-12 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500",
+              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter will-change-contents",
+              hero && "text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-2 sm:py-4 lg:py-6 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",
               !hero && variant === "warning" && "text-warning"
             )} style={{ 
-              textShadow: hero ? `0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 0 80px rgba(14,165,233,0.3)` : 
-                          variant !== 'default' ? '0 0 12px currentColor' : 'none' 
+              textShadow: hero ? `0 0 15px hsl(var(--primary) / 0.5), 0 0 30px hsl(var(--primary) / 0.3), 0 0 60px rgba(14,165,233,0.3)` : 
+                          variant !== 'default' ? '0 0 8px currentColor' : 'none' 
             }}>
               {displayValue}
               {hero && (
