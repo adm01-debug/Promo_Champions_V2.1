@@ -35,6 +35,14 @@ function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
       iconClass: "text-status-warning",
     },
     {
+      title: "Clientes Ativados",
+      value: stats?.activatedCount || 0,
+      icon: Zap,
+      iconWrapperClass: "bg-amber-500/10",
+      iconClass: "text-amber-500",
+      tooltip: "Clientes que já realizaram a primeira compra (ativação)",
+    },
+    {
       title: "Valor Total",
       value: new Intl.NumberFormat("pt-BR", {
         style: "currency",
