@@ -26,6 +26,7 @@ import {
   Receipt,
   Calendar,
   ChevronDown,
+  RotateCcw,
 } from "lucide-react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -199,21 +200,20 @@ const Index = () => {
                         icon={Calendar}
                         variant="success"
                       />
-                    ) : hasSales ? (
-                      <StatCard
-                        title="Vendas Realizadas"
-                        value={String(kpis?.current.totalSales ?? 0)}
-                        numericValue={kpis?.current.totalSales ?? 0}
-                        change={kpis?.changes.sales ?? 0}
-                        previousValue={kpis ? String(kpis.previous.totalSales) : undefined}
-                        icon={ShoppingBag}
-                      />
                     ) : (
-                      <DashboardEmptyState type="sales" />
+                      <StatCard
+                        title="Venda Ativação"
+                        value={formatCurrency(kpis?.current.firstSaleRevenue ?? 0)}
+                        numericValue={kpis?.current.firstSaleRevenue ?? 0}
+                        change={kpis?.changes.firstSaleRevenue ?? 0}
+                        previousValue={kpis ? formatCurrency(kpis.previous.firstSaleRevenue ?? 0) : undefined}
+                        icon={Zap}
+                        variant="success"
+                      />
                     )}
                   </motion.div>
                   
-                  {/* Card 2: Ticket Médio or Leads Qualificados */}
+                  {/* Card 2: Venda Carteira or Leads Qualificados */}
                   <motion.div variants={itemVariants}>
                     {isSDR ? (
                       <StatCard
@@ -224,19 +224,16 @@ const Index = () => {
                         icon={Users}
                         variant="primary"
                       />
-                    ) : kpis?.current.avgTicket ? (
-                      <StatCard
-                        title="Ticket Médio"
-                        value={formatCurrency(kpis?.current.avgTicket ?? 0)}
-                        numericValue={kpis?.current.avgTicket ?? 0}
-                        change={kpis?.changes.avgTicket ?? 0}
-                        previousValue={kpis ? formatCurrency(kpis.previous.avgTicket) : undefined}
-                        icon={Receipt}
-                        variant="primary"
-                        sparklineData={[320, 450, 410, 580, 520, 610, 590]}
-                      />
                     ) : (
-                      <DashboardEmptyState type="revenue" />
+                      <StatCard
+                        title="Venda Carteira"
+                        value={formatCurrency(kpis?.current.recurringRevenue ?? 0)}
+                        numericValue={kpis?.current.recurringRevenue ?? 0}
+                        change={kpis?.changes.recurringRevenue ?? 0}
+                        previousValue={kpis ? formatCurrency(kpis.previous.recurringRevenue ?? 0) : undefined}
+                        icon={RotateCcw}
+                        variant="primary"
+                      />
                     )}
                   </motion.div>
 
