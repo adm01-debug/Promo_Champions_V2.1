@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { VendasLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SavedFiltersBar } from "@/components/filters/SavedFiltersBar";
 import Fuse from "fuse.js";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useSalesData } from "@/hooks/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
@@ -36,6 +37,7 @@ const Vendas = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date_desc");
   const [statusFilter, setStatusFilter] = useState("");
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
   const { data: sales, isLoading } = useSalesData("");
 
   // Fuse.js for fuzzy search
@@ -53,8 +55,8 @@ const Vendas = () => {
     if (!sales) return [];
     
     // Apply fuzzy search
-    let filtered = searchTerm.trim() && fuse
-      ? fuse.search(searchTerm).map(result => result.item)
+    let filtered = debouncedSearchTerm.trim() && fuse
+      ? fuse.search(debouncedSearchTerm).map(result => result.item)
       : [...sales];
     
     // Apply status filter
@@ -84,7 +86,7 @@ const Vendas = () => {
           return 0;
       }
     });
-  }, [sales, fuse, searchTerm, sortBy, statusFilter]);
+  }, [sales, fuse, debouncedSearchTerm, sortBy, statusFilter]);
 
   const {
     paginatedItems,
