@@ -160,7 +160,12 @@ const fetchData = async (
     const completed = periodSales.filter((s) => s.status === "completed");
     const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
     const firstSaleRevenue = completed
-      .filter(s => s.is_first_sale)
+      .filter(s => {
+        // For SDR: Only their first sales count
+        // For Closer: Only first sales they closed count
+        // For global: All first sales count
+        return s.is_first_sale;
+      })
       .reduce((sum, s) => sum + Number(s.amount), 0);
     const recurringRevenue = totalRevenue - firstSaleRevenue;
     const totalSales = completed.length;
