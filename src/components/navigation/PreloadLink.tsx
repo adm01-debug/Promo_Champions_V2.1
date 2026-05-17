@@ -12,13 +12,14 @@ interface PreloadLinkProps {
   component?: any; // For lazy prefetching
   'aria-label'?: string;
   'aria-current'?: "date" | "false" | "location" | "page" | "step" | "time" | "true" | boolean;
+  id?: string;
 }
 
 /**
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, component, ...props }) => {
+export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, component, id, ...props }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,6 +59,7 @@ export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, rep
 
   return (
     <motion.a
+      id={id}
       href={to}
       onClick={handleClick}
       onMouseEnter={preloadRoute}
