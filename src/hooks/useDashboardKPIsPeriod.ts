@@ -110,7 +110,7 @@ const fetchData = async (
   const ePrev = format(prevEnd, "yyyy-MM-dd");
 
   const allStart = prevStart < curStart ? sPrev : sCur;
-  const allEnd = prevEnd > curEnd ? ePrev + "T23:59:59" : eCur + "T23:59:59";
+  const allEnd = prevEnd > curEnd ? ePrev + "T23:59:59.999Z" : eCur + "T23:59:59.999Z";
 
   let salesQuery = supabase
     .from("sales")
@@ -150,7 +150,7 @@ const fetchData = async (
 
   const processPeriod = (start: Date, end: Date): KPIData => {
     const sStr = format(start, "yyyy-MM-dd");
-    const eStr = format(end, "yyyy-MM-dd") + "T23:59:59";
+    const eStr = format(end, "yyyy-MM-dd") + "T23:59:59.999Z";
     const eMetricStr = format(end, "yyyy-MM-dd");
 
     const periodSales = allSales.filter(s => s.created_at >= sStr && s.created_at <= eStr);
@@ -160,18 +160,24 @@ const fetchData = async (
     const completed = periodSales.filter((s) => s.status === "completed");
     const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
     const firstSaleRevenue = completed
-      .filter(s => {
-        // For SDR: Only their first sales count
-        // For Closer: Only first sales they closed count
-        // For global: All first sales count
-        return s.is_first_sale;
-      })
+      .filter(s => s.is_first_sale)
       .reduce((sum, s) => sum + Number(s.amount), 0);
+    
     const recurringRevenue = totalRevenue - firstSaleRevenue;
     const totalSales = completed.length;
-    const newClients = role === 'sdr' 
-      ? periodSales.length // For SDR, "new clients" are new leads they brought in
-      : periodMetrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
+    
+    // Robust client count: try daily_metrics first, fallback to completed sales in period
+    let newClients = periodMetrics.reduce((sum, m) => sum + (m.new_clients || 0), 0);
+    if (newClients === 0 && role !== 'sdr') {
+      // Fallback: unique client_name from completed sales (if client_name exists)
+      // Since 'sales' table has client_name, we can use it as a proxy
+      const uniqueClients = new Set(completed.map(s => (s as any).client_name).filter(Boolean));
+      newClients = uniqueClients.size;
+    }
+
+    if (role === 'sdr') {
+      newClients = periodSales.length; // For SDR, "new clients" are new leads/sales entries
+    }
 
     let conversionRate = 0;
     if (salespersonId) {
@@ -184,10 +190,14 @@ const fetchData = async (
         conversionRate = periodSales.length > 0 ? (completed.length / periodSales.length) * 100 : 0;
       }
     } else {
-      conversionRate = periodMetrics.length
-        ? periodMetrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / periodMetrics.length
-        : 0;
+      // Global conversion rate: fallback to calculated from sales if metrics empty
+      if (periodMetrics.length > 0) {
+        conversionRate = periodMetrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / periodMetrics.length;
+      } else {
+        conversionRate = periodSales.length > 0 ? (completed.length / periodSales.length) * 100 : 0;
+      }
     }
+
     const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
 
     const meetingsScheduled = periodTasks.filter(t => 
