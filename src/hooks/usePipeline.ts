@@ -15,11 +15,11 @@ export interface PipelineStageConfig {
 }
 
 export const PIPELINE_STAGES: PipelineStageConfig[] = [
-  { id: 'lead', label: 'Lead', color: 'bg-blue-500', order: 1, probability: 10 },
+  { id: 'lead', label: 'Ativação (SDR)', color: 'bg-blue-500', order: 1, probability: 10 },
   { id: 'qualified', label: 'Qualificado', color: 'bg-yellow-500', order: 2, probability: 25 },
   { id: 'proposal', label: 'Proposta', color: 'bg-orange-500', order: 3, probability: 50 },
   { id: 'negotiation', label: 'Negociação', color: 'bg-purple-500', order: 4, probability: 75 },
-  { id: 'won', label: 'Ganho', color: 'bg-green-500', order: 5, probability: 100 },
+  { id: 'won', label: 'Venda Concluída', color: 'bg-green-500', order: 5, probability: 100 },
   { id: 'lost', label: 'Perdido', color: 'bg-red-500', order: 6, probability: 0 },
   { id: 'closed', label: 'Arquivado', color: 'bg-gray-500', order: 7, probability: 0 },
 ];
