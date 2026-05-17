@@ -263,6 +263,7 @@ const Vendedores = () => {
                   goalAmount={sp.goalAmount}
                   goalProgress={sp.goalProgress}
                   completedSales={sp.completedSales}
+                  role={sp.role}
                   index={index}
                 />
               ))}
