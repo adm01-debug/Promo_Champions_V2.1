@@ -169,7 +169,6 @@ const Index = () => {
                       icon={TrendingUp}
                       variant="primary"
                       hero
-                      subtitle="Leads → Reuniões"
                     />
                   ) : hasRevenue ? (
                     <StatCard
