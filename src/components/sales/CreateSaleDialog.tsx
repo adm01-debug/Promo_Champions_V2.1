@@ -49,6 +49,7 @@ export const CreateSaleDialog = () => {
   const { data: salespeople } = useSalespeople();
   const { data: products } = useProducts();
   const { data: clients } = useClients();
+  const { celebrateActivation } = useCelebration();
 
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
