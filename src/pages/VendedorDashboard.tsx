@@ -43,17 +43,24 @@ const useVendedorData = (id: string) => {
       const monthStart = startOfMonth(new Date());
       const monthEnd = endOfMonth(new Date());
       const { data: currentSales } = await supabase
-        .from("sales").select("*").eq("salesperson_id", id)
+        .from("sales")
+        .select("*")
+        .or(`salesperson_id.eq.${id},sdr_id.eq.${id},closer_id.eq.${id}`)
         .gte("created_at", monthStart.toISOString()).lte("created_at", monthEnd.toISOString());
 
       const prevMonthStart = startOfMonth(subMonths(new Date(), 1));
       const prevMonthEnd = endOfMonth(subMonths(new Date(), 1));
       const { data: previousSales } = await supabase
-        .from("sales").select("*").eq("salesperson_id", id)
+        .from("sales")
+        .select("*")
+        .or(`salesperson_id.eq.${id},sdr_id.eq.${id},closer_id.eq.${id}`)
         .gte("created_at", prevMonthStart.toISOString()).lte("created_at", prevMonthEnd.toISOString());
 
       const { data: allSales } = await supabase
-        .from("sales").select("*").eq("salesperson_id", id).order("created_at", { ascending: false });
+        .from("sales")
+        .select("*")
+        .or(`salesperson_id.eq.${id},sdr_id.eq.${id},closer_id.eq.${id}`)
+        .order("created_at", { ascending: false });
 
       return {
         salesperson: salesperson as { id: string; name: string; email: string | null; avatar_url: string | null; commission_rate: number },
