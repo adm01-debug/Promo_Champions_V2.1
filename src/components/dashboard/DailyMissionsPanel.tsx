@@ -39,11 +39,11 @@ export function DailyMissionsPanel() {
     <motion.div variants={itemVariants}>
       <Card className="glass dark:border-glow card-elevated overflow-hidden group">
         <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent border-b border-border/30">
-          <CardHeader className="py-4">
+          <CardHeader className="py-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-display flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/20 text-primary shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
-                  <Target className="h-4 w-4" />
+              <CardTitle className="text-sm font-display flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-primary/20 text-primary shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
+                  <Target className="h-3.5 w-3.5" />
                 </div>
                 Missões do Dia
               </CardTitle>
@@ -60,7 +60,7 @@ export function DailyMissionsPanel() {
             </div>
           </CardHeader>
         </div>
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="p-3 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {missions.map((mission, index) => {
               const progress = Math.min(100, (mission.currentValue / mission.target_value) * 100);
@@ -70,14 +70,14 @@ export function DailyMissionsPanel() {
                 <div 
                   key={mission.id} 
                   className={cn(
-                    "relative overflow-hidden rounded-2xl border p-4 transition-all duration-300",
+                    "relative overflow-hidden rounded-xl border p-3 transition-all duration-300",
                     mission.completed 
                       ? "bg-success/5 border-success/30" 
                       : "bg-card/50 border-border/40 hover:border-primary/30"
                   )}
                 >
-                  <div className="flex items-start justify-between gap-4 mb-3 relative z-10">
-                    <div className="space-y-1">
+                  <div className="flex items-start justify-between gap-4 mb-2 relative z-10">
+                    <div className="space-y-0.5">
                       <h4 className="text-sm font-bold font-display group-hover:text-primary transition-colors line-clamp-1">
                         {mission.title}
                       </h4>
@@ -106,7 +106,7 @@ export function DailyMissionsPanel() {
                     <Button 
                       size="sm" 
                       variant="glow" 
-                      className="w-full mt-3 h-8 text-[11px] font-bold uppercase tracking-widest gap-2 bg-success/20 hover:bg-success/30 text-success border-success/30"
+                      className="w-full mt-2 h-7 text-[10px] font-bold uppercase tracking-widest gap-2 bg-success/20 hover:bg-success/30 text-success border-success/30"
                       onClick={() => handleClaim(mission.id, mission.xp_reward)}
                       disabled={claimXP.isPending}
                     >
@@ -116,8 +116,8 @@ export function DailyMissionsPanel() {
                   )}
 
                   {mission.xp_claimed && (
-                    <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-bold text-success uppercase">
-                      <CheckCircle2 className="h-3 w-3" />
+                    <div className="mt-2 flex items-center justify-center gap-1.5 text-[9px] font-bold text-success uppercase">
+                      <CheckCircle2 className="h-2.5 w-2.5" />
                       XP Resgatado
                     </div>
                   )}
