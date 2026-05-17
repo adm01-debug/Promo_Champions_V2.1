@@ -83,7 +83,7 @@ function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
     <TooltipProvider>
       <div className="space-y-4">
         {/* Main Stats */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {cards.map((card) => (
             <Card key={card.title} className="glass hover-lift">
               <CardContent className="pt-6">
