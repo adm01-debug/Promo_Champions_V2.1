@@ -1,6 +1,7 @@
 // MainLayout - primary layout wrapper (performance-optimized)
 import { useRef, lazy, Suspense, useEffect, useMemo } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 import { SearchTrigger } from "@/components/atoms/SearchTrigger";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { Sparkles } from "lucide-react";
@@ -182,11 +183,11 @@ export function MainLayout({ children }: MainLayoutProps) {
           <ConsentBanner />
         </Suspense>
         
-        <Suspense fallback={null}>
+        <Suspense fallback={smartSkeleton}>
           <PerformanceMonitor />
         </Suspense>
 
-        <Suspense fallback={null}>
+        <Suspense fallback={smartSkeleton}>
           <SemanticSearchMount />
         </Suspense>
       </div>
