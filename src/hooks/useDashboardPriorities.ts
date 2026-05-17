@@ -31,7 +31,7 @@ export function useDashboardPriorities(): DashboardPriorities {
           showAnalyticsOpen: false,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "Foco em prospecção hoje!",
+          roleHint: "PROSPECTION MODE: SDR FOCUS ACTIVATED 🎯",
         };
       case "closer":
         return {
@@ -40,7 +40,7 @@ export function useDashboardPriorities(): DashboardPriorities {
           showAnalyticsOpen: true,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "Feche negócios hoje!",
+          roleHint: "CLOSER MODE: REVENUE STRIKE ACTIVATED 💰",
         };
       case "gestao":
         return {
@@ -49,7 +49,7 @@ export function useDashboardPriorities(): DashboardPriorities {
           showAnalyticsOpen: true,
           showPerformanceOpen: true,
           showEngagementOpen: false,
-          roleHint: "Visão estratégica do time",
+          roleHint: "COMMAND MODE: STRATEGIC OVERVIEW 🛡️",
         };
       default:
         return {
@@ -58,7 +58,7 @@ export function useDashboardPriorities(): DashboardPriorities {
           showAnalyticsOpen: true,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "Bora vender!",
+          roleHint: "HYBRID MODE: ADAPTIVE PROTOCOL ACTIVE ⚡",
         };
     }
   }, [salesperson?.role]);
