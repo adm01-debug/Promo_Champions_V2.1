@@ -39,7 +39,7 @@ export const NavItem: FC<NavItemProps> = memo(({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild tooltip={title}>
+      <SidebarMenuButton asChild tooltip={title} aria-label={title}>
         <PreloadLink 
           to={url} 
           component={component}

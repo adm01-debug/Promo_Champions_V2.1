@@ -84,6 +84,7 @@ const Button = React.memo(React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref} 
         disabled={disabled || loading}
         aria-busy={loading || undefined}
+        aria-disabled={disabled || loading}
         onClick={handleClick}
         {...props}
       >

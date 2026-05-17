@@ -148,8 +148,8 @@ export const AppSidebar = memo(function AppSidebar() {
   if (isLoadingCurrentRole) {
     return (
       <Sidebar collapsible="icon" className="border-r-0 bg-sidebar">
-        <SidebarContent className="flex items-center justify-center">
-          <div className="animate-pulse space-y-3 p-4 w-full">
+        <SidebarContent className="flex items-center justify-center" aria-busy="true" aria-label="Carregando menu">
+          <div className="animate-pulse space-y-3 p-4 w-full" aria-hidden="true">
             {[...Array(5)].map((_, i) => <div key={i} className="h-10 bg-muted rounded-xl" />)}
           </div>
         </SidebarContent>

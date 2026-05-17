@@ -239,7 +239,10 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 p-1 rounded-lg hover:bg-muted/80 transition-colors outline-none group">
+              <button 
+                aria-label={`Menu do usuário: ${salesperson?.name || "Usuário"}`}
+                className="flex items-center gap-2 p-1 rounded-lg hover:bg-muted/80 transition-colors outline-none group"
+              >
                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shadow-inner border border-primary/10 group-hover:border-primary/30 transition-all">
                   {salesperson?.name?.charAt(0)?.toUpperCase() || "U"}
                 </div>

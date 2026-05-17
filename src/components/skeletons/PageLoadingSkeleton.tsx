@@ -13,7 +13,7 @@ export { SkeletonCard, TableSkeleton, PageHeaderSkeleton } from './SkeletonPrimi
 
 // Dashboard loading skeleton — content-faithful shimmer
 export const DashboardLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6" aria-busy="true" aria-label="Carregando dashboard">
+  <StaggeredContainer className="max-w-[1600px] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-6 space-y-6" aria-busy="true" aria-live="polite" aria-label="Carregando dashboard">
     <div className="flex items-center justify-between">
       <div className="space-y-2">
         <Shimmer className="h-8 w-56 rounded-lg" />
@@ -56,7 +56,7 @@ export const DashboardLoadingSkeleton: FC = () => (
 );
 
 export const VendedorDashboardLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando performance do vendedor">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={6} />
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -68,7 +68,7 @@ export const VendedorDashboardLoadingSkeleton: FC = () => (
 );
 
 export const AnalyticsLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando análises">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -80,7 +80,7 @@ export const AnalyticsLoadingSkeleton: FC = () => (
 export const AnalyticsPageLoadingSkeleton = AnalyticsLoadingSkeleton;
 
 export const PipelineLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando pipeline">
     <PageHeaderSkeleton />
     <div className="flex gap-4 overflow-hidden">
       {Array.from({ length: 5 }).map((_, i) => (
@@ -96,7 +96,7 @@ export const PipelineLoadingSkeleton: FC = () => (
 );
 
 export const RankingLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando ranking">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={3} />
     <Card className="border-primary/5 bg-background/20">
@@ -119,7 +119,7 @@ export const RankingLoadingSkeleton: FC = () => (
 );
 
 export const SDRDashboardLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando dashboard SDR">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={6} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -130,7 +130,7 @@ export const SDRDashboardLoadingSkeleton: FC = () => (
 );
 
 export const CloserDashboardLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando dashboard Closer">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -141,7 +141,7 @@ export const CloserDashboardLoadingSkeleton: FC = () => (
 );
 
 export const MetasLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando metas">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -152,7 +152,7 @@ export const MetasLoadingSkeleton: FC = () => (
 );
 
 export const MetasAtividadesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando metas de atividades">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <ChartSkeleton />
@@ -160,7 +160,7 @@ export const MetasAtividadesLoadingSkeleton: FC = () => (
 );
 
 export const PlaybooksLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando playbooks">
     <PageHeaderSkeleton />
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -169,7 +169,7 @@ export const PlaybooksLoadingSkeleton: FC = () => (
 );
 
 export const CadenciasLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando cadências">
     <PageHeaderSkeleton />
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -178,7 +178,7 @@ export const CadenciasLoadingSkeleton: FC = () => (
 );
 
 export const TimesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando times">
     <PageHeaderSkeleton />
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -187,7 +187,7 @@ export const TimesLoadingSkeleton: FC = () => (
 );
 
 export const NotificacoesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando notificações">
     <PageHeaderSkeleton />
     <Card className="border-primary/5 bg-background/20">
       <CardContent className="pt-6 space-y-4">
@@ -206,7 +206,7 @@ export const NotificacoesLoadingSkeleton: FC = () => (
 );
 
 export const FonteLeadsLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando fontes de leads">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <ChartSkeleton />
@@ -214,14 +214,14 @@ export const FonteLeadsLoadingSkeleton: FC = () => (
 );
 
 export const VendasLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando vendas">
     <PageHeaderSkeleton />
     <TableSkeleton rows={10} />
   </StaggeredContainer>
 );
 
 export const TarefasLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando tarefas">
     <PageHeaderSkeleton />
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {Array.from({ length: 3 }).map((_, i) => (
@@ -237,7 +237,7 @@ export const TarefasLoadingSkeleton: FC = () => (
 );
 
 export const RelatoriosLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando relatórios">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -248,7 +248,7 @@ export const RelatoriosLoadingSkeleton: FC = () => (
 );
 
 export const RelatorioAtividadesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando relatório de atividades">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <ChartSkeleton />
@@ -257,7 +257,7 @@ export const RelatorioAtividadesLoadingSkeleton: FC = () => (
 );
 
 export const AtividadesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando atividades">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <TableSkeleton rows={8} />
@@ -265,7 +265,7 @@ export const AtividadesLoadingSkeleton: FC = () => (
 );
 
 export const PortfolioLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando portfólio">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <TableSkeleton rows={10} />
@@ -273,21 +273,21 @@ export const PortfolioLoadingSkeleton: FC = () => (
 );
 
 export const ClientesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando clientes">
     <PageHeaderSkeleton />
     <TableSkeleton rows={10} />
   </StaggeredContainer>
 );
 
 export const ProdutosLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando produtos">
     <PageHeaderSkeleton />
     <TableSkeleton rows={10} />
   </StaggeredContainer>
 );
 
 export const VendedoresLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando vendedores">
     <PageHeaderSkeleton />
     <div className="flex items-end justify-center gap-4 py-8">
       <div className="flex flex-col items-center gap-2">
@@ -314,7 +314,7 @@ export const VendedoresLoadingSkeleton: FC = () => (
 );
 
 export const ConfiguracoesLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando configurações">
     <PageHeaderSkeleton />
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Card className="lg:col-span-1 border-primary/5 bg-background/20">
@@ -332,7 +332,7 @@ export const ConfiguracoesLoadingSkeleton: FC = () => (
 );
 
 export const IndexLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando conteúdo">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={4} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -344,7 +344,7 @@ export const IndexLoadingSkeleton: FC = () => (
 );
 
 export const GamificationLoadingSkeleton: FC = () => (
-  <StaggeredContainer className="space-y-6 p-6">
+  <StaggeredContainer className="space-y-6 p-6" aria-busy="true" aria-live="polite" aria-label="Carregando gamificação">
     <PageHeaderSkeleton />
     <StatsGridSkeleton count={3} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
