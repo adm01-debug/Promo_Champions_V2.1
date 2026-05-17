@@ -1,15 +1,32 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserRoles } from "@/hooks/useUserRoles";
 
 const LAST_DASHBOARD_SECTION_KEY = "last_dashboard_section";
 
 export const useDashboardRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { salesperson } = useAuth();
+  const { isAdminOrManager } = useUserRoles();
 
   useEffect(() => {
-    // Check if we are at exactly /dashboard or /dashboard/ or root /
+    // Determine the optimal landing page based on role if at root/dashboard
     if (location.pathname === "/dashboard" || location.pathname === "/dashboard/" || location.pathname === "/") {
+      
+      // If it's a salesperson (SDR or Closer), send them to their dedicated dashboard
+      if (!isAdminOrManager && salesperson) {
+        if (salesperson.role === 'sdr') {
+          navigate("/sdr", { replace: true });
+          return;
+        } else if (salesperson.role === 'closer' || salesperson.role === 'hybrid') {
+          navigate("/closer", { replace: true });
+          return;
+        }
+      }
+
+      // Default logic for managers/admins or unknown roles
       const lastSection = localStorage.getItem(LAST_DASHBOARD_SECTION_KEY);
       
       if (lastSection) {
@@ -24,9 +41,7 @@ export const useDashboardRedirect = () => {
     if (match && match[1] && match[1] !== "visao-geral") {
       localStorage.setItem(LAST_DASHBOARD_SECTION_KEY, match[1]);
     } else if (match && match[1] === "visao-geral") {
-      // We don't necessarily need to save "visao-geral" as it's the default, 
-      // but let's clear or save it for consistency.
       localStorage.removeItem(LAST_DASHBOARD_SECTION_KEY);
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, salesperson, isAdminOrManager]);
 };
