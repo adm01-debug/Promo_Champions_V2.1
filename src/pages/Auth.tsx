@@ -309,11 +309,15 @@ export default function Auth() {
                   <p className="text-sm text-white/50 mt-1">{authMode === 'login' ? 'Entre e suba no ranking agora.' : 'Crie seu perfil de elite.'}</p>
                 </div>
 
-                {/* Sign up link for new users */}
+                {/* Toggle link */}
                 <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
                   <Sparkles className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
                   <p className="text-[11px] text-white/60 leading-relaxed">
-                    Novo na arena? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button> para começar sua jornada.
+                    {authMode === 'login' ? (
+                      <>Novo na arena? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button></>
+                    ) : (
+                      <>Já tem uma conta? <button onClick={() => setAuthMode('login')} className="text-cyan-300 font-bold hover:underline">Faça login</button></>
+                    )}
                   </p>
                 </div>
 
