@@ -38,7 +38,7 @@ interface ActionSuggestion {
   actionType: string;
   priority: 'high' | 'medium' | 'low';
   dealName?: string;
-  dealId?: string;
+  dealId?: string | null;
   channel?: string;
 }
 
