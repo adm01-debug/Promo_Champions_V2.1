@@ -60,7 +60,7 @@ const queryClient = new QueryClient({
         }
 
         const message = error?.message || "Ocorreu um erro ao processar sua solicitação.";
-        Sonner.error("Erro na operação", {
+        toast.error("Erro na operação", {
           description: message,
           duration: 5000,
         });
@@ -79,7 +79,7 @@ const App = () => {
               <GlobalErrorBoundary>
                 <XPToastProvider>
                   <Toaster />
-                  <Sonner 
+                  <SonnerComponent 
                     position="top-right" 
                     closeButton 
                     richColors 
