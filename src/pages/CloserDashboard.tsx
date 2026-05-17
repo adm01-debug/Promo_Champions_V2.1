@@ -20,6 +20,7 @@ import {
   Handshake,
   FileText
 } from "lucide-react";
+import { LazySection } from "@/components/atoms/LazySection";
 
 export default function CloserDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>("month");
@@ -160,42 +161,25 @@ export default function CloserDashboard() {
             </motion.div>
 
             {/* Main Grid */}
-            <motion.div 
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <CloserRevenueComparison period={period} />
-              <TopClosersRanking />
-            </motion.div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <LazySection><CloserRevenueComparison period={period} /></LazySection>
+              <LazySection><TopClosersRanking /></LazySection>
+            </div>
 
             {/* Revenue Evolution Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <LazySection>
               <CloserRevenueEvolution period={period} />
-            </motion.div>
+            </LazySection>
 
             {/* Pipeline Row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
+            <LazySection>
               <CloserPipeline />
-            </motion.div>
+            </LazySection>
 
             {/* Bottom Row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
+            <LazySection>
               <RecentClosedDeals />
-            </motion.div>
+            </LazySection>
           </div>
         </div>
       </PageTransition>

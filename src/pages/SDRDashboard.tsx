@@ -55,6 +55,7 @@ import { SDRSequenceOrchestrator } from "@/components/sdr/SDRSequenceOrchestrato
 import { SDRConversationInsights } from "@/components/sdr/SDRConversationInsights";
 import { SDRAchievementTracker } from "@/components/sdr/SDRAchievementTracker";
 import { SDRCommandBar } from "@/components/sdr/SDRCommandBar";
+import { LazySection } from "@/components/atoms/LazySection";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -346,8 +347,8 @@ export default function SDRDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <ProspectingFunnel />
-              <LeadTemperatureChart />
+              <LazySection><ProspectingFunnel /></LazySection>
+              <LazySection><LeadTemperatureChart /></LazySection>
             </motion.div>
 
             {/* Secondary Metrics - Compact Cards with Circular Icons */}
@@ -400,31 +401,37 @@ export default function SDRDashboard() {
             </motion.div>
 
             {/* Sequence Orchestrator */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.36 }}
-            >
-              <SDRSequenceOrchestrator />
-            </motion.div>
+            <LazySection>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.36 }}
+              >
+                <SDRSequenceOrchestrator />
+              </motion.div>
+            </LazySection>
 
             {/* Conversation Insights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.37 }}
-            >
-              <SDRConversationInsights />
-            </motion.div>
+            <LazySection>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.37 }}
+              >
+                <SDRConversationInsights />
+              </motion.div>
+            </LazySection>
 
             {/* Performance Coaching */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.38 }}
-            >
-              <PerformanceCoaching />
-            </motion.div>
+            <LazySection>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.38 }}
+              >
+                <PerformanceCoaching />
+              </motion.div>
+            </LazySection>
 
             {/* Dialer & Power Mode */}
             <motion.div 
