@@ -14,6 +14,8 @@ interface SkipLinksProps {
 const defaultLinks: SkipLink[] = [
   { href: '#main-content', label: 'Pular para o conteúdo principal' },
   { href: '#main-navigation', label: 'Pular para a navegação' },
+  { href: '#nav-item-dashboard', label: 'Pular para o Dashboard' },
+  { href: '#nav-item-pipeline', label: 'Pular para o Pipeline' },
   { href: '#search', label: 'Pular para a busca' },
 ];
 

@@ -122,6 +122,7 @@ export const AppSidebar = memo(function AppSidebar() {
         badgeCount={isNotifications ? alertCount : 0}
         badgeVariant={isNotifications ? "warning" : "default"}
         component={componentMap[item.url]}
+        id={`nav-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
       />
     );
   }, [isCollapsed, alertCount]);
