@@ -135,6 +135,7 @@ export const usePortfolioStats = (salespersonId?: string) => {
     active,
     inactive,
     unassigned: unassignedCount,
+    activatedCount,
     totalClients: total,
     activeClients: active,
     inactiveClients: inactive,
