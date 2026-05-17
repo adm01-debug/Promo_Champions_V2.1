@@ -1,6 +1,6 @@
 import React from "react";
 // PortfolioStatsCards - aligned with PortfolioStats interface
-import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash } from "lucide-react";
+import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PortfolioStats } from "@/hooks/useClientPortfolio";
