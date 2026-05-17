@@ -59,24 +59,24 @@ function _MiniLeaderboard() {
         transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
       />
 
-      <CardHeader className="pb-3 relative z-10">
+      <CardHeader className="pb-2 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
-            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
-              <Crown className="h-3.5 w-3.5" />
+          <CardTitle className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] flex items-center gap-1.5 text-primary">
+            <div className="p-1 rounded-lg bg-primary/10 border border-primary/20">
+              <Crown className="h-3 w-3" />
             </div>
             Elite Pilots
           </CardTitle>
-          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[9px] font-mono font-bold uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/10">
+          <Button asChild variant="ghost" size="sm" className="h-6 px-1.5 text-[8px] font-mono font-bold uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/10">
             <Link to="/ranking" className="flex items-center gap-1">
               Full Spectrum
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-2.5 w-2.5" />
             </Link>
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-2.5 pb-4 relative z-10">
+      <CardContent className="space-y-2 pb-3 relative z-10">
         {top3.map((person, index) => {
           const config = RANK_CONFIG[index];
           const RankIcon = config.icon;
@@ -89,21 +89,21 @@ function _MiniLeaderboard() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
               className={cn(
-                "group/item relative flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 border",
+                "group/item relative flex items-center gap-2.5 p-2 rounded-xl transition-all duration-300 border",
                 isCurrentUser 
                   ? "bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(14,165,233,0.1)]" 
                   : "bg-white/[0.03] border-white/5 hover:border-white/20 hover:bg-white/[0.06]"
               )}
             >
               {/* Rank Badge */}
-              <div className="relative shrink-0 flex flex-col items-center justify-center w-8 h-8 rounded-lg bg-black/60 border border-white/10 overflow-hidden">
-                <RankIcon className={cn("h-4 w-4 relative z-10", config.color)} style={{ filter: `drop-shadow(0 0 5px ${config.glow})` }} />
+              <div className="relative shrink-0 flex flex-col items-center justify-center w-7 h-7 rounded-lg bg-black/60 border border-white/10 overflow-hidden">
+                <RankIcon className={cn("h-3.5 w-3.5 relative z-10", config.color)} style={{ filter: `drop-shadow(0 0 5px ${config.glow})` }} />
                 <div className="absolute inset-x-0 bottom-0 h-1" style={{ backgroundColor: config.glow.replace('0.4', '1').replace('0.3', '1') }} />
               </div>
 
               {/* Pilot Identity */}
               <div className="relative shrink-0">
-                <Avatar className="h-8 w-8 border border-white/10">
+                <Avatar className="h-7 w-7 border border-white/10">
                   <AvatarImage src={person.avatar_url || undefined} alt={person.name} />
                   <AvatarFallback className="text-[9px] font-mono font-bold bg-muted/40">
                     {person.name.slice(0, 2).toUpperCase()}
