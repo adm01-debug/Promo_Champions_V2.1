@@ -32,7 +32,7 @@ export const useClientPortfolio = (salespersonId?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('client_portfolio')
-        .select('*, client:clients(name, email, phone, company, total_value), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+        .select('*, client:clients(name, email, phone, company, total_value, is_activated, activated_at), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
 
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
