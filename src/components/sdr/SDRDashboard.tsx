@@ -265,7 +265,10 @@ const SDRDashboardInner = () => {
           </TabsContent>
           
           <TabsContent value="qualification" className="mt-0 outline-none">
-            <MQLQualificationForm />
+            <MQLQualificationForm 
+              saleId={selectedLeadId} 
+              clientName={selectedLeadData?.name} 
+            />
           </TabsContent>
 
           <TabsContent value="performance" className="mt-0 outline-none space-y-6">

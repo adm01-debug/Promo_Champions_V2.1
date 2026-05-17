@@ -45,7 +45,7 @@ const fetchReportData = async (startDate: Date, endDate: Date): Promise<ReportDa
   const [salesResult, metricsResult, categoriesResult] = await Promise.all([
     supabase
       .from("sales")
-      .select("*, salespeople(name)")
+      .select("*, salespeople:salespeople!salesperson_id(name)")
       .gte("created_at", start)
       .lte("created_at", end)
       .order("created_at", { ascending: false }),

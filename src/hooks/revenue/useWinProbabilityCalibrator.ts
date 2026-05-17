@@ -49,7 +49,7 @@ export function useCalibrations(filters?: { flag?: string }) {
     queryFn: async () => {
       let q = supabase
         .from("win_probability_deal_calibrations")
-        .select("*, sales:sale_id(id, amount, status, salespeople:salesperson_id(name))")
+        .select("*, sales:sale_id(id, amount, status, salespeople:salespeople!salesperson_id(name))")
         .order("calibration_delta", { ascending: true })
         .limit(500);
       if (filters?.flag) q = q.eq("flag", filters.flag);
