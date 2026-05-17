@@ -253,7 +253,7 @@ export default function Auth() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            className="relative"
+            className="relative w-full lg:max-w-[74%] lg:ml-auto"
           >
             {/* Mobile brand */}
             <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
