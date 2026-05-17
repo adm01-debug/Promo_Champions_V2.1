@@ -1,7 +1,7 @@
 import { UI } from "@/config/constants";
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as SonnerComponent, toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ import { AppRoutes } from "@/routes/AppRoutes";
 import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
 import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
-import { initErrorTracking } from "@/lib/errorTracking";
+import { initErrorTracking, captureException } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
 initErrorTracking();
