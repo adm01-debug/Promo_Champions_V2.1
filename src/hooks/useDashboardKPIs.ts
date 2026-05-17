@@ -35,7 +35,7 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
     const [salesResult, metricsResult] = await Promise.all([
       supabase
         .from("sales")
-        .select("amount, status, is_first_sale")
+        .select("amount, status, is_first_sale, sdr_id, closer_id")
         .gte("created_at", start)
         .lte("created_at", end),
       supabase
@@ -53,9 +53,13 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
 
     const completedSales = sales.filter(s => s.status === "completed");
     const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
+    
+    // Revenue logic: First sale counts for SDR Activation. 
+    // All recurring sales go to Closer Portfolio.
     const firstSaleRevenue = completedSales
       .filter(s => s.is_first_sale)
       .reduce((sum, s) => sum + Number(s.amount), 0);
+    
     const recurringRevenue = totalRevenue - firstSaleRevenue;
     const totalSales = completedSales.length;
     

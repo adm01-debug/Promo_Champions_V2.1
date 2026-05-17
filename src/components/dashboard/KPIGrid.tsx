@@ -60,8 +60,8 @@ export const KPIGrid = React.memo(function KPIGrid() {
   const { data: kpis } = useDashboardKPIs();
 
   const metrics = [
-    { label: "Venda Ativação", value: kpis?.current.firstSaleRevenue ?? 0, format: "currency", icon: Receipt },
-    { label: "Venda Carteira", value: kpis?.current.recurringRevenue ?? 0, format: "currency", icon: RotateCcw },
+    { label: "Venda Ativação (SDR)", value: kpis?.current.firstSaleRevenue ?? 0, format: "currency", icon: Receipt },
+    { label: "Venda Carteira (Closer)", value: kpis?.current.recurringRevenue ?? 0, format: "currency", icon: RotateCcw },
     { label: "Conversão SDR", value: kpis?.current.conversionRate ?? 0, format: "percent", icon: Activity },
   ];
   return (
