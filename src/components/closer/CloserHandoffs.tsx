@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Zap, Clock, ArrowRight, UserCheck, MessageSquare, Briefcase } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function CloserHandoffs() {
   const { user } = useAuth();
@@ -103,10 +103,10 @@ export function CloserHandoffs() {
                     <Badge className="bg-success/20 text-success border-success/30 hover:bg-success/30">MQL</Badge>
                   </div>
                   
-                  {lead.enrichment_data?.pains && (
+                  {(lead.enrichment_data as any)?.pains && (
                     <div className="mt-3 p-2 rounded-lg bg-background/40 border border-white/5 text-[10px] text-muted-foreground italic line-clamp-2">
                       <MessageSquare className="h-3 w-3 inline mr-1 opacity-50" />
-                      "{lead.enrichment_data.pains}"
+                      "{(lead.enrichment_data as any).pains}"
                     </div>
                   )}
 
