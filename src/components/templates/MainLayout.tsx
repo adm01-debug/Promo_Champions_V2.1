@@ -13,6 +13,7 @@ import { SkipLinks } from "@/components/accessibility/SkipLinks";
 import { FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
 import { DesktopTopBar } from "@/components/organisms/DesktopTopBar";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
+import { DevOnly } from "@/components/auth/DevOnly";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { cn } from "@/lib/utils";
 import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
