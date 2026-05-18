@@ -180,9 +180,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         <ScrollToTop />
         
         
-        <Suspense fallback={smartSkeleton}>
-          <PerformanceMonitor />
-        </Suspense>
+        <DevOnly>
+          <Suspense fallback={smartSkeleton}>
+            <PerformanceMonitor />
+          </Suspense>
+        </DevOnly>
 
         <Suspense fallback={smartSkeleton}>
           <SemanticSearchMount />
