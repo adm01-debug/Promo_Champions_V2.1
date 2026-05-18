@@ -170,8 +170,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         <FocusModeBreakReminder />
         
         <Suspense fallback={null}>
-          <InstallPrompt variant="card" />
-          <UpdatePrompt />
+          
+          
         </Suspense>
         
         <Suspense fallback={null}>
