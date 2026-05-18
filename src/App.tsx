@@ -18,6 +18,7 @@ import { AppRoutes } from "@/routes/AppRoutes";
 
 import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
+import { DevOnly } from "@/components/auth/DevOnly";
 import { initErrorTracking, captureException } from "@/lib/errorTracking";
 
 // Initialize error tracking on app load
@@ -94,7 +95,7 @@ const App = () => {
                             <CommandPalette />
                             <RouteProgressBar />
                             <AppRoutes />
-                            <PerformanceMonitor />
+                            <DevOnly><PerformanceMonitor /></DevOnly>
                             
                           </DashboardThemeProvider>
                         </I18nProvider>
