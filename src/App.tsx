@@ -15,7 +15,7 @@ import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { KeyboardShortcutsProvider } from "@/components/keyboard/KeyboardShortcutsProvider";
 import { AppRoutes } from "@/routes/AppRoutes";
-import { LGPDConsentBanner } from "@/components/compliance/LGPDConsentBanner";
+
 import { RouteProgressBar } from "@/components/navigation/RouteProgressBar";
 import { PerformanceMonitor } from "@/components/performance/PerformanceMonitor";
 import { initErrorTracking, captureException } from "@/lib/errorTracking";
@@ -95,7 +95,7 @@ const App = () => {
                             <RouteProgressBar />
                             <AppRoutes />
                             <PerformanceMonitor />
-                            <LGPDConsentBanner />
+                            
                           </DashboardThemeProvider>
                         </I18nProvider>
                       </AuthProvider>

@@ -31,7 +31,7 @@ const InstallPrompt = lazy(() => import("@/components/pwa/InstallPrompt").then(m
 const UpdatePrompt = lazy(() => import("@/components/pwa/UpdatePrompt").then(m => ({ default: m.UpdatePrompt })));
 const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator").then(m => ({ default: m.OfflineIndicator })));
 const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
-const ConsentBanner = lazy(() => import("@/components/lgpd/ConsentBanner").then(m => ({ default: m.ConsentBanner })));
+
 const PerformanceMonitor = lazy(() => import("@/components/admin/PerformanceMonitor").then(m => ({ default: m.PerformanceMonitor })));
 const SemanticSearchMount = lazy(() => import("@/components/semantic/SemanticSearchMount").then(m => ({ default: m.SemanticSearchMount })));
 
@@ -179,9 +179,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         
         <ScrollToTop />
         
-        <Suspense fallback={null}>
-          <ConsentBanner />
-        </Suspense>
         
         <Suspense fallback={smartSkeleton}>
           <PerformanceMonitor />
