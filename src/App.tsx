@@ -96,7 +96,6 @@ const App = () => {
                             <RouteProgressBar />
                             <AppRoutes />
                             <DevOnly><PerformanceMonitor /></DevOnly>
-                            
                           </DashboardThemeProvider>
                         </I18nProvider>
                       </AuthProvider>
