@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils";
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
-  const { data, isLoading, isFetching, refetch } = useRevenueForecast({ horizonDays: horizon as any, ownerId: null, includeAI: true });
+  const { data, isLoading, isFetching, refetch } = useRevenueForecast({ horizonDays: horizon, ownerId: null, includeAI: true });
 
   const { data: salespeople } = useQuery({
     queryKey: ["salespeople-public-names"],
@@ -77,7 +77,7 @@ export const RevenueForecastHub: FC = () => {
     );
   }
   const forecast = data as RevenueForecastResponse;
-  const conf = confidenceLabel((forecast as any).confidence || 0);
+  const conf = confidenceLabel(forecast.confidence);
   const goalProgress = forecast.metrics.goal_for_horizon > 0
     ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
     : 0;
