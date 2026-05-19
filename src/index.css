@@ -28,12 +28,12 @@
 
     /* ===== CORES PRIMÁRIAS - Electric Violet ===== */
     --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 262 100% 98%;
     --primary-glow: 280 100% 70%;
 
     /* ===== CORES SECUNDÁRIAS - Deep Teal ===== */
     --secondary: 172 66% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary-foreground: 172 100% 98%;
 
     /* ===== MUTED ===== */
     --muted: 220 15% 92%;
@@ -45,7 +45,7 @@
 
     /* ===== DESTRUCTIVE ===== */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 100% 98%;
 
     /* ===== BORDAS E INPUTS ===== */
     --border: 220 15% 88%;
@@ -54,11 +54,11 @@
 
     /* ===== ESTADOS ===== */
     --success: 152 76% 42%;
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 152 100% 98%;
     --warning: 38 95% 50%;
     --warning-foreground: 0 0% 0%;
     --info: 200 95% 50%;
-    --info-foreground: 0 0% 100%;
+    --info-foreground: 200 100% 98%;
 
     /* ===== LIVE/REAL-TIME INDICATORS ===== */
     --live-pulse: 330 90% 60%;
