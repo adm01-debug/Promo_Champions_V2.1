@@ -116,7 +116,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const timelineEvents: TimelineEvent[] = [];
 
-      (interactions || []).forEach((int: { id: string; type: string; content: string | null; created_at: string; metadata: any }) => {
+      ((interactions as any[]) || []).forEach((int: any) => {
         timelineEvents.push({
           id: int.id,
           type: int.type,
@@ -129,7 +129,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      activities.forEach((act: any) => {
+      activities.forEach((act) => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
         timelineEvents.push({
           id: act.id,
