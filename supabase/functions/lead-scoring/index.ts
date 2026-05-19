@@ -17,19 +17,19 @@ serve(async (req) => {
   }
 
   try {
-    const { dealIds } = await req.json();
+    const rawBody = await req.json();
     
-    const errors = collectErrors([
-      validateArray(dealIds, "dealIds", { required: true, maxLength: 500 }),
-    ]);
-
-    if (errors.length > 0) {
-      return validationErrorResponse(errors, corsHeaders);
+    // Contract validation
+    const validation = validateWebhookPayload(WebhookContracts.leadScoring, rawBody, "1.0.0");
+    if (!validation.success) {
+      console.error(`[Contract Violation] Lead scoring failed validation: ${validation.error}`);
+      return new Response(
+        JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
+        { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    if (!Array.isArray(dealIds) || dealIds.length === 0) {
-      return validationErrorResponse([{ field: "dealIds", message: "O array dealIds não pode estar vazio" }], corsHeaders);
-    }
+    const { dealIds } = validation.data;
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
