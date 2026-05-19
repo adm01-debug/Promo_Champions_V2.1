@@ -80,6 +80,13 @@ Deno.serve(async (req) => {
 
   const ev = parseEvent(payload, req.headers);
 
+  // Contract validation
+  const validation = validateWebhookPayload(WebhookContracts.inboundEmail, ev, "1.1.0");
+  if (!validation.success) {
+    console.warn(`[Contract Violation] Inbound email event failed validation: ${validation.error}`);
+    // We log but proceed for robustness, or we could return 422 if we want strict enforcement
+  }
+
   const admin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
