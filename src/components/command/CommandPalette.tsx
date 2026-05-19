@@ -18,7 +18,7 @@ import {
   Gauge, HeartPulse, LineChart, MessageSquare, Briefcase, TrendingUp,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useSemanticSearch } from "@/hooks/useSemanticSearch";
+import { useSemanticSearch } from "@/hooks/semantic/useSemanticSearch";
 import { ENTITY_META, type SemanticEntityType } from "@/components/semantic/semanticSearchHelpers";
 
 interface CommandItemData {

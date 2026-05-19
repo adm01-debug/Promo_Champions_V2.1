@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Loader2, Search } from "lucide-react";
-import { useSemanticSearch } from "@/hooks/useSemanticSearch";
+import { useSemanticSearch } from "@/hooks/semantic/useSemanticSearch";
 import { ENTITY_META, type SemanticEntityType, type SemanticResult } from "./semanticSearchHelpers";
 import { SemanticSearchResultRow } from "./SemanticSearchResultRow";
 import { cn } from "@/lib/utils";
