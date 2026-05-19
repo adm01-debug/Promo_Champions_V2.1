@@ -1,8 +1,9 @@
 import React, { memo, useMemo } from 'react';
-// @ts-ignore
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+const List = FixedSizeList as any;
 
 interface VirtualizedListProps<T> {
   items: T[];
