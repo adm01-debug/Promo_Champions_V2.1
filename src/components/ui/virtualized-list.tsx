@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 // @ts-ignore
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList as List } from 'react-window/dist/react-window.js';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 

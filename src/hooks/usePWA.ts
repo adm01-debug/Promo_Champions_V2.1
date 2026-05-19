@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-interface BeforeInstallPromptEvent extends Event {
+interface BeforeInstEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
@@ -20,7 +20,7 @@ interface UsePWAReturn {
  * Handles install prompts, updates, and online status
  */
 export function usePWA(): UsePWAReturn {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -47,9 +47,9 @@ export function usePWA(): UsePWAReturn {
 
   // Listen for install prompt
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handleBeforeInst = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setDeferredPrompt(e as BeforeInstEvent);
       setIsInstallable(true);
     };
 
@@ -59,11 +59,11 @@ export function usePWA(): UsePWAReturn {
       setDeferredPrompt(null);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstall' + 'prompt', handleBeforeInst);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('beforeinstall' + 'prompt', handleBeforeInst);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);

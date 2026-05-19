@@ -28,7 +28,7 @@ const LayoutRealtimeEffects = lazy(() => import("@/components/organisms/LayoutRe
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
 const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
 const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
-const OfflineIndicator = lazy(() => import("@/components/pwa/OfflineIndicator").then(m => ({ default: m.OfflineIndicator })));
+
 const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
 
 const PerformanceMonitor = lazy(() => import("@/components/admin/PerformanceMonitor").then(m => ({ default: m.PerformanceMonitor })));
@@ -89,9 +89,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RouteTracker />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <OfflineIndicator />
-      </Suspense>
       
       <SkipLinks />
       <CyberArenaBackground />
