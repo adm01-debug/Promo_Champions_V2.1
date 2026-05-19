@@ -106,11 +106,12 @@ const useCloserRevenueEvolution = (period: PeriodFilter) => {
   });
 };
 
-const formatCurrency = (value: any) => {
-  if (value >= 1000) {
-    return `R$ ${(value / 1000).toFixed(0)}k`;
+const formatCurrency = (value: number | string) => {
+  const num = Number(value);
+  if (num >= 1000) {
+    return `R$ ${(num / 1000).toFixed(0)}k`;
   }
-  return `R$ ${value.toFixed(0)}`;
+  return `R$ ${num.toFixed(0)}`;
 };
 
 export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) {
