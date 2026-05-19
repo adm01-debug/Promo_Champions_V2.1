@@ -7,9 +7,20 @@ echo "Running CI Forbidden Patterns Check..."
 EXIT_CODE=0
 
 for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
-  # Search src directory, excluding this script and node_modules
-  # We use -r for recursive, -l to list files, and -w for whole word if possible (but patterns like LGPDConsentBanner are specific enough)
-  FOUND=$(grep -rlE "$pattern" src/ --exclude-dir=node_modules 2>/dev/null)
+  # Search all relevant files, excluding node_modules, .git, dist, docs, and non-source files
+  # We use find to have more control over exclusions
+  FOUND=$(find . -type f \
+    -not -path "*/node_modules/*" \
+    -not -path "*/.git/*" \
+    -not -path "*/dist/*" \
+    -not -path "*/docs/*" \
+    -not -path "*/supabase/functions/*" \
+    -not -name "*.md" \
+    -not -name "*.log" \
+    -not -name "package.json" \
+    -not -name "package-lock.json" \
+    -not -name "ci-check-forbidden.sh" \
+    -exec grep -lE "$pattern" {} + 2>/dev/null)
   
   if [ -n "$FOUND" ]; then
     echo "❌ Error: Forbidden pattern '$pattern' found in the following files:"

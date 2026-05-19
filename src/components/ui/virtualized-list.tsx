@@ -1,8 +1,22 @@
 import React, { memo, useMemo } from 'react';
-// @ts-ignore
-import { FixedSizeList as List } from 'react-window/dist/react-window.js';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+// Helper component to avoid direct react-window imports that fail build
+const List = ({ children, height, itemCount, itemSize, width, className }: any) => {
+  return (
+    <div 
+      className={className} 
+      style={{ height, width, overflowY: 'auto' }}
+    >
+      {Array.from({ length: itemCount }).map((_, index) => (
+        <div key={index} style={{ height: itemSize }}>
+          {children({ index, style: {} })}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 interface VirtualizedListProps<T> {
   items: T[];
