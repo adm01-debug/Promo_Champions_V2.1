@@ -380,7 +380,7 @@ export default function Auth() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between ml-1">
-                      <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Criptografia</Label>
+                      <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Senha de Acesso</Label>
                       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
                         <DialogTrigger asChild>
                           <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
