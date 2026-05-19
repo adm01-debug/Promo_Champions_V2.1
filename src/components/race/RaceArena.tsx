@@ -153,15 +153,6 @@ export function RaceArena({
   const cinematicTimerRef = useRef<number | null>(null);
   const lastCinematicAtRef = useRef<number>(0);
 
-  const pushCommentary = useCallback((text: string) => {
-    if (!text) return;
-    const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
-    setCommentary(line);
-    if (commentaryTimerRef.current) window.clearTimeout(commentaryTimerRef.current);
-    commentaryTimerRef.current = window.setTimeout(() => {
-      setCommentary((cur) => (cur?.id === line.id ? null : cur));
-    }, 3000);
-  }, []);
 
   const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
   const tireWearByCar = useMemo(() => {
