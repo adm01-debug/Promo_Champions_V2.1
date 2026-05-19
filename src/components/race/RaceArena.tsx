@@ -37,15 +37,6 @@ import { useRaceReplay } from '@/hooks/race/useRaceReplay';
 import { useRaceDisplayEvents } from '@/hooks/race/useRaceDisplayEvents';
 import { useRaceCommentaryLogic } from '@/hooks/race/useRaceCommentaryLogic';
 import { useRaceDetection } from '@/hooks/race/useRaceDetection';
-
-
-
-import {
-  getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
-  SECTOR_BOUNDARIES, isInDRSZone, computeLapInfo, makeCommentaryLine,
-  getNextCornerInfo,
-} from './raceTrackHelpers';
-
 import { useRaceReactions } from '@/hooks/race/useRaceReactions';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useRaceViewMode } from '@/hooks/race/useRaceViewMode';
@@ -86,9 +77,7 @@ export function RaceArena({
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
   const reducedMotion = useReducedMotion();
-  // Frente A — modo de visualização (default 'focus' = decluttered).
   const viewMode = useRaceViewMode();
-  // Frente D — modo Calm: desliga partículas/shake/fogos/neon, mantém info.
   const { calm } = useRaceCalm();
   const noFx = reducedMotion || calm;
   const carIds = sorted.map((c) => c.car_id);
@@ -96,12 +85,33 @@ export function RaceArena({
   const allReactions = [...liveBurst, ...reactionsData];
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
 
-  // ----- Detecção de ultrapassagens (flash + dust) -----
-  const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
-  const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
-  const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
-  const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
   const { commentary, pushCommentary } = useRaceCommentaryLogic();
+  const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } = useRaceDisplayEvents();
+  const { shaking, trigger: triggerShake } = useScreenShake(280);
+  const { muted, toggleMute, play } = useRaceSounds();
+  const playRef = useRef(play);
+  useEffect(() => { playRef.current = play; }, [play]);
+
+  const {
+    flashingCars,
+    dustBursts,
+    sectorBadges,
+    overtakesTotal,
+    yellowFlagUntil,
+    flashSectorIdx,
+    fastestCarId,
+    cinematicFocus,
+    waveTrigger,
+  } = useRaceDetection({
+    sortedCars: sorted,
+    reducedMotion,
+    triggerShake,
+    playOvertakeSound: () => playRef.current('overtake'),
+    playLeaderTakeoverSound: () => playRef.current('leader_takeover'),
+    pushCommentary,
+    pushTickerEvent,
+    pushBroadcast,
+  });
 
   const [replayOverlay, setReplayOverlay] = useState(false);
   const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
@@ -109,52 +119,15 @@ export function RaceArena({
   const [showFinaleFlag, setShowFinaleFlag] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [startLightsTrigger, setStartLightsTrigger] = useState(0);
-  const prevLeaderIdRef = useRef<string | null>(null);
-  // Pit-stop tracking: timestamp do último progresso para cada carro
   const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
   const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
-
-  // Race Control: contador de overtakes + bandeira atual
-  const [overtakesTotal, setOvertakesTotal] = useState(0);
-  const [yellowFlagUntil, setYellowFlagUntil] = useState<number>(0);
-  // Velocidade simulada do líder (km/h)
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
 
-  // Ticker de eventos ao vivo
-  const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } = useRaceDisplayEvents();
-
-
-  // Screen shake em ultrapassagens top-3
-  const { shaking, trigger: triggerShake } = useScreenShake(280);
-
-  // Sons sintéticos da corrida (mute persistido em localStorage)
-  const { muted, toggleMute, play } = useRaceSounds();
-  const playRef = useRef(play);
-  useEffect(() => { playRef.current = play; }, [play]);
-
-  // Replay 4s das últimas posições
   const replay = useRaceReplay();
-  // Grava snapshot a cada update de leaderboard
   useEffect(() => {
     if (cars.length > 0) replay.recordSnapshot(cars);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cars.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
-
-
-  // Ciclo 47-52: la-ola, fastest sector, cinematic camera
-  const [waveTrigger, setWaveTrigger] = useState(0);
-  const lastLapCompletedRef = useRef<number>(0);
-  const [fastestCarId, setFastestCarId] = useState<string | null>(null);
-  const fastestTimerRef = useRef<number | null>(null);
-  // Tempo do líder ao entrar em cada setor (ms) — para detectar setor mais rápido
-  const sectorEnterRef = useRef<Map<number, { carId: string; at: number }>>(new Map());
-  const bestSectorTimeRef = useRef<Map<number, number>>(new Map());
-  const [flashSectorIdx, setFlashSectorIdx] = useState<number | null>(null);
-  const [cinematicFocus, setCinematicFocus] = useState(false);
-  const cinematicTimerRef = useRef<number | null>(null);
-  const lastCinematicAtRef = useRef<number>(0);
-
 
   const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
   const tireWearByCar = useMemo(() => {
@@ -170,193 +143,38 @@ export function RaceArena({
       const delta = Math.max(0, p - prev.lastProgress);
       const smooth = prev.smoothDelta * 0.85 + delta * 0.15;
       wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: smooth });
-      // wear: 1 quando consistente; degrada conforme distância da média
       const avg = sorted.reduce((acc, x) => acc + Number(x.progress), 0) / Math.max(1, sorted.length);
       const lag = Math.max(0, avg - p);
       const wear = Math.max(0.15, Math.min(1, 1 - lag * 1.4));
       map.set(c.car_id, wear);
     });
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
-  useEffect(() => {
-    const curr = sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
-    const prev = prevSnapshotRef.current;
-    if (prev.length > 0 && !reducedMotion) {
-      const overtakes = detectOvertakes(prev, curr);
-      if (overtakes.length > 0) {
-        // Race Control: incrementa contador + dispara bandeira amarela 3s
-        setOvertakesTotal((n) => n + overtakes.length);
-        setYellowFlagUntil(Date.now() + 3000);
-        const newFlash = new Set(flashingCars);
-        overtakes.forEach((o) => newFlash.add(o.overtaker));
-        setFlashingCars(newFlash);
-        setTimeout(() => {
-          setFlashingCars((s) => {
-            const next = new Set(s);
-            overtakes.forEach((o) => next.delete(o.overtaker));
-            return next;
-          });
-        }, 700);
-        // narração + grava último overtake p/ replay + ticker + screen shake top-3
-        const o = overtakes[0];
-        const attackerName = sorted.find((c) => c.car_id === o.overtaker)?.salesperson_name;
-        const defenderName = sorted.find((c) => c.car_id === o.overtaken)?.salesperson_name;
-        const inDRS = isInDRSZone(curr.find((x) => x.id === o.overtaker)?.progress ?? 0);
-        pushCommentary(makeCommentaryLine({
-          type: inDRS ? 'drs' : 'overtake',
-          attacker: attackerName,
-          defender: defenderName,
-        }));
-        // Ticker resumido
-        if (attackerName && defenderName) {
-          pushTickerEvent(
-            `${attackerName.split(' ')[0]} ultrapassou ${defenderName.split(' ')[0]}`,
-            inDRS ? '⚡' : '🏁',
-          );
-        }
-        // Screen shake apenas se overtake afeta posições top-3
-        const sortedCurr = [...curr].sort((a, b) => b.progress - a.progress);
-        const overtakerNewRank = sortedCurr.findIndex((x) => x.id === o.overtaker);
-        if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
-          triggerShake();
-          // Sound: overtake top-3
-          playRef.current('overtake');
-          // Broadcast event
-          if (attackerName && defenderName) {
-            pushBroadcast({
-              kind: 'overtake',
-              title: `${attackerName.split(' ')[0]} ULTRAPASSOU ${defenderName.split(' ')[0]}`,
-              detail: inDRS ? `Zona DRS · P${overtakerNewRank + 1}` : `Manobra limpa · P${overtakerNewRank + 1}`,
-            });
-          }
-        }
-        lastOvertakeRef.current = { attacker: o.overtaker, defender: o.overtaken, at: Date.now() };
-      }
-      // dust quando carro cruza um checkpoint (curva)
-      const newDust: Array<{ id: string; x: number; y: number }> = [];
-      curr.forEach((c) => {
-        const p = prev.find((x) => x.id === c.id);
-        if (!p) return;
-        for (const cp of CHECKPOINTS) {
-          if (p.progress < cp && c.progress >= cp) {
-            const pos = getPositionOnTrack(cp, 0);
-            newDust.push({ id: `${c.id}-${cp}-${Date.now()}`, x: pos.x, y: pos.y });
-          }
-        }
-      });
-      if (newDust.length > 0) {
-        setDustBursts((d) => [...d, ...newDust]);
-        setTimeout(() => {
-          setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
-        }, 1200);
-      }
-
-      // ----- Setores cronometrados (apenas líder dispara badge) -----
-      const leaderCurr = curr[0];
-      const leaderPrev = prev.find((x) => x.id === leaderCurr?.id);
-      if (leaderCurr && leaderPrev) {
-        SECTOR_BOUNDARIES.forEach((b, i) => {
-          if (leaderPrev.progress < b && leaderCurr.progress >= b) {
-            const pos = getPositionOnTrack(b, 0);
-            const name = `S${i + 1}`;
-            const badgeId = `${leaderCurr.id}-${name}-${Date.now()}`;
-            setSectorBadges((arr) => [...arr, { id: badgeId, name, x: pos.x, y: pos.y }]);
-            setTimeout(() => {
-              setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
-            }, 900);
-            const lname = sorted.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
-            pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
-
-            // ===== FASTEST SECTOR detection =====
-            const now = Date.now();
-            const prevEnter = sectorEnterRef.current.get(i);
-            if (prevEnter && prevEnter.carId === leaderCurr.id) {
-              const sectorTime = now - prevEnter.at;
-              const best = bestSectorTimeRef.current.get(i);
-              if (sectorTime > 200 && (best === undefined || sectorTime < best)) {
-                bestSectorTimeRef.current.set(i, sectorTime);
-                // flash setor + badge FASTEST
-                setFlashSectorIdx(i);
-                setFastestCarId(leaderCurr.id);
-                if (fastestTimerRef.current) window.clearTimeout(fastestTimerRef.current);
-                fastestTimerRef.current = window.setTimeout(() => {
-                  setFlashSectorIdx(null);
-                  setFastestCarId(null);
-                }, 2000);
-              }
-            }
-            sectorEnterRef.current.set(i, { carId: leaderCurr.id, at: now });
-
-            // ===== CINEMATIC FOCUS no setor 3 (final da volta, i==2) =====
-            if (i === 2 && now - lastCinematicAtRef.current > 8000) {
-              lastCinematicAtRef.current = now;
-              setCinematicFocus(true);
-              if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
-              cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
-            }
-          }
-        });
-
-        // ===== LA OLA: dispara quando líder completa uma volta (cruza 0) =====
-        if (leaderCurr.progress > 1 && Math.floor(leaderCurr.progress) > lastLapCompletedRef.current) {
-          lastLapCompletedRef.current = Math.floor(leaderCurr.progress);
-          setWaveTrigger((n) => n + 1);
-        }
-      }
-      // ----- Mudança de líder -----
-      const newLeaderId = leaderCurr?.id ?? null;
-      if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
-        const lname = sorted.find((c) => c.car_id === newLeaderId)?.salesperson_name;
-        pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
-        if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
-        // Sound + broadcast: leader takeover
-        playRef.current('leader_takeover');
-        if (lname) {
-          pushBroadcast({
-            kind: 'leader',
-            title: `${lname.split(' ')[0]} ASSUMIU A LIDERANÇA`,
-            detail: 'Tomada de P1 ao vivo',
-          });
-        }
-      }
-      if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
-    }
-    prevSnapshotRef.current = curr;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorted.map((c) => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
-
-  // ----- Spotlight do líder -----
   const leader = sorted[0];
   const leaderPos = useMemo(
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
     [leader?.car_id, leader?.progress],
   );
 
-  // ----- Lap info -----
   const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
 
-  // ----- Velocidade simulada do líder (delta progresso × 1000 → km/h) -----
   useEffect(() => {
     if (!leader) return;
     const now = Date.now();
     const p = Number(leader.progress);
     const prev = lastLeaderProgressRef.current;
     if (prev) {
-      const dt = (now - prev.at) / 1000; // segundos
+      const dt = (now - prev.at) / 1000;
       const dp = Math.max(0, p - prev.progress);
       if (dt > 0.05) {
-        // Conversão arbitrária: 1% de progresso em 1s ≈ 220 km/h.
         const kmh = (dp / dt) * 22000;
-        // suavização exponencial
         setLeaderSpeed((s) => s * 0.7 + Math.min(360, kmh) * 0.3);
         lastLeaderProgressRef.current = { progress: p, at: now };
       }
     } else {
       lastLeaderProgressRef.current = { progress: p, at: now };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leader?.car_id, leader?.progress]);
 
   // Decay quando ninguém atualiza
