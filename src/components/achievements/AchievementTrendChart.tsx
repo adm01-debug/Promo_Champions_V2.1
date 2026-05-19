@@ -63,13 +63,13 @@ export function AchievementTrendChart() {
     );
   }
 
-  const chartData = trends.map((t) => ({
+  const chartData = (trends || []).map((t: any) => ({
     ...t,
     dateLabel: format(parseISO(t.date), "dd/MM", { locale: ptBR }),
   }));
 
-  const totalGoals = trends.reduce((sum, t) => sum + t.dailyGoals, 0);
-  const totalMilestones = trends.reduce((sum, t) => sum + t.streakMilestones, 0);
+  const totalGoals = (trends || []).reduce((sum: number, t: any) => sum + (t.dailyGoals || 0), 0);
+  const totalMilestones = (trends || []).reduce((sum: number, t: any) => sum + (t.streakMilestones || 0), 0);
 
   return (
     <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">
