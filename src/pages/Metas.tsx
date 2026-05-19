@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { cn } from "@/lib/utils";
 
-import { useGoalsDashboard } from "@/hooks/sales/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { TeamGoalProgress } from "@/components/goals/TeamGoalProgress";
 import { GoalsLeaderboard } from "@/components/goals/GoalsLeaderboard";
 import { CommissionCalculator } from "@/components/goals/CommissionCalculator";

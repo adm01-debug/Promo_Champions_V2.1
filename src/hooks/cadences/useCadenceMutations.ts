@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ActionType } from "./useCadenceQueries";
+import { ActionType } from "@/hooks/cadences/useCadenceQueries";
 
 export function useCreateCadence() {
   const queryClient = useQueryClient();

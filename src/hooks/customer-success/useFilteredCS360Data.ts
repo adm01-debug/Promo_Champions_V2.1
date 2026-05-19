@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { subDays, parseISO, isWithinInterval, startOfDay, endOfDay, isAfter } from "date-fns";
-import { CS360Response } from "./useCustomerSuccess360";
+import { CS360Response } from "@/hooks/customer-success/useCustomerSuccess360";
 
 export function useFilteredCS360Data(data: CS360Response | null | undefined, period: string, startDate: string, endDate: string) {
   return useMemo(() => {

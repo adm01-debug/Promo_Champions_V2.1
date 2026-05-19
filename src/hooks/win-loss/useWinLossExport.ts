@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { exportToCSV, formatCurrencyForExport, formatDateForExport } from "@/utils/csvExport";
-import type { WLAnalysisRow } from "./useWinLossData";
+import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 /**
  * Gera CSV das análises filtradas (outcome, valor, ciclo, motivo, concorrente, segmento).

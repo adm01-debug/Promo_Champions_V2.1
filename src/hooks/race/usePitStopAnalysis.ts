@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { differenceInDays, differenceInCalendarDays } from 'date-fns';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
-import type { RaceSeason } from './useRaceSeason';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceSeason } from "@/hooks/race/useRaceSeason";
 
 export interface PitStopAnalysis {
   hasData: boolean;

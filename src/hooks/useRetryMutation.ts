@@ -1,6 +1,6 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { withCircuitBreaker, CircuitBreakerError } from './useCircuitBreaker';
+import { withCircuitBreaker, CircuitBreakerError } from "@/hooks/useCircuitBreaker";
 
 interface RetryConfig {
   maxRetries?: number;

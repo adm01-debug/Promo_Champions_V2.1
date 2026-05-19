@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSemanticSearch, type SemanticProduct } from "@/hooks/semantic/useSemanticSearch";
+import { useSemanticSearch, type SemanticProduct } from "@/hooks/useSemanticSearch";
 import {
   VisualSearchButton,
   type VisualSearchResponse,

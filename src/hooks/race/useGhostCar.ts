@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
-import type { RaceSeason } from './useRaceSeason';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceSeason } from "@/hooks/race/useRaceSeason";
 
 export type GhostStatus = 'ahead' | 'behind' | 'tied' | 'no-data';
 

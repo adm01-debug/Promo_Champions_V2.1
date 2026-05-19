@@ -20,7 +20,7 @@ import {
   isWithinInterval,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { KPIPeriod } from "./useDashboardKPIsPeriod";
+import type { KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 
 export interface TrendBucket {
   label: string;

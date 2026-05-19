@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { SalespersonStat } from "./useWinLossAggregations";
+import type { SalespersonStat } from "@/hooks/win-loss/useWinLossAggregations";
 
 export type ScoreTier = "diamante" | "ouro" | "prata" | "bronze";
 

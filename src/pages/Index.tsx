@@ -10,7 +10,7 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/sales/useSalesRealtime";
 import { useSalesChartData } from "@/hooks/sales/useSalesChartData";
-import { useGoalsDashboard } from "@/hooks/sales/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDashboardPriorities } from "@/hooks/dashboard/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";

@@ -186,4 +186,4 @@ export function useIPWhitelist() {
 }
 
 // Re-export from security monitoring for backward compatibility
-export { useCheckIPStatus, useLoginAttempts, useLogLoginAttempt, useSecurityStats } from "./useSecurityMonitoring";
+export { useCheckIPStatus, useLoginAttempts, useLogLoginAttempt, useSecurityStats } from "@/hooks/useSecurityMonitoring";

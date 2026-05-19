@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { VoiceId, VOICE_OPTIONS } from './useElevenLabsVoice';
+import { VoiceId, VOICE_OPTIONS } from "@/hooks/useElevenLabsVoice";
 
 export type ResponseMode = 'text' | 'audio' | 'both';
 

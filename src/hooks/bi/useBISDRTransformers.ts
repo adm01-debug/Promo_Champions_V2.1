@@ -1,5 +1,5 @@
 import { differenceInDays, format, parseISO, differenceInBusinessDays, endOfMonth, startOfMonth } from "date-fns";
-import type { BISDRData } from "./useBISDR";
+import type { BISDRData } from "@/hooks/bi/useBISDR";
 
 interface SaleRecord {
   id: string;

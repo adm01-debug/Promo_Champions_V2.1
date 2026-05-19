@@ -3,8 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   aggregateBySalesperson,
   type SalespersonStat,
-} from "./useWinLossAggregations";
-import type { WLAnalysisRow } from "./useWinLossData";
+} from "@/hooks/win-loss/useWinLossAggregations";
+import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 export const useSalespersonWinLossStats = (
   rows: WLAnalysisRow[] | undefined,

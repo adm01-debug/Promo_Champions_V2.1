@@ -1,5 +1,5 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { useCelebration } from './useCelebration';
+import { useCelebration } from "@/hooks/useCelebration";
 
 interface LevelUpEvent {
   salespersonId: string;

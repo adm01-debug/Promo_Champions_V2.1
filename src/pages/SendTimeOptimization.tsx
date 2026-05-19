@@ -7,7 +7,7 @@ import {
   useGlobalSendTimeStats,
   useTopSendTimeProfiles,
   useOptimizeSendTime,
-} from "@/hooks/engagement/useSendTimeOptimization";
+} from "@/hooks/sequences/useSendTimeOptimization";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScheduledSendsPanel } from "@/components/engagement/SendTime/ScheduledSendsPanel";
 import { SendTimeHeatmap } from "@/components/engagement/SendTime/SendTimeHeatmap";

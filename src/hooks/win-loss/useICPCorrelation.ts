@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { WLAnalysisRow } from "./useWinLossData";
+import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 export interface ICPCell {
   segment: string;

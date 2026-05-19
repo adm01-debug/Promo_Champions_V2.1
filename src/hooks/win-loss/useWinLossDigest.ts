@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import type { WLKpis } from "./useWinLossAggregations";
-import type { CompetitorStat } from "./useWinLossAggregations";
-import type { KpiDelta } from "./usePreviousPeriodKpis";
+import type { WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
+import type { CompetitorStat } from "@/hooks/win-loss/useWinLossAggregations";
+import type { KpiDelta } from "@/hooks/win-loss/usePreviousPeriodKpis";
 
 interface InsightLite {
   title: string;

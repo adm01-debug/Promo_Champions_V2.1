@@ -15,7 +15,7 @@ import {
   useSendBulkJob,
   useUpdateDraft,
 } from "@/hooks/engagement/useBulkComposer";
-import { useScheduleOptimalSend } from "@/hooks/engagement/useSendTimeOptimization";
+import { useScheduleOptimalSend } from "@/hooks/sequences/useSendTimeOptimization";
 import { TONE_OPTIONS, LANGUAGE_OPTIONS, STATUS_LABEL, STATUS_TONE } from "./bulkComposerHelpers";
 import { BulkDraftRow } from "./BulkDraftRow";
 import { toast } from "@/hooks/use-toast";

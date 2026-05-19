@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
-import { useGoalsDashboard } from "@/hooks/sales/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/sales/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";

@@ -1,5 +1,5 @@
 // Re-export all cadence hooks for easy importing
-export * from './useCadenceQueries';
-export * from './useCadenceMutations';
-export * from './useProspectCadenceMutations';
-export * from './useCadenceTaskMutations';
+export * from "@/hooks/cadences/useCadenceQueries";
+export * from "@/hooks/cadences/useCadenceMutations";
+export * from "@/hooks/cadences/useProspectCadenceMutations";
+export * from "@/hooks/cadences/useCadenceTaskMutations";

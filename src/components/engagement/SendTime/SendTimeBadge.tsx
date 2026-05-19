@@ -1,7 +1,7 @@
 import { Clock, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useSendTimeProfile } from "@/hooks/engagement/useSendTimeOptimization";
+import { useSendTimeProfile } from "@/hooks/sequences/useSendTimeOptimization";
 import { formatWindow, normalizeScore } from "@/components/sequences/sendTimeHelpers";
 import { SendTimeHeatmap } from "./SendTimeHeatmap";
 

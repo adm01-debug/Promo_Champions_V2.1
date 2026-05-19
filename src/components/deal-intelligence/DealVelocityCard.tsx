@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Gauge, RefreshCw, CalendarClock, TrendingUp, TrendingDown } from "lucide-react";
-import { useDealVelocityPrediction, usePredictDealVelocity } from "@/hooks/deal-intelligence/useDealVelocity";
+import { useDealVelocityPrediction, usePredictDealVelocity } from "@/hooks/useDealVelocity";
 import { VelocityStatusBadge } from "./VelocityStatusBadge";
 import { VelocityForecastTimeline } from "./VelocityForecastTimeline";
 import { confidenceTierLabel, formatCloseDate, formatDaysRemaining, velocityRingColor } from "./velocityHelpers";

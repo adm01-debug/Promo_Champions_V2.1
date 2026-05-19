@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 const PREF_KEY = 'race_smart_notifications_enabled';
 

@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { useSoundSettings } from './useSoundSettings';
-import { useRecordAchievement } from './useAchievements';
+import { useSoundSettings } from "@/hooks/useSoundSettings";
+import { useRecordAchievement } from "@/hooks/gamification/useAchievements";
 
 export function useCelebration() {
   const hasPlayedRef = useRef<Set<string>>(new Set());

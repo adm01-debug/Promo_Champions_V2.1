@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceViewMode } from './useRaceViewMode';
+import type { RaceViewMode } from "@/hooks/race/useRaceViewMode";
 
 export interface RacePreferences {
   view_mode: RaceViewMode;

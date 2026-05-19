@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 const STORAGE_KEY = 'race_briefing_last_shown';
 

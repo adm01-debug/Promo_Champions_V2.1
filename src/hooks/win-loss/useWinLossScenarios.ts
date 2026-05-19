@@ -42,7 +42,7 @@
  * ============================================================================
  */
 import { useMemo } from "react";
-import type { TrendPoint } from "./useWinLossAggregations";
+import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
 
 export type BandMode = "see" | "pi95";
 
