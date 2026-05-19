@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
 interface ScoringFactors {
