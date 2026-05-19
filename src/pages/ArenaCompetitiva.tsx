@@ -61,7 +61,7 @@ const ArenaCompetitiva = () => {
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Live Tournament Hub v2.0</span>
                 </div>
                 <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-[0.8]">
-                  Arena <br /> <span className="text-foreground">Competitiva</span>
+                  Circuito <br /> <span className="text-foreground">de Vencedores</span>
                 </h1>
                 <div className="flex items-center gap-4">
                   <p className="text-sm text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2">
