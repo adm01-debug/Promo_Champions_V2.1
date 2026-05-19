@@ -110,13 +110,12 @@ export const useLeadScoring = (leadId?: string) => {
 
       const icpMap = new Map((icpData || []).map(d => [d.client_id, d]));
 
-      // Get Churn Risk data
       const { data: riskData } = await supabase
         .from('lead_churn_risk')
         .select('*')
-        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']) as any; // Cast for types compatibility if needed
+        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']);
 
-      const riskMap = new Map((riskData || []).map((r: any) => [r.sale_id, r]));
+      const riskMap = new Map((riskData || []).map((r) => [r.sale_id, r]));
 
       return clients.map(client => {
         const dealIds = clientSalesMap.get(client.id) || [];
