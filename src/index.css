@@ -387,7 +387,7 @@
     --background: 0 0% 100%;
     --foreground: 230 25% 12%;
     --card: 0 0% 100%;
-    --primary: 262 83% 58%;
+    --primary: 262 83% 52%; /* Darker violet for better contrast in light mode */
     --border: 220 15% 90%;
     --muted: 220 15% 96%;
     --muted-foreground: 220 12% 35%;
