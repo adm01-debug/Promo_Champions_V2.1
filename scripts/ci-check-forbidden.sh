@@ -7,19 +7,16 @@ echo "Running CI Forbidden Patterns Check..."
 EXIT_CODE=0
 
 for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
-  # Search all relevant files, excluding node_modules, .git, dist, docs, and non-source files
-  # We use find to have more control over exclusions
+  # Search all relevant files, excluding node_modules, .git, dist, and this script itself
+  # We want to catch patterns in configs, templates, and assets too as requested.
   FOUND=$(find . -type f \
     -not -path "*/node_modules/*" \
     -not -path "*/.git/*" \
     -not -path "*/dist/*" \
-    -not -path "*/docs/*" \
-    -not -path "*/supabase/functions/*" \
-    -not -name "*.md" \
-    -not -name "*.log" \
+    -not -name "ci-check-forbidden.sh" \
     -not -name "package.json" \
     -not -name "package-lock.json" \
-    -not -name "ci-check-forbidden.sh" \
+    -not -name "*.log" \
     -exec grep -lE "$pattern" {} + 2>/dev/null)
   
   if [ -n "$FOUND" ]; then
