@@ -9,7 +9,7 @@ import { useRaceSeasonByRole, type RoleType } from '@/hooks/race/useRaceSeasonBy
 import { useRaceLeaderboard } from '@/hooks/race/useRaceLeaderboard';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useMyRaceCar } from '@/hooks/race/useMyRaceCar';
-import { useCurrentStreak } from '@/hooks/useDailyStreakAchievements';
+import { useCurrentStreak } from '@/hooks/gamification/useDailyStreakAchievements';
 import { useDailyBriefing } from '@/hooks/race/useDailyBriefing';
 import { useRaceWhatIf } from '@/hooks/race/useRaceWhatIf';
 import { useRaceSmartNotifications } from '@/hooks/race/useRaceSmartNotifications';

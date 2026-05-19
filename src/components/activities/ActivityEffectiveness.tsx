@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useActivityStats } from "@/hooks/useActivities";
+import { useActivityStats } from "@/hooks/activities/useActivities";
 import { Target, Zap, TrendingUp, BarChart3 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 

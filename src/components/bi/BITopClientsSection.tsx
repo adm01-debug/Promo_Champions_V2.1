@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Trophy, Package, Building, User } from "lucide-react";
 import { motion } from "framer-motion";
-import { useBITopClients, TopClientData, SupplierSalesData, TopCompanyData } from "@/hooks/useBITopClients";
+import { useBITopClients, TopClientData, SupplierSalesData, TopCompanyData } from "@/hooks/bi/useBITopClients";
 
 const formatCurrency = (value: number) =>
   `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;

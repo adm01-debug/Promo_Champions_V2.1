@@ -2,14 +2,14 @@ import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallengesCard";
 import { CreateChallengeDialog } from "@/components/gamification/CreateChallengeDialog";
-import { useGamificationData } from "@/hooks/useGamificationData";
+import { useGamificationData } from "@/hooks/gamification/useGamificationData";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Users, Zap, Target, Crown, Medal, Award } from "lucide-react";
-import { useChallengesWithProgress } from "@/hooks/useWeeklyChallenges";
+import { useChallengesWithProgress } from "@/hooks/gamification/useWeeklyChallenges";
 import { motion } from "framer-motion";
 
 export default function DesafiosSemanais() {

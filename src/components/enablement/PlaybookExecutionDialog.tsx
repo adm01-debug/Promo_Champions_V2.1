@@ -20,9 +20,9 @@ import {
   FileText,
   Target
 } from "lucide-react";
-import type { Playbook } from "@/hooks/useSalesEnablement";
-import { useTogglePlaybookItem, useAllPlaybookProgress } from "@/hooks/useSalesEnablement";
-import { useSalesData } from "@/hooks/useSalesData";
+import type { Playbook } from "@/hooks/sales/useSalesEnablement";
+import { useTogglePlaybookItem, useAllPlaybookProgress } from "@/hooks/sales/useSalesEnablement";
+import { useSalesData } from "@/hooks/sales/useSalesData";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) => {

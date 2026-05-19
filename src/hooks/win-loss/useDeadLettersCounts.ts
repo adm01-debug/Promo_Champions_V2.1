@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { DeadLetterStatus } from "./useWebhookDeadLetters";
+import type { DeadLetterStatus } from "@/hooks/win-loss/useWebhookDeadLetters";
 
 export interface DeadLettersCounts {
   pending: number;

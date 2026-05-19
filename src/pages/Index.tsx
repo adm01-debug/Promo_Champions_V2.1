@@ -7,12 +7,12 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 // Removed unused useDashboardKPIs import
-import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
-import { useSalesRealtime } from "@/hooks/useSalesRealtime";
-import { useSalesChartData } from "@/hooks/useSalesChartData";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
+import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
+import { useSalesRealtime } from "@/hooks/sales/useSalesRealtime";
+import { useSalesChartData } from "@/hooks/sales/useSalesChartData";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
+import { useDashboardPriorities } from "@/hooks/dashboard/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
+import { useDashboardRedirect } from "@/hooks/dashboard/useDashboardRedirect";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 

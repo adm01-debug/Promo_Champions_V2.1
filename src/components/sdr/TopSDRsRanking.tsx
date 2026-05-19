@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trophy, Flame, CalendarCheck, UserCheck, Crown, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 

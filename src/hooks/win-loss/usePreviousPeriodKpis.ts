@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { WinLossFilterState } from "@/components/win-loss/winLossFiltersHelpers";
-import type { WLAnalysisRow } from "./useWinLossData";
-import { useWLKpis, type WLKpis } from "./useWinLossAggregations";
+import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
+import { useWLKpis, type WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
 
 /**
  * Busca KPIs da janela equivalente IMEDIATAMENTE anterior (mesma duração).

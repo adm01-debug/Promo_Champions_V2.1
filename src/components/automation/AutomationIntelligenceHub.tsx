@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkles, Zap, TrendingUp, Clock, CheckCircle2, AlertCircle, Plus, Activity } from "lucide-react";
-import { useAutomationIntelligence, useApplyAutomationTemplate, type AutomationSuggestion } from "@/hooks/useAutomationIntelligence";
+import { useAutomationIntelligence, useApplyAutomationTemplate, type AutomationSuggestion } from "@/hooks/automation/useAutomationIntelligence";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 

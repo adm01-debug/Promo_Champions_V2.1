@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Phone, Mail, Calendar, MessageCircle, Linkedin, Target } from "lucide-react";
-import { useUpsertActivityGoal, useActivityGoals } from "@/hooks/useActivityGoals";
+import { useUpsertActivityGoal, useActivityGoals } from "@/hooks/activities/useActivityGoals";
 import {
   Form,
   FormControl,

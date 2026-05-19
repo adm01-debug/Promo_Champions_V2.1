@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { TrendingUp, Phone, Mail, Calendar, Activity } from "lucide-react";
-import { ActivityTrendData } from "@/hooks/useSalespersonActivityReport";
+import { ActivityTrendData } from "@/hooks/sales/useSalespersonActivityReport";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { RechartsTooltipProps, RechartsTooltipPayloadEntry } from "@/types/recharts";

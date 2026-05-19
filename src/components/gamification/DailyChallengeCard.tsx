@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, XCircle, Target } from "lucide-react";
-import { getDailyChallengeIcon, getDailyChallengeColor } from "@/hooks/useDailyChallenges";
+import { getDailyChallengeIcon, getDailyChallengeColor } from "@/hooks/gamification/useDailyChallenges";
 
 interface DailyChallengeCardProps {
   challenge: {

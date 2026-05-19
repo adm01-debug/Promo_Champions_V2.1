@@ -5,8 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Brain, Sparkles, RefreshCw, Zap, AlertTriangle } from 'lucide-react';
-import { useSalespeople } from '@/hooks/useSalespeople';
-import { useSalespersonCoaching } from '@/hooks/useSalespersonCoaching';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { useSalespersonCoaching } from '@/hooks/sales/useSalespersonCoaching';
 import { useQueryClient } from '@tanstack/react-query';
 import { CoachingResults } from './CoachingResults';
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
-import type { RaceSoundType } from './useRaceSounds';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceSoundType } from "@/hooks/race/useRaceSounds";
 
 interface Params {
   leaderboard: RaceLeaderboardEntry[];

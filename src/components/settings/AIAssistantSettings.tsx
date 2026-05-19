@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useSalespersonPreferences, ResponseMode } from '@/hooks/useSalespersonPreferences';
+import { useSalespersonPreferences, ResponseMode } from '@/hooks/sales/useSalespersonPreferences';
 import { VoiceId } from '@/hooks/useElevenLabsVoice';
 import { Bot, Sparkles, Save, Loader2, Volume2, MessageSquare, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

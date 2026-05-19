@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import type { RaceEvent } from './useRaceEvents';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceEvent } from "@/hooks/race/useRaceEvents";
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 export type TrackCondition = 'sunny' | 'cloudy' | 'rainy' | 'storm';
 

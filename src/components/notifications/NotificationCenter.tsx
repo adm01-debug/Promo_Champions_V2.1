@@ -33,7 +33,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUpdateSalesperson } from "@/hooks/useSalespeople";
+import { useUpdateSalesperson } from "@/hooks/sales/useSalespeople";
 import {
   useNotifications,
   useMarkNotificationRead,

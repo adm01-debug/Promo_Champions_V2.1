@@ -1,4 +1,4 @@
-import { useClient360 } from "@/hooks/useClient360";
+import { useClient360 } from "@/hooks/crm/useClient360";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";

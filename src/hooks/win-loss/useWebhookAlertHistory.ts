@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { WebhookAlertKind } from "./useWebhookAlerts";
+import type { WebhookAlertKind } from "@/hooks/win-loss/useWebhookAlerts";
 
 export interface WebhookAlertHistoryRow {
   id: string;

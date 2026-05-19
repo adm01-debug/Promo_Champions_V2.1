@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trophy } from "lucide-react";
-import { useGamificationData, SalespersonGamificationData } from "@/hooks/useGamificationData";
+import { useGamificationData, SalespersonGamificationData } from "@/hooks/gamification/useGamificationData";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence } from "framer-motion";
 import { XPRankingRow } from "./XPRankingRow";

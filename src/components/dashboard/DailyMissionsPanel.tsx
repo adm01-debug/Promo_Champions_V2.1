@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useDailyMissions } from "@/hooks/useDailyMissions";
+import { useDailyMissions } from "@/hooks/gamification/useDailyMissions";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

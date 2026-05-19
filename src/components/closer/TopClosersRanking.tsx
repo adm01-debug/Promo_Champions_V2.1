@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trophy, Crown, DollarSign, Medal, TrendingUp, Sparkles } from "lucide-react";
 import { useTopClosers } from "@/hooks/useCloserMetrics";
-import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 

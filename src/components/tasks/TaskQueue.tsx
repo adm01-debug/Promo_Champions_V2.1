@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useTodayTasks, TaskRecord, TaskPriority, useUpdateTask } from '@/hooks/useTasks';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { PriorityColumn } from './PriorityColumn';
 import { DraggableTaskCard } from './DraggableTaskCard';
 import { CreateTaskDialog } from './CreateTaskDialog';

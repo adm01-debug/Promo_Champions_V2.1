@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import { useSalesStreaks } from '@/hooks/useSalesStreaks';
+import { useSalesStreaks } from '@/hooks/sales/useSalesStreaks';
 
 const STREAK_TIERS = [
   { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-destructive' },

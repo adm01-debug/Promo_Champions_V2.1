@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 export type NextGoalMode = 'hunting' | 'defending' | 'leader-only' | 'idle';
 

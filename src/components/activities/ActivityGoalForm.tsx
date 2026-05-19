@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useActivityGoals, useUpdateActivityGoals } from "@/hooks/useActivities";
+import { useActivityGoals, useUpdateActivityGoals } from "@/hooks/activities/useActivities";
 import { Target, Phone, Mail, Users, Linkedin, MessageCircle, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";

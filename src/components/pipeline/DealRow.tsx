@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Flame, Clock, Activity, ChevronDown, Sparkles, Lightbulb } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AtRiskDeal } from "@/hooks/useAtRiskDeals";
+import { AtRiskDeal } from "@/hooks/deal-intelligence/useAtRiskDeals";
 
 const RISK_COLORS = {
   critical: "bg-status-error/20 text-status-error border-status-error/30",

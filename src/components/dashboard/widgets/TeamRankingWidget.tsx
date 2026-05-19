@@ -1,5 +1,5 @@
 import React from "react";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 export interface OvertakeEvent {
   id: string;

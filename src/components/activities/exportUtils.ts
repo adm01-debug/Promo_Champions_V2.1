@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ActivityRecord } from '@/hooks/useActivities';
+import { ActivityRecord } from '@/hooks/activities/useActivities';
 import { activityLabels, outcomeLabels } from './activityConstants';
 
 export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {

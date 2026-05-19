@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCompetitiveRanking } from "@/hooks/useCompetitiveRanking";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { Crown, Swords, Trophy, TrendingUp, Flame } from "lucide-react";
 import { SalespersonLevelBadge } from "./SalespersonLevelBadge";
 

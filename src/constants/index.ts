@@ -52,6 +52,16 @@ export const DEAL_STATUS = {
   CANCELLED: 'cancelled',
 } as const;
 
+export const SALE_STATUS_LABELS: Record<string, string> = {
+  pending: "Pendente",
+  qualified: "Qualificada",
+  proposal: "Proposta",
+  negotiation: "Negociação",
+  completed: "Concluída",
+  lost: "Perdida",
+};
+
+
 export const ACTIVITY_TYPE = {
   CALL: 'call',
   EMAIL: 'email',

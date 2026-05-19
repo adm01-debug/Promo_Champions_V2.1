@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, ChevronDown, ChevronUp, PieChart as PieIcon, Activity, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Sector } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
-import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
+import { ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
 import { cn } from "@/lib/utils";
 

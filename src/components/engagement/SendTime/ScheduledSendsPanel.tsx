@@ -6,7 +6,7 @@ import {
   useScheduledSends,
   useCancelScheduledSend,
   type ScheduledSend,
-} from "@/hooks/engagement/useSendTimeOptimization";
+} from "@/hooks/sequences/useSendTimeOptimization";
 
 const channelIcon = (c: string) => {
   if (c === "email") return <Mail className="h-3 w-3" />;

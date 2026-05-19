@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { useSalespeopleList } from "@/hooks/useSalespeopleList";
+import { useSalespeopleList } from "@/hooks/sales/useSalespeopleList";
 import { Deal, PipelineStageId } from "@/hooks/usePipeline";
 
 interface MacroConfig {

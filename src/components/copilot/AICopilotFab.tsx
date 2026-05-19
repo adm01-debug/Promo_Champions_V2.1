@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useAICopilot } from '@/hooks/useAICopilot';
+import { useAICopilot } from '@/hooks/ai/useAICopilot';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 
 export const AICopilotFab: FC = () => {

@@ -4,7 +4,7 @@ import { Crown, LogOut, LayoutGrid, LayoutList, ShieldCheck } from "lucide-react
 import { NavItem, NavGroup } from "@/components/navigation";
 import { UserRoleBadge } from "@/components/molecules/UserRoleBadge";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAlerts } from "@/hooks/useAlerts";
+import { useAlerts } from "@/hooks/notifications/useAlerts";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
 import { cn } from "@/lib/utils";

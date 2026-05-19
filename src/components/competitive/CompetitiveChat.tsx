@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useCompetitiveChat } from '@/hooks/useCompetitiveChat';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 

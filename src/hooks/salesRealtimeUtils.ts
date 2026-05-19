@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
+import { XP_REWARDS, calculateLevelFromXP, getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 import { toast } from "sonner";
 
 export const RANK_TITLES = {

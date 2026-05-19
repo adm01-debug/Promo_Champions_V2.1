@@ -17,7 +17,7 @@ import { AdminSecurityPanel } from "@/components/admin/AdminSecurityPanel";
 import { AdminSystemStatus } from "@/components/admin/AdminSystemStatus";
 import { AdminQuickLinks } from "@/components/admin/AdminQuickLinks";
 import { SemanticReindexPanel } from "@/components/admin/SemanticReindexPanel";
-import { useAdminStats } from "@/hooks/useAdminStats";
+import { useAdminStats } from "@/hooks/admin/useAdminStats";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";

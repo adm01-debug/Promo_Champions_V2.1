@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAchievementsByPerson } from "@/hooks/useAchievementsByPerson";
+import { useAchievementsByPerson } from "@/hooks/gamification/useAchievementsByPerson";
 import { Users, Trophy } from "lucide-react";
 import {
   BarChart,

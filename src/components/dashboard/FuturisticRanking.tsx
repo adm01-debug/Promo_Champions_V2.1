@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, ChevronUp, ChevronDown, Minus, Crown, Medal, Award, Zap } from "lucide-react";
-import { useFuturisticRanking, type RankingRow } from "@/hooks/useFuturisticRanking";
+import { useFuturisticRanking, type RankingRow } from "@/hooks/gamification/useFuturisticRanking";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";

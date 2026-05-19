@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { DateRange, getPreviousPeriodRange, getSamePeriodLastYear } from "./useBIFilters";
+import { DateRange, getPreviousPeriodRange, getSamePeriodLastYear } from "@/hooks/bi/useBIFilters";
 import { differenceInDays } from "date-fns";
-import { transformBISDRData } from "./useBISDRTransformers";
+import { transformBISDRData } from "@/hooks/bi/useBISDRTransformers";
 
 export interface BISDRData {
   totalLeadsGenerated: number;

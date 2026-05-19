@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBIFilters } from "@/hooks/useBIFilters";
-import { useBISDR } from "@/hooks/useBISDR";
+import { useBIFilters } from "@/hooks/bi/useBIFilters";
+import { useBISDR } from "@/hooks/bi/useBISDR";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { VendedorDashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";

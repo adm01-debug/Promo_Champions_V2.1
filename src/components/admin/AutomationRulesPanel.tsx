@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useAutomationRules, useAutomationLogs, useToggleAutomationRule } from "@/hooks/useAutomationRules";
+import { useAutomationRules, useAutomationLogs, useToggleAutomationRule } from "@/hooks/automation/useAutomationRules";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Activity, AlertCircle, CheckCircle2, Clock, Zap } from "lucide-react";

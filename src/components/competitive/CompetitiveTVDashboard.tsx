@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
-import { useSalesStreaks } from '@/hooks/useSalesStreaks';
-import { useWeeklyMatchups } from '@/hooks/useWeeklyMatchups';
+import { useSalesStreaks } from '@/hooks/sales/useSalesStreaks';
+import { useWeeklyMatchups } from '@/hooks/gamification/useWeeklyMatchups';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 

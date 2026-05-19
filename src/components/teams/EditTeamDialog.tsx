@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Phone } from "lucide-react";
 import { Team, useUpdateTeam, useAvailableClosers } from "@/hooks/useTeams";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { CloserSelector } from "./CloserSelector";
 

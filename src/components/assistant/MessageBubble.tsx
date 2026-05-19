@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Bot, Loader2, User, Volume2 } from 'lucide-react';
-import { ChatMessage } from '@/hooks/useSalesAssistant';
+import { ChatMessage } from '@/hooks/sales/useSalesAssistant';
 import { cn } from '@/lib/utils';
 
 interface MessageBubbleProps {

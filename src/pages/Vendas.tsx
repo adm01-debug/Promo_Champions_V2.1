@@ -9,7 +9,7 @@ import { useState, useMemo, useEffect } from "react";
 import { SavedFiltersBar } from "@/components/filters/SavedFiltersBar";
 import Fuse from "fuse.js";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useSalesData } from "@/hooks/useSalesData";
+import { useSalesData } from "@/hooks/sales/useSalesData";
 import { CreateSaleDialog } from "@/components/sales/CreateSaleDialog";
 import { FilterPopover, SortOption } from "@/components/shared/FilterPopover";
 import { usePagination } from "@/hooks/usePagination";

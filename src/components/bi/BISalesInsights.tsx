@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Receipt, RefreshCw, TrendingUp, TrendingDown, User, Building, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
-import { useSalesInsights } from "@/hooks/useSalesInsights";
+import { useSalesInsights } from "@/hooks/sales/useSalesInsights";
 
 const formatCurrency = (value: number) =>
   `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;

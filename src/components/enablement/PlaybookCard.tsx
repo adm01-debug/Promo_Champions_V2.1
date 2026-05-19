@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Lock, ArrowRight, Shield, Zap, PlayCircle } from "lucide-react";
-import type { Playbook } from "@/hooks/useSalesEnablement";
+import type { Playbook } from "@/hooks/sales/useSalesEnablement";
 import { PlaybookExecutionDialog } from "./PlaybookExecutionDialog";
 
 export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {

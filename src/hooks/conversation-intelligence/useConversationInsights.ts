@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useConversationAnalyses } from "./useConversationAnalyses";
+import { useConversationAnalyses } from "@/hooks/conversation-intelligence/useConversationAnalyses";
 import {
   sentimentDistribution,
   topObjectionsAcross,

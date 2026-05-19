@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { WLAnalysisRow } from "./useWinLossData";
+import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 export interface CohortCell {
   createdMonth: string; // YYYY-MM (lead created)

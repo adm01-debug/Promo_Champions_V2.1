@@ -10,7 +10,7 @@ import {
   useStreakAchievements,
   STREAK_MILESTONES,
   getNextMilestone,
-} from "@/hooks/useDailyStreakAchievements";
+} from "@/hooks/gamification/useDailyStreakAchievements";
 
 interface StreakAchievementsCardProps {
   salespersonId?: string;

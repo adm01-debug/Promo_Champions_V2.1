@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-import { useActivities } from "@/hooks/useActivities";
+import { useActivities } from "@/hooks/activities/useActivities";
 import { format, subDays, startOfDay, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 

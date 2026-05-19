@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays, parseISO, differenceInDays } from "date-fns";
-import { calculateLevelFromXP, getLevelInfo } from "./useSalespersonXP";
+import { calculateLevelFromXP, getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 
 export interface SalespersonGamificationData {
   salesperson_id: string;

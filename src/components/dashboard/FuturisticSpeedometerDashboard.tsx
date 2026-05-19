@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
-import { useSalespeopleList } from "@/hooks/useSalespeopleList";
+import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
+import { useSalespeopleList } from "@/hooks/sales/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Settings2, RefreshCw, Bell, AlertTriangle, Info, Gauge, TrendingUp, TrendingDown, Zap, Target, DollarSign, Activity, Users, Hash, Download, FileText as FileTextIcon, History, Smartphone, Mail, Layout } from "lucide-react";

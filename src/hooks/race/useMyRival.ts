@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 export interface MyRival {
   rival_car_id: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { useDashboardKPIs } from "@/hooks/dashboard/useDashboardKPIs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";

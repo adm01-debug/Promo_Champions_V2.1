@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Flame, Trophy, Zap, Loader2, Database } from "lucide-react";
-import { useLevelUpCelebration } from "@/hooks/useLevelUpCelebration";
+import { useLevelUpCelebration } from "@/hooks/gamification/useLevelUpCelebration";
 import { LevelUpOverlay, StreakMilestoneOverlay } from "./LevelUpOverlay";
-import { getLevelInfo, useAddXP } from "@/hooks/useSalespersonXP";
-import { useGamificationData } from "@/hooks/useGamificationData";
+import { getLevelInfo, useAddXP } from "@/hooks/gamification/useSalespersonXP";
+import { useGamificationData } from "@/hooks/gamification/useGamificationData";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 

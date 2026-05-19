@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { formatDistanceToNow, differenceInMinutes, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { activityIcons, activityLabels, outcomeLabels } from "./activityConstants";
-import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
+import { ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
 
 interface AuditLog {
   id: string;

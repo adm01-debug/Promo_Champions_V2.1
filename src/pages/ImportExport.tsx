@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { Upload, Download, FileSpreadsheet, Check, AlertCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { useLogAuditEvent } from "@/hooks/useAuditLogs";
+import { useLogAuditEvent } from "@/hooks/admin/useAuditLogs";
 
 type ImportStep = "upload" | "mapping" | "preview" | "complete";
 

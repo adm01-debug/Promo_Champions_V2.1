@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flame, Zap } from 'lucide-react';
-import { useSalesStreaks } from '@/hooks/useSalesStreaks';
+import { useSalesStreaks } from '@/hooks/sales/useSalesStreaks';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Tooltip,

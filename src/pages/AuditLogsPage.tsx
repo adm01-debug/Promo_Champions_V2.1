@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuditLogs, exportAuditLogsToCSV, AuditFilters } from "@/hooks/useAuditLogs";
+import { useAuditLogs, exportAuditLogsToCSV, AuditFilters } from "@/hooks/admin/useAuditLogs";
 import { ScrollText, Download, Filter, User, Activity, Clock } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";

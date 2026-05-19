@@ -16,8 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useSalespeople } from "@/hooks/useSalespeople";
-import { useUnassignedClients, useAssignClient } from "@/hooks/useClientPortfolio";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
+import { useUnassignedClients, useAssignClient } from "@/hooks/crm/useClientPortfolio";
 import { Loader2 } from "lucide-react";
 
 interface AssignClientDialogProps {

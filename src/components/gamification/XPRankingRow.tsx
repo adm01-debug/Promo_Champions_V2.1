@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Crown, Medal, Award, TrendingUp, TrendingDown, Zap, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { getLevelInfo } from "@/hooks/useSalespersonXP";
+import { getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 
 interface RankPosition {
   current: number;

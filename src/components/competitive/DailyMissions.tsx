@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { useDailyMissions } from '@/hooks/useDailyMissions';
+import { useDailyMissions } from '@/hooks/gamification/useDailyMissions';
 import { toast } from 'sonner';
 
 const missionIcons: Record<string, typeof Target> = {

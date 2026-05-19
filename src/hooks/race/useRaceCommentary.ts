@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from './useRaceLeaderboard';
-import type { RaceEvent } from './useRaceEvents';
+import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceEvent } from "@/hooks/race/useRaceEvents";
 
 interface UseRaceCommentaryOpts {
   seasonId?: string;

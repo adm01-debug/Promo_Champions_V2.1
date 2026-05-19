@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronLeft, Loader2, Plus, Search, Trash2, X } from 'lucide-react';
-import { ConversationWithMatches } from '@/hooks/useSalesAssistant';
+import { ConversationWithMatches } from '@/hooks/sales/useSalesAssistant';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, subDays, subMonths, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

@@ -2,11 +2,11 @@ import { useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useSoundSettings } from "./useSoundSettings";
-import { useSystemSoundSettings } from "./useSystemSoundSettings";
-import { XP_REWARDS, getLevelInfo } from "./useSalespersonXP";
-import { useCelebration } from "./useCelebration";
-import { useUserRoles } from "./useUserRoles";
+import { useSoundSettings } from "@/hooks/useSoundSettings";
+import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
+import { XP_REWARDS, getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
+import { useCelebration } from "@/hooks/useCelebration";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import { triggerConfetti, awardSaleXP, getRankTitle } from "./salesRealtimeUtils";
 
 export { getRankTitle };

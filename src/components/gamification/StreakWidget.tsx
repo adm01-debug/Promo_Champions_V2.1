@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Flame, Trophy, Target } from "lucide-react";
-import { useCurrentStreak, useStreakAchievements, getNextMilestone } from "@/hooks/useDailyStreakAchievements";
+import { useCurrentStreak, useStreakAchievements, getNextMilestone } from "@/hooks/gamification/useDailyStreakAchievements";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";

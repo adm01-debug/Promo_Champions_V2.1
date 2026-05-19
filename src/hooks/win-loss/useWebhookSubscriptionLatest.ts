@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { WebhookStatsWindow } from "./useWebhookDeliveryStats";
+import type { WebhookStatsWindow } from "@/hooks/win-loss/useWebhookDeliveryStats";
 
 const WINDOW_HOURS: Record<WebhookStatsWindow, number> = {
   "24h": 24,

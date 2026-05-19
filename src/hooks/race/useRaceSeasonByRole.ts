@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceSeason } from './useRaceSeason';
+import type { RaceSeason } from "@/hooks/race/useRaceSeason";
 
 export type RoleType = 'closer' | 'sdr';
 

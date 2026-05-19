@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Target, TrendingUp, AlertTriangle, CheckCircle2, Flame, Rocket, Zap } from "lucide-react";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getLevelInfo } from "@/hooks/useSalespersonXP";
+import { getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 import { Star, Zap } from "lucide-react";
 
 interface SalespersonLevelBadgeProps {

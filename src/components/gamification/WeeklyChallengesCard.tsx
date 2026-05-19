@@ -12,7 +12,7 @@ import {
   CHALLENGE_ICONS,
   CHALLENGE_COLORS,
   type ChallengeWithProgress,
-} from "@/hooks/useWeeklyChallenges";
+} from "@/hooks/gamification/useWeeklyChallenges";
 
 interface WeeklyChallengesCardProps {
   salespersonId?: string;

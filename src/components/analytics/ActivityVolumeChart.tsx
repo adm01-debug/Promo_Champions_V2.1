@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { BarChart3 } from "lucide-react";
-import { SalespersonActivityData } from "@/hooks/useSalespersonActivityReport";
+import { SalespersonActivityData } from "@/hooks/sales/useSalespersonActivityReport";
 
 interface ActivityVolumeChartProps {
   data: SalespersonActivityData[];

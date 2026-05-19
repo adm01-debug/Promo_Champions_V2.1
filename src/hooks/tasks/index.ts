@@ -1,3 +1,3 @@
 export * from './types';
-export * from './useTaskQueries';
-export * from './useTaskMutations';
+export * from "@/hooks/tasks/useTaskQueries";
+export * from "@/hooks/tasks/useTaskMutations";

@@ -8,7 +8,7 @@ import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkele
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
 import Fuse from "fuse.js";
-import { useClients, useDeleteClient, Client } from "@/hooks/useClients";
+import { useClients, useDeleteClient, Client } from "@/hooks/crm/useClients";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";
@@ -23,7 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
 import { useCountUp } from "@/hooks/useCountUp";
-import { useClientPredictions } from "@/hooks/useClientPredictions";
+import { useClientPredictions } from "@/hooks/crm/useClientPredictions";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 

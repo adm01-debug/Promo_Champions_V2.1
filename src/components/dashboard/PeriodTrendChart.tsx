@@ -13,7 +13,7 @@ import {
 import { Activity, DollarSign, ShoppingBag, TrendingUp, TrendingDown } from "lucide-react";
 import { usePeriodTrend } from "@/hooks/usePeriodTrend";
 import { TrendChartSkeleton } from "./skeletons/SpeedometerSkeletons";
-import { PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
+import { PERIOD_LABELS, type KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 import { cn } from "@/lib/utils";
 
 const PERIOD_STORAGE_KEY = "dashboard.speedometer.period";

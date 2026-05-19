@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingDown, TrendingUp, AlertTriangle, Filter, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useFunnelData } from '@/hooks/useFunnelData';
+import { useFunnelData } from '@/hooks/dashboard/useFunnelData';
 
 interface ConversionFunnelProps {
   stages?: string[];

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { calculateLevelFromXP, getLevelInfo } from '@/hooks/useSalespersonXP';
-import { useLevelUpCelebration } from '@/hooks/useLevelUpCelebration';
+import { calculateLevelFromXP, getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
+import { useLevelUpCelebration } from '@/hooks/gamification/useLevelUpCelebration';
 import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
 import { VictoryOverlay } from './VictoryOverlay';
 import { useAuth } from '@/contexts/AuthContext';

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Timer, TrendingUp, AlertCircle, Clock, Zap } from "lucide-react";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 

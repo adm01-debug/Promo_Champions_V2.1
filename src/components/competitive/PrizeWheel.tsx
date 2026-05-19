@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { usePrizeWheel, PRIZE_SLICES } from '@/hooks/usePrizeWheel';
+import { usePrizeWheel, PRIZE_SLICES } from '@/hooks/gamification/usePrizeWheel';
 import { toast } from 'sonner';
 
 import { formatDistanceToNow } from 'date-fns';

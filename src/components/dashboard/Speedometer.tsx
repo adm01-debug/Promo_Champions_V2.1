@@ -39,7 +39,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
-import { type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
+import { type KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 
 export interface SpeedometerProps {
   value: number;

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useSalesData } from '@/hooks/useSalesData';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalesData } from '@/hooks/sales/useSalesData';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { Brain, TrendingUp, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 

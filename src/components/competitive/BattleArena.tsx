@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useSalesBattles } from '@/hooks/useSalesBattles';
+import { useSalesBattles } from '@/hooks/sales/useSalesBattles';
 import { BattleCardItem } from './BattleCardItem';
 import { CreateBattleDialog } from './CreateBattleDialog';
 
