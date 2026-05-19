@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useAchievementTrends } from "@/hooks/gamification/useAchievementTrends";
+import { useAchievementTrends, AchievementTrendData } from "@/hooks/gamification/useAchievementTrends";
 import { TrendingUp, Trophy } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -63,13 +63,13 @@ export function AchievementTrendChart() {
     );
   }
 
-  const chartData = trends.map((t) => ({
+  const chartData = (trends || []).map((t: AchievementTrendData) => ({
     ...t,
     dateLabel: format(parseISO(t.date), "dd/MM", { locale: ptBR }),
   }));
 
-  const totalGoals = trends.reduce((sum, t) => sum + t.dailyGoals, 0);
-  const totalMilestones = trends.reduce((sum, t) => sum + t.streakMilestones, 0);
+  const totalGoals = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.dailyGoals || 0), 0);
+  const totalMilestones = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.streakMilestones || 0), 0);
 
   return (
     <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">

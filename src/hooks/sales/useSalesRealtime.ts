@@ -7,7 +7,7 @@ import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
 import { XP_REWARDS, getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 import { useCelebration } from "@/hooks/useCelebration";
 import { useUserRoles } from "@/hooks/useUserRoles";
-import { triggerConfetti, awardSaleXP, getRankTitle } from "./salesRealtimeUtils";
+import { triggerConfetti, awardSaleXP, getRankTitle } from "../salesRealtimeUtils";
 
 export { getRankTitle };
 

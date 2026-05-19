@@ -7,7 +7,7 @@ import {
   useGlobalSendTimeStats,
   useTopSendTimeProfiles,
   useOptimizeSendTime,
-} from "@/hooks/sequences/useSendTimeOptimization";
+} from "@/hooks/engagement/useSendTimeOptimization";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScheduledSendsPanel } from "@/components/engagement/SendTime/ScheduledSendsPanel";
 import { SendTimeHeatmap } from "@/components/engagement/SendTime/SendTimeHeatmap";
@@ -101,7 +101,7 @@ export default function SendTimeOptimizationPage() {
                 Nenhum perfil ainda. Use "Recalcular todos" para gerar.
               </div>
             )}
-            {top.map((p) => (
+            {top.map((p: any) => (
               <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
                 <div className="space-y-1 min-w-0">
                   <div className="text-sm font-mono text-muted-foreground">{p.sale_id.slice(0, 8)}…</div>
