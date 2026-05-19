@@ -44,7 +44,7 @@ function formatBRL(value: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(value);
 }
 
-const KPICard = ({ icon: Icon, label, value, subtext, color, delay }: any) => (
+const KPICard = ({ icon: Icon, label, value, subtext, color, delay }: { icon: any, label: string, value: string | number, subtext: React.ReactNode, color: string, delay: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -262,12 +262,7 @@ export function CustomerSuccessHub() {
                             acc.health_score > 75 ? "bg-success" : acc.health_score > 40 ? "bg-warning" : "bg-destructive"
                           )}
                         />
-      <ChurnRiskDetailDialog 
-        account={selectedAccount} 
-        open={dialogOpen} 
-        onOpenChange={setDialogOpen} 
-      />
-    </div>
+                      </div>
                       
                       {acc.health_factors && (
                         <div className="grid grid-cols-3 gap-2">
@@ -308,6 +303,11 @@ export function CustomerSuccessHub() {
           <CheckCircle2 className="size-4" /> Validar Health Score
         </button>
       </div>
+      <ChurnRiskDetailDialog 
+        account={selectedAccount} 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+      />
     </div>
   );
 }
