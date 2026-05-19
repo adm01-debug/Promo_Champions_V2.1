@@ -38,3 +38,42 @@ export interface BIGestorData {
   missedGoals: number;
   lowActivitySalespeople: number;
 }
+
+export interface BIVendedorData {
+  totalRevenue: number;
+  previousRevenue: number;
+  revenueChange: number;
+  totalDeals: number;
+  completedDeals: number;
+  conversionRate: number;
+  avgTicket: number;
+  currentGoal: number;
+  goalProgress: number;
+  daysRemaining: number;
+  dailyRequired: number;
+  commission: number;
+  commissionRate: number;
+  pipelineValue: number;
+  pipelineDeals: number;
+  dealsByStage: { stage: string; count: number; value: number }[];
+  avgDaysInPipeline: number;
+  currentRank: number;
+  totalSalespeople: number;
+  totalActivities: number;
+  activitiesByType: { type: string; count: number }[];
+  activityGoalProgress: number;
+  currentStreak: number;
+  bestStreak: number;
+  totalAchievements: number;
+  recentAchievements: { type: string; date: string }[];
+  salesByDay: { day: string; value: number }[];
+  salesByCategory: { category: string; value: number }[];
+  conversationInsights: {
+    total: number;
+    sentiment: { sentiment: string; label: string; value: number; color: string }[];
+    topObjections: { label: string; count: number }[];
+    buyingSignalsTotal: number;
+    riskSignalsTotal: number;
+  };
+}
+
