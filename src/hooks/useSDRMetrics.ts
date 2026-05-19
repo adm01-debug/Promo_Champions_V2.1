@@ -49,7 +49,7 @@ function getPeriodRange(period: PeriodFilter, offset: number = 0) {
 
 export function useSDRMetrics(
   period: PeriodFilter = "month",
-  filters?: any,
+  filters?: { status?: string; channel?: string },
   searchTerm?: string
 ) {
   return useQuery({
