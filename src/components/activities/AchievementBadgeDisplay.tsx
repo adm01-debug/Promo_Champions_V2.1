@@ -9,7 +9,7 @@ export const AchievementBadgeDisplay: React.FC = () => {
     { id: 1, name: "Killer Instinct", icon: Target, color: "text-status-error", bg: "bg-status-error/10", border: "border-status-error/30", desc: "Performance Explosiva: Batendo 150% da meta global." },
     { id: 2, name: "Overclock", icon: Zap, color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", desc: "Modo Overclock: Atividades de alta densidade registradas." },
     { id: 3, name: "Iron Fortress", icon: Shield, color: "text-status-info", bg: "bg-status-info/10", border: "border-status-info/30", desc: "Consistência de Ferro: 7 dias consecutivos em alto nível." },
-    { id: 4, name: "Arena Emperor", icon: Crown, color: "text-rank-gold", bg: "bg-rank-gold/10", border: "border-rank-gold/30", desc: "Top 1 Absoluto: Dominando o ranking da arena." },
+    { id: 4, name: "Circuito Emperor", icon: Crown, color: "text-rank-gold", bg: "bg-rank-gold/10", border: "border-rank-gold/30", desc: "Top 1 Absoluto: Dominando o ranking do circuito." },
   ];
 
   return (
