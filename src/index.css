@@ -402,19 +402,17 @@
   /* ===== KEYBOARD FOCUS INDICATORS ===== */
   /* Only show focus rings for keyboard users (not mouse) */
   :focus-visible {
-    outline: 3px solid hsl(var(--primary));
-    outline-offset: 3px;
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
     border-radius: var(--radius-sm);
-    box-shadow: 0 0 0 6px hsl(var(--background)), 0 0 0 9px hsl(var(--primary) / 0.5);
-    z-index: 50;
   }
 
-  /* Robust inner ring for inputs with high contrast */
+  /* Subtle inner ring for inputs */
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 5px hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.25), 0 0 0 4px hsl(var(--primary) / 0.1);
   }
 
   /* Skip focus styles for mouse users */
