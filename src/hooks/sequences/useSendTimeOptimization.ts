@@ -92,13 +92,13 @@ export function useSendTimeProfile(saleId: string | undefined) {
     queryKey: ["send-time-profile", saleId],
     enabled: !!saleId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("send_time_profiles")
         .select("*")
         .eq("sale_id", saleId!)
         .maybeSingle();
       if (error) throw error;
-      return (data as SendTimeProfile | null) ?? null;
+      return (data as unknown as SendTimeProfile | null) ?? null;
     },
   });
 }
