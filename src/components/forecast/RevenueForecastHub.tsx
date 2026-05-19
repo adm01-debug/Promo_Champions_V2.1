@@ -23,7 +23,7 @@ import {
   Waves,
   LucideIcon
 } from "lucide-react";
-import { useRevenueForecast } from "@/hooks/revenue-intelligence/useRevenueForecast";
+import { useRevenueForecast } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
