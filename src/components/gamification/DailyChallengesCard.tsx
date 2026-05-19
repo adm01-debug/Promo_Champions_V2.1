@@ -15,7 +15,7 @@ import {
   useClaimDailyChallengeReward,
   getDailyChallengeIcon,
   getDailyChallengeColor,
-} from "@/hooks/useDailyChallenges";
+} from "@/hooks/gamification/useDailyChallenges";
 
 interface DailyChallengesCardProps {
   salespersonId?: string;

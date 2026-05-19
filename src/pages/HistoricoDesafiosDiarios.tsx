@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { StreakAchievementsCard } from "@/components/gamification/StreakAchievementsCard";
-import { useCheckAndAwardStreakMilestone } from "@/hooks/useDailyStreakAchievements";
+import { useCheckAndAwardStreakMilestone } from "@/hooks/gamification/useDailyStreakAchievements";
 import { DailyChallengeCard } from "@/components/gamification/DailyChallengeCard";
 
 interface DailyChallengeWithProgress {

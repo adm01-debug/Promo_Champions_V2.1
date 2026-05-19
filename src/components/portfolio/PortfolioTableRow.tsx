@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, UserCheck, UserX, Trash2, Calendar, Mail, Phone } from "lucide-react";
 import { ICPBadge } from "@/components/shared/ICPBadge";
-import type { ClientPortfolioItem } from "@/hooks/useClientPortfolio";
+import type { ClientPortfolioItem } from "@/hooks/crm/useClientPortfolio";
 import type { ICPData } from "@/hooks/useICPData";
 
 interface PortfolioTableRowProps {

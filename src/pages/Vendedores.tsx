@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Trophy, Medal, Crown, Award, Users, Flame, Zap, Star, LayoutGrid, UserPlus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSalespeopleRanking, PeriodFilter } from "@/hooks/sales/useSalespeople";
-import { useGamificationData } from "@/hooks/useGamificationData";
+import { useGamificationData } from "@/hooks/gamification/useGamificationData";
 import { SalespersonForm, SalespersonRole } from "@/components/vendedores/SalespersonForm";
 import { SendRankingNotificationsButton } from "@/components/ranking/SendRankingNotificationsButton";
 import { GoalEditDialog } from "@/components/vendedores/GoalEditDialog";

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Loader2 } from "lucide-react";
-import { CHALLENGE_ICONS } from "@/hooks/useWeeklyChallenges";
+import { CHALLENGE_ICONS } from "@/hooks/gamification/useWeeklyChallenges";
 
 const CHALLENGE_TYPES = [
   { value: "calls", label: "Ligações" },

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Phone, Mail, Calendar, MessageCircle, Linkedin, Users, Crown, Medal, TrendingUp, Activity } from "lucide-react";
-import { SalespersonActivityData } from "@/hooks/useSalespersonActivityReport";
+import { SalespersonActivityData } from "@/hooks/sales/useSalespersonActivityReport";
 import { cn } from "@/lib/utils";
 
 interface SalespersonActivityTableProps {

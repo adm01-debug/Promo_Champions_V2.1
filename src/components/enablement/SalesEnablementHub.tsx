@@ -7,7 +7,7 @@ import {
   useAssetEfficiency,
   type EnablementAsset,
   type Playbook 
-} from "@/hooks/useSalesEnablement";
+} from "@/hooks/sales/useSalesEnablement";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

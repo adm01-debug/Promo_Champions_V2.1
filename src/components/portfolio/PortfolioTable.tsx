@@ -15,7 +15,7 @@ import {
   ClientPortfolioItem,
   useUpdatePortfolioStatus,
   useRemoveFromPortfolio,
-} from "@/hooks/useClientPortfolio";
+} from "@/hooks/crm/useClientPortfolio";
 import {
   ArrowUpDown,
   ArrowUp,

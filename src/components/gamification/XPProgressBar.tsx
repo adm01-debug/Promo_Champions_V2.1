@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { calculateLevelFromXP, getLevelInfo } from "@/hooks/useSalespersonXP";
+import { calculateLevelFromXP, getLevelInfo } from "@/hooks/gamification/useSalespersonXP";
 import { Sparkles, Star, Zap, Trophy, ArrowUp } from "lucide-react";
 
 interface XPProgressBarProps {

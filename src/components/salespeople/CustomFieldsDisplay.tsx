@@ -1,4 +1,4 @@
-import { useSalespersonCustomFields, CustomFieldWithValue } from '@/hooks/useSalespersonCustomFields';
+import { useSalespersonCustomFields, CustomFieldWithValue } from '@/hooks/sales/useSalespersonCustomFields';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, Hash, Type } from 'lucide-react';
 

@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { useGamifiedProfile } from "@/hooks/useGamifiedProfile";
+import { useGamifiedProfile } from "@/hooks/gamification/useGamifiedProfile";
 import { BadgesGallery } from "@/components/competitive/BadgesGallery";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

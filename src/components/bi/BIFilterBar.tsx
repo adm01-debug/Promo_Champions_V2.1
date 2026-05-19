@@ -16,7 +16,7 @@ import {
 import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { PeriodType, PERIOD_OPTIONS, DateRange as BIDateRange } from "@/hooks/useBIFilters";
+import { PeriodType, PERIOD_OPTIONS, DateRange as BIDateRange } from "@/hooks/bi/useBIFilters";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface BIFilterBarProps {

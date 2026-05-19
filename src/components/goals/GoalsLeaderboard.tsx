@@ -8,7 +8,7 @@ import { SalespersonGoalCard } from "./SalespersonGoalCard";
 import { Trophy, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 
 interface SalespersonData {
   id: string;

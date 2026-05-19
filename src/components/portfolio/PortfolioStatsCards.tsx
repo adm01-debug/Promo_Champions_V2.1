@@ -3,7 +3,7 @@ import React from "react";
 import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PortfolioStats } from "@/hooks/useClientPortfolio";
+import { PortfolioStats } from "@/hooks/crm/useClientPortfolio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PortfolioStatsCardsProps {

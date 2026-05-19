@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSalesChartData } from "@/hooks/useSalesChartData";
+import { useSalesChartData } from "@/hooks/sales/useSalesChartData";
 
 type Period = "7d" | "30d" | "90d";
 

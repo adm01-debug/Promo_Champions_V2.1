@@ -23,7 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
 import { Client360View } from "@/components/clients/Client360View";
 import { useCountUp } from "@/hooks/useCountUp";
-import { useClientPredictions } from "@/hooks/useClientPredictions";
+import { useClientPredictions } from "@/hooks/crm/useClientPredictions";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 

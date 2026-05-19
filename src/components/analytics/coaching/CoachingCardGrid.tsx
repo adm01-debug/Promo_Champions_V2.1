@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Crown, Trophy, CheckCircle2, Zap, AlertTriangle } from "lucide-react";
-import type { CoachingData } from "@/hooks/useSalespersonCoaching";
+import type { CoachingData } from "@/hooks/sales/useSalespersonCoaching";
 
 const getRankBadge = (index: number) => {
   const colors = [

@@ -9,10 +9,10 @@ import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatu
 // Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/sales/useSalesRealtime";
-import { useSalesChartData } from "@/hooks/useSalesChartData";
+import { useSalesChartData } from "@/hooks/sales/useSalesChartData";
 import { useGoalsDashboard } from "@/hooks/sales/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
+import { useDashboardPriorities } from "@/hooks/dashboard/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion, AnimatePresence } from "framer-motion";

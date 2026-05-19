@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Brain, Sparkles, RefreshCw, Zap, AlertTriangle } from 'lucide-react';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
-import { useSalespersonCoaching } from '@/hooks/useSalespersonCoaching';
+import { useSalespersonCoaching } from '@/hooks/sales/useSalespersonCoaching';
 import { useQueryClient } from '@tanstack/react-query';
 import { CoachingResults } from './CoachingResults';
 

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download, Filter } from "lucide-react";
-import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/useSalespersonActivityReport";
+import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/sales/useSalespersonActivityReport";
 import { SalespersonActivityTable } from "@/components/analytics/SalespersonActivityTable";
 import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart";
 import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesChart";

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useROIDashboard } from '@/hooks/useROIDashboard';
+import { useROIDashboard } from '@/hooks/dashboard/useROIDashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis, Legend } from 'recharts';
 import { ROIRankingList } from '@/components/roi/ROIRankingList';
 import { PageTransition } from "@/components/transitions/PageTransition";

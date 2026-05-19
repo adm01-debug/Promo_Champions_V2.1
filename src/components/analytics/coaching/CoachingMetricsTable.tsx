@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TrendingUp, TrendingDown, BarChart3, Crown, Trophy } from "lucide-react";
-import type { CoachingData } from "@/hooks/useSalespersonCoaching";
+import type { CoachingData } from "@/hooks/sales/useSalespersonCoaching";
 
 const getRankBadge = (index: number) => {
   const colors = [

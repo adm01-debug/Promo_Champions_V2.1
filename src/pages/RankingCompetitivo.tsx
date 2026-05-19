@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useAllSalespeopleXP, getLevelInfo, calculateLevelFromXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP, getLevelInfo, calculateLevelFromXP } from "@/hooks/gamification/useSalespersonXP";
 import { XPProgressBar } from "@/components/gamification/XPProgressBar";
 import { LevelBadge } from "@/components/gamification/LevelBadge";
 import { RankingLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";

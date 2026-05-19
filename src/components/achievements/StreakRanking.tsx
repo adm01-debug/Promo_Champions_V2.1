@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStreakRanking } from "@/hooks/gamification/useAchievements";
-import { useAllSalespeopleXP } from "@/hooks/useSalespersonXP";
+import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 
 const roleLabels: Record<string, string> = {

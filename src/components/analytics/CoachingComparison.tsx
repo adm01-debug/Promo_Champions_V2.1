@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Users, TrendingDown, Target, Sparkles, Crown } from 'lucide-react';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
-import { CoachingData } from '@/hooks/useSalespersonCoaching';
+import { CoachingData } from '@/hooks/sales/useSalespersonCoaching';
 import { useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CoachingMetricsTable } from '@/components/analytics/coaching/CoachingMetricsTable';
