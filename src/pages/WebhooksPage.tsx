@@ -154,6 +154,10 @@ const WebhooksPage = () => {
             ))}
           </motion.div>
 
+          <motion.div variants={itemVariants}>
+            <WebhookSimulationPanel />
+          </motion.div>
+
           <Tabs defaultValue="webhooks">
             <TabsList>
               <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
