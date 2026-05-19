@@ -265,7 +265,7 @@ export const systemItems: MenuItem[] = [
 
 export const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
-  { title: "Admin Race 🏎️", url: "/admin/race-arena", icon: Flag },
+  { title: "Admin Race Circuito 🏎️", url: "/admin/race-arena", icon: Flag },
   { title: "Comissões (Admin)", url: "/admin/comissoes", icon: Wallet },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Audit Trail", url: "/audit-logs", icon: ScrollText },
