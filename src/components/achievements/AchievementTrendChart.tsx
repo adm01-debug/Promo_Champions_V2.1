@@ -156,7 +156,7 @@ export function AchievementTrendChart() {
                 }}
                 itemStyle={{ padding: "2px 0" }}
                 cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 2 }}
-                formatter={(value: number, name: string) => {
+                formatter={(value: any, name: string) => {
                   const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
                   return [value, label];
                 }}

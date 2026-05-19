@@ -40,9 +40,9 @@ export const horizonOptions: { value: ForecastHorizon; label: string }[] = [
 ];
 
 export function confidenceLabel(score: number | undefined): { label: string; color: string } {
+  if (score === undefined || score < 50) return { label: "Baixa", color: "text-destructive" };
   if (score >= 80) return { label: "Alta", color: "text-emerald-500" };
-  if (score >= 50) return { label: "Média", color: "text-amber-500" };
-  return { label: "Baixa", color: "text-destructive" };
+  return { label: "Média", color: "text-amber-500" };
 }
 
 export function deltaPct(value: number, base: number): number {
