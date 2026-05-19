@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils";
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
-  const { data, isLoading, isFetching, refetch } = useRevenueForecast({ horizonDays: horizon });
+  const { data, isLoading, isFetching, refetch } = useRevenueForecast({ horizonDays: horizon, ownerId: null, includeAI: true });
 
   const { data: salespeople } = useQuery({
     queryKey: ["salespeople-public-names"],
