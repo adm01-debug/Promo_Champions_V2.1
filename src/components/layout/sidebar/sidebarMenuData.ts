@@ -42,8 +42,8 @@ export const closerMainItems: MenuItem[] = [
   { title: "Comissões", url: "/comissoes", icon: Wallet },
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Clientes", url: "/clientes", icon: Users },
-  { title: "Arena", url: "/arena", icon: Swords },
-  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
+  { title: "Circuito", url: "/arena", icon: Swords },
+  { title: "Race Circuito 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const gestaoMainItems: MenuItem[] = [
