@@ -103,6 +103,25 @@ export const WebhookContracts = {
     }),
   }),
 
+  workflowExecution: z.object({
+    workflow_id: z.string().uuid({ message: "ID do workflow deve ser um UUID válido" }),
+    trigger_payload: z.record(z.unknown()).optional().default({}),
+  }),
+
+  leadScoring: z.object({
+    dealIds: z.array(z.string()).min(1, { message: "Pelo menos um ID de negócio deve ser fornecido" }).max(500),
+  }),
+
+  aiCopilot: z.object({
+    context: z.object({
+      page: z.string().min(1, { message: "Campo 'context.page' é obrigatório" }),
+      extra: z.string().optional(),
+    }),
+    salespersonId: z.string().optional(),
+    action: z.enum(["page_suggestion", "smart_tip", "auto_fill", "quick_answer"]).optional(),
+    question: z.string().optional(),
+  }),
+
   // Add more contracts here as needed
 };
 
