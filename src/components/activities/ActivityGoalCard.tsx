@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target, Trophy, TrendingUp } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
 import { useCelebration } from "@/hooks/useCelebration";
-import { useSalespersonStreak } from "@/hooks/useAchievements";
+import { useSalespersonStreak } from "@/hooks/gamification/useAchievements";
 
 interface ActivityGoalCardProps {
   data: ActivityGoalProgress;

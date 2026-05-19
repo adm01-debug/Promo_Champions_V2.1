@@ -1,4 +1,4 @@
-import { useBIGestor } from "@/hooks/useBIGestor";
+import { useBIGestor } from "@/hooks/bi/useBIGestor";
 import { Helmet } from "react-helmet-async";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { AnalyticsLoadingSkeleton as BIGestorLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";

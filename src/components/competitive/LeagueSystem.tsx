@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { useLeagues, useJoinLeague, LEAGUE_CONFIG, LeagueTier } from '@/hooks/useLeagues';
+import { useLeagues, useJoinLeague, LEAGUE_CONFIG, LeagueTier } from '@/hooks/gamification/useLeagues';
 import { toast } from 'sonner';
 
 interface LeagueSystemProps {

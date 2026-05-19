@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/useDashboardKPIsPeriod";
+import { useDashboardKPIsPeriod, PERIOD_LABELS, type KPIPeriod } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
 import { useSalespeopleList } from "@/hooks/useSalespeopleList";
 import { useAuth } from "@/contexts/AuthContext";

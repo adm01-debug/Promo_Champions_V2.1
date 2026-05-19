@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { useDashboardKPIs } from "@/hooks/useDashboardKPIs";
+import { useDashboardKPIs } from "@/hooks/dashboard/useDashboardKPIs";
 
 export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs();

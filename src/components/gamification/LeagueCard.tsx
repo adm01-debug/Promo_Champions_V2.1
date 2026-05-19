@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Trophy, Zap, Shield } from "lucide-react";
-import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/useLeagues";
+import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/gamification/useLeagues";
 import { cn } from "@/lib/utils";
 
 function _LeagueCard() {

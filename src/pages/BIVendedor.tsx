@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { useBIVendedor } from "@/hooks/useBIVendedor";
+import { useBIVendedor } from "@/hooks/bi/useBIVendedor";
 import { useAuth } from "@/contexts/AuthContext";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { VendedorDashboardLoadingSkeleton as BIVendedorLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";

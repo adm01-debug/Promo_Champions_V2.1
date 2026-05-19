@@ -7,7 +7,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 // Removed unused useDashboardKPIs import
-import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/useDashboardKPIsPeriod";
+import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 import { useSalesRealtime } from "@/hooks/useSalesRealtime";
 import { useSalesChartData } from "@/hooks/useSalesChartData";
 import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { useDashboardRedirect } from "@/hooks/useDashboardRedirect";
+import { useDashboardRedirect } from "@/hooks/dashboard/useDashboardRedirect";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 

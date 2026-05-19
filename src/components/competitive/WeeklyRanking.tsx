@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { useWeeklyRanking } from '@/hooks/useWeeklyRanking';
+import { useWeeklyRanking } from '@/hooks/gamification/useWeeklyRanking';
 
 
 const PODIUM_CONFIG: Record<number, { icon: typeof Crown; gradient: string; label: string }> = {
