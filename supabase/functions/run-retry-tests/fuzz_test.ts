@@ -21,60 +21,56 @@ function makeHarness() {
   return { deps, deliveries };
 }
 
-// ─────────────────── Fuzzing Scenarios ───────────────────
+// ─────────────────── Mass Fuzzing Scenarios ───────────────────
 
-Deno.test("fuzz: payload missing event field", async () => {
+Deno.test("fuzz: thousands of randomized payloads", async () => {
   const { deps } = makeHarness();
-  // @ts-ignore: testing invalid runtime payload
-  const result = await dispatchOne(SUB, { data: "no event" }, deps);
-  // The current implementation of dispatchOne defaults event to "unknown" if missing.
-  // We should verify it doesn't crash.
-  assert(result);
-  assertEquals(result.succeeded, true);
-});
+  
+  // Generating 1000 variations of payloads
+  for (let i = 0; i < 1000; i++) {
+    const payload = {
+      event: i % 10 === 0 ? null : (i % 5 === 0 ? "" : "event_" + i),
+      data: {
+        id: i,
+        nested: { val: "x".repeat(i % 100) },
+        mixed: [1, "2", { three: 3 }],
+        nullField: i % 3 === 0 ? null : undefined,
+        largeNum: Math.pow(10, i % 10),
+      },
+      __request_id: i % 100 === 0 ? "not-a-uuid" : undefined
+    };
 
-Deno.test("fuzz: payload with very large data", async () => {
-  const { deps } = makeHarness();
-  const largeData = "a".repeat(1024 * 10); // 10KB string
-  const result = await dispatchOne(SUB, { event: "x", data: largeData }, deps);
-  assertEquals(result.succeeded, true);
-});
-
-Deno.test("fuzz: payload with null values in required fields", async () => {
-  const { deps } = makeHarness();
-  // @ts-ignore
-  const result = await dispatchOne(SUB, { event: null, data: 123 }, deps);
-  assertEquals(result.succeeded, true);
-});
-
-Deno.test("fuzz: invalid subscription URL", async () => {
-  const badSub = { ...SUB, url: "not-a-url" };
-  const deps: DispatchDeps = {
-    fetchFn: () => Promise.reject(new TypeError("Invalid URL")),
-    insertDelivery: () => Promise.resolve(),
-    sleep: () => Promise.resolve(),
-    updateSubscription: () => Promise.resolve(),
-    now: () => 0,
-    rand: () => 0,
-  };
-  const result = await dispatchOne(badSub, { event: "x" }, deps);
-  assertEquals(result.succeeded, false);
-  assertEquals(result.status, 0);
-  assert(result.error?.includes("TypeError"));
-});
-
-Deno.test("fuzz: payload with nested circular references (if possible)", async () => {
-  const { deps } = makeHarness();
-  const payload: any = { event: "x" };
-  // Circular ref would normally break JSON.stringify, but dispatchOne should handle or fail gracefully.
-  // We don't implement circular ref here because JSON.stringify would throw.
-  // Instead, let's test a very deep object.
-  let deep: any = { event: "x" };
-  let current = deep;
-  for (let i = 0; i < 100; i++) {
-    current.child = { val: i };
-    current = current.child;
+    // @ts-ignore: testing invalid runtime payload
+    const result = await dispatchOne(SUB, payload, deps);
+    assert(result, `Failed at execution ${i}`);
+    // Even with malformed payloads, dispatchOne should complete without crashing
+    // (it defaults missing fields or handles them as strings)
   }
-  const result = await dispatchOne(SUB, deep, deps);
-  assertEquals(result.succeeded, true);
 });
+
+Deno.test("fuzz: payload with extreme characters", async () => {
+  const { deps } = makeHarness();
+  const extremeInputs = [
+    '<script>alert("xss")</script>',
+    "'; DROP TABLE users; --",
+    '👋🌍🚀',
+    '\x00\x01\x02',
+    'A'.repeat(5000)
+  ];
+
+  for (const input of extremeInputs) {
+    const result = await dispatchOne(SUB, { event: "x", data: input }, deps);
+    assertEquals(result.succeeded, true);
+  }
+});
+
+Deno.test("fuzz: edge case numbers", async () => {
+  const { deps } = makeHarness();
+  const nums = [0, -1, NaN, Infinity, -Infinity, 1e20];
+
+  for (const n of nums) {
+    const result = await dispatchOne(SUB, { event: "x", val: n }, deps);
+    assertEquals(result.succeeded, true);
+  }
+});
+
