@@ -1,16 +1,45 @@
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
+export interface WebhookValidationError {
+  field: string;
+  message: string;
+}
+
 export interface WebhookValidationResult<T> {
   success: boolean;
   data?: T;
   error?: string;
+  details?: WebhookValidationError[];
   statusCode: number;
-  contract_version?: string;
+  contract_version: string;
 }
 
 /**
- * Robust validator for incoming webhooks to prevent "silent breaks"
- * and handle malformed payloads gracefully.
+ * Standardizes 422 Unprocessable Entity responses across the system.
+ */
+export function createValidationErrorResponse(
+  error: string,
+  details: WebhookValidationError[],
+  contractVersion: string,
+  corsHeaders: Record<string, string>
+): Response {
+  return new Response(
+    JSON.stringify({
+      error,
+      code: "VALIDATION_ERROR",
+      details,
+      contract_version: contractVersion,
+      timestamp: new Date().toISOString()
+    }),
+    { 
+      status: 422, 
+      headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    }
+  );
+}
+
+/**
+ * Robust validator for incoming webhooks supporting contract versioning.
  */
 export function validateWebhookPayload<T extends z.ZodTypeAny>(
   schema: T,
@@ -30,15 +59,18 @@ export function validateWebhookPayload<T extends z.ZodTypeAny>(
     const result = schema.safeParse(payload);
 
     if (!result.success) {
-      const errorMsg = result.error.issues
-        .map((i) => `${i.path.join(".")}: ${i.message}`)
-        .join(", ");
+      const details = result.error.issues.map((i) => ({
+        field: i.path.join("."),
+        message: i.message,
+      }));
       
-      console.error(`[Webhook Validation Failed] ${errorMsg}`);
+      const errorMsg = details.map(d => `${d.field}: ${d.message}`).join(", ");
+      console.error(`[Webhook Validation Failed][v${contractVersion}] ${errorMsg}`);
       
       return {
         success: false,
-        error: `Validation failed: ${errorMsg}`,
+        error: `Validation failed for contract v${contractVersion}`,
+        details,
         statusCode: 422,
         contract_version: contractVersion,
       };
@@ -62,9 +94,43 @@ export function validateWebhookPayload<T extends z.ZodTypeAny>(
 }
 
 /**
- * Common schemas for enterprise webhooks (Contracts)
+ * Versioned Webhook Contracts (v1/v2)
  */
 export const WebhookContracts = {
+  v1: {
+    crmEvent: z.object({
+      event_id: z.string().uuid({ message: "O ID do evento deve ser um UUID válido" }),
+      timestamp: z.string().datetime(),
+      source: z.enum(["bitrix24", "salesforce", "hubspot", "custom"]),
+      payload: z.record(z.unknown()),
+    }),
+    leadUpdate: z.object({
+      lead_id: z.string().min(1, { message: "ID do lead é obrigatório" }),
+      status: z.string().min(1, { message: "Status é obrigatório" }),
+    }),
+  },
+  
+  v2: {
+    crmEvent: z.object({
+      event_id: z.string().uuid({ message: "O ID do evento deve ser um UUID válido" }),
+      timestamp: z.string().datetime({ message: "Timestamp deve ser ISO 8601" }),
+      source: z.enum(["bitrix24", "salesforce", "hubspot", "custom"]),
+      payload: z.record(z.unknown()),
+      schema_version: z.literal("2.0.0").default("2.0.0"),
+      metadata: z.object({
+        environment: z.enum(["prod", "staging", "dev"]).optional(),
+        retry_count: z.number().int().nonnegative().optional(),
+      }).optional(),
+    }),
+    leadUpdate: z.object({
+      lead_id: z.string().uuid({ message: "Na v2, lead_id deve ser um UUID válido" }),
+      status: z.string().min(1, { message: "Status é obrigatório" }),
+      previous_status: z.string().optional(),
+      changed_at: z.string().datetime(),
+    }),
+  },
+
+  // Default/Legacy Schema mappings
   crmEvent: z.object({
     event_id: z.string().uuid({ message: "O ID do evento deve ser um UUID válido" }),
     timestamp: z.string().datetime({ message: "O timestamp deve estar no formato ISO 8601" }),
@@ -87,18 +153,18 @@ export const WebhookContracts = {
   inboundEmail: z.object({
     provider: z.enum(["resend", "sendgrid", "generic"]),
     eventType: z.enum(["reply", "bounce", "complaint", "unsubscribe", "other"]),
-    fromEmail: z.string().email().nullable(),
+    fromEmail: z.string().email({ message: "E-mail inválido" }).nullable(),
     messageId: z.string().nullable(),
-    receivedAt: z.string().datetime().optional(),
+    receivedAt: z.string().datetime({ message: "Data inválida" }).optional(),
   }),
 
   quoteSync: z.object({
-    action: z.string(),
+    action: z.string().min(1, { message: "Ação é obrigatória" }),
     quote: z.object({
-      id: z.string(),
-      quote_number: z.string(),
-      status: z.string(),
-      total: z.number().nonnegative(),
+      id: z.string().min(1, { message: "ID do orçamento é obrigatório" }),
+      quote_number: z.string().min(1, { message: "Número do orçamento é obrigatório" }),
+      status: z.string().min(1, { message: "Status é obrigatório" }),
+      total: z.number().nonnegative({ message: "O total não pode ser negativo" }),
       items: z.array(z.any()).min(1, { message: "O orçamento deve conter pelo menos um item" }),
     }),
   }),
@@ -121,9 +187,6 @@ export const WebhookContracts = {
     action: z.enum(["page_suggestion", "smart_tip", "auto_fill", "quick_answer"]).optional(),
     question: z.string().optional(),
   }),
-
-  // Add more contracts here as needed
 };
 
-// Legacy alias for compatibility
 export const EnterpriseWebhookSchemas = WebhookContracts;
