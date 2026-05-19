@@ -10,8 +10,9 @@ export default function Auth() {
   return (
     <>
       <Helmet>
-        <title>Circuito de Vencedores | Promo Champions</title>
-        <meta name="description" content="Entre no Circuito. Competa. Vença." />
+        <title>Login | Circuito de Vencedores</title>
+        <meta name="description" content="Acesse a plataforma Circuito de Vencedores. Entre no jogo, acompanhe suas metas e supere seus limites no maior ecossistema de vendas inteligente." />
+        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <div className="min-h-screen w-full relative overflow-hidden bg-[#05060f] text-white flex items-center justify-center p-4 sm:p-8">
