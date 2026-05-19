@@ -116,7 +116,7 @@ export const useUpdateCoachingSession = () => {
     mutationFn: async ({ id, ...updates }: UpdateSessionInput) => {
       const { data, error } = await supabase
         .from("coaching_sessions")
-        .update(updates as Record<string, any>)
+        .update(updates as any)
         .eq("id", id)
         .select()
         .single();
