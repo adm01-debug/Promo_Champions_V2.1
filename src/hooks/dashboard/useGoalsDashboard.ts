@@ -113,8 +113,8 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
-          predictedAttainment: prediction?.predicted_attainment_pct ?? (progress * (totalDays / daysElapsed)),
-          paceStatus: prediction?.pace_status as 'ahead' | 'on_track' | 'behind' | undefined,
+          predictedAttainment: prediction ? Number(prediction.predicted_amount) / (goalAmount || 1) * 100 : (progress * (totalDays / daysElapsed)),
+          paceStatus: prediction?.risk_level === 'low' ? 'ahead' : prediction?.risk_level === 'medium' ? 'on_track' : 'behind',
         };
       });
 
