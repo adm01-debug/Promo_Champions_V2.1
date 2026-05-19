@@ -85,6 +85,8 @@ export const StatCard = React.memo(({
     <motion.div
       whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
       className="h-full"
+      role="region"
+      aria-label={`Métrica de ${title}: ${displayValue}`}
     >
       <Card className={cn(
         "group relative h-full overflow-hidden transition-all duration-300",
