@@ -10,7 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { useIntegrationConnections, useTestConnection } from "@/hooks/admin/useIntegrationConnections";
-import { useCredentialsSource } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
 import {
   buildMarkdownReport,
   loadSnapshot,

@@ -3,7 +3,7 @@ import { CheckCircle2, XCircle, Activity, AlertTriangle, Loader2 } from "lucide-
 import { useIntegrationConnections, useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
 import { useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCredentialsSource } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
 
 export function IntegrationsHealthCard() {
   const { data: conns = [], isLoading: loadingConns } = useIntegrationConnections();
