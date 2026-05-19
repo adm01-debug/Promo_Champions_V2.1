@@ -80,7 +80,7 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
         if (currentSalesRes.error) throw currentSalesRes.error;
         if (prevSalesRes.error) throw prevSalesRes.error;
 
-        const calculateMetrics = (sales: any[]): RoleMetrics => {
+        const calculateMetrics = (sales: Array<{ status: string; amount: number | null }>): RoleMetrics => {
           const totalDeals = sales.length;
           const closedDeals = sales.filter(s => s.status === "completed").length;
           const totalValue = sales.reduce((sum, s) => sum + Number(s.amount || 0), 0);

@@ -41,14 +41,15 @@ export function useAdminStats() {
       ]);
 
       const roleDistribution = { admin: 0, manager: 0, salesperson: 0 };
-      userRoles?.forEach((r: any) => {
-        if (r.role in roleDistribution) {
-          roleDistribution[r.role as keyof typeof roleDistribution]++;
+      userRoles?.forEach((r) => {
+        const role = r.role as keyof typeof roleDistribution;
+        if (role in roleDistribution) {
+          roleDistribution[role]++;
         }
       });
 
       const totalRevenue = revenueData?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
-      const openCircuits = circuitEvents?.filter((e: any) => e.new_state === "OPEN") || [];
+      const openCircuits = circuitEvents?.filter((e) => e.new_state === "OPEN") || [];
       const queryMetrics = getQueryMetrics();
 
       return {

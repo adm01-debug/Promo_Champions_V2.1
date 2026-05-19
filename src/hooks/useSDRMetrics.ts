@@ -49,7 +49,7 @@ function getPeriodRange(period: PeriodFilter, offset: number = 0) {
 
 export function useSDRMetrics(
   period: PeriodFilter = "month",
-  filters?: any,
+  filters?: { status?: string; channel?: string },
   searchTerm?: string
 ) {
   return useQuery({
@@ -111,7 +111,7 @@ export function useSDRMetrics(
 
         const scoreMap = new Map(leadScoresRes.data?.map(s => [s.sale_id, s.score]) || []);
 
-        const calculateMetrics = (sales: any[], tasks: any[]): SDRMetrics => {
+        const calculateMetrics = (sales: Array<{ id: string; status: string }>, tasks: Array<{ id: string }>): SDRMetrics => {
           const totalLeads = sales.length;
           const qualifiedLeads = sales.filter(s => 
             ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
@@ -267,11 +267,14 @@ export function useHourlySuccessProbability() {
 
         return hours
           .filter((h) => h.total > 0 || (parseInt(h.hour) >= 8 && parseInt(h.hour) <= 18))
-          .map((h) => ({
-            hour: h.hour,
-            probability: h.total > 0 ? Math.round((h.success / h.total) * 100) : Math.floor(Math.random() * 40) + 20,
-            status: (h.total > 0 ? (h.success/h.total >= 0.8 ? "critical" : h.success/h.total >= 0.6 ? "high" : h.success/h.total >= 0.4 ? "medium" : "low") : "low") as any
-          }));
+          .map((h) => {
+            const ratio = h.total > 0 ? h.success / h.total : 0;
+            return {
+              hour: h.hour,
+              probability: h.total > 0 ? Math.round(ratio * 100) : Math.floor(Math.random() * 40) + 20,
+              status: (ratio >= 0.8 ? "critical" : ratio >= 0.6 ? "high" : ratio >= 0.4 ? "medium" : "low") as "critical" | "high" | "medium" | "low"
+            };
+          });
       } catch (error) {
         captureException(error, "useHourlySuccessProbability");
         throw error;

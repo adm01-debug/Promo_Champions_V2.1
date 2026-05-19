@@ -92,7 +92,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const saleIds = (sales || []).map(s => s.id);
       
-      let activities: any[] = [];
+      let activities: Array<{ id: string; activity_type: string; created_at: string; notes: string | null; outcome?: string; contact_name?: string; duration_minutes?: number; sale_id?: string }> = [];
       if (saleIds.length > 0) {
         const { data: actData, error: actError } = await supabase
           .from('activities')
@@ -102,7 +102,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .limit(100);
         
         if (actError) throw actError;
-        activities = actData || [];
+        activities = (actData || []) as any;
       } else {
         const { data: actData, error: actError } = await supabase
           .from('activities')
@@ -111,12 +111,12 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .order('created_at', { ascending: false })
           .limit(100);
         
-        if (!actError) activities = actData || [];
+        if (!actError) activities = (actData || []) as any;
       }
 
       const timelineEvents: TimelineEvent[] = [];
 
-      (interactions || []).forEach((int: any) => {
+      ((interactions as any[]) || []).forEach((int: any) => {
         timelineEvents.push({
           id: int.id,
           type: int.type,
@@ -129,7 +129,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      activities.forEach((act: any) => {
+      activities.forEach((act) => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
         timelineEvents.push({
           id: act.id,

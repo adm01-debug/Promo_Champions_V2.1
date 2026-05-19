@@ -113,8 +113,8 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
-          predictedAttainment: (prediction as any)?.predicted_attainment_pct,
-          paceStatus: (prediction as any)?.pace_status as any,
+          predictedAttainment: prediction ? Number(prediction.predicted_amount) / (goalAmount || 1) * 100 : (progress * (totalDays / daysElapsed)),
+          paceStatus: prediction?.risk_level === 'low' ? 'ahead' : prediction?.risk_level === 'medium' ? 'on_track' : 'behind',
         };
       });
 
@@ -143,7 +143,7 @@ export function useGoalsDashboard() {
         requiredDailyAverage: Math.max(0, teamRequiredDaily),
         totalCurrentCommission,
         totalProjectedCommission,
-        teamPredictedAttainment: teamPrediction ? (teamPrediction as any).predicted_attainment_pct : (teamProgress * (totalDays / daysElapsed)),
+        teamPredictedAttainment: teamPrediction ? (Number(teamPrediction.predicted_amount) / (totalGoal || 1) * 100) : (teamProgress * (totalDays / daysElapsed)),
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },

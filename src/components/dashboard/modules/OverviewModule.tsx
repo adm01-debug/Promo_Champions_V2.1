@@ -9,10 +9,14 @@ import { MiniLeaderboard } from "@/components/dashboard/MiniLeaderboard";
 import { PredictiveRevenueForecast } from "@/components/dashboard/PredictiveRevenueForecast";
 import { containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
+import type { KPIPeriodResult } from "@/hooks/dashboard/useDashboardKPIsPeriod";
 
 interface OverviewModuleProps {
-  goalsData: any;
-  kpis: any;
+  goalsData: {
+    totalSales: number;
+    totalGoal: number;
+  } | undefined;
+  kpis: KPIPeriodResult | undefined;
 }
 
 export const OverviewModule = memo(({ goalsData, kpis }: OverviewModuleProps) => {

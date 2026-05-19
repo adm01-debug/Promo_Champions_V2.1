@@ -92,13 +92,13 @@ export function useSendTimeProfile(saleId: string | undefined) {
     queryKey: ["send-time-profile", saleId],
     enabled: !!saleId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("send_time_profiles")
         .select("*")
         .eq("sale_id", saleId!)
         .maybeSingle();
       if (error) throw error;
-      return (data as SendTimeProfile | null) ?? null;
+      return (data as unknown as SendTimeProfile | null) ?? null;
     },
   });
 }
@@ -126,11 +126,13 @@ export function useScheduledSends(status: ScheduledSend["status"] | "all" = "pen
   const q = useQuery({
     queryKey: ["scheduled-sends", status],
     queryFn: async () => {
-      let qb: any = (supabase as any).from("scheduled_sends").select("*").order("scheduled_for", { ascending: true }).limit(200);
-      if (status !== "all") qb = qb.eq("status", status);
+      let qb = supabase.from("scheduled_sends").select("*").order("scheduled_for", { ascending: true }).limit(200);
+      if (status !== "all") {
+        qb = qb.eq("status", status) as any; // Temporary assertion for complex chain if needed, but trying to avoid any
+      }
       const { data, error } = await qb;
       if (error) throw error;
-      return (data ?? []) as ScheduledSend[];
+      return (data ?? []) as unknown as ScheduledSend[];
     },
   });
 
@@ -153,7 +155,7 @@ export function useCancelScheduledSend() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("scheduled_sends").update({ status: "cancelled" }).eq("id", id);
+      const { error } = await supabase.from("scheduled_sends").update({ status: "cancelled" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

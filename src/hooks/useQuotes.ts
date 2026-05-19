@@ -26,7 +26,7 @@ export interface Quote {
   subtotal: number | null;
   discount_amount: number | null;
   discount_percent: number | null;
-  items: any; // JSONB stored as array or object
+  items: QuoteItem[] | string | null; // JSONB stored as array or object
   external_quote_id: string | null;
   sync_status: string | null;
   pdf_url: string | null;
@@ -53,7 +53,7 @@ export interface QuoteItem {
 
 /** Parse the items JSON string into typed array */
 /** Parse the items into typed array */
-export function parseQuoteItems(items: any): QuoteItem[] {
+export function parseQuoteItems(items: QuoteItem[] | string | null | unknown): QuoteItem[] {
   if (!items) return [];
   if (typeof items === 'string') {
     try {
@@ -136,14 +136,14 @@ interface CreateQuoteInput {
   subtotal?: number;
   discount_amount?: number;
   discount_percent?: number;
-  items?: any;
+  items?: QuoteItem[] | string | null;
 }
 
 export function useCreateQuote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateQuoteInput) => {
-      const { data, error } = await supabase.from('quotes').insert(input).select().single();
+      const { data, error } = await supabase.from('quotes').insert([input as any]).select().single();
       if (error) throw error;
       return data;
     },

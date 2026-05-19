@@ -50,14 +50,17 @@ export default function Orcamentos() {
     subscription_type: "one-time"
   });
 
-  interface QuoteItem {
+  interface LocalQuoteItem {
     product_name: string;
     quantity: number;
     unit_price: number;
     total_price: number;
+    product_id?: string;
+    subtotal?: number;
+    personalizations?: any[];
   }
 
-  const [items, setItems] = useState<QuoteItem[]>([]);
+  const [items, setItems] = useState<LocalQuoteItem[]>([]);
   const [newItem, setNewItem] = useState<{ product_name: string; quantity: number; unit_price: number }>({ product_name: "", quantity: 1, unit_price: 0 });
 
   const addItem = () => {
@@ -101,7 +104,7 @@ export default function Orcamentos() {
       subtotal: Number(form.subtotal),
       discount_amount: Number(form.discount_amount),
       discount_percent: Number(form.subtotal) > 0 ? (Number(form.discount_amount) / Number(form.subtotal)) * 100 : 0,
-      items: items
+      items: items as any
     }, { 
       onSuccess: () => { 
         setIsCreateOpen(false); 
