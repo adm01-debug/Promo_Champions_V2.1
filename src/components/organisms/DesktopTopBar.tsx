@@ -176,7 +176,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
               <TooltipTrigger asChild>
                 <PreloadLink
                   to="/cadencias-orcamentos?filter=today"
-                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-ring outline-none"
+                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
                   aria-label={`${quoteTasksCount} tarefa${quoteTasksCount > 1 ? "s" : ""} de cadência de orçamento para hoje`}
                 >
                   <FileText className="h-4 w-4 text-primary" />
