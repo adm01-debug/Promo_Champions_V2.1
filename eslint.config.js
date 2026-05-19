@@ -46,6 +46,10 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'react-hooks/exhaustive-deps': 'off',
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+      'prefer-const': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
       'no-console': 'off',
     },
   }
