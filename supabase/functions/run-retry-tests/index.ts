@@ -93,9 +93,9 @@ async function captureAndRun(): Promise<{
 
   try {
     // Dynamic import — registers all Deno.test() calls into `captured`.
-    // Note: retry_test.ts is a copy of supabase/functions/winloss-webhook-dispatcher/retry_test.ts
-    // (edge runtime sandboxes prevent sibling-function imports).
+    // We import both the basic retry_test.ts and the parametric test suite.
     await import("./retry_test.ts");
+    await import("./retry_parametric_test.ts");
   } finally {
     // deno-lint-ignore no-explicit-any
     (Deno as any).test = originalDenoTest;
