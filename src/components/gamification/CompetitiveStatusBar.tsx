@@ -31,7 +31,7 @@ export function CompetitiveStatusBar() {
             </div>
             <div>
               <p className="text-sm font-display font-semibold">Faça login para competir</p>
-              <p className="text-xs text-muted-foreground">Entre na arena e conquiste seu lugar</p>
+              <p className="text-xs text-muted-foreground">Entre no circuito e conquiste seu lugar</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-colors">
