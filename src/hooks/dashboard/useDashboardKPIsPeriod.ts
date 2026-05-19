@@ -171,7 +171,7 @@ const fetchData = async (
     if (newClients === 0 && role !== 'sdr') {
       // Fallback: unique client_name from completed sales (if client_name exists)
       // Since 'sales' table has client_name, we can use it as a proxy
-      const uniqueClients = new Set(completed.map(s => (s as any).client_name).filter(Boolean));
+      const uniqueClients = new Set(completed.map(s => (s as { client_name?: string }).client_name).filter(Boolean));
       newClients = uniqueClients.size;
     }
 
