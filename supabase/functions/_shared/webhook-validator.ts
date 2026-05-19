@@ -92,6 +92,17 @@ export const WebhookContracts = {
     receivedAt: z.string().datetime().optional(),
   }),
 
+  quoteSync: z.object({
+    action: z.string(),
+    quote: z.object({
+      id: z.string(),
+      quote_number: z.string(),
+      status: z.string(),
+      total: z.number().nonnegative(),
+      items: z.array(z.any()).min(1, { message: "O orçamento deve conter pelo menos um item" }),
+    }),
+  }),
+
   // Add more contracts here as needed
 };
 
