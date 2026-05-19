@@ -84,6 +84,14 @@ export const WebhookContracts = {
     metadata: z.record(z.unknown()).optional(),
   }),
 
+  inboundEmail: z.object({
+    provider: z.enum(["resend", "sendgrid", "generic"]),
+    eventType: z.enum(["reply", "bounce", "complaint", "unsubscribe", "other"]),
+    fromEmail: z.string().email().nullable(),
+    messageId: z.string().nullable(),
+    receivedAt: z.string().datetime().optional(),
+  }),
+
   // Add more contracts here as needed
 };
 
