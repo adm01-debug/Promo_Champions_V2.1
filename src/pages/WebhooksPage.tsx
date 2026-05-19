@@ -23,6 +23,7 @@ import { ptBR } from "date-fns/locale";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { toast } from "sonner";
 import { WebhookSimulationPanel } from "@/components/debug/WebhookSimulationPanel";
+import { QualityReportView } from "@/components/debug/QualityReportView";
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
@@ -154,8 +155,9 @@ const WebhooksPage = () => {
             ))}
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <WebhookSimulationPanel />
+            <QualityReportView />
           </motion.div>
 
           <Tabs defaultValue="webhooks">
