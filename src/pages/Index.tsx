@@ -92,7 +92,22 @@ const Index = () => {
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
       <Helmet>
-        <title>Circuito de Vencedores | Promo Champions</title>
+        <title>Dashboard | Circuito de Vencedores</title>
+        <meta name="description" content="Acompanhe sua performance em tempo real no Circuito de Vencedores. KPIs de vendas, ranking competitivo e inteligência comercial 10/10." />
+        <meta name="keywords" content="vendas, dashboard, performance, CRM, inteligência comercial" />
+        <link rel="canonical" href="https://promochampions.com.br/dashboard" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Circuito de Vencedores Dashboard",
+            "description": "Plataforma inteligente de gestão de vendas e performance comercial.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Promo Champions"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-700">
