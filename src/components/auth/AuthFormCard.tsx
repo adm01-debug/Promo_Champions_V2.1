@@ -140,7 +140,7 @@ export function AuthFormCard(props: AuthFormCardProps) {
                       </DialogContent>
                     </Dialog>
                     <Button type="submit" className="w-full h-11 rounded-xl gradient-primary font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow" disabled={isLoginDisabled}>
-                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Entrando...</>) : lockoutStatus.isLocked && countdown > 0 ? (<><ShieldAlert className="mr-2 h-4 w-4" />Bloqueado ({formatRemainingTime(countdown)})</>) : "Entrar na Arena"}
+                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Acessando...</>) : lockoutStatus.isLocked && countdown > 0 ? (<><ShieldAlert className="mr-2 h-4 w-4" />Bloqueado ({formatRemainingTime(countdown)})</>) : "Entrar no Circuito"}
                     </Button>
                   </form>
                 </TabsContent>
