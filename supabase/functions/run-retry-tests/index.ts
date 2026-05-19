@@ -93,9 +93,10 @@ async function captureAndRun(): Promise<{
 
   try {
     // Dynamic import — registers all Deno.test() calls into `captured`.
-    // We import both the basic retry_test.ts and the parametric test suite.
+    // We import basic tests, parametric tests, and fuzzing tests.
     await import("./retry_test.ts");
     await import("./retry_parametric_test.ts");
+    await import("./fuzz_test.ts");
   } finally {
     // deno-lint-ignore no-explicit-any
     (Deno as any).test = originalDenoTest;
