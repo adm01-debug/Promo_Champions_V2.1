@@ -56,7 +56,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         className={cn(
           cardVariants({ variant }),
           !hover && "hover:transform-none hover:shadow-none",
-          isInteractive && "outline-none focus-visible:ring-3 focus-visible:ring-primary focus-visible:ring-offset-2",
+          isInteractive && "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           className
         )}
         onClick={handleClick}

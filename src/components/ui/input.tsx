@@ -17,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
           "placeholder:text-muted-foreground/60",
           "hover:border-border/80 hover:bg-background/80",
-          "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary",
           "disabled:cursor-not-allowed disabled:opacity-50",
           "transition-all duration-200",
           error && "border-destructive focus-visible:ring-destructive/30 animate-shake",
