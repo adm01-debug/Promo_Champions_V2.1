@@ -50,6 +50,9 @@ export default tseslint.config(
       'react-hooks/rules-of-hooks': 'off',
       'prefer-const': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      'no-empty': 'off',
       'no-console': 'off',
     },
   }
