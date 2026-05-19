@@ -207,9 +207,9 @@ export default function Auth() {
                 transition={{ delay: 0.3, duration: 0.8 }}
                 className="text-5xl xl:text-6xl font-black leading-[1.05]"
               >
-                Entre na{" "}
+                Entre no{" "}
                 <span className="bg-gradient-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent" style={{ filter: "drop-shadow(0 0 24px rgba(168,85,247,0.4))" }}>
-                  Arena
+                  Circuito
                 </span>
                 .<br />
                 Domine o{" "}
