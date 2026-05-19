@@ -377,10 +377,10 @@
     --card: 230 35% 6%;
     --card-foreground: 199 89% 95%;
     --border: 199 89% 25%;
-    --primary: 199 89% 55%; /* High Contrast Cyber Cyan */
-    --ring: 199 89% 55%;
-    --muted: 230 20% 18%;
-    --muted-foreground: 199 20% 85%;
+    --primary: 199 89% 48%; /* Cyber Cyan */
+    --ring: 199 89% 48%;
+    --muted: 230 15% 20%;
+    --muted-foreground: 220 8% 82%;
   }
 
   .standard-mode {
