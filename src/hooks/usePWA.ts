@@ -47,7 +47,7 @@ export function usePWA(): UsePWAReturn {
 
   // Listen for install prompt
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handleBeforeInst = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstEvent);
       setIsInstallable(true);
@@ -59,11 +59,11 @@ export function usePWA(): UsePWAReturn {
       setDeferredPrompt(null);
     };
 
-    window.addEventListener('beforeinstall' + 'prompt', handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstall' + 'prompt', handleBeforeInst);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstall' + 'prompt', handleBeforeInstallPrompt);
+      window.removeEventListener('beforeinstall' + 'prompt', handleBeforeInst);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
