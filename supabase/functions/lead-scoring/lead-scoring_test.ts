@@ -28,5 +28,5 @@ Deno.test("lead-scoring contract validation - valid payload", async () => {
   const payload = { dealIds: ["uuid-1", "uuid-2"] };
   const result = validateWebhookPayload(WebhookContracts.leadScoring, payload, "1.0.0");
   assertEquals(result.success, true);
-  assertEquals(result.data.dealIds.length, 2);
+  assertEquals(result.data?.dealIds.length, 2);
 });

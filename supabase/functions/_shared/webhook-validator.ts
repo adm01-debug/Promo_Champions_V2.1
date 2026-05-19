@@ -137,7 +137,7 @@ export const WebhookContracts = {
     source: z.enum(["bitrix24", "salesforce", "hubspot", "custom"], {
       errorMap: () => ({ message: "Fonte do evento inválida" })
     }),
-    payload: z.record(z.unknown(), { message: "Payload deve ser um objeto JSON" }),
+    payload: z.record(z.any()),
     actor: z.object({
       id: z.string().optional(),
       email: z.string().email({ message: "E-mail do ator inválido" }).optional(),
