@@ -143,7 +143,7 @@ export function useGoalsDashboard() {
         requiredDailyAverage: Math.max(0, teamRequiredDaily),
         totalCurrentCommission,
         totalProjectedCommission,
-        teamPredictedAttainment: teamPrediction ? (teamPrediction as any).predicted_attainment_pct : (teamProgress * (totalDays / daysElapsed)),
+        teamPredictedAttainment: teamPrediction ? (Number(teamPrediction.predicted_amount) / (totalGoal || 1) * 100) : (teamProgress * (totalDays / daysElapsed)),
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },
