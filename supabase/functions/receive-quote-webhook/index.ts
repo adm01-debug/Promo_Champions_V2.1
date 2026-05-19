@@ -95,7 +95,14 @@ Deno.serve(async (req) => {
     // Contract validation
     const validation = validateWebhookPayload(WebhookContracts.quoteSync, rawBody, "1.2.0");
     if (!validation.success) {
-      console.error(`[Contract Violation] Quote sync failed validation: ${validation.error}`);
+      if (validation.statusCode === 422) {
+        return createValidationErrorResponse(
+          validation.error!,
+          validation.details!,
+          validation.contract_version,
+          corsHeaders
+        );
+      }
       return new Response(
         JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
         { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
