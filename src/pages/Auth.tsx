@@ -437,7 +437,7 @@ export default function Auth() {
                         <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
                         <>
-                          {authMode === 'login' ? 'INVASÃO DE SISTEMA' : 'INICIAR JORNADA'}
+                          {authMode === 'login' ? 'ACESSAR CIRCUITO' : 'INICIAR JORNADA'}
                           <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                         </>
                       )}
