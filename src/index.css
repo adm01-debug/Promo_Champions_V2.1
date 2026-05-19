@@ -27,8 +27,8 @@
     --popover-foreground: 230 25% 12%;
 
     /* ===== CORES PRIMÁRIAS - Electric Violet ===== */
-    --primary: 262 83% 52%;
-    --primary-foreground: 262 100% 98%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
     --primary-glow: 280 100% 70%;
     --status-success: 152 76% 35%;
     --status-warning: 38 95% 45%;
@@ -36,7 +36,7 @@
 
     /* ===== CORES SECUNDÁRIAS - Deep Teal ===== */
     --secondary: 172 66% 45%;
-    --secondary-foreground: 172 100% 98%;
+    --secondary-foreground: 0 0% 100%;
 
     /* ===== MUTED ===== */
     --muted: 220 15% 92%;
@@ -48,7 +48,7 @@
 
     /* ===== DESTRUCTIVE ===== */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 100% 98%;
+    --destructive-foreground: 0 0% 100%;
 
     /* ===== BORDAS E INPUTS ===== */
     --border: 220 15% 88%;
@@ -57,11 +57,11 @@
 
     /* ===== ESTADOS ===== */
     --success: 152 76% 42%;
-    --success-foreground: 152 100% 98%;
+    --success-foreground: 0 0% 100%;
     --warning: 38 95% 50%;
     --warning-foreground: 0 0% 0%;
     --info: 200 95% 50%;
-    --info-foreground: 200 100% 98%;
+    --info-foreground: 0 0% 100%;
 
     /* ===== LIVE/REAL-TIME INDICATORS ===== */
     --live-pulse: 330 90% 60%;
@@ -105,7 +105,7 @@
     --sidebar-background: 230 25% 10%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 262 83% 65%;
-    --sidebar-primary-foreground: 262 100% 98%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 185 90% 48%;
     --sidebar-accent-foreground: 220 50% 10%;
     --sidebar-border: 230 20% 18%;
