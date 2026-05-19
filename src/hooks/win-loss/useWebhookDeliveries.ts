@@ -90,7 +90,8 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
   });
 
   return Object.assign(query, {
-    replay: replay.mutate,
+    replay: replay.mutateAsync,
     isReplaying: replay.isPending,
+
   });
 }
