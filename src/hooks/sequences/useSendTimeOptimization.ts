@@ -126,11 +126,13 @@ export function useScheduledSends(status: ScheduledSend["status"] | "all" = "pen
   const q = useQuery({
     queryKey: ["scheduled-sends", status],
     queryFn: async () => {
-      let qb: any = (supabase as any).from("scheduled_sends").select("*").order("scheduled_for", { ascending: true }).limit(200);
-      if (status !== "all") qb = qb.eq("status", status);
+      let qb = supabase.from("scheduled_sends").select("*").order("scheduled_for", { ascending: true }).limit(200);
+      if (status !== "all") {
+        qb = qb.eq("status", status) as any; // Temporary assertion for complex chain if needed, but trying to avoid any
+      }
       const { data, error } = await qb;
       if (error) throw error;
-      return (data ?? []) as ScheduledSend[];
+      return (data ?? []) as unknown as ScheduledSend[];
     },
   });
 
