@@ -99,8 +99,8 @@ export function RaceArena({
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
   const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
   const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
-  const [commentary, setCommentary] = useState<CommentaryLine | null>(null);
-  const commentaryTimerRef = useRef<number | null>(null);
+  const { commentary, pushCommentary } = useRaceCommentaryLogic();
+
   const [replayOverlay, setReplayOverlay] = useState(false);
   const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
   const [finaleShown, setFinaleShown] = useState(false);
