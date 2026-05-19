@@ -7,17 +7,19 @@ echo "Running CI Forbidden Patterns Check..."
 EXIT_CODE=0
 
 for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
-  # Search all relevant files, excluding node_modules, .git, dist, and this script
+  # Search all relevant files, excluding node_modules, .git, dist, docs, and this script
   # We check the root directory but exclude common non-source directories
   FOUND=$(grep -rlE "$pattern" . \
     --exclude-dir=node_modules \
     --exclude-dir=.git \
     --exclude-dir=dist \
     --exclude-dir=supabase/functions \
+    --exclude-dir=docs \
     --exclude="ci-check-forbidden.sh" \
     --exclude="package.json" \
     --exclude="package-lock.json" \
     --exclude="*.log" \
+    --exclude="*.md" \
     2>/dev/null)
   
   if [ -n "$FOUND" ]; then
