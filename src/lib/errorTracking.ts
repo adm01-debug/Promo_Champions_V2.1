@@ -111,6 +111,17 @@ export function captureError(
 
   ERROR_BUFFER.push(tracked);
 
+  // Auto-recovery for chunk errors
+  if (category === "network" && msg.includes("chunk")) {
+    const lastReload = localStorage.getItem("last-error-reload");
+    const now = Date.now();
+    if (!lastReload || now - parseInt(lastReload) > 60000) {
+      localStorage.setItem("last-error-reload", now.toString());
+      window.location.reload();
+      return;
+    }
+  }
+
   if (ERROR_BUFFER.length >= MAX_BUFFER) {
     void flushErrors();
   }

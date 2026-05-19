@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png'],
+      includeAssets: ['favicon.ico', 'icon-192.png', 'icon-512.png'],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
@@ -26,23 +26,29 @@ export default defineConfig(({ mode }) => ({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'supabase-api',
-              expiration: { maxEntries: 100, maxAgeSeconds: 86400 },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              expiration: { 
+                maxEntries: 100, 
+                maxAgeSeconds: 86400 // 24 hours
+              },
             },
           },
         ],
       },
       manifest: {
-        name: "PROMO CHAMPIONS",
-        short_name: 'PromoChampions',
-        description: 'Plataforma Inteligente de Gestão de Vendas',
+        name: "Circuito de Vencedores",
+        short_name: 'Circuito',
+        description: 'Plataforma Inteligente de Gestão de Vendas e Performance Comercial 10/10.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#0a0a0f',
-        theme_color: '#7c3aed',
+        background_color: '#05060f',
+        theme_color: '#0ea5e9',
         orientation: 'portrait-primary',
         icons: [
-          { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
     }),

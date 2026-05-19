@@ -144,16 +144,22 @@ const Index = () => {
         </div>
         
         {/* Priority Hint based on role */}
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center gap-3"
-        >
-          <div className="p-1.5 rounded-full bg-current/10">
-            <Zap className="h-4 w-4" />
-          </div>
-          <p className="text-sm font-medium">{priorities.roleHint}</p>
-        </motion.div>
+        <AnimatePresence>
+          {priorities.roleHint && (
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 20, opacity: 0 }}
+              className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center gap-3 overflow-hidden relative group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="p-1.5 rounded-full bg-current/10 relative z-10">
+                <Zap className="h-4 w-4 animate-pulse" />
+              </div>
+              <p className="text-sm font-bold uppercase tracking-tight relative z-10">{priorities.roleHint}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
           <div className="space-y-8">
