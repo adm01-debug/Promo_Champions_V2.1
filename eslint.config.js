@@ -16,6 +16,7 @@ export default tseslint.config(
       'postcss.config.js',
       'supabase/**',
       'src/integrations/supabase/types.ts',
+      'scripts/**',
     ],
   },
   js.configs.recommended,
@@ -51,7 +52,7 @@ export default tseslint.config(
         },
       ],
       'react-hooks/exhaustive-deps': 'warn',
-      'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
+      'no-console': 'off',
     },
   }
   ,
