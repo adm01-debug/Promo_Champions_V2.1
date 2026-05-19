@@ -111,7 +111,7 @@ export function useSDRMetrics(
 
         const scoreMap = new Map(leadScoresRes.data?.map(s => [s.sale_id, s.score]) || []);
 
-        const calculateMetrics = (sales: any[], tasks: any[]): SDRMetrics => {
+        const calculateMetrics = (sales: Array<{ id: string; status: string }>, tasks: Array<{ id: string }>): SDRMetrics => {
           const totalLeads = sales.length;
           const qualifiedLeads = sales.filter(s => 
             ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
