@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useAchievementTrends, AchievementTrendData } from "@/hooks/useAchievementTrends";
+import { useAchievementTrends, type AchievementTrendData } from "@/hooks/gamification/useAchievementTrends";
 import { TrendingUp, Trophy } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -156,11 +156,11 @@ export function AchievementTrendChart() {
                 }}
                 itemStyle={{ padding: "2px 0" }}
                 cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 2 }}
-                formatter={(value: any, name: string) => {
+                formatter={(value: any, name: any) => {
                   const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
                   return [value, label];
                 }}
-                labelFormatter={(label: string) => `Ciclo: ${label}`}
+                labelFormatter={(label: any) => `Ciclo: ${label}`}
               />
               <Legend
                 verticalAlign="top"
