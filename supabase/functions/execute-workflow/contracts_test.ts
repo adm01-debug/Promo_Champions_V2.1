@@ -3,26 +3,26 @@ import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-val
 
 Deno.test("execute-workflow contract validation - v1", async () => {
   const payload = {
-    workflowId: "wf-123",
-    input: { key: "value" }
+    workflow_id: "721a6a68-6d24-480c-9a46-d5f9922e967a",
+    trigger_payload: { key: "value" }
   };
-  const result = validateWebhookPayload(WebhookContracts.executeWorkflow, payload, "1.0.0");
+  const result = validateWebhookPayload(WebhookContracts.workflowExecution, payload, "1.0.0");
   assertEquals(result.success, true);
 });
 
-Deno.test("execute-workflow contract validation - missing workflowId", async () => {
+Deno.test("execute-workflow contract validation - missing workflow_id", async () => {
   const payload = {
-    input: { key: "value" }
+    trigger_payload: { key: "value" }
   };
-  const result = validateWebhookPayload(WebhookContracts.executeWorkflow, payload, "1.0.0");
+  const result = validateWebhookPayload(WebhookContracts.workflowExecution, payload, "1.0.0");
   assertEquals(result.success, false);
   assertEquals(result.statusCode, 422);
 });
 
 Deno.test("ai-copilot contract validation", async () => {
   const payload = {
-    prompt: "Help me with this deal",
-    context: { dealId: "deal-123" }
+    context: { page: "dashboard", extra: "user is on pipeline" },
+    action: "page_suggestion"
   };
   const result = validateWebhookPayload(WebhookContracts.aiCopilot, payload, "1.0.0");
   assertEquals(result.success, true);
