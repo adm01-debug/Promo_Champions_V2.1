@@ -60,7 +60,7 @@ export function AuthFormCard(props: AuthFormCardProps) {
             </div>
           </div>
           <h1 className="text-2xl font-bold font-display gradient-text">PROMO CHAMPIONS</h1>
-          <p className="text-sm text-muted-foreground mt-1">Entre na arena e conquiste seu lugar</p>
+          <p className="text-sm text-muted-foreground mt-1">Entre no circuito e conquiste seu lugar</p>
         </motion.div>
 
         {/* Desktop heading */}
