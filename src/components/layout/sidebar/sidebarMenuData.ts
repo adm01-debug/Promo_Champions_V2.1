@@ -29,8 +29,8 @@ export const sdrMainItems: MenuItem[] = [
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Ranking", url: "/ranking", icon: Trophy },
-  { title: "Arena", url: "/arena", icon: Swords },
-  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
+  { title: "Circuito", url: "/arena", icon: Swords },
+  { title: "Race Circuito 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const closerMainItems: MenuItem[] = [
