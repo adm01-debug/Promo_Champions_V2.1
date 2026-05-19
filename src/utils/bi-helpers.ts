@@ -194,7 +194,21 @@ export function computeStreak(
   return { currentStreak, bestStreak };
 }
 
+export function computePipelineByStage(pipelineDeals: SaleRecord[], now: Date) {
+  const pipelineValue = pipelineDeals.reduce((sum, s) => sum + Number(s.amount), 0);
+  const dealsByStage = ["pending", "qualified", "proposal", "negotiation"].map(stage => ({
+    stage,
+    count: pipelineDeals.filter(d => d.status === stage).length,
+    value: pipelineDeals.filter(d => d.status === stage).reduce((sum, d) => sum + Number(d.amount), 0),
+  }));
+  const avgDaysInPipeline = pipelineDeals.length > 0
+    ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) / pipelineDeals.length
+    : 0;
+  return { pipelineValue, dealsByStage, avgDaysInPipeline };
+}
+
 export function buildSalesByDay(sales: SaleRecord[]) {
+
   const map: Record<string, number> = {};
   sales.forEach(sale => {
     const day = format(parseISO(sale.created_at), "dd/MM");
