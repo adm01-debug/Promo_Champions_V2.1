@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 
 interface ParsedEvent {
   provider: string;
@@ -78,6 +79,13 @@ Deno.serve(async (req) => {
   }
 
   const ev = parseEvent(payload, req.headers);
+
+  // Contract validation
+  const validation = validateWebhookPayload(WebhookContracts.inboundEmail, ev, "1.1.0");
+  if (!validation.success) {
+    console.warn(`[Contract Violation] Inbound email event failed validation: ${validation.error}`);
+    // We log but proceed for robustness, or we could return 422 if we want strict enforcement
+  }
 
   const admin = createClient(
     Deno.env.get("SUPABASE_URL")!,

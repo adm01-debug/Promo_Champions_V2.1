@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -89,8 +90,19 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    const body = await req.json();
-    const { action, quote, timestamp } = body as {
+    const rawBody = await req.json();
+    
+    // Contract validation
+    const validation = validateWebhookPayload(WebhookContracts.quoteSync, rawBody, "1.2.0");
+    if (!validation.success) {
+      console.error(`[Contract Violation] Quote sync failed validation: ${validation.error}`);
+      return new Response(
+        JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
+        { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { action, quote, timestamp } = validation.data as {
       action: string;
       quote: IncomingQuote;
       timestamp?: string;
