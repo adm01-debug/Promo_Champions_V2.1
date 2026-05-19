@@ -119,13 +119,9 @@ export function RaceArena({
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
 
-  // Ticker de eventos ao vivo (top 3, expira após 12s — gerenciado pelo componente)
-  const [tickerEvents, setTickerEvents] = useState<RaceTickerEvent[]>([]);
-  const pushTickerEvent = useCallback((text: string, icon?: string) => {
-    setTickerEvents((prev) =>
-      [{ id: `${Date.now()}-${Math.random()}`, text, icon, at: Date.now() }, ...prev].slice(0, 8),
-    );
-  }, []);
+  // Ticker de eventos ao vivo
+  const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } = useRaceDisplayEvents();
+
 
   // Screen shake em ultrapassagens top-3
   const { shaking, trigger: triggerShake } = useScreenShake(280);
