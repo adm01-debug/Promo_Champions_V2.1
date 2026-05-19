@@ -34,6 +34,9 @@ import { RankBadge } from './RankBadge';
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
 import { useRaceReplay } from '@/hooks/race/useRaceReplay';
+import { useRaceDisplayEvents } from '@/hooks/race/useRaceDisplayEvents';
+import { useRaceCommentaryLogic } from '@/hooks/race/useRaceCommentaryLogic';
+
 
 import {
   getPositionOnTrack, detectOvertakes, CHECKPOINTS, TRACK_VIEWBOX,
