@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertTriangle, Activity, RefreshCw } from "lucide-react";
-import { useAtRiskDeals, useAnalyzeAtRiskDeal } from "@/hooks/useAtRiskDeals";
+import { useAtRiskDeals, useAnalyzeAtRiskDeal } from "@/hooks/deal-intelligence/useAtRiskDeals";
 import { toast } from "sonner";
 import { DealRow, formatCurrency } from "./DealRow";
 

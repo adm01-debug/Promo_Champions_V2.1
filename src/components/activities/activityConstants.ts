@@ -1,4 +1,4 @@
-import { ActivityType, ActivityOutcome } from "@/hooks/useActivities";
+import { ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
 import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, FileText } from "lucide-react";
 
 export const activityIcons: Record<ActivityType, typeof Phone> = {

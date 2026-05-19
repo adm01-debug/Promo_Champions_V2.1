@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Target, TrendingUp, Zap, Trophy, Flame } from "lucide-react";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { cn } from "@/lib/utils";
 
 interface EnhancedActivityCardProps {

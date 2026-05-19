@@ -13,7 +13,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Check, ChevronsUpDown, Sparkles, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/useActivities";
+import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
 import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { useClients } from "@/hooks/crm/useClients";
 import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";

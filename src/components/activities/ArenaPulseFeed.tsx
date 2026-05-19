@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Zap, Trophy, TrendingUp, Star, Flame, Target, MessageCircle, Radar, Ghost, Crown, Medal, Award, Search, Filter } from "lucide-react";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

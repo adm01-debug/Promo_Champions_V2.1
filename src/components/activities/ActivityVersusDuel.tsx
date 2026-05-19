@@ -2,7 +2,7 @@ import React from "react";
 // Import with a dummy comment to force change if needed
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Swords, TrendingUp, TrendingDown } from "lucide-react";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";

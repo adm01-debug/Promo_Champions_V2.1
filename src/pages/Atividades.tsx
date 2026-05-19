@@ -8,7 +8,7 @@ import { ActivityHeatmap } from "@/components/activities/ActivityHeatmap";
 import { ActivityLeaderboard } from "@/components/activities/ActivityLeaderboard";
 import { ActivityGoalForm } from "@/components/activities/ActivityGoalForm";
 import { ClipboardList, Filter, Bell, Trophy, Target } from "lucide-react";
-import { useActivities } from "@/hooks/useActivities";
+import { useActivities } from "@/hooks/activities/useActivities";
 import { AtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { PageTransition } from "@/components/transitions/PageTransition";

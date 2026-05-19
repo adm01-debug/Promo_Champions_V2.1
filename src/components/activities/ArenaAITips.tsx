@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, ArrowRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { Button } from "@/components/ui/button";
 
 interface ArenaAITipsProps {

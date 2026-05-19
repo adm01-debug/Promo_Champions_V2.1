@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSDRLeaderboard } from "@/hooks/useActivities";
+import { useSDRLeaderboard } from "@/hooks/activities/useActivities";
 import { Trophy, Medal, Target } from "lucide-react";
 import { motion } from "framer-motion";
 

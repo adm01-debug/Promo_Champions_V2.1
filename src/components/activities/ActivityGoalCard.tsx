@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target, Trophy, TrendingUp } from "lucide-react";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { useCelebration } from "@/hooks/useCelebration";
 import { useSalespersonStreak } from "@/hooks/gamification/useAchievements";
 

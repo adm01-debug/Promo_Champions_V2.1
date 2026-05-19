@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarClock, Plus, CheckCircle2, Trash2, Phone, Users, Bell, ListChecks, Repeat, ShoppingCart } from "lucide-react";
-import { useAgendaEvents, useCreateAgendaEvent, useCompleteAgendaEvent, useDeleteAgendaEvent, type AgendaEvent, type AgendaEventType, type AgendaEventPriority, type AgendaEventStatus } from "@/hooks/useAgendaEvents";
+import { useAgendaEvents, useCreateAgendaEvent, useCompleteAgendaEvent, useDeleteAgendaEvent, type AgendaEvent, type AgendaEventType, type AgendaEventPriority, type AgendaEventStatus } from "@/hooks/calendar/useAgendaEvents";
 import { useClients } from "@/hooks/crm/useClients";
 import { useSalesData } from "@/hooks/sales/useSalesData";
 import { format } from "date-fns";

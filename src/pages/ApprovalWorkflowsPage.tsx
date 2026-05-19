@@ -18,7 +18,7 @@ import {
   useCreateApprovalRequest,
   useDecideApproval,
   useCreateWorkflow,
-} from "@/hooks/useApprovalWorkflows";
+} from "@/hooks/admin/useApprovalWorkflows";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { CheckCircle, XCircle, Clock, ShieldCheck, Plus, FileCheck, AlertTriangle, DollarSign, Percent } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";

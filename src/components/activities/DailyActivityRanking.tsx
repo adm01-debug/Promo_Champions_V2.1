@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Crown, Medal, Award, Trophy, Flame, Search, Filter, Zap, MessageCircle, ThumbsUp, PartyPopper } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ActivityGoalProgress } from "@/hooks/useActivityGoals";
+import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

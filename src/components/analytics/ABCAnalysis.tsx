@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { useABCAnalysis } from '@/hooks/useABCAnalysis';
+import { useABCAnalysis } from '@/hooks/bi/useABCAnalysis';
 import { Package, Users, Layers, Download, Filter, MousePointer2, Brain, MoveRight, Bot, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/utils/csvExport';
