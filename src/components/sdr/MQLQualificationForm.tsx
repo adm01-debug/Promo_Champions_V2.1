@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, ClipboardCheck, XCircle, Timer, Wallet, UserCog, AlertCircle, ArrowRightLeft, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useSalespeopleList } from "@/hooks/useSalespeopleList";
+import { useSalespeopleList } from "@/hooks/sales/useSalespeopleList";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface MQLQualificationFormProps {

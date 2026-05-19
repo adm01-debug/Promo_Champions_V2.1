@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Phone, Handshake, X } from "lucide-react";
 import { useCreateTeam, useAvailableClosers } from "@/hooks/useTeams";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import {
   Form,
   FormControl,

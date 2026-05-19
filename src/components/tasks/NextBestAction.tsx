@@ -2,7 +2,7 @@
 // NextBestAction - AI-powered action suggestions
 import { useState } from 'react';
 import { useNextBestAction } from '@/hooks/useNextBestAction';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useCreateTask } from '@/hooks/useTasks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

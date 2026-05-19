@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useClientPortfolio, usePortfolioStats } from "@/hooks/useClientPortfolio";
 import { useRoutingHistory, useSalespersonPerformance } from "@/hooks/useLeadRouting";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { useICPDataMap } from "@/hooks/useICPData";
 import { PortfolioStatsCards } from "@/components/portfolio/PortfolioStatsCards";
 import { PortfolioTable } from "@/components/portfolio/PortfolioTable";

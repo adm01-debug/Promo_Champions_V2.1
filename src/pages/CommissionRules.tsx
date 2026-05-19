@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings, Plus, Edit2, Trash2, ShieldCheck, AlertCircle } from "lucide-react";
 import { useCommissionRules, useUpsertCommissionRule, useDeleteCommissionRule, type CommissionRule } from "@/hooks/useCommissionRules";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";

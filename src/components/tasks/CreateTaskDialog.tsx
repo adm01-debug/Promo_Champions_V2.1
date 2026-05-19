@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateTask, TaskPriority, TaskType } from '@/hooks/useTasks';
-import { useSalespeople } from '@/hooks/useSalespeople';
-import { useClients } from '@/hooks/useClients';
-import { useSalesData } from '@/hooks/useSalesData';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { useClients } from '@/hooks/crm/useClients';
+import { useSalesData } from '@/hooks/sales/useSalesData';
 import {
   Dialog,
   DialogContent,

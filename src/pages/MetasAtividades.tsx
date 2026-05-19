@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Target, TrendingUp, Users, AlertTriangle, CheckCircle, PartyPopper, Trophy, Flame, Calendar, Zap, Cpu, Sparkles, MousePointer2, Crown } from "lucide-react";
 import { useActivityGoalProgress } from "@/hooks/useActivityGoals";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { ActivityGoalCard } from "@/components/activities/ActivityGoalCard";
 import { ActivityGoalEditDialog } from "@/components/activities/ActivityGoalEditDialog";
 import { DailyActivityRanking } from "@/components/activities/DailyActivityRanking";

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, History, Plus, Loader2, MessageSquare } from 'lucide-react';
 import { useSalesAssistant } from '@/hooks/useSalesAssistant';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useElevenLabsVoice } from '@/hooks/useElevenLabsVoice';
 import { useDealChatHistory, QuestionType } from '@/hooks/useDealChatHistory';
 import { useSalespersonPreferences } from '@/hooks/useSalespersonPreferences';

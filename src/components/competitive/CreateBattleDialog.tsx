@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Swords, Users, Trophy, Zap, Calendar } from 'lucide-react';
 import { useSalesBattles } from '@/hooks/useSalesBattles';
-import { useSalespeople } from '@/hooks/useSalespeople';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';

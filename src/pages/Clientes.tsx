@@ -8,7 +8,7 @@ import { ClientesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkele
 import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { useState, useMemo } from "react";
 import Fuse from "fuse.js";
-import { useClients, useDeleteClient, Client } from "@/hooks/useClients";
+import { useClients, useDeleteClient, Client } from "@/hooks/crm/useClients";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
 import { EditClientDialog } from "@/components/clients/EditClientDialog";
 import { DeleteConfirmDialog } from "@/components/shared/DeleteConfirmDialog";

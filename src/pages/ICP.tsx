@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useICPData, useUpdateICPData, type ICPData } from "@/hooks/useICPData";
-import { useClients } from "@/hooks/useClients";
+import { useClients } from "@/hooks/crm/useClients";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

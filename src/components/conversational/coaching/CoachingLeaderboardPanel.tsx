@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, TrendingUp, TrendingDown, Minus, Crown, AlertTriangle } from "lucide-react";
 import { useCoachingLeaderboard } from "@/hooks/conversational/useCoachingScorecard";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { DIMENSION_LABELS, classifyHealth, healthHsl, HEALTH_LABELS, healthBadgeVariant } from "./coachingHelpers";
 import type { SalespersonAggregate } from "./coachingHelpers";
 

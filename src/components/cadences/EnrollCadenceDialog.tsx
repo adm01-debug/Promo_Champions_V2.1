@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useCadences, useCadenceSteps, useEnrollInCadence, Cadence } from "@/hooks/useCadences";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { CadenceCard } from "./CadenceCard";
 import { Play } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";

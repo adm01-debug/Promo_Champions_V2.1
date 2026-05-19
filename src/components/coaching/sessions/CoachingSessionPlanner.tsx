@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Plus, Star } from "lucide-react";
 import { useCoachingSessions, type CoachingSession } from "@/hooks/coaching/useCoachingSessions";
-import { useSalespeople } from "@/hooks/useSalespeople";
+import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { SessionScheduleDialog } from "./SessionScheduleDialog";
 import { SessionNotesEditor } from "./SessionNotesEditor";
 import { SessionPrepCard } from "./SessionPrepCard";

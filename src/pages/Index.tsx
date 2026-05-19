@@ -8,9 +8,9 @@ import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
 import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
 // Removed unused useDashboardKPIs import
 import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
-import { useSalesRealtime } from "@/hooks/useSalesRealtime";
+import { useSalesRealtime } from "@/hooks/sales/useSalesRealtime";
 import { useSalesChartData } from "@/hooks/useSalesChartData";
-import { useGoalsDashboard } from "@/hooks/useGoalsDashboard";
+import { useGoalsDashboard } from "@/hooks/sales/useGoalsDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDashboardPriorities } from "@/hooks/useDashboardPriorities";
 import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
