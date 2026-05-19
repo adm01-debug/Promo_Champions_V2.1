@@ -78,8 +78,8 @@ export const RevenueForecastHub: FC = () => {
   }
   const forecast = data as RevenueForecastResponse;
   const conf = confidenceLabel(forecast.confidence);
-  const goalProgress = data.metrics.goal_for_horizon > 0
-    ? Math.min(100, (data.scenarios.realistic / data.metrics.goal_for_horizon) * 100)
+  const goalProgress = forecast.metrics.goal_for_horizon > 0
+    ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
     : 0;
 
   return (
@@ -150,11 +150,11 @@ export const RevenueForecastHub: FC = () => {
                  const { error } = await supabase.from('forecast_snapshots').insert([{
                    period_start: start,
                    period_end: end,
-                   commit_amount: data.scenarios.pessimistic,
-                   weighted_amount: data.scenarios.realistic,
-                   best_case_amount: data.scenarios.optimistic,
-                   forecast_amount: data.scenarios.realistic,
-                   forecast_deals: data.metrics.open_deals_count,
+                   commit_amount: forecast.scenarios.pessimistic,
+                   weighted_amount: forecast.scenarios.realistic,
+                   best_case_amount: forecast.scenarios.optimistic,
+                   forecast_amount: forecast.scenarios.realistic,
+                   forecast_deals: forecast.metrics.open_deals_count,
                    source: 'manual_trigger',
                    segment: 'all'
                  }]);
@@ -175,24 +175,24 @@ export const RevenueForecastHub: FC = () => {
           <div className="grid gap-4 md:grid-cols-3">
             <ForecastKpiCard 
               label="Pipeline Neural" 
-              value={data.metrics.total_open_pipeline} 
-              subtitle={`${data.metrics.open_deals_count} conexões ativas`}
+              value={forecast.metrics.total_open_pipeline} 
+              subtitle={`${forecast.metrics.open_deals_count} conexões ativas`}
               isCurrency
               icon={Waves}
               color="text-primary"
             />
             <ForecastKpiCard 
               label="Forecast Ponderado" 
-              value={data.metrics.weighted_forecast} 
-              subtitle={`Ciclo: ${data.metrics.avg_cycle_days} dias`}
+              value={forecast.metrics.weighted_forecast} 
+              subtitle={`Ciclo: ${forecast.metrics.avg_cycle_days} dias`}
               isCurrency
               icon={Zap}
               color="text-info"
             />
             <ForecastKpiCard 
               label="Performance 90d" 
-              value={data.metrics.won_amount_90d} 
-              subtitle={`${data.metrics.won_count_90d} fechamentos`}
+              value={forecast.metrics.won_amount_90d} 
+              subtitle={`${forecast.metrics.won_count_90d} fechamentos`}
               isCurrency
               icon={BarChart3}
               color="text-emerald-500"
@@ -203,36 +203,36 @@ export const RevenueForecastHub: FC = () => {
           <div className="grid gap-4 md:grid-cols-4">
             <ScenarioCard
               scenario="pessimistic"
-              value={data.scenarios.pessimistic}
-              goal={data.metrics.goal_for_horizon}
+              value={forecast.scenarios.pessimistic}
+              goal={forecast.metrics.goal_for_horizon}
               index={0}
             />
             <ScenarioCard
               scenario="realistic"
-              value={data.scenarios.realistic}
-              goal={data.metrics.goal_for_horizon}
+              value={forecast.scenarios.realistic}
+              goal={forecast.metrics.goal_for_horizon}
               index={1}
             />
             <ScenarioCard
               scenario="optimistic"
-              value={data.scenarios.optimistic}
-              goal={data.metrics.goal_for_horizon}
+              value={forecast.scenarios.optimistic}
+              goal={forecast.metrics.goal_for_horizon}
               index={2}
             />
             <CategoryForecastCard 
-              categories={data.metrics.categories}
-              goal={data.metrics.goal_for_horizon}
+              categories={forecast.metrics.categories}
+              goal={forecast.metrics.goal_for_horizon}
             />
           </div>
 
           {/* Simulator & Forecast Chart */}
           <div className="grid grid-cols-1 gap-6">
             <ForecastScenarioSimulator 
-              baseForecast={data.scenarios.realistic}
-              baseCoverage={data.metrics.total_open_pipeline / (data.metrics.goal_for_horizon || 1)}
-              baseWinRate={data.metrics.goal_for_horizon > 0 ? (data.scenarios.realistic / data.metrics.total_open_pipeline) : 0.2}
+              baseForecast={forecast.scenarios.realistic}
+              baseCoverage={forecast.metrics.total_open_pipeline / (forecast.metrics.goal_for_horizon || 1)}
+              baseWinRate={forecast.metrics.goal_for_horizon > 0 ? (forecast.scenarios.realistic / forecast.metrics.total_open_pipeline) : 0.2}
             />
-            <PipelineContributionChart perOwner={data.per_owner} ownerNames={ownerNames} />
+            <PipelineContributionChart perOwner={forecast.per_owner} ownerNames={ownerNames} />
           </div>
         </div>
 
@@ -261,27 +261,27 @@ export const RevenueForecastHub: FC = () => {
                       cx="50" cy="50" r="45" 
                       fill="none" stroke="currentColor" 
                       strokeWidth="8" strokeDasharray="283"
-                      strokeDashoffset={283 - (283 * data.confidence) / 100}
+                      strokeDashoffset={283 - (283 * forecast.confidence) / 100}
                       className="text-primary"
                       initial={{ strokeDashoffset: 283 }}
-                      animate={{ strokeDashoffset: 283 - (283 * data.confidence) / 100 }}
+                      animate={{ strokeDashoffset: 283 - (283 * forecast.confidence) / 100 }}
                       transition={{ duration: 1.5, ease: "easeOut" }}
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center">
-                    <span className="text-2xl font-black">{data.confidence}%</span>
+                    <span className="text-2xl font-black">{forecast.confidence}%</span>
                     <span className="text-[8px] font-bold uppercase tracking-tighter opacity-50 text-muted-foreground">Neural Score</span>
                   </div>
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-                O modelo de predição processou {data.metrics.open_deals_count} variáveis para este horizonte.
+                O modelo de predição processou {forecast.metrics.open_deals_count} variáveis para este horizonte.
               </p>
             </div>
           </Card>
 
           {/* Goal Progress Shield */}
-          {data.metrics.goal_for_horizon > 0 && (
+          {forecast.metrics.goal_for_horizon > 0 && (
             <Card className="glass border-white/5 p-6 overflow-hidden relative">
               <div className="absolute -right-4 -bottom-4 opacity-5">
                 <Target className="h-24 w-24" />
@@ -312,12 +312,12 @@ export const RevenueForecastHub: FC = () => {
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div className="space-y-1">
                     <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">Meta Alvo</span>
-                    <div className="text-xs font-black">{formatCompactBRL(data.metrics.goal_for_horizon)}</div>
+                    <div className="text-xs font-black">{formatCompactBRL(forecast.metrics.goal_for_horizon)}</div>
                   </div>
                   <div className="space-y-1">
                     <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">Gap Atual</span>
-                    <div className={cn("text-xs font-black", data.metrics.gap_to_goal > 0 ? "text-destructive" : "text-emerald-500")}>
-                      {data.metrics.gap_to_goal > 0 ? `-${formatCompactBRL(data.metrics.gap_to_goal)}` : "META OK"}
+                    <div className={cn("text-xs font-black", forecast.metrics.gap_to_goal > 0 ? "text-destructive" : "text-emerald-500")}>
+                      {forecast.metrics.gap_to_goal > 0 ? `-${formatCompactBRL(forecast.metrics.gap_to_goal)}` : "META OK"}
                     </div>
                   </div>
                 </div>
@@ -326,7 +326,7 @@ export const RevenueForecastHub: FC = () => {
           )}
 
           {/* Accuracy Pulse */}
-          {data.accuracy && (
+          {forecast.accuracy && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -343,9 +343,9 @@ export const RevenueForecastHub: FC = () => {
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Acurácia Histórica</span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-emerald-500 tracking-tighter">{100 - data.accuracy.avg_deviation}%</div>
+                  <div className="text-3xl font-black text-emerald-500 tracking-tighter">{100 - forecast.accuracy.avg_deviation}%</div>
                   <p className="text-[10px] text-muted-foreground mt-1 leading-tight font-medium">
-                    Desvio médio de apenas {data.accuracy.avg_deviation}% em relação ao faturamento real.
+                    Desvio médio de apenas {forecast.accuracy.avg_deviation}% em relação ao faturamento real.
                   </p>
                 </div>
               </div>
@@ -354,9 +354,9 @@ export const RevenueForecastHub: FC = () => {
 
           {/* IA Insights Container */}
           <ForecastNarrativeCard
-            narrative={data.narrative}
-            risks={data.risks}
-            opportunities={data.opportunities}
+            narrative={forecast.narrative}
+            risks={forecast.risks}
+            opportunities={forecast.opportunities}
           />
         </div>
       </div>
