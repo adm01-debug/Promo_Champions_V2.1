@@ -9,12 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, X, SkipForward, Copy } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { RotateCw, Loader2, X, SkipForward } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useWebhookDeliveries } from "@/hooks/win-loss/useWebhookDeliveries";
 import {
   AlertDialog,
@@ -30,6 +27,9 @@ import { toast } from "sonner";
 import { MAX_REPLAY_IDS, validateReplayIds } from "@/hooks/win-loss/validateReplayIds";
 import { logReplayValidationFailure } from "@/hooks/win-loss/replayValidationDiagnostics";
 import { getEventLabel } from "./webhookHelpers";
+import { useWebhookReplayPersistence } from "@/hooks/win-loss/useWebhookReplayPersistence";
+import { useWebhookResultTimers } from "@/hooks/win-loss/useWebhookResultTimers";
+import { WebhookDeliveryRow } from "./webhook/WebhookDeliveryRow";
 
 interface Props {
   subscriptionId: string | null;
@@ -40,7 +40,6 @@ interface Props {
 }
 
 const MAX_REPLAY = MAX_REPLAY_IDS;
-const RETENTION_STORAGE_KEY = "winloss.replay.resultRetentionMs";
 const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
   { label: "10s", value: 10_000 },
   { label: "30s", value: 30_000 },
@@ -48,63 +47,6 @@ const RETENTION_OPTIONS: Array<{ label: string; value: number }> = [
   { label: "10min", value: 600_000 },
   { label: "Manter", value: Number.POSITIVE_INFINITY },
 ];
-const DEFAULT_RETENTION_MS = 30_000;
-
-
-
-
-
-function readStoredRetention(): number | null {
-  try {
-    const raw = localStorage.getItem(RETENTION_STORAGE_KEY);
-    if (!raw) return null;
-    if (raw === "Infinity") return Number.POSITIVE_INFINITY;
-    const n = Number(raw);
-    return Number.isFinite(n) && n >= 0 ? n : null;
-  } catch {
-    return null;
-  }
-}
-
-// --- Persistência da seleção por assinatura ---
-const SELECTION_STORAGE_PREFIX = "winloss.replay.selection:";
-const SELECTION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
-
-function selectionKey(subscriptionId: string | null): string | null {
-  return subscriptionId ? `${SELECTION_STORAGE_PREFIX}${subscriptionId}` : null;
-}
-
-function readStoredSelection(subscriptionId: string | null): string[] {
-  const key = selectionKey(subscriptionId);
-  if (!key) return [];
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as { ids?: unknown; at?: unknown };
-    if (typeof parsed?.at === "number" && Date.now() - parsed.at > SELECTION_MAX_AGE_MS) {
-      localStorage.removeItem(key);
-      return [];
-    }
-    if (!Array.isArray(parsed?.ids)) return [];
-    return parsed.ids.filter((x): x is string => typeof x === "string");
-  } catch {
-    return [];
-  }
-}
-
-function writeStoredSelection(subscriptionId: string | null, ids: string[]) {
-  const key = selectionKey(subscriptionId);
-  if (!key) return;
-  try {
-    if (ids.length === 0) {
-      localStorage.removeItem(key);
-      return;
-    }
-    localStorage.setItem(key, JSON.stringify({ ids, at: Date.now() }));
-  } catch {
-    // localStorage indisponível — ok
-  }
-}
 
 export function WebhookDeliveriesDrawer({
   subscriptionId,
@@ -114,159 +56,30 @@ export function WebhookDeliveriesDrawer({
   resultRetentionMs,
 }: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
-  const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(
-    new Map(),
-  );
-  const [requestIds, setRequestIds] = useState<Map<string, string>>(new Map());
-  const [resultTimestamps, setResultTimestamps] = useState<Map<string, number>>(new Map());
-  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const [confirm, setConfirm] = useState<{ ids: string[]; requestedCount: number } | null>(null);
 
-  // Retention configurável (prop > localStorage > default)
-  const [retentionMs, setRetentionMs] = useState<number>(
-    () => resultRetentionMs ?? readStoredRetention() ?? DEFAULT_RETENTION_MS,
-  );
-  // Mantém em ref para uso dentro de callbacks sem recriar handlers
-  const retentionRef = useRef(retentionMs);
-  useEffect(() => {
-    retentionRef.current = retentionMs;
-  }, [retentionMs]);
+  const {
+    selected,
+    setSelected,
+    retentionMs,
+    updateRetention,
+  } = useWebhookReplayPersistence(subscriptionId, data, open);
 
-  const updateRetention = (ms: number) => {
-    setRetentionMs(ms);
-    try {
-      localStorage.setItem(
-        RETENTION_STORAGE_KEY,
-        ms === Number.POSITIVE_INFINITY ? "Infinity" : String(ms),
-      );
-    } catch {
-      // localStorage indisponível — ok, mantém em memória
-    }
-  };
+  const {
+    lastResults,
+    setLastResults,
+    requestIds,
+    setRequestIds,
+    setResultTimestamps,
+    scheduleClearResult,
+  } = useWebhookResultTimers(retentionMs);
 
-  // Quando o drawer fecha, mantemos `selected` (persistido) para restaurar
-  // ao reabrir. Apenas limpamos estado transitório.
   useEffect(() => {
     if (!open) {
       setProcessingIds(new Set());
     }
   }, [open]);
-
-  // Restaura seleção persistida quando abre OU quando os dados (failedIds) chegam.
-  // Filtra por entregas falhas ainda existentes para evitar IDs órfãos.
-  const restoredForRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (!open || !subscriptionId || !data) return;
-    if (restoredForRef.current === subscriptionId) return;
-    const stored = readStoredSelection(subscriptionId);
-    if (stored.length === 0) {
-      restoredForRef.current = subscriptionId;
-      return;
-    }
-    const failedSet = new Set(data.filter((d) => !d.succeeded).map((d) => d.id));
-    const valid = stored.filter((id) => failedSet.has(id)).slice(0, MAX_REPLAY);
-    if (valid.length > 0) {
-      setSelected(new Set(valid));
-    }
-    // Reescreve removendo IDs órfãos (ou zera se nenhum válido)
-    if (valid.length !== stored.length) {
-      writeStoredSelection(subscriptionId, valid);
-    }
-    restoredForRef.current = subscriptionId;
-  }, [open, subscriptionId, data]);
-
-  // Reseta o "já restaurei" ao trocar de assinatura ou fechar
-  useEffect(() => {
-    if (!open) restoredForRef.current = null;
-  }, [open, subscriptionId]);
-
-  // Persiste qualquer mudança de seleção
-  useEffect(() => {
-    if (!subscriptionId) return;
-    writeStoredSelection(subscriptionId, Array.from(selected));
-  }, [selected, subscriptionId]);
-
-  // Cleanup timers on unmount
-  useEffect(() => {
-    const timers = timersRef.current;
-    return () => {
-      timers.forEach((t) => clearTimeout(t));
-      timers.clear();
-    };
-  }, []);
-
-  const scheduleClearResult = (id: string) => {
-    const existing = timersRef.current.get(id);
-    if (existing) clearTimeout(existing);
-    const ms = retentionRef.current;
-    if (!Number.isFinite(ms) || ms <= 0) {
-      // Modo "manter": não agenda expiração
-      timersRef.current.delete(id);
-      return;
-    }
-    const t = setTimeout(() => {
-      setLastResults((prev) => {
-        const next = new Map(prev);
-        next.delete(id);
-        return next;
-      });
-      setResultTimestamps((prev) => {
-        const next = new Map(prev);
-        next.delete(id);
-        return next;
-      });
-      setRequestIds((prev) => {
-        const next = new Map(prev);
-        next.delete(id);
-        return next;
-      });
-      timersRef.current.delete(id);
-    }, ms);
-    timersRef.current.set(id, t);
-  };
-
-  // Quando o usuário muda a retenção, reagenda timers existentes
-  useEffect(() => {
-    timersRef.current.forEach((t, id) => {
-      clearTimeout(t);
-      timersRef.current.delete(id);
-      const baseTs = resultTimestamps.get(id) ?? Date.now();
-      const elapsed = Date.now() - baseTs;
-      const remaining = retentionMs - elapsed;
-      if (!Number.isFinite(retentionMs) || retentionMs <= 0) return;
-      if (remaining <= 0) {
-        setLastResults((prev) => {
-          const next = new Map(prev);
-          next.delete(id);
-          return next;
-        });
-        setResultTimestamps((prev) => {
-          const next = new Map(prev);
-          next.delete(id);
-          return next;
-        });
-        return;
-      }
-      const handle = setTimeout(() => {
-        setLastResults((prev) => {
-          const next = new Map(prev);
-          next.delete(id);
-          return next;
-        });
-        setResultTimestamps((prev) => {
-          const next = new Map(prev);
-          next.delete(id);
-          return next;
-        });
-        timersRef.current.delete(id);
-      }, remaining);
-      timersRef.current.set(id, handle);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [retentionMs]);
-
 
   const recordResults = (
     ids: string[],
@@ -314,17 +127,11 @@ export function WebhookDeliveriesDrawer({
     });
   };
 
-  const clearProcessing = (ids: string[]) =>
-    setProcessingIds((prev) => {
-      const next = new Set(prev);
-      for (const id of ids) next.delete(id);
-      return next;
-    });
-
   const failedIds = useMemo(
     () => (data ?? []).filter((d) => !d.succeeded).map((d) => d.id),
     [data],
   );
+  
   const allFailedSelected = failedIds.length > 0 && failedIds.every((id) => selected.has(id));
   const someFailedSelected = failedIds.some((id) => selected.has(id));
   const headerCheckState: boolean | "indeterminate" = allFailedSelected
@@ -332,7 +139,6 @@ export function WebhookDeliveriesDrawer({
     : someFailedSelected
       ? "indeterminate"
       : false;
-  const atLimit = selected.size >= MAX_REPLAY;
 
   const toggleOne = (id: string) =>
     setSelected((prev) => {
@@ -345,909 +151,170 @@ export function WebhookDeliveriesDrawer({
   const toggleAll = () =>
     setSelected((prev) => {
       if (allFailedSelected) return new Set();
-      // Select up to MAX_REPLAY of failed
       return new Set(failedIds.slice(0, MAX_REPLAY));
     });
 
-  const clearSelection = () => setSelected(new Set());
-
-  // --- Confirmation state ---
-  const [confirm, setConfirm] = useState<{ ids: string[]; requestedCount: number } | null>(null);
-
   const confirmSummary = useMemo(() => {
-    const empty = {
-      count: 0,
-      byEvent: [] as { event: string; label: string; count: number; unknown: boolean }[],
-      items: [] as { id: string; event: string; label: string; unknown: boolean }[],
-      missingCount: 0,
-      unknownCount: 0,
-      single: null as null | {
-        id: string;
-        event: string;
-        label: string;
-        unknown: boolean;
-        attempt: number;
-        status: number;
-        error: string | null;
-      },
-    };
-    if (!confirm || !data) return empty;
-    const idSet = new Set(confirm.ids);
+    if (!confirm || !data) return null;
     const byId = new Map(data.map((d) => [d.id, d] as const));
-    const map = new Map<string, number>();
-    const items: { id: string; event: string; label: string; unknown: boolean }[] = [];
-    let missingCount = 0;
-    let unknownCount = 0;
-    for (const id of confirm.ids) {
+    const items = confirm.ids.map(id => {
       const d = byId.get(id);
-      const rawEvent = d?.event;
-      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
-      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
-      if (!d) missingCount++;
-      if (unknown) unknownCount++;
-      map.set(event, (map.get(event) ?? 0) + 1);
-      items.push({ id, event, label: getEventLabel(event), unknown });
-    }
-    let single: typeof empty.single = null;
-    if (confirm.ids.length === 1) {
-      const id = confirm.ids[0];
-      const d = byId.get(id);
-      const rawEvent = d?.event;
-      const event = rawEvent && rawEvent.trim().length > 0 ? rawEvent : "unknown";
-      const unknown = !d || !rawEvent || rawEvent.trim().length === 0;
-      single = {
-        id,
-        event,
-        label: getEventLabel(event),
-        unknown,
-        attempt: d?.attempt ?? 0,
-        status: d?.status ?? 0,
-        error: d?.error_message ?? (unknown ? "Detalhes da entrega indisponíveis (pode ter sido removida)." : null),
-      };
-    }
-    return {
-      count: confirm.ids.length,
-      byEvent: Array.from(map, ([event, count]) => ({
-        event,
-        label: getEventLabel(event),
-        count,
-        unknown: event === "unknown",
-      })).sort((a, b) => b.count - a.count),
-      items,
-      missingCount,
-      unknownCount,
-      single,
-    };
+      return { id, event: d?.event || 'unknown', label: getEventLabel(d?.event || 'unknown') };
+    });
+    return { count: confirm.ids.length, items };
   }, [confirm, data]);
 
   const requestReplay = (ids: string[]) => {
-    // Bloqueio global: já existe um lote em voo ou diálogo aberto aguardando confirmação.
-    if (isReplaying) {
-      toast.info("Aguarde o reenvio em andamento concluir antes de iniciar outro.");
-      return;
-    }
-    if (confirm) {
-      toast.info("Há um reenvio aguardando confirmação — finalize ou cancele primeiro.");
-      return;
-    }
+    if (isReplaying || confirm) return;
+    
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
-      logReplayValidationFailure(ids, validation.message, {
-        subscriptionId,
-        source: ids.length === 1 ? "row" : "bulk",
-      });
+      logReplayValidationFailure(ids, validation.message, { subscriptionId });
       toast.error(validation.message);
       return;
     }
-    const n = validation.ids.length;
-    const dupes = ids.length - n;
-    const descriptionParts: string[] = [];
-    if (dupes > 0) {
-      descriptionParts.push(
-        `${dupes} ID${dupes === 1 ? "" : "s"} duplicado${dupes === 1 ? "" : "s"} removido${dupes === 1 ? "" : "s"}.`,
-      );
-    }
-    descriptionParts.push(`Limite de ${MAX_REPLAY_IDS} por reenvio (${n}/${MAX_REPLAY_IDS}).`);
-    toast.info(
-      n === 1
-        ? "1 entrega pronta para reenvio — confirme no diálogo."
-        : `${n} entregas prontas para reenvio — confirme no diálogo.`,
-      { description: descriptionParts.join(" ") },
-    );
+    
     setConfirm({ ids: validation.ids, requestedCount: ids.length });
   };
 
-  // --- Batch tracking (para resumo "X/Y reenviando, Z falhou") ---
-  interface BatchState {
-    id: string;
-    ids: string[];
-    startedAt: number;
-    results: Map<string, "ok" | "skipped" | "fail">;
-  }
-  const [activeBatch, setActiveBatch] = useState<BatchState | null>(null);
-
-  // --- Histórico local de replays (últimos N) ---
-  interface ReplayHistoryEntry {
-    id: string;
-    at: number;
-    total: number;
-    ok: number;
-    skipped: number;
-    fail: number;
-    byEvent: Array<{ event: string; ok: number; skipped: number; fail: number }>;
-  }
-  const MAX_HISTORY = 8;
-  const [replayHistory, setReplayHistory] = useState<ReplayHistoryEntry[]>([]);
-
-  const recordHistory = (
-    ids: string[],
-    payload:
-      | {
-          results: Array<{ id: string; succeeded: boolean; skipped?: boolean }>;
-        }
-      | undefined,
-  ) => {
-    if (!data) return;
-    const idToEvent = new Map<string, string>();
-    for (const d of data) idToEvent.set(d.id, d.event);
-    const statusById = new Map<string, "ok" | "skipped" | "fail">();
-    const returned = new Set<string>();
-    for (const r of payload?.results ?? []) {
-      const status: "ok" | "skipped" | "fail" = r.skipped
-        ? "skipped"
-        : r.succeeded
-          ? "ok"
-          : "fail";
-      statusById.set(r.id, status);
-      returned.add(r.id);
-    }
-    for (const id of ids) if (!returned.has(id)) statusById.set(id, "fail");
-
-    const eventMap = new Map<string, { ok: number; skipped: number; fail: number }>();
-    let ok = 0;
-    let skipped = 0;
-    let fail = 0;
-    for (const id of ids) {
-      const s = statusById.get(id) ?? "fail";
-      const ev = idToEvent.get(id) ?? "unknown";
-      const cur = eventMap.get(ev) ?? { ok: 0, skipped: 0, fail: 0 };
-      cur[s]++;
-      eventMap.set(ev, cur);
-      if (s === "ok") ok++;
-      else if (s === "skipped") skipped++;
-      else fail++;
-    }
-    const entry: ReplayHistoryEntry = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      at: Date.now(),
-      total: ids.length,
-      ok,
-      skipped,
-      fail,
-      byEvent: Array.from(eventMap, ([event, v]) => ({ event, ...v })).sort(
-        (a, b) => b.ok + b.skipped + b.fail - (a.ok + a.skipped + a.fail),
-      ),
-    };
-    setReplayHistory((prev) => [entry, ...prev].slice(0, MAX_HISTORY));
-  };
-
-  const executeReplay = () => {
+  const handleExecuteReplay = async () => {
     if (!confirm) return;
     const ids = confirm.ids;
-    // Mantém o modal aberto durante o replay para mostrar spinner inline.
-    // Será fechado em onSettled abaixo.
-
-    if (ids.length === 1) {
-      setPendingId(ids[0]);
-    }
-    setProcessingIds((prev) => {
-      const next = new Set(prev);
-      for (const id of ids) next.add(id);
-      return next;
-    });
-    if (ids.length > 1) clearSelection();
-
-    // Só rastreamos lotes (>1) — uma única linha já tem feedback inline
-    const batchId =
-      ids.length > 1
-        ? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-        : null;
-    if (batchId) {
-      setActiveBatch({
-        id: batchId,
-        ids,
-        startedAt: Date.now(),
-        results: new Map(),
+    setConfirm(null);
+    setProcessingIds((prev) => new Set([...prev, ...ids]));
+    
+    try {
+      const res = await replay(ids);
+      recordResults(ids, res);
+      setSelected((prev) => {
+        const next = new Set(prev);
+        ids.forEach(id => next.delete(id));
+        return next;
+      });
+      toast.success(`${ids.length} reenvio(s) processado(s).`);
+    } catch (e) {
+      toast.error("Erro ao reenviar webhooks.");
+    } finally {
+      setProcessingIds((prev) => {
+        const next = new Set(prev);
+        ids.forEach(id => next.delete(id));
+        return next;
       });
     }
-
-    replay(ids, {
-      onSuccess: (payload) => {
-        recordResults(ids, payload);
-        recordHistory(ids, payload);
-        if (batchId) {
-          setActiveBatch((prev) => {
-            if (!prev || prev.id !== batchId) return prev;
-            const next = new Map(prev.results);
-            const returned = new Set<string>();
-            for (const r of payload?.results ?? []) {
-              const status: "ok" | "skipped" | "fail" = r.skipped
-                ? "skipped"
-                : r.succeeded
-                  ? "ok"
-                  : "fail";
-              next.set(r.id, status);
-              returned.add(r.id);
-            }
-            for (const id of ids) {
-              if (!returned.has(id) && !next.has(id)) next.set(id, "fail");
-            }
-            return { ...prev, results: next };
-          });
-        }
-      },
-      onSettled: () => {
-        if (ids.length === 1) setPendingId(null);
-        clearProcessing(ids);
-        setConfirm(null);
-        // Auto-clear do resumo após pequeno delay para o usuário ler
-        if (batchId) {
-          window.setTimeout(() => {
-            setActiveBatch((prev) => (prev && prev.id === batchId ? null : prev));
-          }, 6000);
-        }
-      },
-    });
-  };
-
-  const handleReplay = (id: string) => {
-    // Bloqueio por linha: ignora cliques repetidos enquanto este ID já está em voo
-    if (processingIds.has(id)) {
-      toast.info("Esta entrega já está sendo reenviada…");
-      return;
-    }
-    requestReplay([id]);
-  };
-
-  const handleReplaySelected = () => {
-    if (selected.size === 0) return;
-    // Bloqueio por linha: filtra IDs já em processamento para não duplicar
-    const ids = Array.from(selected).filter((id) => !processingIds.has(id));
-    if (ids.length === 0) {
-      toast.info("As entregas selecionadas já estão sendo reenviadas.");
-      return;
-    }
-    requestReplay(ids);
   };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="border-b">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <DrawerTitle className="text-base">Histórico de entregas</DrawerTitle>
-              <DrawerDescription className="truncate text-xs">{url ?? subscriptionId}</DrawerDescription>
+      <DrawerContent className="max-h-[90vh]">
+        <DrawerHeader className="border-b pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <DrawerTitle className="text-xl font-bold">Entregas de Webhook</DrawerTitle>
+              <DrawerDescription className="text-xs">
+                Acompanhe e reenvie falhas de entrega para esta assinatura.
+              </DrawerDescription>
             </div>
-            <label className="flex items-center gap-1.5 shrink-0 text-[10px] text-muted-foreground">
-              <span className="hidden sm:inline">Manter status por</span>
-              <select
-                className="h-7 rounded-md border bg-background px-1.5 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                value={Number.isFinite(retentionMs) ? String(retentionMs) : "Infinity"}
-                onChange={(e) =>
-                  updateRetention(
-                    e.target.value === "Infinity"
-                      ? Number.POSITIVE_INFINITY
-                      : Number(e.target.value),
-                  )
-                }
-                aria-label="Tempo de retenção do status de replay nas linhas"
-              >
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-medium text-muted-foreground uppercase">Retenção:</span>
+              <div className="flex rounded-md border bg-muted/50 p-0.5">
                 {RETENTION_OPTIONS.map((opt) => (
-                  <option
+                  <button
                     key={opt.label}
-                    value={Number.isFinite(opt.value) ? String(opt.value) : "Infinity"}
+                    onClick={() => updateRetention(opt.value)}
+                    className={cn(
+                      "px-2 py-1 text-[10px] font-bold transition-all rounded-[4px]",
+                      retentionMs === opt.value
+                        ? "bg-background text-primary shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
                   >
                     {opt.label}
-                  </option>
+                  </button>
                 ))}
-              </select>
-            </label>
+              </div>
+            </div>
           </div>
         </DrawerHeader>
 
-        <TooltipProvider delayDuration={200}>
-          {/* Batch progress summary (lote >1) */}
-          {activeBatch && (() => {
-            const total = activeBatch.ids.length;
-            let ok = 0;
-            let skipped = 0;
-            let fail = 0;
-            for (const s of activeBatch.results.values()) {
-              if (s === "ok") ok++;
-              else if (s === "skipped") skipped++;
-              else fail++;
-            }
-            const done = ok + skipped + fail;
-            const pending = total - done;
-            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-            const allDone = pending === 0;
-            return (
-              <div
-                className="sticky top-0 z-20 border-b bg-background/95 px-4 py-2 backdrop-blur"
-                role="status"
-                aria-live="polite"
-                aria-label={`Resumo do reenvio em lote: ${pending} reenviando, ${ok} sucesso, ${skipped} já entregues, ${fail} falhou de ${total}`}
-              >
-                <div className="flex items-center justify-between gap-3 text-[11px]">
-                  <div className="flex items-center gap-2 min-w-0">
-                    {allDone ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" aria-hidden />
-                    ) : (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" aria-hidden />
-                    )}
-                    <span className="font-medium text-foreground">
-                      {allDone ? "Reenvio concluído" : `Reenviando ${done}/${total}`}
-                    </span>
-                    <span className="text-muted-foreground tabular-nums">·</span>
-                    {pending > 0 && (
-                      <span className="text-muted-foreground tabular-nums">
-                        {pending} pendente{pending === 1 ? "" : "s"}
-                      </span>
-                    )}
-                    {ok > 0 && (
-                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5 bg-success/15 text-success">
-                        {ok} sucesso
-                      </Badge>
-                    )}
-                    {skipped > 0 && (
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-muted-foreground">
-                        {skipped} já entregue{skipped === 1 ? "" : "s"}
-                      </Badge>
-                    )}
-                    {fail > 0 && (
-                      <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
-                        {fail} falhou
-                      </Badge>
-                    )}
-                  </div>
-                  {allDone && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-6 px-2 text-[10px]"
-                      onClick={() => setActiveBatch(null)}
-                      aria-label="Dispensar resumo"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  )}
-                </div>
-                <div
-                  className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-muted"
-                  aria-hidden
-                >
-                  <div
-                    className={cn(
-                      "h-full transition-all duration-500",
-                      allDone
-                        ? fail > 0
-                          ? "bg-destructive"
-                          : "bg-success"
-                        : "bg-primary",
-                    )}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Sticky selection toolbar */}
-          {failedIds.length > 0 && (
-            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur">
-              <label className="flex items-center gap-2 text-xs cursor-pointer select-none">
-                <Checkbox
-                  checked={headerCheckState}
-                  onCheckedChange={toggleAll}
-                  aria-label="Selecionar todas as entregas falhas"
-                />
-                <span className="text-muted-foreground">
-                  Selecionar todas as falhas ({failedIds.length})
-                </span>
-              </label>
-              <div
-                className="flex items-center gap-2"
-                aria-live="polite"
-              >
-                {selected.size > 0 && (
-                  <>
-                    <Badge
-                      variant={atLimit ? "destructive" : "outline"}
-                      className="text-[10px] py-0 px-1.5 tabular-nums"
-                      title={`Máximo de ${MAX_REPLAY} por reenvio`}
-                    >
-                      {selected.size}/{MAX_REPLAY} selecionada{selected.size === 1 ? "" : "s"}
-                    </Badge>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 px-2 text-xs"
-                      onClick={clearSelection}
-                      disabled={isReplaying}
-                    >
-                      <X className="h-3 w-3 mr-1" />
-                      Limpar
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={handleReplaySelected}
-                      disabled={isReplaying || processingIds.size > 0}
-                      aria-label={
-                        isReplaying || processingIds.size > 0
-                          ? "Aguardando reenvio em andamento concluir"
-                          : "Reenviar entregas selecionadas"
-                      }
-                    >
-                      {isReplaying ? (
-                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                      ) : (
-                        <RotateCw className="h-3 w-3 mr-1" />
-                      )}
-                      {isReplaying ? "Reenviando…" : "Reenviar selecionados"}
-                    </Button>
-                  </>
-                )}
-              </div>
+        <div className="flex flex-1 flex-col overflow-hidden px-4 py-4">
+          <div className="mb-4 flex items-center justify-between rounded-xl border bg-muted/30 p-3">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={headerCheckState === true}
+                onCheckedChange={toggleAll}
+                className={cn(headerCheckState === "indeterminate" && "opacity-70")}
+              />
+              <span className="text-xs font-semibold">
+                {selected.size > 0 ? `${selected.size} selecionados` : "Selecionar falhas"}
+              </span>
             </div>
-          )}
 
-          {replayHistory.length > 0 && (
-            <div className="border-b bg-muted/10 px-4 py-2">
-              <div className="flex items-center justify-between mb-1.5">
-                <h4 className="text-[11px] font-semibold text-foreground uppercase tracking-wide">
-                  Histórico do replay
-                </h4>
-                <button
-                  type="button"
-                  onClick={() => setReplayHistory([])}
-                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Limpar histórico de replays"
-                >
-                  Limpar
-                </button>
-              </div>
-              <ScrollArea className="max-h-32">
-                <ol className="space-y-1.5 pr-2" aria-label="Últimos reenvios">
-                  {replayHistory.map((h) => (
-                    <li
-                      key={h.id}
-                      className="rounded-md border bg-background/60 px-2 py-1.5 text-[10px]"
-                    >
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-medium text-foreground">
-                            {h.total} {h.total === 1 ? "entrega" : "entregas"}
-                          </span>
-                          {h.ok > 0 && (
-                            <Badge variant="secondary" className="text-[9px] py-0 px-1 bg-success/15 text-success">
-                              {h.ok} ok
-                            </Badge>
-                          )}
-                          {h.skipped > 0 && (
-                            <Badge variant="outline" className="text-[9px] py-0 px-1 text-muted-foreground">
-                              {h.skipped} já entregue{h.skipped === 1 ? "" : "s"}
-                            </Badge>
-                          )}
-                          {h.fail > 0 && (
-                            <Badge variant="destructive" className="text-[9px] py-0 px-1">
-                              {h.fail} falhou
-                            </Badge>
-                          )}
-                        </div>
-                        <span className="text-muted-foreground shrink-0">
-                          {formatDistanceToNow(new Date(h.at), { addSuffix: true, locale: ptBR })}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {h.byEvent.map((e) => {
-                          const variant: "secondary" | "destructive" | "outline" =
-                            e.fail > 0 ? "destructive" : e.ok > 0 ? "secondary" : "outline";
-                          const cls =
-                            e.fail > 0
-                              ? ""
-                              : e.ok > 0
-                                ? "bg-success/15 text-success"
-                                : "text-muted-foreground";
-                          return (
-                            <Badge
-                              key={e.event}
-                              variant={variant}
-                              className={cn("text-[9px] py-0 px-1 font-mono", cls)}
-                            >
-                              {e.event}
-                              {e.ok > 0 && <span className="ml-1 opacity-80">✓{e.ok}</span>}
-                              {e.skipped > 0 && <span className="ml-1 opacity-80">↷{e.skipped}</span>}
-                              {e.fail > 0 && <span className="ml-1 opacity-80">✕{e.fail}</span>}
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </ScrollArea>
-            </div>
-          )}
-
-          <ScrollArea className="flex-1 px-4 py-3">
-            {isLoading && <p className="text-xs text-muted-foreground py-4 text-center">Carregando…</p>}
-            {!isLoading && (data?.length ?? 0) === 0 && (
-              <p className="text-xs text-muted-foreground py-6 text-center">Nenhuma entrega registrada ainda.</p>
-            )}
-            <ul className="space-y-2 pb-6" role="list" aria-label="Entregas de webhook">
-              {(data ?? []).map((d) => {
-                const Icon = d.succeeded ? CheckCircle2 : XCircle;
-                const color = d.succeeded ? "text-emerald-500" : "text-destructive";
-                const isProcessing = processingIds.has(d.id);
-                const isPending = (pendingId === d.id && isReplaying) || isProcessing;
-                const isChecked = selected.has(d.id);
-                const checkboxDisabled =
-                  d.succeeded || isProcessing || (atLimit && !isChecked);
-                const result = lastResults.get(d.id);
-                const reqId = requestIds.get(d.id);
-                return (
-                  <li
-                    key={d.id}
-                    aria-busy={isProcessing}
-                    className={cn(
-                      "relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden",
-                      isProcessing && "bg-primary/5 border-primary/30",
-                    )}
-                  >
-                    {d.succeeded ? (
-                      <span className="w-4 shrink-0" aria-hidden />
-                    ) : (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="mt-0.5 shrink-0">
-                            <Checkbox
-                              checked={isChecked}
-                              disabled={checkboxDisabled}
-                              onCheckedChange={() => toggleOne(d.id)}
-                              aria-label={`Selecionar entrega de ${d.event}`}
-                            />
-                          </span>
-                        </TooltipTrigger>
-                        {atLimit && !isChecked && (
-                          <TooltipContent side="right" className="text-xs">
-                            Máximo de {MAX_REPLAY} por reenvio — desmarque uma entrega para selecionar outra.
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
-                    )}
-                    <Icon className={`h-4 w-4 mt-0.5 ${color}`} aria-hidden />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <Badge variant="outline" className="text-[10px] py-0 px-1.5">{d.event}</Badge>
-                        <Badge
-                          variant={d.succeeded ? "secondary" : "destructive"}
-                          className="text-[10px] py-0 px-1.5"
-                        >
-                          HTTP {d.status || "—"}
-                        </Badge>
-                        <Badge variant="outline" className="text-[10px] py-0 px-1.5">
-                          tentativa {d.attempt}
-                        </Badge>
-                        <span className="text-[10px] text-muted-foreground inline-flex items-center gap-0.5">
-                          <Clock className="h-3 w-3" />
-                          {d.duration_ms}ms
-                        </span>
-                      </div>
-                      {d.error_message && (
-                        <p className="text-[11px] text-destructive mt-1 break-words">{d.error_message}</p>
-                      )}
-                      <p className="text-[10px] text-muted-foreground mt-1">
-                        {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
-                      </p>
-                      {(isProcessing || result) && (
-                        <div
-                          className="mt-1.5"
-                          role="status"
-                          aria-live="polite"
-                        >
-                          {isProcessing ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                              Reenviando…
-                            </span>
-                          ) : result === "ok" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success px-2 py-0.5 text-[10px] font-medium">
-                              <CheckCircle2 className="h-3 w-3" />
-                              Reenviado
-                            </span>
-                          ) : result === "skipped" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-[10px] font-medium">
-                              <SkipForward className="h-3 w-3" />
-                              Já entregue
-                            </span>
-                          ) : (
-                            <>
-                              <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 text-destructive px-2 py-0.5 text-[10px] font-medium">
-                                <XCircle className="h-3 w-3" />
-                                Falhou
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="ml-1 h-5 px-2 text-[10px] gap-1 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                onClick={() => handleReplay(d.id)}
-                                disabled={d.succeeded || isProcessing}
-                                aria-label={`Tentar reenviar novamente entrega ${d.event}`}
-                              >
-                                <RotateCw className="h-2.5 w-2.5" />
-                                Tentar novamente
-                              </Button>
-                            </>
-                          )}
-                          {reqId && !isProcessing && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    void navigator.clipboard?.writeText(reqId).then(
-                                      () => toast.success("requestId copiado"),
-                                      () => toast.error("Falha ao copiar"),
-                                    );
-                                  }}
-                                  className="ml-1 inline-flex items-center gap-1 rounded-full border border-border/50 bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                                  aria-label={`Copiar requestId ${reqId}`}
-                                >
-                                  <span className="opacity-70">req</span>
-                                  <span>{reqId.slice(0, 8)}</span>
-                                  <Copy className="h-2.5 w-2.5 opacity-60" />
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="text-xs font-mono">
-                                {reqId}
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span aria-busy={isProcessing}>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 w-7 p-0 shrink-0"
-                            // Bloqueio: desabilita se ESTA delivery está em voo OU se há
-                            // qualquer reenvio global em andamento (evita disparar nova mutation).
-                            disabled={d.succeeded || isProcessing || isReplaying}
-                            onClick={() => handleReplay(d.id)}
-                            aria-label={
-                              isProcessing
-                                ? "Reenvio em andamento para esta entrega"
-                                : isReplaying
-                                  ? "Aguardando reenvio em andamento concluir"
-                                  : "Reenviar entrega"
-                            }
-                          >
-                            {isProcessing ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <RotateCw className="h-3 w-3" />
-                            )}
-                          </Button>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="left" className="text-xs">
-                        {d.succeeded
-                          ? "Já entregue com sucesso"
-                          : isProcessing
-                            ? "Reenvio em andamento — aguarde…"
-                            : "Reenviar este evento"}
-                      </TooltipContent>
-                    </Tooltip>
-                    {isProcessing && (
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-primary/20 via-primary to-primary/20 animate-pulse"
-                      />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </ScrollArea>
-        </TooltipProvider>
-      </DrawerContent>
-
-      <AlertDialog
-        open={!!confirm}
-        onOpenChange={(o) => {
-          if (o) return;
-          if (isReplaying) return; // bloqueia ESC/overlay enquanto replay roda
-          setConfirm(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {confirmSummary.count > 1 ? "Confirmar reenvio em lote" : "Confirmar reenvio"}
-            </AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="space-y-3">
-                {confirmSummary.single ? (
-                  <div className="rounded-md border bg-muted/30 px-3 py-2 space-y-1.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <Badge
-                        variant={confirmSummary.single.unknown ? "outline" : "outline"}
-                        className={cn(
-                          "text-[10px] py-0 px-1.5",
-                          confirmSummary.single.unknown && "border-warning/40 text-warning",
-                        )}
-                      >
-                        {confirmSummary.single.label}
-                      </Badge>
-                      {!confirmSummary.single.unknown && (
-                        <code className="text-[10px] text-muted-foreground font-mono">
-                          {confirmSummary.single.event}
-                        </code>
-                      )}
-                      <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
-                        HTTP {confirmSummary.single.status || "—"}
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5">
-                        tentativa {confirmSummary.single.attempt}
-                      </Badge>
-                    </div>
-                    <div className="text-[11px] text-muted-foreground font-mono break-all">
-                      ID: <span className="text-foreground">{confirmSummary.single.id.slice(0, 8)}</span>
-                      <span className="opacity-60">…{confirmSummary.single.id.slice(-4)}</span>
-                    </div>
-                    {confirmSummary.single.error && (
-                      <p className="text-[11px] text-destructive line-clamp-2 break-words">
-                        {confirmSummary.single.error}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <p>
-                      <span className="font-semibold text-foreground">{confirmSummary.count}</span>{" "}
-                      {confirmSummary.count === 1 ? "entrega será reenviada." : "entregas serão reenviadas."}
-                    </p>
-                    {confirm && confirm.requestedCount !== confirmSummary.count && (
-                      <p className="text-[11px] text-muted-foreground">
-                        Selecionado{confirm.requestedCount === 1 ? "" : "s"}:{" "}
-                        <span className="font-medium text-foreground tabular-nums">
-                          {confirm.requestedCount}
-                        </span>
-                        {" · "}após dedupe:{" "}
-                        <span className="font-medium text-foreground tabular-nums">
-                          {confirmSummary.count}
-                        </span>
-                        {" · "}
-                        <span className="text-warning">
-                          {confirm.requestedCount - confirmSummary.count} duplicada
-                          {confirm.requestedCount - confirmSummary.count === 1 ? "" : "s"} removida
-                          {confirm.requestedCount - confirmSummary.count === 1 ? "" : "s"}
-                        </span>
-                        .
-                      </p>
-                    )}
-                    {confirmSummary.byEvent.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {confirmSummary.byEvent.map((b) => (
-                          <Badge
-                            key={b.event}
-                            variant="outline"
-                            className={cn(
-                              "text-[10px] py-0 px-1.5",
-                              b.unknown && "border-warning/40 text-warning",
-                            )}
-                            title={b.unknown ? "Evento sem rótulo conhecido" : b.event}
-                          >
-                            {b.label} · {b.count}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    {confirmSummary.unknownCount > 0 && (
-                      <p className="text-[11px] text-warning flex items-start gap-1">
-                        <span aria-hidden>⚠</span>
-                        <span>
-                          {confirmSummary.unknownCount}{" "}
-                          {confirmSummary.unknownCount === 1
-                            ? "entrega tem evento desconhecido"
-                            : "entregas têm evento desconhecido"}
-                          {confirmSummary.missingCount > 0 &&
-                            ` (${confirmSummary.missingCount} sem detalhes carregados)`}
-                          . O reenvio prosseguirá normalmente.
-                        </span>
-                      </p>
-                    )}
-                    {confirmSummary.items.length > 0 && (
-                      <details className="rounded-md border bg-muted/20 px-2 py-1.5">
-                        <summary className="cursor-pointer text-[11px] font-medium text-foreground hover:text-primary transition-colors">
-                          Ver mapeamento por entrega ({confirmSummary.items.length})
-                        </summary>
-                        <ScrollArea className="mt-1.5 max-h-40">
-                          <ul className="space-y-1 pr-2" aria-label="Mapeamento de eventos por entrega">
-                            {confirmSummary.items.map((it) => (
-                              <li
-                                key={it.id}
-                                className="flex items-center justify-between gap-2 text-[10px]"
-                              >
-                                <span className="font-mono text-muted-foreground shrink-0">
-                                  {it.id.slice(0, 8)}…{it.id.slice(-4)}
-                                </span>
-                                <span className="text-muted-foreground">→</span>
-                                <div className="flex items-center gap-1.5 min-w-0 flex-1 justify-end">
-                                  <span
-                                    className={cn(
-                                      "truncate font-medium",
-                                      it.unknown ? "text-warning" : "text-foreground",
-                                    )}
-                                  >
-                                    {it.label}
-                                  </span>
-                                  {!it.unknown && (
-                                    <code className="text-muted-foreground font-mono shrink-0 opacity-70">
-                                      {it.event}
-                                    </code>
-                                  )}
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </ScrollArea>
-                      </details>
-                    )}
-                  </>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  {confirmSummary.single
-                    ? "Uma nova tentativa será criada no histórico."
-                    : "Cada entrega criará uma nova tentativa no histórico."}
-                </p>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          {isReplaying && (
-            <div
-              className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-[11px] text-primary"
-              role="status"
-              aria-live="polite"
-            >
-              <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden />
-              <span>Reenviando {confirmSummary.count}… aguarde a conclusão.</span>
-            </div>
-          )}
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isReplaying}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                executeReplay();
-              }}
-              disabled={isReplaying}
+            <Button
+              size="sm"
+              disabled={selected.size === 0 || isReplaying}
+              onClick={() => requestReplay(Array.from(selected))}
+              className="h-8 gap-2 px-4 font-bold"
             >
               {isReplaying ? (
-                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" aria-hidden />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <RotateCw className="h-3.5 w-3.5 mr-1.5" aria-hidden />
+                <RotateCw className="h-3.5 w-3.5" />
               )}
-              {isReplaying ? "Reenviando…" : `Reenviar ${confirmSummary.count}`}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              Reenviar Selecionados
+            </Button>
+          </div>
+
+          <ScrollArea className="flex-1 -mx-4 px-4">
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
+                <p className="text-sm text-muted-foreground font-medium italic">Buscando entregas...</p>
+              </div>
+            ) : data?.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
+                <SkipForward className="h-10 w-10 text-muted-foreground/20" />
+                <p className="text-sm font-bold text-muted-foreground">Nenhuma entrega encontrada.</p>
+                <p className="text-xs text-muted-foreground/60 max-w-[240px]">
+                  Webhooks disparados recentemente aparecerão aqui para depuração.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 pb-10">
+                {data?.map((delivery) => (
+                  <WebhookDeliveryRow
+                    key={delivery.id}
+                    delivery={delivery}
+                    isSelected={selected.has(delivery.id)}
+                    onToggle={toggleOne}
+                    isProcessing={processingIds.has(delivery.id)}
+                    lastResult={lastResults.get(delivery.id)}
+                    requestId={requestIds.get(delivery.id)}
+                    onReplay={(id) => requestReplay([id])}
+                  />
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+
+        <AlertDialog open={!!confirm} onOpenChange={(v) => !v && setConfirm(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Reenvio</AlertDialogTitle>
+              <AlertDialogDescription>
+                Deseja reenviar {confirm?.ids.length} entrega(s) de webhook?
+                Isso gerará novas tentativas imediatas.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleExecuteReplay} className="bg-primary font-bold">
+                Confirmar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </DrawerContent>
     </Drawer>
   );
 }
