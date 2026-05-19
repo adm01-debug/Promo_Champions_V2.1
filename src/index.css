@@ -27,13 +27,16 @@
     --popover-foreground: 230 25% 12%;
 
     /* ===== CORES PRIMÁRIAS - Electric Violet ===== */
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 262 83% 52%;
+    --primary-foreground: 262 100% 98%;
     --primary-glow: 280 100% 70%;
+    --status-success: 152 76% 35%;
+    --status-warning: 38 95% 45%;
+    --status-info: 200 95% 45%;
 
     /* ===== CORES SECUNDÁRIAS - Deep Teal ===== */
     --secondary: 172 66% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary-foreground: 172 100% 98%;
 
     /* ===== MUTED ===== */
     --muted: 220 15% 92%;
@@ -45,7 +48,7 @@
 
     /* ===== DESTRUCTIVE ===== */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 100% 98%;
 
     /* ===== BORDAS E INPUTS ===== */
     --border: 220 15% 88%;
@@ -54,11 +57,11 @@
 
     /* ===== ESTADOS ===== */
     --success: 152 76% 42%;
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 152 100% 98%;
     --warning: 38 95% 50%;
     --warning-foreground: 0 0% 0%;
     --info: 200 95% 50%;
-    --info-foreground: 0 0% 100%;
+    --info-foreground: 200 100% 98%;
 
     /* ===== LIVE/REAL-TIME INDICATORS ===== */
     --live-pulse: 330 90% 60%;
@@ -102,7 +105,7 @@
     --sidebar-background: 230 25% 10%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 262 83% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary-foreground: 262 100% 98%;
     --sidebar-accent: 185 90% 48%;
     --sidebar-accent-foreground: 220 50% 10%;
     --sidebar-border: 230 20% 18%;
@@ -250,7 +253,7 @@
     --destructive: 0 90% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ===== BORDAS E INPUTS - Slightly more visible ===== */
+    /* ===== BORDAS E INPUTS - High Visibility for WCAG compliance ===== */
     --border: 230 15% 22%;
     --input: 230 15% 22%;
     --ring: 262 90% 65%;
@@ -363,6 +366,9 @@
     --race-building-edge: 220 10% 22%;
     --race-checkered-light: 0 0% 92%;
     --race-checkered-dark: 0 0% 6%;
+    --status-success: 152 85% 65%;
+    --status-warning: 38 100% 65%;
+    --status-info: 200 100% 65%;
   }
 
   .cyber-mode {
@@ -370,17 +376,21 @@
     --foreground: 199 89% 95%;
     --card: 230 35% 6%;
     --card-foreground: 199 89% 95%;
-    --border: 199 89% 20%;
-    --primary: 199 89% 48%; /* Cyber Cyan */
-    --ring: 199 89% 48%;
+    --border: 199 89% 25%;
+    --primary: 199 89% 55%; /* High Contrast Cyber Cyan */
+    --ring: 199 89% 55%;
+    --muted: 230 20% 18%;
+    --muted-foreground: 199 20% 85%;
   }
 
   .standard-mode {
-    --background: 220 20% 97%;
+    --background: 0 0% 100%;
     --foreground: 230 25% 12%;
     --card: 0 0% 100%;
-    --primary: 262 83% 58%;
-    --border: 220 15% 88%;
+    --primary: 262 83% 52%; /* Darker violet for better contrast in light mode */
+    --border: 220 15% 90%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 12% 35%;
   }
 }
 
@@ -392,17 +402,19 @@
   /* ===== KEYBOARD FOCUS INDICATORS ===== */
   /* Only show focus rings for keyboard users (not mouse) */
   :focus-visible {
-    outline: 2px solid hsl(var(--primary));
-    outline-offset: 2px;
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 3px;
     border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 6px hsl(var(--background)), 0 0 0 9px hsl(var(--primary) / 0.5);
+    z-index: 50;
   }
 
-  /* Subtle inner ring for inputs */
+  /* Robust inner ring for inputs with high contrast */
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.25), 0 0 0 4px hsl(var(--primary) / 0.1);
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 5px hsl(var(--primary));
   }
 
   /* Skip focus styles for mouse users */
