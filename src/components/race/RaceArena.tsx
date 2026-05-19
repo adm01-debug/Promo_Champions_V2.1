@@ -139,24 +139,6 @@ export function RaceArena({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cars.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
 
-  // Eventos de broadcast (rotativos)
-  const [broadcastEvents, setBroadcastEvents] = useState<BroadcastEvent[]>([]);
-  const pushBroadcast = useCallback((evt: Omit<BroadcastEvent, 'id'>) => {
-    setBroadcastEvents((prev) => {
-      const id = `${Date.now()}-${Math.random()}`;
-      return [{ id, ...evt }, ...prev].slice(0, 5);
-    });
-  }, []);
-  // Auto-cleanup eventos > 60s
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      const cutoff = Date.now() - 60_000;
-      setBroadcastEvents((prev) =>
-        prev.filter((e) => Number(e.id.split('-')[0]) > cutoff),
-      );
-    }, 8_000);
-    return () => window.clearInterval(id);
-  }, []);
 
   // Ciclo 47-52: la-ola, fastest sector, cinematic camera
   const [waveTrigger, setWaveTrigger] = useState(0);
