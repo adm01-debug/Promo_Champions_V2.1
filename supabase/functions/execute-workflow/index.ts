@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 
 interface ActionDef {
   type: "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner";
