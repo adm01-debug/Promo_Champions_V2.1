@@ -1,17 +1,8 @@
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { CredentialsSourceContext } from "./CredentialsSourceContext";
 
 export type CredentialsSource = "all" | "db" | "env" | "secret";
 export type HealthStatusFilter = "all" | "healthy" | "warning" | "failing";
-
-interface Ctx {
-  source: CredentialsSource;
-  setSource: (s: CredentialsSource) => void;
-  healthStatus: HealthStatusFilter;
-  setHealthStatus: (s: HealthStatusFilter) => void;
-}
-
-const CredentialsSourceContext = createContext<Ctx | null>(null);
 
 const SOURCE_KEY = "integration-health:source-filter";
 const STATUS_KEY = "integration-health:status-filter";
@@ -64,12 +55,4 @@ export function CredentialsSourceFilterProvider({ children }: { children: ReactN
   return <CredentialsSourceContext.Provider value={value}>{children}</CredentialsSourceContext.Provider>;
 }
 
-/**
- * Hook to use the credentials source filter context.
- */
-export const useCredentialsSource = () => {
-  const ctx = useContext(CredentialsSourceContext);
-  if (!ctx) throw new Error("useCredentialsSource must be used inside CredentialsSourceFilterProvider");
-  return ctx;
-};
 

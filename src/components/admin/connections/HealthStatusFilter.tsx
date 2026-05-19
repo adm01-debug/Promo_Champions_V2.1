@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCredentialsSource, type HealthStatusFilter as Status } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
+import { type HealthStatusFilter as Status } from "./CredentialsSourceFilterContext";
 
 const OPTIONS: Array<{ value: Status; label: string }> = [
   { value: "all", label: "Todos" },

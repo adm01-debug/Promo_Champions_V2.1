@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useIntegrationConnections, useIntegrationHealth } from "@/hooks/admin/useIntegrationConnections";
-import { useCredentialsSource } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
 import { IntegrationHealthCard } from "./IntegrationHealthCard";
 import { Skeleton } from "@/components/ui/skeleton";
 

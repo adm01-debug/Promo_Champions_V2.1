@@ -12,7 +12,7 @@ import {
   useDeleteConnection,
   type IntegrationConnection,
 } from "@/hooks/admin/useIntegrationConnections";
-import { useCredentialsSource } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
 import { useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
