@@ -30,9 +30,9 @@
     --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 280 100% 70%;
-    --status-success: 152 76% 35%;
-    --status-warning: 38 95% 45%;
-    --status-info: 200 95% 45%;
+    --status-success: 152 76% 42%;
+    --status-warning: 38 95% 50%;
+    --status-info: 200 95% 50%;
 
     /* ===== CORES SECUNDÁRIAS - Deep Teal ===== */
     --secondary: 172 66% 45%;
