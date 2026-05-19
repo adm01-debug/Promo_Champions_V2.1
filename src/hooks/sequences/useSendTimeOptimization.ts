@@ -98,7 +98,13 @@ export function useSendTimeProfile(saleId: string | undefined) {
         .eq("sale_id", saleId!)
         .maybeSingle();
       if (error) throw error;
-      return (data as unknown as SendTimeProfile | null) ?? null;
+      if (!data) return null;
+      
+      return {
+        ...data,
+        hour_distribution: (data.hour_distribution as number[]) || [],
+        dow_distribution: (data.dow_distribution as number[]) || [],
+      } as SendTimeProfile;
     },
   });
 }
