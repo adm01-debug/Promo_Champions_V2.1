@@ -45,7 +45,7 @@ export interface RevenueForecastResponse {
 }
 
 interface Options {
-  horizonDays?: ForecastHorizon;
+  horizonDays?: number;
   ownerId?: string | null;
   includeAI?: boolean;
 }

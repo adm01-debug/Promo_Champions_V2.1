@@ -23,7 +23,7 @@ import {
   Waves,
   LucideIcon
 } from "lucide-react";
-import { useRevenueForecast, RevenueForecastResponse } from "@/hooks/forecast/useRevenueForecast";
+import { useRevenueForecast, type RevenueForecastResponse } from "@/hooks/forecast/useRevenueForecast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -77,7 +77,7 @@ export const RevenueForecastHub: FC = () => {
     );
   }
   const forecast = data as RevenueForecastResponse;
-  const conf = confidenceLabel(forecast.confidence || 0);
+  const conf = confidenceLabel(forecast.confidence);
   const goalProgress = forecast.metrics.goal_for_horizon > 0
     ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
     : 0;
