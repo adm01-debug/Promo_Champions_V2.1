@@ -63,13 +63,13 @@ export function AchievementTrendChart() {
     );
   }
 
-  const chartData = (trends || []).map((t: any) => ({
+  const chartData = (trends || []).map((t: AchievementTrendData) => ({
     ...t,
     dateLabel: format(parseISO(t.date), "dd/MM", { locale: ptBR }),
   }));
 
-  const totalGoals = (trends || []).reduce((sum: number, t: any) => sum + (t.dailyGoals || 0), 0);
-  const totalMilestones = (trends || []).reduce((sum: number, t: any) => sum + (t.streakMilestones || 0), 0);
+  const totalGoals = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.dailyGoals || 0), 0);
+  const totalMilestones = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.streakMilestones || 0), 0);
 
   return (
     <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">
@@ -156,7 +156,7 @@ export function AchievementTrendChart() {
                 }}
                 itemStyle={{ padding: "2px 0" }}
                 cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 2 }}
-                formatter={(value: any, name: any) => {
+                formatter={(value: number, name: string) => {
                   const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
                   return [value, label];
                 }}

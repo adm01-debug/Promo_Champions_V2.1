@@ -77,7 +77,7 @@ export const RevenueForecastHub: FC = () => {
     );
   }
   const forecast = data as RevenueForecastResponse;
-  const conf = confidenceLabel(forecast.confidence);
+  const conf = confidenceLabel(forecast.confidence || 0);
   const goalProgress = forecast.metrics.goal_for_horizon > 0
     ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
     : 0;

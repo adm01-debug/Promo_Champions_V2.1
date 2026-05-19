@@ -39,7 +39,7 @@ export const horizonOptions: { value: ForecastHorizon; label: string }[] = [
   { value: 90, label: "90 dias" },
 ];
 
-export function confidenceLabel(score: number): { label: string; color: string } {
+export function confidenceLabel(score: number | undefined): { label: string; color: string } {
   if (score >= 80) return { label: "Alta", color: "text-emerald-500" };
   if (score >= 50) return { label: "Média", color: "text-amber-500" };
   return { label: "Baixa", color: "text-destructive" };
