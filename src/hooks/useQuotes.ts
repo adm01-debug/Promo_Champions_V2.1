@@ -143,7 +143,7 @@ export function useCreateQuote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateQuoteInput) => {
-      const { data, error } = await supabase.from('quotes').insert(input).select().single();
+      const { data, error } = await supabase.from('quotes').insert([input as any]).select().single();
       if (error) throw error;
       return data;
     },
