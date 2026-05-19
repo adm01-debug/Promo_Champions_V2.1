@@ -79,7 +79,8 @@ const Button = React.memo(React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp 
         className={cn(
           buttonVariants({ variant, size, className }), 
-          loading && "cursor-wait relative"
+          loading && "cursor-wait relative",
+          "focus-visible:ring-3 focus-visible:ring-offset-2"
         )} 
         ref={ref} 
         disabled={disabled || loading}
