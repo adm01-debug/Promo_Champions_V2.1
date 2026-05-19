@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CredentialsSourceContext } from "./CredentialsSourceFilterContext";
+import { CredentialsSourceContext } from "./CredentialsSourceContext";
 
 /**
  * Hook to use the credentials source filter context.

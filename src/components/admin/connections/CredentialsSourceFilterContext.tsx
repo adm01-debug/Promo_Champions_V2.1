@@ -1,16 +1,8 @@
-import { createContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { CredentialsSourceContext } from "./CredentialsSourceContext";
 
 export type CredentialsSource = "all" | "db" | "env" | "secret";
 export type HealthStatusFilter = "all" | "healthy" | "warning" | "failing";
-
-interface Ctx {
-  source: CredentialsSource;
-  setSource: (s: CredentialsSource) => void;
-  healthStatus: HealthStatusFilter;
-  setHealthStatus: (s: HealthStatusFilter) => void;
-}
-
-export const CredentialsSourceContext = createContext<Ctx | null>(null);
 
 const SOURCE_KEY = "integration-health:source-filter";
 const STATUS_KEY = "integration-health:status-filter";
