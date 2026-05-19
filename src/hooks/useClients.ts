@@ -1,11 +1,10 @@
 import { Client } from '@/types';
 import { CACHE_TIMES } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
+import { clientService } from '@/services/clientService';
 
-// Re-export Client type for convenience
 export type { Client } from '@/types';
 
 export interface UseClientsOptions {
@@ -15,12 +14,7 @@ export interface UseClientsOptions {
 export const useClients = (filters?: UseClientsOptions) => {
   return useQuery<Client[]>({
     queryKey: ['clients', filters],
-    queryFn: async (): Promise<Client[]> => {
-      const query = supabase.from('clients').select('*');
-      const { data, error } = await query;
-      if (error) throw error;
-      return (data || []) as Client[];
-    },
+    queryFn: () => clientService.getClients(),
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
   });
@@ -31,13 +25,7 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: async (input: { name: string; email?: string; phone?: string; company?: string; lead_source?: string; lat?: number; lng?: number; total_value?: number; user_id?: string }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const payload = { ...input, user_id: input.user_id || user?.id };
-      const { data, error } = await supabase.from('clients').insert(payload).select().single();
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: (input: any) => clientService.createClient(input),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       if (data?.id) index('client', data.id);
@@ -52,11 +40,7 @@ export const useUpdateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string; name?: string; email?: string | null; phone?: string | null; company?: string | null; total_value?: number; lead_source?: string | null; lat?: number | null; lng?: number | null }) => {
-      const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: ({ id, ...updates }: { id: string } & any) => clientService.updateClient(id, updates),
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);
@@ -82,10 +66,7 @@ export const useDeleteClient = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (clientId: string) => {
-      const { error } = await supabase.from('clients').delete().eq('id', clientId);
-      if (error) throw error;
-    },
+    mutationFn: (clientId: string) => clientService.deleteClient(clientId),
     onMutate: async (clientId) => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);
