@@ -30,6 +30,9 @@
     --primary: 262 83% 58%;
     --primary-foreground: 262 100% 98%;
     --primary-glow: 280 100% 70%;
+    --status-success: 152 76% 35%;
+    --status-warning: 38 95% 45%;
+    --status-info: 200 95% 45%;
 
     /* ===== CORES SECUNDÁRIAS - Deep Teal ===== */
     --secondary: 172 66% 45%;
@@ -250,7 +253,7 @@
     --destructive: 0 90% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ===== BORDAS E INPUTS - Slightly more visible ===== */
+    /* ===== BORDAS E INPUTS - High Visibility for WCAG compliance ===== */
     --border: 230 15% 22%;
     --input: 230 15% 22%;
     --ring: 262 90% 65%;
@@ -363,6 +366,9 @@
     --race-building-edge: 220 10% 22%;
     --race-checkered-light: 0 0% 92%;
     --race-checkered-dark: 0 0% 6%;
+    --status-success: 152 85% 65%;
+    --status-warning: 38 100% 65%;
+    --status-info: 200 100% 65%;
   }
 
   .cyber-mode {
