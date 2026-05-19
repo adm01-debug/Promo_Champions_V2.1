@@ -9,9 +9,9 @@ EXIT_CODE=0
 for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
   # Search all relevant files, excluding node_modules, .git, dist, and this script itself
   # We want to catch patterns in configs, templates, and assets too as requested.
-  FOUND=$(find . -maxdepth 2 -not -path '*/.*' -not -path './node_modules*' -not -path './dist*' -not -name 'package*' -not -name 'scripts*' -type f -exec grep -lE "$pattern" {} +; \
-           find src -type f -not -path '*/.*' -exec grep -lE "$pattern" {} +; \
-           find public -type f -not -path '*/.*' -exec grep -lE "$pattern" {} +)
+  FOUND=$(grep -rlE "$pattern" . \
+    --exclude-dir={node_modules,.git,dist,docs} \
+    --exclude={ci-check-forbidden.sh,package.json,package-lock.json,*.log})
   
   if [ -n "$FOUND" ]; then
     echo "❌ Error: Forbidden pattern '$pattern' found in the following files:"
