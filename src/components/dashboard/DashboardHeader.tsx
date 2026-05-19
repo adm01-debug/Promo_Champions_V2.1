@@ -103,18 +103,20 @@ export const DashboardHeader = () => {
             variant="outline"
             size="sm"
             onClick={toggleTheme}
+            aria-label={theme === "cyber" ? "Ativar Modo Padrão" : "Ativar Modo Cyber"}
             className={cn(
               "h-9 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]",
-              theme === "cyber" ? "bg-black/60 shadow-[0_0_15px_rgba(14,165,233,0.1)]" : "bg-background"
+              theme === "cyber" ? "bg-black/60 shadow-[0_0_15_rgba(14,165,233,0.1)]" : "bg-background"
             )}
           >
-            {theme === "cyber" ? <Zap className="h-3.5 w-3.5 mr-2" /> : <Monitor className="h-3.5 w-3.5 mr-2" />}
+            {theme === "cyber" ? <Zap className="h-3.5 w-3.5 mr-2" aria-hidden="true" /> : <Monitor className="h-3.5 w-3.5 mr-2" aria-hidden="true" />}
             {theme === "cyber" ? "Standard Mode" : "Cyber Mode"}
           </Button>
           
           <Button
             variant="outline"
             size="sm"
+            aria-label="Ir para Central de Business Intelligence"
             onClick={() => {
               if (salesperson?.role === 'sdr') navigate("/bi-sdr");
               else if (salesperson?.role === 'closer' || salesperson?.role === 'hybrid') navigate("/bi-closer");
@@ -122,7 +124,7 @@ export const DashboardHeader = () => {
             }}
             className="h-9 bg-black/40 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
-            <BarChart3 className="h-3.5 w-3.5 mr-2" />
+            <BarChart3 className="h-3.5 w-3.5 mr-2" aria-hidden="true" />
             Central BI
           </Button>
           <Button
@@ -130,9 +132,10 @@ export const DashboardHeader = () => {
             size="sm"
             onClick={handleExportPDF}
             disabled={exporting}
+            aria-label={exporting ? "Gerando relatório..." : "Exportar relatório mensal para PDF"}
             className="h-9 bg-primary text-primary-foreground shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_25px_rgba(14,165,233,0.5)] transition-all text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
-            <FileDown className="h-3.5 w-3.5 mr-2" />
+            <FileDown className="h-3.5 w-3.5 mr-2" aria-hidden="true" />
             {exporting ? "Compiling..." : "Export HUD"}
           </Button>
         </div>
