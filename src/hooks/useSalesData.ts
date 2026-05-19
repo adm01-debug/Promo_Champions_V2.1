@@ -1,105 +1,25 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
 import { useRetryMutation } from "@/hooks/useRetryMutation";
 import { useIndexEntity } from "@/hooks/semantic/useIndexEntity";
 import { triggerRaceEvent } from "@/hooks/race/useRaceTrigger";
+import { salesService } from "@/services/salesService";
+import { CreateSaleInput } from "@/types/sales";
 import type { SemanticEntityType } from "@/components/semantic/semanticSearchHelpers";
 
 const LEAD_STATUSES = new Set(["lead", "prospecting", "qualified"]);
+
 function saleEntityType(status?: string | null): SemanticEntityType {
   return status && LEAD_STATUSES.has(status) ? "lead" : "deal";
 }
-export interface Sale {
-  id: string;
-  client_id: string | null;
-  product_id: string | null;
-  client_name: string;
-  product_name: string;
-  amount: number;
-  status: string;
-  category: string;
-  source: string | null;
-  salesperson_id: string | null;
-  created_at: string;
-  updated_at: string;
-  ai_prediction_score: number | null;
-  ai_prediction_reasoning: string | null;
-  whatsapp_status: string | null;
-  whatsapp_last_interaction: string | null;
-}
-
-export interface CreateSaleInput {
-  client_id?: string;
-  product_id?: string;
-  client_name: string;
-  product_name: string;
-  amount: number;
-  status?: string;
-  category?: string;
-  source?: string;
-  salesperson_id?: string;
-  sdr_id?: string;
-  closer_id?: string;
-  sku?: string;
-  is_first_sale?: boolean;
-}
-
-const statusMap: Record<string, string> = {
-  pending: "Pendente",
-  qualified: "Qualificada",
-  proposal: "Proposta",
-  negotiation: "Negociação",
-  completed: "Concluída",
-  lost: "Perdida",
-};
 
 export const useSalesData = (searchTerm?: string) => {
   return useQuery({
     queryKey: ["sales-list", searchTerm],
-    queryFn: async () => {
-      let query = supabase
-        .from("sales")
-        .select(`
-          *,
-          client:clients(name),
-          product:products(id, name, price, sku)
-        `)
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      if (searchTerm) {
-        query = query.or(`client_name.ilike.%${searchTerm}%,product_name.ilike.%${searchTerm}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      return (data || []).map((sale: any) => ({
-        id: sale.id.substring(0, 8).toUpperCase(),
-        fullId: sale.id,
-        cliente: sale.client?.name || sale.client_name,
-        produto: sale.product?.name || sale.product_name,
-        valor: Number(sale.amount || 0),
-        status: sale.status,
-        statusLabel: statusMap[sale.status] || sale.status,
-        data: format(new Date(sale.created_at), "dd/MM/yyyy", { locale: ptBR }),
-        created_at: sale.created_at, // Preserving raw ISO date for robust sorting
-        client_id: sale.client_id,
-        product_id: sale.product_id,
-        salesperson_id: sale.salesperson_id,
-        sku: sale.sku || sale.product?.sku,
-        ai_prediction_score: sale.ai_prediction_score,
-        ai_prediction_reasoning: sale.ai_prediction_reasoning,
-        whatsapp_status: sale.whatsapp_status,
-        whatsapp_last_interaction: sale.whatsapp_last_interaction,
-      }));
-    },
-    staleTime: 30000, // Optimize: Keep data fresh for 30s
-    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+    queryFn: () => salesService.getSales(searchTerm),
+    staleTime: 30000,
+    gcTime: 1000 * 60 * 5,
   });
 };
 
@@ -109,16 +29,7 @@ export const useCreateSale = () => {
   const { index } = useIndexEntity();
 
   return useRetryMutation(
-    async (input: CreateSaleInput) => {
-      const { data, error } = await supabase
-        .from("sales")
-        .insert([input])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
+    (input: CreateSaleInput) => salesService.createSale(input),
     {
       retryConfig: { maxRetries: 3, baseDelay: 1000 },
       onSuccess: (data) => {
