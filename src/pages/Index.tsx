@@ -92,7 +92,7 @@ const Index = () => {
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
       <Helmet>
-        <title>Dashboard | Promo Champions</title>
+        <title>Circuito de Vencedores | Promo Champions</title>
       </Helmet>
 
       <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-700">

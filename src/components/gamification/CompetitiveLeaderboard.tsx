@@ -53,7 +53,7 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
             <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="gradient-text">Arena de Vendas</span>
+            <span className="gradient-text">Circuito de Vendas</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -75,7 +75,7 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
             <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="gradient-text">Arena de Vendas</span>
+            <span className="gradient-text">Circuito de Vendas</span>
           </CardTitle>
           <Badge variant="secondary" className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-sm">
             {ranking?.length || 0} competidores

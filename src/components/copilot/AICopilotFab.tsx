@@ -50,7 +50,7 @@ export const AICopilotFab: FC = () => {
                 <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary via-primary-glow to-primary flex items-center justify-center shadow-[0_0_10px_rgba(var(--primary),0.4)]">
                   <Sparkles className="h-4 w-4 text-primary-foreground animate-pulse-gentle" />
                 </div>
-                <span className="text-sm font-black uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Arena Copilot</span>
+                <span className="text-sm font-black uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Circuito Copilot</span>
               </div>
               <Button
                 variant="ghost"

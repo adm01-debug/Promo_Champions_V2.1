@@ -122,8 +122,8 @@ export default function Auth() {
   return (
     <>
       <Helmet>
-        <title>Arena de Login | Promo Champions</title>
-        <meta name="description" content="Entre na Arena. Compete. Vença." />
+        <title>Circuito de Vencedores | Promo Champions</title>
+        <meta name="description" content="Entre no Circuito. Competa. Vença." />
       </Helmet>
 
       <div className="min-h-screen w-full relative overflow-hidden bg-[#05060f] text-white flex items-center justify-center p-4 sm:p-8">
@@ -207,9 +207,9 @@ export default function Auth() {
                 transition={{ delay: 0.3, duration: 0.8 }}
                 className="text-5xl xl:text-6xl font-black leading-[1.05]"
               >
-                Entre na{" "}
+                Entre no{" "}
                 <span className="bg-gradient-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent" style={{ filter: "drop-shadow(0 0 24px rgba(168,85,247,0.4))" }}>
-                  Arena
+                  Circuito
                 </span>
                 .<br />
                 Domine o{" "}
@@ -303,7 +303,7 @@ export default function Auth() {
                 <div className="mb-7">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
-                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">{authMode === 'login' ? 'ACESSO À ARENA' : 'CADASTRO NA ARENA'}</span>
+                    <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">{authMode === 'login' ? 'ACESSO AO CIRCUITO' : 'CADASTRO NO CIRCUITO'}</span>
                   </div>
                   <h2 className="text-3xl font-black">{authMode === 'login' ? 'Pronto para vencer?' : 'Comece sua jornada'}</h2>
                   <p className="text-sm text-white/50 mt-1">{authMode === 'login' ? 'Entre e suba no ranking agora.' : 'Crie seu perfil de elite.'}</p>
@@ -314,7 +314,7 @@ export default function Auth() {
                   <Sparkles className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
                   <p className="text-[11px] text-white/60 leading-relaxed">
                     {authMode === 'login' ? (
-                      <>Novo na arena? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button></>
+                      <>Novo no circuito? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button></>
                     ) : (
                       <>Já tem uma conta? <button onClick={() => setAuthMode('login')} className="text-cyan-300 font-bold hover:underline">Faça login</button></>
                     )}
@@ -367,7 +367,7 @@ export default function Auth() {
                   )}
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Email de Combate</Label>
+                    <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">E-mail de Acesso</Label>
                     <Input
                       id="email"
                       type="email"
@@ -380,7 +380,7 @@ export default function Auth() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between ml-1">
-                      <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Criptografia</Label>
+                      <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Senha de Acesso</Label>
                       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
                         <DialogTrigger asChild>
                           <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
@@ -437,7 +437,7 @@ export default function Auth() {
                         <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
                         <>
-                          {authMode === 'login' ? 'INVASÃO DE SISTEMA' : 'INICIAR JORNADA'}
+                          {authMode === 'login' ? 'ACESSAR CIRCUITO' : 'INICIAR JORNADA'}
                           <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                         </>
                       )}

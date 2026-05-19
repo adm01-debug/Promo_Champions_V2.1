@@ -77,7 +77,7 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
 
             <div className="flex items-center gap-2 shrink-0">
               <Button asChild size="sm" variant="secondary" className="hidden sm:inline-flex">
-                <Link to="/vendedores">
+                <Link to="/ranking">
                   Ver ranking <ArrowRight className="ml-1 h-3 w-3" />
                 </Link>
               </Button>

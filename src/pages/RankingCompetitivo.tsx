@@ -79,7 +79,7 @@ const RankingCompetitivo = () => {
   return (
     <>
     <Helmet>
-      <title>Ranking Competitivo | Promo Champions</title>
+      <title>Circuito de Vencedores | Promo Champions</title>
       <meta name="description" content="Rankings e competições entre vendedores" />
     </Helmet>
     <SkeletonTransition isLoading={isLoading} skeleton={<RankingLoadingSkeleton />} duration={400}>
@@ -90,7 +90,7 @@ const RankingCompetitivo = () => {
           <div>
             <h1 className="text-page-title flex items-center gap-3">
               <Trophy className="h-8 w-8 text-rank-gold" />
-              Ranking <span className="gradient-text">Competitivo</span>
+              Circuito <span className="gradient-text">de Vencedores</span>
             </h1>
             <p className="text-muted-foreground mt-1">Acompanhe a competição entre vendedores em tempo real</p>
           </div>

@@ -29,8 +29,8 @@ export const sdrMainItems: MenuItem[] = [
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Ranking", url: "/ranking", icon: Trophy },
-  { title: "Arena", url: "/arena", icon: Swords },
-  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
+  { title: "Circuito", url: "/arena", icon: Swords },
+  { title: "Race Circuito 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const closerMainItems: MenuItem[] = [
@@ -42,8 +42,8 @@ export const closerMainItems: MenuItem[] = [
   { title: "Comissões", url: "/comissoes", icon: Wallet },
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Clientes", url: "/clientes", icon: Users },
-  { title: "Arena", url: "/arena", icon: Swords },
-  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
+  { title: "Circuito", url: "/arena", icon: Swords },
+  { title: "Race Circuito 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const gestaoMainItems: MenuItem[] = [
@@ -51,7 +51,7 @@ export const gestaoMainItems: MenuItem[] = [
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Relatórios", url: "/relatorios", icon: LineChart },
-  { title: "Race Arena 🏎️", url: "/race-arena", icon: Flag },
+  { title: "Race Circuito 🏎️", url: "/race-arena", icon: Flag },
 ];
 
 export const sdrGroupedItems: MenuGroup[] = [
@@ -88,7 +88,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
       { title: "Ranking Global", url: "/ranking", icon: Trophy },
-      { title: "Arena de Duelos", url: "/arena", icon: Swords },
+      { title: "Circuito de Duelos", url: "/arena", icon: Swords },
     ],
   },
   {
@@ -137,7 +137,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
       { title: "Ranking Global", url: "/ranking", icon: Trophy },
-      { title: "Arena de Duelos", url: "/arena", icon: Swords },
+      { title: "Circuito de Duelos", url: "/arena", icon: Swords },
     ],
   },
   {
@@ -229,7 +229,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
     items: [
       { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
-      { title: "Arena Competitiva", url: "/arena", icon: Swords },
+      { title: "Circuito Competitivo", url: "/arena", icon: Swords },
       { title: "Temporadas", url: "/competitive-seasons", icon: Flame },
       { title: "Multichannel", url: "/multichannel", icon: MessageSquare },
     ],
@@ -265,7 +265,7 @@ export const systemItems: MenuItem[] = [
 
 export const adminOnlyItems: MenuItem[] = [
   { title: "Admin", url: "/admin", icon: ShieldCheck },
-  { title: "Admin Race 🏎️", url: "/admin/race-arena", icon: Flag },
+  { title: "Admin Race Circuito 🏎️", url: "/admin/race-arena", icon: Flag },
   { title: "Comissões (Admin)", url: "/admin/comissoes", icon: Wallet },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Audit Trail", url: "/audit-logs", icon: ScrollText },
