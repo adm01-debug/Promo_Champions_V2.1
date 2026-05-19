@@ -5,8 +5,8 @@ import { RaceCar } from './RaceCar';
 import { ReactionFloater } from './ReactionFloater';
 import { ReactionBar } from './ReactionBar';
 import { RaceMiniMap } from './RaceMiniMap';
-import { CommentaryBubble } from './CommentaryBubble';
-import type { CommentaryLine } from './CommentaryBubble';
+import { CommentaryBubble, type CommentaryLine } from './CommentaryBubble';
+
 
 import { ReplayButton } from './ReplayButton';
 import { StartLights } from './StartLights';
