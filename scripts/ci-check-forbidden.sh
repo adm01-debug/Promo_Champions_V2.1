@@ -6,12 +6,17 @@ FORBIDDEN_PATTERNS=("LGPDConsentBanner" "InstallPrompt" "UpdatePrompt" "LGPD")
 echo "Running CI Forbidden Patterns Check..."
 EXIT_CODE=0
 
+# Determine the script name to exclude it
+SCRIPT_NAME=$(basename "$0")
+
 for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
-  # Search all relevant files, excluding node_modules, .git, dist, and this script itself
-  # We want to catch patterns in configs, templates, and assets too as requested.
+  # Search recursively, excluding directories and specific files
+  # -r: recursive
+  # -l: only list filenames
+  # -E: extended regex
   FOUND=$(grep -rlE "$pattern" . \
     --exclude-dir={node_modules,.git,dist,docs} \
-    --exclude={ci-check-forbidden.sh,package.json,package-lock.json,*.log})
+    --exclude={"$SCRIPT_NAME",package.json,package-lock.json,*.log})
   
   if [ -n "$FOUND" ]; then
     echo "❌ Error: Forbidden pattern '$pattern' found in the following files:"
