@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCredentialsSource, type CredentialsSource } from "./CredentialsSourceFilterContext";
+import { useCredentialsSource } from "./useCredentialsSource";
+import { type CredentialsSource } from "./CredentialsSourceFilterContext";
 
 const OPTIONS: Array<{ value: CredentialsSource; label: string }> = [
   { value: "all", label: "Todas" },
