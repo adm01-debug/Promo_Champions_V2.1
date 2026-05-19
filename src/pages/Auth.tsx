@@ -122,8 +122,8 @@ export default function Auth() {
   return (
     <>
       <Helmet>
-        <title>Arena de Login | Promo Champions</title>
-        <meta name="description" content="Entre na Arena. Compete. Vença." />
+        <title>Circuito de Vencedores | Promo Champions</title>
+        <meta name="description" content="Entre no Circuito. Competa. Vença." />
       </Helmet>
 
       <div className="min-h-screen w-full relative overflow-hidden bg-[#05060f] text-white flex items-center justify-center p-4 sm:p-8">
