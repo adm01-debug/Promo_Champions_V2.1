@@ -53,7 +53,7 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
             <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="gradient-text">Arena de Vendas</span>
+            <span className="gradient-text">Circuito de Vendas</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
