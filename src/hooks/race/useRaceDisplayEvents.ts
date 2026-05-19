@@ -9,7 +9,7 @@ export interface RaceTickerEvent {
 
 export interface BroadcastEvent {
   id: string;
-  kind: 'overtake' | 'leader' | 'sector' | 'victory' | 'drs';
+  kind: 'gap' | 'overtake' | 'finale' | 'leader';
   title: string;
   detail: string;
 }
