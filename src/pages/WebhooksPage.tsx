@@ -22,6 +22,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { toast } from "sonner";
+import { WebhookSimulationPanel } from "@/components/debug/WebhookSimulationPanel";
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
@@ -151,6 +152,10 @@ const WebhooksPage = () => {
                 </CardContent>
               </Card>
             ))}
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <WebhookSimulationPanel />
           </motion.div>
 
           <Tabs defaultValue="webhooks">
