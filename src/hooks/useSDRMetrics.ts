@@ -267,11 +267,14 @@ export function useHourlySuccessProbability() {
 
         return hours
           .filter((h) => h.total > 0 || (parseInt(h.hour) >= 8 && parseInt(h.hour) <= 18))
-          .map((h) => ({
-            hour: h.hour,
-            probability: h.total > 0 ? Math.round((h.success / h.total) * 100) : Math.floor(Math.random() * 40) + 20,
-            status: (h.total > 0 ? (h.success/h.total >= 0.8 ? "critical" : h.success/h.total >= 0.6 ? "high" : h.success/h.total >= 0.4 ? "medium" : "low") : "low") as any
-          }));
+          .map((h) => {
+            const ratio = h.total > 0 ? h.success / h.total : 0;
+            return {
+              hour: h.hour,
+              probability: h.total > 0 ? Math.round(ratio * 100) : Math.floor(Math.random() * 40) + 20,
+              status: (ratio >= 0.8 ? "critical" : ratio >= 0.6 ? "high" : ratio >= 0.4 ? "medium" : "low") as "critical" | "high" | "medium" | "low"
+            };
+          });
       } catch (error) {
         captureException(error, "useHourlySuccessProbability");
         throw error;
