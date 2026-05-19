@@ -101,8 +101,8 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
 
   const periodLabel = period === "week" ? "ESTA SEMANA" : period === "month" ? "ESTE MÊS" : "ESTE TRIMESTRE";
 
-  const formatCurrencyFull = (value: any) =>
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  const formatCurrencyFull = (value: number | string) =>
+    `R$ ${Number(value).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const totalRevenue = closers?.reduce((sum, c) => sum + c.revenue, 0) || 0;
 
@@ -217,7 +217,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                 <LabelList 
                   dataKey="revenue" 
                   position="right" 
-                  formatter={(value: any) => formatCurrencyFull(Number(value))}
+                  formatter={(value: number | string) => formatCurrencyFull(Number(value))}
                   style={{ 
                     fill: "rgba(255,255,255,0.8)", 
                     fontSize: 9,
