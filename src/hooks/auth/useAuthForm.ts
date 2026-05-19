@@ -11,8 +11,6 @@ const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
 
 export function useAuthForm() {
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [name, setName] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -21,7 +19,7 @@ export function useAuthForm() {
   const [resetEmail, setResetEmail] = useState("");
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
@@ -36,13 +34,13 @@ export function useAuthForm() {
     if (lockoutStatus.isLocked && lockoutStatus.remainingSeconds > 0) {
       setCountdown(lockoutStatus.remainingSeconds);
       const i = setInterval(() => {
-        setCountdown((p) => { 
-          if (p <= 1) { 
-            clearInterval(i); 
-            if (loginEmail) checkLoginAttempts(loginEmail); 
-            return 0; 
-          } 
-          return p - 1; 
+        setCountdown((p) => {
+          if (p <= 1) {
+            clearInterval(i);
+            if (loginEmail) checkLoginAttempts(loginEmail);
+            return 0;
+          }
+          return p - 1;
         });
       }, 1000);
       return () => clearInterval(i);
@@ -51,51 +49,34 @@ export function useAuthForm() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { 
-      emailSchema.parse(loginEmail); 
-      passwordSchema.parse(loginPassword); 
-      if (authMode === 'signup' && !name) {
-        toast.error("Por favor, insira seu nome.");
+    try {
+      emailSchema.parse(loginEmail);
+      passwordSchema.parse(loginPassword);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast.error(err.errors[0].message);
         return;
       }
     }
-    catch (err) { 
-      if (err instanceof z.ZodError) { 
-        toast.error(err.errors[0].message); 
-        return; 
-      } 
+
+    const { canAttempt } = await checkLoginAttempts(loginEmail);
+    if (!canAttempt) {
+      toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`);
+      return;
     }
-    
-    if (authMode === 'login') {
-      const { canAttempt } = await checkLoginAttempts(loginEmail);
-      if (!canAttempt) { 
-        toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`); 
-        return; 
-      }
-      setIsLoading(true);
-      const { error } = await signIn(loginEmail, loginPassword);
-      setIsLoading(false);
-      if (error) {
-        await recordLoginAttempt(loginEmail, false, error.message);
-        if (error.message.includes("Invalid login credentials")) {
-          const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
-          toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
-        } else toast.error(error.message);
-      } else { 
-        await recordLoginAttempt(loginEmail, true); 
-        toast.success("Bem-vindo de volta, campeão! 🏆"); 
-        navigate("/"); 
-      }
+    setIsLoading(true);
+    const { error } = await signIn(loginEmail, loginPassword);
+    setIsLoading(false);
+    if (error) {
+      await recordLoginAttempt(loginEmail, false, error.message);
+      if (error.message.includes("Invalid login credentials")) {
+        const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
+        toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
+      } else toast.error(error.message);
     } else {
-      setIsLoading(true);
-      const { error } = await signUp(loginEmail, loginPassword, name);
-      setIsLoading(false);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Conta criada com sucesso! 🚀");
-        setAuthMode('login');
-      }
+      await recordLoginAttempt(loginEmail, true);
+      toast.success("Bem-vindo de volta, campeão! 🏆");
+      navigate("/");
     }
   };
 
@@ -111,21 +92,19 @@ export function useAuthForm() {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
-    try { 
-      const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin }); 
-      if (error) toast.error("Erro Google."); 
+    try {
+      const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      if (error) toast.error("Erro Google.");
     }
-    catch { 
-      toast.error("Erro Google."); 
+    catch {
+      toast.error("Erro Google.");
     }
-    finally { 
-      setIsGoogleLoading(false); 
+    finally {
+      setIsGoogleLoading(false);
     }
   };
 
   return {
-    authMode, setAuthMode,
-    name, setName,
     showPwd, setShowPwd,
     isLoading,
     isGoogleLoading,

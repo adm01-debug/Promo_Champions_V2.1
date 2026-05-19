@@ -1,16 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Crown, Zap, Sparkles, Loader2, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Crown, Zap, Sparkles, Loader2, Eye, EyeOff, ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface AuthFormCardProps {
-  authMode: 'login' | 'signup';
-  setAuthMode: (mode: 'login' | 'signup') => void;
-  name: string;
-  setName: (v: string) => void;
   showPwd: boolean;
   setShowPwd: (v: boolean) => void;
   isLoading: boolean;
@@ -34,7 +30,7 @@ interface AuthFormCardProps {
 
 export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCardProps) {
   const {
-    authMode, setAuthMode, name, setName, showPwd, setShowPwd, isLoading, isGoogleLoading,
+    showPwd, setShowPwd, isLoading, isGoogleLoading,
     loginEmail, setLoginEmail, loginPassword, setLoginPassword, resetEmail, setResetEmail,
     isResetLoading, resetDialogOpen, setResetDialogOpen, countdown, lockoutStatus,
     handleAuth, handlePasswordReset, handleGoogleSignIn, isLoginDisabled
@@ -67,20 +63,16 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
           <div className="mb-7">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
-              <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">{authMode === 'login' ? 'ACESSO AO CIRCUITO' : 'CADASTRO NO CIRCUITO'}</span>
+              <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">ACESSO AO CIRCUITO</span>
             </div>
-            <h2 className="text-3xl font-black">{authMode === 'login' ? 'Pronto para vencer?' : 'Comece sua jornada'}</h2>
-            <p className="text-sm text-white/50 mt-1">{authMode === 'login' ? 'Entre e suba no ranking agora.' : 'Crie seu perfil de elite.'}</p>
+            <h2 className="text-3xl font-black">Pronto para vencer?</h2>
+            <p className="text-sm text-white/50 mt-1">Entre e suba no ranking agora.</p>
           </div>
 
           <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
-            <Sparkles className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
+            <Lock className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
             <p className="text-[11px] text-white/60 leading-relaxed">
-              {authMode === 'login' ? (
-                <>Novo no circuito? <button onClick={() => setAuthMode('signup')} className="text-cyan-300 font-bold hover:underline">Crie sua conta</button></>
-              ) : (
-                <>Já tem uma conta? <button onClick={() => setAuthMode('login')} className="text-cyan-300 font-bold hover:underline">Faça login</button></>
-              )}
+              Acesso restrito à equipe Promo Brindes. Novos cadastros são criados exclusivamente por um administrador.
             </p>
           </div>
 
@@ -112,17 +104,6 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
           </div>
 
           <form onSubmit={handleAuth} className="space-y-4">
-            {authMode === 'signup' && (
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">Nome de Guerra</Label>
-                <Input
-                  id="name" type="text" placeholder="Seu nome" value={name} onChange={(e) => setName(e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
-                  required
-                />
-              </div>
-            )}
-
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">E-mail de Acesso</Label>
               <Input
@@ -182,7 +163,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    {authMode === 'login' ? 'ACESSAR CIRCUITO' : 'INICIAR JORNADA'}
+                    ACESSAR CIRCUITO
                     <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                   </>
                 )}

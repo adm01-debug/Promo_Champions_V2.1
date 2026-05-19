@@ -20,7 +20,6 @@ interface AuthContextType {
   isLoading: boolean;
   refreshSalesperson: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -91,50 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: { name }
-      }
-    });
-
-    if (authError) return { error: authError };
-
-    // Link or create salesperson record
-    if (authData.user) {
-      // First try to find existing salesperson by email
-      const { data: existingSp } = await supabase
-        .from("salespeople")
-        .select("*")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (existingSp) {
-        // Link existing salesperson to auth user
-        await supabase
-          .from("salespeople")
-          .update({ auth_user_id: authData.user.id })
-          .eq("id", existingSp.id);
-      } else {
-        // Create new salesperson
-        await supabase.from("salespeople").insert({
-          name,
-          email,
-          auth_user_id: authData.user.id,
-          is_active: true,
-          role: "hybrid"
-        });
-      }
-    }
-
-    return { error: null };
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
     setSalesperson(null);
@@ -151,7 +106,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading, 
     refreshSalesperson, 
     signIn, 
-    signUp, 
     signOut 
   }), [user, session, salesperson, isLoading]);
 
