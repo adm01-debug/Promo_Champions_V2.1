@@ -23,25 +23,19 @@ serve(async (req) => {
       user = data?.user ?? null;
     }
 
-    const body = await req.json();
+    const rawBody = await req.json();
     
-    // Input validation
-    const { context, salespersonId, action } = body;
-    if (!context || typeof context !== "object" || !context.page) {
-      return new Response(JSON.stringify({ error: "Campo 'context.page' é obrigatório" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Contract validation
+    const validation = validateWebhookPayload(WebhookContracts.aiCopilot, rawBody, "1.0.0");
+    if (!validation.success) {
+      console.error(`[Contract Violation] AI Copilot failed validation: ${validation.error}`);
+      return new Response(
+        JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
+        { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
-    if (action && !["page_suggestion", "smart_tip", "auto_fill", "quick_answer"].includes(action)) {
-      return new Response(JSON.stringify({ error: "Ação inválida" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    if (salespersonId && typeof salespersonId !== "string") {
-      return new Response(JSON.stringify({ error: "salespersonId deve ser string" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+
+    const { context, salespersonId, action, question } = validation.data;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
