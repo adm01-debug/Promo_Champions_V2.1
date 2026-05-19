@@ -366,9 +366,9 @@
     --race-building-edge: 220 10% 22%;
     --race-checkered-light: 0 0% 92%;
     --race-checkered-dark: 0 0% 6%;
-    --status-success: 152 85% 65%;
-    --status-warning: 38 100% 65%;
-    --status-info: 200 100% 65%;
+    --status-success: 152 85% 48%;
+    --status-warning: 38 100% 55%;
+    --status-info: 200 100% 55%;
   }
 
   .cyber-mode {
