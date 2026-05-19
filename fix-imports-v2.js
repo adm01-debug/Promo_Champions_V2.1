@@ -21,6 +21,8 @@ function scanHooks(dir) {
 }
 
 scanHooks(hooksDir);
+hookMap.set('useDealVelocity', 'hooks/deal-intelligence/useDealAnalyticsVelocity');
+
 
 // 2. Fix all imports in the project
 function fixAll(dir) {
