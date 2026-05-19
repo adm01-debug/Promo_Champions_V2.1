@@ -89,9 +89,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RouteTracker />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <OfflineIndicator />
-      </Suspense>
       
       <SkipLinks />
       <CyberArenaBackground />
