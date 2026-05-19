@@ -29,12 +29,19 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { workflow_id, trigger_payload = {} } = await req.json();
-    if (!workflow_id) {
-      return new Response(JSON.stringify({ error: "workflow_id required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const rawBody = await req.json();
+    
+    // Contract validation
+    const validation = validateWebhookPayload(WebhookContracts.workflowExecution, rawBody, "1.0.0");
+    if (!validation.success) {
+      console.error(`[Contract Violation] Workflow execution failed validation: ${validation.error}`);
+      return new Response(
+        JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
+        { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+
+    const { workflow_id, trigger_payload } = validation.data;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
