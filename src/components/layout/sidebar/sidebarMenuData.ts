@@ -88,7 +88,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Vitórias (Feed)", url: "/victory-feed", icon: Trophy },
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
       { title: "Ranking Global", url: "/ranking", icon: Trophy },
-      { title: "Arena de Duelos", url: "/arena", icon: Swords },
+      { title: "Circuito de Duelos", url: "/arena", icon: Swords },
     ],
   },
   {
