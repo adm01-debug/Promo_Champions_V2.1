@@ -155,7 +155,7 @@ export function useCancelScheduledSend() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("scheduled_sends").update({ status: "cancelled" }).eq("id", id);
+      const { error } = await supabase.from("scheduled_sends").update({ status: "cancelled" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
