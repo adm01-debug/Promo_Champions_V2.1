@@ -9,6 +9,8 @@ export interface ClientPrediction {
   averageIntervalDays: number;
   daysToNextPurchase: number;
   urgency: 'low' | 'medium' | 'high';
+  predictedLTVGrowth?: number;
+  riskOfChurn?: number;
 }
 
 export const useClientPredictions = () => {
@@ -62,13 +64,18 @@ export const useClientPredictions = () => {
         if (daysToNext <= 3) urgency = 'high';
         else if (daysToNext <= 7) urgency = 'medium';
 
+        const lastPurchaseDate = dates[dates.length - 1];
+        const daysSinceLast = differenceInDays(now, lastPurchaseDate);
+        const riskOfChurn = daysSinceLast > avgInterval * 1.5 ? Math.min(100, Math.round(((daysSinceLast - (avgInterval * 1.5)) / avgInterval) * 100)) : 0;
+
         predictions[clientId] = {
           clientId,
           nextPurchaseDate: nextDate,
-          confidence: Math.min(dates.length * 0.2, 0.95), // More purchases = more confidence
+          confidence: Math.min(dates.length * 0.2, 0.95),
           averageIntervalDays: Math.round(avgInterval),
           daysToNextPurchase: daysToNext,
-          urgency
+          urgency,
+          riskOfChurn
         };
       });
 
