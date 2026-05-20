@@ -7,9 +7,17 @@ export interface Client360Data {
   ordersCount: number;
   orders: any[];
   topProducts: { name: string; count: number; total: number }[];
+  spendingHistory: { date: string; amount: number }[];
+  categoryDistribution: { name: string; value: number }[];
+  priceSensitivity: 'high' | 'medium' | 'low';
+  preferredDayOfWeek: string;
+  preferredTimeOfDay: string;
   purchaseFrequency: number; // Dias médios entre compras
+  percentile: number; // Posição do cliente em relação à base (0-100)
+  nba: { title: string; description: string; script: string };
   predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
   churnRisk: number; // 0 a 100
+  engagementRatio: number; // Média de atividades por venda
 }
 
 export function useClient360(clientName: string | undefined) {
@@ -27,7 +35,26 @@ export function useClient360(clientName: string | undefined) {
 
       if (error) throw error;
 
-      const ltv = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
+      // Fetch activities to calculate engagement ratio
+      const { data: activities } = await supabase
+        .from("activities")
+        .select("id")
+        .eq("client_id", sales[0]?.client_id || ''); // This assumes we can get client_id from sales, or we might need another join.
+      
+      const engagementRatio = sales.length > 0 ? (activities?.length || 0) / sales.length : 0;
+
+      // Benchmark da base para Percentile
+      const { data: allSales } = await supabase.from("sales").select("client_name, amount");
+      const clientTotals = new Map<string, number>();
+      allSales?.forEach(s => {
+        clientTotals.set(s.client_name, (clientTotals.get(s.client_name) || 0) + Number(s.amount));
+      });
+      const sortedTotals = Array.from(clientTotals.values()).sort((a, b) => a - b);
+      const ltvValue = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
+      const rank = sortedTotals.filter(t => t < ltvValue).length;
+      const percentile = sortedTotals.length > 0 ? Math.round((rank / sortedTotals.length) * 100) : 0;
+
+      const ltv = ltvValue;
       const ordersCount = sales.length;
       const averageTicket = ordersCount > 0 ? ltv / ordersCount : 0;
 
@@ -47,10 +74,8 @@ export function useClient360(clientName: string | undefined) {
         const lastPurchaseDate = new Date(sales[0].created_at).getTime();
         const daysSinceLastPurchase = (new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);
         
-        // Previsão simples baseada na média
         predictedNextPurchaseDays = Math.max(0, Math.round(purchaseFrequency - daysSinceLastPurchase));
         
-        // Risco de Churn baseado na fuga da frequência média
         if (daysSinceLastPurchase > purchaseFrequency * 1.5) {
           churnRisk = Math.min(100, Math.round(((daysSinceLastPurchase - (purchaseFrequency * 1.5)) / purchaseFrequency) * 100));
         }
@@ -69,15 +94,78 @@ export function useClient360(clientName: string | undefined) {
         .map(([name, data]) => ({ name, ...data }))
         .sort((a, b) => b.total - a.total);
 
+      // Histórico de gastos para gráfico
+      const spendingHistory = sales
+        .map(s => ({
+          date: new Date(s.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+          amount: Number(s.amount || 0)
+        }))
+        .reverse();
+
+      const categoryDistribution = topProducts.slice(0, 5).map(p => ({
+        name: p.name.split(' ')[0],
+        value: p.total
+      }));
+
+      // Sensibilidade a Preço
+      const priceVariation = ordersCount > 1 
+        ? Math.sqrt(sales.reduce((acc, s) => acc + Math.pow(Number(s.amount) - averageTicket, 2), 0) / ordersCount) / averageTicket
+        : 0;
+      const priceSensitivity = priceVariation > 0.4 ? 'high' : priceVariation > 0.15 ? 'medium' : 'low';
+
+      // Preferências temporais
+      const daysLabels = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      const dayCounts = new Array(7).fill(0);
+      const hourCounts = new Array(24).fill(0);
+      
+      sales.forEach(s => {
+        const date = new Date(s.created_at);
+        dayCounts[date.getDay()]++;
+        hourCounts[date.getHours()]++;
+      });
+      
+      const preferredDayOfWeek = daysLabels[dayCounts.indexOf(Math.max(...dayCounts))];
+      const maxHour = hourCounts.indexOf(Math.max(...hourCounts));
+      const preferredTimeOfDay = maxHour < 12 ? 'Manhã' : maxHour < 18 ? 'Tarde' : 'Noite';
+
+      // Next Best Action Generator
+      let nba = {
+        title: "Upsell Premium",
+        description: "Oferecer upgrade para linha Gold baseada no ticket médio.",
+        script: `Olá ${clientName}, notamos seu interesse em ${topProducts[0]?.name || 'nossos produtos'}. Temos uma condição exclusiva para o upgrade da sua conta!`
+      };
+
+      if (churnRisk > 50) {
+        nba = {
+          title: "Resgate Crítico",
+          description: "Enviar cupom de 20% OFF para reativação imediata.",
+          script: `Oi ${clientName}, sentimos sua falta! Preparamos um cupom de 20% (VOLTA20) válido por 48h para seu próximo pedido.`
+        };
+      } else if (ordersCount < 3) {
+        nba = {
+          title: "Boas-vindas Revisitada",
+          description: "Garantir a segunda compra com amostra grátis.",
+          script: `Olá ${clientName}, tudo bem? Queremos te presentear com um item extra no seu próximo pedido para celebrar nossa parceria!`
+        };
+      }
+
       return {
         ltv,
         averageTicket,
         ordersCount,
         orders: sales,
         topProducts,
+        spendingHistory,
+        categoryDistribution,
+        priceSensitivity,
+        preferredDayOfWeek,
+        preferredTimeOfDay,
         purchaseFrequency,
+        percentile,
+        nba,
         predictedNextPurchaseDays,
-        churnRisk
+        churnRisk,
+        engagementRatio
       };
     },
   });
