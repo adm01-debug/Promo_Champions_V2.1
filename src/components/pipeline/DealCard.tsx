@@ -88,7 +88,9 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
       {...listeners}
       className={cn(
         "touch-none cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50"
+        isDragging && "opacity-50",
+        // Etapa 3: "Hot Deal" Pulse Animation
+        leadScore?.category === 'hot' && "animate-[pulse_3s_ease-in-out_infinite] ring-1 ring-status-error/50"
       )}
     >
       <Card className={cn(
@@ -176,12 +178,22 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
         </div>
 
-        {/* Value */}
-        <div className="flex items-center gap-1.5 mb-2">
-          <DollarSign className="h-3.5 w-3.5 text-status-success" />
-          <span className="font-display font-bold text-sm gradient-text">
-            {formatCurrency(deal.amount)}
-          </span>
+        {/* Value & Time in Stage Indicator (Etapa 1) */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <DollarSign className="h-3.5 w-3.5 text-status-success" />
+            <span className="font-display font-bold text-sm gradient-text">
+              {formatCurrency(deal.amount)}
+            </span>
+          </div>
+          <div className={cn(
+            "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
+            (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
+              ? "bg-red-500/10 text-red-500 border-red-500/20" 
+              : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+          )}>
+            {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+          </div>
         </div>
 
         {/* Meta info */}
