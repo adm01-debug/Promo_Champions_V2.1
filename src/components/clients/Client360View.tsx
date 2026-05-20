@@ -226,7 +226,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-lg uppercase font-black tracking-tighter">
-                <History className="h-5 w-5 text-primary" />
+                <HistoryIcon className="h-5 w-5 text-primary" />
                 Livro de Transações Detalhado
               </CardTitle>
               <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">Gestão granular do histórico comercial</CardDescription>
