@@ -39,14 +39,14 @@ export function getLevelFromXP(totalXP: number): LevelInfo {
       const xpInLevel = totalXP - level.minXP;
       const levelRange = level.maxXP - level.minXP;
       const progressPercent = Math.min((xpInLevel / levelRange) * 100, 100);
-      
+
       return {
         ...level,
         progressPercent,
       };
     }
   }
-  
+
   return {
     ...LEVELS[0],
     progressPercent: 0,
@@ -55,7 +55,8 @@ export function getLevelFromXP(totalXP: number): LevelInfo {
 
 export function getXPForNextLevel(totalXP: number): number {
   const currentLevel = getLevelFromXP(totalXP);
-  return currentLevel.maxXP - totalXP;
+  if (!Number.isFinite(currentLevel.maxXP)) return 0;
+  return Math.max(0, currentLevel.maxXP - totalXP);
 }
 
 export function formatXP(xp: number): string {

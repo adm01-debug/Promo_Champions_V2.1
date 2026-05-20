@@ -17,20 +17,26 @@ export function useCalmMode() {
 
   useEffect(() => {
     const handler = () => setCalm(read());
-    window.addEventListener(EVENT, handler);
-    window.addEventListener('storage', (e) => {
+    const storageHandler = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) handler();
-    });
-    return () => window.removeEventListener(EVENT, handler);
+    };
+    window.addEventListener(EVENT, handler);
+    window.addEventListener('storage', storageHandler);
+    return () => {
+      window.removeEventListener(EVENT, handler);
+      window.removeEventListener('storage', storageHandler);
+    };
   }, []);
 
   const toggle = useCallback(() => {
-    setCalm((prev) => {
+    setCalm(prev => {
       const next = !prev;
       try {
         window.localStorage.setItem(STORAGE_KEY, next ? '1' : '0');
         window.dispatchEvent(new CustomEvent(EVENT));
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
       return next;
     });
   }, []);
@@ -40,7 +46,9 @@ export function useCalmMode() {
     try {
       window.localStorage.setItem(STORAGE_KEY, v ? '1' : '0');
       window.dispatchEvent(new CustomEvent(EVENT));
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }, []);
 
   return { calm, toggle, setCalmMode };

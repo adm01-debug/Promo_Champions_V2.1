@@ -6,11 +6,13 @@ import { useState, useEffect, useRef } from 'react';
  */
 export function useCountUp(end: number, duration = 1200, decimals = 0): number {
   const [value, setValue] = useState(0);
-  const prevEnd = useRef(0);
+  // Mirrors the last rendered value so a new animation resumes from where the
+  // previous one stopped, even if `end` changes mid-flight.
+  const currentValue = useRef(0);
   const rafId = useRef<number>();
 
   useEffect(() => {
-    const start = prevEnd.current;
+    const start = currentValue.current;
     const diff = end - start;
     if (diff === 0) return;
 
@@ -22,12 +24,11 @@ export function useCountUp(end: number, duration = 1200, decimals = 0): number {
       // easeOutExpo
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const current = start + diff * eased;
+      currentValue.current = current;
       setValue(Number(current.toFixed(decimals)));
 
       if (progress < 1) {
         rafId.current = requestAnimationFrame(tick);
-      } else {
-        prevEnd.current = end;
       }
     };
 
