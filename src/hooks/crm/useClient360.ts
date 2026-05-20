@@ -7,17 +7,19 @@ export interface Client360Data {
   ordersCount: number;
   orders: any[];
   topProducts: { name: string; count: number; total: number }[];
-  spendingHistory: { date: string; amount: number }[];
+  spendingHistory: { date: string; amount: number; cumulativeLtv: number }[];
   categoryDistribution: { name: string; value: number }[];
   priceSensitivity: 'high' | 'medium' | 'low';
   preferredDayOfWeek: string;
   preferredTimeOfDay: string;
-  purchaseFrequency: number; // Dias médios entre compras
-  percentile: number; // Posição do cliente em relação à base (0-100)
+  purchaseFrequency: number;
+  percentile: number;
+  segmentAverageLtv: number;
+  segmentAverageTicket: number;
   nba: { title: string; description: string; script: string };
-  predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
-  churnRisk: number; // 0 a 100
-  engagementRatio: number; // Média de atividades por venda
+  predictedNextPurchaseDays: number | null;
+  churnRisk: number;
+  engagementRatio: number;
 }
 
 export function useClient360(clientName: string | undefined) {
@@ -29,34 +31,48 @@ export function useClient360(clientName: string | undefined) {
 
       const { data: sales, error } = await supabase
         .from("sales")
-        .select("*")
+        .select(`
+          *,
+          salesperson:salespeople(name),
+          closer:salespeople!sales_closer_id_fkey(name)
+        `)
         .eq("client_name", clientName)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
 
-      // Fetch activities to calculate engagement ratio
-      const { data: activities } = await supabase
-        .from("activities")
-        .select("id")
-        .eq("client_id", sales[0]?.client_id || ''); // This assumes we can get client_id from sales, or we might need another join.
-      
-      const engagementRatio = sales.length > 0 ? (activities?.length || 0) / sales.length : 0;
-
-      // Benchmark da base para Percentile
+      // Benchmark da base
       const { data: allSales } = await supabase.from("sales").select("client_name, amount");
       const clientTotals = new Map<string, number>();
+      let totalGlobalAmount = 0;
+      let totalGlobalOrders = 0;
+      
       allSales?.forEach(s => {
         clientTotals.set(s.client_name, (clientTotals.get(s.client_name) || 0) + Number(s.amount));
+        totalGlobalAmount += Number(s.amount);
+        totalGlobalOrders++;
       });
+      
       const sortedTotals = Array.from(clientTotals.values()).sort((a, b) => a - b);
       const ltvValue = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
       const rank = sortedTotals.filter(t => t < ltvValue).length;
       const percentile = sortedTotals.length > 0 ? Math.round((rank / sortedTotals.length) * 100) : 0;
+      
+      const segmentAverageLtv = sortedTotals.length > 0 ? totalGlobalAmount / clientTotals.size : 0;
+      const segmentAverageTicket = totalGlobalOrders > 0 ? totalGlobalAmount / totalGlobalOrders : 0;
 
       const ltv = ltvValue;
       const ordersCount = sales.length;
       const averageTicket = ordersCount > 0 ? ltv / ordersCount : 0;
+
+      // Fetch activities to calculate engagement ratio
+      const firstSale = sales[sales.length - 1];
+      const { data: activities } = await supabase
+        .from("activities")
+        .select("id")
+        .eq("client_id", firstSale?.client_id || '');
+      
+      const engagementRatio = ordersCount > 0 ? (activities?.length || 0) / ordersCount : 0;
 
       // Cálculo de Frequência e Previsão
       let purchaseFrequency = 0;
@@ -94,13 +110,18 @@ export function useClient360(clientName: string | undefined) {
         .map(([name, data]) => ({ name, ...data }))
         .sort((a, b) => b.total - a.total);
 
-      // Histórico de gastos para gráfico
-      const spendingHistory = sales
-        .map(s => ({
-          date: new Date(s.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
-          amount: Number(s.amount || 0)
-        }))
-        .reverse();
+      // Histórico de gastos e evolução LTV
+      let cumulative = 0;
+      const spendingHistory = [...sales]
+        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        .map(s => {
+          cumulative += Number(s.amount || 0);
+          return {
+            date: new Date(s.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+            amount: Number(s.amount || 0),
+            cumulativeLtv: cumulative
+          };
+        });
 
       const categoryDistribution = topProducts.slice(0, 5).map(p => ({
         name: p.name.split(' ')[0],
@@ -162,6 +183,8 @@ export function useClient360(clientName: string | undefined) {
         preferredTimeOfDay,
         purchaseFrequency,
         percentile,
+        segmentAverageLtv,
+        segmentAverageTicket,
         nba,
         predictedNextPurchaseDays,
         churnRisk,
