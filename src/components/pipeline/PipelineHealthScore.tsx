@@ -29,7 +29,9 @@ export const PipelineHealthScore = () => {
         ...agg,
         coverage,
         weightedCoverage,
-        health: coverage >= 3 ? "Excellent" : coverage >= 2 ? "Healthy" : "At Risk"
+        health: coverage >= 3 ? "Excellent" : coverage >= 2 ? "Healthy" : "At Risk",
+        commit: agg.total_pipeline * 0.4, // Simplified logic for commit
+        upside: agg.total_pipeline * 0.7, // Simplified logic for upside
       };
     }
   });
@@ -90,6 +92,17 @@ export const PipelineHealthScore = () => {
           <p className="text-xl font-black tracking-tighter text-foreground">
             R$ {metrics?.weighted_forecast.toLocaleString("pt-BR")}
           </p>
+        </div>
+
+        <div className="hidden lg:grid grid-cols-2 gap-4 border-l border-border/20 pl-6">
+          <div className="space-y-0.5">
+            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Commit (Pessimista)</span>
+            <p className="text-sm font-black text-emerald-500/80">R$ {metrics?.commit.toLocaleString("pt-BR")}</p>
+          </div>
+          <div className="space-y-0.5">
+            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Upside (Otimista)</span>
+            <p className="text-sm font-black text-primary/80">R$ {metrics?.upside.toLocaleString("pt-BR")}</p>
+          </div>
         </div>
       </CardContent>
     </Card>
