@@ -33,16 +33,35 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const { data, isLoading } = useClient360(clientName);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  const categories = useMemo(() => {
+    if (!data?.orders) return [];
+    const cats = new Set<string>();
+    data.orders.forEach(o => {
+      if (o.product_name) {
+        const cat = o.product_name.split(' ')[0];
+        cats.add(cat);
+      }
+    });
+    return Array.from(cats);
+  }, [data?.orders]);
 
   const filteredOrders = useMemo(() => {
     if (!data?.orders) return [];
     return data.orders.filter(order => {
-      const matchesSearch = (order.product_name || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const productName = (order.product_name || "").toLowerCase();
+      const matchesSearch = productName.includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesCategory = categoryFilter === "all" || productName.startsWith(categoryFilter.toLowerCase());
+      const amount = Number(order.amount || 0);
+      const matchesValue = amount >= valueRange[0] && amount <= valueRange[1];
+      
+      return matchesSearch && matchesStatus && matchesCategory && matchesValue;
     });
-  }, [data?.orders, searchTerm, statusFilter]);
+  }, [data?.orders, searchTerm, statusFilter, categoryFilter, valueRange]);
 
   if (isLoading) {
     return (
