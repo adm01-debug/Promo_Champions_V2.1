@@ -37,7 +37,7 @@ export const ACTIVITY_LABELS: Record<string, string> = {
   calls: 'Ligações',
   emails: 'E-mails',
   meetings: 'Reuniões',
-  linkedin: 'LinkedIn',
+  linkedin: 'Linkedin',
   whatsapp: 'WhatsApp',
 };
 

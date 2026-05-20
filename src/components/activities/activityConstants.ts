@@ -1,12 +1,12 @@
 import { ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
-import { Phone, Mail, Users, LinkedIn, MessageCircle, MoreHorizontal, FileText } from "lucide-react";
+import { Phone, Mail, Users, Linkedin, MessageCircle, MoreHorizontal, FileText } from "lucide-react";
 
 export const activityIcons: Record<ActivityType, typeof Phone> = {
-  call: Phone, email: Mail, meeting: Users, linkedin: LinkedIn, whatsapp: MessageCircle, note: FileText, other: MoreHorizontal,
+  call: Phone, email: Mail, meeting: Users, linkedin: Linkedin, whatsapp: MessageCircle, note: FileText, other: MoreHorizontal,
 };
 
 export const activityLabels: Record<ActivityType, string> = {
-  call: "Ligação", email: "E-mail", meeting: "Reunião", linkedin: "LinkedIn", whatsapp: "WhatsApp", note: "Nota", other: "Outro",
+  call: "Ligação", email: "E-mail", meeting: "Reunião", linkedin: "Linkedin", whatsapp: "WhatsApp", note: "Nota", other: "Outro",
 };
 
 export const outcomeLabels: Record<ActivityOutcome, { label: string; color: string }> = {
@@ -25,7 +25,7 @@ export const outcomeLabels: Record<ActivityOutcome, { label: string; color: stri
 
 export const activityTypeOptions = [
   { label: "Ligação", value: "call" }, { label: "E-mail", value: "email" },
-  { label: "Reunião", value: "meeting" }, { label: "LinkedIn", value: "linkedin" },
+  { label: "Reunião", value: "meeting" }, { label: "Linkedin", value: "linkedin" },
   { label: "WhatsApp", value: "whatsapp" }, { label: "Nota", value: "note" }, { label: "Outro", value: "other" },
 ];
 

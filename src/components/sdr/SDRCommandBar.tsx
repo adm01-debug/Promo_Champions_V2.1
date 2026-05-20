@@ -4,7 +4,7 @@ import {
   Plus, 
   Phone, 
   Mail, 
-  LinkedIn, 
+  Linkedin, 
   MessageSquare, 
   Sparkles,
   Zap,
@@ -39,7 +39,7 @@ export const SDRCommandBar = () => {
         </Button>
         
         <Button variant="outline" size="sm" className="h-8 gap-2 border-primary/20 hover:bg-primary/5 text-[10px] font-bold uppercase tracking-wider">
-          <LinkedIn className="h-3.5 w-3.5 text-[#0077b5]" />
+          <Linkedin className="h-3.5 w-3.5 text-[#0077b5]" />
           Log Social
         </Button>
       </div>

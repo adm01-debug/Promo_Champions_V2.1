@@ -19,7 +19,7 @@ import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton"
 import {
   MessageSquare,
   Mail,
-  LinkedIn,
+  Linkedin,
   Phone,
   Smartphone,
   Search,
@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 const CHANNEL_CONFIG: Record<Channel, { label: string; icon: typeof Mail; color: string }> = {
   whatsapp: { label: "WhatsApp", icon: MessageSquare, color: "text-success" },
   email: { label: "Email", icon: Mail, color: "text-primary" },
-  linkedin: { label: "LinkedIn", icon: LinkedIn, color: "text-info" },
+  linkedin: { label: "Linkedin", icon: Linkedin, color: "text-info" },
   sms: { label: "SMS", icon: Smartphone, color: "text-status-warning" },
   phone: { label: "Telefone", icon: Phone, color: "text-status-info" },
 };

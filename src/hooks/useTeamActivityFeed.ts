@@ -40,7 +40,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
   email: "Email",
   meeting: "Reunião",
   whatsapp: "WhatsApp",
-  linkedin: "LinkedIn",
+  linkedin: "Linkedin",
   visit: "Visita",
 };
 

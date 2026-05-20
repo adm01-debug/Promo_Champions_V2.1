@@ -1,4 +1,4 @@
-import { Clock, Mail, MessageSquare, LinkedIn, X, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Clock, Mail, MessageSquare, Linkedin, X, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 const channelIcon = (c: string) => {
   if (c === "email") return <Mail className="h-3 w-3" />;
   if (c === "whatsapp") return <MessageSquare className="h-3 w-3" />;
-  if (c === "linkedin") return <LinkedIn className="h-3 w-3" />;
+  if (c === "linkedin") return <Linkedin className="h-3 w-3" />;
   return <Clock className="h-3 w-3" />;
 };
 

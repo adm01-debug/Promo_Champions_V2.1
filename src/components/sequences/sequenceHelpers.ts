@@ -1,10 +1,10 @@
-import { Mail, MessageCircle, Phone, LinkedIn, ListChecks } from "lucide-react";
+import { Mail, MessageCircle, Phone, Linkedin, ListChecks } from "lucide-react";
 
 export const CHANNEL_META = {
   email: { label: "E-mail", icon: Mail, color: "text-blue-500" },
   whatsapp: { label: "WhatsApp", icon: MessageCircle, color: "text-green-500" },
   call: { label: "Ligação", icon: Phone, color: "text-orange-500" },
-  linkedin: { label: "LinkedIn", icon: LinkedIn, color: "text-sky-500" },
+  linkedin: { label: "Linkedin", icon: Linkedin, color: "text-sky-500" },
   task: { label: "Tarefa", icon: ListChecks, color: "text-purple-500" },
 } as const;
 

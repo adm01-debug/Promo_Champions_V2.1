@@ -18,7 +18,7 @@ export interface BISDRData {
   totalCalls: number;
   totalEmails: number;
   totalMeetings: number;
-  totalLinkedIn: number;
+  totalLinkedin: number;
   totalWhatsApp: number;
   pipelineValue: number;
   pipelineCount: number;

@@ -77,7 +77,7 @@ const RelatoriosExecutivos = () => {
     if (!activities) return [];
     const types: Record<string, number> = {};
     activities.forEach(a => { types[a.activity_type] = (types[a.activity_type] || 0) + 1; });
-    const labels: Record<string, string> = { call: 'Ligações', email: 'E-mails', meeting: 'Reuniões', linkedin: 'LinkedIn', whatsapp: 'WhatsApp', note: 'Notas' };
+    const labels: Record<string, string> = { call: 'Ligações', email: 'E-mails', meeting: 'Reuniões', linkedin: 'Linkedin', whatsapp: 'WhatsApp', note: 'Notas' };
     return Object.entries(types).map(([type, count]) => ({ name: labels[type] || type, value: count }));
   }, [activities]);
 

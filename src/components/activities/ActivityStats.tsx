@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useActivityStats, useActivityGoals } from "@/hooks/activities/useActivities";
-import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity, LinkedIn, MessageCircle, FileText, Target } from "lucide-react";
+import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity, Linkedin, MessageCircle, FileText, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -50,9 +50,9 @@ export function ActivityStats() {
       goal: goals?.meetings_goal
     },
     { 
-      label: "LinkedIn", 
+      label: "Linkedin", 
       value: stats?.linkedinToday ?? 0, 
-      icon: LinkedIn,
+      icon: Linkedin,
       color: "text-status-info",
       goal: goals?.linkedin_goal
     },

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Phone, Mail, Calendar, MessageCircle, LinkedIn, Settings, PartyPopper, Flame, Zap, Target, Trophy, TrendingUp } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, Linkedin, Settings, PartyPopper, Flame, Zap, Target, Trophy, TrendingUp } from "lucide-react";
 import { ActivityGoalProgress } from "@/hooks/activities/useActivityGoals";
 import { useCelebration } from "@/hooks/useCelebration";
 import { useSalespersonStreak } from "@/hooks/gamification/useAchievements";
@@ -111,7 +111,7 @@ const ActivityGoalCardComponent = ({ data, onEdit }: ActivityGoalCardProps) => {
     { icon: Phone, label: "Calls", current: data.current.calls, goal: data.goals.calls, progress: data.progress.calls, color: "text-status-success", weight: 0.3 },
     { icon: Mail, label: "Emails", current: data.current.emails, goal: data.goals.emails, progress: data.progress.emails, color: "text-status-info", weight: 0.1 },
     { icon: Calendar, label: "Reuniões", current: data.current.meetings, goal: data.goals.meetings, progress: data.progress.meetings, color: "text-status-purple", weight: 0.5 },
-    { icon: LinkedIn, label: "LinkedIn", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary", weight: 0.05 },
+    { icon: Linkedin, label: "Linkedin", current: data.current.linkedin, goal: data.goals.linkedin, progress: data.progress.linkedin, color: "text-primary", weight: 0.05 },
     { icon: MessageCircle, label: "WhatsApp", current: data.current.whatsapp, goal: data.goals.whatsapp, progress: data.progress.whatsapp, color: "text-accent", weight: 0.05 },
   ];
 

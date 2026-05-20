@@ -120,7 +120,7 @@ export function StakeholderFormDialog({ open, onOpenChange, saleId, ownerId, ini
             <div><Label htmlFor="sh-email">E-mail</Label><Input id="sh-email" type="email" value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} /></div>
             <div><Label htmlFor="sh-phone">Telefone</Label><Input id="sh-phone" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} /></div>
           </div>
-          <div><Label htmlFor="sh-linkedin">LinkedIn</Label><Input id="sh-linkedin" value={draft.linkedin_url} onChange={(e) => setDraft({ ...draft, linkedin_url: e.target.value })} /></div>
+          <div><Label htmlFor="sh-linkedin">Linkedin</Label><Input id="sh-linkedin" value={draft.linkedin_url} onChange={(e) => setDraft({ ...draft, linkedin_url: e.target.value })} /></div>
           <div><Label htmlFor="sh-notes">Notas</Label><Textarea id="sh-notes" rows={2} value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></div>
         </div>
         <DialogFooter>

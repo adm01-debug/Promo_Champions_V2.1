@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Phone, Mail, Calendar, LinkedIn, MessageCircle, MoreHorizontal, ArrowRight,
+  Phone, Mail, Calendar, Linkedin, MessageCircle, MoreHorizontal, ArrowRight,
   CheckCircle2, PhoneCall, Users, Reply, FileText, Trophy, XCircle, Bot, Filter, Activity,
 } from "lucide-react";
 import type { TimelineEventType } from "@/hooks/useDealTimeline";
@@ -9,14 +9,14 @@ export const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
   call: <Phone className="h-3.5 w-3.5" />,
   email: <Mail className="h-3.5 w-3.5" />,
   meeting: <Calendar className="h-3.5 w-3.5" />,
-  linkedin: <LinkedIn className="h-3.5 w-3.5" />,
+  linkedin: <Linkedin className="h-3.5 w-3.5" />,
   whatsapp: <MessageCircle className="h-3.5 w-3.5" />,
   other: <MoreHorizontal className="h-3.5 w-3.5" />,
 };
 
 export const ACTIVITY_LABELS: Record<string, string> = {
   call: "Ligação", email: "Email", meeting: "Reunião",
-  linkedin: "LinkedIn", whatsapp: "WhatsApp", other: "Outro",
+  linkedin: "Linkedin", whatsapp: "WhatsApp", other: "Outro",
 };
 
 export const OUTCOME_LABELS: Record<string, string> = {
@@ -42,14 +42,14 @@ export const TASK_TYPE_ICONS: Record<string, React.ReactNode> = {
   follow_up: <Reply className="h-3.5 w-3.5" />, 
   email: <Mail className="h-3.5 w-3.5" />,
   proposal: <FileText className="h-3.5 w-3.5" />, 
-  linkedin: <LinkedIn className="h-3.5 w-3.5" />,
+  linkedin: <Linkedin className="h-3.5 w-3.5" />,
   whatsapp: <MessageCircle className="h-3.5 w-3.5" />,
   other: <CheckCircle2 className="h-3.5 w-3.5" />,
 };
 
 export const TASK_TYPE_LABELS: Record<string, string> = {
   call: "Ligação", meeting: "Reunião", follow_up: "Follow-up",
-  email: "Email", proposal: "Proposta", linkedin: "LinkedIn", whatsapp: "WhatsApp", other: "Outro",
+  email: "Email", proposal: "Proposta", linkedin: "Linkedin", whatsapp: "WhatsApp", other: "Outro",
 };
 
 export const FILTER_TABS: { value: TimelineEventType | "all"; label: string; icon: React.ReactNode }[] = [
