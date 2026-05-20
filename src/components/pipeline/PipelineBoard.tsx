@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ import { usePipelineDeals, useMoveDeal, PIPELINE_STAGES, Deal, PipelineStageId }
 import { usePipelines, usePipelineStages, usePipelineDealsByPipeline, useMoveDealMultiPipeline, PipelineDeal } from "@/hooks/useMultiplePipelines";
 import { PipelineColumn } from "./PipelineColumn";
 import { PipelineSelector } from "./PipelineSelector";
+import { PipelineHealthScore } from "./PipelineHealthScore";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw, Zap, TrendingUp } from "lucide-react";
@@ -251,6 +253,9 @@ export const PipelineBoard = () => {
 
   return (
     <div className="space-y-4">
+      {/* Etapa 1: Global Health Score */}
+      <PipelineHealthScore />
+
       {/* Etapa 9: Advanced Filter Bar (Foco Cirúrgico) */}
       <div className="flex flex-wrap items-center gap-2 p-2 bg-card/40 backdrop-blur-md border border-border/20 rounded-2xl shadow-inner">
         <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
@@ -263,19 +268,32 @@ export const PipelineBoard = () => {
         </Button>
         
         {/* Etapa 6: Executive Simulator Slider */}
-        <div className="flex items-center gap-3 bg-muted/30 px-3 py-1 rounded-xl border border-border/10">
-          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Simular Ticket:</span>
-          <input 
-            type="range" 
-            min="-50" 
-            max="100" 
-            value={ticketSimulation} 
-            onChange={(e) => setTicketSimulation(parseInt(e.target.value))}
-            className="w-24 h-1 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary"
-          />
-          <span className={cn("text-[10px] font-black", ticketSimulation >= 0 ? "text-emerald-500" : "text-red-500")}>
-            {ticketSimulation > 0 ? "+" : ""}{ticketSimulation}%
-          </span>
+        <div className="flex items-center gap-3 bg-card/60 px-4 py-2 rounded-2xl border border-primary/20 shadow-lg transition-all hover:border-primary/40">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Simular Ticket Médio</span>
+            <div className="flex items-center gap-3">
+              <input 
+                type="range" 
+                min="-50" 
+                max="100" 
+                value={ticketSimulation} 
+                onChange={(e) => setTicketSimulation(parseInt(e.target.value))}
+                className="w-32 h-1 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary"
+              />
+              <span className={cn("text-xs font-black w-8", ticketSimulation >= 0 ? "text-emerald-500" : "text-red-500")}>
+                {ticketSimulation > 0 ? "+" : ""}{ticketSimulation}%
+              </span>
+            </div>
+          </div>
+          
+          <div className="h-8 w-px bg-border/20 mx-2" />
+          
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary">Ganho Potencial</span>
+            <span className="text-xs font-black text-foreground">
+              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(weightedTotalValue * (ticketSimulation / 100))}
+            </span>
+          </div>
         </div>
         <div className="flex-1" />
         {/* Pipeline Selector */}
@@ -294,22 +312,29 @@ export const PipelineBoard = () => {
         
         <div className="flex gap-12 relative z-10">
           <div className="flex flex-col">
-            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Comandos Ativos</span>
+            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Pipeline Health (P2)</span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-display font-black tracking-tighter">{totalDeals}</span>
-              <span className="text-[10px] font-bold text-emerald-500 uppercase">Implementados</span>
+              <span className="text-3xl font-display font-black tracking-tighter">92.4%</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
+                <TrendingUp className="h-3 w-3" /> Eficiência
+              </span>
             </div>
           </div>
           
-          <div className="hidden sm:flex items-center">
+          <div className="hidden lg:flex items-center">
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Previsão Ponderada (P2)</span>
+              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Time em Win-Streak</span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-display font-black tracking-tighter gradient-text">
-                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(weightedTotalValue)}
-                </span>
-                <span className="text-[10px] font-bold text-primary uppercase">Forecast</span>
+                <div className="flex -space-x-2 mr-2">
+                  {[1, 2, 3].map(i => (
+                    <Avatar key={i} className="h-6 w-6 border-2 border-background ring-2 ring-primary/20">
+                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} />
+                    </Avatar>
+                  ))}
+                </div>
+                <span className="text-xl font-display font-black tracking-tighter text-primary">+12 Deals</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">/ Semana</span>
               </div>
             </div>
           </div>

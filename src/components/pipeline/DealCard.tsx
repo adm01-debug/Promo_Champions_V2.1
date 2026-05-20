@@ -7,9 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
+import { DealScoreIndicator } from "./DealScoreIndicator";
+import { SLACountdown } from "./SLACountdown";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { useDealPlaybookProgress, usePlaybooksByStage } from "@/hooks/usePlaybooks";
 import { DealPlaybookModal } from "./DealPlaybookModal";
@@ -128,9 +130,30 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           getHealthGradient(healthScore)
         )} />
         
-        {/* Etapa 9: Presence Mockup */}
-        <div className="absolute top-1 right-8 flex -space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-          <div className="w-4 h-4 rounded-full border border-background bg-primary ring-1 ring-primary/30 animate-pulse" />
+        {/* Etapa 9: Advanced Presence System */}
+        <div className="absolute top-1 right-8 flex -space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative">
+                <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-primary/20">
+                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
+                  <AvatarFallback className="text-[6px]">FX</AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Felix está editando agora...</TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all">
+                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" />
+                <AvatarFallback className="text-[6px]">AN</AvatarFallback>
+              </Avatar>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Anna viu há 2 min</TooltipContent>
+          </Tooltip>
         </div>
 
         {/* Header */}
@@ -173,59 +196,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {leadScore && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className={cn("text-[10px] cursor-help", getScoreColor(leadScore.category))}>
-                    <Target className="h-3 w-3 mr-1" />
-                    {leadScore.score}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[280px] p-0 border-none bg-transparent shadow-2xl">
-                  {/* Etapa 6: Contextual AI Insights Tooltip */}
-                  <div className="bg-card/95 backdrop-blur-md border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
-                    <div className="bg-primary/10 p-3 border-b border-primary/10">
-                      <div className="flex items-center gap-2">
-                        <Brain className="h-4 w-4 text-primary animate-pulse" />
-                        <span className="text-[11px] font-black uppercase tracking-widest italic">AI STRATEGIC INSIGHT</span>
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 space-y-3">
-                      {explanation ? (
-                        <>
-                          <div className="space-y-1.5">
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Principais Motivadores</span>
-                            {explanation.top_drivers.slice(0, 3).map((d) => (
-                              <div key={d.factor} className="flex items-center justify-between text-[11px] bg-muted/30 p-1.5 rounded-md border border-border/10">
-                                <span className="font-medium">{d.label}</span>
-                                <span className={cn(
-                                  "font-black",
-                                  d.direction === "positive" ? "text-emerald-500" : "text-destructive"
-                                )}>
-                                  {d.direction === "positive" ? "+" : "-"}{d.contribution_pct}%
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          
-                          <div className="pt-2 border-t border-border/20">
-                            <span className="text-[9px] font-bold text-amber-500 uppercase tracking-wider">⚠️ OBJEÇÃO PREVISTA</span>
-                            <p className="text-[11px] font-medium leading-relaxed mt-1 text-foreground/90">
-                              O cliente pode questionar o <span className="text-primary font-bold italic">prazo de implementação</span>. 
-                              <span className="text-emerald-500"> DICA:</span> Enfatize o suporte VIP 24h.
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex items-center gap-2 py-4">
-                          <Zap className="h-4 w-4 text-primary animate-spin" />
-                          <p className="text-[11px] text-muted-foreground font-medium italic">Processando neuro-análise do deal...</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+              <DealScoreIndicator 
+                score={leadScore.score} 
+                factors={leadScore.factors}
+              />
             )}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -284,34 +258,38 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Etapa 4: Sparkline */}
-            <Sparkline data={deal.interaction_history || [10, 20, 15, 30, 25, 40, 35]} />
-            
-            <div className={cn(
-              "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
-              (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
-                ? "bg-red-500/10 text-red-500 border-red-500/20" 
-                : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-            )}>
-              {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+            {/* Etapa 7: SLA & Interaction Sparkline */}
+            <div className="flex flex-col items-end gap-1">
+              <Sparkline data={deal.interaction_history || [10, 20, 15, 30, 25, 40, 35]} />
+              <SLACountdown updatedAt={deal.updated_at} stage={deal.status} />
             </div>
           </div>
         </div>
 
-        {/* Etapa 8: "Next Best Action" Nudge */}
+        {/* Etapa 4: Dynamic AI Action Nudge */}
         <AnimatePresence>
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            className="mb-2 bg-primary/5 rounded-lg border border-primary/10 p-2 overflow-hidden"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
-              <p className="text-[10px] font-bold text-primary tracking-tight">
-                Sugestão IA: <span className="font-medium text-foreground/80 italic">"Enviar proposta revisada com foco em ROI"</span>
-              </p>
-            </div>
-          </motion.div>
+          {healthScore < 60 && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className={cn(
+                "mb-2 rounded-lg border p-2 overflow-hidden",
+                healthScore < 40 ? "bg-destructive/5 border-destructive/20" : "bg-primary/5 border-primary/20"
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className={cn("h-3 w-3", healthScore < 40 ? "text-destructive" : "text-primary")} />
+                <p className="text-[10px] font-bold tracking-tight">
+                  {healthScore < 40 ? "Ação Reativa: " : "Oportunidade: "}
+                  <span className="font-medium text-foreground/80 italic">
+                    {healthScore < 40 
+                      ? "Deal esfriando! Sugerimos envio de case de sucesso via WhatsApp." 
+                      : "Fit alto! O cliente está pronto para uma proposta de valor."}
+                  </span>
+                </p>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Meta info */}
@@ -338,6 +316,22 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
               ICP ALVO
             </Badge>
           )}
+
+          {/* Etapa 5: Stakeholder Influence */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-primary/10 text-primary border-none cursor-help">
+                <Users className="h-2.5 w-2.5 mr-0.5" />
+                3 Decisores
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-[10px] p-2 space-y-1">
+              <p className="font-bold border-b border-border/10 pb-1 mb-1">Mapa de Influência</p>
+              <p className="flex justify-between"><span>CEO (Decisor)</span> <span className="text-emerald-500 font-bold">Favorável</span></p>
+              <p className="flex justify-between"><span>CTO (Influenciador)</span> <span className="text-amber-500 font-bold">Neutro</span></p>
+              <p className="flex justify-between"><span>Diretor Vendas</span> <span className="text-emerald-500 font-bold">Favorável</span></p>
+            </TooltipContent>
+          </Tooltip>
 
           {deal.sdr_id && !deal.salesperson_id && (
             <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-amber-500/10 text-amber-500 border-none">
