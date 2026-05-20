@@ -7,6 +7,9 @@ export interface Client360Data {
   ordersCount: number;
   orders: any[];
   topProducts: { name: string; count: number; total: number }[];
+  purchaseFrequency: number; // Dias médios entre compras
+  predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
+  churnRisk: number; // 0 a 100
 }
 
 export function useClient360(clientName: string | undefined) {
@@ -28,6 +31,31 @@ export function useClient360(clientName: string | undefined) {
       const ordersCount = sales.length;
       const averageTicket = ordersCount > 0 ? ltv / ordersCount : 0;
 
+      // Cálculo de Frequência e Previsão
+      let purchaseFrequency = 0;
+      let predictedNextPurchaseDays: number | null = null;
+      let churnRisk = 0;
+
+      if (ordersCount >= 2) {
+        const dates = sales.map(s => new Date(s.created_at).getTime()).sort((a, b) => a - b);
+        const intervals = [];
+        for (let i = 1; i < dates.length; i++) {
+          intervals.push((dates[i] - dates[i-1]) / (1000 * 60 * 60 * 24));
+        }
+        purchaseFrequency = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        
+        const lastPurchaseDate = new Date(sales[0].created_at).getTime();
+        const daysSinceLastPurchase = (new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);
+        
+        // Previsão simples baseada na média
+        predictedNextPurchaseDays = Math.max(0, Math.round(purchaseFrequency - daysSinceLastPurchase));
+        
+        // Risco de Churn baseado na fuga da frequência média
+        if (daysSinceLastPurchase > purchaseFrequency * 1.5) {
+          churnRisk = Math.min(100, Math.round(((daysSinceLastPurchase - (purchaseFrequency * 1.5)) / purchaseFrequency) * 100));
+        }
+      }
+
       const productMap = new Map<string, { count: number; total: number }>();
       sales.forEach(sale => {
         if (!sale.product_name) return;
@@ -47,6 +75,9 @@ export function useClient360(clientName: string | undefined) {
         ordersCount,
         orders: sales,
         topProducts,
+        purchaseFrequency,
+        predictedNextPurchaseDays,
+        churnRisk
       };
     },
   });
