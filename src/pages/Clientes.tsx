@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Users, Search, Mail, Phone, Pencil, Trash2, History, BarChart3, Plus, Sparkles, Zap, TrendingUp, Clock, ShieldAlert, BrainCircuit } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
