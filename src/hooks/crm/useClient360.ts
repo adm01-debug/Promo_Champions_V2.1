@@ -34,6 +34,7 @@ export function useClient360(clientName: string | undefined) {
 
       if (error) throw error;
 
+      // Benchmark da base para Percentile
       const { data: allSales } = await supabase.from("sales").select("client_name, amount");
       const clientTotals = new Map<string, number>();
       allSales?.forEach(s => {
@@ -42,7 +43,7 @@ export function useClient360(clientName: string | undefined) {
       const sortedTotals = Array.from(clientTotals.values()).sort((a, b) => a - b);
       const ltvValue = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
       const rank = sortedTotals.filter(t => t < ltvValue).length;
-      const percentile = Math.round((rank / sortedTotals.length) * 100);
+      const percentile = sortedTotals.length > 0 ? Math.round((rank / sortedTotals.length) * 100) : 0;
 
       const ltv = ltvValue;
       const ordersCount = sales.length;
@@ -64,10 +65,8 @@ export function useClient360(clientName: string | undefined) {
         const lastPurchaseDate = new Date(sales[0].created_at).getTime();
         const daysSinceLastPurchase = (new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);
         
-        // Previsão simples baseada na média
         predictedNextPurchaseDays = Math.max(0, Math.round(purchaseFrequency - daysSinceLastPurchase));
         
-        // Risco de Churn baseado na fuga da frequência média
         if (daysSinceLastPurchase > purchaseFrequency * 1.5) {
           churnRisk = Math.min(100, Math.round(((daysSinceLastPurchase - (purchaseFrequency * 1.5)) / purchaseFrequency) * 100));
         }
@@ -92,22 +91,21 @@ export function useClient360(clientName: string | undefined) {
           date: new Date(s.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
           amount: Number(s.amount || 0)
         }))
-        .reverse(); // Ordem cronológica
+        .reverse();
 
-      // Distribuição por categoria (simulada via produto ou extraída se houvesse campo category)
       const categoryDistribution = topProducts.slice(0, 5).map(p => ({
-        name: p.name.split(' ')[0], // Simplificação para demonstração
+        name: p.name.split(' ')[0],
         value: p.total
       }));
 
-      // Sensibilidade a Preço (Baseado na variação do valor das compras)
+      // Sensibilidade a Preço
       const priceVariation = ordersCount > 1 
         ? Math.sqrt(sales.reduce((acc, s) => acc + Math.pow(Number(s.amount) - averageTicket, 2), 0) / ordersCount) / averageTicket
         : 0;
       const priceSensitivity = priceVariation > 0.4 ? 'high' : priceVariation > 0.15 ? 'medium' : 'low';
 
       // Preferências temporais
-      const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      const daysLabels = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
       const dayCounts = new Array(7).fill(0);
       const hourCounts = new Array(24).fill(0);
       
@@ -117,9 +115,30 @@ export function useClient360(clientName: string | undefined) {
         hourCounts[date.getHours()]++;
       });
       
-      const preferredDayOfWeek = days[dayCounts.indexOf(Math.max(...dayCounts))];
+      const preferredDayOfWeek = daysLabels[dayCounts.indexOf(Math.max(...dayCounts))];
       const maxHour = hourCounts.indexOf(Math.max(...hourCounts));
       const preferredTimeOfDay = maxHour < 12 ? 'Manhã' : maxHour < 18 ? 'Tarde' : 'Noite';
+
+      // Next Best Action Generator
+      let nba = {
+        title: "Upsell Premium",
+        description: "Oferecer upgrade para linha Gold baseada no ticket médio.",
+        script: `Olá ${clientName}, notamos seu interesse em ${topProducts[0]?.name || 'nossos produtos'}. Temos uma condição exclusiva para o upgrade da sua conta!`
+      };
+
+      if (churnRisk > 50) {
+        nba = {
+          title: "Resgate Crítico",
+          description: "Enviar cupom de 20% OFF para reativação imediata.",
+          script: `Oi ${clientName}, sentimos sua falta! Preparamos um cupom de 20% (VOLTA20) válido por 48h para seu próximo pedido.`
+        };
+      } else if (ordersCount < 3) {
+        nba = {
+          title: "Boas-vindas Revisitada",
+          description: "Garantir a segunda compra com amostra grátis.",
+          script: `Olá ${clientName}, tudo bem? Queremos te presentear com um item extra no seu próximo pedido para celebrar nossa parceria!`
+        };
+      }
 
       return {
         ltv,
@@ -133,6 +152,8 @@ export function useClient360(clientName: string | undefined) {
         preferredDayOfWeek,
         preferredTimeOfDay,
         purchaseFrequency,
+        percentile,
+        nba,
         predictedNextPurchaseDays,
         churnRisk
       };
