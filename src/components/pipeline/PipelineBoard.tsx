@@ -257,11 +257,26 @@ export const PipelineBoard = () => {
       <PipelineHealthScore />
 
       {/* Etapa 9: Advanced Filter Bar (Foco Cirúrgico) */}
-      <div className="flex flex-wrap items-center gap-2 p-2 bg-card/40 backdrop-blur-md border border-border/20 rounded-2xl shadow-inner">
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-card/60 backdrop-blur-xl border border-border/20 rounded-2xl shadow-2xl">
         <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
           <Zap className="h-3 w-3" />
-          Filtros Rápidos
+          Comando Estratégico
         </div>
+        
+        {/* Etapa 10: AI Semantic Search */}
+        <div className="relative flex-1 max-w-sm group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Sparkles className="h-3 w-3 text-primary animate-pulse" />
+          </div>
+          <input 
+            type="text" 
+            placeholder="Busca Semântica IA: 'Deals de TI acima de 50k com risco'..." 
+            className="w-full bg-background/50 border border-border/40 rounded-xl py-2 pl-9 pr-4 text-[10px] font-medium placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 transition-all group-hover:border-primary/30"
+          />
+        </div>
+
+        <div className="h-6 w-px bg-border/20 mx-2" />
+
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Alta Prioridade</Button>
         <Button variant="ghost" size="sm" className={cn("h-8 text-[10px] font-bold uppercase tracking-tighter", showFunnelLayer ? "bg-primary/20" : "")} onClick={() => setShowFunnelLayer(!showFunnelLayer)}>
           <TrendingUp className="h-3 w-3 mr-1" /> Funnel Layer
