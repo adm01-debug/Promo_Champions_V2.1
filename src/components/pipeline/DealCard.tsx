@@ -188,8 +188,9 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
 
           <div className="flex-1 min-w-0">
-            <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors">
+            <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors flex items-center gap-1.5">
               {deal.client_name}
+              {isEnriching && <RefreshCw className="h-3 w-3 animate-spin text-primary" />}
             </h4>
             <p className="text-xs text-muted-foreground truncate mt-0.5">
               {deal.product_name}
