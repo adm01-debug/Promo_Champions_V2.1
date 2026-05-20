@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 
@@ -311,12 +312,33 @@ export const PipelineBoard = () => {
         
         <div className="flex gap-12 relative z-10">
           <div className="flex flex-col">
-            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Comandos Ativos</span>
+            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Pipeline Health (P2)</span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-display font-black tracking-tighter">{totalDeals}</span>
-              <span className="text-[10px] font-bold text-emerald-500 uppercase">Implementados</span>
+              <span className="text-3xl font-display font-black tracking-tighter">92.4%</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
+                <TrendingUp className="h-3 w-3" /> Eficiência
+              </span>
             </div>
           </div>
+          
+          <div className="hidden lg:flex items-center">
+            <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Time em Win-Streak</span>
+              <div className="flex items-baseline gap-2">
+                <div className="flex -space-x-2 mr-2">
+                  {[1, 2, 3].map(i => (
+                    <Avatar key={i} className="h-6 w-6 border-2 border-background ring-2 ring-primary/20">
+                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} />
+                    </Avatar>
+                  ))}
+                </div>
+                <span className="text-xl font-display font-black tracking-tighter text-primary">+12 Deals</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">/ Semana</span>
+              </div>
+            </div>
+          </div>
+        </div>
           
           <div className="hidden sm:flex items-center">
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
