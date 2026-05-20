@@ -99,6 +99,36 @@ export function Client360View({ clientName }: Client360ViewProps) {
             <p className="text-[9px] text-muted-foreground mt-1 uppercase font-bold tracking-tight">Dias desde a última compra</p>
           </CardContent>
         </Card>
+
+        <Card className={cn(
+          "shadow-sm overflow-hidden relative group transition-all duration-500",
+          data.churnRisk > 50 ? "bg-destructive/5 border-destructive/10" : "bg-blue-500/5 border-blue-500/10"
+        )}>
+          <div className="absolute right-0 top-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+            <BarChart3 className={cn("h-12 w-12", data.churnRisk > 50 ? "text-destructive" : "text-blue-500")} />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Previsibilidade</CardTitle>
+            <BarChart3 className={cn("h-4 w-4", data.churnRisk > 50 ? "text-destructive" : "text-blue-500")} />
+          </CardHeader>
+          <CardContent>
+            <div className={cn(
+              "text-2xl font-black tabular-nums",
+              data.churnRisk > 50 ? "text-destructive" : "text-blue-500"
+            )}>
+              {data.predictedNextPurchaseDays !== null ? `${data.predictedNextPurchaseDays}d` : '---'}
+            </div>
+            <p className="text-[9px] text-muted-foreground mt-1 uppercase font-bold tracking-tight">Próxima Compra Estimada</p>
+            {data.churnRisk > 0 && (
+              <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
+                <div 
+                  className={cn("h-full transition-all duration-1000", data.churnRisk > 50 ? "bg-destructive" : "bg-blue-500")} 
+                  style={{ width: `${data.churnRisk}%` }} 
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -129,6 +159,62 @@ export function Client360View({ clientName }: Client360ViewProps) {
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum produto em estoque</p>
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Customer Pulse & Recommendation - Etapa 2 do Plano 10/10 */}
+        <Card className="border-border/40 bg-gradient-to-br from-card/60 to-accent/5 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden lg:col-span-2">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="relative flex-shrink-0">
+                <div className={cn(
+                  "w-32 h-32 rounded-full border-4 flex flex-col items-center justify-center transition-all duration-500",
+                  data.churnRisk > 50 ? "border-destructive/20 bg-destructive/5" : "border-primary/20 bg-primary/5"
+                )}>
+                  <span className="text-3xl font-black tabular-nums">
+                    {Math.round(100 - data.churnRisk)}
+                  </span>
+                  <span className="text-[8px] font-black uppercase tracking-widest opacity-60">Health Score</span>
+                </div>
+                {data.churnRisk > 50 && (
+                  <div className="absolute -top-2 -right-2 p-2 rounded-full bg-destructive text-destructive-foreground animate-bounce">
+                    <AlertCircle className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h3 className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-amber-500" />
+                    Insight Estratégico
+                  </h3>
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed max-w-2xl">
+                    {data.churnRisk > 50 
+                      ? "O cliente está apresentando sinais críticos de inatividade. O tempo desde a última compra excede em 50% sua média histórica. Sugerimos uma ação de reativação imediata com oferta personalizada baseada nos produtos de maior valor."
+                      : data.ordersCount > 5 
+                      ? "Cliente fidelizado com alta previsibilidade. O comportamento de compra é estável e o LTV está em crescimento. Oportunidade ideal para Cross-sell de produtos premium."
+                      : "Cliente em fase de maturação. Focar em aumentar a frequência de compra para consolidar o hábito de consumo."
+                    }
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {data.churnRisk > 50 ? (
+                    <Badge className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-black px-4 py-1">
+                      AÇÃO URGENTE: CUPOM REATIVAÇÃO
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground font-black px-4 py-1">
+                      AÇÃO SUGERIDA: UPSELL CATEGORIA A
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="border-primary/30 text-primary font-black px-4 py-1">
+                    AGENDAR FOLLOW-UP
+                  </Badge>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
