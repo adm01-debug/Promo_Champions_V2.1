@@ -5,6 +5,7 @@ import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
 import { ICPData } from "@/hooks/useICPData";
 import { Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface DealProbability {
   probability: number;

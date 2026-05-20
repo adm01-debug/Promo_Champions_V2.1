@@ -84,6 +84,8 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     }
   };
 
+  // Etapa 8: Bulk Operations Mode
+  const [isSelected, setIsSelected] = useState(false);
   // Etapa 3: Inline Fast-Edit
   const [isEditing, setIsEditing] = useState(false);
   const [editedAmount, setEditedAmount] = useState(deal.amount.toString());

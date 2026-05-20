@@ -18,7 +18,7 @@ import { PipelineColumn } from "./PipelineColumn";
 import { PipelineSelector } from "./PipelineSelector";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Zap } from "lucide-react";
+import { RefreshCw, Zap, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDealProbabilities } from "@/hooks/useDealProbability";
 import { useLeadScores, useCalculateLeadScores } from "@/hooks/useLeadScoring";
