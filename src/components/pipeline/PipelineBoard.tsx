@@ -339,20 +339,6 @@ export const PipelineBoard = () => {
             </div>
           </div>
         </div>
-          
-          <div className="hidden sm:flex items-center">
-            <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Previsão Ponderada (P2)</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-display font-black tracking-tighter gradient-text">
-                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(weightedTotalValue)}
-                </span>
-                <span className="text-[10px] font-bold text-primary uppercase">Forecast</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div className="flex gap-3 relative z-10">
           {isDefaultPipeline && (
