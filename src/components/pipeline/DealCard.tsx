@@ -80,7 +80,6 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     }
   };
 
-  return (
   // Etapa 8: Bulk Operations Mode
   const [isSelected, setIsSelected] = useState(false);
 
