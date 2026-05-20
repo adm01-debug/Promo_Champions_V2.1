@@ -8,7 +8,8 @@ import {
   DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, 
   ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, 
   Star, Download, MousePointerClick, Search, Filter, Eye, User,
-  ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info
+  ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info,
+  ShieldCheck, CalendarPlus, Sparkles, Brain
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<"table" | "timeline">("timeline");
 
   const categories = useMemo(() => {
     if (!data?.orders) return [];
@@ -53,7 +55,17 @@ export function Client360View({ clientName }: Client360ViewProps) {
     if (!data?.orders) return [];
     return data.orders.filter(order => {
       const productName = (order.product_name || "").toLowerCase();
-      const matchesSearch = productName.includes(searchTerm.toLowerCase());
+      const sku = (order.sku || "").toLowerCase();
+      const status = (order.status || "").toLowerCase();
+      
+      // Smart search logic: search in name, sku, and status
+      const searchTerms = searchTerm.toLowerCase().split(' ');
+      const matchesSearch = searchTerms.every(term => 
+        productName.includes(term) || 
+        sku.includes(term) || 
+        status.includes(term)
+      );
+
       const matchesStatus = statusFilter === "all" || order.status === statusFilter;
       const matchesCategory = categoryFilter === "all" || productName.startsWith(categoryFilter.toLowerCase());
       const amount = Number(order.amount || 0);
@@ -87,20 +99,61 @@ export function Client360View({ clientName }: Client360ViewProps) {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 p-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-primary flex items-center gap-2">
-            Relatório Estratégico 360º
-            <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/20">Real-time Data</Badge>
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-primary flex items-center gap-3">
+            <HistoryIcon className="h-8 w-8 text-primary" />
+            Intelligence Hub 360º
+            <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/20 animate-pulse">Neural Engine Active</Badge>
           </h2>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Visão holística de comportamento e valor</p>
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Análise comportamental profunda de {clientName}</p>
+            <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+            <span className="text-[10px] font-black text-emerald-500 uppercase">Perﬁl: {data.ltv > data.segmentAverageLtv * 1.5 ? 'VIP Diamond' : 'Standard'}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
-            onClick={() => toast.info("Gerando relatório executivo...")}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-accent/20 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all shadow-lg"
+            onClick={() => toast.info("Sincronizando com o ERP...")}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+          >
+            <Zap className="h-3.5 w-3.5 text-primary" />
+            Sincronizar
+          </button>
+          <button 
+            onClick={() => toast.info("Gerando dossiê estratégico...")}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-primary/20"
           >
             <Download className="h-3.5 w-3.5" />
-            PDF Executivo
+            Dossiê PDF
           </button>
+        </div>
+      </div>
+
+      {/* Smart Insight Banner */}
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-600/20 via-purple-600/10 to-transparent border border-indigo-500/20 p-5 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-xl">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+            <Brain className="h-6 w-6 text-indigo-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black uppercase tracking-tighter text-indigo-400">Sumário Cognitivo da IA</h3>
+            <p className="text-xs font-medium text-foreground/80 leading-relaxed">
+              Cliente com <span className="text-indigo-400 font-bold">Alta Fidelidade</span>, prefere comprar <span className="text-indigo-400 font-bold">{data.preferredTimeOfDay}</span> às <span className="text-indigo-400 font-bold">{data.preferredDayOfWeek}s</span>. 
+              Sensibilidade a preço: <span className="text-indigo-400 font-bold">{data.priceSensitivity.toUpperCase()}</span>.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 shrink-0">
+          <div className="text-right">
+            <p className="text-[10px] font-black text-muted-foreground uppercase">Tempo de Casa</p>
+            <p className="text-lg font-black text-foreground">
+              {data.orders.length > 0 ? `${Math.floor((new Date().getTime() - new Date(data.orders[data.orders.length - 1].created_at).getTime()) / (1000 * 60 * 60 * 24 * 30))} meses` : 'N/A'}
+            </p>
+          </div>
+          <div className="h-8 w-px bg-white/10" />
+          <div className="text-right">
+            <p className="text-[10px] font-black text-muted-foreground uppercase">Conversão</p>
+            <p className="text-lg font-black text-emerald-500">{(100 - data.churnRisk)}%</p>
+          </div>
         </div>
       </div>
 
@@ -203,9 +256,19 @@ export function Client360View({ clientName }: Client360ViewProps) {
         {/* Mix de Categorias */}
         <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
-              <PieChart className="h-5 w-5 text-indigo-500" />
-              Afinidade de Categoria
+            <CardTitle className="flex items-center justify-between text-base uppercase font-black tracking-tighter">
+              <div className="flex items-center gap-2">
+                <PieChart className="h-5 w-5 text-indigo-500" />
+                Afinidade & Cross-sell
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>Análise de mix e sugestões preditivas</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
@@ -227,13 +290,156 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-2 gap-3 w-full mt-4">
+            <div className="grid grid-cols-2 gap-2 w-full mt-4">
               {data.categoryDistribution.map((cat, i) => (
-                <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
-                  <div className="w-2 h-2 rounded-full shrink-0" style={{backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#06b6d4'][i % 5]}} />
-                  <span className="text-[9px] font-bold uppercase truncate opacity-80">{cat.name}</span>
+                <div key={i} className="flex items-center gap-2 p-1.5 rounded-lg bg-white/5 border border-white/5">
+                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#06b6d4'][i % 5]}} />
+                  <span className="text-[8px] font-bold uppercase truncate opacity-80">{cat.name}</span>
                 </div>
               ))}
+            </div>
+
+            <div className="w-full mt-6 pt-6 border-t border-white/10">
+              <span className="text-[9px] font-black text-primary uppercase tracking-widest block mb-3 flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3" /> Sugestão Cross-sell
+              </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-primary/10 border border-primary/20 group hover:bg-primary/20 cursor-pointer transition-all">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-primary/20">
+                      <ShoppingBag className="h-3 w-3 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase">Linha Premium Gold</span>
+                      <span className="text-[8px] font-bold text-muted-foreground uppercase">+34% Conversão</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Health Score & NBA (Next Best Action) Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-1 border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden group">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm uppercase font-black tracking-tighter">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" />
+              Customer Health Score
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center justify-center py-4">
+              <div className="relative w-32 h-32 flex items-center justify-center mb-4">
+                <svg className="w-full h-full -rotate-90">
+                  <circle
+                    cx="64" cy="64" r="58"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    className="text-white/5"
+                  />
+                  <circle
+                    cx="64" cy="64" r="58"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={364.4}
+                    strokeDashoffset={364.4 - (364.4 * (100 - data.churnRisk)) / 100}
+                    className={cn(
+                      "transition-all duration-1000",
+                      data.churnRisk < 30 ? "text-emerald-500" : 
+                      data.churnRisk < 60 ? "text-amber-500" : "text-rose-500"
+                    )}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-black">{100 - data.churnRisk}</span>
+                  <span className="text-[8px] font-bold text-muted-foreground uppercase">Score Total</span>
+                </div>
+              </div>
+              <div className="w-full space-y-3">
+                <div className="flex justify-between items-center text-[10px] font-bold uppercase">
+                  <span className="text-muted-foreground">Risco de Churn:</span>
+                  <span className={cn(
+                    data.churnRisk < 30 ? "text-emerald-500" : 
+                    data.churnRisk < 60 ? "text-amber-500" : "text-rose-500"
+                  )}>{data.churnRisk}%</span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold uppercase">
+                  <span className="text-muted-foreground">Recência (Últ. Compra):</span>
+                  <span>{data.orders.length > 0 ? `${Math.floor((new Date().getTime() - new Date(data.orders[0].created_at).getTime()) / (1000 * 60 * 60 * 24))} dias` : 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold uppercase">
+                  <span className="text-muted-foreground">Frequência Média:</span>
+                  <span>{data.purchaseFrequency.toFixed(1)} dias</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2 border-primary/20 bg-gradient-to-br from-primary/10 to-transparent backdrop-blur-md shadow-xl rounded-2xl overflow-hidden border-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm uppercase font-black tracking-tighter text-primary">
+              <Zap className="h-4 w-4 fill-primary" />
+              IA Next Best Action (NBA)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h4 className="text-xl font-black text-foreground uppercase tracking-tight">{data.nba.title}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">{data.nba.description}</p>
+                </div>
+                
+                <div className="p-4 rounded-xl bg-black/20 border border-white/5 relative">
+                  <div className="absolute top-2 right-2">
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(data.nba.script);
+                        toast.success("Script copiado para o clipboard!");
+                      }}
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all"
+                    >
+                      <Copy className="h-3 w-3 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <span className="text-[8px] font-black text-primary uppercase tracking-widest block mb-2">Script Sugerido pela IA</span>
+                  <p className="text-xs italic text-foreground/80 leading-relaxed pr-6">"{data.nba.script}"</p>
+                </div>
+              </div>
+
+              <div className="w-full md:w-48 space-y-3">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-center">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase block mb-1">Previsão Próxima Compra</span>
+                  <div className="text-lg font-black text-primary">
+                    {data.predictedNextPurchaseDays !== null 
+                      ? `Em ~${data.predictedNextPurchaseDays} dias`
+                      : 'Indefinido'}
+                  </div>
+                  <Badge variant="outline" className="text-[8px] font-bold mt-2 border-primary/20 text-primary">85% Confiança</Badge>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => toast.success("Follow-up agendado com sucesso!")}
+                    className="flex-1 py-3 px-2 rounded-xl bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-tighter hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-1.5"
+                  >
+                    <CalendarPlus className="h-3.5 w-3.5" />
+                    Agendar
+                  </button>
+                  <button 
+                    onClick={() => toast.info("Abrindo canal de comunicação...")}
+                    className="py-3 px-3 rounded-xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 transition-all"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -251,6 +457,26 @@ export function Client360View({ clientName }: Client360ViewProps) {
               <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">Gestão granular do histórico comercial</CardDescription>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <div className="flex bg-muted/50 p-1 rounded-xl border border-white/5 mr-2">
+                <button 
+                  onClick={() => setViewMode("timeline")}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                    viewMode === "timeline" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Timeline
+                </button>
+                <button 
+                  onClick={() => setViewMode("table")}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                    viewMode === "table" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Tabela
+                </button>
+              </div>
               <div className="relative w-full md:w-48">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input 
@@ -284,45 +510,25 @@ export function Client360View({ clientName }: Client360ViewProps) {
                   <SelectItem value="cancelled">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-xl border border-white/5 px-3 h-10">
-                <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                <div className="flex flex-col">
-                  <span className="text-[8px] font-black text-muted-foreground uppercase leading-none">Faixa de Valor</span>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="number" 
-                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
-                      value={valueRange[0]} 
-                      onChange={e => setValueRange([Number(e.target.value), valueRange[1]])}
-                    />
-                    <span className="text-[8px] text-muted-foreground">-</span>
-                    <input 
-                      type="number" 
-                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
-                      value={valueRange[1]} 
-                      onChange={e => setValueRange([valueRange[0], Number(e.target.value)])}
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-accent/10">
-                <TableRow className="border-border/10 hover:bg-transparent">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Data</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Produto / SKU</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Valor</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Status</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.length > 0 ? filteredOrders.map((order) => (
-                  <TableRow key={order.id} className="border-border/10 group transition-colors hover:bg-white/5">
+          {viewMode === "table" ? (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-accent/10">
+                  <TableRow className="border-border/10 hover:bg-transparent">
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Data</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Produto / SKU</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Valor</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Status</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrders.length > 0 ? filteredOrders.map((order) => (
+                    <TableRow key={order.id} className="border-border/10 group transition-colors hover:bg-white/5">
                     <TableCell className="text-xs font-medium py-4">
                       {new Date(order.created_at).toLocaleDateString('pt-BR')}
                     </TableCell>
@@ -363,7 +569,56 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
+        ) : (
+          <div className="p-8 relative">
+            <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary/50 via-border to-transparent" />
+            <div className="space-y-12">
+              {filteredOrders.map((order, idx) => (
+                <div key={order.id} className="relative pl-16 group">
+                  <div className={cn(
+                    "absolute left-0 top-0 w-5 h-5 rounded-full border-4 border-background z-10 transition-transform group-hover:scale-125",
+                    order.status === 'completed' ? "bg-emerald-500" : 
+                    order.status === 'pending' ? "bg-amber-500" : "bg-rose-500"
+                  )} />
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/[0.08] transition-all">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        {new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      </span>
+                      <h4 className="text-sm font-black uppercase text-foreground group-hover:text-primary transition-colors">{order.product_name}</h4>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[8px] font-black border-white/10 uppercase opacity-60">SKU: {order.sku || 'N/A'}</Badge>
+                        <Badge variant="outline" className={cn(
+                          "text-[8px] font-black border-none uppercase",
+                          order.status === 'completed' ? "bg-emerald-500/10 text-emerald-500" :
+                          order.status === 'pending' ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
+                        )}>{order.status}</Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <span className="text-lg font-black text-primary">{formatCurrency(Number(order.amount))}</span>
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase">Valor da Transação</p>
+                      </div>
+                      <button 
+                        onClick={() => setSelectedOrder(order)}
+                        className="p-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary text-primary hover:text-primary-foreground transition-all shadow-lg"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredOrders.length === 0 && (
+                <div className="text-center py-20">
+                  <p className="text-xs font-bold text-muted-foreground uppercase">Nenhum evento na jornada com estes filtros</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </CardContent>
       </Card>
 
       {/* Deep-dive Modal Pedido */}
