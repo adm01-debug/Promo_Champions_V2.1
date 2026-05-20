@@ -117,9 +117,16 @@ const Clientes = () => {
               <div>
                 <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Clientes</h1>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Intelligence Hub v3.0</span>
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Intelligence Hub v4.0</span>
                   <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                   <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{totalItems} UNIDADES CADASTRADAS</p>
+                  <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                  <div className="flex items-center gap-1">
+                    <Zap className="h-2.5 w-2.5 text-amber-500 fill-amber-500" />
+                    <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider">
+                      {Object.values(predictions).filter(p => p.urgency === 'high').length} EM JANELA CRÍTICA
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
