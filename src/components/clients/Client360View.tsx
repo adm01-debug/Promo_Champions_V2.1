@@ -324,74 +324,110 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Detalhes da Transação</DialogTitle>
                 <DialogDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">ID: {selectedOrder?.id}</DialogDescription>
               </div>
-              <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 font-black h-6">PEDIDO FINALIZADO</Badge>
+              <Badge className={cn(
+                "font-black h-6 border-none",
+                selectedOrder?.status === 'completed' ? "bg-emerald-500/10 text-emerald-500" :
+                selectedOrder?.status === 'pending' ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
+              )}>
+                {selectedOrder?.status === 'completed' ? 'PEDIDO FINALIZADO' : selectedOrder?.status?.toUpperCase() || 'PROCESSANDO'}
+              </Badge>
             </div>
           </DialogHeader>
 
           <div className="p-8 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                <div className="text-[10px] font-black text-muted-foreground uppercase mb-2">Responsáveis Comercial</div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary"><User className="h-3.5 w-3.5" /></div>
-                    <span className="text-xs font-black uppercase truncate">SDR: {selectedOrder?.salesperson?.name || 'Sistema'}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-colors">
+                <div className="text-[10px] font-black text-muted-foreground uppercase mb-3 tracking-widest flex items-center gap-2">
+                  <User className="h-3 w-3 text-primary" />
+                  Responsáveis Comercial
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase">SDR (Prospecção)</span>
+                    <span className="text-xs font-black uppercase truncate max-w-[120px]">{selectedOrder?.sdr?.name || selectedOrder?.salesperson?.name || 'Sistema'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-500"><CheckCircle2 className="h-3.5 w-3.5" /></div>
-                    <span className="text-xs font-black uppercase truncate">Closer: {selectedOrder?.closer?.name || 'N/A'}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase">Closer (Fechamento)</span>
+                    <span className="text-xs font-black uppercase truncate max-w-[120px]">{selectedOrder?.closer?.name || 'Venda Direta'}</span>
                   </div>
                 </div>
               </div>
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                <div className="text-[10px] font-black text-muted-foreground uppercase mb-2">Informações Adicionais</div>
-                <div className="space-y-2">
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-colors">
+                <div className="text-[10px] font-black text-muted-foreground uppercase mb-3 tracking-widest flex items-center gap-2">
+                  <Info className="h-3 w-3 text-primary" />
+                  Atributos de Venda
+                </div>
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Origem:</span>
-                    <span className="text-xs font-black uppercase">{selectedOrder?.source || 'Orgânico'}</span>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase">Origem/Canal:</span>
+                    <Badge variant="outline" className="text-[9px] font-black uppercase h-5 bg-white/5">{selectedOrder?.source || 'Orgânico'}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Primeira Venda:</span>
-                    <Badge variant="outline" className="text-[8px] h-4">{selectedOrder?.is_first_sale ? 'SIM' : 'NÃO'}</Badge>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase">Novo Cliente?</span>
+                    <Badge variant="outline" className={cn(
+                      "text-[9px] font-black uppercase h-5",
+                      selectedOrder?.is_first_sale ? "bg-primary/10 text-primary border-primary/20" : "bg-white/5 opacity-60"
+                    )}>
+                      {selectedOrder?.is_first_sale ? 'SIM (CAC)' : 'RECOMPRA (LTV)'}
+                    </Badge>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Package className="h-4 w-4 text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Itens do Pedido</span>
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/[0.07] transition-all">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-primary" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Discriminação de Itens</span>
+                </div>
+                <Badge variant="outline" className="text-[9px] font-mono border-white/10 uppercase">
+                  v.{selectedOrder?.version || '1.0'}
+                </Badge>
               </div>
-              <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-4">
-                <div className="flex flex-col">
-                  <span className="text-sm font-black uppercase">{selectedOrder?.product_name}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">SKU: {selectedOrder?.sku || 'N/A'}</span>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-start group">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-black uppercase group-hover:text-primary transition-colors">{selectedOrder?.product_name}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">SKU: {selectedOrder?.sku || 'N/A'}</span>
+                  </div>
+                  <span className="text-sm font-black text-foreground">{formatCurrency(Number(selectedOrder?.amount))}</span>
                 </div>
-                <span className="text-sm font-black text-primary">{formatCurrency(Number(selectedOrder?.amount))}</span>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-muted-foreground">
-                  <span className="text-[10px] font-bold uppercase">Subtotal:</span>
-                  <span className="text-xs font-bold">{formatCurrency(Number(selectedOrder?.amount))}</span>
-                </div>
-                <div className="flex justify-between items-center text-emerald-500">
-                  <span className="text-[10px] font-bold uppercase">Desconto aplicado:</span>
-                  <span className="text-xs font-bold">- R$ 0,00</span>
-                </div>
-                <div className="flex justify-between items-center pt-3 border-t border-white/10">
-                  <span className="text-xs font-black uppercase">Total Final:</span>
-                  <span className="text-lg font-black text-primary">{formatCurrency(Number(selectedOrder?.amount))}</span>
+
+                <div className="pt-4 border-t border-white/10 space-y-2.5">
+                  <div className="flex justify-between items-center text-muted-foreground">
+                    <span className="text-[10px] font-bold uppercase">Subtotal Bruto:</span>
+                    <span className="text-xs font-bold">{formatCurrency(Number(selectedOrder?.amount))}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-emerald-500">
+                    <span className="text-[10px] font-bold uppercase flex items-center gap-1.5">
+                      <Zap className="h-3 w-3 fill-emerald-500" />
+                      Desconto de Campanha:
+                    </span>
+                    <span className="text-xs font-bold">- R$ 0,00</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-4 mt-2 border-t border-white/20">
+                    <span className="text-xs font-black uppercase tracking-widest">Investimento Final:</span>
+                    <div className="text-right">
+                      <span className="text-xl font-black text-primary drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">
+                        {formatCurrency(Number(selectedOrder?.amount))}
+                      </span>
+                      <p className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">IVA Inc. / Faturado</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <button className="flex-1 py-3 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-xl shadow-primary/20">
-                Imprimir Comprovante
+            <div className="flex gap-3 pt-2">
+              <button className="flex-1 py-4 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
+                <Download className="h-3.5 w-3.5" />
+                Gerar Comprovante
               </button>
-              <button className="flex-1 py-3 px-6 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
-                Abrir no CRM
+              <button className="flex-1 py-4 px-6 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                <HistoryIcon className="h-3.5 w-3.5" />
+                Histórico de Alterações
               </button>
             </div>
           </div>
