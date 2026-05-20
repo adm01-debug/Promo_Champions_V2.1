@@ -364,7 +364,56 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
+        ) : (
+          <div className="p-8 relative">
+            <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary/50 via-border to-transparent" />
+            <div className="space-y-12">
+              {filteredOrders.map((order, idx) => (
+                <div key={order.id} className="relative pl-16 group">
+                  <div className={cn(
+                    "absolute left-0 top-0 w-5 h-5 rounded-full border-4 border-background z-10 transition-transform group-hover:scale-125",
+                    order.status === 'completed' ? "bg-emerald-500" : 
+                    order.status === 'pending' ? "bg-amber-500" : "bg-rose-500"
+                  )} />
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/[0.08] transition-all">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        {new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      </span>
+                      <h4 className="text-sm font-black uppercase text-foreground group-hover:text-primary transition-colors">{order.product_name}</h4>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[8px] font-black border-white/10 uppercase opacity-60">SKU: {order.sku || 'N/A'}</Badge>
+                        <Badge variant="outline" className={cn(
+                          "text-[8px] font-black border-none uppercase",
+                          order.status === 'completed' ? "bg-emerald-500/10 text-emerald-500" :
+                          order.status === 'pending' ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
+                        )}>{order.status}</Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <span className="text-lg font-black text-primary">{formatCurrency(Number(order.amount))}</span>
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase">Valor da Transação</p>
+                      </div>
+                      <button 
+                        onClick={() => setSelectedOrder(order)}
+                        className="p-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary text-primary hover:text-primary-foreground transition-all shadow-lg"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredOrders.length === 0 && (
+                <div className="text-center py-20">
+                  <p className="text-xs font-bold text-muted-foreground uppercase">Nenhum evento na jornada com estes filtros</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </CardContent>
       </Card>
 
       {/* Deep-dive Modal Pedido */}
