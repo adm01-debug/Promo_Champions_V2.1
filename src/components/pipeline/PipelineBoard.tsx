@@ -253,6 +253,7 @@ export const PipelineBoard = () => {
   );
 
   return (
+    <TooltipProvider>
     <div className="space-y-4">
       {/* Etapa 1: Global Health Score */}
       <PipelineHealthScore />
