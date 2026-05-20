@@ -8,7 +8,8 @@ import {
   DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, 
   ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, 
   Star, Download, MousePointerClick, Search, Filter, Eye, User,
-  ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info
+  ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info,
+  ShieldCheck, CalendarPlus
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
