@@ -405,6 +405,6 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           stageId={deal.status}
         />
       </Card>
-    </div>
+    </motion.div>
   );
 };
