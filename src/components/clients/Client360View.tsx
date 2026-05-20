@@ -9,8 +9,10 @@ import {
   ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, 
   Star, Download, MousePointerClick, Search, Filter, Eye, User,
   ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info,
-  ShieldCheck, CalendarPlus, Sparkles, Brain
+  ShieldCheck, CalendarPlus, Sparkles, Brain, Clock, CreditCard
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
