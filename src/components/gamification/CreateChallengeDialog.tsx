@@ -30,7 +30,7 @@ const CHALLENGE_TYPES = [
   { value: "emails", label: "E-mails" },
   { value: "meetings", label: "Reuniões" },
   { value: "sales", label: "Vendas" },
-  { value: "linkedin", label: "LinkedIn" },
+  { value: "linkedin", label: "Linkedin" },
   { value: "whatsapp", label: "WhatsApp" },
   { value: "activity", label: "Atividades Gerais" },
 ];

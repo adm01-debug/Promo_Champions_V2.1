@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useActivityGoals, useUpdateActivityGoals } from "@/hooks/activities/useActivities";
-import { Target, Phone, Mail, Users, LinkedIn, MessageCircle, Save } from "lucide-react";
+import { Target, Phone, Mail, Users, Linkedin, MessageCircle, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -101,7 +101,7 @@ export function ActivityGoalForm() {
             </div>
             <div className="space-y-2">
               <Label className="text-xs flex items-center gap-2">
-                <LinkedIn className="h-3 w-3 text-status-info" /> LinkedIn
+                <Linkedin className="h-3 w-3 text-status-info" /> Linkedin
               </Label>
               <Input 
                 type="number" 

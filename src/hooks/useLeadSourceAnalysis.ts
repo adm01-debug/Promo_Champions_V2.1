@@ -5,7 +5,7 @@ import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
 export type LeadSource = 'linkedin' | 'referral' | 'inbound' | 'outbound' | 'event' | 'website' | 'paid_ads' | 'other';
 
 export const sourceLabels: Record<LeadSource, string> = {
-  linkedin: "LinkedIn",
+  linkedin: "Linkedin",
   referral: "Indicação",
   inbound: "Inbound",
   outbound: "Outbound",

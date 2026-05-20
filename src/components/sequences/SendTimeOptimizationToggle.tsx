@@ -31,7 +31,7 @@ export function SendTimeOptimizationToggle({ sequenceId, enabled }: Props) {
                 <TooltipContent side="top" className="max-w-xs">
                   <p className="text-xs">
                     Quando ativado, a sequência aprende o melhor horário de cada contato (com base em opens, clicks e replies)
-                    e adia envios de e-mail/LinkedIn para a próxima janela ótima dentro de 24h.
+                    e adia envios de e-mail/Linkedin para a próxima janela ótima dentro de 24h.
                   </p>
                 </TooltipContent>
               </Tooltip>

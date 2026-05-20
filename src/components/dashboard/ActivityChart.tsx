@@ -26,7 +26,7 @@ const TYPE_LABELS: Record<string, string> = {
   email: "Emails",
   meeting: "Reuniões",
   whatsapp: "WhatsApp",
-  linkedin: "LinkedIn",
+  linkedin: "Linkedin",
   follow_up: "Follow-ups",
 };
 

@@ -91,7 +91,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
               <SelectItem value="phone">Telefone</SelectItem>
               <SelectItem value="email">Email</SelectItem>
-              <SelectItem value="linkedin">LinkedIn</SelectItem>
+              <SelectItem value="linkedin">Linkedin</SelectItem>
             </SelectContent>
           </Select>
         </div>

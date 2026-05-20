@@ -18,7 +18,7 @@ export const ImprovementPlan = () => {
     {
       step: "02",
       title: "Enriquecimento Automático via IA",
-      description: "Desenvolver scraper inteligente que valide e-mails e telefones em tempo real ao capturar leads do LinkedIn.",
+      description: "Desenvolver scraper inteligente que valide e-mails e telefones em tempo real ao capturar leads do Linkedin.",
       focus: "Data Quality",
       impact: "Very High",
       effort: "Medium",

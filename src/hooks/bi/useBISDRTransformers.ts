@@ -83,7 +83,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   const totalCalls = activities.filter(a => a.activity_type === "call").length;
   const totalEmails = activities.filter(a => a.activity_type === "email").length;
   const totalMeetings = activities.filter(a => a.activity_type === "meeting").length;
-  const totalLinkedIn = activities.filter(a => a.activity_type === "linkedin").length;
+  const totalLinkedin = activities.filter(a => a.activity_type === "linkedin").length;
   const totalWhatsApp = activities.filter(a => a.activity_type === "whatsapp").length;
 
   // Pipeline
@@ -183,7 +183,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
     totalLeadsGenerated, qualifiedLeads, qualificationRate, avgQualificationTime,
     totalActivities: activities.length, activitiesByType, avgActivitiesPerDay,
     connectRate, bookingRate,
-    totalCalls, totalEmails, totalMeetings, totalLinkedIn, totalWhatsApp,
+    totalCalls, totalEmails, totalMeetings, totalLinkedin, totalWhatsApp,
     pipelineValue, pipelineCount: pipelineDeals.length, pipelineByStage,
     previousPeriod, sameLastYear,
     leadGoal, activityGoal, goalProgress, projectedLeads, dailyLeadsNeeded,

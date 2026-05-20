@@ -27,7 +27,7 @@ import {
   Plus,
   Lightbulb,
   Zap,
-  LinkedIn,
+  Linkedin,
   MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -56,7 +56,7 @@ const actionTypeConfig = {
   follow_up: { label: 'Follow-up', icon: Clock, color: 'text-status-warning' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-accent' },
   discount: { label: 'Desconto', icon: Sparkles, color: 'text-status-success' },
-  linkedin: { label: 'LinkedIn', icon: LinkedIn, color: 'text-[#0077B5]' },
+  linkedin: { label: 'Linkedin', icon: Linkedin, color: 'text-[#0077B5]' },
   whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'text-[#25D366]' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };

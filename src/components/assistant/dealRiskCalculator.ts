@@ -93,5 +93,5 @@ export const STATUS_LABELS: Record<string, { label: string; color: string; icon:
 
 export const ACTIVITY_TYPE_LABELS: Record<string, string> = {
   call: 'Ligação', email: 'E-mail', meeting: 'Reunião',
-  linkedin: 'LinkedIn', whatsapp: 'WhatsApp', other: 'Outro',
+  linkedin: 'Linkedin', whatsapp: 'WhatsApp', other: 'Outro',
 };

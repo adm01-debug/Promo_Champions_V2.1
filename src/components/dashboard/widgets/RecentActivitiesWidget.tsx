@@ -10,7 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const TYPE_LABELS: Record<string, string> = {
-  call: "Ligação", email: "Email", meeting: "Reunião", whatsapp: "WhatsApp", linkedin: "LinkedIn",
+  call: "Ligação", email: "Email", meeting: "Reunião", whatsapp: "WhatsApp", linkedin: "Linkedin",
 };
 
 export const RecentActivitiesWidget = React.memo(function RecentActivitiesWidget() {

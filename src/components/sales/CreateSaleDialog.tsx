@@ -354,7 +354,7 @@ export const CreateSaleDialog = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="linkedin">Linkedin</SelectItem>
                         <SelectItem value="referral">Indicação</SelectItem>
                         <SelectItem value="inbound">Inbound</SelectItem>
                         <SelectItem value="other">Outro</SelectItem>

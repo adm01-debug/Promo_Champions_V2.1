@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTodaysCadenceTasks, useCompleteCadenceTask, useSkipCadenceTask, ActionType, useUpdateLeadStage } from "@/hooks/useCadences";
-import { Phone, Mail, LinkedIn, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch, CheckSquare, RefreshCw } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, CheckCircle2, Zap, GitBranch, CheckSquare, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
   email: Mail,
-  linkedin: LinkedIn,
+  linkedin: Linkedin,
   whatsapp: MessageCircle,
   task: CheckSquare,
   meeting: Users,
@@ -26,7 +26,7 @@ const actionIcons: Record<ActionType, typeof Phone> = {
 const actionLabels: Record<ActionType, string> = {
   call: "Ligação",
   email: "E-mail",
-  linkedin: "LinkedIn",
+  linkedin: "Linkedin",
   whatsapp: "WhatsApp",
   task: "Tarefa",
   meeting: "Reunião",
@@ -343,7 +343,7 @@ export function TodaysCadenceTasks() {
                                 className="h-7 text-[10px] gap-1.5 flex-1 bg-blue-500/10 text-blue-600 border-blue-500/30 hover:bg-blue-500/20"
                                 onClick={() => window.open(String((sale as any).client_linkedin), '_blank')}
                               >
-                                <LinkedIn className="h-3 w-3" /> Ver LinkedIn
+                                <Linkedin className="h-3 w-3" /> Ver Linkedin
                               </Button>
                             )}
                           </div>

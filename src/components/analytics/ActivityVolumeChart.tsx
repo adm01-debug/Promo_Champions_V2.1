@@ -13,7 +13,7 @@ export function ActivityVolumeChart({ data }: ActivityVolumeChartProps) {
     Calls: sp.calls,
     Emails: sp.emails,
     Reuniões: sp.meetings,
-    LinkedIn: sp.linkedin,
+    Linkedin: sp.linkedin,
     WhatsApp: sp.whatsapp,
   }));
 
@@ -44,7 +44,7 @@ export function ActivityVolumeChart({ data }: ActivityVolumeChartProps) {
               <Bar dataKey="Calls" stackId="a" fill="hsl(142, 76%, 36%)" radius={[0, 0, 0, 0]} />
               <Bar dataKey="Emails" stackId="a" fill="hsl(217, 91%, 60%)" radius={[0, 0, 0, 0]} />
               <Bar dataKey="Reuniões" stackId="a" fill="hsl(280, 87%, 63%)" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="LinkedIn" stackId="a" fill="hsl(199, 89%, 48%)" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="Linkedin" stackId="a" fill="hsl(199, 89%, 48%)" radius={[0, 0, 0, 0]} />
               <Bar dataKey="WhatsApp" stackId="a" fill="hsl(158, 64%, 52%)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>

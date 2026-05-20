@@ -14,7 +14,7 @@ import {
   Clock,
   MoreHorizontal,
   GripVertical,
-  LinkedIn,
+  Linkedin,
   MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -33,7 +33,7 @@ const typeConfig = {
   email: { label: 'E-mail', icon: Mail, color: 'text-primary' },
   proposal: { label: 'Proposta', icon: FileText, color: 'text-accent' },
   discount: { label: 'Desconto', icon: Check, color: 'text-status-success' },
-  linkedin: { label: 'LinkedIn', icon: LinkedIn, color: 'text-status-info' },
+  linkedin: { label: 'Linkedin', icon: Linkedin, color: 'text-status-info' },
   whatsapp: { label: 'WhatsApp', icon: MessageCircle, color: 'text-status-success' },
   other: { label: 'Outro', icon: MoreHorizontal, color: 'text-muted-foreground' },
 };

@@ -12,7 +12,7 @@ interface MergeTagPickerProps {
 }
 
 const SAMPLE_CTX: MergeTagContext = {
-  sale: { client_name: "João Silva", amount: 12500, stage: "qualified", category: "Brindes Premium", source: "LinkedIn" },
+  sale: { client_name: "João Silva", amount: 12500, stage: "qualified", category: "Brindes Premium", source: "Linkedin" },
   client: { name: "João Silva", company: "Acme Ltda", email: "joao@acme.com", phone: "(11) 9 9999-9999" },
   salesperson: { name: "Maria", email: "maria@empresa.com" },
 };

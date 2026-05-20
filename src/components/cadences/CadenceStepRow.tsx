@@ -7,14 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, LinkedIn, MessageCircle, Users, CheckSquare, Zap } from "lucide-react";
+import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, Linkedin, MessageCircle, Users, CheckSquare, Zap } from "lucide-react";
 import { CadenceStep, ActionType } from "@/hooks/cadences/useCadenceQueries";
 import { MergeTagPicker } from "./MergeTagPicker";
 
 const ACTION_TYPES: { value: ActionType; label: string; icon: typeof Phone }[] = [
   { value: "email", label: "E-mail", icon: Mail },
   { value: "call", label: "Ligação", icon: Phone },
-  { value: "linkedin", label: "LinkedIn", icon: LinkedIn },
+  { value: "linkedin", label: "Linkedin", icon: Linkedin },
   { value: "whatsapp", label: "WhatsApp", icon: MessageCircle },
   { value: "task", label: "Tarefa", icon: CheckSquare },
   { value: "meeting", label: "Reunião", icon: Users },

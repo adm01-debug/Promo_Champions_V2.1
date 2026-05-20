@@ -94,7 +94,7 @@ export default function SequencesPage() {
     <>
       <Helmet>
         <title>Sequências | CRM</title>
-        <meta name="description" content="Motor de sequências multistep multicanal: e-mail, WhatsApp, ligações e LinkedIn em cadências automatizadas." />
+        <meta name="description" content="Motor de sequências multistep multicanal: e-mail, WhatsApp, ligações e Linkedin em cadências automatizadas." />
       </Helmet>
       <div className="container mx-auto p-4 md:p-6 max-w-6xl space-y-6">
         <div className="flex items-center justify-between gap-3 flex-wrap">

@@ -43,7 +43,7 @@ const activityLabels: Record<string, string> = {
   meeting: 'Reunião',
   proposal: 'Proposta',
   whatsapp: 'WhatsApp',
-  linkedin: 'LinkedIn',
+  linkedin: 'Linkedin',
   follow_up: 'Follow-up',
 };
 

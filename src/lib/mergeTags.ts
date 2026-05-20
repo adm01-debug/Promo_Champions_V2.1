@@ -42,7 +42,7 @@ export const AVAILABLE_MERGE_TAGS: MergeTagDefinition[] = [
   { key: "negocio.valor", label: "Valor", example: "R$ 12.500,00", group: "Negócio" },
   { key: "negocio.estagio", label: "Estágio", example: "qualified", group: "Negócio" },
   { key: "negocio.categoria", label: "Categoria", example: "Brindes Premium", group: "Negócio" },
-  { key: "negocio.fonte", label: "Fonte do lead", example: "LinkedIn", group: "Negócio" },
+  { key: "negocio.fonte", label: "Fonte do lead", example: "Linkedin", group: "Negócio" },
   { key: "data.hoje", label: "Data de hoje", example: "16/04/2026", group: "Outros" },
   { key: "data.amanha", label: "Amanhã", example: "17/04/2026", group: "Outros" },
   { key: "singu.primeira_frase", label: "Primeira frase (IA)", example: "Vi que vocês expandiram para o México recentemente...", group: "SINGU Intelligence" },

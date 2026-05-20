@@ -117,7 +117,7 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
                   <SelectContent>
                     <SelectItem value="whatsapp">WhatsApp</SelectItem>
                     <SelectItem value="email">Email</SelectItem>
-                    <SelectItem value="linkedin">LinkedIn</SelectItem>
+                    <SelectItem value="linkedin">Linkedin</SelectItem>
                     <SelectItem value="sms">SMS</SelectItem>
                   </SelectContent>
                 </Select>

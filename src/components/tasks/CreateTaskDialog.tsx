@@ -186,7 +186,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                         <SelectItem value="follow_up">Follow-up</SelectItem>
                         <SelectItem value="email">E-mail</SelectItem>
                         <SelectItem value="proposal">Proposta</SelectItem>
-                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="linkedin">Linkedin</SelectItem>
                         <SelectItem value="whatsapp">WhatsApp</SelectItem>
                         <SelectItem value="other">Outro</SelectItem>
                       </SelectContent>

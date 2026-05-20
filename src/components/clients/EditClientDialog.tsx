@@ -213,7 +213,7 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Ex: LinkedIn, Indicação, Site..."
+                      placeholder="Ex: Linkedin, Indicação, Site..."
                       className="bg-muted/50 border-border/50"
                     />
                   </FormControl>

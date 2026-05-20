@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Cadence, CadenceStep, ActionType } from "@/hooks/useCadences";
-import { Phone, Mail, LinkedIn, MessageCircle, Users, MoreHorizontal, Trash2, ChevronDown, ChevronUp, ListTodo, Pencil, Power, CheckSquare } from "lucide-react";
+import { Phone, Mail, Linkedin, MessageCircle, Users, MoreHorizontal, Trash2, ChevronDown, ChevronUp, ListTodo, Pencil, Power, CheckSquare } from "lucide-react";
 import { useState } from "react";
 import { EditCadenceDialog } from "./EditCadenceDialog";
 import { DeleteCadenceDialog } from "./DeleteCadenceDialog";
@@ -11,7 +11,7 @@ import { DeleteCadenceDialog } from "./DeleteCadenceDialog";
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
   email: Mail,
-  linkedin: LinkedIn,
+  linkedin: Linkedin,
   whatsapp: MessageCircle,
   task: CheckSquare,
   meeting: Users,
@@ -21,7 +21,7 @@ const actionIcons: Record<ActionType, typeof Phone> = {
 const actionLabels: Record<ActionType, string> = {
   call: "Ligação",
   email: "E-mail",
-  linkedin: "LinkedIn",
+  linkedin: "Linkedin",
   whatsapp: "WhatsApp",
   task: "Tarefa",
   meeting: "Reunião",

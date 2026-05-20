@@ -68,7 +68,7 @@ export function ChannelChart({ data }: Props) {
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="whatsapp" name="WhatsApp" fill={CHANNEL_COLORS.whatsapp} radius={[2, 2, 0, 0]} stackId="a" />
               <Bar dataKey="email" name="Email" fill={CHANNEL_COLORS.email} radius={[2, 2, 0, 0]} stackId="a" />
-              <Bar dataKey="linkedin" name="LinkedIn" fill={CHANNEL_COLORS.linkedin} radius={[2, 2, 0, 0]} stackId="a" />
+              <Bar dataKey="linkedin" name="Linkedin" fill={CHANNEL_COLORS.linkedin} radius={[2, 2, 0, 0]} stackId="a" />
               <Bar dataKey="sms" name="SMS" fill={CHANNEL_COLORS.sms} radius={[2, 2, 0, 0]} stackId="a" />
               <Bar dataKey="phone" name="Telefone" fill={CHANNEL_COLORS.phone} radius={[2, 2, 0, 0]} stackId="a" />
             </BarChart>
