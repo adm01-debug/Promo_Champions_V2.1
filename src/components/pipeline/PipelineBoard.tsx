@@ -453,5 +453,6 @@ export const PipelineBoard = () => {
         </DragOverlay>
       </DndContext>
     </div>
+    </TooltipProvider>
   );
 };
