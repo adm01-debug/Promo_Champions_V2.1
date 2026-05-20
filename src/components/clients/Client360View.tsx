@@ -756,8 +756,41 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/[0.07] transition-all">
-              <div className="flex items-center justify-between mb-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 h-px bg-white/5" />
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Fluxo Logístico & Pagamento</span>
+                <div className="flex-1 h-px bg-white/5" />
+              </div>
+              <div className="flex justify-between px-2">
+                {[
+                  { label: "Criação", date: selectedOrder?.created_at, icon: Calendar, done: true },
+                  { label: "Pagamento", date: selectedOrder?.status === 'completed' ? selectedOrder?.created_at : null, icon: CreditCard, done: selectedOrder?.status === 'completed' },
+                  { label: "Faturamento", date: selectedOrder?.status === 'completed' ? selectedOrder?.created_at : null, icon: DollarSign, done: selectedOrder?.status === 'completed' },
+                  { label: "Entrega", date: null, icon: Package, done: false },
+                ].map((step, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2 group/step">
+                    <div className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center border transition-all",
+                      step.done ? "bg-emerald-500/20 border-emerald-500 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-white/5 border-white/10 text-muted-foreground"
+                    )}>
+                      <step.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className={cn("text-[8px] font-black uppercase", step.done ? "text-foreground" : "text-muted-foreground")}>{step.label}</span>
+                      {step.date && <span className="text-[7px] font-bold text-muted-foreground/60">{new Date(step.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/[0.07] transition-all relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <ShoppingBag className="h-24 w-24 text-primary" />
+              </div>
+              
+              <div className="flex items-center justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-primary" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Discriminação de Itens</span>
@@ -767,13 +800,20 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </Badge>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 <div className="flex justify-between items-start group">
                   <div className="flex flex-col">
                     <span className="text-sm font-black uppercase group-hover:text-primary transition-colors">{selectedOrder?.product_name}</span>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">SKU: {selectedOrder?.sku || 'N/A'}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">SKU: {selectedOrder?.sku || 'N/A'}</span>
+                      <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                      <span className="text-[10px] font-bold text-primary uppercase">Garantia Vitalícia</span>
+                    </div>
                   </div>
-                  <span className="text-sm font-black text-foreground">{formatCurrency(Number(selectedOrder?.amount))}</span>
+                  <div className="text-right">
+                    <span className="text-sm font-black text-foreground">{formatCurrency(Number(selectedOrder?.amount))}</span>
+                    <p className="text-[8px] font-bold text-muted-foreground uppercase">unid: 1.0</p>
+                  </div>
                 </div>
 
                 <div className="pt-4 border-t border-white/10 space-y-2.5">
@@ -800,6 +840,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </div>
               </div>
             </div>
+
 
             <div className="flex gap-3 pt-2">
               <button className="flex-1 py-4 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
