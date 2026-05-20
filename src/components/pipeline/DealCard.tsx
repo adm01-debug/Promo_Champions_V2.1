@@ -81,18 +81,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
   };
 
   return (
+  // Etapa 8: Bulk Operations Mode
+  const [isSelected, setIsSelected] = useState(false);
+
+  return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
+      onClick={() => setIsSelected(!isSelected)}
       className={cn(
-        "touch-none cursor-grab active:cursor-grabbing",
+        "touch-none cursor-grab active:cursor-grabbing relative",
         isDragging && "opacity-50",
         // Etapa 3: "Hot Deal" Pulse Animation
-        leadScore?.category === 'hot' && "animate-[pulse_3s_ease-in-out_infinite] ring-1 ring-status-error/50"
+        leadScore?.category === 'hot' && "animate-[pulse_3s_ease-in-out_infinite] ring-1 ring-status-error/50",
+        isSelected && "ring-2 ring-primary ring-offset-2 scale-[0.98]"
       )}
     >
+      {isSelected && (
+        <div className="absolute -top-2 -right-2 z-30 bg-primary text-white p-1 rounded-full shadow-lg">
+          <Zap className="h-3 w-3 fill-current" />
+        </div>
+      )}
       <Card className={cn(
         "p-3 glass border border-border/40 dark:border-glow hover-lift transition-all duration-300",
         "hover:shadow-lg hover:shadow-primary/10 group overflow-hidden",
