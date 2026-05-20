@@ -373,6 +373,44 @@ export function Client360View({ clientName }: Client360ViewProps) {
                   </div>
                 ))}
 
+                {/* Pricing & Timing DNA - Etapa 5 e 6 do Plano 10/10 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <DollarSign className="h-4 w-4 text-amber-500" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">DNA de Precificação</span>
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <div className="text-xl font-black uppercase tracking-tighter">
+                          {data.priceSensitivity === 'high' ? 'Sensível' : data.priceSensitivity === 'medium' ? 'Moderado' : 'Inelástico'}
+                        </div>
+                        <div className="text-[8px] font-bold text-muted-foreground uppercase mt-1">Perfil de compra por valor</div>
+                      </div>
+                      <Badge variant="outline" className="text-[8px] border-amber-500/20 text-amber-500">
+                        {data.priceSensitivity === 'high' ? 'FOCO EM DESCONTOS' : 'FOCO EM VALOR'}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 to-indigo-500/5 border border-purple-500/10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calendar className="h-4 w-4 text-purple-500" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-purple-500">Padrão Comportamental</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <div className="text-xs font-black uppercase text-muted-foreground">Melhor Dia</div>
+                        <div className="text-sm font-black">{data.preferredDayOfWeek}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-black uppercase text-muted-foreground">Melhor Hora</div>
+                        <div className="text-sm font-black">{data.preferredTimeOfDay}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {data.orders.length === 0 && (
                   <div className="text-center py-12">
                     <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground/20" />

@@ -9,6 +9,9 @@ export interface Client360Data {
   topProducts: { name: string; count: number; total: number }[];
   spendingHistory: { date: string; amount: number }[];
   categoryDistribution: { name: string; value: number }[];
+  priceSensitivity: 'high' | 'medium' | 'low';
+  preferredDayOfWeek: string;
+  preferredTimeOfDay: string;
   purchaseFrequency: number; // Dias médios entre compras
   predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
   churnRisk: number; // 0 a 100
@@ -85,6 +88,27 @@ export function useClient360(clientName: string | undefined) {
         value: p.total
       }));
 
+      // Sensibilidade a Preço (Baseado na variação do valor das compras)
+      const priceVariation = ordersCount > 1 
+        ? Math.sqrt(sales.reduce((acc, s) => acc + Math.pow(Number(s.amount) - averageTicket, 2), 0) / ordersCount) / averageTicket
+        : 0;
+      const priceSensitivity = priceVariation > 0.4 ? 'high' : priceVariation > 0.15 ? 'medium' : 'low';
+
+      // Preferências temporais
+      const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      const dayCounts = new Array(7).fill(0);
+      const hourCounts = new Array(24).fill(0);
+      
+      sales.forEach(s => {
+        const date = new Date(s.created_at);
+        dayCounts[date.getDay()]++;
+        hourCounts[date.getHours()]++;
+      });
+      
+      const preferredDayOfWeek = days[dayCounts.indexOf(Math.max(...dayCounts))];
+      const maxHour = hourCounts.indexOf(Math.max(...hourCounts));
+      const preferredTimeOfDay = maxHour < 12 ? 'Manhã' : maxHour < 18 ? 'Tarde' : 'Noite';
+
       return {
         ltv,
         averageTicket,
@@ -93,6 +117,9 @@ export function useClient360(clientName: string | undefined) {
         topProducts,
         spendingHistory,
         categoryDistribution,
+        priceSensitivity,
+        preferredDayOfWeek,
+        preferredTimeOfDay,
         purchaseFrequency,
         predictedNextPurchaseDays,
         churnRisk
