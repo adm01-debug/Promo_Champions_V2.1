@@ -46,6 +46,7 @@ interface DealCardProps {
 }
 
 export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData }: DealCardProps) => {
+  const [isEnriching, setIsEnriching] = useState(false); // Etapa 3: Data Enrichment
   const [playbookOpen, setPlaybookOpen] = useState(false);
   const { data: explanation } = useLeadScoreExplanation(leadScore ? deal.id : null);
   const { data: playbooks } = usePlaybooksByStage(deal.status);
