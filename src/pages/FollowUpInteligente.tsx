@@ -139,9 +139,13 @@ const FollowUpInteligente = memo(() => {
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
-          const score = (deal as unknown as { lead_scores: { score: number }[] }).lead_scores?.[0]?.score || 0;
-          const probability = (deal as unknown as { deal_probability_scores: { calibrated_probability: number }[] }).deal_probability_scores?.[0]?.calibrated_probability || undefined;
+          const score = (deal as any).lead_scores?.[0]?.score || 0;
+          const probability = (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
           
+          // Enhanced AI Logic for Step 1
+          const healthScore = Math.max(0, Math.min(100, 100 - (daysInactive * 5) + (score / 10)));
+          const velocity = daysInactive < 5 ? 'increasing' : daysInactive > 10 ? 'decreasing' : 'stable';
+
           return {
             ...deal,
             days_inactive: daysInactive,
@@ -154,6 +158,8 @@ const FollowUpInteligente = memo(() => {
               type: lastActivity.activity_type
             } : undefined,
             score,
+            health_score: Math.round(healthScore),
+            interaction_velocity: velocity,
             probability,
             has_pending_task: pendingTaskIds.has(deal.id),
             follow_up_count: completedTasksMap[deal.id] || 0

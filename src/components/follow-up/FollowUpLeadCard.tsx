@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake, History, RotateCw } from 'lucide-react';
+import { Clock, Mail, Phone, MessageCircle, Send, Zap, CheckCircle2, Snowflake, History, RotateCw, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
@@ -75,53 +75,71 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="font-semibold truncate">{lead.client_name}</span>
+                <span className="font-semibold truncate text-base">{lead.client_name}</span>
                 {lead.score && lead.score >= 80 && (
-                  <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none text-[10px] h-5 px-1.5 animate-pulse">
+                  <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white border-none text-[10px] h-5 px-1.5 shadow-sm">
                     <Zap className="h-3 w-3 mr-0.5 fill-current" />
                     CLASSE A
                   </Badge>
                 )}
-                <Badge variant="outline" className={`${config.bgClass} ${config.colorClass} border-none text-xs`}>
+                <Badge variant="outline" className={`${config.bgClass} ${config.colorClass} border-none text-xs font-medium`}>
                   <config.icon className="h-3 w-3 mr-1" />
                   {config.label}
                 </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  {statusLabels[lead.status] || lead.status}
-                </Badge>
                 
-                {lead.days_inactive >= 3 && lead.days_inactive < 5 && (
-                  <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">D+3 Cadence</Badge>
+                {lead.health_score !== undefined && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1 bg-muted/50 px-2 py-0.5 rounded-full border text-[10px] font-bold">
+                          <div className={`w-1.5 h-1.5 rounded-full ${lead.health_score > 70 ? 'bg-green-500' : lead.health_score > 40 ? 'bg-yellow-500' : 'bg-red-500'} animate-pulse`} />
+                          SAÚDE: {lead.health_score}%
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Saúde do Deal baseada em interações e tempo</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
-                {lead.days_inactive >= 5 && (
-                  <Badge variant="outline" className="text-[10px] border-destructive/30 text-destructive font-bold">D+5 Priority</Badge>
-                )}
-                {lead.follow_up_count && lead.follow_up_count > 0 && (
-                  <Badge variant="outline" className="text-[10px] border-muted-foreground/30">
-                    {lead.follow_up_count}ª tentativa
-                  </Badge>
+
+                {lead.interaction_velocity && (
+                  <div className="flex items-center text-[10px] text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded border border-dashed">
+                    {lead.interaction_velocity === 'increasing' ? (
+                      <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                    ) : lead.interaction_velocity === 'decreasing' ? (
+                      <TrendingDown className="h-3 w-3 text-red-500 mr-1" />
+                    ) : (
+                      <Minus className="h-3 w-3 text-yellow-500 mr-1" />
+                    )}
+                    Velocidade
+                  </div>
                 )}
               </div>
 
-              <div className="text-sm text-muted-foreground mb-1">
+              <div className="text-sm text-muted-foreground mb-1 flex items-center gap-2">
                 {lead.product_name && <span>{lead.product_name} · </span>}
-                <span className="font-medium text-foreground">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
+                <span className="font-bold text-foreground">R$ {(lead.amount || 0).toLocaleString('pt-BR')}</span>
+                <Badge variant="secondary" className="text-[10px] h-4 px-1 leading-none uppercase tracking-tighter opacity-70">
+                  {statusLabels[lead.status] || lead.status}
+                </Badge>
               </div>
 
               {lead.last_activity && (
-                <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-1.5 rounded border border-dashed border-muted-foreground/20 italic">
-                  <span className="font-semibold not-italic capitalize">{lead.last_activity.type?.replace('_', ' ')}:</span> "{lead.last_activity.notes}" ({format(new Date(lead.last_activity.created_at), "dd/MM")})
+                <div className="text-xs text-muted-foreground mb-2 bg-muted/30 p-2 rounded-lg border border-dashed border-muted-foreground/20 italic group-hover:bg-muted/50 transition-colors">
+                  <span className="font-semibold not-italic capitalize text-foreground/80">{lead.last_activity.type?.replace('_', ' ')}:</span> "{lead.last_activity.notes}"
+                  <div className="text-[10px] mt-1 not-italic opacity-60 flex items-center gap-1">
+                    <Clock className="h-2.5 w-2.5" /> {format(new Date(lead.last_activity.created_at), "dd 'de' MMM", { locale: ptBR })}
+                  </div>
                 </div>
               )}
 
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span className={lead.days_inactive > 14 ? 'text-destructive font-medium' : ''}>
-                    {lead.days_inactive} dias sem atividade
+                  <span className={lead.days_inactive > 14 ? 'text-destructive font-bold' : lead.days_inactive > 7 ? 'text-orange-500 font-medium' : ''}>
+                    {lead.days_inactive} dias em silêncio
                   </span>
                 </span>
-                <span>Atualizado: {format(new Date(lead.updated_at), "dd/MM/yyyy", { locale: ptBR })}</span>
+                <span className="opacity-70">Atualizado: {format(new Date(lead.updated_at), "dd/MM/yyyy", { locale: ptBR })}</span>
               </div>
             </div>
 
