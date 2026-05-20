@@ -171,19 +171,36 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 text-primary">
-                  <Calendar className="h-4 w-4" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={cn("h-8 w-8 hover:bg-indigo-500/20 text-indigo-500", isEnriching && "animate-pulse")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEnriching(true);
+                    setTimeout(() => setIsEnriching(false), 2000);
+                  }}
+                >
+                  <Database className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Agendar Call</TooltipContent>
+              <TooltipContent className="font-bold">Enriquecer com Dados de Ecossistema (Etapa 3)</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-indigo-500/20 text-indigo-500">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-orange-500/20 text-orange-500">
+                  <Mic className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="font-bold">AI Voice Command (Etapa 4)</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 text-primary">
                   <ListTodo className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Ver Tarefas</TooltipContent>
+              <TooltipContent className="font-bold">Ver Tarefas</TooltipContent>
             </Tooltip>
           </div>
 
