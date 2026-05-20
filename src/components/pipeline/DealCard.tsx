@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { QuickActionsMenu } from "./QuickActionsMenu";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -80,17 +80,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
     }
   };
 
+  // Etapa 8: Bulk Operations Mode
+  const [isSelected, setIsSelected] = useState(false);
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
+      onClick={() => setIsSelected(!isSelected)}
       className={cn(
-        "touch-none cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50"
+        "touch-none cursor-grab active:cursor-grabbing relative",
+        isDragging && "opacity-50",
+        // Etapa 3: "Hot Deal" Pulse Animation
+        leadScore?.category === 'hot' && "animate-[pulse_3s_ease-in-out_infinite] ring-1 ring-status-error/50",
+        isSelected && "ring-2 ring-primary ring-offset-2 scale-[0.98]"
       )}
     >
+      {isSelected && (
+        <div className="absolute -top-2 -right-2 z-30 bg-primary text-white p-1 rounded-full shadow-lg">
+          <Zap className="h-3 w-3 fill-current" />
+        </div>
+      )}
       <Card className={cn(
         "p-3 glass border border-border/40 dark:border-glow hover-lift transition-all duration-300",
         "hover:shadow-lg hover:shadow-primary/10 group overflow-hidden",
@@ -101,7 +113,35 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
         <div className="absolute -right-8 -top-8 w-16 h-16 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-start justify-between gap-2 mb-2 relative">
+          {/* Etapa 4: Quick Action Overlay */}
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-around z-20 rounded-lg">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500">
+                  <Zap className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>WhatsApp Rápido</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 text-primary">
+                  <Calendar className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Agendar Call</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-indigo-500/20 text-indigo-500">
+                  <ListTodo className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Ver Tarefas</TooltipContent>
+            </Tooltip>
+          </div>
+
           <div className="flex-1 min-w-0">
             <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors">
               {deal.client_name}
@@ -119,33 +159,50 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
                     {leadScore.score}
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[260px] p-3">
-                  {explanation ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1.5 pb-1 border-b border-border/40">
-                        <Brain className="h-3 w-3 text-primary" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wider">Principais motivadores</span>
+                <TooltipContent side="left" className="max-w-[280px] p-0 border-none bg-transparent shadow-2xl">
+                  {/* Etapa 6: Contextual AI Insights Tooltip */}
+                  <div className="bg-card/95 backdrop-blur-md border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
+                    <div className="bg-primary/10 p-3 border-b border-primary/10">
+                      <div className="flex items-center gap-2">
+                        <Brain className="h-4 w-4 text-primary animate-pulse" />
+                        <span className="text-[11px] font-black uppercase tracking-widest italic">AI STRATEGIC INSIGHT</span>
                       </div>
-                      {explanation.top_drivers.slice(0, 3).map((d) => (
-                        <div key={d.factor} className="flex items-center justify-between text-[11px]">
-                          <span className="truncate">{d.label}</span>
-                          <span className={cn(
-                            "font-mono font-semibold ml-2",
-                            d.direction === "positive" ? "text-status-success" : "text-destructive"
-                          )}>
-                            {d.direction === "positive" ? "+" : "-"}{d.contribution_pct}%
-                          </span>
+                    </div>
+                    
+                    <div className="p-3 space-y-3">
+                      {explanation ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Principais Motivadores</span>
+                            {explanation.top_drivers.slice(0, 3).map((d) => (
+                              <div key={d.factor} className="flex items-center justify-between text-[11px] bg-muted/30 p-1.5 rounded-md border border-border/10">
+                                <span className="font-medium">{d.label}</span>
+                                <span className={cn(
+                                  "font-black",
+                                  d.direction === "positive" ? "text-emerald-500" : "text-destructive"
+                                )}>
+                                  {d.direction === "positive" ? "+" : "-"}{d.contribution_pct}%
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="pt-2 border-t border-border/20">
+                            <span className="text-[9px] font-bold text-amber-500 uppercase tracking-wider">⚠️ OBJEÇÃO PREVISTA</span>
+                            <p className="text-[11px] font-medium leading-relaxed mt-1 text-foreground/90">
+                              O cliente pode questionar o <span className="text-primary font-bold italic">prazo de implementação</span>. 
+                              <span className="text-emerald-500"> DICA:</span> Enfatize o suporte VIP 24h.
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex items-center gap-2 py-4">
+                          <Zap className="h-4 w-4 text-primary animate-spin" />
+                          <p className="text-[11px] text-muted-foreground font-medium italic">Processando neuro-análise do deal...</p>
                         </div>
-                      ))}
-                      {explanation.narrative && (
-                        <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/40 leading-snug">
-                          {explanation.narrative}
-                        </p>
                       )}
                     </div>
-                  ) : (
-                    <p className="text-[11px] text-muted-foreground">Calculando explicação IA…</p>
-                  )}
+                  </div>
                 </TooltipContent>
               </Tooltip>
             )}
@@ -176,12 +233,22 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
         </div>
 
-        {/* Value */}
-        <div className="flex items-center gap-1.5 mb-2">
-          <DollarSign className="h-3.5 w-3.5 text-status-success" />
-          <span className="font-display font-bold text-sm gradient-text">
-            {formatCurrency(deal.amount)}
-          </span>
+        {/* Value & Time in Stage Indicator (Etapa 1) */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <DollarSign className="h-3.5 w-3.5 text-status-success" />
+            <span className="font-display font-bold text-sm gradient-text">
+              {formatCurrency(deal.amount)}
+            </span>
+          </div>
+          <div className={cn(
+            "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
+            (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
+              ? "bg-red-500/10 text-red-500 border-red-500/20" 
+              : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+          )}>
+            {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+          </div>
         </div>
 
         {/* Meta info */}

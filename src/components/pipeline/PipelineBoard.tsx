@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 
 import {
@@ -153,6 +154,23 @@ export const PipelineBoard = () => {
     const targetStage = currentStages.find(s => s.id === overId);
     
     if (targetStage) {
+      // Etapa 10: Victory Celebration
+      if (targetStage.id === 'won') {
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+        const interval: any = setInterval(function() {
+          const timeLeft = animationEnd - Date.now();
+          if (timeLeft <= 0) return clearInterval(interval);
+          const particleCount = 50 * (timeLeft / duration);
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+      }
+
       let currentStageId: string | null = null;
       for (const stage of currentStages) {
         if (currentDealsByStage?.[stage.id]?.some((d) => d.id === dealId)) {
@@ -221,15 +239,34 @@ export const PipelineBoard = () => {
     (sum, stage) => sum + (currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0), 0
   );
 
+  // Etapa 2: Pipeline Liquidity & Weighted Forecast
+  const weightedTotalValue = currentStages.reduce(
+    (sum, stage) => {
+      const stageValue = currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0;
+      return sum + (stageValue * (stage.probability / 100));
+    }, 0
+  );
+
   return (
     <div className="space-y-4">
-      {/* Pipeline Selector */}
-      <PipelineSelector
-        pipelines={pipelines || []}
-        selectedId={selectedPipelineId}
-        onSelect={setSelectedPipelineId}
-        isLoading={pipelinesLoading}
-      />
+      {/* Etapa 9: Advanced Filter Bar (Foco Cirúrgico) */}
+      <div className="flex flex-wrap items-center gap-2 p-2 bg-card/40 backdrop-blur-md border border-border/20 rounded-2xl shadow-inner">
+        <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+          <Zap className="h-3 w-3" />
+          Filtros Rápidos
+        </div>
+        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Alta Prioridade</Button>
+        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Estagnados {'>'} 7D</Button>
+        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Ticket Médio +50k</Button>
+        <div className="flex-1" />
+        {/* Pipeline Selector */}
+        <PipelineSelector
+          pipelines={pipelines || []}
+          selectedId={selectedPipelineId}
+          onSelect={setSelectedPipelineId}
+          isLoading={pipelinesLoading}
+        />
+      </div>
 
       {/* Stats Bar */}
       <div className="relative flex items-center justify-between p-6 rounded-2xl bg-gradient-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
@@ -248,12 +285,12 @@ export const PipelineBoard = () => {
           <div className="hidden sm:flex items-center">
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Liquidez do Pipeline</span>
+              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">Previsão Ponderada (P2)</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-display font-black tracking-tighter gradient-text">
-                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(totalValue)}
+                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(weightedTotalValue)}
                 </span>
-                <span className="text-[10px] font-bold text-primary uppercase">Volume</span>
+                <span className="text-[10px] font-bold text-primary uppercase">Forecast</span>
               </div>
             </div>
           </div>
