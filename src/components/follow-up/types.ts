@@ -19,10 +19,12 @@ export interface ColdLead {
     created_at: string;
     type: string;
   };
-  score?: number;
+  score?: number; // Lead Score (A, B, C)
+  health_score?: number; // 0-100 (Deal Health)
   probability?: number;
   has_pending_task?: boolean;
   follow_up_count?: number;
+  interaction_velocity?: 'increasing' | 'stable' | 'decreasing';
 }
 
 export const temperatureConfig: Record<LeadTemperature, {
