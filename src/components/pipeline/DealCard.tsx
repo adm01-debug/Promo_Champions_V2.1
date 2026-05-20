@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles, RefreshCw, Mic, ShieldCheck, History, Database } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { DealScoreIndicator } from "./DealScoreIndicator";
