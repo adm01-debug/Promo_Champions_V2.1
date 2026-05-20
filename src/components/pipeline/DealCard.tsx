@@ -162,11 +162,11 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-around z-20 rounded-lg">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500">
-                  <Zap className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500 group/btn">
+                  <Zap className="h-4 w-4 group-hover/btn:scale-125 transition-transform" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>WhatsApp Rápido</TooltipContent>
+              <TooltipContent className="font-bold">WhatsApp Rápido (Automação Etapa 2)</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
