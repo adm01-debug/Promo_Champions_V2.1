@@ -40,6 +40,14 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
     id: stage.id,
   });
 
+  const avgScore = useMemo(() => {
+    if (deals.length === 0) return 0;
+    const validDeals = deals.filter(d => leadScores?.[d.id]?.score);
+    if (validDeals.length === 0) return 50;
+    const sum = validDeals.reduce((s, d) => s + (leadScores?.[d.id]?.score || 0), 0);
+    return sum / validDeals.length;
+  }, [deals, leadScores]);
+
   const totalValue = deals.reduce((sum, deal) => sum + deal.amount, 0);
 
   const formatCurrency = (value: number) => {
@@ -54,8 +62,11 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col min-w-[300px] max-w-[320px] 2xl:min-w-0 2xl:max-w-none rounded-2xl transition-all duration-500 snap-center h-full",
+        "flex flex-col min-w-[300px] max-w-[320px] 2xl:min-w-0 2xl:max-w-none rounded-2xl transition-all duration-500 snap-center h-full relative",
         "bg-gradient-to-b from-card/40 to-background/20 backdrop-blur-sm border border-border/20",
+        // Etapa 3: Heatmap Glow
+        avgScore > 75 ? "shadow-[0_0_30px_rgba(16,185,129,0.05)]" : avgScore < 40 ? "shadow-[0_0_30px_rgba(239,68,68,0.05)]" : "",
+        "hover:shadow-2xl hover:shadow-primary/5",
         // Etapa 5: Smart Column Transitions
         isOver ? "ring-2 ring-primary ring-offset-4 ring-offset-background scale-[1.03] shadow-2xl shadow-primary/20 z-10 bg-primary/5" : "hover:border-primary/10"
       )}
@@ -63,6 +74,12 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
 
       {/* Column Header */}
       <div className="relative rounded-t-2xl p-5 border-b border-border/10 overflow-hidden group">
+        {/* Etapa 3: Heatmap Background Overlay */}
+        <div className={cn(
+          "absolute inset-0 opacity-10 transition-opacity duration-700 pointer-events-none",
+          avgScore > 75 ? "bg-emerald-500" : avgScore < 40 ? "bg-red-500" : "bg-primary"
+        )} />
+
         {/* Etapa 7: Funnel Overlay */}
         {showFunnelLayer && conversionRate !== undefined && (
           <div className="absolute top-0 right-0 p-2 z-10">
