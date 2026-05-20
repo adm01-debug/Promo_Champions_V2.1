@@ -103,7 +103,35 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
         <div className="absolute -right-8 -top-8 w-16 h-16 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-start justify-between gap-2 mb-2 relative">
+          {/* Etapa 4: Quick Action Overlay */}
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-around z-20 rounded-lg">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500">
+                  <Zap className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>WhatsApp Rápido</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 text-primary">
+                  <Calendar className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Agendar Call</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-indigo-500/20 text-indigo-500">
+                  <ListTodo className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Ver Tarefas</TooltipContent>
+            </Tooltip>
+          </div>
+
           <div className="flex-1 min-w-0">
             <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors">
               {deal.client_name}
