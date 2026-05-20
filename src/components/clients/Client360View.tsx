@@ -36,6 +36,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<"table" | "timeline">("timeline");
 
   const categories = useMemo(() => {
     if (!data?.orders) return [];
@@ -251,6 +252,26 @@ export function Client360View({ clientName }: Client360ViewProps) {
               <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">Gestão granular do histórico comercial</CardDescription>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <div className="flex bg-muted/50 p-1 rounded-xl border border-white/5 mr-2">
+                <button 
+                  onClick={() => setViewMode("timeline")}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                    viewMode === "timeline" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Timeline
+                </button>
+                <button 
+                  onClick={() => setViewMode("table")}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                    viewMode === "table" ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Tabela
+                </button>
+              </div>
               <div className="relative w-full md:w-48">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input 
@@ -284,45 +305,25 @@ export function Client360View({ clientName }: Client360ViewProps) {
                   <SelectItem value="cancelled">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-xl border border-white/5 px-3 h-10">
-                <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                <div className="flex flex-col">
-                  <span className="text-[8px] font-black text-muted-foreground uppercase leading-none">Faixa de Valor</span>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="number" 
-                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
-                      value={valueRange[0]} 
-                      onChange={e => setValueRange([Number(e.target.value), valueRange[1]])}
-                    />
-                    <span className="text-[8px] text-muted-foreground">-</span>
-                    <input 
-                      type="number" 
-                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
-                      value={valueRange[1]} 
-                      onChange={e => setValueRange([valueRange[0], Number(e.target.value)])}
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-accent/10">
-                <TableRow className="border-border/10 hover:bg-transparent">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Data</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Produto / SKU</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Valor</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Status</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.length > 0 ? filteredOrders.map((order) => (
-                  <TableRow key={order.id} className="border-border/10 group transition-colors hover:bg-white/5">
+          {viewMode === "table" ? (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-accent/10">
+                  <TableRow className="border-border/10 hover:bg-transparent">
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Data</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Produto / SKU</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">Valor</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Status</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrders.length > 0 ? filteredOrders.map((order) => (
+                    <TableRow key={order.id} className="border-border/10 group transition-colors hover:bg-white/5">
                     <TableCell className="text-xs font-medium py-4">
                       {new Date(order.created_at).toLocaleDateString('pt-BR')}
                     </TableCell>
