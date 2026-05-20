@@ -449,6 +449,11 @@ const FollowUpInteligente = memo(() => {
                       isCreating={creatingLeadId === lead.id}
                       onOpenAudit={(l) => { setSelectedLeadForAudit(l); setIsAuditModalOpen(true); }}
                       onReactivate={(l) => { setReactivateLead(l); setIsReactivateModalOpen(true); }}
+                      onQuickAction={(lead, action) => {
+                        if (action === 'script') {
+                          handleWhatsAppClick(lead);
+                        }
+                      }}
                     />
                   ))}
                 </AnimatePresence>
