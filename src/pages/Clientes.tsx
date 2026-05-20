@@ -176,6 +176,12 @@ const Clientes = () => {
                           <div className={cn("mb-4 p-3 rounded-xl border flex items-center gap-3 animate-fade-in", prediction.urgency === 'high' ? "bg-rose-500/10 border-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/10 border-amber-500/20" : "bg-emerald-500/5 border-emerald-500/20")}>
                             <div className={cn("p-2 rounded-lg", prediction.urgency === 'high' ? "bg-rose-500/20" : prediction.urgency === 'medium' ? "bg-amber-500/20" : "bg-emerald-500/10")}><BrainCircuit className={cn("h-4 w-4", prediction.urgency === 'high' ? "text-rose-500 animate-pulse" : prediction.urgency === 'medium' ? "text-amber-500" : "text-emerald-500")} /></div>
                             <div><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Previsão</p><p className="text-xs font-bold">{prediction.daysToNextPurchase <= 0 ? "Expectativa Hoje!" : `Em ~${prediction.daysToNextPurchase} dias`}</p></div>
+                            {prediction.riskOfChurn && prediction.riskOfChurn > 30 && (
+                              <div className="flex flex-col items-center">
+                                <span className="text-[8px] font-black text-rose-500">CHURN RISK</span>
+                                <span className="text-xs font-black text-rose-500">{prediction.riskOfChurn}%</span>
+                              </div>
+                            )}
                             <div className="ml-auto text-right"><p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Confiança</p><p className="text-xs font-bold text-primary">{Math.round(prediction.confidence * 100)}%</p></div>
                           </div>
                         )}
@@ -185,8 +191,13 @@ const Clientes = () => {
                         </div>
                         <div className="pt-4 border-t border-border/10">
                           <div className="flex justify-between items-end">
-                            <div className="space-y-0.5"><span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">LTV Total</span><div className="flex items-baseline gap-1"><TotalValueDisplay value={Number(client.total_value || 0)} /><span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span></div></div>
-                            <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
+                             <div className="space-y-0.5"><span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">LTV Total</span><div className="flex items-baseline gap-1"><TotalValueDisplay value={Number(client.total_value || 0)} /><span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span></div></div>
+                             {prediction && prediction.confidence > 0.8 && (
+                               <Badge variant="outline" className="animate-pulse bg-primary/10 border-primary/30 text-primary text-[8px] font-black h-5">
+                                 <Sparkles className="h-2.5 w-2.5 mr-1" /> IA VIP
+                               </Badge>
+                             )}
+                             <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
                           </div>
                         </div>
                       </motion.div>
