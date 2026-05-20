@@ -55,7 +55,17 @@ export function Client360View({ clientName }: Client360ViewProps) {
     if (!data?.orders) return [];
     return data.orders.filter(order => {
       const productName = (order.product_name || "").toLowerCase();
-      const matchesSearch = productName.includes(searchTerm.toLowerCase());
+      const sku = (order.sku || "").toLowerCase();
+      const status = (order.status || "").toLowerCase();
+      
+      // Smart search logic: search in name, sku, and status
+      const searchTerms = searchTerm.toLowerCase().split(' ');
+      const matchesSearch = searchTerms.every(term => 
+        productName.includes(term) || 
+        sku.includes(term) || 
+        status.includes(term)
+      );
+
       const matchesStatus = statusFilter === "all" || order.status === statusFilter;
       const matchesCategory = categoryFilter === "all" || productName.startsWith(categoryFilter.toLowerCase());
       const amount = Number(order.amount || 0);
@@ -89,20 +99,61 @@ export function Client360View({ clientName }: Client360ViewProps) {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 p-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-primary flex items-center gap-2">
-            Relatório Estratégico 360º
-            <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/20">Real-time Data</Badge>
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-primary flex items-center gap-3">
+            <HistoryIcon className="h-8 w-8 text-primary" />
+            Intelligence Hub 360º
+            <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/20 animate-pulse">Neural Engine Active</Badge>
           </h2>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Visão holística de comportamento e valor</p>
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Análise comportamental profunda de {clientName}</p>
+            <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+            <span className="text-[10px] font-black text-emerald-500 uppercase">Perﬁl: {data.ltv > data.segmentAverageLtv * 1.5 ? 'VIP Diamond' : 'Standard'}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
-            onClick={() => toast.info("Gerando relatório executivo...")}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-accent/20 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all shadow-lg"
+            onClick={() => toast.info("Sincronizando com o ERP...")}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+          >
+            <Zap className="h-3.5 w-3.5 text-primary" />
+            Sincronizar
+          </button>
+          <button 
+            onClick={() => toast.info("Gerando dossiê estratégico...")}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-primary/20"
           >
             <Download className="h-3.5 w-3.5" />
-            PDF Executivo
+            Dossiê PDF
           </button>
+        </div>
+      </div>
+
+      {/* Smart Insight Banner */}
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-600/20 via-purple-600/10 to-transparent border border-indigo-500/20 p-5 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-xl">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+            <Brain className="h-6 w-6 text-indigo-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black uppercase tracking-tighter text-indigo-400">Sumário Cognitivo da IA</h3>
+            <p className="text-xs font-medium text-foreground/80 leading-relaxed">
+              Cliente com <span className="text-indigo-400 font-bold">Alta Fidelidade</span>, prefere comprar <span className="text-indigo-400 font-bold">{data.preferredTimeOfDay}</span> às <span className="text-indigo-400 font-bold">{data.preferredDayOfWeek}s</span>. 
+              Sensibilidade a preço: <span className="text-indigo-400 font-bold">{data.priceSensitivity.toUpperCase()}</span>.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 shrink-0">
+          <div className="text-right">
+            <p className="text-[10px] font-black text-muted-foreground uppercase">Tempo de Casa</p>
+            <p className="text-lg font-black text-foreground">
+              {data.orders.length > 0 ? `${Math.floor((new Date().getTime() - new Date(data.orders[data.orders.length - 1].created_at).getTime()) / (1000 * 60 * 60 * 24 * 30))} meses` : 'N/A'}
+            </p>
+          </div>
+          <div className="h-8 w-px bg-white/10" />
+          <div className="text-right">
+            <p className="text-[10px] font-black text-muted-foreground uppercase">Conversão</p>
+            <p className="text-lg font-black text-emerald-500">{(100 - data.churnRisk)}%</p>
+          </div>
         </div>
       </div>
 
