@@ -19,6 +19,7 @@ interface FollowUpLeadCardProps {
   isCreating: boolean;
   onOpenAudit: (lead: ColdLead) => void;
   onReactivate: (lead: ColdLead) => void;
+  onQuickAction?: (lead: ColdLead, action: string) => void;
 }
 
 const channelIcons: Record<string, { icon: typeof Mail; label: string }> = {
@@ -44,7 +45,8 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
   onWhatsAppClick,
   isCreating,
   onOpenAudit,
-  onReactivate
+  onReactivate,
+  onQuickAction
 }: FollowUpLeadCardProps) {
   const config = temperatureConfig[lead.temperature];
   const channel = channelIcons[lead.suggested_channel] || channelIcons.email;
@@ -229,19 +231,35 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
               </div>
             )}
 
-            <div className="p-2.5 bg-accent/30 rounded-lg text-xs flex items-start gap-2 border border-accent/20">
-              <Zap className="h-3.5 w-3.5 text-status-warning mt-0.5 shrink-0" />
-              <div className="flex-1">
-                <span className="text-muted-foreground">
-                  <strong className="text-foreground">Sugestão IA:</strong> {lead.suggested_action}
-                </span>
-                {lead.suggested_channel === 'whatsapp' && (
-                  <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-1 text-green-600 font-medium">
-                      <MessageCircle className="h-3 w-3" /> WhatsApp validado
-                    </span>
-                  </div>
-                )}
+            <div className="p-3 bg-accent/30 rounded-xl text-xs flex flex-col gap-3 border border-accent/20">
+              <div className="flex items-start gap-2">
+                <Zap className="h-4 w-4 text-status-warning mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <span className="text-muted-foreground leading-relaxed">
+                    <strong className="text-foreground">Plano de Resgate IA:</strong> {lead.suggested_action}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 mt-1">
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="h-7 text-[10px] bg-background hover:bg-primary hover:text-primary-foreground transition-all flex-1 border-none shadow-sm"
+                  onClick={() => onQuickAction?.(lead, 'script')}
+                >
+                  <MessageCircle className="h-3 w-3 mr-1" />
+                  Script de Reativação
+                </Button>
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="h-7 text-[10px] bg-background hover:bg-green-500 hover:text-white transition-all flex-1 border-none shadow-sm"
+                  onClick={() => onWhatsAppClick(lead)}
+                >
+                  <Send className="h-3 w-3 mr-1" />
+                  Enviar WhatsApp
+                </Button>
               </div>
             </div>
           </div>
