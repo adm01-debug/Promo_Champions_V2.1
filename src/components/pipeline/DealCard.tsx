@@ -130,29 +130,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           getHealthGradient(healthScore)
         )} />
         
-        {/* Etapa 9: Advanced Presence System */}
-        <div className="absolute top-1 right-8 flex -space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+        {/* Etapa 1: Presença em Tempo Real (Colaboração Ativa) */}
+        <div className="absolute top-1 right-8 flex -space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="relative">
-                <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-primary/20">
+                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
                   <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
                   <AvatarFallback className="text-[6px]">FX</AvatarFallback>
                 </Avatar>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
               </div>
             </TooltipTrigger>
-            <TooltipContent className="text-[10px]">Felix está editando agora...</TooltipContent>
+            <TooltipContent className="text-[10px] font-bold">Felix está editando agora...</TooltipContent>
           </Tooltip>
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all">
+              <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
                 <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" />
                 <AvatarFallback className="text-[6px]">AN</AvatarFallback>
               </Avatar>
             </TooltipTrigger>
-            <TooltipContent className="text-[10px]">Anna viu há 2 min</TooltipContent>
+            <TooltipContent className="text-[10px] font-bold">Anna visualizou há 1 min</TooltipContent>
           </Tooltip>
         </div>
 
