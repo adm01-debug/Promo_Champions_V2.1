@@ -267,19 +267,32 @@ export const PipelineBoard = () => {
         </Button>
         
         {/* Etapa 6: Executive Simulator Slider */}
-        <div className="flex items-center gap-3 bg-muted/30 px-3 py-1 rounded-xl border border-border/10">
-          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Simular Ticket:</span>
-          <input 
-            type="range" 
-            min="-50" 
-            max="100" 
-            value={ticketSimulation} 
-            onChange={(e) => setTicketSimulation(parseInt(e.target.value))}
-            className="w-24 h-1 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary"
-          />
-          <span className={cn("text-[10px] font-black", ticketSimulation >= 0 ? "text-emerald-500" : "text-red-500")}>
-            {ticketSimulation > 0 ? "+" : ""}{ticketSimulation}%
-          </span>
+        <div className="flex items-center gap-3 bg-card/60 px-4 py-2 rounded-2xl border border-primary/20 shadow-lg transition-all hover:border-primary/40">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Simular Ticket Médio</span>
+            <div className="flex items-center gap-3">
+              <input 
+                type="range" 
+                min="-50" 
+                max="100" 
+                value={ticketSimulation} 
+                onChange={(e) => setTicketSimulation(parseInt(e.target.value))}
+                className="w-32 h-1 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary"
+              />
+              <span className={cn("text-xs font-black w-8", ticketSimulation >= 0 ? "text-emerald-500" : "text-red-500")}>
+                {ticketSimulation > 0 ? "+" : ""}{ticketSimulation}%
+              </span>
+            </div>
+          </div>
+          
+          <div className="h-8 w-px bg-border/20 mx-2" />
+          
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary">Ganho Potencial</span>
+            <span className="text-xs font-black text-foreground">
+              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact" }).format(weightedTotalValue * (ticketSimulation / 100))}
+            </span>
+          </div>
         </div>
         <div className="flex-1" />
         {/* Pipeline Selector */}
