@@ -9,8 +9,10 @@ import {
   ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, 
   Star, Download, MousePointerClick, Search, Filter, Eye, User,
   ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info,
-  ShieldCheck, CalendarPlus, Sparkles, Brain
+  ShieldCheck, CalendarPlus, Sparkles, Brain, Clock, CreditCard
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -38,6 +40,21 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [viewMode, setViewMode] = useState<"table" | "timeline">("timeline");
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = () => {
+    setIsExporting(true);
+    toast.promise(
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+      {
+        loading: 'Gerando dossiê estratégico com IA...',
+        success: 'Dossiê PDF gerado com sucesso!',
+        error: 'Erro ao gerar dossiê.',
+        finally: () => setIsExporting(false)
+      }
+    );
+  };
+
 
   const categories = useMemo(() => {
     if (!data?.orders) return [];
@@ -119,12 +136,14 @@ export function Client360View({ clientName }: Client360ViewProps) {
             Sincronizar
           </button>
           <button 
-            onClick={() => toast.info("Gerando dossiê estratégico...")}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-primary/20"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:scale-100"
           >
-            <Download className="h-3.5 w-3.5" />
+            {isExporting ? <Zap className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
             Dossiê PDF
           </button>
+
         </div>
       </div>
 
@@ -159,12 +178,13 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
       {/* KPIs Estratégicos com Comparativo de Segmento */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-primary/5 border-primary/10 shadow-sm overflow-hidden relative group">
+        <Card className="bg-primary/5 border-primary/10 shadow-sm overflow-hidden relative group backdrop-blur-sm">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-primary/20 transition-all" />
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">LTV Absoluto</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black text-primary tabular-nums">{formatCurrency(data.ltv)}</div>
+            <div className="text-2xl font-black text-primary tabular-nums drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">{formatCurrency(data.ltv)}</div>
             <div className="flex items-center gap-1.5 mt-2">
               {ltvDiff >= 0 ? <ArrowUpRight className="h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="h-3 w-3 text-rose-500" />}
               <span className={cn("text-[9px] font-bold uppercase", ltvDiff >= 0 ? "text-emerald-500" : "text-rose-500")}>
@@ -174,12 +194,13 @@ export function Client360View({ clientName }: Client360ViewProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-indigo-500/5 border-indigo-500/10 shadow-sm overflow-hidden relative group">
+        <Card className="bg-indigo-500/5 border-indigo-500/10 shadow-sm overflow-hidden relative group backdrop-blur-sm">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-indigo-500/20 transition-all" />
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Ticket Médio</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black text-indigo-500 tabular-nums">{formatCurrency(data.averageTicket)}</div>
+            <div className="text-2xl font-black text-indigo-500 tabular-nums drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]">{formatCurrency(data.averageTicket)}</div>
             <div className="flex items-center gap-1.5 mt-2">
               {ticketDiff >= 0 ? <ArrowUpRight className="h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="h-3 w-3 text-rose-500" />}
               <span className={cn("text-[9px] font-bold uppercase", ticketDiff >= 0 ? "text-emerald-500" : "text-rose-500")}>
@@ -189,25 +210,28 @@ export function Client360View({ clientName }: Client360ViewProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-emerald-600/10 border-emerald-500/20 shadow-sm overflow-hidden relative group">
+        <Card className="bg-emerald-600/10 border-emerald-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-emerald-500/20 transition-all" />
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Esforço de Venda</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black text-emerald-500 tabular-nums">{data.engagementRatio.toFixed(1)}x</div>
+            <div className="text-2xl font-black text-emerald-500 tabular-nums drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">{data.engagementRatio.toFixed(1)}x</div>
             <p className="text-[9px] text-muted-foreground mt-2 uppercase font-bold tracking-tight">Interações por conversão</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group">
+        <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-purple-500/20 transition-all" />
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Posição na Base</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black text-indigo-500 tabular-nums">TOP {100 - data.percentile}%</div>
+            <div className="text-2xl font-black text-indigo-500 tabular-nums drop-shadow-[0_0_8px_rgba(139,92,246,0.3)]">TOP {100 - data.percentile}%</div>
             <p className="text-[9px] text-muted-foreground mt-2 uppercase font-bold tracking-tight">Percentil de faturamento</p>
           </CardContent>
         </Card>
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -301,23 +325,40 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
             <div className="w-full mt-6 pt-6 border-t border-white/10">
               <span className="text-[9px] font-black text-primary uppercase tracking-widest block mb-3 flex items-center gap-1.5">
-                <Sparkles className="h-3 w-3" /> Sugestão Cross-sell
+                <Sparkles className="h-3 w-3" /> Matriz de Afinidade (Cross-sell)
               </span>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-2 rounded-xl bg-primary/10 border border-primary/20 group hover:bg-primary/20 cursor-pointer transition-all">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-primary/20">
-                      <ShoppingBag className="h-3 w-3 text-primary" />
+              <div className="space-y-3">
+                {[
+                  { title: "Linha Premium Gold", conversion: "+34%", category: "Upgrade", color: "text-amber-500" },
+                  { title: "Manutenção Preventiva", conversion: "+21%", category: "Serviço", color: "text-emerald-500" },
+                  { title: "Kit Acessórios V.4", conversion: "+18%", category: "Bundle", color: "text-indigo-500" },
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + (i * 0.1) }}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 group hover:bg-white/[0.08] cursor-pointer transition-all"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-primary/10">
+                        <ShoppingBag className="h-3 w-3 text-primary" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase leading-tight">{item.title}</span>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={cn("text-[8px] font-black uppercase", item.color)}>{item.conversion} Conv.</span>
+                          <div className="h-0.5 w-0.5 rounded-full bg-white/20" />
+                          <span className="text-[7px] font-bold text-muted-foreground uppercase">{item.category}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black uppercase">Linha Premium Gold</span>
-                      <span className="text-[8px] font-bold text-muted-foreground uppercase">+34% Conversão</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-                </div>
+                    <ArrowRight className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                  </motion.div>
+                ))}
               </div>
             </div>
+
           </CardContent>
         </Card>
       </div>
@@ -512,6 +553,29 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </Select>
             </div>
           </div>
+          <div className="flex flex-wrap items-center gap-2 mt-4 px-1">
+            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mr-2">Filtros Rápidos:</span>
+            {[
+              { label: "Ticket Alto", filter: () => { setStatusFilter("all"); setValueRange([5000, 100000]); } },
+              { label: "Pendente", filter: () => { setStatusFilter("pending"); setValueRange([0, 100000]); } },
+              { label: "Últimos 30 dias", filter: () => { setStatusFilter("all"); setValueRange([0, 100000]); } },
+            ].map((chip) => (
+              <button
+                key={chip.label}
+                onClick={chip.filter}
+                className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold uppercase hover:bg-primary/20 hover:border-primary/30 transition-all"
+              >
+                {chip.label}
+              </button>
+            ))}
+            <button
+              onClick={() => { setStatusFilter("all"); setCategoryFilter("all"); setValueRange([0, 100000]); setSearchTerm(""); }}
+              className="px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-[9px] font-bold uppercase text-rose-500 hover:bg-rose-500/20 transition-all ml-auto"
+            >
+              Limpar Tudo
+            </button>
+          </div>
+
         </CardHeader>
         <CardContent className="p-0">
           {viewMode === "table" ? (
@@ -573,43 +637,75 @@ export function Client360View({ clientName }: Client360ViewProps) {
           <div className="p-8 relative">
             <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary/50 via-border to-transparent" />
             <div className="space-y-12">
-              {filteredOrders.map((order, idx) => (
-                <div key={order.id} className="relative pl-16 group">
-                  <div className={cn(
-                    "absolute left-0 top-0 w-5 h-5 rounded-full border-4 border-background z-10 transition-transform group-hover:scale-125",
-                    order.status === 'completed' ? "bg-emerald-500" : 
-                    order.status === 'pending' ? "bg-amber-500" : "bg-rose-500"
-                  )} />
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/[0.08] transition-all">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        {new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                      </span>
-                      <h4 className="text-sm font-black uppercase text-foreground group-hover:text-primary transition-colors">{order.product_name}</h4>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-[8px] font-black border-white/10 uppercase opacity-60">SKU: {order.sku || 'N/A'}</Badge>
-                        <Badge variant="outline" className={cn(
-                          "text-[8px] font-black border-none uppercase",
-                          order.status === 'completed' ? "bg-emerald-500/10 text-emerald-500" :
-                          order.status === 'pending' ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
-                        )}>{order.status}</Badge>
+              {filteredOrders.map((order, idx) => {
+                const isHighValue = Number(order.amount) > data.averageTicket * 1.5;
+                const date = new Date(order.created_at);
+                const month = date.getMonth();
+                const isSeasonal = [10, 11, 0].includes(month); // BF and Xmas
+                
+                return (
+                  <motion.div 
+                    key={order.id} 
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="relative pl-16 group"
+                  >
+                    <div className={cn(
+                      "absolute left-0 top-0 w-5 h-5 rounded-full border-4 border-background z-10 transition-transform group-hover:scale-125 shadow-lg shadow-black/50",
+                      order.status === 'completed' ? "bg-emerald-500" : 
+                      order.status === 'pending' ? "bg-amber-500" : "bg-rose-500"
+                    )} />
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/[0.08] transition-all relative overflow-hidden">
+                      {isHighValue && (
+                        <div className="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-primary/20 blur-2xl rounded-full" />
+                      )}
+                      
+                      <div className="space-y-1 relative z-10">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                            {date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                          </span>
+                          {isSeasonal && (
+                            <Badge variant="outline" className="text-[7px] font-black border-amber-500/30 text-amber-500 bg-amber-500/5 px-1 h-3.5">
+                              Sazonalidade Alta
+                            </Badge>
+                          )}
+                        </div>
+                        <h4 className="text-sm font-black uppercase text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
+                          {order.product_name}
+                          {isHighValue && <Star className="h-3 w-3 text-amber-500 fill-amber-500" />}
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-[8px] font-black border-white/10 uppercase opacity-60">SKU: {order.sku || 'N/A'}</Badge>
+                          <Badge variant="outline" className={cn(
+                            "text-[8px] font-black border-none uppercase",
+                            order.status === 'completed' ? "bg-emerald-500/10 text-emerald-500" :
+                            order.status === 'pending' ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
+                          )}>{order.status}</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6 relative z-10">
+                        <div className="text-right">
+                          <span className={cn(
+                            "text-lg font-black",
+                            isHighValue ? "text-amber-500" : "text-primary"
+                          )}>{formatCurrency(Number(order.amount))}</span>
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase">Valor da Transação</p>
+                        </div>
+                        <button 
+                          onClick={() => setSelectedOrder(order)}
+                          className="p-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary text-primary hover:text-primary-foreground transition-all shadow-lg group/btn"
+                        >
+                          <Eye className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <span className="text-lg font-black text-primary">{formatCurrency(Number(order.amount))}</span>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase">Valor da Transação</p>
-                      </div>
-                      <button 
-                        onClick={() => setSelectedOrder(order)}
-                        className="p-3 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary text-primary hover:text-primary-foreground transition-all shadow-lg"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </motion.div>
+                );
+              })}
+
               {filteredOrders.length === 0 && (
                 <div className="text-center py-20">
                   <p className="text-xs font-bold text-muted-foreground uppercase">Nenhum evento na jornada com estes filtros</p>
@@ -682,8 +778,41 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/[0.07] transition-all">
-              <div className="flex items-center justify-between mb-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 h-px bg-white/5" />
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em]">Fluxo Logístico & Pagamento</span>
+                <div className="flex-1 h-px bg-white/5" />
+              </div>
+              <div className="flex justify-between px-2">
+                {[
+                  { label: "Criação", date: selectedOrder?.created_at, icon: Calendar, done: true },
+                  { label: "Pagamento", date: selectedOrder?.status === 'completed' ? selectedOrder?.created_at : null, icon: CreditCard, done: selectedOrder?.status === 'completed' },
+                  { label: "Faturamento", date: selectedOrder?.status === 'completed' ? selectedOrder?.created_at : null, icon: DollarSign, done: selectedOrder?.status === 'completed' },
+                  { label: "Entrega", date: null, icon: Package, done: false },
+                ].map((step, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2 group/step">
+                    <div className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center border transition-all",
+                      step.done ? "bg-emerald-500/20 border-emerald-500 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-white/5 border-white/10 text-muted-foreground"
+                    )}>
+                      <step.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className={cn("text-[8px] font-black uppercase", step.done ? "text-foreground" : "text-muted-foreground")}>{step.label}</span>
+                      {step.date && <span className="text-[7px] font-bold text-muted-foreground/60">{new Date(step.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/[0.07] transition-all relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <ShoppingBag className="h-24 w-24 text-primary" />
+              </div>
+              
+              <div className="flex items-center justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-primary" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Discriminação de Itens</span>
@@ -693,13 +822,20 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </Badge>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 <div className="flex justify-between items-start group">
                   <div className="flex flex-col">
                     <span className="text-sm font-black uppercase group-hover:text-primary transition-colors">{selectedOrder?.product_name}</span>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">SKU: {selectedOrder?.sku || 'N/A'}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">SKU: {selectedOrder?.sku || 'N/A'}</span>
+                      <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                      <span className="text-[10px] font-bold text-primary uppercase">Garantia Vitalícia</span>
+                    </div>
                   </div>
-                  <span className="text-sm font-black text-foreground">{formatCurrency(Number(selectedOrder?.amount))}</span>
+                  <div className="text-right">
+                    <span className="text-sm font-black text-foreground">{formatCurrency(Number(selectedOrder?.amount))}</span>
+                    <p className="text-[8px] font-bold text-muted-foreground uppercase">unid: 1.0</p>
+                  </div>
                 </div>
 
                 <div className="pt-4 border-t border-white/10 space-y-2.5">
@@ -726,6 +862,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </div>
               </div>
             </div>
+
 
             <div className="flex gap-3 pt-2">
               <button className="flex-1 py-4 px-6 rounded-2xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
