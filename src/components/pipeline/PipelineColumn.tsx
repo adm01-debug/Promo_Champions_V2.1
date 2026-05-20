@@ -4,6 +4,7 @@ import { Deal, PipelineStageConfig } from "@/hooks/usePipeline";
 import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
 import { ICPData } from "@/hooks/useICPData";
+import { Target } from "lucide-react";
 
 interface DealProbability {
   probability: number;
@@ -83,8 +84,15 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
       )}>
         <SortableContext items={deals.map(d => d.id)} strategy={verticalListSortingStrategy}>
           {deals.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-primary/30 rounded-lg bg-gradient-to-b from-primary/10 to-primary/5 transition-all hover:border-primary/40 hover:bg-primary/15">
-              <p className="text-xs text-muted-foreground font-medium">Arraste oportunidades aqui</p>
+            // Etapa 7: Empty Stage Gamification
+            <div className="flex flex-col items-center justify-center min-h-[160px] border-2 border-dashed border-primary/20 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent transition-all hover:border-primary/40 group/empty">
+              <div className="p-4 rounded-full bg-primary/10 mb-3 group-hover/empty:scale-110 transition-transform">
+                <Target className="h-6 w-6 text-primary/40" />
+              </div>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest text-center px-4">
+                Fome de Leads? <br />
+                <span className="text-primary">Prospecção Ativa Agora</span>
+              </p>
             </div>
           ) : (
             deals.map((deal) => (
