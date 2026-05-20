@@ -205,9 +205,19 @@ export function Client360View({ clientName }: Client360ViewProps) {
         {/* Mix de Categorias */}
         <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
-              <PieChart className="h-5 w-5 text-indigo-500" />
-              Afinidade de Categoria
+            <CardTitle className="flex items-center justify-between text-base uppercase font-black tracking-tighter">
+              <div className="flex items-center gap-2">
+                <PieChart className="h-5 w-5 text-indigo-500" />
+                Afinidade & Cross-sell
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>Análise de mix e sugestões preditivas</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
@@ -229,13 +239,33 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-2 gap-3 w-full mt-4">
+            <div className="grid grid-cols-2 gap-2 w-full mt-4">
               {data.categoryDistribution.map((cat, i) => (
-                <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
-                  <div className="w-2 h-2 rounded-full shrink-0" style={{backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#06b6d4'][i % 5]}} />
-                  <span className="text-[9px] font-bold uppercase truncate opacity-80">{cat.name}</span>
+                <div key={i} className="flex items-center gap-2 p-1.5 rounded-lg bg-white/5 border border-white/5">
+                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#06b6d4'][i % 5]}} />
+                  <span className="text-[8px] font-bold uppercase truncate opacity-80">{cat.name}</span>
                 </div>
               ))}
+            </div>
+
+            <div className="w-full mt-6 pt-6 border-t border-white/10">
+              <span className="text-[9px] font-black text-primary uppercase tracking-widest block mb-3 flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3" /> Sugestão Cross-sell
+              </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-primary/10 border border-primary/20 group hover:bg-primary/20 cursor-pointer transition-all">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-primary/20">
+                      <ShoppingBag className="h-3 w-3 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase">Linha Premium Gold</span>
+                      <span className="text-[8px] font-bold text-muted-foreground uppercase">+34% Conversão</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
