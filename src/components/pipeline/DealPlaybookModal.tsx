@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, CheckCircle2, Circle, AlertCircle } from "lucide-react";
+import { BookOpen, CheckCircle2, Circle, AlertCircle, Sparkles, Brain, Target, Zap } from "lucide-react";
 import { usePlaybooksByStage, useDealPlaybookProgress, useTogglePlaybookItem } from "@/hooks/usePlaybooks";
 import { cn } from "@/lib/utils";
 
@@ -73,7 +73,36 @@ export const DealPlaybookModal = ({
           <Progress value={progressPercentage} className="h-2 bg-primary/10" />
         </div>
 
-        <ScrollArea className="h-[400px] p-6">
+        <ScrollArea className="h-[450px] p-6">
+          {/* Etapa 8: AI Strategic Insight Panel */}
+          <div className="mb-8 p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-3">
+              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+            </div>
+            
+            <div className="flex items-center gap-2 mb-3">
+              <Brain className="h-4 w-4 text-primary" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Diretriz Estratégica IA</span>
+            </div>
+            
+            <div className="space-y-3 relative z-10">
+              <p className="text-sm font-semibold leading-relaxed">
+                "Este cliente valoriza <span className="text-primary underline decoration-primary/30">velocidade de implementação</span> e <span className="text-primary underline decoration-primary/30">ROI imediato</span>. Foque em demonstrar o tempo de payback menor que 6 meses."
+              </p>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <div className="p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
+                  <span className="text-[9px] font-black text-emerald-500 uppercase block mb-1">Ponto de Ganho</span>
+                  <p className="text-[11px] font-medium">Escalabilidade técnica provada no case X.</p>
+                </div>
+                <div className="p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
+                  <span className="text-[9px] font-black text-amber-500 uppercase block mb-1">Objeção Provável</span>
+                  <p className="text-[11px] font-medium">Curva de aprendizado do time operacional.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {loadingPlaybooks || loadingProgress ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
               <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
