@@ -255,7 +255,7 @@ export const PipelineBoard = () => {
           Filtros Rápidos
         </div>
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Alta Prioridade</Button>
-        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Estagnados > 7D</Button>
+        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Estagnados {'>'} 7D</Button>
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Ticket Médio +50k</Button>
         <div className="flex-1" />
         {/* Pipeline Selector */}
