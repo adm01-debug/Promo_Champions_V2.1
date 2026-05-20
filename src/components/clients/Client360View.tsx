@@ -9,7 +9,7 @@ import {
   ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, 
   Star, Download, MousePointerClick, Search, Filter, Eye, User,
   ChevronDown, ArrowUpRight, ArrowDownRight, History as HistoryIcon, Info,
-  ShieldCheck, CalendarPlus, Sparkles
+  ShieldCheck, CalendarPlus, Sparkles, Brain
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
