@@ -78,7 +78,7 @@
     "date-fns": "3.3.1",
     "exceljs": "^4.4.0",
     "framer-motion": "^12.39.0",
-    "fuse.js": "^7.1.0",
+    "fuse.js": "^7.3.0",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "husky": "^9.1.7",
