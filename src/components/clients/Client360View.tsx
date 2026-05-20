@@ -250,28 +250,61 @@ export function Client360View({ clientName }: Client360ViewProps) {
               </CardTitle>
               <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">Gestão granular do histórico comercial</CardDescription>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="relative w-full md:w-64">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative w-full md:w-48">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input 
-                  placeholder="Buscar por produto..." 
+                  placeholder="Buscar..." 
                   className="pl-10 h-10 bg-muted/50 border-white/5 rounded-xl text-xs"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-[130px] h-10 bg-muted/50 border-white/5 rounded-xl text-xs">
+                  <Package className="h-3.5 w-3.5 mr-2" />
+                  <SelectValue placeholder="Categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Categorias</SelectItem>
+                  {categories.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[140px] h-10 bg-muted/50 border-white/5 rounded-xl text-xs">
+                <SelectTrigger className="w-[120px] h-10 bg-muted/50 border-white/5 rounded-xl text-xs">
                   <Filter className="h-3.5 w-3.5 mr-2" />
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos Status</SelectItem>
+                  <SelectItem value="all">Status</SelectItem>
                   <SelectItem value="completed">Concluído</SelectItem>
                   <SelectItem value="pending">Pendente</SelectItem>
                   <SelectItem value="cancelled">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
+              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-xl border border-white/5 px-3 h-10">
+                <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase leading-none">Faixa de Valor</span>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="number" 
+                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
+                      value={valueRange[0]} 
+                      onChange={e => setValueRange([Number(e.target.value), valueRange[1]])}
+                    />
+                    <span className="text-[8px] text-muted-foreground">-</span>
+                    <input 
+                      type="number" 
+                      className="bg-transparent text-[10px] font-bold w-12 outline-none" 
+                      value={valueRange[1]} 
+                      onChange={e => setValueRange([valueRange[0], Number(e.target.value)])}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </CardHeader>
