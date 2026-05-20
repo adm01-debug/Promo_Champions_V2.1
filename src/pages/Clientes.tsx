@@ -200,12 +200,14 @@ const Clientes = () => {
                         <div className="pt-4 border-t border-border/10">
                           <div className="flex justify-between items-end">
                              <div className="space-y-0.5"><span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">LTV Total</span><div className="flex items-baseline gap-1"><TotalValueDisplay value={Number(client.total_value || 0)} /><span className="text-[9px] font-bold text-emerald-500 uppercase">Valorizado</span></div></div>
-                             {prediction && prediction.confidence > 0.8 && (
-                               <Badge variant="outline" className="animate-pulse bg-primary/10 border-primary/30 text-primary text-[8px] font-black h-5">
-                                 <Sparkles className="h-2.5 w-2.5 mr-1" /> IA VIP
-                               </Badge>
-                             )}
-                             <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
+                             <div className="flex flex-col items-end gap-1">
+                               {prediction && prediction.confidence > 0.8 && (
+                                 <Badge variant="outline" className="animate-pulse bg-primary/10 border-primary/30 text-primary text-[8px] font-black h-5 px-1.5">
+                                   <Sparkles className="h-2.5 w-2.5 mr-1" /> IA VIP
+                                 </Badge>
+                               )}
+                               <div className="px-2 py-1 rounded-md bg-primary/5 text-[9px] font-black text-primary uppercase border border-primary/10">Rank Elite</div>
+                             </div>
                           </div>
                         </div>
                       </motion.div>
