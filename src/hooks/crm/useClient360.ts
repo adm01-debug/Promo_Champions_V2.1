@@ -33,8 +33,9 @@ export function useClient360(clientName: string | undefined) {
         .from("sales")
         .select(`
           *,
-          salesperson:salespeople(name),
-          closer:salespeople!sales_closer_id_fkey(name)
+          salesperson:salespeople!sales_salesperson_id_fkey(name),
+          closer:salespeople!sales_closer_id_fkey(name),
+          sdr:salespeople!sales_sdr_id_fkey(name)
         `)
         .eq("client_name", clientName)
         .order("created_at", { ascending: false });
