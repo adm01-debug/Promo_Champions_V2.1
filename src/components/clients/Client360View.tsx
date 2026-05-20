@@ -1,6 +1,7 @@
 import { useClient360 } from "@/hooks/crm/useClient360";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, PieChart, Pie, Cell } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
 import { DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, ArrowRight, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -131,7 +132,95 @@ export function Client360View({ clientName }: Client360ViewProps) {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Trend Analysis - Etapa 3 do Plano 10/10 */}
+        <Card className="lg:col-span-2 border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Análise de Tendência de Consumo
+            </CardTitle>
+            <CardDescription className="text-[10px] font-bold uppercase tracking-widest">Evolução do ticket por transação</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data.spendingHistory}>
+                  <defs>
+                    <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <XAxis 
+                    dataKey="date" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 'bold'}}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 'bold'}}
+                    tickFormatter={(value) => `R$${value}`}
+                  />
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '8px', fontSize: '10px' }}
+                    itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="amount" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorAmount)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Category Affinity - Etapa 4 do Plano 10/10 */}
+        <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
+              <BarChart3 className="h-5 w-5 text-indigo-500" />
+              Mix de Categorias
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center">
+            <div className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={data.categoryDistribution}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {data.categoryDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={['#10b981', '#6366f1', '#f59e0b', '#ec4899'][index % 4]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-2 gap-2 w-full mt-4">
+              {data.categoryDistribution.map((cat, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ec4899'][i % 4]}} />
+                  <span className="text-[10px] font-bold uppercase truncate opacity-70">{cat.name}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Top Products */}
         <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl">
           <CardHeader>

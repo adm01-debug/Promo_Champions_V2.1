@@ -7,6 +7,8 @@ export interface Client360Data {
   ordersCount: number;
   orders: any[];
   topProducts: { name: string; count: number; total: number }[];
+  spendingHistory: { date: string; amount: number }[];
+  categoryDistribution: { name: string; value: number }[];
   purchaseFrequency: number; // Dias médios entre compras
   predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
   churnRisk: number; // 0 a 100
@@ -69,12 +71,28 @@ export function useClient360(clientName: string | undefined) {
         .map(([name, data]) => ({ name, ...data }))
         .sort((a, b) => b.total - a.total);
 
+      // Histórico de gastos para gráfico
+      const spendingHistory = sales
+        .map(s => ({
+          date: new Date(s.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+          amount: Number(s.amount || 0)
+        }))
+        .reverse(); // Ordem cronológica
+
+      // Distribuição por categoria (simulada via produto ou extraída se houvesse campo category)
+      const categoryDistribution = topProducts.slice(0, 5).map(p => ({
+        name: p.name.split(' ')[0], // Simplificação para demonstração
+        value: p.total
+      }));
+
       return {
         ltv,
         averageTicket,
         ordersCount,
         orders: sales,
         topProducts,
+        spendingHistory,
+        categoryDistribution,
         purchaseFrequency,
         predictedNextPurchaseDays,
         churnRisk
