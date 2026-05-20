@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
+import { DealScoreIndicator } from "./DealScoreIndicator";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { useDealPlaybookProgress, usePlaybooksByStage } from "@/hooks/usePlaybooks";
 import { DealPlaybookModal } from "./DealPlaybookModal";
@@ -173,59 +174,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {leadScore && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className={cn("text-[10px] cursor-help", getScoreColor(leadScore.category))}>
-                    <Target className="h-3 w-3 mr-1" />
-                    {leadScore.score}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[280px] p-0 border-none bg-transparent shadow-2xl">
-                  {/* Etapa 6: Contextual AI Insights Tooltip */}
-                  <div className="bg-card/95 backdrop-blur-md border border-primary/20 rounded-xl overflow-hidden shadow-2xl">
-                    <div className="bg-primary/10 p-3 border-b border-primary/10">
-                      <div className="flex items-center gap-2">
-                        <Brain className="h-4 w-4 text-primary animate-pulse" />
-                        <span className="text-[11px] font-black uppercase tracking-widest italic">AI STRATEGIC INSIGHT</span>
-                      </div>
-                    </div>
-                    
-                    <div className="p-3 space-y-3">
-                      {explanation ? (
-                        <>
-                          <div className="space-y-1.5">
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Principais Motivadores</span>
-                            {explanation.top_drivers.slice(0, 3).map((d) => (
-                              <div key={d.factor} className="flex items-center justify-between text-[11px] bg-muted/30 p-1.5 rounded-md border border-border/10">
-                                <span className="font-medium">{d.label}</span>
-                                <span className={cn(
-                                  "font-black",
-                                  d.direction === "positive" ? "text-emerald-500" : "text-destructive"
-                                )}>
-                                  {d.direction === "positive" ? "+" : "-"}{d.contribution_pct}%
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          
-                          <div className="pt-2 border-t border-border/20">
-                            <span className="text-[9px] font-bold text-amber-500 uppercase tracking-wider">⚠️ OBJEÇÃO PREVISTA</span>
-                            <p className="text-[11px] font-medium leading-relaxed mt-1 text-foreground/90">
-                              O cliente pode questionar o <span className="text-primary font-bold italic">prazo de implementação</span>. 
-                              <span className="text-emerald-500"> DICA:</span> Enfatize o suporte VIP 24h.
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex items-center gap-2 py-4">
-                          <Zap className="h-4 w-4 text-primary animate-spin" />
-                          <p className="text-[11px] text-muted-foreground font-medium italic">Processando neuro-análise do deal...</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+              <DealScoreIndicator 
+                score={leadScore.score} 
+                factors={leadScore.factors}
+              />
             )}
             <Tooltip>
               <TooltipTrigger asChild>

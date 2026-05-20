@@ -16,6 +16,7 @@ import { usePipelineDeals, useMoveDeal, PIPELINE_STAGES, Deal, PipelineStageId }
 import { usePipelines, usePipelineStages, usePipelineDealsByPipeline, useMoveDealMultiPipeline, PipelineDeal } from "@/hooks/useMultiplePipelines";
 import { PipelineColumn } from "./PipelineColumn";
 import { PipelineSelector } from "./PipelineSelector";
+import { PipelineHealthScore } from "./PipelineHealthScore";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw, Zap, TrendingUp } from "lucide-react";
@@ -251,6 +252,9 @@ export const PipelineBoard = () => {
 
   return (
     <div className="space-y-4">
+      {/* Etapa 1: Global Health Score */}
+      <PipelineHealthScore />
+
       {/* Etapa 9: Advanced Filter Bar (Foco Cirúrgico) */}
       <div className="flex flex-wrap items-center gap-2 p-2 bg-card/40 backdrop-blur-md border border-border/20 rounded-2xl shadow-inner">
         <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
