@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, PieChart, Pie, Cell } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
-import { DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, ArrowRight, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
+import { DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, Star } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -130,6 +131,26 @@ export function Client360View({ clientName }: Client360ViewProps) {
             )}
           </CardContent>
         </Card>
+
+        <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group">
+          <div className="absolute right-0 top-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Star className="h-12 w-12 text-indigo-500" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Benchmark da Base</CardTitle>
+            <Star className="h-4 w-4 text-indigo-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-black text-indigo-500 tabular-nums">TOP {100 - data.percentile}%</div>
+            <p className="text-[9px] text-muted-foreground mt-1 uppercase font-bold tracking-tight">O cliente está acima de {data.percentile}% da base</p>
+            <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-indigo-500 transition-all duration-1000" 
+                style={{ width: `${data.percentile}%` }} 
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -248,6 +269,51 @@ export function Client360View({ clientName }: Client360ViewProps) {
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum produto em estoque</p>
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Next Best Action (NBA) - Etapa 7 do Plano 10/10 */}
+        <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden lg:col-span-2">
+          <CardHeader className="border-b border-border/10">
+            <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
+              <Zap className="h-5 w-5 text-amber-500" />
+              Next Best Action (NBA)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex-1 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black uppercase tracking-tight">{data.nba.title}</h4>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{data.nba.description}</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl bg-accent/10 border border-white/5 relative group/script">
+                  <p className="text-xs font-medium italic pr-10 leading-relaxed">"{data.nba.script}"</p>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(data.nba.script);
+                      toast.success("Script copiado para a área de transferência!");
+                    }}
+                    className="absolute top-4 right-4 p-2 rounded-lg bg-background/50 border border-border/50 hover:bg-primary/20 hover:border-primary/50 transition-all"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="w-full md:w-48 space-y-2">
+                <button className="w-full py-2 px-4 rounded-xl bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform">
+                  Executar Agora
+                </button>
+                <button className="w-full py-2 px-4 rounded-xl bg-accent/20 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-accent/30 transition-all">
+                  Ignorar
+                </button>
+              </div>
             </div>
           </CardContent>
         </Card>

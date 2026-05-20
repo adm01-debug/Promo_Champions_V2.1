@@ -13,6 +13,8 @@ export interface Client360Data {
   preferredDayOfWeek: string;
   preferredTimeOfDay: string;
   purchaseFrequency: number; // Dias médios entre compras
+  percentile: number; // Posição do cliente em relação à base (0-100)
+  nba: { title: string; description: string; script: string };
   predictedNextPurchaseDays: number | null; // Previsão de dias para a próxima compra
   churnRisk: number; // 0 a 100
 }
@@ -32,7 +34,17 @@ export function useClient360(clientName: string | undefined) {
 
       if (error) throw error;
 
-      const ltv = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
+      const { data: allSales } = await supabase.from("sales").select("client_name, amount");
+      const clientTotals = new Map<string, number>();
+      allSales?.forEach(s => {
+        clientTotals.set(s.client_name, (clientTotals.get(s.client_name) || 0) + Number(s.amount));
+      });
+      const sortedTotals = Array.from(clientTotals.values()).sort((a, b) => a - b);
+      const ltvValue = sales.reduce((acc, sale) => acc + Number(sale.amount || 0), 0);
+      const rank = sortedTotals.filter(t => t < ltvValue).length;
+      const percentile = Math.round((rank / sortedTotals.length) * 100);
+
+      const ltv = ltvValue;
       const ordersCount = sales.length;
       const averageTicket = ordersCount > 0 ? ltv / ordersCount : 0;
 
