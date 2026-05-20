@@ -18,7 +18,7 @@ import { PipelineColumn } from "./PipelineColumn";
 import { PipelineSelector } from "./PipelineSelector";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Zap } from "lucide-react";
+import { RefreshCw, Zap, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDealProbabilities } from "@/hooks/useDealProbability";
 import { useLeadScores, useCalculateLeadScores } from "@/hooks/useLeadScoring";
@@ -29,6 +29,8 @@ const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 export const PipelineBoard = () => {
   const [selectedPipelineId, setSelectedPipelineId] = useState<string>(DEFAULT_PIPELINE_ID);
+  const [ticketSimulation, setTicketSimulation] = useState(0); // Etapa 6: Simulator
+  const [showFunnelLayer, setShowFunnelLayer] = useState(false); // Etapa 7: Funnel Layer
   
   // Multi-pipeline data
   const { data: pipelines, isLoading: pipelinesLoading } = usePipelines();
@@ -239,10 +241,10 @@ export const PipelineBoard = () => {
     (sum, stage) => sum + (currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0), 0
   );
 
-  // Etapa 2: Pipeline Liquidity & Weighted Forecast
+  // Etapa 2: Pipeline Liquidity & Weighted Forecast + Simulator (Etapa 6)
   const weightedTotalValue = currentStages.reduce(
     (sum, stage) => {
-      const stageValue = currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0;
+      const stageValue = (currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0) * (1 + ticketSimulation / 100);
       return sum + (stageValue * (stage.probability / 100));
     }, 0
   );
@@ -256,8 +258,25 @@ export const PipelineBoard = () => {
           Filtros Rápidos
         </div>
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Alta Prioridade</Button>
-        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Estagnados {'>'} 7D</Button>
-        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Ticket Médio +50k</Button>
+        <Button variant="ghost" size="sm" className={cn("h-8 text-[10px] font-bold uppercase tracking-tighter", showFunnelLayer ? "bg-primary/20" : "")} onClick={() => setShowFunnelLayer(!showFunnelLayer)}>
+          <TrendingUp className="h-3 w-3 mr-1" /> Funnel Layer
+        </Button>
+        
+        {/* Etapa 6: Executive Simulator Slider */}
+        <div className="flex items-center gap-3 bg-muted/30 px-3 py-1 rounded-xl border border-border/10">
+          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Simular Ticket:</span>
+          <input 
+            type="range" 
+            min="-50" 
+            max="100" 
+            value={ticketSimulation} 
+            onChange={(e) => setTicketSimulation(parseInt(e.target.value))}
+            className="w-24 h-1 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary"
+          />
+          <span className={cn("text-[10px] font-black", ticketSimulation >= 0 ? "text-emerald-500" : "text-red-500")}>
+            {ticketSimulation > 0 ? "+" : ""}{ticketSimulation}%
+          </span>
+        </div>
         <div className="flex-1" />
         {/* Pipeline Selector */}
         <PipelineSelector
@@ -331,18 +350,27 @@ export const PipelineBoard = () => {
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory md:snap-none 2xl:grid 2xl:grid-cols-7 2xl:overflow-x-visible">
-          {currentStages.map((stage) => (
-            <div key={stage.id} className="2xl:min-w-0">
-              <PipelineColumn
-                stage={stage}
-                deals={currentDealsByStage?.[stage.id] || []}
-                probabilities={isDefaultPipeline ? probabilities : undefined}
-                leadScores={isDefaultPipeline ? leadScores : undefined}
-                activeCadences={isDefaultPipeline ? activeCadences : undefined}
-                icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
-              />
-            </div>
-          ))}
+          {currentStages.map((stage, index) => {
+            const nextStage = currentStages[index + 1];
+            const dealsInThisStage = currentDealsByStage?.[stage.id]?.length || 0;
+            const dealsInNextStage = nextStage ? (currentDealsByStage?.[nextStage.id]?.length || 0) : 0;
+            const conversionRate = dealsInThisStage > 0 ? Math.round((dealsInNextStage / (dealsInThisStage + dealsInNextStage)) * 100) : 0;
+
+            return (
+              <div key={stage.id} className="2xl:min-w-0">
+                <PipelineColumn
+                  stage={stage}
+                  deals={currentDealsByStage?.[stage.id] || []}
+                  probabilities={isDefaultPipeline ? probabilities : undefined}
+                  leadScores={isDefaultPipeline ? leadScores : undefined}
+                  activeCadences={isDefaultPipeline ? activeCadences : undefined}
+                  icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
+                  showFunnelLayer={showFunnelLayer}
+                  conversionRate={conversionRate}
+                />
+              </div>
+            );
+          })}
         </div>
 
         <DragOverlay>

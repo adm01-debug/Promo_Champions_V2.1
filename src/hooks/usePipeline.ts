@@ -38,6 +38,9 @@ export interface Deal {
   source: string | null;
   created_at: string;
   updated_at: string;
+  closing_date?: string; // Etapa 3: Predictive utility
+  health_score?: number; // Etapa 2: Heatmap
+  interaction_history?: number[]; // Etapa 4: Sparklines
 }
 
 export const usePipelineDeals = (filters?: { salespersonId?: string }) => {

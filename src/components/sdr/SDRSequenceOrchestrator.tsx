@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Mail, 
   Phone, 
-  Linkedin, 
+  LinkedIn, 
   ArrowRight, 
   CheckCircle2, 
   Clock,
@@ -83,7 +83,7 @@ export const SDRSequenceOrchestrator = () => {
                     seq.status === 'active' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
                   }`}>
                     {seq.name.includes('Email') ? <Mail className="h-4 w-4" /> : 
-                     seq.name.includes('LinkedIn') ? <Linkedin className="h-4 w-4" /> : 
+                     seq.name.includes('LinkedIn') ? <LinkedIn className="h-4 w-4" /> : 
                      <Phone className="h-4 w-4" />}
                   </div>
                   <div>
@@ -127,7 +127,7 @@ export const SDRSequenceOrchestrator = () => {
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold truncate max-w-[120px]">{action.lead}</p>
                 <div className="p-1 rounded bg-primary/10">
-                  {action.type === 'call' ? <Phone className="h-3 w-3 text-primary" /> : <Linkedin className="h-3 w-3 text-primary" />}
+                  {action.type === 'call' ? <Phone className="h-3 w-3 text-primary" /> : <LinkedIn className="h-3 w-3 text-primary" />}
                 </div>
               </div>
               <p className="text-[11px] font-medium leading-tight group-hover:text-primary transition-colors">{action.action}</p>

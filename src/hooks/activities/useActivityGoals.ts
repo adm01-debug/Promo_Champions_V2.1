@@ -99,13 +99,13 @@ export function useActivityGoalProgress() {
         const currentCalls = spActivities.filter(a => a.activity_type === 'call').length;
         const currentEmails = spActivities.filter(a => a.activity_type === 'email').length;
         const currentMeetings = spActivities.filter(a => a.activity_type === 'meeting').length;
-        const currentLinkedin = spActivities.filter(a => a.activity_type === 'linkedin').length;
+        const currentLinkedIn = spActivities.filter(a => a.activity_type === 'linkedin').length;
         const currentWhatsapp = spActivities.filter(a => a.activity_type === 'whatsapp').length;
 
         const goalCalls = spGoals?.calls_goal || 0;
         const goalEmails = spGoals?.emails_goal || 0;
         const goalMeetings = spGoals?.meetings_goal || 0;
-        const goalLinkedin = spGoals?.linkedin_goal || 0;
+        const goalLinkedIn = spGoals?.linkedin_goal || 0;
         const goalWhatsapp = spGoals?.whatsapp_goal || 0;
 
         const calcProgress = (current: number, goal: number) => 
@@ -114,12 +114,12 @@ export function useActivityGoalProgress() {
         const progressCalls = calcProgress(currentCalls, goalCalls);
         const progressEmails = calcProgress(currentEmails, goalEmails);
         const progressMeetings = calcProgress(currentMeetings, goalMeetings);
-        const progressLinkedin = calcProgress(currentLinkedin, goalLinkedin);
+        const progressLinkedIn = calcProgress(currentLinkedIn, goalLinkedIn);
         const progressWhatsapp = calcProgress(currentWhatsapp, goalWhatsapp);
 
-        const totalGoals = [goalCalls, goalEmails, goalMeetings, goalLinkedin, goalWhatsapp].filter(g => g > 0).length;
+        const totalGoals = [goalCalls, goalEmails, goalMeetings, goalLinkedIn, goalWhatsapp].filter(g => g > 0).length;
         const overallProgress = totalGoals > 0
-          ? (progressCalls + progressEmails + progressMeetings + progressLinkedin + progressWhatsapp) / totalGoals
+          ? (progressCalls + progressEmails + progressMeetings + progressLinkedIn + progressWhatsapp) / totalGoals
           : 0;
 
         return {
@@ -131,21 +131,21 @@ export function useActivityGoalProgress() {
             calls: goalCalls,
             emails: goalEmails,
             meetings: goalMeetings,
-            linkedin: goalLinkedin,
+            linkedin: goalLinkedIn,
             whatsapp: goalWhatsapp,
           },
           current: {
             calls: currentCalls,
             emails: currentEmails,
             meetings: currentMeetings,
-            linkedin: currentLinkedin,
+            linkedin: currentLinkedIn,
             whatsapp: currentWhatsapp,
           },
           progress: {
             calls: progressCalls,
             emails: progressEmails,
             meetings: progressMeetings,
-            linkedin: progressLinkedin,
+            linkedin: progressLinkedIn,
             whatsapp: progressWhatsapp,
             overall: overallProgress,
           },

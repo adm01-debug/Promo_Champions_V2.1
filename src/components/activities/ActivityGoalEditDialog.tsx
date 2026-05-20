@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Target } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, LinkedIn, Target } from "lucide-react";
 import { useUpsertActivityGoal, useActivityGoals } from "@/hooks/activities/useActivityGoals";
 import {
   Form,
@@ -118,7 +118,7 @@ export function ActivityGoalEditDialog({
     { name: "calls_goal", label: "Calls por dia", icon: Phone, color: "text-status-success" },
     { name: "emails_goal", label: "Emails por dia", icon: Mail, color: "text-status-info" },
     { name: "meetings_goal", label: "Reuniões por dia", icon: Calendar, color: "text-status-purple" },
-    { name: "linkedin_goal", label: "LinkedIn por dia", icon: Linkedin, color: "text-primary" },
+    { name: "linkedin_goal", label: "LinkedIn por dia", icon: LinkedIn, color: "text-primary" },
     { name: "whatsapp_goal", label: "WhatsApp por dia", icon: MessageCircle, color: "text-accent" },
   ];
 

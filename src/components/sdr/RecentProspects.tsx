@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2, Linkedin, Building2, Globe } from "lucide-react";
+import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2, LinkedIn, Building2, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
 import { Button } from "@/components/ui/button";
@@ -226,7 +226,7 @@ export function RecentProspects({
                     <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-border/30">
                       {enrichment.linkedin_url && (
                         <a href={enrichment.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-primary hover:underline">
-                          <Linkedin className="h-2.5 w-2.5" /> LinkedIn
+                          <LinkedIn className="h-2.5 w-2.5" /> LinkedIn
                         </a>
                       )}
                       {enrichment.company_size && (

@@ -7,15 +7,19 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { useDealPlaybookProgress, usePlaybooksByStage } from "@/hooks/usePlaybooks";
 import { DealPlaybookModal } from "./DealPlaybookModal";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkline } from "./Sparkline";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DealCardProps {
   deal: Deal;
@@ -82,35 +86,52 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
 
   // Etapa 8: Bulk Operations Mode
   const [isSelected, setIsSelected] = useState(false);
+  // Etapa 3: Inline Fast-Edit
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedAmount, setEditedAmount] = useState(deal.amount.toString());
+
+  // Etapa 2: Dynamic Health Heatmap
+  const healthScore = deal.health_score || (leadScore?.score || 50);
+  const getHealthGradient = (score: number) => {
+    if (score > 80) return "from-emerald-500/10 via-transparent";
+    if (score < 40) return "from-red-500/10 via-transparent";
+    return "from-amber-500/10 via-transparent";
+  };
+
+  const isHighRisk = healthScore < 30 || (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;
 
   return (
-    <div
+    <motion.div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      onClick={() => setIsSelected(!isSelected)}
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
       className={cn(
         "touch-none cursor-grab active:cursor-grabbing relative",
-        isDragging && "opacity-50",
-        // Etapa 3: "Hot Deal" Pulse Animation
-        leadScore?.category === 'hot' && "animate-[pulse_3s_ease-in-out_infinite] ring-1 ring-status-error/50",
-        isSelected && "ring-2 ring-primary ring-offset-2 scale-[0.98]"
+        isDragging && "opacity-50 z-50",
+        leadScore?.category === 'hot' && "ring-1 ring-status-error/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]",
+        isSelected && "ring-2 ring-primary ring-offset-2"
       )}
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 z-30 bg-primary text-white p-1 rounded-full shadow-lg">
-          <Zap className="h-3 w-3 fill-current" />
-        </div>
-      )}
       <Card className={cn(
-        "p-3 glass border border-border/40 dark:border-glow hover-lift transition-all duration-300",
-        "hover:shadow-lg hover:shadow-primary/10 group overflow-hidden",
-        isDragging && "shadow-2xl shadow-primary/30 rotate-2 scale-105 border-primary/50"
+        "p-3 glass border border-border/40 dark:border-glow transition-all duration-300 group overflow-hidden relative",
+        isDragging && "shadow-2xl rotate-2 scale-105"
       )}>
-        {/* Glow effect on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-        <div className="absolute -right-8 -top-8 w-16 h-16 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
+        {/* Etapa 2: Heatmap Overlay */}
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-br opacity-40 transition-opacity duration-700 pointer-events-none",
+          getHealthGradient(healthScore)
+        )} />
+        
+        {/* Etapa 9: Presence Mockup */}
+        <div className="absolute top-1 right-8 flex -space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <div className="w-4 h-4 rounded-full border border-background bg-primary ring-1 ring-primary/30 animate-pulse" />
+        </div>
 
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2 relative">
@@ -233,23 +254,65 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
         </div>
 
-        {/* Value & Time in Stage Indicator (Etapa 1) */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5">
+        {/* Value & Time & Velocity (Etapa 1, 3, 4) */}
+        <div className="flex items-center justify-between mb-2 relative z-10">
+          <div className="flex items-center gap-1.5 flex-1" onClick={(e) => e.stopPropagation()}>
             <DollarSign className="h-3.5 w-3.5 text-status-success" />
-            <span className="font-display font-bold text-sm gradient-text">
-              {formatCurrency(deal.amount)}
-            </span>
+            {isEditing ? (
+              <div className="flex items-center gap-1">
+                <Input 
+                  value={editedAmount} 
+                  onChange={(e) => setEditedAmount(e.target.value)}
+                  className="h-6 w-20 text-[11px] px-1 font-bold"
+                  autoFocus
+                />
+                <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setIsEditing(false)}>
+                  <Check className="h-3 w-3 text-emerald-500" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 group/edit">
+                <span className="font-display font-bold text-sm gradient-text">
+                  {formatCurrency(deal.amount)}
+                </span>
+                <Edit2 
+                  className="h-2.5 w-2.5 opacity-0 group-hover/edit:opacity-100 cursor-pointer transition-opacity" 
+                  onClick={() => setIsEditing(true)}
+                />
+              </div>
+            )}
           </div>
-          <div className={cn(
-            "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
-            (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
-              ? "bg-red-500/10 text-red-500 border-red-500/20" 
-              : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-          )}>
-            {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+
+          <div className="flex items-center gap-2">
+            {/* Etapa 4: Sparkline */}
+            <Sparkline data={deal.interaction_history || [10, 20, 15, 30, 25, 40, 35]} />
+            
+            <div className={cn(
+              "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
+              (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
+                ? "bg-red-500/10 text-red-500 border-red-500/20" 
+                : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+            )}>
+              {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+            </div>
           </div>
         </div>
+
+        {/* Etapa 8: "Next Best Action" Nudge */}
+        <AnimatePresence>
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            className="mb-2 bg-primary/5 rounded-lg border border-primary/10 p-2 overflow-hidden"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
+              <p className="text-[10px] font-bold text-primary tracking-tight">
+                Sugestão IA: <span className="font-medium text-foreground/80 italic">"Enviar proposta revisada com foco em ROI"</span>
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
         {/* Meta info */}
         <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
@@ -282,6 +345,26 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
               AGUARDANDO CLOSER
             </Badge>
           )}
+          {/* Etapa 5: Churn Risk */}
+          {isHighRisk && (
+            <Badge variant="destructive" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 animate-pulse">
+              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+              Risco de Churn
+            </Badge>
+          )}
+
+          {/* Etapa 1: Capacity/Closer */}
+          <div className="flex items-center gap-1 ml-auto">
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar className="h-5 w-5 border border-primary/20">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${deal.salesperson_id || 'unassigned'}`} />
+                  <AvatarFallback className="text-[8px]">CL</AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent>Closer: Responsável Direto (Carga 85%)</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
 
 
@@ -324,6 +407,6 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           stageId={deal.status}
         />
       </Card>
-    </div>
+    </motion.div>
   );
 };

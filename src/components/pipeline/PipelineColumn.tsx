@@ -5,6 +5,7 @@ import { DealCard } from "./DealCard";
 import { cn } from "@/lib/utils";
 import { ICPData } from "@/hooks/useICPData";
 import { Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface DealProbability {
   probability: number;
@@ -30,9 +31,11 @@ interface PipelineColumnProps {
   leadScores?: Record<string, LeadScoreData>;
   activeCadences?: Record<string, ActiveCadenceInfo>;
   icpByClientName?: Map<string, ICPData>;
+  showFunnelLayer?: boolean; // Etapa 7
+  conversionRate?: number; // Etapa 7
 }
 
-export const PipelineColumn = ({ stage, deals, probabilities, leadScores, activeCadences, icpByClientName }: PipelineColumnProps) => {
+export const PipelineColumn = ({ stage, deals, probabilities, leadScores, activeCadences, icpByClientName, showFunnelLayer, conversionRate }: PipelineColumnProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: stage.id,
   });
@@ -60,6 +63,14 @@ export const PipelineColumn = ({ stage, deals, probabilities, leadScores, active
 
       {/* Column Header */}
       <div className="relative rounded-t-2xl p-5 border-b border-border/10 overflow-hidden group">
+        {/* Etapa 7: Funnel Overlay */}
+        {showFunnelLayer && conversionRate !== undefined && (
+          <div className="absolute top-0 right-0 p-2 z-10">
+            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black">
+              {conversionRate}% CONV
+            </Badge>
+          </div>
+        )}
         {/* Animated accent line */}
         <div className={cn("absolute bottom-0 left-0 h-1 transition-all duration-500", isOver ? "w-full" : "w-1/3", stage.color.replace('bg-', 'bg-'))} />
         
