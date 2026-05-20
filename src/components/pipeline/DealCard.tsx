@@ -11,6 +11,7 @@ import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, Tr
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { DealScoreIndicator } from "./DealScoreIndicator";
+import { SLACountdown } from "./SLACountdown";
 import { useLeadScoreExplanation } from "@/hooks/scoring/useLeadScoreExplanation";
 import { useDealPlaybookProgress, usePlaybooksByStage } from "@/hooks/usePlaybooks";
 import { DealPlaybookModal } from "./DealPlaybookModal";
@@ -236,16 +237,10 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Etapa 4: Sparkline */}
-            <Sparkline data={deal.interaction_history || [10, 20, 15, 30, 25, 40, 35]} />
-            
-            <div className={cn(
-              "text-[9px] font-black px-1.5 py-0.5 rounded-md border",
-              (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 7 
-                ? "bg-red-500/10 text-red-500 border-red-500/20" 
-                : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-            )}>
-              {Math.floor((Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24))}D
+            {/* Etapa 7: SLA & Interaction Sparkline */}
+            <div className="flex flex-col items-end gap-1">
+              <Sparkline data={deal.interaction_history || [10, 20, 15, 30, 25, 40, 35]} />
+              <SLACountdown updatedAt={deal.updated_at} stage={deal.status} />
             </div>
           </div>
         </div>
