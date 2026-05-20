@@ -121,7 +121,7 @@ const FollowUpInteligente = memo(() => {
 
       const { data: activities, error: activitiesError } = await supabase
         .from('activities')
-        .select('sale_id, notes, created_at, activity_type, metadata')
+        .select('sale_id, notes, created_at, activity_type')
         .order('created_at', { ascending: false });
 
       if (activitiesError) throw activitiesError;
