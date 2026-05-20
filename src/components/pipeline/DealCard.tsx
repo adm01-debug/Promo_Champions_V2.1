@@ -250,20 +250,30 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           </div>
         </div>
 
-        {/* Etapa 8: "Next Best Action" Nudge */}
+        {/* Etapa 4: Dynamic AI Action Nudge */}
         <AnimatePresence>
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            className="mb-2 bg-primary/5 rounded-lg border border-primary/10 p-2 overflow-hidden"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
-              <p className="text-[10px] font-bold text-primary tracking-tight">
-                Sugestão IA: <span className="font-medium text-foreground/80 italic">"Enviar proposta revisada com foco em ROI"</span>
-              </p>
-            </div>
-          </motion.div>
+          {healthScore < 60 && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className={cn(
+                "mb-2 rounded-lg border p-2 overflow-hidden",
+                healthScore < 40 ? "bg-destructive/5 border-destructive/20" : "bg-primary/5 border-primary/20"
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className={cn("h-3 w-3", healthScore < 40 ? "text-destructive" : "text-primary")} />
+                <p className="text-[10px] font-bold tracking-tight">
+                  {healthScore < 40 ? "Ação Reativa: " : "Oportunidade: "}
+                  <span className="font-medium text-foreground/80 italic">
+                    {healthScore < 40 
+                      ? "Deal esfriando! Sugerimos envio de case de sucesso via WhatsApp." 
+                      : "Fit alto! O cliente está pronto para uma proposta de valor."}
+                  </span>
+                </p>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Meta info */}
