@@ -301,6 +301,22 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
             </Badge>
           )}
 
+          {/* Etapa 5: Stakeholder Influence */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-primary/10 text-primary border-none cursor-help">
+                <Users className="h-2.5 w-2.5 mr-0.5" />
+                3 Decisores
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-[10px] p-2 space-y-1">
+              <p className="font-bold border-b border-border/10 pb-1 mb-1">Mapa de Influência</p>
+              <p className="flex justify-between"><span>CEO (Decisor)</span> <span className="text-emerald-500 font-bold">Favorável</span></p>
+              <p className="flex justify-between"><span>CTO (Influenciador)</span> <span className="text-amber-500 font-bold">Neutro</span></p>
+              <p className="flex justify-between"><span>Diretor Vendas</span> <span className="text-emerald-500 font-bold">Favorável</span></p>
+            </TooltipContent>
+          </Tooltip>
+
           {deal.sdr_id && !deal.salesperson_id && (
             <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-amber-500/10 text-amber-500 border-none">
               <UserPlus className="h-2.5 w-2.5 mr-0.5" />
