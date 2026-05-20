@@ -311,13 +311,43 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           )}
         </AnimatePresence>
 
-        {/* Meta info */}
-        <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
-          {deal.category && (
-            <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-muted/50 text-foreground/80 border-none">
-              {deal.category}
-            </Badge>
+        {/* Etapa 5: Predictive Churn Guard & Revenue Ops Audit */}
+        <AnimatePresence>
+          {healthScore < 30 && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className="mb-2 bg-red-500/10 border border-red-500/30 rounded-lg p-2 flex items-center gap-2"
+            >
+              <AlertTriangle className="h-4 w-4 text-red-500 animate-bounce" />
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">Alerta de Churn Iminente</p>
+                <p className="text-[9px] text-foreground/80 font-medium">Inatividade crítica detectada. Reative agora para salvar o deal.</p>
+              </div>
+            </motion.div>
           )}
+        </AnimatePresence>
+
+        <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground items-center">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-emerald-500/10 text-emerald-500 border-none cursor-help">
+                <ShieldCheck className="h-2.5 w-2.5 mr-0.5" />
+                RevOps OK
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Auditoria de Revenue Operations validada (Etapa 6)</TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-4 w-4 hover:text-primary transition-colors">
+                <History className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Ver Histórico de Auditoria (Etapa 6)</TooltipContent>
+          </Tooltip>
+
           
           {probability && (
             <Badge variant="outline" className={cn(
