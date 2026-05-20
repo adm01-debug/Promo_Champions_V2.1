@@ -8,8 +8,10 @@ import { triggerHaptic } from '@/lib/haptics';
  * @param isDirty - Whether the form has unsaved changes.
  * @param message - Custom message to show in the browser dialog (note: most modern browsers show a generic message).
  */
-export function useFormGuard(isDirty: boolean, message: string = 'Você tem alterações não salvas. Deseja realmente sair?') {
-  
+export function useFormGuard(
+  isDirty: boolean,
+  message: string = 'Você tem alterações não salvas. Deseja realmente sair?'
+) {
   // Handle browser close/refresh
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -27,8 +29,13 @@ export function useFormGuard(isDirty: boolean, message: string = 'Você tem alte
   // Handle SPA navigation (React Router)
   const blocker = useBlocker(
     useCallback(
-      ({ currentLocation, nextLocation }) =>
-        isDirty && currentLocation.pathname !== nextLocation.pathname,
+      ({
+        currentLocation,
+        nextLocation,
+      }: {
+        currentLocation: { pathname: string };
+        nextLocation: { pathname: string };
+      }) => isDirty && currentLocation.pathname !== nextLocation.pathname,
       [isDirty]
     )
   );
