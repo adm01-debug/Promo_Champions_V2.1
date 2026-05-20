@@ -16,7 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useCreateActivity, ActivityType, ActivityOutcome } from "@/hooks/activities/useActivities";
 import { useSalespeople } from "@/hooks/sales/useSalespeople";
 import { useClients } from "@/hooks/crm/useClients";
-import { Phone, Mail, Users, Linkedin as LinkedIn, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";
+import { Phone, Mail, Users, LinkedIn, MessageCircle, MoreHorizontal, Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 const activityTypes: { value: ActivityType; label: string; icon: typeof Phone }[] = [

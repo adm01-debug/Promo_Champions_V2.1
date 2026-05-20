@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Lightbulb, Phone, Mail, Users, ArrowRight, MessageSquare,
-  FileText, Loader2, AlertTriangle, Linkedin, MessagesSquare,
+  FileText, Loader2, AlertTriangle, LinkedIn, MessagesSquare,
   Sparkles, Plus, Target, RefreshCw, TrendingUp, Calendar,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,7 +24,7 @@ const actionIcons: Record<string, React.ReactNode> = {
   email: <Mail className="h-4 w-4" />,
   follow_up: <ArrowRight className="h-4 w-4" />,
   proposal: <FileText className="h-4 w-4" />,
-  linkedin: <Linkedin className="h-4 w-4" />,
+  linkedin: <LinkedIn className="h-4 w-4" />,
   whatsapp: <MessagesSquare className="h-4 w-4" />,
   other: <MessageSquare className="h-4 w-4" />,
 };

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Users, Crown, Medal, TrendingUp, Activity } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, LinkedIn, Users, Crown, Medal, TrendingUp, Activity } from "lucide-react";
 import { SalespersonActivityData } from "@/hooks/sales/useSalespersonActivityReport";
 import { cn } from "@/lib/utils";
 
@@ -143,7 +143,7 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
                       <span className="font-medium text-muted-foreground">{sp.meetings}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs p-1.5 rounded-md bg-primary/5 group-hover:bg-primary/10 transition-all group-hover:scale-105">
-                      <Linkedin className="h-3.5 w-3.5 text-primary" />
+                      <LinkedIn className="h-3.5 w-3.5 text-primary" />
                       <span className="font-medium text-muted-foreground">{sp.linkedin}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs p-1.5 rounded-md bg-accent/10 group-hover:bg-accent/20 transition-all group-hover:scale-105">
