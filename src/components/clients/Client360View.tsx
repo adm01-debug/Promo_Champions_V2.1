@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, PieChart, Pie, Cell } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
-import { DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, Star } from "lucide-react";
+import { DollarSign, ShoppingBag, TrendingUp, Package, BarChart3, Calendar, ArrowRight, Zap, AlertCircle, CheckCircle2, MessageSquare, Copy, Star, Download, MousePointerClick } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -40,6 +40,17 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xl font-black uppercase tracking-tighter text-primary">Relatório Estratégico 360º</h2>
+        <button 
+          onClick={() => toast.info("Gerando relatório executivo...")}
+          className="flex items-center gap-2 py-2 px-4 rounded-xl bg-accent/20 border border-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all"
+        >
+          <Download className="h-3 w-3" />
+          Exportar PDF Executivo
+        </button>
+      </div>
+
       {/* KPIs Estratégicos - Etapa 1 do Plano 10/10 */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-primary/5 border-primary/10 shadow-sm overflow-hidden relative group">
@@ -129,6 +140,28 @@ export function Client360View({ clientName }: Client360ViewProps) {
                 />
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        </Card>
+
+        <Card className="bg-emerald-600/10 border-emerald-500/20 shadow-sm overflow-hidden relative group">
+          <div className="absolute right-0 top-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+            <MousePointerClick className="h-12 w-12 text-emerald-500" />
+          </div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Índice de Esforço</CardTitle>
+            <MousePointerClick className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-black text-emerald-500 tabular-nums">{data.engagementRatio.toFixed(1)}x</div>
+            <p className="text-[9px] text-muted-foreground mt-1 uppercase font-bold tracking-tight">Interações médias por conversão</p>
+            <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 transition-all duration-1000" 
+                style={{ width: `${Math.min(100, data.engagementRatio * 20)}%` }} 
+              />
+            </div>
           </CardContent>
         </Card>
 
