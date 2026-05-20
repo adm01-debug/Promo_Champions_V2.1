@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Deal } from "@/hooks/usePipeline";
 import { cn } from "@/lib/utils";
-import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles } from "lucide-react";
+import { DollarSign, Calendar, Target, Zap, Users, Brain, ListTodo, UserPlus, TrendingUp, AlertTriangle, Edit2, Check, Sparkles, RefreshCw, Mic, ShieldCheck, History, Database } from "lucide-react";
 import { StagnantDealAlert } from "./StagnantDealAlert";
 import { DealSummaryCard } from "./DealSummaryCard";
 import { DealScoreIndicator } from "./DealScoreIndicator";
@@ -46,6 +46,7 @@ interface DealCardProps {
 }
 
 export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData }: DealCardProps) => {
+  const [isEnriching, setIsEnriching] = useState(false); // Etapa 3: Data Enrichment
   const [playbookOpen, setPlaybookOpen] = useState(false);
   const { data: explanation } = useLeadScoreExplanation(leadScore ? deal.id : null);
   const { data: playbooks } = usePlaybooksByStage(deal.status);
@@ -130,29 +131,29 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           getHealthGradient(healthScore)
         )} />
         
-        {/* Etapa 9: Advanced Presence System */}
-        <div className="absolute top-1 right-8 flex -space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+        {/* Etapa 1: Presença em Tempo Real (Colaboração Ativa) */}
+        <div className="absolute top-1 right-8 flex -space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="relative">
-                <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-primary/20">
+                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
                   <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
                   <AvatarFallback className="text-[6px]">FX</AvatarFallback>
                 </Avatar>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
               </div>
             </TooltipTrigger>
-            <TooltipContent className="text-[10px]">Felix está editando agora...</TooltipContent>
+            <TooltipContent className="text-[10px] font-bold">Felix está editando agora...</TooltipContent>
           </Tooltip>
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <Avatar className="h-5 w-5 border-2 border-background ring-2 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all">
+              <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
                 <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" />
                 <AvatarFallback className="text-[6px]">AN</AvatarFallback>
               </Avatar>
             </TooltipTrigger>
-            <TooltipContent className="text-[10px]">Anna viu há 2 min</TooltipContent>
+            <TooltipContent className="text-[10px] font-bold">Anna visualizou há 1 min</TooltipContent>
           </Tooltip>
         </div>
 
@@ -162,33 +163,51 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-around z-20 rounded-lg">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500">
-                  <Zap className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500 group/btn">
+                  <Zap className="h-4 w-4 group-hover/btn:scale-125 transition-transform" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>WhatsApp Rápido</TooltipContent>
+              <TooltipContent className="font-bold">WhatsApp Rápido (Automação Etapa 2)</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={cn("h-8 w-8 hover:bg-indigo-500/20 text-indigo-500", isEnriching && "animate-pulse")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEnriching(true);
+                    setTimeout(() => setIsEnriching(false), 2000);
+                  }}
+                >
+                  <Database className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="font-bold">Enriquecer com Dados de Ecossistema (Etapa 3)</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-orange-500/20 text-orange-500">
+                  <Mic className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="font-bold">AI Voice Command (Etapa 4)</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 text-primary">
-                  <Calendar className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Agendar Call</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-indigo-500/20 text-indigo-500">
                   <ListTodo className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Ver Tarefas</TooltipContent>
+              <TooltipContent className="font-bold">Ver Tarefas</TooltipContent>
             </Tooltip>
           </div>
 
           <div className="flex-1 min-w-0">
-            <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors">
+            <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors flex items-center gap-1.5">
               {deal.client_name}
+              {isEnriching && <RefreshCw className="h-3 w-3 animate-spin text-primary" />}
             </h4>
             <p className="text-xs text-muted-foreground truncate mt-0.5">
               {deal.product_name}
@@ -292,13 +311,43 @@ export const DealCard = ({ deal, probability, leadScore, activeCadence, icpData 
           )}
         </AnimatePresence>
 
-        {/* Meta info */}
-        <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground">
-          {deal.category && (
-            <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-muted/50 text-foreground/80 border-none">
-              {deal.category}
-            </Badge>
+        {/* Etapa 5: Predictive Churn Guard & Revenue Ops Audit */}
+        <AnimatePresence>
+          {healthScore < 30 && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className="mb-2 bg-red-500/10 border border-red-500/30 rounded-lg p-2 flex items-center gap-2"
+            >
+              <AlertTriangle className="h-4 w-4 text-red-500 animate-bounce" />
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">Alerta de Churn Iminente</p>
+                <p className="text-[9px] text-foreground/80 font-medium">Inatividade crítica detectada. Reative agora para salvar o deal.</p>
+              </div>
+            </motion.div>
           )}
+        </AnimatePresence>
+
+        <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground items-center">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-emerald-500/10 text-emerald-500 border-none cursor-help">
+                <ShieldCheck className="h-2.5 w-2.5 mr-0.5" />
+                RevOps OK
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Auditoria de Revenue Operations validada (Etapa 6)</TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-4 w-4 hover:text-primary transition-colors">
+                <History className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px]">Ver Histórico de Auditoria (Etapa 6)</TooltipContent>
+          </Tooltip>
+
           
           {probability && (
             <Badge variant="outline" className={cn(

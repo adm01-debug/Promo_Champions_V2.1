@@ -20,7 +20,8 @@ import { PipelineSelector } from "./PipelineSelector";
 import { PipelineHealthScore } from "./PipelineHealthScore";
 import { DealCard } from "./DealCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Zap, TrendingUp } from "lucide-react";
+import { RefreshCw, Zap, TrendingUp, Sparkles, Filter, Database, Mic, Search } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { useDealProbabilities } from "@/hooks/useDealProbability";
 import { useLeadScores, useCalculateLeadScores } from "@/hooks/useLeadScoring";
@@ -252,16 +253,32 @@ export const PipelineBoard = () => {
   );
 
   return (
+    <TooltipProvider>
     <div className="space-y-4">
       {/* Etapa 1: Global Health Score */}
       <PipelineHealthScore />
 
       {/* Etapa 9: Advanced Filter Bar (Foco Cirúrgico) */}
-      <div className="flex flex-wrap items-center gap-2 p-2 bg-card/40 backdrop-blur-md border border-border/20 rounded-2xl shadow-inner">
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-card/60 backdrop-blur-xl border border-border/20 rounded-2xl shadow-2xl">
         <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
           <Zap className="h-3 w-3" />
-          Filtros Rápidos
+          Comando Estratégico
         </div>
+        
+        {/* Etapa 10: AI Semantic Search */}
+        <div className="relative flex-1 max-w-sm group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Sparkles className="h-3 w-3 text-primary animate-pulse" />
+          </div>
+          <input 
+            type="text" 
+            placeholder="Busca Semântica IA: 'Deals de TI acima de 50k com risco'..." 
+            className="w-full bg-background/50 border border-border/40 rounded-xl py-2 pl-9 pr-4 text-[10px] font-medium placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/20 transition-all group-hover:border-primary/30"
+          />
+        </div>
+
+        <div className="h-6 w-px bg-border/20 mx-2" />
+
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tighter hover:bg-primary/5">Alta Prioridade</Button>
         <Button variant="ghost" size="sm" className={cn("h-8 text-[10px] font-bold uppercase tracking-tighter", showFunnelLayer ? "bg-primary/20" : "")} onClick={() => setShowFunnelLayer(!showFunnelLayer)}>
           <TrendingUp className="h-3 w-3 mr-1" /> Funnel Layer
@@ -296,6 +313,29 @@ export const PipelineBoard = () => {
           </div>
         </div>
         <div className="flex-1" />
+        
+        {/* Etapa 7: Custom Field Orchestrator & RevOps Tools */}
+        <div className="flex items-center gap-1 bg-background/40 p-1 rounded-xl border border-border/20">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary">
+                <Database className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px] font-bold">Campos Personalizados (Etapa 7)</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-indigo-500">
+                <Filter className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px] font-bold">Regras de Automação (Etapa 2/8)</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <div className="h-6 w-px bg-border/20 mx-2" />
+
         {/* Pipeline Selector */}
         <PipelineSelector
           pipelines={pipelines || []}
@@ -413,5 +453,6 @@ export const PipelineBoard = () => {
         </DragOverlay>
       </DndContext>
     </div>
+    </TooltipProvider>
   );
 };
