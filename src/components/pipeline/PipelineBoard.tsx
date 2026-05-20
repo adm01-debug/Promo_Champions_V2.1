@@ -311,6 +311,29 @@ export const PipelineBoard = () => {
           </div>
         </div>
         <div className="flex-1" />
+        
+        {/* Etapa 7: Custom Field Orchestrator & RevOps Tools */}
+        <div className="flex items-center gap-1 bg-background/40 p-1 rounded-xl border border-border/20">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary">
+                <Database className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px] font-bold">Campos Personalizados (Etapa 7)</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-indigo-500">
+                <Filter className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-[10px] font-bold">Regras de Automação (Etapa 2/8)</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <div className="h-6 w-px bg-border/20 mx-2" />
+
         {/* Pipeline Selector */}
         <PipelineSelector
           pipelines={pipelines || []}
