@@ -1,5 +1,5 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { corsHeaders } from '../_shared/cors.ts';
 
 const SLOW_QUERY_THRESHOLD_MS = 3000;
 const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;
@@ -13,54 +13,62 @@ function emitTelemetry(meta: {
   countMode?: string;
   durationMs: number;
   recordCount?: number;
-  status: "ok" | "error" | "slow" | "very_slow";
+  status: 'ok' | 'error' | 'slow' | 'very_slow';
   error?: string;
   userId?: string | null;
 }) {
-  const icon = meta.status === "very_slow" ? "🔴"
-    : meta.status === "slow" ? "🟡"
-    : meta.status === "error" ? "❌"
-    : "✅";
+  const icon =
+    meta.status === 'very_slow'
+      ? '🔴'
+      : meta.status === 'slow'
+        ? '🟡'
+        : meta.status === 'error'
+          ? '❌'
+          : '✅';
 
-  const target = meta.rpcName || meta.table || "unknown";
-  const line = `${icon} [telemetry] ${meta.operation}:${target} ${meta.durationMs}ms` +
-    ` | records=${meta.recordCount ?? "-"}` +
-    ` limit=${meta.limit ?? "-"}` +
-    ` offset=${meta.offset ?? "-"}` +
-    ` count=${meta.countMode ?? "-"}`;
+  const target = meta.rpcName || meta.table || 'unknown';
+  const line =
+    `${icon} [telemetry] ${meta.operation}:${target} ${meta.durationMs}ms` +
+    ` | records=${meta.recordCount ?? '-'}` +
+    ` limit=${meta.limit ?? '-'}` +
+    ` offset=${meta.offset ?? '-'}` +
+    ` count=${meta.countMode ?? '-'}`;
 
-  if (meta.status === "very_slow") {
+  if (meta.status === 'very_slow') {
     console.warn(`⚠️ VERY SLOW QUERY: ${line}`);
-  } else if (meta.status === "slow") {
+  } else if (meta.status === 'slow') {
     console.warn(`⚠️ SLOW QUERY: ${line}`);
-  } else if (meta.status === "error") {
+  } else if (meta.status === 'error') {
     console.error(line + ` error=${meta.error}`);
   } else {
     console.info(line);
   }
 
   // Persist to local DB (fire-and-forget) — only for non-ok statuses
-  if (meta.status !== "ok") {
+  if (meta.status !== 'ok') {
     try {
-      const localUrl = Deno.env.get("SUPABASE_URL");
-      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      const localUrl = Deno.env.get('SUPABASE_URL');
+      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
       if (localUrl && serviceKey) {
         const localClient = createClient(localUrl, serviceKey);
-        localClient.from("query_telemetry").insert({
-          operation: meta.operation,
-          table_name: meta.table || null,
-          rpc_name: meta.rpcName || null,
-          duration_ms: meta.durationMs,
-          record_count: meta.recordCount ?? null,
-          query_limit: meta.limit ?? null,
-          query_offset: meta.offset ?? null,
-          count_mode: meta.countMode || null,
-          severity: meta.status,
-          error_message: meta.error || null,
-          user_id: meta.userId || null,
-        }).then(({ error: insertErr }) => {
-          if (insertErr) console.warn("[telemetry-persist] Insert failed:", insertErr.message);
-        });
+        localClient
+          .from('query_telemetry')
+          .insert({
+            operation: meta.operation,
+            table_name: meta.table || null,
+            rpc_name: meta.rpcName || null,
+            duration_ms: meta.durationMs,
+            record_count: meta.recordCount ?? null,
+            query_limit: meta.limit ?? null,
+            query_offset: meta.offset ?? null,
+            count_mode: meta.countMode || null,
+            severity: meta.status,
+            error_message: meta.error || null,
+            user_id: meta.userId || null,
+          })
+          .then(({ error: insertErr }) => {
+            if (insertErr) console.warn('[telemetry-persist] Insert failed:', insertErr.message);
+          });
       }
     } catch (_e) {
       // Fire-and-forget: NEVER block main response
@@ -68,64 +76,109 @@ function emitTelemetry(meta: {
   }
 }
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+// Explicit allowlist of tables that may be accessed through this bridge
+const ALLOWED_TABLES = new Set([
+  'clients',
+  'salespeople',
+  'sales',
+  'activities',
+  'tasks',
+  'products',
+  'quotes',
+  'icp_data',
+  'goals',
+  'notifications',
+]);
+
+Deno.serve(async req => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
-  try {
-    const { operation, table, rpcName, columns, filters, data: bodyData, limit, offset, countMode } = await req.json();
+  // Require authentication — this function proxies arbitrary queries to an external database
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: 'Authorization header required' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  const localUrl = Deno.env.get('SUPABASE_URL')!;
+  const localAnon = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const authClient = createClient(localUrl, localAnon, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser();
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  const userId = user.id;
 
-    // Get user from auth header
-    const authHeader = req.headers.get("Authorization");
-    let userId: string | null = null;
-    if (authHeader) {
-      const localUrl = Deno.env.get("SUPABASE_URL")!;
-      const localAnon = Deno.env.get("SUPABASE_ANON_KEY")!;
-      const localClient = createClient(localUrl, localAnon, {
-        global: { headers: { Authorization: authHeader } },
-      });
-      const { data: { user } } = await localClient.auth.getUser();
-      userId = user?.id || null;
+  try {
+    const {
+      operation,
+      table,
+      rpcName,
+      columns,
+      filters,
+      data: bodyData,
+      limit,
+      offset,
+      countMode,
+    } = await req.json();
+
+    // Validate table against allowlist to prevent arbitrary data exfiltration
+    if (table && !ALLOWED_TABLES.has(table)) {
+      return new Response(
+        JSON.stringify({ error: `Table '${table}' is not accessible through this bridge` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Connect to external DB
-    const externalUrl = Deno.env.get("EXTERNAL_SUPABASE_URL");
-    const externalKey = Deno.env.get("EXTERNAL_SUPABASE_ANON_KEY");
+    const externalUrl = Deno.env.get('EXTERNAL_SUPABASE_URL');
+    const externalKey = Deno.env.get('EXTERNAL_SUPABASE_ANON_KEY');
 
     if (!externalUrl || !externalKey) {
-      return new Response(
-        JSON.stringify({ error: "External database not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: 'External database not configured' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const externalClient = createClient(externalUrl, externalKey);
 
-    const selectColumns = columns || "*";
+    const selectColumns = columns || '*';
     const queryLimit = limit || 100;
     const queryOffset = offset || 0;
-    const queryCountMode = countMode || "none";
+    const queryCountMode = countMode || 'none';
 
-    if (operation === "select") {
+    if (operation === 'select') {
       const startTime = performance.now();
-      let query = externalClient
-        .from(table)
-        .select(selectColumns, { count: queryCountMode === "none" ? undefined : queryCountMode as any });
+      let query = externalClient.from(table).select(selectColumns, {
+        count: queryCountMode === 'none' ? undefined : (queryCountMode as any),
+      });
 
       // Apply filters
       if (filters) {
         for (const f of filters) {
-          if (f.type === "eq") query = query.eq(f.column, f.value);
-          else if (f.type === "neq") query = query.neq(f.column, f.value);
-          else if (f.type === "gt") query = query.gt(f.column, f.value);
-          else if (f.type === "gte") query = query.gte(f.column, f.value);
-          else if (f.type === "lt") query = query.lt(f.column, f.value);
-          else if (f.type === "lte") query = query.lte(f.column, f.value);
-          else if (f.type === "like") query = query.like(f.column, f.value);
-          else if (f.type === "ilike") query = query.ilike(f.column, f.value);
-          else if (f.type === "in") query = query.in(f.column, f.value);
-          else if (f.type === "order") query = query.order(f.column, { ascending: f.ascending ?? true });
+          if (f.type === 'eq') query = query.eq(f.column, f.value);
+          else if (f.type === 'neq') query = query.neq(f.column, f.value);
+          else if (f.type === 'gt') query = query.gt(f.column, f.value);
+          else if (f.type === 'gte') query = query.gte(f.column, f.value);
+          else if (f.type === 'lt') query = query.lt(f.column, f.value);
+          else if (f.type === 'lte') query = query.lte(f.column, f.value);
+          else if (f.type === 'like') query = query.like(f.column, f.value);
+          else if (f.type === 'ilike') query = query.ilike(f.column, f.value);
+          else if (f.type === 'in') query = query.in(f.column, f.value);
+          else if (f.type === 'order')
+            query = query.order(f.column, { ascending: f.ascending ?? true });
         }
       }
 
@@ -134,68 +187,86 @@ Deno.serve(async (req) => {
       const { data: selectData, error: selectError, count } = await query;
       const durationMs = Math.round(performance.now() - startTime);
 
-      const status = selectError ? "error"
-        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS ? "very_slow"
-        : durationMs >= SLOW_QUERY_THRESHOLD_MS ? "slow"
-        : "ok";
+      const status = selectError
+        ? 'error'
+        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS
+          ? 'very_slow'
+          : durationMs >= SLOW_QUERY_THRESHOLD_MS
+            ? 'slow'
+            : 'ok';
 
       emitTelemetry({
-        operation: "select", table, limit: queryLimit, offset: queryOffset,
-        countMode: queryCountMode, durationMs, status,
+        operation: 'select',
+        table,
+        limit: queryLimit,
+        offset: queryOffset,
+        countMode: queryCountMode,
+        durationMs,
+        status,
         recordCount: selectData?.length ?? 0,
-        error: selectError?.message, userId,
+        error: selectError?.message,
+        userId,
       });
 
       if (selectError) {
         return new Response(JSON.stringify({ error: selectError.message }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(JSON.stringify({ data: selectData, count, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    if (operation === "rpc") {
+    if (operation === 'rpc') {
       const startTime = performance.now();
       const { data: rpcData, error: rpcError } = await externalClient.rpc(rpcName, bodyData || {});
       const durationMs = Math.round(performance.now() - startTime);
 
-      const status = rpcError ? "error"
-        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS ? "very_slow"
-        : durationMs >= SLOW_QUERY_THRESHOLD_MS ? "slow"
-        : "ok";
+      const status = rpcError
+        ? 'error'
+        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS
+          ? 'very_slow'
+          : durationMs >= SLOW_QUERY_THRESHOLD_MS
+            ? 'slow'
+            : 'ok';
 
       emitTelemetry({
-        operation: "rpc", rpcName, durationMs, status,
+        operation: 'rpc',
+        rpcName,
+        durationMs,
+        status,
         recordCount: Array.isArray(rpcData) ? rpcData.length : undefined,
-        error: rpcError?.message, userId,
+        error: rpcError?.message,
+        userId,
       });
 
       if (rpcError) {
         return new Response(JSON.stringify({ error: rpcError.message }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(JSON.stringify({ data: rpcData, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // insert/update/delete
-    if (["insert", "update", "delete"].includes(operation)) {
+    if (['insert', 'update', 'delete'].includes(operation)) {
       const startTime = performance.now();
       let result;
 
-      if (operation === "insert") {
+      if (operation === 'insert') {
         result = await externalClient.from(table).insert(bodyData).select();
-      } else if (operation === "update") {
+      } else if (operation === 'update') {
         let q = externalClient.from(table).update(bodyData);
         if (filters) {
           for (const f of filters) {
-            if (f.type === "eq") q = q.eq(f.column, f.value);
+            if (f.type === 'eq') q = q.eq(f.column, f.value);
           }
         }
         result = await q.select();
@@ -203,42 +274,52 @@ Deno.serve(async (req) => {
         let q = externalClient.from(table).delete();
         if (filters) {
           for (const f of filters) {
-            if (f.type === "eq") q = q.eq(f.column, f.value);
+            if (f.type === 'eq') q = q.eq(f.column, f.value);
           }
         }
         result = await q.select();
       }
 
       const durationMs = Math.round(performance.now() - startTime);
-      const status = result.error ? "error"
-        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS ? "very_slow"
-        : durationMs >= SLOW_QUERY_THRESHOLD_MS ? "slow"
-        : "ok";
+      const status = result.error
+        ? 'error'
+        : durationMs >= VERY_SLOW_QUERY_THRESHOLD_MS
+          ? 'very_slow'
+          : durationMs >= SLOW_QUERY_THRESHOLD_MS
+            ? 'slow'
+            : 'ok';
 
       emitTelemetry({
-        operation, table, durationMs, status,
+        operation,
+        table,
+        durationMs,
+        status,
         recordCount: result.data?.length ?? 0,
-        error: result.error?.message, userId,
+        error: result.error?.message,
+        userId,
       });
 
       if (result.error) {
         return new Response(JSON.stringify({ error: result.error.message }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(JSON.stringify({ data: result.data, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(JSON.stringify({ error: `Unknown operation: ${operation}` }), {
-      status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    console.error("Bridge error:", err);
+    console.error('Bridge error:', err);
     return new Response(JSON.stringify({ error: err.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

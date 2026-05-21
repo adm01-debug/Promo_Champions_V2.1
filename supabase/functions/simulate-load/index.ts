@@ -1,18 +1,70 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { corsHeaders } from '../_shared/cors.ts';
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+const PRIVATE_IP_RE =
+  /^(localhost|127\.|0\.0\.0\.0|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|fd[0-9a-f]{2}:|169\.254\.)/i;
+
+function isPrivateUrl(raw: string): boolean {
+  try {
+    const { hostname } = new URL(raw);
+    return PRIVATE_IP_RE.test(hostname);
+  } catch {
+    return true;
+  }
+}
+
+serve(async req => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+  // Require valid JWT — this endpoint can generate significant outbound traffic
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: 'Authorization header required' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const {
+    data: { user },
+    error: authError,
+  } = await authClient.auth.getUser();
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
     const { concurrency = 10, total = 100, targetUrl } = await req.json().catch(() => ({}));
-    
+
     if (!targetUrl) {
-      return new Response(JSON.stringify({ error: "targetUrl is required" }), {
+      return new Response(JSON.stringify({ error: 'targetUrl is required' }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // Block SSRF — reject requests targeting private/internal network addresses
+    if (isPrivateUrl(targetUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'Requests to private or internal addresses are not allowed' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Cap concurrency and total to reasonable limits
+    const safeConcurrency = Math.min(Math.max(1, concurrency), 20);
+    const safeTotal = Math.min(Math.max(1, total), 200);
 
     const results = {
       passed: 0,
@@ -25,15 +77,15 @@ serve(async (req) => {
         const start = performance.now();
         try {
           const res = await fetch(targetUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ event: "load_test", ts: Date.now() }),
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event: 'load_test', ts: Date.now() }),
           });
           const duration = performance.now() - start;
           results.latencies.push(duration);
           if (res.ok) results.passed++;
           else results.failed++;
-        } catch (e) {
+        } catch (_e) {
           results.failed++;
           results.latencies.push(performance.now() - start);
         }
@@ -41,9 +93,9 @@ serve(async (req) => {
       await Promise.all(promises);
     };
 
-    const batches = Math.ceil(total / concurrency);
+    const batches = Math.ceil(safeTotal / safeConcurrency);
     for (let i = 0; i < batches; i++) {
-      const currentBatchSize = Math.min(concurrency, total - i * concurrency);
+      const currentBatchSize = Math.min(safeConcurrency, safeTotal - i * safeConcurrency);
       await runBatch(currentBatchSize);
     }
 
@@ -53,20 +105,20 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        total,
+        total: safeTotal,
         passed: results.passed,
         failed: results.failed,
         avgLatencyMs: Math.round(avgLatency),
         maxLatencyMs: Math.round(maxLatency),
         minLatencyMs: Math.round(minLatency),
-        successRate: (results.passed / total) * 100,
+        successRate: (results.passed / safeTotal) * 100,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
