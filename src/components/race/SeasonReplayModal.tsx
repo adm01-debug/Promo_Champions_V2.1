@@ -27,7 +27,7 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
     if (!events.length) return [];
     const buckets = new Map<string, RaceEvent[]>();
     for (const ev of events) {
-      const day = ev.created_at.slice(0, 10);
+      const day = format(new Date(ev.created_at), 'yyyy-MM-dd');
       if (!buckets.has(day)) buckets.set(day, []);
       buckets.get(day)!.push(ev);
     }
@@ -82,7 +82,7 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
                   {current.topMovers.length === 0 ? (
                     <p className="text-xs text-muted-foreground">Sem movimentações destacadas.</p>
                   ) : (
-                    current.topMovers.map((m) => (
+                    current.topMovers.map(m => (
                       <div key={m.id} className="flex items-center justify-between text-sm">
                         <span className="truncate">{m.name}</span>
                         <span className="text-muted-foreground tabular-nums">{m.count}x</span>
@@ -98,7 +98,7 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
               min={0}
               max={Math.max(0, days.length - 1)}
               step={1}
-              onValueChange={(v) => setIdx(v[0] ?? 0)}
+              onValueChange={v => setIdx(v[0] ?? 0)}
               aria-label="Scrubber temporal"
             />
             <p className="text-[11px] text-muted-foreground text-center">

@@ -1,23 +1,29 @@
-import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Sale, CreateSaleInput } from "@/types/sales";
-import { SALE_STATUS_LABELS } from "@/constants";
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Sale, CreateSaleInput } from '@/types/sales';
+import { SALE_STATUS_LABELS } from '@/constants';
 
 export const salesService = {
   async getSales(searchTerm?: string): Promise<Sale[]> {
     let query = supabase
-      .from("sales")
-      .select(`
+      .from('sales')
+      .select(
+        `
         *,
         client:clients(name),
         product:products(id, name, price, sku)
-      `)
-      .order("created_at", { ascending: false })
+      `
+      )
+      .order('created_at', { ascending: false })
       .limit(100);
 
     if (searchTerm) {
-      query = query.or(`client_name.ilike.%${searchTerm}%,product_name.ilike.%${searchTerm}%`);
+      // PostgREST .or() parses commas/parentheses as separators; strip them from user input.
+      const safe = searchTerm.replace(/[,()*]/g, ' ').trim();
+      if (safe) {
+        query = query.or(`client_name.ilike.%${safe}%,product_name.ilike.%${safe}%`);
+      }
     }
 
     const { data, error } = await query;
@@ -31,7 +37,7 @@ export const salesService = {
       valor: Number(sale.amount || 0),
       status: sale.status,
       statusLabel: SALE_STATUS_LABELS[sale.status] || sale.status,
-      data: format(new Date(sale.created_at), "dd/MM/yyyy", { locale: ptBR }),
+      data: format(new Date(sale.created_at), 'dd/MM/yyyy', { locale: ptBR }),
       created_at: sale.created_at,
       client_id: sale.client_id,
       product_id: sale.product_id,
@@ -45,13 +51,9 @@ export const salesService = {
   },
 
   async createSale(input: CreateSaleInput) {
-    const { data, error } = await supabase
-      .from("sales")
-      .insert([input])
-      .select()
-      .single();
+    const { data, error } = await supabase.from('sales').insert([input]).select().single();
 
     if (error) throw error;
     return data;
-  }
+  },
 };
