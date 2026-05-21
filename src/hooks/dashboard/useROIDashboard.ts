@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
+import { isWonSaleStatus } from '@/constants';
 
 interface SalespersonROI {
   id: string;
@@ -89,10 +90,7 @@ export function useROIDashboard(periodMonths: number = 3) {
     return salespeople
       .map(sp => {
         const spSales = sales.filter(s => s.salesperson_id === sp.id);
-        // sales_status_check allows 'completed' (manual) plus 'won'/'closed' (integrations)
-        const wonSales = spSales.filter(
-          s => s.status === 'completed' || s.status === 'won' || s.status === 'closed'
-        );
+        const wonSales = spSales.filter(s => isWonSaleStatus(s.status));
         const totalRevenue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
         const spActivities = activities.filter(a => a.salesperson_id === sp.id);
 

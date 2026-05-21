@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, format, differenceInDays, subDays } from 'date-fns';
 import { BIGestorData, BIVendedorData } from '@/types/bi';
 import * as helpers from '@/utils/bi-helpers';
+import { WON_SALE_STATUSES, isWonSaleStatus } from '@/constants';
 import {
   sentimentDistribution,
   topObjectionsAcross,
@@ -37,7 +38,7 @@ export const biService = {
       supabase
         .from('sales')
         .select('salesperson_id, amount, status')
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', prevMonthStart.toISOString())
         .lte('created_at', prevMonthEnd.toISOString()),
       supabase
@@ -55,7 +56,7 @@ export const biService = {
       supabase
         .from('sales')
         .select('amount, status, created_at')
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', subMonths(now, 6).toISOString()),
     ]);
 
@@ -67,7 +68,7 @@ export const biService = {
     const activities = activitiesRes.data || [];
     const last6MonthsSales = last6MonthsSalesRes.data || [];
 
-    const completedSales = currentSales.filter(s => s.status === 'completed');
+    const completedSales = currentSales.filter(s => isWonSaleStatus(s.status));
     const totalTeamRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
     const previousTeamRevenue = previousSales.reduce((sum, s) => sum + Number(s.amount), 0);
     const teamRevenueChange =
@@ -167,14 +168,14 @@ export const biService = {
         .from('sales')
         .select('id, amount, category, status, created_at')
         .eq('salesperson_id', salesperson.id)
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', monthStart.toISOString())
         .lte('created_at', monthEnd.toISOString()),
       supabase
         .from('sales')
         .select('amount')
         .eq('salesperson_id', salesperson.id)
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', prevMonthStart.toISOString())
         .lte('created_at', prevMonthEnd.toISOString()),
       supabase
@@ -222,7 +223,7 @@ export const biService = {
       supabase
         .from('sales')
         .select('salesperson_id, amount')
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', monthStart.toISOString())
         .lte('created_at', monthEnd.toISOString()),
     ]);

@@ -53,14 +53,29 @@ export const DEAL_STATUS = {
 } as const;
 
 export const SALE_STATUS_LABELS: Record<string, string> = {
-  pending: "Pendente",
-  qualified: "Qualificada",
-  proposal: "Proposta",
-  negotiation: "Negociação",
-  completed: "Concluída",
-  lost: "Perdida",
+  pending: 'Pendente',
+  qualified: 'Qualificada',
+  proposal: 'Proposta',
+  negotiation: 'Negociação',
+  completed: 'Concluída',
+  lost: 'Perdida',
 };
 
+// Sales considered successful/won. Manual entry uses "completed"; the
+// Bitrix24/integration sync writes "won"/"closed". All three satisfy the
+// sales_status_check constraint, so revenue/conversion logic must treat them
+// uniformly. Single source of truth — see isWonSaleStatus / isOpenSaleStatus.
+export const WON_SALE_STATUSES = ['completed', 'won', 'closed'] as const;
+export const LOST_SALE_STATUSES = ['lost', 'cancelled'] as const;
+
+export const isWonSaleStatus = (status?: string | null): boolean =>
+  !!status && (WON_SALE_STATUSES as readonly string[]).includes(status);
+
+export const isLostSaleStatus = (status?: string | null): boolean =>
+  !!status && (LOST_SALE_STATUSES as readonly string[]).includes(status);
+
+export const isOpenSaleStatus = (status?: string | null): boolean =>
+  !!status && !isWonSaleStatus(status) && !isLostSaleStatus(status);
 
 export const ACTIVITY_TYPE = {
   CALL: 'call',
@@ -90,5 +105,5 @@ export const ERROR_MESSAGES = {
 
 // ===== TIPOS AUXILIARES =====
 
-export type DealStatus = typeof DEAL_STATUS[keyof typeof DEAL_STATUS];
-export type ActivityType = typeof ACTIVITY_TYPE[keyof typeof ACTIVITY_TYPE];
+export type DealStatus = (typeof DEAL_STATUS)[keyof typeof DEAL_STATUS];
+export type ActivityType = (typeof ACTIVITY_TYPE)[keyof typeof ACTIVITY_TYPE];

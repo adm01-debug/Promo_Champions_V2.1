@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfWeek, endOfWeek, subWeeks, format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus } from '@/constants';
+import { startOfWeek, endOfWeek, subWeeks, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export interface TrendPoint {
   week: string;
@@ -13,7 +14,7 @@ export interface TrendPoint {
 
 export const useTrendsData = (weeks: number = 8) => {
   return useQuery({
-    queryKey: ["dashboard-trends", weeks],
+    queryKey: ['dashboard-trends', weeks],
     queryFn: async (): Promise<TrendPoint[]> => {
       const now = new Date();
       const ranges = Array.from({ length: weeks }, (_, i) => {
@@ -28,28 +29,28 @@ export const useTrendsData = (weeks: number = 8) => {
 
       const [salesRes, metricsRes] = await Promise.all([
         supabase
-          .from("sales")
-          .select("amount, status, created_at")
-          .gte("created_at", earliest.toISOString())
-          .lte("created_at", latest.toISOString()),
+          .from('sales')
+          .select('amount, status, created_at')
+          .gte('created_at', earliest.toISOString())
+          .lte('created_at', latest.toISOString()),
         supabase
-          .from("daily_metrics")
-          .select("conversion_rate, date")
-          .gte("date", format(earliest, "yyyy-MM-dd"))
-          .lte("date", format(latest, "yyyy-MM-dd")),
+          .from('daily_metrics')
+          .select('conversion_rate, date')
+          .gte('date', format(earliest, 'yyyy-MM-dd'))
+          .lte('date', format(latest, 'yyyy-MM-dd')),
       ]);
 
       const sales = salesRes.data ?? [];
       const metrics = metricsRes.data ?? [];
 
       return ranges.map(({ start, end }) => {
-        const inRange = sales.filter((s) => {
+        const inRange = sales.filter(s => {
           const t = new Date(s.created_at).getTime();
-          return t >= start.getTime() && t <= end.getTime() && s.status === "completed";
+          return t >= start.getTime() && t <= end.getTime() && isWonSaleStatus(s.status);
         });
         const revenue = inRange.reduce((sum, s) => sum + Number(s.amount), 0);
         const salesCount = inRange.length;
-        const wkMetrics = metrics.filter((m) => {
+        const wkMetrics = metrics.filter(m => {
           const t = new Date(m.date).getTime();
           return t >= start.getTime() && t <= end.getTime();
         });
@@ -58,8 +59,8 @@ export const useTrendsData = (weeks: number = 8) => {
           : 0;
 
         return {
-          week: format(start, "dd/MM", { locale: ptBR }),
-          weekFull: `${format(start, "dd MMM", { locale: ptBR })} - ${format(end, "dd MMM", { locale: ptBR })}`,
+          week: format(start, 'dd/MM', { locale: ptBR }),
+          weekFull: `${format(start, 'dd MMM', { locale: ptBR })} - ${format(end, 'dd MMM', { locale: ptBR })}`,
           revenue,
           sales: salesCount,
           conversion,

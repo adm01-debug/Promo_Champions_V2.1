@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { WON_SALE_STATUSES } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +31,7 @@ export const LTVBySegment: FC = () => {
       const { data: sales, error } = await supabase
         .from('sales')
         .select('client_name, amount, status, product_name, created_at')
-        .eq('status', 'completed');
+        .in('status', [...WON_SALE_STATUSES]);
 
       if (error) throw error;
 
@@ -42,8 +43,11 @@ export const LTVBySegment: FC = () => {
       const clientMap = new Map(clients?.map(c => [c.name, c]) || []);
 
       // Group sales by client
-      const clientSales = new Map<string, { total: number; count: number; company: string | null }>();
-      
+      const clientSales = new Map<
+        string,
+        { total: number; count: number; company: string | null }
+      >();
+
       (sales || []).forEach(sale => {
         const existing = clientSales.get(sale.client_name) || { total: 0, count: 0, company: null };
         existing.total += Number(sale.amount || 0);
@@ -61,13 +65,13 @@ export const LTVBySegment: FC = () => {
 
       const segments: Record<string, { totalRev: number; count: number; purchases: number }> = {
         'Premium (Top 20%)': { totalRev: 0, count: 0, purchases: 0 },
-        'Regular': { totalRev: 0, count: 0, purchases: 0 },
-        'Básico': { totalRev: 0, count: 0, purchases: 0 },
+        Regular: { totalRev: 0, count: 0, purchases: 0 },
+        Básico: { totalRev: 0, count: 0, purchases: 0 },
         'Recorrente (3+ compras)': { totalRev: 0, count: 0, purchases: 0 },
         'Único (1 compra)': { totalRev: 0, count: 0, purchases: 0 },
       };
 
-      clientSales.forEach((data) => {
+      clientSales.forEach(data => {
         // By value tier
         if (data.total >= thresholdHigh) {
           segments['Premium (Top 20%)'].totalRev += data.total;
@@ -139,7 +143,7 @@ export const LTVBySegment: FC = () => {
               <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
                 <XAxis
                   type="number"
-                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                  tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`}
                   fontSize={11}
                   stroke="hsl(var(--muted-foreground))"
                 />
@@ -171,7 +175,10 @@ export const LTVBySegment: FC = () => {
             {/* Segment cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {data.map((seg, _idx) => (
-                <div key={seg.segment} className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2">
+                <div
+                  key={seg.segment}
+                  className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium truncate">{seg.segment}</span>
                     <Badge variant="outline" className="text-[10px] shrink-0">
@@ -191,7 +198,8 @@ export const LTVBySegment: FC = () => {
                       {seg.avgPurchases} compras/cliente
                     </span>
                     <span>
-                      {totalRevenue > 0 ? Math.round((seg.totalRevenue / totalRevenue) * 100) : 0}% receita
+                      {totalRevenue > 0 ? Math.round((seg.totalRevenue / totalRevenue) * 100) : 0}%
+                      receita
                     </span>
                   </div>
                 </div>

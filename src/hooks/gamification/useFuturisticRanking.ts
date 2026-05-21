@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { isWonSaleStatus } from '@/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 
 export interface RankingRow {
   id: string;
@@ -14,13 +15,11 @@ export interface RankingRow {
   revenueChangePct: number;
 }
 
-const buildMap = (
-  rows: { salesperson_id: string | null; amount: number; status: string }[],
-) => {
+const buildMap = (rows: { salesperson_id: string | null; amount: number; status: string }[]) => {
   const map = new Map<string, { revenue: number; deals: number }>();
   rows
-    .filter((r) => r.status === "completed" && r.salesperson_id)
-    .forEach((r) => {
+    .filter(r => isWonSaleStatus(r.status) && r.salesperson_id)
+    .forEach(r => {
       const cur = map.get(r.salesperson_id!) ?? { revenue: 0, deals: 0 };
       cur.revenue += Number(r.amount);
       cur.deals += 1;
@@ -38,27 +37,27 @@ const rank = (map: Map<string, { revenue: number; deals: number }>) => {
 
 export const useFuturisticRanking = () => {
   return useQuery({
-    queryKey: ["futuristic-ranking"],
+    queryKey: ['futuristic-ranking'],
     queryFn: async (): Promise<RankingRow[]> => {
       const now = new Date();
-      const curStart = format(startOfMonth(now), "yyyy-MM-dd");
-      const curEnd = format(endOfMonth(now), "yyyy-MM-dd");
+      const curStart = format(startOfMonth(now), 'yyyy-MM-dd');
+      const curEnd = format(endOfMonth(now), 'yyyy-MM-dd');
       const prev = subMonths(now, 1);
-      const prevStart = format(startOfMonth(prev), "yyyy-MM-dd");
-      const prevEnd = format(endOfMonth(prev), "yyyy-MM-dd");
+      const prevStart = format(startOfMonth(prev), 'yyyy-MM-dd');
+      const prevEnd = format(endOfMonth(prev), 'yyyy-MM-dd');
 
       const [spRes, curRes, prevRes] = await Promise.all([
-        supabase.from("salespeople_public").select("id, name, avatar_url").eq("is_active", true),
+        supabase.from('salespeople_public').select('id, name, avatar_url').eq('is_active', true),
         supabase
-          .from("sales")
-          .select("salesperson_id, amount, status")
-          .gte("created_at", curStart)
-          .lte("created_at", curEnd),
+          .from('sales')
+          .select('salesperson_id, amount, status')
+          .gte('created_at', curStart)
+          .lte('created_at', curEnd),
         supabase
-          .from("sales")
-          .select("salesperson_id, amount, status")
-          .gte("created_at", prevStart)
-          .lte("created_at", prevEnd),
+          .from('sales')
+          .select('salesperson_id, amount, status')
+          .gte('created_at', prevStart)
+          .lte('created_at', prevEnd),
       ]);
 
       const sps = spRes.data ?? [];
@@ -68,8 +67,11 @@ export const useFuturisticRanking = () => {
       const prevPos = rank(prevMap);
 
       const rows: RankingRow[] = sps
-        .filter((sp): sp is { id: string; name: string; avatar_url: string | null } => !!sp.id && !!sp.name)
-        .map((sp) => {
+        .filter(
+          (sp): sp is { id: string; name: string; avatar_url: string | null } =>
+            !!sp.id && !!sp.name
+        )
+        .map(sp => {
           const cur = curMap.get(sp.id) ?? { revenue: 0, deals: 0 };
           const prev = prevMap.get(sp.id);
           const position = curPos.get(sp.id) ?? sps.length;

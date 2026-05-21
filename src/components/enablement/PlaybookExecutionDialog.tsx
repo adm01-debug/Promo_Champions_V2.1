@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isOpenSaleStatus } from '@/constants';
 import {
   Dialog,
   DialogContent,
@@ -29,8 +30,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
   const toggleItem = useTogglePlaybookItem();
   const { data: completedItems } = useAllPlaybookProgress(selectedSaleId || undefined);
 
-  const activeSales =
-    (sales || []).filter((s: any) => s.status !== 'completed' && s.status !== 'lost') || [];
+  const activeSales = (sales || []).filter((s: any) => isOpenSaleStatus(s.status)) || [];
 
   return (
     <Dialog>

@@ -1,7 +1,15 @@
-import { format, eachDayOfInterval, eachWeekOfInterval, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  format,
+  eachDayOfInterval,
+  eachWeekOfInterval,
+  startOfWeek,
+  endOfWeek,
+  isWithinInterval,
+} from 'date-fns';
+import { isWonSaleStatus } from '@/constants';
+import { ptBR } from 'date-fns/locale';
 
-export type ReportPeriod = "weekly" | "monthly";
+export type ReportPeriod = 'weekly' | 'monthly';
 
 export interface SaleRow {
   id: string;
@@ -72,12 +80,12 @@ export interface SalesReportData {
 }
 
 export const STATUS_LABEL: Record<string, string> = {
-  completed: "Concluídas",
-  pending: "Pendentes",
-  cancelled: "Canceladas",
-  qualified: "Qualificadas",
-  proposal: "Em proposta",
-  negotiation: "Em negociação",
+  completed: 'Concluídas',
+  pending: 'Pendentes',
+  cancelled: 'Canceladas',
+  qualified: 'Qualificadas',
+  proposal: 'Em proposta',
+  negotiation: 'Em negociação',
 };
 
 const calcDelta = (current: number, previous: number): number => {
@@ -86,7 +94,7 @@ const calcDelta = (current: number, previous: number): number => {
 };
 
 export function buildKpis(sales: SaleRow[]): ReportKpis {
-  const completed = sales.filter((s) => s.status === "completed");
+  const completed = sales.filter(s => isWonSaleStatus(s.status));
   const revenue = completed.reduce((acc, s) => acc + Number(s.amount ?? 0), 0);
   const salesCount = completed.length;
   const avgTicket = salesCount > 0 ? revenue / salesCount : 0;
@@ -110,15 +118,15 @@ export function buildRevenueSeries(
   start: Date,
   end: Date
 ): ChartPoint[] {
-  const completed = sales.filter((s) => s.status === "completed");
-  if (period === "weekly") {
+  const completed = sales.filter(s => isWonSaleStatus(s.status));
+  if (period === 'weekly') {
     const days = eachDayOfInterval({ start, end });
-    return days.map((d) => {
-      const key = format(d, "yyyy-MM-dd");
+    return days.map(d => {
+      const key = format(d, 'yyyy-MM-dd');
       const total = completed
-        .filter((s) => format(new Date(s.created_at), "yyyy-MM-dd") === key)
+        .filter(s => format(new Date(s.created_at), 'yyyy-MM-dd') === key)
         .reduce((acc, s) => acc + Number(s.amount ?? 0), 0);
-      return { name: format(d, "EEE", { locale: ptBR }), value: total };
+      return { name: format(d, 'EEE', { locale: ptBR }), value: total };
     });
   }
   const weeks = eachWeekOfInterval({ start, end }, { weekStartsOn: 1 });
@@ -126,7 +134,7 @@ export function buildRevenueSeries(
     const ws = startOfWeek(w, { weekStartsOn: 1 });
     const we = endOfWeek(w, { weekStartsOn: 1 });
     const total = completed
-      .filter((s) => isWithinInterval(new Date(s.created_at), { start: ws, end: we }))
+      .filter(s => isWithinInterval(new Date(s.created_at), { start: ws, end: we }))
       .reduce((acc, s) => acc + Number(s.amount ?? 0), 0);
     return { name: `Sem ${i + 1}`, value: total };
   });
@@ -135,9 +143,9 @@ export function buildRevenueSeries(
 export function buildTopProducts(sales: SaleRow[], topN = 5): TopProduct[] {
   const map = new Map<string, number>();
   sales
-    .filter((s) => s.status === "completed")
-    .forEach((s) => {
-      const name = s.product_name ?? "—";
+    .filter(s => isWonSaleStatus(s.status))
+    .forEach(s => {
+      const name = s.product_name ?? '—';
       map.set(name, (map.get(name) ?? 0) + Number(s.amount ?? 0));
     });
   return Array.from(map.entries())
@@ -148,8 +156,8 @@ export function buildTopProducts(sales: SaleRow[], topN = 5): TopProduct[] {
 
 export function buildStatusBreakdown(sales: SaleRow[]): StatusSlice[] {
   const map = new Map<string, number>();
-  sales.forEach((s) => {
-    const k = s.status ?? "outros";
+  sales.forEach(s => {
+    const k = s.status ?? 'outros';
     map.set(k, (map.get(k) ?? 0) + 1);
   });
   return Array.from(map.entries()).map(([key, value]) => ({
@@ -166,14 +174,14 @@ export function buildTeamRanking(
 ): TeamRanking[] {
   const map = new Map<string, number>();
   sales
-    .filter((s) => s.status === "completed" && s.salesperson_id)
-    .forEach((s) => {
+    .filter(s => isWonSaleStatus(s.status) && s.salesperson_id)
+    .forEach(s => {
       const id = s.salesperson_id as string;
       map.set(id, (map.get(id) ?? 0) + Number(s.amount ?? 0));
     });
   return Array.from(map.entries())
     .map(([id, value]) => ({
-      name: salespeople.find((p) => p.id === id)?.name ?? "Desconhecido",
+      name: salespeople.find(p => p.id === id)?.name ?? 'Desconhecido',
       value,
     }))
     .sort((a, b) => b.value - a.value)
@@ -188,14 +196,18 @@ export function buildTopDeals(
   return [...sales]
     .sort((a, b) => Number(b.amount ?? 0) - Number(a.amount ?? 0))
     .slice(0, topN)
-    .map((s) => ({
-      client: s.client_name ?? "—",
-      product: s.product_name ?? "—",
-      salesperson: salespeople.find((p) => p.id === s.salesperson_id)?.name ?? "—",
+    .map(s => ({
+      client: s.client_name ?? '—',
+      product: s.product_name ?? '—',
+      salesperson: salespeople.find(p => p.id === s.salesperson_id)?.name ?? '—',
       amount: Number(s.amount ?? 0),
-      status: STATUS_LABEL[s.status ?? ""] ?? s.status ?? "—",
+      status: STATUS_LABEL[s.status ?? ''] ?? s.status ?? '—',
     }));
 }
 
 export const formatBRL = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(value);
+  new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(value);

@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { WON_SALE_STATUSES } from '@/constants';
 import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,7 @@ const ActivityHeatmapComponent: FC = () => {
       // Get activities from last 90 days
       const since = new Date();
       since.setDate(since.getDate() - 90);
-      
+
       const { data, error } = await supabase
         .from('activities')
         .select('created_at')
@@ -25,7 +26,7 @@ const ActivityHeatmapComponent: FC = () => {
 
       // Build heatmap grid [day][hour]
       const grid: number[][] = Array.from({ length: 7 }, () => Array(12).fill(0));
-      
+
       (data || []).forEach(a => {
         const d = new Date(a.created_at);
         const day = d.getDay();
@@ -47,16 +48,16 @@ const ActivityHeatmapComponent: FC = () => {
     queryFn: async () => {
       const since = new Date();
       since.setDate(since.getDate() - 90);
-      
+
       const { data, error } = await supabase
         .from('sales')
         .select('created_at')
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', since.toISOString());
       if (error) throw error;
 
       const grid: number[][] = Array.from({ length: 7 }, () => Array(12).fill(0));
-      
+
       (data || []).forEach(s => {
         const d = new Date(s.created_at);
         const day = d.getDay();
@@ -83,12 +84,18 @@ const ActivityHeatmapComponent: FC = () => {
     return 'bg-success/40';
   };
 
-  const renderHeatmap = (data: { grid: number[][]; maxVal: number; total: number } | undefined, title: string, emoji: string) => (
+  const renderHeatmap = (
+    data: { grid: number[][]; maxVal: number; total: number } | undefined,
+    title: string,
+    emoji: string
+  ) => (
     <Card className="border-none shadow-md">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2">
           {emoji} {title}
-          <span className="text-xs text-muted-foreground font-normal ml-auto">{data?.total || 0} nos últimos 90 dias</span>
+          <span className="text-xs text-muted-foreground font-normal ml-auto">
+            {data?.total || 0} nos últimos 90 dias
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -97,7 +104,9 @@ const ActivityHeatmapComponent: FC = () => {
             {/* Hour labels */}
             <div className="flex gap-1 mb-1 ml-10">
               {HOURS.map(h => (
-                <div key={h} className="flex-1 text-[9px] text-muted-foreground text-center">{h}h</div>
+                <div key={h} className="flex-1 text-[9px] text-muted-foreground text-center">
+                  {h}h
+                </div>
               ))}
             </div>
             {/* Grid */}
@@ -125,9 +134,11 @@ const ActivityHeatmapComponent: FC = () => {
             {/* Legend */}
             <div className="flex items-center gap-2 mt-3 justify-end">
               <span className="text-[9px] text-muted-foreground">Menos</span>
-              {['bg-muted/20', 'bg-success/40', 'bg-success/60', 'bg-success/80', 'bg-success'].map(c => (
-                <div key={c} className={cn('h-3 w-3 rounded-sm', c)} />
-              ))}
+              {['bg-muted/20', 'bg-success/40', 'bg-success/60', 'bg-success/80', 'bg-success'].map(
+                c => (
+                  <div key={c} className={cn('h-3 w-3 rounded-sm', c)} />
+                )
+              )}
               <span className="text-[9px] text-muted-foreground">Mais</span>
             </div>
           </div>
@@ -149,7 +160,9 @@ const ActivityHeatmapComponent: FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Descubra os melhores horários para vender baseado nos últimos 90 dias</p>
+            <p className="text-xs text-muted-foreground">
+              Descubra os melhores horários para vender baseado nos últimos 90 dias
+            </p>
           </CardContent>
         </div>
       </Card>
@@ -159,6 +172,5 @@ const ActivityHeatmapComponent: FC = () => {
     </div>
   );
 };
-
 
 export const ActivityHeatmap = React.memo(ActivityHeatmapComponent);

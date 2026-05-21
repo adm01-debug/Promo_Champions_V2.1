@@ -1,17 +1,11 @@
 import { FC } from 'react';
+import { WON_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Package } from 'lucide-react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const COLORS = [
   'hsl(var(--primary))',
@@ -29,7 +23,7 @@ export const ProductMix: FC = () => {
       const { data: sales, error } = await supabase
         .from('sales')
         .select('product_name, amount, category')
-        .eq('status', 'completed');
+        .in('status', [...WON_SALE_STATUSES]);
 
       if (error) throw error;
 
@@ -61,8 +55,12 @@ export const ProductMix: FC = () => {
   if (isLoading) {
     return (
       <Card className="glass border-border/40">
-        <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
-        <CardContent><Skeleton className="h-[250px] w-full" /></CardContent>
+        <CardHeader>
+          <Skeleton className="h-5 w-32" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[250px] w-full" />
+        </CardContent>
       </Card>
     );
   }
@@ -76,7 +74,7 @@ export const ProductMix: FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {(!data || data.length === 0) ? (
+        {!data || data.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">Nenhuma venda concluída</p>
         ) : (
           <div className="h-[250px]">
@@ -98,7 +96,7 @@ export const ProductMix: FC = () => {
                 <Tooltip
                   formatter={(value, name, props) => [
                     `${value} vendas (${(props.payload as Record<string, unknown>)?.percentage ?? 0}%)`,
-                    String(name)
+                    String(name),
                   ]}
                 />
                 <Legend />

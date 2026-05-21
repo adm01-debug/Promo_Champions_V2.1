@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek, endOfWeek } from 'date-fns';
 
@@ -25,7 +26,7 @@ export function useWeeklyRanking() {
         supabase
           .from('sales')
           .select('salesperson_id, amount')
-          .eq('status', 'completed')
+          .in('status', [...WON_SALE_STATUSES])
           .gte('created_at', weekStart.toISOString())
           .lte('created_at', weekEnd.toISOString()),
       ]);

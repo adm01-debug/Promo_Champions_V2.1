@@ -1,10 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, subWeeks, subMonths, subQuarters, subDays } from "date-fns";
-import { captureException } from "@/lib/errorTracking";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus, WON_SALE_STATUSES } from '@/constants';
+import {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfQuarter,
+  endOfQuarter,
+  subWeeks,
+  subMonths,
+  subQuarters,
+  subDays,
+} from 'date-fns';
+import { captureException } from '@/lib/errorTracking';
 
 export type SalesRole = 'sdr' | 'closer' | 'hybrid';
-export type PeriodFilter = "week" | "month" | "quarter";
+export type PeriodFilter = 'week' | 'month' | 'quarter';
 
 interface RoleMetrics {
   totalDeals: number;
@@ -29,26 +41,29 @@ interface RoleComparison {
 
 function getPeriodRange(period: PeriodFilter, offset: number = 0) {
   const now = new Date();
-  
+
   switch (period) {
-    case "week": {
+    case 'week': {
       const weekRef = offset === 0 ? now : subWeeks(now, offset);
-      return { start: startOfWeek(weekRef, { weekStartsOn: 1 }), end: endOfWeek(weekRef, { weekStartsOn: 1 }) };
+      return {
+        start: startOfWeek(weekRef, { weekStartsOn: 1 }),
+        end: endOfWeek(weekRef, { weekStartsOn: 1 }),
+      };
     }
-    case "month": {
+    case 'month': {
       const monthRef = offset === 0 ? now : subMonths(now, offset);
       return { start: startOfMonth(monthRef), end: endOfMonth(monthRef) };
     }
-    case "quarter": {
+    case 'quarter': {
       const quarterRef = offset === 0 ? now : subQuarters(now, offset);
       return { start: startOfQuarter(quarterRef), end: endOfQuarter(quarterRef) };
     }
   }
 }
 
-export function useCloserMetrics(period: PeriodFilter = "month") {
+export function useCloserMetrics(period: PeriodFilter = 'month') {
   return useQuery({
-    queryKey: ["closer-metrics", period],
+    queryKey: ['closer-metrics', period],
     queryFn: async (): Promise<RoleComparison> => {
       try {
         const currentRange = getPeriodRange(period, 0);
@@ -56,20 +71,20 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
 
         // Fetch closers once
         const { data: closersData } = await supabase
-          .from("salespeople")
-          .select("id")
-          .in("role", ["closer", "hybrid"]);
-        
+          .from('salespeople')
+          .select('id')
+          .in('role', ['closer', 'hybrid']);
+
         const closerIds = closersData?.map(c => c.id) || [];
-        if (closerIds.length === 0) throw new Error("No closers found");
+        if (closerIds.length === 0) throw new Error('No closers found');
 
         const buildSalesQuery = (range: { start: Date; end: Date }) => {
           return supabase
-            .from("sales")
-            .select("id, status, amount, salesperson_id")
-            .in("salesperson_id", closerIds)
-            .gte("created_at", range.start.toISOString())
-            .lte("created_at", range.end.toISOString());
+            .from('sales')
+            .select('id, status, amount, salesperson_id')
+            .in('salesperson_id', closerIds)
+            .gte('created_at', range.start.toISOString())
+            .lte('created_at', range.end.toISOString());
         };
 
         const [currentSalesRes, prevSalesRes] = await Promise.all([
@@ -80,27 +95,36 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
         if (currentSalesRes.error) throw currentSalesRes.error;
         if (prevSalesRes.error) throw prevSalesRes.error;
 
-        const calculateMetrics = (sales: Array<{ status: string; amount: number | null }>): RoleMetrics => {
+        const calculateMetrics = (
+          sales: Array<{ status: string; amount: number | null }>
+        ): RoleMetrics => {
           const totalDeals = sales.length;
-          const closedDeals = sales.filter(s => s.status === "completed").length;
+          const closedDeals = sales.filter(s => isWonSaleStatus(s.status)).length;
           const totalValue = sales.reduce((sum, s) => sum + Number(s.amount || 0), 0);
-          const closedValue = sales.filter(s => s.status === "completed")
+          const closedValue = sales
+            .filter(s => isWonSaleStatus(s.status))
             .reduce((sum, s) => sum + Number(s.amount || 0), 0);
           const conversionRate = totalDeals > 0 ? (closedDeals / totalDeals) * 100 : 0;
           const avgDealSize = closedDeals > 0 ? closedValue / closedDeals : 0;
-          const inNegotiation = sales.filter(s => s.status === "negotiation").length;
-          const inProposal = sales.filter(s => s.status === "proposal").length;
+          const inNegotiation = sales.filter(s => s.status === 'negotiation').length;
+          const inProposal = sales.filter(s => s.status === 'proposal').length;
 
           return {
-            totalDeals, closedDeals, totalValue, closedValue,
-            conversionRate, avgDealSize, inNegotiation, inProposal
+            totalDeals,
+            closedDeals,
+            totalValue,
+            closedValue,
+            conversionRate,
+            avgDealSize,
+            inNegotiation,
+            inProposal,
           };
         };
 
         const current = calculateMetrics(currentSalesRes.data || []);
         const previous = calculateMetrics(prevSalesRes.data || []);
 
-        const calcChange = (curr: number, prev: number) => 
+        const calcChange = (curr: number, prev: number) =>
           prev > 0 ? ((curr - prev) / prev) * 100 : curr > 0 ? 100 : 0;
 
         return {
@@ -113,7 +137,7 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
           },
         };
       } catch (error) {
-        captureException(error, "useCloserMetrics");
+        captureException(error, 'useCloserMetrics');
         throw error;
       }
     },
@@ -123,23 +147,23 @@ export function useCloserMetrics(period: PeriodFilter = "month") {
 
 export function useCloserPipeline() {
   return useQuery({
-    queryKey: ["closer-pipeline"],
+    queryKey: ['closer-pipeline'],
     queryFn: async () => {
       try {
         const sixtyDaysAgo = subDays(new Date(), 60);
         const { data: closers } = await supabase
-          .from("salespeople")
-          .select("id")
-          .in("role", ["closer", "hybrid"]);
+          .from('salespeople')
+          .select('id')
+          .in('role', ['closer', 'hybrid']);
 
         const closerIds = closers?.map(c => c.id) || [];
 
         const { data: sales, error } = await supabase
-          .from("sales")
-          .select("status, amount")
-          .in("salesperson_id", closerIds)
-          .gte("created_at", sixtyDaysAgo.toISOString())
-          .in("status", ["proposal", "negotiation", "completed", "pending"]);
+          .from('sales')
+          .select('status, amount')
+          .in('salesperson_id', closerIds)
+          .gte('created_at', sixtyDaysAgo.toISOString())
+          .in('status', ['proposal', 'negotiation', 'completed', 'pending']);
 
         if (error) throw error;
 
@@ -147,7 +171,7 @@ export function useCloserPipeline() {
           proposal: { count: 0, value: 0 },
           negotiation: { count: 0, value: 0 },
           completed: { count: 0, value: 0 },
-          pending: { count: 0, value: 0 }
+          pending: { count: 0, value: 0 },
         };
 
         sales?.forEach(sale => {
@@ -159,13 +183,13 @@ export function useCloserPipeline() {
         });
 
         return [
-          { stage: "Orçamentos Pendentes", ...pipeline.pending, color: "#94a3b8" },
-          { stage: "Proposta", ...pipeline.proposal, color: "#8b5cf6" },
-          { stage: "Negociação", ...pipeline.negotiation, color: "#f59e0b" },
-          { stage: "Fechados", ...pipeline.completed, color: "#22c55e" },
+          { stage: 'Orçamentos Pendentes', ...pipeline.pending, color: '#94a3b8' },
+          { stage: 'Proposta', ...pipeline.proposal, color: '#8b5cf6' },
+          { stage: 'Negociação', ...pipeline.negotiation, color: '#f59e0b' },
+          { stage: 'Fechados', ...pipeline.completed, color: '#22c55e' },
         ];
       } catch (error) {
-        captureException(error, "useCloserPipeline");
+        captureException(error, 'useCloserPipeline');
         throw error;
       }
     },
@@ -175,24 +199,24 @@ export function useCloserPipeline() {
 
 export function useTopClosers() {
   return useQuery({
-    queryKey: ["top-closers"],
+    queryKey: ['top-closers'],
     queryFn: async () => {
       try {
         const monthStart = startOfMonth(new Date());
 
         const { data: closers, error: closersErr } = await supabase
-          .from("salespeople")
-          .select("*")
-          .in("role", ["closer", "hybrid"])
-          .eq("is_active", true);
+          .from('salespeople')
+          .select('*')
+          .in('role', ['closer', 'hybrid'])
+          .eq('is_active', true);
 
         if (closersErr) throw closersErr;
 
         const { data: sales, error: salesErr } = await supabase
-          .from("sales")
-          .select("salesperson_id, amount")
-          .eq("status", "completed")
-          .gte("created_at", monthStart.toISOString());
+          .from('sales')
+          .select('salesperson_id, amount')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte('created_at', monthStart.toISOString());
 
         if (salesErr) throw salesErr;
 
@@ -208,12 +232,12 @@ export function useTopClosers() {
         return (closers || [])
           .map(c => ({
             ...c,
-            ...stats.get(c.id) || { closedDeals: 0, closedValue: 0 }
+            ...(stats.get(c.id) || { closedDeals: 0, closedValue: 0 }),
           }))
           .sort((a, b) => b.closedValue - a.closedValue)
           .slice(0, 5);
       } catch (error) {
-        captureException(error, "useTopClosers");
+        captureException(error, 'useTopClosers');
         throw error;
       }
     },
@@ -223,20 +247,20 @@ export function useTopClosers() {
 
 export function useRecentClosedDeals() {
   return useQuery({
-    queryKey: ["recent-closed-deals"],
+    queryKey: ['recent-closed-deals'],
     queryFn: async () => {
       try {
         const { data: deals, error } = await supabase
-          .from("sales")
-          .select("*")
-          .eq("status", "completed")
-          .order("updated_at", { ascending: false })
+          .from('sales')
+          .select('*')
+          .in('status', [...WON_SALE_STATUSES])
+          .order('updated_at', { ascending: false })
           .limit(10);
 
         if (error) throw error;
         return deals || [];
       } catch (error) {
-        captureException(error, "useRecentClosedDeals");
+        captureException(error, 'useRecentClosedDeals');
         throw error;
       }
     },

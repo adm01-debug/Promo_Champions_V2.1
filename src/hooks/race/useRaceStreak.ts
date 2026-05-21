@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
 import { useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -50,11 +51,11 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
         .from('sales')
         .select('created_at')
         .eq('salesperson_id', salespersonId!)
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', seasonStart!)
         .lte('created_at', seasonEnd!);
       if (error) throw error;
-      return { dates: (data ?? []).map((d) => d.created_at as string) };
+      return { dates: (data ?? []).map(d => d.created_at as string) };
     },
     enabled,
     staleTime: 30_000,
@@ -66,10 +67,15 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
       .channel(`race-streak-${salespersonId}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'sales', filter: `salesperson_id=eq.${salespersonId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sales',
+          filter: `salesperson_id=eq.${salespersonId}`,
+        },
         () => {
           qc.invalidateQueries({ queryKey: ['race-streak', salespersonId] });
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -80,9 +86,7 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
   const streak: RaceStreak = useMemo(() => {
     const dates = query.data?.dates ?? [];
     const streakDays = computeStreak(dates);
-    const lastSaleAt = dates.length
-      ? dates.reduce((a, b) => (a > b ? a : b))
-      : null;
+    const lastSaleAt = dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : null;
     return {
       streakDays,
       salesCount: dates.length,
