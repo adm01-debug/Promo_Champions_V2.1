@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Flame, CalendarDays, Users, TrendingUp, Target, ShieldCheck, History, AlertTriangle, ShieldAlert } from "lucide-react";
+import { Brain, Flame, CalendarDays, Users, Target, ShieldCheck, ShieldAlert } from "lucide-react";
 import { ClientSelector } from "./ClientSelector";
 import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
 import { PurchasePredictionCard } from "./PurchasePredictionCard";
@@ -10,9 +10,10 @@ import { IntelligenceAlerts } from "../dashboard/modules/IntelligenceAlerts";
 import { EmptyStateGuide } from "./EmptyStateGuide";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DuplicateBlockAudit } from "./DuplicateBlockAudit";
 import { IntelligenceSettings } from "./IntelligenceSettings";
+import { ClientPurchaseHistory } from "./ClientPurchaseHistory";
+import { LTVBySegment } from "../analytics/LTVBySegment";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
@@ -112,16 +113,18 @@ export function PurchaseIntelligenceHub() {
               >
                 <div className="space-y-6">
                   <PurchasePredictionCard clientId={clientId} />
+                  <LTVBySegment />
                   <IntelligenceAlerts />
                 </div>
               </motion.div>
               <motion.div 
-                className="lg:col-span-8"
+                className="lg:col-span-8 space-y-6"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
               >
                 <PurchaseHeatmapGrid clientId={clientId} months={24} />
+                <ClientPurchaseHistory clientId={clientId} />
               </motion.div>
             </div>
           </TabsContent>
