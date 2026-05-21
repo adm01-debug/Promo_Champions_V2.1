@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { computeForecast, computeStreak } from '@/utils/bi-helpers';
 import { getXPForNextLevel, getLevelFromXP } from '@/lib/gamification';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 
 /**
  * REGRESSION TESTS
@@ -37,5 +38,15 @@ describe('Regression Tests', () => {
     expect(maxLevel.level).toBe(20);
     expect(Number.isFinite(getXPForNextLevel(50_000))).toBe(true);
     expect(getXPForNextLevel(50_000)).toBe(0);
+  });
+
+  it('sanitizeCsvCell: neutralizes formula-injection prefixes', () => {
+    expect(sanitizeCsvCell('=1+1')).toBe("'=1+1");
+    expect(sanitizeCsvCell('+44')).toBe("'+44");
+    expect(sanitizeCsvCell('-5')).toBe("'-5");
+    expect(sanitizeCsvCell('@cmd')).toBe("'@cmd");
+    // Normal values are left untouched
+    expect(sanitizeCsvCell('Acme Corp')).toBe('Acme Corp');
+    expect(sanitizeCsvCell('1500.50')).toBe('1500.50');
   });
 });

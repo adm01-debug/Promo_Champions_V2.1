@@ -86,58 +86,72 @@ export function useROIDashboard(periodMonths: number = 3) {
 
     const BASE_SALARY_MONTHLY = 3500; // Estimated average base salary
 
-    return salespeople.map((sp) => {
-      const spSales = sales.filter((s) => s.salesperson_id === sp.id);
-      const wonSales = spSales.filter((s) => s.status === 'won' || s.status === 'closed');
-      const totalRevenue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
-      const spActivities = activities.filter((a) => a.salesperson_id === sp.id);
+    return salespeople
+      .map(sp => {
+        const spSales = sales.filter(s => s.salesperson_id === sp.id);
+        // sales_status_check allows 'completed' (manual) plus 'won'/'closed' (integrations)
+        const wonSales = spSales.filter(
+          s => s.status === 'completed' || s.status === 'won' || s.status === 'closed'
+        );
+        const totalRevenue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
+        const spActivities = activities.filter(a => a.salesperson_id === sp.id);
 
-      const commissionPaid = totalRevenue * (sp.commission_rate || 0.1);
-      const estimatedCost = BASE_SALARY_MONTHLY * periodMonths + commissionPaid;
+        const commissionPaid = totalRevenue * (sp.commission_rate || 0.1);
+        const estimatedCost = BASE_SALARY_MONTHLY * periodMonths + commissionPaid;
 
-      const roi = estimatedCost > 0 ? ((totalRevenue - estimatedCost) / estimatedCost) * 100 : 0;
+        const roi = estimatedCost > 0 ? ((totalRevenue - estimatedCost) / estimatedCost) * 100 : 0;
 
-      // CAC: cost to acquire each client (approx by won deals)
-      const cac = wonSales.length > 0 ? estimatedCost / wonSales.length : 0;
+        // CAC: cost to acquire each client (approx by won deals)
+        const cac = wonSales.length > 0 ? estimatedCost / wonSales.length : 0;
 
-      // LTV: average deal value (simplified)
-      const avgDealSize = wonSales.length > 0 ? totalRevenue / wonSales.length : 0;
-      const ltv = avgDealSize * 2.5; // Estimated repeat factor
+        // LTV: average deal value (simplified)
+        const avgDealSize = wonSales.length > 0 ? totalRevenue / wonSales.length : 0;
+        const ltv = avgDealSize * 2.5; // Estimated repeat factor
 
-      // Payback: how many days to recover cost
-      const daysInPeriod = periodMonths * 30;
-      const revenuePerDay = daysInPeriod > 0 ? totalRevenue / daysInPeriod : 0;
-      const paybackDays = revenuePerDay > 0 ? Math.round(estimatedCost / revenuePerDay) : 999;
+        // Payback: how many days to recover cost
+        const daysInPeriod = periodMonths * 30;
+        const revenuePerDay = daysInPeriod > 0 ? totalRevenue / daysInPeriod : 0;
+        const paybackDays = revenuePerDay > 0 ? Math.round(estimatedCost / revenuePerDay) : 999;
 
-      const conversionRate = spSales.length > 0 ? (wonSales.length / spSales.length) * 100 : 0;
-      const revenuePerActivity = spActivities.length > 0 ? totalRevenue / spActivities.length : 0;
+        const conversionRate = spSales.length > 0 ? (wonSales.length / spSales.length) * 100 : 0;
+        const revenuePerActivity = spActivities.length > 0 ? totalRevenue / spActivities.length : 0;
 
-      return {
-        id: sp.id,
-        name: sp.name,
-        role: sp.role || 'closer',
-        commission_rate: sp.commission_rate || 0.1,
-        totalRevenue,
-        totalDeals: spSales.length,
-        wonDeals: wonSales.length,
-        avgDealSize,
-        estimatedCost,
-        commissionPaid,
-        roi,
-        ltv,
-        cac,
-        paybackDays,
-        revenuePerDay,
-        activitiesCount: spActivities.length,
-        revenuePerActivity,
-        conversionRate,
-      };
-    }).sort((a, b) => b.roi - a.roi);
+        return {
+          id: sp.id,
+          name: sp.name,
+          role: sp.role || 'closer',
+          commission_rate: sp.commission_rate || 0.1,
+          totalRevenue,
+          totalDeals: spSales.length,
+          wonDeals: wonSales.length,
+          avgDealSize,
+          estimatedCost,
+          commissionPaid,
+          roi,
+          ltv,
+          cac,
+          paybackDays,
+          revenuePerDay,
+          activitiesCount: spActivities.length,
+          revenuePerActivity,
+          conversionRate,
+        };
+      })
+      .sort((a, b) => b.roi - a.roi);
   }, [salespeople, sales, activities, periodMonths]);
 
   const summary = useMemo((): ROISummary => {
     if (!roiData.length) {
-      return { totalRevenue: 0, totalCosts: 0, overallROI: 0, avgCAC: 0, avgLTV: 0, avgPayback: 0, bestPerformer: null, worstPerformer: null };
+      return {
+        totalRevenue: 0,
+        totalCosts: 0,
+        overallROI: 0,
+        avgCAC: 0,
+        avgLTV: 0,
+        avgPayback: 0,
+        bestPerformer: null,
+        worstPerformer: null,
+      };
     }
 
     const totalRevenue = roiData.reduce((s, r) => s + r.totalRevenue, 0);
