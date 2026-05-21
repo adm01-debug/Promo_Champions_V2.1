@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface EvolutionPoint {
   date: string;
@@ -11,7 +12,7 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
   const startDate = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() - periodDays);
-    return d.toISOString().split('T')[0];
+    return getLocalISODate(d);
   }, [periodDays]);
 
   const { data: salespeople } = useQuery({
@@ -42,9 +43,8 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
   const chartData = useMemo((): EvolutionPoint[] => {
     if (!salespeople || !sales) return [];
 
-    const filteredPeople = selectedIds.length > 0
-      ? salespeople.filter(sp => selectedIds.includes(sp.id))
-      : salespeople;
+    const filteredPeople =
+      selectedIds.length > 0 ? salespeople.filter(sp => selectedIds.includes(sp.id)) : salespeople;
 
     // Group sales by day and salesperson
     const days = new Map<string, Record<string, number>>();
@@ -55,7 +55,9 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const key = d.toISOString().split('T')[0];
       const entry: Record<string, number> = {};
-      filteredPeople.forEach(sp => { entry[sp.name] = 0; });
+      filteredPeople.forEach(sp => {
+        entry[sp.name] = 0;
+      });
       days.set(key, entry);
     }
 
@@ -73,7 +75,9 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
 
     // Convert to cumulative
     const cumulative: Record<string, number> = {};
-    filteredPeople.forEach(sp => { cumulative[sp.name] = 0; });
+    filteredPeople.forEach(sp => {
+      cumulative[sp.name] = 0;
+    });
 
     return Array.from(days.entries()).map(([date, dailyValues]) => {
       const point: EvolutionPoint = { date };

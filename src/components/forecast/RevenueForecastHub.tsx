@@ -1,18 +1,18 @@
-import { FC, useMemo, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { 
-  RefreshCw, 
-  TrendingUp, 
-  Target, 
-  Activity, 
-  Zap, 
-  History, 
-  ChevronRight, 
+import { FC, useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import {
+  RefreshCw,
+  TrendingUp,
+  Target,
+  Activity,
+  Zap,
+  History,
+  ChevronRight,
   ShieldCheck,
   BrainCircuit,
   Workflow,
@@ -21,34 +21,40 @@ import {
   CalendarDays,
   Microchip,
   Waves,
-  LucideIcon
-} from "lucide-react";
-import { useRevenueForecast, type RevenueForecastResponse } from "@/hooks/forecast/useRevenueForecast";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+  LucideIcon,
+} from 'lucide-react';
+import {
+  useRevenueForecast,
+  type RevenueForecastResponse,
+} from '@/hooks/forecast/useRevenueForecast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   type ForecastHorizon,
   formatCompactBRL,
   horizonOptions,
   confidenceLabel,
-} from "./forecastHelpers";
-import { ScenarioCard } from "./ScenarioCard";
-import { ForecastNarrativeCard } from "./ForecastNarrativeCard";
-import { PipelineContributionChart } from "./PipelineContributionChart";
-import { ForecastScenarioSimulator } from "./ForecastScenarioSimulator";
-import { CategoryForecastCard } from "./CategoryForecastCard";
-import { cn } from "@/lib/utils";
+} from './forecastHelpers';
+import { ScenarioCard } from './ScenarioCard';
+import { ForecastNarrativeCard } from './ForecastNarrativeCard';
+import { PipelineContributionChart } from './PipelineContributionChart';
+import { ForecastScenarioSimulator } from './ForecastScenarioSimulator';
+import { CategoryForecastCard } from './CategoryForecastCard';
+import { cn } from '@/lib/utils';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export const RevenueForecastHub: FC = () => {
   const [horizon, setHorizon] = useState<ForecastHorizon>(30);
-  const { data, isLoading, isFetching, refetch } = useRevenueForecast({ horizonDays: horizon, ownerId: null, includeAI: true });
+  const { data, isLoading, isFetching, refetch } = useRevenueForecast({
+    horizonDays: horizon,
+    ownerId: null,
+    includeAI: true,
+  });
 
   const { data: salespeople } = useQuery({
-    queryKey: ["salespeople-public-names"],
+    queryKey: ['salespeople-public-names'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("salespeople_public")
-        .select("id, name");
+      const { data, error } = await supabase.from('salespeople_public').select('id, name');
       if (error) throw error;
       return data ?? [];
     },
@@ -57,7 +63,7 @@ export const RevenueForecastHub: FC = () => {
 
   const ownerNames = useMemo(() => {
     const map: Record<string, string> = {};
-    (salespeople ?? []).forEach((s) => {
+    (salespeople ?? []).forEach(s => {
       if (s.id && s.name) map[s.id] = s.name;
     });
     return map;
@@ -78,9 +84,10 @@ export const RevenueForecastHub: FC = () => {
   }
   const forecast = data as RevenueForecastResponse;
   const conf = confidenceLabel(forecast.confidence);
-  const goalProgress = forecast.metrics.goal_for_horizon > 0
-    ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
-    : 0;
+  const goalProgress =
+    forecast.metrics.goal_for_horizon > 0
+      ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
+      : 0;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -101,7 +108,10 @@ export const RevenueForecastHub: FC = () => {
             <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary animate-pulse">
               <BrainCircuit className="h-6 w-6" />
             </div>
-            <Badge variant="live" className="h-6 gap-1.5 px-3 bg-primary/20 text-primary border-primary/30 font-black tracking-widest uppercase text-[10px]">
+            <Badge
+              variant="live"
+              className="h-6 gap-1.5 px-3 bg-primary/20 text-primary border-primary/30 font-black tracking-widest uppercase text-[10px]"
+            >
               <Sparkles className="h-3 w-3" /> Neural Forecast Hub
             </Badge>
           </div>
@@ -109,21 +119,22 @@ export const RevenueForecastHub: FC = () => {
             Revenue Intelligence 10/10
           </h1>
           <p className="text-muted-foreground max-w-lg leading-relaxed font-medium">
-            Projeção neural multivariada combinando telemetria de pipeline, ciclo de vida de deals e metas estratégicas.
+            Projeção neural multivariada combinando telemetria de pipeline, ciclo de vida de deals e
+            metas estratégicas.
           </p>
         </motion.div>
 
         <div className="flex flex-col items-end gap-3">
           <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-1 rounded-xl border border-white/10 shadow-sm">
-            {horizonOptions.map((o) => (
+            {horizonOptions.map(o => (
               <button
                 key={o.value}
                 onClick={() => setHorizon(o.value)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300",
+                  'px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                   horizon === o.value
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 )}
               >
                 {o.label}
@@ -138,31 +149,33 @@ export const RevenueForecastHub: FC = () => {
               disabled={isFetching}
               className="h-9 w-9 p-0 rounded-xl border-white/10 bg-background/50"
             >
-              <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
+              <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
             </Button>
-            <Button 
-              variant="glow" 
-              size="sm" 
+            <Button
+              variant="glow"
+              size="sm"
               className="h-9 px-4 text-[10px] font-black uppercase tracking-widest gap-2 rounded-xl"
               onClick={async () => {
-                 const start = new Date().toISOString().split('T')[0];
-                 const end = new Date(Date.now() + horizon * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                 const { error } = await supabase.from('forecast_snapshots').insert([{
-                   period_start: start,
-                   period_end: end,
-                   commit_amount: forecast.scenarios.pessimistic,
-                   weighted_amount: forecast.scenarios.realistic,
-                   best_case_amount: forecast.scenarios.optimistic,
-                   forecast_amount: forecast.scenarios.realistic,
-                   forecast_deals: forecast.metrics.open_deals_count,
-                   source: 'manual_trigger',
-                   segment: 'all'
-                 }]);
-                 if (!error) refetch();
+                const start = getLocalISODate();
+                const end = getLocalISODate(new Date(Date.now() + horizon * 24 * 60 * 60 * 1000));
+                const { error } = await supabase.from('forecast_snapshots').insert([
+                  {
+                    period_start: start,
+                    period_end: end,
+                    commit_amount: forecast.scenarios.pessimistic,
+                    weighted_amount: forecast.scenarios.realistic,
+                    best_case_amount: forecast.scenarios.optimistic,
+                    forecast_amount: forecast.scenarios.realistic,
+                    forecast_deals: forecast.metrics.open_deals_count,
+                    source: 'manual_trigger',
+                    segment: 'all',
+                  },
+                ]);
+                if (!error) refetch();
               }}
             >
               <Workflow className="h-3.5 w-3.5" />
-               Snapshot Neural
+              Snapshot Neural
             </Button>
           </div>
         </div>
@@ -173,25 +186,25 @@ export const RevenueForecastHub: FC = () => {
         {/* Left Column - Core Metrics */}
         <div className="lg:col-span-3 space-y-6">
           <div className="grid gap-4 md:grid-cols-3">
-            <ForecastKpiCard 
-              label="Pipeline Neural" 
-              value={forecast.metrics.total_open_pipeline} 
+            <ForecastKpiCard
+              label="Pipeline Neural"
+              value={forecast.metrics.total_open_pipeline}
               subtitle={`${forecast.metrics.open_deals_count} conexões ativas`}
               isCurrency
               icon={Waves}
               color="text-primary"
             />
-            <ForecastKpiCard 
-              label="Forecast Ponderado" 
-              value={forecast.metrics.weighted_forecast} 
+            <ForecastKpiCard
+              label="Forecast Ponderado"
+              value={forecast.metrics.weighted_forecast}
               subtitle={`Ciclo: ${forecast.metrics.avg_cycle_days} dias`}
               isCurrency
               icon={Zap}
               color="text-info"
             />
-            <ForecastKpiCard 
-              label="Performance 90d" 
-              value={forecast.metrics.won_amount_90d} 
+            <ForecastKpiCard
+              label="Performance 90d"
+              value={forecast.metrics.won_amount_90d}
               subtitle={`${forecast.metrics.won_count_90d} fechamentos`}
               isCurrency
               icon={BarChart3}
@@ -219,7 +232,7 @@ export const RevenueForecastHub: FC = () => {
               goal={forecast.metrics.goal_for_horizon}
               index={2}
             />
-            <CategoryForecastCard 
+            <CategoryForecastCard
               categories={forecast.metrics.categories}
               goal={forecast.metrics.goal_for_horizon}
             />
@@ -227,10 +240,16 @@ export const RevenueForecastHub: FC = () => {
 
           {/* Simulator & Forecast Chart */}
           <div className="grid grid-cols-1 gap-6">
-            <ForecastScenarioSimulator 
+            <ForecastScenarioSimulator
               baseForecast={forecast.scenarios.realistic}
-              baseCoverage={forecast.metrics.total_open_pipeline / (forecast.metrics.goal_for_horizon || 1)}
-              baseWinRate={forecast.metrics.goal_for_horizon > 0 ? (forecast.scenarios.realistic / forecast.metrics.total_open_pipeline) : 0.2}
+              baseCoverage={
+                forecast.metrics.total_open_pipeline / (forecast.metrics.goal_for_horizon || 1)
+              }
+              baseWinRate={
+                forecast.metrics.goal_for_horizon > 0
+                  ? forecast.scenarios.realistic / forecast.metrics.total_open_pipeline
+                  : 0.2
+              }
             />
             <PipelineContributionChart perOwner={forecast.per_owner} ownerNames={ownerNames} />
           </div>
@@ -242,8 +261,13 @@ export const RevenueForecastHub: FC = () => {
           <Card className="glass overflow-hidden border-primary/20 relative group p-6">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between mb-6">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Motor de Confiança</span>
-              <Badge variant="outline" className={cn("h-5 text-[10px] font-bold border-white/10", conf.color)}>
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                Motor de Confiança
+              </span>
+              <Badge
+                variant="outline"
+                className={cn('h-5 text-[10px] font-bold border-white/10', conf.color)}
+              >
                 {conf.label}
               </Badge>
             </div>
@@ -252,30 +276,41 @@ export const RevenueForecastHub: FC = () => {
                 <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
                 <div className="relative h-24 w-24 flex items-center justify-center">
                   <svg className="h-full w-full" viewBox="0 0 100 100">
-                    <circle 
-                      cx="50" cy="50" r="45" 
-                      fill="none" stroke="currentColor" 
-                      strokeWidth="8" className="text-white/5" 
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      className="text-white/5"
                     />
-                    <motion.circle 
-                      cx="50" cy="50" r="45" 
-                      fill="none" stroke="currentColor" 
-                      strokeWidth="8" strokeDasharray="283"
+                    <motion.circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      strokeDasharray="283"
                       strokeDashoffset={283 - (283 * forecast.confidence) / 100}
                       className="text-primary"
                       initial={{ strokeDashoffset: 283 }}
                       animate={{ strokeDashoffset: 283 - (283 * forecast.confidence) / 100 }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      transition={{ duration: 1.5, ease: 'easeOut' }}
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center">
                     <span className="text-2xl font-black">{forecast.confidence}%</span>
-                    <span className="text-[8px] font-bold uppercase tracking-tighter opacity-50 text-muted-foreground">Neural Score</span>
+                    <span className="text-[8px] font-bold uppercase tracking-tighter opacity-50 text-muted-foreground">
+                      Neural Score
+                    </span>
                   </div>
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-                O modelo de predição processou {forecast.metrics.open_deals_count} variáveis para este horizonte.
+                O modelo de predição processou {forecast.metrics.open_deals_count} variáveis para
+                este horizonte.
               </p>
             </div>
           </Card>
@@ -292,9 +327,13 @@ export const RevenueForecastHub: FC = () => {
                     <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
                       <Target className="h-4 w-4" />
                     </div>
-                    <span className="text-xs font-black uppercase tracking-widest">Meta Estratégica</span>
+                    <span className="text-xs font-black uppercase tracking-widest">
+                      Meta Estratégica
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground">{horizon} dias</span>
+                  <span className="text-[10px] font-bold text-muted-foreground">
+                    {horizon} dias
+                  </span>
                 </div>
 
                 <div className="space-y-1">
@@ -302,22 +341,35 @@ export const RevenueForecastHub: FC = () => {
                     <span className="text-muted-foreground font-medium">Progresso Realista</span>
                     <span className="font-black text-primary">{goalProgress.toFixed(1)}%</span>
                   </div>
-                  <Progress 
-                    value={goalProgress} 
-                    className="h-2 bg-white/5" 
+                  <Progress
+                    value={goalProgress}
+                    className="h-2 bg-white/5"
                     indicatorClassName="bg-gradient-to-r from-primary/50 to-primary shadow-[0_0_10px_rgba(147,51,234,0.3)]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div className="space-y-1">
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">Meta Alvo</span>
-                    <div className="text-xs font-black">{formatCompactBRL(forecast.metrics.goal_for_horizon)}</div>
+                    <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">
+                      Meta Alvo
+                    </span>
+                    <div className="text-xs font-black">
+                      {formatCompactBRL(forecast.metrics.goal_for_horizon)}
+                    </div>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">Gap Atual</span>
-                    <div className={cn("text-xs font-black", forecast.metrics.gap_to_goal > 0 ? "text-destructive" : "text-emerald-500")}>
-                      {forecast.metrics.gap_to_goal > 0 ? `-${formatCompactBRL(forecast.metrics.gap_to_goal)}` : "META OK"}
+                    <span className="text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">
+                      Gap Atual
+                    </span>
+                    <div
+                      className={cn(
+                        'text-xs font-black',
+                        forecast.metrics.gap_to_goal > 0 ? 'text-destructive' : 'text-emerald-500'
+                      )}
+                    >
+                      {forecast.metrics.gap_to_goal > 0
+                        ? `-${formatCompactBRL(forecast.metrics.gap_to_goal)}`
+                        : 'META OK'}
                     </div>
                   </div>
                 </div>
@@ -340,12 +392,17 @@ export const RevenueForecastHub: FC = () => {
                   <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-500">
                     <Microchip className="h-4 w-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Acurácia Histórica</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">
+                    Acurácia Histórica
+                  </span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-emerald-500 tracking-tighter">{100 - forecast.accuracy.avg_deviation}%</div>
+                  <div className="text-3xl font-black text-emerald-500 tracking-tighter">
+                    {100 - forecast.accuracy.avg_deviation}%
+                  </div>
                   <p className="text-[10px] text-muted-foreground mt-1 leading-tight font-medium">
-                    Desvio médio de apenas {forecast.accuracy.avg_deviation}% em relação ao faturamento real.
+                    Desvio médio de apenas {forecast.accuracy.avg_deviation}% em relação ao
+                    faturamento real.
                   </p>
                 </div>
               </div>
@@ -381,18 +438,34 @@ function ForecastKpiCard({
 }) {
   return (
     <Card className="glass overflow-hidden border-white/5 relative group p-6">
-      <div className={cn("absolute -right-6 -top-6 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-full", color.replace('text-', 'bg-'))} />
+      <div
+        className={cn(
+          'absolute -right-6 -top-6 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-full',
+          color.replace('text-', 'bg-')
+        )}
+      />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{label}</span>
-          <div className={cn("p-2 rounded-xl bg-background/50 border border-white/5 shadow-inner", color)}>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+            {label}
+          </span>
+          <div
+            className={cn(
+              'p-2 rounded-xl bg-background/50 border border-white/5 shadow-inner',
+              color
+            )}
+          >
             <Icon className="h-4 w-4" />
           </div>
         </div>
         <div className="flex flex-col">
           <div className="flex items-baseline gap-1.5">
             {isCurrency && <span className="text-xl font-bold opacity-30">R$</span>}
-            <CountUp value={value} isCompact className="text-4xl font-black font-display tracking-tighter" />
+            <CountUp
+              value={value}
+              isCompact
+              className="text-4xl font-black font-display tracking-tighter"
+            />
           </div>
           {subtitle && (
             <div className="flex items-center gap-1.5 mt-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60">
@@ -406,9 +479,17 @@ function ForecastKpiCard({
   );
 }
 
-const CountUp = ({ value, className, isCompact = false }: { value: number; className?: string; isCompact?: boolean }) => {
+const CountUp = ({
+  value,
+  className,
+  isCompact = false,
+}: {
+  value: number;
+  className?: string;
+  isCompact?: boolean;
+}) => {
   const [displayValue, setDisplayValue] = useState(0);
-  
+
   useEffect(() => {
     let start = 0;
     const end = value;
@@ -420,7 +501,7 @@ const CountUp = ({ value, className, isCompact = false }: { value: number; class
       const progress = Math.min(elapsed / duration, 1);
       const easeOutExpo = 1 - Math.pow(2, -10 * progress);
       const current = easeOutExpo * (end - start) + start;
-      
+
       setDisplayValue(current);
 
       if (progress < 1) {
@@ -431,13 +512,9 @@ const CountUp = ({ value, className, isCompact = false }: { value: number; class
     requestAnimationFrame(animate);
   }, [value]);
 
-  const formatted = isCompact 
+  const formatted = isCompact
     ? formatCompactBRL(displayValue).replace('R$', '').trim()
-    : Math.round(displayValue).toLocaleString("pt-BR");
+    : Math.round(displayValue).toLocaleString('pt-BR');
 
-  return (
-    <span className={className}>
-      {formatted}
-    </span>
-  );
+  return <span className={className}>{formatted}</span>;
 };
