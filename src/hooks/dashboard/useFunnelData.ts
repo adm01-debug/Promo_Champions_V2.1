@@ -66,10 +66,13 @@ export const useFunnelData = (timeframe: number = 30) => {
       const totalDeals = (sales || []).length;
       let previousCount = totalDeals || 1;
 
-      const stages: FunnelStage[] = stageOrder.map((stage) => {
+      const stages: FunnelStage[] = stageOrder.map(stage => {
         const saleIds = stageGroups.get(stage) || new Set();
         const count = saleIds.size || 0;
-        const value = Array.from(saleIds).reduce((sum, id) => sum + (saleAmountMap.get(id) || 0), 0);
+        const value = Array.from(saleIds).reduce(
+          (sum, id) => sum + (saleAmountMap.get(id) || 0),
+          0
+        );
 
         const conversionRate = previousCount > 0 ? (count / previousCount) * 100 : 0;
         const dropOffRate = Math.max(0, 100 - conversionRate);
@@ -80,7 +83,7 @@ export const useFunnelData = (timeframe: number = 30) => {
           value,
           conversionRate: Math.round(conversionRate * 10) / 10,
           averageTime: 0,
-          velocityScore: Math.round(Math.random() * 100), // Simulação inicial, será real no heatmap
+          velocityScore: 0,
           dropOffRate: Math.round(dropOffRate * 10) / 10,
         };
 
@@ -89,18 +92,18 @@ export const useFunnelData = (timeframe: number = 30) => {
       });
 
       const wonSales = (sales || []).filter(s => s.status === 'completed' || s.status === 'won');
-      const overallConversion = totalDeals > 0
-        ? (wonSales.length / totalDeals) * 100
-        : 0;
+      const overallConversion = totalDeals > 0 ? (wonSales.length / totalDeals) * 100 : 0;
 
       const totalValue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
       const avgDealSize = wonSales.length > 0 ? totalValue / wonSales.length : 0;
 
-      const topDropOffStage = stages.length > 0
-        ? stages.reduce((max, stage) =>
-            stage.dropOffRate > max.dropOffRate ? stage : max
-          , stages[0]).stage
-        : 'N/A';
+      const topDropOffStage =
+        stages.length > 0
+          ? stages.reduce(
+              (max, stage) => (stage.dropOffRate > max.dropOffRate ? stage : max),
+              stages[0]
+            ).stage
+          : 'N/A';
 
       return {
         stages,
