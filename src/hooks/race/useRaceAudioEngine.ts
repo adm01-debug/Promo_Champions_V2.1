@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
-import type { RaceSoundType } from "@/hooks/race/useRaceSounds";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { RaceSoundType } from '@/hooks/race/useRaceSounds';
 
 interface Params {
   leaderboard: RaceLeaderboardEntry[];
@@ -50,24 +50,22 @@ export function useRaceAudioEngine({
       tryPlay('powerup');
     }
     prevComboRef.current = comboCount;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comboCount, muted]);
 
   // Checkpoint: 25/50/75/100% do progresso
   useEffect(() => {
     if (!mySalespersonId) return;
-    const me = leaderboard.find((e) => e.salesperson_id === mySalespersonId);
+    const me = leaderboard.find(e => e.salesperson_id === mySalespersonId);
     if (!me) return;
     const progress = Number(me.progress) || 0;
     const prev = prevProgressRef.current;
     if (prev !== undefined) {
-      const crossed = CHECKPOINTS.find((cp) => prev < cp && progress >= cp);
+      const crossed = CHECKPOINTS.find(cp => prev < cp && progress >= cp);
       if (crossed !== undefined) {
         tryPlay(crossed === 100 ? 'victory' : 'checkpoint');
       }
     }
     prevProgressRef.current = progress;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leaderboard, mySalespersonId, muted]);
 
   // Countdown final: últimos 5s
@@ -78,13 +76,12 @@ export function useRaceAudioEngine({
       tryPlay('countdown');
     }
     prevSecondsRef.current = secondsToEnd;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsToEnd, muted]);
 
   // Rank up pessoal (subiu ≥1 posição)
   useEffect(() => {
     if (!mySalespersonId) return;
-    const me = leaderboard.find((e) => e.salesperson_id === mySalespersonId);
+    const me = leaderboard.find(e => e.salesperson_id === mySalespersonId);
     if (!me?.rank) return;
     const prev = prevRankRef.current;
     if (initializedRef.current && prev !== undefined && me.rank < prev) {
@@ -92,6 +89,5 @@ export function useRaceAudioEngine({
     }
     prevRankRef.current = me.rank;
     initializedRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leaderboard, mySalespersonId, muted]);
 }

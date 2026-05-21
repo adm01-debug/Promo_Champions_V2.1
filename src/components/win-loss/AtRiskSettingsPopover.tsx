@@ -1,32 +1,42 @@
-import { useDeferredValue, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { SlidersHorizontal, RotateCcw, Search, Bug, X, CloudOff, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import type { AtRiskSettings, SyncStatus } from "@/hooks/win-loss/useAtRiskSettings";
+import { useDeferredValue, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import {
+  SlidersHorizontal,
+  RotateCcw,
+  Search,
+  Bug,
+  X,
+  CloudOff,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from 'lucide-react';
+import type { AtRiskSettings, SyncStatus } from '@/hooks/win-loss/useAtRiskSettings';
 import {
   AT_RISK_PRESETS,
   AT_RISK_SEVERITY_PRESETS,
   detectActivePreset,
   getPresetById,
   type AtRiskPresetId,
-} from "@/hooks/win-loss/atRiskPresets";
-import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
+} from '@/hooks/win-loss/atRiskPresets';
+import type { RiskSeverity } from '@/lib/winloss/severityFromScore';
 import {
   RISK_REASON_CODES,
   RISK_REASON_LABELS,
   type RiskReasonCode,
-} from "@/lib/winloss/riskReasons";
-import { cn } from "@/lib/utils";
+} from '@/lib/winloss/riskReasons';
+import { cn } from '@/lib/utils';
 
 const SELECTABLE_REASON_CODES: RiskReasonCode[] = RISK_REASON_CODES.filter(
-  (c) => c !== "CROSSED_SIGNALS",
+  c => c !== 'CROSSED_SIGNALS'
 );
 
 interface Props {
@@ -60,32 +70,30 @@ export function AtRiskSettingsPopover({
     if (debounced !== settings.keywordFilter) {
       onUpdate({ keywordFilter: debounced });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
 
   // External resets (e.g. clearFilters) should reflect in the input.
   useEffect(() => {
     if (settings.keywordFilter !== keyword) setKeyword(settings.keywordFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.keywordFilter]);
 
   const toggleStage = (stage: string) => {
     const next = settings.stageFilter.includes(stage)
-      ? settings.stageFilter.filter((s) => s !== stage)
+      ? settings.stageFilter.filter(s => s !== stage)
       : [...settings.stageFilter, stage];
     onUpdate({ stageFilter: next });
   };
 
   const toggleReasonCode = (code: RiskReasonCode) => {
     const next = settings.reasonCodes.includes(code)
-      ? settings.reasonCodes.filter((c) => c !== code)
+      ? settings.reasonCodes.filter(c => c !== code)
       : [...settings.reasonCodes, code];
     onUpdate({ reasonCodes: next });
   };
 
   const toggleSeverity = (sev: RiskSeverity) => {
     const next = settings.severityFilter.includes(sev)
-      ? settings.severityFilter.filter((s) => s !== sev)
+      ? settings.severityFilter.filter(s => s !== sev)
       : [...settings.severityFilter, sev];
     onUpdate({ severityFilter: next });
   };
@@ -111,20 +119,19 @@ export function AtRiskSettingsPopover({
           size="sm"
           variant="ghost"
           className="h-7 px-2 gap-1"
-          aria-label={`Configurar filtros de risco${settings.debug ? " (debug ativo)" : ""}`}
-          title={settings.debug ? "Ajustar score, filtros e debug (debug ativo)" : "Ajustar score, filtros e debug"}
+          aria-label={`Configurar filtros de risco${settings.debug ? ' (debug ativo)' : ''}`}
+          title={
+            settings.debug
+              ? 'Ajustar score, filtros e debug (debug ativo)'
+              : 'Ajustar score, filtros e debug'
+          }
         >
           <SlidersHorizontal className="h-3 w-3" />
           <span className="text-[10px] font-medium tabular-nums">≥{settings.threshold}</span>
           {filtersActive && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-primary"
-              aria-label="Filtros ativos"
-            />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Filtros ativos" />
           )}
-          {settings.debug && (
-            <Bug className="h-3 w-3 text-warning" aria-label="Modo debug ativo" />
-          )}
+          {settings.debug && <Bug className="h-3 w-3 text-warning" aria-label="Modo debug ativo" />}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -141,12 +148,12 @@ export function AtRiskSettingsPopover({
           <Label className="text-xs">Presets de risco</Label>
           <ToggleGroup
             type="single"
-            value={activePreset ?? ""}
+            value={activePreset ?? ''}
             onValueChange={applyPreset}
             className="flex flex-wrap justify-start gap-1"
             aria-label="Presets rápidos de threshold e limit"
           >
-            {AT_RISK_PRESETS.map((p) => (
+            {AT_RISK_PRESETS.map(p => (
               <ToggleGroupItem
                 key={p.id}
                 value={p.id}
@@ -169,11 +176,18 @@ export function AtRiskSettingsPopover({
           <Label className="text-xs">
             Só uma severidade
             {settings.severityFilter.length > 0 && (
-              <span className="text-muted-foreground"> ({settings.severityFilter.length} sel.)</span>
+              <span className="text-muted-foreground">
+                {' '}
+                ({settings.severityFilter.length} sel.)
+              </span>
             )}
           </Label>
-          <div className="flex flex-wrap gap-1" role="group" aria-label="Filtrar por severidade exata">
-            {AT_RISK_SEVERITY_PRESETS.map((p) => {
+          <div
+            className="flex flex-wrap gap-1"
+            role="group"
+            aria-label="Filtrar por severidade exata"
+          >
+            {AT_RISK_SEVERITY_PRESETS.map(p => {
               const active = settings.severityFilter.includes(p.id);
               const count = severityCounts[p.id] ?? 0;
               return (
@@ -182,15 +196,13 @@ export function AtRiskSettingsPopover({
                   type="button"
                   onClick={() => toggleSeverity(p.id)}
                   aria-pressed={active}
-                  aria-label={`${p.description}${active ? " (ativo)" : ""}`}
+                  aria-label={`${p.description}${active ? ' (ativo)' : ''}`}
                   title={p.description}
                   data-severity={p.id}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] transition-colors",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    active
-                      ? p.activeClass
-                      : "border-border text-muted-foreground hover:bg-muted/50",
+                    'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    active ? p.activeClass : 'border-border text-muted-foreground hover:bg-muted/50'
                   )}
                 >
                   <span>{p.label}</span>
@@ -208,7 +220,9 @@ export function AtRiskSettingsPopover({
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="at-risk-threshold" className="text-xs">Score mínimo</Label>
+            <Label htmlFor="at-risk-threshold" className="text-xs">
+              Score mínimo
+            </Label>
             <span className="text-xs tabular-nums font-medium">{settings.threshold}</span>
           </div>
           <Slider
@@ -224,7 +238,9 @@ export function AtRiskSettingsPopover({
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="at-risk-limit" className="text-xs">Máximo analisado</Label>
+            <Label htmlFor="at-risk-limit" className="text-xs">
+              Máximo analisado
+            </Label>
             <span className="text-xs tabular-nums font-medium">{settings.limit}</span>
           </div>
           <Slider
@@ -240,7 +256,9 @@ export function AtRiskSettingsPopover({
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="at-risk-visible" className="text-xs">Mostrar no painel</Label>
+            <Label htmlFor="at-risk-visible" className="text-xs">
+              Mostrar no painel
+            </Label>
             <span className="text-xs tabular-nums font-medium">{settings.maxVisible}</span>
           </div>
           <Slider
@@ -259,8 +277,8 @@ export function AtRiskSettingsPopover({
           <ToggleGroup
             type="single"
             value={settings.sortBy}
-            onValueChange={(v) => {
-              if (v === "score" || v === "recency") onUpdate({ sortBy: v });
+            onValueChange={v => {
+              if (v === 'score' || v === 'recency') onUpdate({ sortBy: v });
             }}
             className="grid grid-cols-2 gap-1"
             aria-label="Critério de ordenação dos deals em risco"
@@ -302,14 +320,14 @@ export function AtRiskSettingsPopover({
             <Switch
               id="at-risk-debug"
               checked={settings.debug}
-              onCheckedChange={(v) => onUpdate({ debug: v })}
+              onCheckedChange={v => onUpdate({ debug: v })}
               aria-label="Alternar painel de debug por deal"
             />
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-xs">
-              Estágios{" "}
+              Estágios{' '}
               {settings.stageFilter.length > 0 && (
                 <span className="text-muted-foreground">({settings.stageFilter.length} sel.)</span>
               )}
@@ -320,7 +338,7 @@ export function AtRiskSettingsPopover({
               </p>
             ) : (
               <div className="flex flex-wrap gap-1">
-                {availableStages.map((stage) => {
+                {availableStages.map(stage => {
                   const active = settings.stageFilter.includes(stage);
                   return (
                     <button
@@ -328,11 +346,11 @@ export function AtRiskSettingsPopover({
                       type="button"
                       onClick={() => toggleStage(stage)}
                       aria-pressed={active}
-                      aria-label={`Filtro de estágio: ${stage} ${active ? "ativo" : "inativo"}`}
+                      aria-label={`Filtro de estágio: ${stage} ${active ? 'ativo' : 'inativo'}`}
                       className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
                     >
                       <Badge
-                        variant={active ? "default" : "outline"}
+                        variant={active ? 'default' : 'outline'}
                         className="cursor-pointer text-[10px] px-2 py-0.5 capitalize"
                       >
                         {stage}
@@ -345,13 +363,18 @@ export function AtRiskSettingsPopover({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="at-risk-keyword" className="text-xs">Palavra-chave</Label>
+            <Label htmlFor="at-risk-keyword" className="text-xs">
+              Palavra-chave
+            </Label>
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" aria-hidden />
+              <Search
+                className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground"
+                aria-hidden
+              />
               <Input
                 id="at-risk-keyword"
                 value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
+                onChange={e => setKeyword(e.target.value)}
                 placeholder="cliente, padrão ou ação..."
                 maxLength={100}
                 className="h-8 pl-7 pr-7 text-xs"
@@ -360,7 +383,7 @@ export function AtRiskSettingsPopover({
               {keyword && (
                 <button
                   type="button"
-                  onClick={() => setKeyword("")}
+                  onClick={() => setKeyword('')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   aria-label="Limpar palavra-chave"
                 >
@@ -372,13 +395,13 @@ export function AtRiskSettingsPopover({
 
           <div className="space-y-1.5">
             <Label className="text-xs">
-              Sinais{" "}
+              Sinais{' '}
               {settings.reasonCodes.length > 0 && (
                 <span className="text-muted-foreground">({settings.reasonCodes.length} sel.)</span>
               )}
             </Label>
             <div className="flex flex-wrap gap-1">
-              {SELECTABLE_REASON_CODES.map((code) => {
+              {SELECTABLE_REASON_CODES.map(code => {
                 const active = settings.reasonCodes.includes(code);
                 return (
                   <button
@@ -386,12 +409,12 @@ export function AtRiskSettingsPopover({
                     type="button"
                     onClick={() => toggleReasonCode(code)}
                     aria-pressed={active}
-                    aria-label={`Filtro de sinal: ${RISK_REASON_LABELS[code]} ${active ? "ativo" : "inativo"}`}
+                    aria-label={`Filtro de sinal: ${RISK_REASON_LABELS[code]} ${active ? 'ativo' : 'inativo'}`}
                     data-reason-code={code}
                     className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
                   >
                     <Badge
-                      variant={active ? "default" : "outline"}
+                      variant={active ? 'default' : 'outline'}
                       className="cursor-pointer text-[10px] px-2 py-0.5"
                     >
                       {RISK_REASON_LABELS[code]}
@@ -417,12 +440,7 @@ export function AtRiskSettingsPopover({
 
         <Separator />
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full gap-1.5 h-7 text-xs"
-          onClick={onReset}
-        >
+        <Button variant="ghost" size="sm" className="w-full gap-1.5 h-7 text-xs" onClick={onReset}>
           <RotateCcw className="h-3 w-3" />
           Restaurar padrões
         </Button>
@@ -433,36 +451,36 @@ export function AtRiskSettingsPopover({
             role="status"
             aria-live="polite"
             title={
-              syncStatus === "offline"
-                ? "Salvo apenas neste navegador. Faça login para sincronizar entre dispositivos."
-                : syncStatus === "syncing" || syncStatus === "loading"
-                  ? "Sincronizando preferências com o servidor…"
-                  : syncStatus === "synced"
-                    ? "Preferências sincronizadas com seu perfil."
-                    : syncStatus === "error"
-                      ? "Falha ao sincronizar. Mudanças permanecem salvas localmente."
-                      : ""
+              syncStatus === 'offline'
+                ? 'Salvo apenas neste navegador. Faça login para sincronizar entre dispositivos.'
+                : syncStatus === 'syncing' || syncStatus === 'loading'
+                  ? 'Sincronizando preferências com o servidor…'
+                  : syncStatus === 'synced'
+                    ? 'Preferências sincronizadas com seu perfil.'
+                    : syncStatus === 'error'
+                      ? 'Falha ao sincronizar. Mudanças permanecem salvas localmente.'
+                      : ''
             }
           >
-            {(syncStatus === "syncing" || syncStatus === "loading") && (
+            {(syncStatus === 'syncing' || syncStatus === 'loading') && (
               <>
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
                 Sincronizando…
               </>
             )}
-            {syncStatus === "synced" && (
+            {syncStatus === 'synced' && (
               <>
                 <CheckCircle2 className="h-3 w-3 text-status-success" aria-hidden />
                 Sincronizado com seu perfil
               </>
             )}
-            {syncStatus === "offline" && (
+            {syncStatus === 'offline' && (
               <>
                 <CloudOff className="h-3 w-3" aria-hidden />
                 Salvo só neste navegador
               </>
             )}
-            {syncStatus === "error" && (
+            {syncStatus === 'error' && (
               <>
                 <AlertCircle className="h-3 w-3 text-warning" aria-hidden />
                 Falha de sync · salvo local
