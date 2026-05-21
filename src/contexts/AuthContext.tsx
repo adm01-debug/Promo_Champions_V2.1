@@ -1,6 +1,15 @@
-import { createContext, useContext, useEffect, useState, useRef, ReactNode, useMemo } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Salesperson {
   id: string;
@@ -38,9 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchedRef.current = authUserId;
 
     const { data, error } = await supabase
-      .from("salespeople")
-      .select("id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email")
-      .eq("auth_user_id", authUserId)
+      .from('salespeople')
+      .select(
+        'id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email'
+      )
+      .eq('auth_user_id', authUserId)
       .maybeSingle();
 
     if (!error && data) {
@@ -50,27 +61,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const refreshSalesperson = async () => {
+  const refreshSalesperson = useCallback(async () => {
     if (user?.id) {
       await fetchSalesperson(user.id, true);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          fetchSalesperson(session.user.id);
-        } else {
-          setSalesperson(null);
-          fetchedRef.current = null;
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        fetchSalesperson(session.user.id);
+      } else {
+        setSalesperson(null);
+        fetchedRef.current = null;
       }
-    );
+    });
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -85,41 +96,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setSalesperson(null);
     setUser(null);
     setSession(null);
     fetchedRef.current = null;
-    window.location.href = "/auth";
-  };
+    window.location.href = '/auth';
+  }, []);
 
-  const value = useMemo(() => ({ 
-    user, 
-    session, 
-    salesperson, 
-    isLoading, 
-    refreshSalesperson, 
-    signIn, 
-    signOut 
-  }), [user, session, salesperson, isLoading]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      session,
+      salesperson,
+      isLoading,
+      refreshSalesperson,
+      signIn,
+      signOut,
+    }),
+    [user, session, salesperson, isLoading, refreshSalesperson, signIn, signOut]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }
