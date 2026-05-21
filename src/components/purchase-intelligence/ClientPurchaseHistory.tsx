@@ -50,7 +50,18 @@ export function ClientPurchaseHistory({ clientId }: Props) {
   const { data: orders, isLoading } = usePurchaseHistory(clientId);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+
+  const categories = useMemo(() => {
+    if (!orders) return [];
+    const cats = new Set<string>();
+    orders.forEach(o => {
+      if (o.category) cats.add(o.category);
+    });
+    return Array.from(cats);
+  }, [orders]);
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
@@ -60,10 +71,12 @@ export function ClientPurchaseHistory({ clientId }: Props) {
         order.items.some(item => item.product_name.toLowerCase().includes(searchTerm.toLowerCase()));
       
       const matchesStatus = statusFilter.length === 0 || statusFilter.includes(order.status);
+      const matchesCategory = categoryFilter.length === 0 || (order.category && categoryFilter.includes(order.category));
+      const matchesPrice = order.total >= priceRange[0] && order.total <= priceRange[1];
       
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesCategory && matchesPrice;
     });
-  }, [orders, searchTerm, statusFilter]);
+  }, [orders, searchTerm, statusFilter, categoryFilter, priceRange]);
 
   if (!clientId) return null;
 
@@ -99,13 +112,19 @@ export function ClientPurchaseHistory({ clientId }: Props) {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9 gap-2 border-border/50 bg-background/50">
                   <Filter className="h-3.5 w-3.5" />
-                  Status
+                  Filtros Inteligentes
+                  {(statusFilter.length > 0 || categoryFilter.length > 0) && (
+                    <Badge variant="default" className="h-4 w-4 p-0 flex items-center justify-center rounded-full text-[10px]">
+                      {statusFilter.length + categoryFilter.length}
+                    </Badge>
+                  )}
                   <ChevronDown className="h-3 w-3" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-card/95 backdrop-blur-xl border-border/50">
-                <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Filtrar por Status</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-xl border-border/50 p-2">
+                <DropdownMenuLabel className="text-[10px] uppercase font-black text-muted-foreground tracking-widest px-2 py-1.5">
+                  Status de Pagamento
+                </DropdownMenuLabel>
                 {["delivered", "shipped", "confirmed", "pending", "cancelled"].map((status) => (
                   <DropdownMenuCheckboxItem
                     key={status}
@@ -120,6 +139,66 @@ export function ClientPurchaseHistory({ clientId }: Props) {
                     {statusLabel(status as any)}
                   </DropdownMenuCheckboxItem>
                 ))}
+                
+                {categories.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <DropdownMenuLabel className="text-[10px] uppercase font-black text-muted-foreground tracking-widest px-2 py-1.5">
+                      Categorias
+                    </DropdownMenuLabel>
+                    {categories.map((cat) => (
+                      <DropdownMenuCheckboxItem
+                        key={cat}
+                        checked={categoryFilter.includes(cat)}
+                        onCheckedChange={(checked) => {
+                          setCategoryFilter(prev => 
+                            checked ? [...prev, cat] : prev.filter(s => s !== cat)
+                          );
+                        }}
+                        className="text-xs"
+                      >
+                        {cat}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </>
+                )}
+
+                <DropdownMenuSeparator className="bg-border/40" />
+                <div className="px-2 py-2">
+                  <span className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Faixa de Valor</span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input 
+                      type="number" 
+                      placeholder="Min" 
+                      className="h-7 text-[10px] px-1.5 bg-background/30"
+                      onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
+                    />
+                    <Input 
+                      type="number" 
+                      placeholder="Max" 
+                      className="h-7 text-[10px] px-1.5 bg-background/30"
+                      onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || 50000])}
+                    />
+                  </div>
+                </div>
+
+                {(statusFilter.length > 0 || categoryFilter.length > 0) && (
+                  <>
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full h-8 text-[10px] font-bold text-destructive hover:bg-destructive/10"
+                      onClick={() => {
+                        setStatusFilter([]);
+                        setCategoryFilter([]);
+                        setPriceRange([0, 50000]);
+                      }}
+                    >
+                      Limpar Filtros
+                    </Button>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
