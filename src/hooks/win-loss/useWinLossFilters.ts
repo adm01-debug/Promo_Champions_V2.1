@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   DEFAULT_WL_FILTERS,
   filtersToParams,
   paramsToFilters,
   type WinLossFilterState,
-} from "@/components/win-loss/winLossFiltersHelpers";
+} from '@/components/win-loss/winLossFiltersHelpers';
 
 const DEBOUNCE_MS = 250;
 
@@ -14,7 +14,7 @@ export function useWinLossFilters() {
 
   const urlFilters = useMemo<WinLossFilterState>(
     () => (sp.toString() ? paramsToFilters(sp) : DEFAULT_WL_FILTERS),
-    [sp],
+    [sp]
   );
 
   // Local optimistic state for instant UI feedback
@@ -34,7 +34,6 @@ export function useWinLossFilters() {
       }
     }, DEBOUNCE_MS);
     return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localFilters]);
 
   const setFilters = useCallback((patch: Partial<WinLossFilterState>) => {
