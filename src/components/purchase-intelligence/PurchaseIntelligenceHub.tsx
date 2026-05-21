@@ -124,7 +124,37 @@ export function PurchaseIntelligenceHub() {
                 transition={{ delay: 0.3 }}
               >
                 <PurchaseHeatmapGrid clientId={clientId} months={24} />
-                <ClientPurchaseHistory clientId={clientId} />
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <ClientPurchaseHistory clientId={clientId} />
+                  <Card className="glass border-border/50 p-6">
+                    <CardHeader className="p-0 pb-4">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Resumo Financeiro Mensal
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={[
+                          { month: "Jan", gastado: 4500, ltv: 12000 },
+                          { month: "Fev", gastado: 5200, ltv: 14500 },
+                          { month: "Mar", gastado: 4800, ltv: 18000 },
+                          { month: "Abr", gastado: 6100, ltv: 22000 },
+                          { month: "Mai", gastado: 5900, ltv: 25000 },
+                          { month: "Jun", gastado: 7200, ltv: 31000 },
+                        ]}>
+                          <XAxis dataKey="month" fontSize={12} stroke="hsl(var(--muted-foreground))" />
+                          <YAxis fontSize={12} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `R$${v/1000}k`} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                            formatter={(value: any) => [`R$ ${value.toLocaleString('pt-BR')}`]}
+                          />
+                          <Bar dataKey="gastado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Gastos Mensais" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </div>
               </motion.div>
             </div>
           </TabsContent>
