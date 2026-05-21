@@ -22,7 +22,7 @@ const SEGMENT_COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-export const LTVBySegment: FC = () => {
+export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicket?: number }> = ({ currentClientLTV = 4500, currentClientAvgTicket = 1200 }) => {
   const { data, isLoading } = useQuery<SegmentLTV[]>({
     queryKey: ['ltv-by-segment'],
     queryFn: async () => {
@@ -110,6 +110,7 @@ export const LTVBySegment: FC = () => {
   });
 
   const totalRevenue = data?.reduce((sum, s) => sum + s.totalRevenue, 0) || 0;
+  const avgSegmentLTV = data ? data.reduce((sum, s) => sum + s.avgLTV, 0) / data.length : 0;
 
   return (
     <Card className="glass border-border/50">
@@ -134,39 +135,67 @@ export const LTVBySegment: FC = () => {
           </div>
         ) : (
           <div className="space-y-6">
+            {/* Benchmark Section */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">LTV vs Média</span>
+                  <Badge variant={currentClientLTV >= avgSegmentLTV ? "success" : "destructive"} className="h-4 text-[9px]">
+                    {currentClientLTV >= avgSegmentLTV ? "+" : ""}{(((currentClientLTV / avgSegmentLTV) - 1) * 100).toFixed(1)}%
+                  </Badge>
+                </div>
+                <div className="text-xl font-black">R$ {currentClientLTV.toLocaleString('pt-BR')}</div>
+                <div className="text-[9px] text-muted-foreground">Média do Segmento: R$ {avgSegmentLTV.toLocaleString('pt-BR')}</div>
+              </div>
+              
+              <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/20 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Ticket Médio</span>
+                  <Badge variant="outline" className="h-4 text-[9px] border-primary/20 text-primary">BENCHMARK</Badge>
+                </div>
+                <div className="text-xl font-black">R$ {currentClientAvgTicket.toLocaleString('pt-BR')}</div>
+                <div className="text-[9px] text-muted-foreground">Potencial: +R$ 450,00</div>
+              </div>
+            </div>
+
             {/* Chart */}
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={data} layout="vertical" margin={{ left: 20, right: 20 }}>
-                <XAxis
-                  type="number"
-                  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-                  fontSize={11}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis
-                  dataKey="segment"
-                  type="category"
-                  width={150}
-                  fontSize={11}
-                  stroke="hsl(var(--muted-foreground))"
-                  tickLine={false}
-                />
-                <Tooltip
-                  formatter={(value: any) => [`R$ ${value.toLocaleString('pt-BR')}`, 'LTV Médio']}
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                  }}
-                />
-                <Bar dataKey="avgLTV" radius={[0, 4, 4, 0]}>
-                  {data.map((_, idx) => (
-                    <Cell key={idx} fill={SEGMENT_COLORS[idx % SEGMENT_COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="pt-4">
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Distribuição de LTV por Segmento</h4>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={data} layout="vertical" margin={{ left: 0, right: 20 }}>
+                  <XAxis
+                    type="number"
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                    fontSize={10}
+                    stroke="hsl(var(--muted-foreground))"
+                    hide
+                  />
+                  <YAxis
+                    dataKey="segment"
+                    type="category"
+                    width={130}
+                    fontSize={10}
+                    stroke="hsl(var(--muted-foreground))"
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    formatter={(value: any) => [`R$ ${value.toLocaleString('pt-BR')}`, 'LTV Médio']}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '11px',
+                    }}
+                  />
+                  <Bar dataKey="avgLTV" radius={[0, 4, 4, 0]} barSize={12}>
+                    {data.map((_, idx) => (
+                      <Cell key={idx} fill={SEGMENT_COLORS[idx % SEGMENT_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
             {/* Segment cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
