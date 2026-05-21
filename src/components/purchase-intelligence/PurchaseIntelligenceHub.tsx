@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Flame, CalendarDays, Users, Target, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Brain, Flame, CalendarDays, Users, Target, ShieldCheck, ShieldAlert, TrendingUp } from "lucide-react";
 import { ClientSelector } from "./ClientSelector";
 import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
 import { PurchasePredictionCard } from "./PurchasePredictionCard";
@@ -14,6 +14,8 @@ import { DuplicateBlockAudit } from "./DuplicateBlockAudit";
 import { IntelligenceSettings } from "./IntelligenceSettings";
 import { ClientPurchaseHistory } from "./ClientPurchaseHistory";
 import { LTVBySegment } from "../analytics/LTVBySegment";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
