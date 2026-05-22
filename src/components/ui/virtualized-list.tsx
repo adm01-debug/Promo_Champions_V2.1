@@ -27,13 +27,26 @@ const List = ({ children: Component, height, itemCount, itemSize, width, classNa
     );
   }
 
+  const containerStyle = useMemo(() => ({ 
+    height, 
+    width, 
+    overflowY: 'auto' as const, 
+    position: 'relative' as const 
+  }), [height, width]);
+
+  const innerStyle = useMemo(() => ({ 
+    height: itemCount * itemSize, 
+    width: '100%', 
+    position: 'relative' as const 
+  }), [itemCount, itemSize]);
+
   return (
     <div 
       className={className} 
-      style={{ height, width, overflowY: 'auto', position: 'relative' }}
+      style={containerStyle}
       onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
     >
-      <div style={{ height: itemCount * itemSize, width: '100%', position: 'relative' }}>
+      <div style={innerStyle}>
         {visibleItems}
       </div>
     </div>
