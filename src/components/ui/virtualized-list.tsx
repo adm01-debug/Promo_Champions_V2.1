@@ -1,19 +1,42 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-// Helper component to avoid direct react-window imports that fail build
-const List = ({ children, height, itemCount, itemSize, width, className }: any) => {
+// Helper component that implements basic virtualization to avoid 
+// direct react-window imports that may fail in some build environments
+const List = ({ children: Component, height, itemCount, itemSize, width, className }: any) => {
+  const [scrollTop, setScrollTop] = useState(0);
+
+  // Simple virtualization logic
+  const startIndex = Math.max(0, Math.floor(scrollTop / itemSize) - 5);
+  const endIndex = Math.min(itemCount - 1, Math.floor((scrollTop + height) / itemSize) + 5);
+
+  const visibleItems = [];
+  for (let i = startIndex; i <= endIndex; i++) {
+    visibleItems.push(
+      <div 
+        key={i} 
+        style={{ 
+          position: 'absolute', 
+          top: i * itemSize, 
+          height: itemSize, 
+          width: '100%' 
+        }}
+      >
+        <Component index={i} style={{}} />
+      </div>
+    );
+  }
+
   return (
     <div 
       className={className} 
-      style={{ height, width, overflowY: 'auto' }}
+      style={{ height, width, overflowY: 'auto', position: 'relative' }}
+      onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
     >
-      {Array.from({ length: itemCount }).map((_, index) => (
-        <div key={index} style={{ height: itemSize }}>
-          {children({ index, style: {} })}
-        </div>
-      ))}
+      <div style={{ height: itemCount * itemSize, width: '100%', position: 'relative' }}>
+        {visibleItems}
+      </div>
     </div>
   );
 };
