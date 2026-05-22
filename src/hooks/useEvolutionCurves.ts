@@ -53,7 +53,7 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     const start = new Date(startDate);
     const end = new Date();
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const key = d.toISOString().split('T')[0];
+      const key = getLocalISODate(d);
       const entry: Record<string, number> = {};
       filteredPeople.forEach(sp => {
         entry[sp.name] = 0;
@@ -66,7 +66,7 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
       if (!sale.salesperson_id) return;
       const sp = filteredPeople.find(s => s.id === sale.salesperson_id);
       if (!sp) return;
-      const day = sale.created_at.split('T')[0];
+      const day = getLocalISODate(new Date(sale.created_at));
       const entry = days.get(day);
       if (entry) {
         entry[sp.name] = (entry[sp.name] || 0) + (sale.amount || 0);

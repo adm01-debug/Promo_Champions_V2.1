@@ -3,11 +3,31 @@ import { CACHE_TIMES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { getLocalISODate } from '@/utils/dateHelpers';
+import { format } from 'date-fns';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
-export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
-export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified' | 'bad_timing' | 'wrong_person' | 'unsubscribed';
+export type ActivityType =
+  | 'call'
+  | 'email'
+  | 'meeting'
+  | 'linkedin'
+  | 'whatsapp'
+  | 'note'
+  | 'other';
+export type ActivityOutcome =
+  | 'connected'
+  | 'no_answer'
+  | 'scheduled'
+  | 'voicemail'
+  | 'busy'
+  | 'callback'
+  | 'not_interested'
+  | 'qualified'
+  | 'bad_timing'
+  | 'wrong_person'
+  | 'unsubscribed';
 
 export interface ActivityRecord {
   id: string;
@@ -72,7 +92,7 @@ export const useRecentActivities = (limit: number = 100) => {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(limit);
-      
+
       if (error) throw error;
       return (data || []) as ActivityRecord[];
     },
@@ -85,43 +105,143 @@ export const useActivityStats = (salespersonId?: string) => {
   return useQuery<ActivityStats>({
     queryKey: ['activity-stats', salespersonId],
     queryFn: async (): Promise<ActivityStats> => {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = getLocalISODate();
+
       let query = supabase.from('activities').select('*');
-      
+
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
-      
+
       const activities = (data || []) as ActivityRecord[];
-      const todayActivities = activities.filter(a => a.created_at.startsWith(today));
-      
+      const todayActivities = activities.filter(
+        a => format(new Date(a.created_at), 'yyyy-MM-dd') === today
+      );
+
       const byType: Record<ActivityType, number> = {
-        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, note: 0, other: 0
+        call: 0,
+        email: 0,
+        meeting: 0,
+        linkedin: 0,
+        whatsapp: 0,
+        note: 0,
+        other: 0,
       };
-      
+
       const byOutcome: Record<ActivityOutcome, number> = {
-        connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
-        busy: 0, callback: 0, not_interested: 0, qualified: 0,
-        bad_timing: 0, wrong_person: 0, unsubscribed: 0
+        connected: 0,
+        no_answer: 0,
+        scheduled: 0,
+        voicemail: 0,
+        busy: 0,
+        callback: 0,
+        not_interested: 0,
+        qualified: 0,
+        bad_timing: 0,
+        wrong_person: 0,
+        unsubscribed: 0,
       };
-      
+
       const byTypeOutcome: Record<ActivityType, Record<ActivityOutcome, number>> = {
-        call: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        email: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        meeting: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        linkedin: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        whatsapp: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        note: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
-        other: { connected: 0, no_answer: 0, scheduled: 0, voicemail: 0, busy: 0, callback: 0, not_interested: 0, qualified: 0, bad_timing: 0, wrong_person: 0, unsubscribed: 0 },
+        call: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        email: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        meeting: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        linkedin: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        whatsapp: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        note: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
+        other: {
+          connected: 0,
+          no_answer: 0,
+          scheduled: 0,
+          voicemail: 0,
+          busy: 0,
+          callback: 0,
+          not_interested: 0,
+          qualified: 0,
+          bad_timing: 0,
+          wrong_person: 0,
+          unsubscribed: 0,
+        },
       };
-      
+
       let totalDuration = 0;
       let durationCount = 0;
-      
+
       activities.forEach(a => {
         if (a.activity_type in byType) {
           byType[a.activity_type]++;
@@ -137,17 +257,31 @@ export const useActivityStats = (salespersonId?: string) => {
           durationCount++;
         }
       });
-      
+
       // Today stats
       const todayByType: Record<ActivityType, number> = {
-        call: 0, email: 0, meeting: 0, linkedin: 0, whatsapp: 0, note: 0, other: 0
+        call: 0,
+        email: 0,
+        meeting: 0,
+        linkedin: 0,
+        whatsapp: 0,
+        note: 0,
+        other: 0,
       };
       const todayByOutcome: Record<ActivityOutcome, number> = {
-        connected: 0, no_answer: 0, scheduled: 0, voicemail: 0,
-        busy: 0, callback: 0, not_interested: 0, qualified: 0,
-        bad_timing: 0, wrong_person: 0, unsubscribed: 0
+        connected: 0,
+        no_answer: 0,
+        scheduled: 0,
+        voicemail: 0,
+        busy: 0,
+        callback: 0,
+        not_interested: 0,
+        qualified: 0,
+        bad_timing: 0,
+        wrong_person: 0,
+        unsubscribed: 0,
       };
-      
+
       todayActivities.forEach(a => {
         if (a.activity_type in todayByType) {
           todayByType[a.activity_type]++;
@@ -156,7 +290,7 @@ export const useActivityStats = (salespersonId?: string) => {
           todayByOutcome[a.outcome]++;
         }
       });
-      
+
       return {
         total: activities.length,
         byType,
@@ -183,32 +317,38 @@ export const useSDRLeaderboard = () => {
   return useQuery({
     queryKey: ['sdr-leaderboard'],
     queryFn: async () => {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = getLocalISODate();
+
       const { data, error } = await supabase
         .from('activities')
         .select('salesperson_id, salespeople:salespeople(name, avatar_url)')
         .gte('created_at', today);
-      
+
       if (error) throw error;
-      
-      const counts: Record<string, { id: string; name: string; avatar: string | null; count: number }> = {};
-      
-      (data || []).forEach((a) => {
+
+      const counts: Record<
+        string,
+        { id: string; name: string; avatar: string | null; count: number }
+      > = {};
+
+      (data || []).forEach(a => {
         const id = a.salesperson_id;
         if (!id) return;
-        const salespeople = a.salespeople as unknown as { name: string; avatar_url: string | null } | null;
+        const salespeople = a.salespeople as unknown as {
+          name: string;
+          avatar_url: string | null;
+        } | null;
         if (!counts[id]) {
-          counts[id] = { 
-            id, 
-            name: salespeople?.name || 'Vendedor', 
+          counts[id] = {
+            id,
+            name: salespeople?.name || 'Vendedor',
             avatar: salespeople?.avatar_url || null,
-            count: 0 
+            count: 0,
           };
         }
         counts[id].count++;
       });
-      
+
       return Object.values(counts).sort((a, b) => b.count - a.count);
     },
     staleTime: 60000,
@@ -225,7 +365,7 @@ export const useActivityGoals = (salespersonId?: string) => {
         .select('*')
         .eq('salesperson_id', salespersonId)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data;
     },
@@ -249,13 +389,13 @@ export const useUpdateActivityGoals = () => {
         .upsert(input, { onConflict: 'salesperson_id' })
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['activity-goals', variables.salesperson_id] });
-      toast.success("Metas atualizadas!");
+      toast.success('Metas atualizadas!');
     },
   });
 };
@@ -275,16 +415,12 @@ export const useCreateActivity = () => {
       client_id?: string;
       salesperson_id?: string;
     }) => {
-      const { data, error } = await supabase
-        .from('activities')
-        .insert(input)
-        .select()
-        .single();
+      const { data, error } = await supabase.from('activities').insert(input).select().single();
 
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
       queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
       queryClient.invalidateQueries({ queryKey: ['sdr-leaderboard'] });

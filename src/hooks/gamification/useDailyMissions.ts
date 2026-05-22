@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface DailyMission {
   id: string;
@@ -15,7 +16,7 @@ export interface DailyMission {
 
 export function useDailyMissions(salespersonId?: string) {
   const queryClient = useQueryClient();
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalISODate();
 
   const { data: missions, isLoading } = useQuery({
     queryKey: ['daily-missions', today, salespersonId],
@@ -47,7 +48,10 @@ export function useDailyMissions(salespersonId?: string) {
         .from('daily_challenge_progress')
         .select('*')
         .eq('salesperson_id', salespersonId)
-        .in('challenge_id', challenges.map(c => c.id));
+        .in(
+          'challenge_id',
+          challenges.map(c => c.id)
+        );
 
       return challenges.map(c => {
         const p = progress?.find(pr => pr.challenge_id === c.id);

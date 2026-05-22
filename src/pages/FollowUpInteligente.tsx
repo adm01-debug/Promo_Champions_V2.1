@@ -1,6 +1,12 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, MessageCircle, History, Zap } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
@@ -8,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import { differenceInHours, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
@@ -19,7 +26,14 @@ import { FollowUpLeadCard } from '@/components/follow-up/FollowUpLeadCard';
 import { FollowUpEmptyState } from '@/components/follow-up/FollowUpEmptyState';
 import { getTemperature, getSuggestedAction, type ColdLead } from '@/components/follow-up/types';
 import { FollowUpLoadingSkeleton } from '@/components/skeletons/FollowUpLoadingSkeleton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,15 +54,15 @@ const FollowUpInteligente = memo(() => {
   const [reactivateLead, setReactivateLead] = useState<ColdLead | null>(null);
   const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
   const [reactivationReason, setReactivationReason] = useState('');
-  const [reactivationDate, setReactivationDate] = useState(new Date().toISOString().split('T')[0]);
+  const [reactivationDate, setReactivationDate] = useState(getLocalISODate());
 
   const { data: userRole } = useQuery({
-    queryKey: ["user-role", salesperson?.id],
+    queryKey: ['user-role', salesperson?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", salesperson?.id || "")
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', salesperson?.id || '')
         .maybeSingle();
       if (error) throw error;
       return data?.role;
@@ -56,15 +70,12 @@ const FollowUpInteligente = memo(() => {
     enabled: !!salesperson?.id,
   });
 
-  const isAdmin = userRole === "admin";
+  const isAdmin = userRole === 'admin';
 
   const { data: followUpSettings } = useQuery({
-    queryKey: ["follow-up-settings"],
+    queryKey: ['follow-up-settings'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("follow_up_settings")
-        .select("*")
-        .maybeSingle();
+      const { data, error } = await supabase.from('follow_up_settings').select('*').maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -90,7 +101,8 @@ const FollowUpInteligente = memo(() => {
     queryFn: async () => {
       const { data: deals, error: dealsError } = await supabase
         .from('sales')
-        .select(`
+        .select(
+          `
           id, 
           client_name, 
           product_name, 
@@ -100,7 +112,8 @@ const FollowUpInteligente = memo(() => {
           salesperson_id,
           lead_scores (score),
           deal_probability_scores (calibrated_probability)
-        `)
+        `
+        )
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
         .order('updated_at', { ascending: true });
 
@@ -113,11 +126,15 @@ const FollowUpInteligente = memo(() => {
 
       if (tasksError) throw tasksError;
 
-      const pendingTaskIds = new Set((allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id));
-      const completedTasksMap = (allTasks || []).filter(t => t.status === 'completed').reduce((acc: Record<string, number>, t) => {
-        if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
-        return acc;
-      }, {});
+      const pendingTaskIds = new Set(
+        (allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id)
+      );
+      const completedTasksMap = (allTasks || [])
+        .filter(t => t.status === 'completed')
+        .reduce((acc: Record<string, number>, t) => {
+          if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
+          return acc;
+        }, {});
 
       const { data: activities, error: activitiesError } = await supabase
         .from('activities')
@@ -126,10 +143,13 @@ const FollowUpInteligente = memo(() => {
 
       if (activitiesError) throw activitiesError;
 
-      const activitiesMap = (activities || []).reduce((acc: Record<string, typeof activities[0]>, act) => {
-        if (act.sale_id && !acc[act.sale_id]) acc[act.sale_id] = act;
-        return acc;
-      }, {});
+      const activitiesMap = (activities || []).reduce(
+        (acc: Record<string, (typeof activities)[0]>, act) => {
+          if (act.sale_id && !acc[act.sale_id]) acc[act.sale_id] = act;
+          return acc;
+        },
+        {}
+      );
 
       const now = new Date();
       return (deals || [])
@@ -140,11 +160,13 @@ const FollowUpInteligente = memo(() => {
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
           const score = (deal as any).lead_scores?.[0]?.score || 0;
-          const probability = (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
-          
+          const probability =
+            (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
+
           // Enhanced AI Logic for Step 1
-          const healthScore = Math.max(0, Math.min(100, 100 - (daysInactive * 5) + (score / 10)));
-          const velocity = daysInactive < 5 ? 'increasing' : daysInactive > 10 ? 'decreasing' : 'stable';
+          const healthScore = Math.max(0, Math.min(100, 100 - daysInactive * 5 + score / 10));
+          const velocity =
+            daysInactive < 5 ? 'increasing' : daysInactive > 10 ? 'decreasing' : 'stable';
 
           return {
             ...deal,
@@ -152,17 +174,19 @@ const FollowUpInteligente = memo(() => {
             temperature: temp,
             suggested_action: suggestion.action,
             suggested_channel: suggestion.channel,
-            last_activity: lastActivity ? {
-              notes: lastActivity.notes,
-              created_at: lastActivity.created_at,
-              type: lastActivity.activity_type
-            } : undefined,
+            last_activity: lastActivity
+              ? {
+                  notes: lastActivity.notes,
+                  created_at: lastActivity.created_at,
+                  type: lastActivity.activity_type,
+                }
+              : undefined,
             score,
             health_score: Math.round(healthScore),
             interaction_velocity: velocity,
             probability,
             has_pending_task: pendingTaskIds.has(deal.id),
-            follow_up_count: completedTasksMap[deal.id] || 0
+            follow_up_count: completedTasksMap[deal.id] || 0,
           } as ColdLead;
         })
         .filter(lead => lead.days_inactive >= minDaysInactive)
@@ -172,56 +196,79 @@ const FollowUpInteligente = memo(() => {
   });
 
   const logAction = useMutation({
-    mutationFn: async ({ saleId, actionType, details, status = 'success' }: { saleId: string, actionType: string, details: Record<string, any>, status?: string }) => {
-      const { error } = await supabase
-        .from('follow_up_audit_logs')
-        .insert({
-          sale_id: saleId,
-          user_id: salesperson?.id,
-          action_type: actionType,
-          details,
-          status
-        });
+    mutationFn: async ({
+      saleId,
+      actionType,
+      details,
+      status = 'success',
+    }: {
+      saleId: string;
+      actionType: string;
+      details: Record<string, any>;
+      status?: string;
+    }) => {
+      const { error } = await supabase.from('follow_up_audit_logs').insert({
+        sale_id: saleId,
+        user_id: salesperson?.id,
+        action_type: actionType,
+        details,
+        status,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['follow-up-audit-logs'] });
-    }
+    },
   });
 
   const createFollowUpTask = useMutation({
     mutationFn: async (lead: ColdLead) => {
       setCreatingLeadId(lead.id);
       if (lead.has_pending_task) {
-        toast.info("Este lead já possui uma tarefa pendente.");
+        toast.info('Este lead já possui uma tarefa pendente.');
         return;
       }
-      if (lead.temperature === 'frozen' && lead.score !== undefined && lead.score >= 80 && !isAdmin) {
-        toast.error("Apenas administradores podem gerenciar leads Classe A congelados.");
+      if (
+        lead.temperature === 'frozen' &&
+        lead.score !== undefined &&
+        lead.score >= 80 &&
+        !isAdmin
+      ) {
+        toast.error('Apenas administradores podem gerenciar leads Classe A congelados.');
         return;
       }
 
-      const { data: taskData, error: taskError } = await supabase.from('tasks').insert({
-        title: `Follow-up: ${lead.client_name}`,
-        description: lead.suggested_action,
-        task_type: lead.suggested_channel === 'call' ? 'call' : lead.suggested_channel === 'email' ? 'email' : 'follow_up',
-        priority: lead.temperature === 'frozen' ? 'high' : lead.temperature === 'cold' ? 'medium' : 'low',
-        due_date: new Date().toISOString().split('T')[0],
-        sale_id: lead.id,
-        salesperson_id: salesperson?.id,
-      }).select().single();
-      
+      const { data: taskData, error: taskError } = await supabase
+        .from('tasks')
+        .insert({
+          title: `Follow-up: ${lead.client_name}`,
+          description: lead.suggested_action,
+          task_type:
+            lead.suggested_channel === 'call'
+              ? 'call'
+              : lead.suggested_channel === 'email'
+                ? 'email'
+                : 'follow_up',
+          priority:
+            lead.temperature === 'frozen' ? 'high' : lead.temperature === 'cold' ? 'medium' : 'low',
+          due_date: getLocalISODate(),
+          sale_id: lead.id,
+          salesperson_id: salesperson?.id,
+        })
+        .select()
+        .single();
+
       if (taskError) throw taskError;
 
       await logAction.mutateAsync({
         saleId: lead.id,
         actionType: 'task_created',
-        details: { 
+        details: {
           task_id: taskData.id,
           task_type: taskData.task_type,
-          due_date: taskData.due_date 
+          due_date: taskData.due_date,
         },
-        status: 'success'
+        status: 'success',
       });
     },
     onSuccess: () => {
@@ -239,9 +286,9 @@ const FollowUpInteligente = memo(() => {
       const tasks = leadsToProcess.map(lead => ({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
-        task_type: lead.suggested_channel === 'call' ? 'call' as const : 'follow_up' as const,
-        priority: lead.temperature === 'frozen' ? 'high' as const : 'medium' as const,
-        due_date: new Date().toISOString().split('T')[0],
+        task_type: lead.suggested_channel === 'call' ? ('call' as const) : ('follow_up' as const),
+        priority: lead.temperature === 'frozen' ? ('high' as const) : ('medium' as const),
+        due_date: getLocalISODate(),
         sale_id: lead.id,
         salesperson_id: salesperson?.id,
       }));
@@ -254,12 +301,12 @@ const FollowUpInteligente = memo(() => {
             await logAction.mutateAsync({
               saleId: task.sale_id,
               actionType: 'task_created',
-              details: { 
-                task_id: task.id, 
+              details: {
+                task_id: task.id,
                 batch: true,
-                task_type: task.task_type 
+                task_type: task.task_type,
               },
-              status: 'success'
+              status: 'success',
             });
           }
         }
@@ -274,12 +321,12 @@ const FollowUpInteligente = memo(() => {
   });
 
   const filteredLeads = useMemo(() => {
-    let result = filterTemp === 'all' ? coldLeads : coldLeads.filter(l => l.temperature === filterTemp);
+    let result =
+      filterTemp === 'all' ? coldLeads : coldLeads.filter(l => l.temperature === filterTemp);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(l =>
-        l.client_name?.toLowerCase().includes(q) ||
-        l.product_name?.toLowerCase().includes(q)
+      result = result.filter(
+        l => l.client_name?.toLowerCase().includes(q) || l.product_name?.toLowerCase().includes(q)
       );
     }
     return result;
@@ -288,7 +335,11 @@ const FollowUpInteligente = memo(() => {
   const toggleLead = useCallback((id: string) => {
     setSelectedLeads(prev => {
       const next = new Set(prev);
-      if (next.has(id)) { next.delete(id); } else { next.add(id); }
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   }, []);
@@ -308,92 +359,115 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      .filter(v => !((lead as unknown as Record<string, string | number | undefined>)[v]));
+      .filter(v => !(lead as unknown as Record<string, string | number | undefined>)[v]);
     return missing;
   }, []);
 
-  const handleWhatsAppClick = useCallback((lead: ColdLead) => {
-    const template = followUpSettings?.whatsapp_template || 
-      "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
-    
-    const missing = validateTemplate(template, lead);
-    setMissingVariables(missing);
-    setCurrentLeadForWA(lead);
-    setIsPreviewOpen(true);
-  }, [followUpSettings, validateTemplate]);
+  const handleWhatsAppClick = useCallback(
+    (lead: ColdLead) => {
+      const template =
+        followUpSettings?.whatsapp_template ||
+        'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?';
 
-  const sendWhatsApp = useCallback((lead: ColdLead) => {
-    if (missingVariables.length > 0) {
-      toast.error(`Variáveis faltando no template: ${missingVariables.join(', ')}`);
-      return;
-    }
+      const missing = validateTemplate(template, lead);
+      setMissingVariables(missing);
+      setCurrentLeadForWA(lead);
+      setIsPreviewOpen(true);
+    },
+    [followUpSettings, validateTemplate]
+  );
 
-    const template = followUpSettings?.whatsapp_template || 
-      "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?";
-    
-    let message = template;
-    const vars = template.match(/{{(.*?)}}/g) || [];
-    vars.forEach(v => {
-      const key = v.replace(/{{|}}/g, '');
-      message = message.replace(v, String((lead as unknown as Record<string, string | number | undefined>)[key] || ''));
-    });
+  const sendWhatsApp = useCallback(
+    (lead: ColdLead) => {
+      if (missingVariables.length > 0) {
+        toast.error(`Variáveis faltando no template: ${missingVariables.join(', ')}`);
+        return;
+      }
 
-    logAction.mutate({
-      saleId: lead.id,
-      actionType: 'whatsapp_attempt',
-      details: { 
-        message_preview: message,
-        template_used: followUpSettings?.whatsapp_template ? 'custom' : 'default'
-      },
-      status: 'attempted'
-    });
+      const template =
+        followUpSettings?.whatsapp_template ||
+        'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?';
 
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-    setIsPreviewOpen(false);
-  }, [followUpSettings, logAction, missingVariables]);
+      let message = template;
+      const vars = template.match(/{{(.*?)}}/g) || [];
+      vars.forEach(v => {
+        const key = v.replace(/{{|}}/g, '');
+        message = message.replace(
+          v,
+          String((lead as unknown as Record<string, string | number | undefined>)[key] || '')
+        );
+      });
+
+      logAction.mutate({
+        saleId: lead.id,
+        actionType: 'whatsapp_attempt',
+        details: {
+          message_preview: message,
+          template_used: followUpSettings?.whatsapp_template ? 'custom' : 'default',
+        },
+        status: 'attempted',
+      });
+
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+      setIsPreviewOpen(false);
+    },
+    [followUpSettings, logAction, missingVariables]
+  );
 
   const handleReactivate = useMutation({
     mutationFn: async () => {
       if (!reactivateLead) return;
-      if (!isAdmin) throw new Error("Apenas administradores podem reativar leads Classe A.");
+      if (!isAdmin) throw new Error('Apenas administradores podem reativar leads Classe A.');
 
       await logAction.mutateAsync({
         saleId: reactivateLead.id,
         actionType: 'lead_reactivated',
-        details: { reason: reactivationReason, next_follow_up: reactivationDate }
+        details: { reason: reactivationReason, next_follow_up: reactivationDate },
       });
 
-      await supabase.from('tasks').insert([{
-        title: `Follow-up Reativação: ${reactivateLead.client_name}`,
-        description: `Lead Classe A reativado. Motivo: ${reactivationReason}`,
-        task_type: 'follow_up',
-        priority: 'high',
-        due_date: new Date(reactivationDate).toISOString(),
-        sale_id: reactivateLead.id,
-        salesperson_id: reactivateLead.salesperson_id || salesperson?.id
-      }]);
+      await supabase.from('tasks').insert([
+        {
+          title: `Follow-up Reativação: ${reactivateLead.client_name}`,
+          description: `Lead Classe A reativado. Motivo: ${reactivationReason}`,
+          task_type: 'follow_up',
+          priority: 'high',
+          due_date: new Date(reactivationDate).toISOString(),
+          sale_id: reactivateLead.id,
+          salesperson_id: reactivateLead.salesperson_id || salesperson?.id,
+        },
+      ]);
 
-      await supabase.from('sales').update({ updated_at: new Date().toISOString() }).eq('id', reactivateLead.id);
+      await supabase
+        .from('sales')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', reactivateLead.id);
     },
     onSuccess: () => {
-      toast.success("Lead reativado com sucesso!");
+      toast.success('Lead reativado com sucesso!');
       setIsReactivateModalOpen(false);
       setReactivationReason('');
       queryClient.invalidateQueries({ queryKey: ['cold-leads'] });
     },
     onError: (error: Error) => {
-      toast.error("Erro ao reativar: " + error.message);
-    }
+      toast.error('Erro ao reativar: ' + error.message);
+    },
   });
 
   return (
     <>
       <Helmet>
         <title>Follow-up Inteligente | PROMO CHAMPIONS</title>
-        <meta name="description" content="Detecção automática de leads esfriando com sugestões inteligentes de follow-up para maximizar conversões." />
+        <meta
+          name="description"
+          content="Detecção automática de leads esfriando com sugestões inteligentes de follow-up para maximizar conversões."
+        />
       </Helmet>
 
-      <SkeletonTransition isLoading={isLoading} skeleton={<FollowUpLoadingSkeleton />} duration={400}>
+      <SkeletonTransition
+        isLoading={isLoading}
+        skeleton={<FollowUpLoadingSkeleton />}
+        duration={400}
+      >
         <PageTransition>
           <div className="space-y-6">
             <FollowUpHeader
@@ -434,7 +508,9 @@ const FollowUpInteligente = memo(() => {
               </div>
 
               {filteredLeads.length === 0 ? (
-                <FollowUpEmptyState isFiltered={filterTemp !== 'all' || searchQuery.trim().length > 0} />
+                <FollowUpEmptyState
+                  isFiltered={filterTemp !== 'all' || searchQuery.trim().length > 0}
+                />
               ) : (
                 <AnimatePresence mode="popLayout">
                   {filteredLeads.map((lead, i) => (
@@ -447,8 +523,14 @@ const FollowUpInteligente = memo(() => {
                       onCreateTask={l => createFollowUpTask.mutate(l)}
                       onWhatsAppClick={handleWhatsAppClick}
                       isCreating={creatingLeadId === lead.id}
-                      onOpenAudit={(l) => { setSelectedLeadForAudit(l); setIsAuditModalOpen(true); }}
-                      onReactivate={(l) => { setReactivateLead(l); setIsReactivateModalOpen(true); }}
+                      onOpenAudit={l => {
+                        setSelectedLeadForAudit(l);
+                        setIsAuditModalOpen(true);
+                      }}
+                      onReactivate={l => {
+                        setReactivateLead(l);
+                        setIsReactivateModalOpen(true);
+                      }}
                       onQuickAction={(lead, action) => {
                         if (action === 'script') {
                           handleWhatsAppClick(lead);
@@ -477,27 +559,29 @@ const FollowUpInteligente = memo(() => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Motivo da Reativação</Label>
-              <Textarea 
-                placeholder="Ex: Cliente demonstrou novo interesse após webinar..." 
+              <Textarea
+                placeholder="Ex: Cliente demonstrou novo interesse após webinar..."
                 value={reactivationReason}
-                onChange={(e) => setReactivationReason(e.target.value)}
+                onChange={e => setReactivationReason(e.target.value)}
                 disabled={!isAdmin}
               />
             </div>
             <div className="space-y-2">
               <Label>Nova Data de Acompanhamento</Label>
-              <Input 
-                type="date" 
+              <Input
+                type="date"
                 value={reactivationDate}
-                onChange={(e) => setReactivationDate(e.target.value)}
+                onChange={e => setReactivationDate(e.target.value)}
                 disabled={!isAdmin}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsReactivateModalOpen(false)}>Cancelar</Button>
-            <Button 
-              onClick={() => handleReactivate.mutate()} 
+            <Button variant="outline" onClick={() => setIsReactivateModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => handleReactivate.mutate()}
               disabled={handleReactivate.isPending || !isAdmin || !reactivationReason}
               className="gap-2"
             >
@@ -519,20 +603,29 @@ const FollowUpInteligente = memo(() => {
           <ScrollArea className="h-[400px] mt-4 pr-4">
             <div className="space-y-4">
               {auditLogs.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma ação registrada para este lead.</p>
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Nenhuma ação registrada para este lead.
+                </p>
               )}
               {auditLogs.map((log: any) => (
-                <div key={log.id} className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative">
+                <div
+                  key={log.id}
+                  className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative"
+                >
                   <div className="absolute -left-1.5 top-2 w-3 h-3 rounded-full bg-primary" />
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <span className="font-bold text-sm">
-                        {log.action_type === 'whatsapp_sent' ? "WhatsApp Enviado" : 
-                         log.action_type === 'task_created' ? "Tarefa Criada" : 
-                         log.action_type === 'lead_reactivated' ? "Lead Reativado" : log.action_type}
+                        {log.action_type === 'whatsapp_sent'
+                          ? 'WhatsApp Enviado'
+                          : log.action_type === 'task_created'
+                            ? 'Tarefa Criada'
+                            : log.action_type === 'lead_reactivated'
+                              ? 'Lead Reativado'
+                              : log.action_type}
                       </span>
                       <span className="text-[10px] text-muted-foreground uppercase font-black">
-                        {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -540,11 +633,14 @@ const FollowUpInteligente = memo(() => {
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="h-4 w-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold">
-                        {log.user_name?.substring(0, 2).toUpperCase() || "UN"}
+                        {log.user_name?.substring(0, 2).toUpperCase() || 'UN'}
                       </div>
-                      <span className="text-[10px] font-medium">{log.user_name || "Sistema"}</span>
+                      <span className="text-[10px] font-medium">{log.user_name || 'Sistema'}</span>
                       {log.status && (
-                        <Badge variant="outline" className="text-[8px] h-4 px-1 uppercase font-bold ml-auto">
+                        <Badge
+                          variant="outline"
+                          className="text-[8px] h-4 px-1 uppercase font-bold ml-auto"
+                        >
                           {log.status}
                         </Badge>
                       )}
@@ -564,10 +660,11 @@ const FollowUpInteligente = memo(() => {
               Revisar Mensagem
             </DialogTitle>
             <DialogDescription>
-              Revise o conteúdo antes de gerar o link do WhatsApp para {currentLeadForWA?.client_name}.
+              Revise o conteúdo antes de gerar o link do WhatsApp para{' '}
+              {currentLeadForWA?.client_name}.
             </DialogDescription>
           </DialogHeader>
-          
+
           {missingVariables.length > 0 && (
             <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-xs text-destructive font-bold flex items-center gap-2">
               <Zap className="h-4 w-4" />
@@ -577,32 +674,40 @@ const FollowUpInteligente = memo(() => {
 
           <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
             <div className="absolute top-2 right-2">
-              <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold">
+                WHATSAPP MOCKUP
+              </Badge>
             </div>
             <div className="space-y-4">
               <div className="flex justify-start">
                 <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-border/50">
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {currentLeadForWA && (() => {
-                      const template = followUpSettings?.whatsapp_template || 
-                        "Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}}...";
-                      let msg = template;
-                      const vars = template.match(/{{(.*?)}}/g) || [];
-                      vars.forEach(v => {
-                        const key = v.replace(/{{|}}/g, '');
-                        msg = msg.replace(v, (currentLeadForWA as any)[key] || `[${key}?]`);
-                      });
-                      return msg;
-                    })()}
+                    {currentLeadForWA &&
+                      (() => {
+                        const template =
+                          followUpSettings?.whatsapp_template ||
+                          'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}}...';
+                        let msg = template;
+                        const vars = template.match(/{{(.*?)}}/g) || [];
+                        vars.forEach(v => {
+                          const key = v.replace(/{{|}}/g, '');
+                          msg = msg.replace(v, (currentLeadForWA as any)[key] || `[${key}?]`);
+                        });
+                        return msg;
+                      })()}
                   </p>
-                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">Agora</span>
+                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">
+                    Agora
+                  </span>
                 </div>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Cancelar</Button>
-            <Button 
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
               className="bg-green-600 hover:bg-green-700 text-white gap-2"
               onClick={() => currentLeadForWA && sendWhatsApp(currentLeadForWA)}
               disabled={missingVariables.length > 0}
@@ -617,6 +722,6 @@ const FollowUpInteligente = memo(() => {
   );
 });
 
-FollowUpInteligente.displayName = "FollowUpInteligente";
+FollowUpInteligente.displayName = 'FollowUpInteligente';
 
 export default FollowUpInteligente;

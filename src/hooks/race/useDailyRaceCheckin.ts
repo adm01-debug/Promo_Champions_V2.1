@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 const SEEN_KEY_PREFIX = 'race_daily_checkin_seen';
 
@@ -8,7 +9,13 @@ export interface DailyCheckinResult {
   streak_days: number;
   previous_streak: number;
   today: { rank: number; progress: number; total_sales: number; deals_count: number } | null;
-  previous: { date: string; rank: number; progress: number; total_sales: number; deals_count: number } | null;
+  previous: {
+    date: string;
+    rank: number;
+    progress: number;
+    total_sales: number;
+    deals_count: number;
+  } | null;
   delta: { rank: number; progress: number; total_sales: number; deals_count: number } | null;
 }
 
@@ -27,9 +34,10 @@ export function useDailyRaceCheckin({ seasonId, salespersonId, enabled = true }:
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const localKey = seasonId && salespersonId
-    ? `${SEEN_KEY_PREFIX}:${seasonId}:${salespersonId}:${new Date().toISOString().slice(0, 10)}`
-    : null;
+  const localKey =
+    seasonId && salespersonId
+      ? `${SEEN_KEY_PREFIX}:${seasonId}:${salespersonId}:${getLocalISODate()}`
+      : null;
 
   const trigger = useCallback(async () => {
     if (!enabled || !seasonId || !salespersonId) return;
@@ -56,7 +64,9 @@ export function useDailyRaceCheckin({ seasonId, salespersonId, enabled = true }:
     if (!enabled || !seasonId || !salespersonId || !localKey) return;
     if (localStorage.getItem(localKey)) return;
     // pequeno delay para não competir com o load inicial
-    const t = window.setTimeout(() => { void trigger(); }, 1200);
+    const t = window.setTimeout(() => {
+      void trigger();
+    }, 1200);
     return () => window.clearTimeout(t);
   }, [enabled, seasonId, salespersonId, localKey, trigger]);
 
