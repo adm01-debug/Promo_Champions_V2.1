@@ -113,7 +113,7 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
       </div>
 
       {/* RIGHT CLUSTER: Actions */}
-      <TooltipProvider delayDuration={300}>
+      <TooltipProvider delayDuration={300} skipDelayDuration={0}>
         <div className="flex items-center gap-0.5">
           {/* Search — visually prominent */}
           <motion.button
