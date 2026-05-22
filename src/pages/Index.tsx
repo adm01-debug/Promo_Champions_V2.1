@@ -47,6 +47,12 @@ const CompetitionModule = lazy(() => import("@/components/dashboard/modules/Comp
 const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
 const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
 
+// Preload the next modules after initial render
+const preloadModules = () => {
+  import("@/components/dashboard/modules/PerformanceModule");
+  import("@/components/dashboard/modules/AnalyticsModule");
+};
+
 const SECTION_MAP: Record<string, string> = {
   performance: "performance",
   analises: "analytics",
@@ -68,6 +74,12 @@ const Index = () => {
   const priorities = useDashboardPriorities();
   
   useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
+
+  React.useEffect(() => {
+    // Small delay to allow main thread to breathe after mounting
+    const timer = setTimeout(preloadModules, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === "visao-geral");

@@ -40,7 +40,7 @@ export const StatCard = React.memo(({
   const isPositive = change >= 0;
 
   const animatedNum = useCountUp(numericValue ?? 0, {
-    duration: hero ? 2000 : 800, // Reduced duration for better performance
+    duration: hero ? 1200 : 600, // Faster animations for snappy feel
     decimals: value.includes("%") ? 1 : 0,
     enabled: numericValue !== undefined,
   });
@@ -104,7 +104,7 @@ export const StatCard = React.memo(({
           </div>
           {/* Scanning line for Hero */}
           <motion.div 
-            className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none will-change-[top]"
+            className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
             animate={{ top: ["0%", "100%", "0%"] }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
@@ -137,7 +137,7 @@ export const StatCard = React.memo(({
               {title}
             </p>
             <p className={cn(
-              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter will-change-contents truncate",
+              "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter truncate",
               hero && "text-2xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-2 sm:py-4 lg:py-6 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500 truncate",
               !hero && variant === "primary" && "text-primary",
               !hero && variant === "success" && "text-success",

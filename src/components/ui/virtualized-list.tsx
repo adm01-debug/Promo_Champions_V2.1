@@ -92,7 +92,7 @@ export function VirtualizedList<T>({
             delay: (index % 8) * 0.03, // Tighter stagger for faster feel
             ease: "easeOut" 
           }}
-          className="will-change-transform"
+          className=""
         >
           {renderItem(item, index)}
         </motion.div>
