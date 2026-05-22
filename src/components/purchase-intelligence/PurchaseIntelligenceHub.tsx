@@ -116,7 +116,26 @@ export function PurchaseIntelligenceHub() {
                 <div className="space-y-6">
                   <PurchasePredictionCard clientId={clientId} />
                   <LTVBySegment />
-                  <IntelligenceAlerts />
+                  <IntelligenceAlerts 
+                    customAlerts={clientId ? [
+                      {
+                        id: 'ltv-alert',
+                        title: "LTV vs Segmento",
+                        description: "O LTV deste cliente está 15% acima da média do seu segmento de atuação.",
+                        priority: "medium",
+                        impact: "+R$ 12.400",
+                        category: "Insight"
+                      },
+                      {
+                        id: 'ticket-drop-alert',
+                        title: "Queda de Ticket Médio",
+                        description: "Redução de 8% no ticket médio detectada nos últimos 3 meses.",
+                        priority: "high",
+                        impact: "-R$ 1.200/mês",
+                        category: "Alerta"
+                      }
+                    ] : []} 
+                  />
                 </div>
               </motion.div>
               <motion.div 
