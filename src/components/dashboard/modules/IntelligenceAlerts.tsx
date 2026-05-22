@@ -72,7 +72,7 @@ export const IntelligenceAlerts = React.memo(({ customAlerts }: IntelligenceAler
       </CardHeader>
       <CardContent className="p-4 space-y-4">
         <AnimatePresence>
-          {alerts.map((alert, index) => (
+          {displayAlerts.map((alert, index) => (
             <motion.div
               key={alert.id}
               initial={{ opacity: 0, x: 20 }}
@@ -104,7 +104,6 @@ export const IntelligenceAlerts = React.memo(({ customAlerts }: IntelligenceAler
                 </Button>
               </div>
               
-              {/* Progress indicator decoration */}
               <div className={cn(
                 "absolute left-0 top-0 bottom-0 w-[2px]",
                 alert.priority === "high" ? "bg-destructive" : "bg-warning"
@@ -119,7 +118,3 @@ export const IntelligenceAlerts = React.memo(({ customAlerts }: IntelligenceAler
 
 IntelligenceAlerts.displayName = "IntelligenceAlerts";
 
-// Helper for cn
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(" ");
-}
