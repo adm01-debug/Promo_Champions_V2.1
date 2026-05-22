@@ -40,7 +40,7 @@ export const StatCard = React.memo(({
   const isPositive = change >= 0;
 
   const animatedNum = useCountUp(numericValue ?? 0, {
-    duration: hero ? 2000 : 800, // Reduced duration for better performance
+    duration: hero ? 1200 : 600, // Faster animations for snappy feel
     decimals: value.includes("%") ? 1 : 0,
     enabled: numericValue !== undefined,
   });
