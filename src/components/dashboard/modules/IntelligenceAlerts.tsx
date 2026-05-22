@@ -1,38 +1,60 @@
 import React, { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, AlertCircle, ArrowUpRight, Target, BrainCircuit } from "lucide-react";
+import { Zap, AlertCircle, ArrowUpRight, Target, BrainCircuit, TrendingDown, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
-const alerts = [
-  {
-    id: 1,
-    title: "Oportunidade de Upsell Iminente",
-    description: "5 clientes VIP atingiram 85% do ciclo de vida do produto atual.",
-    priority: "high",
-    impact: "+R$ 45.000",
-    category: "Retenção"
-  },
-  {
-    id: 2,
-    title: "Anomalia Detectada: Ciclo de Compra",
-    description: "Aumento repentino no tempo de decisão na categoria 'Eletrônicos'.",
-    priority: "medium",
-    impact: "-12% Conversão",
-    category: "Análise"
-  },
-  {
-    id: 3,
-    title: "Lead 'Hot' Identificado",
-    description: "Empresa XPTO realizou 12 interações nas últimas 2 horas.",
-    priority: "high",
-    impact: "Lead Scoring: 98",
-    category: "Vendas"
-  }
-];
+interface Alert {
+  id: string | number;
+  title: string;
+  description: string;
+  priority: "high" | "medium" | "low";
+  impact: string;
+  category: string;
+  type?: "insight" | "system";
+}
 
-export const IntelligenceAlerts = React.memo(() => {
+interface IntelligenceAlertsProps {
+  customAlerts?: Alert[];
+}
+
+export const IntelligenceAlerts = React.memo(({ customAlerts }: IntelligenceAlertsProps) => {
+  const staticAlerts: Alert[] = [
+    {
+      id: 1,
+      title: "Oportunidade de Upsell Iminente",
+      description: "5 clientes VIP atingiram 85% do ciclo de vida do produto atual.",
+      priority: "high",
+      impact: "+R$ 45.000",
+      category: "Retenção"
+    },
+    {
+      id: 2,
+      title: "Anomalia Detectada: Ciclo de Compra",
+      description: "Aumento repentino no tempo de decisão na categoria 'Eletrônicos'.",
+      priority: "medium",
+      impact: "-12% Conversão",
+      category: "Análise"
+    },
+    {
+      id: 3,
+      title: "Lead 'Hot' Identificado",
+      description: "Empresa XPTO realizou 12 interações nas últimas 2 horas.",
+      priority: "high",
+      impact: "Lead Scoring: 98",
+      category: "Vendas"
+    }
+  ];
+
+  const displayAlerts = useMemo(() => {
+    if (customAlerts && customAlerts.length > 0) {
+      return [...customAlerts, ...staticAlerts].slice(0, 5);
+    }
+    return staticAlerts;
+  }, [customAlerts]);
+
   return (
     <Card className="h-full border-white/5 bg-black/40 backdrop-blur-xl overflow-hidden group">
       <CardHeader className="pb-2 border-b border-white/5">
