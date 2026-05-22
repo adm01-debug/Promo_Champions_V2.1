@@ -48,11 +48,33 @@ interface Props {
 
 export function ClientPurchaseHistory({ clientId }: Props) {
   const { data: orders, isLoading } = usePurchaseHistory(clientId);
+  
+  // Persist filters per client using localStorage
+  const getPersistedState = (key: string, defaultValue: any) => {
+    if (!clientId) return defaultValue;
+    const saved = localStorage.getItem(`purchase_filters_${clientId}`);
+    if (!saved) return defaultValue;
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed[key] ?? defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
+  const [statusFilter, setStatusFilter] = useState<string[]>(() => getPersistedState("statusFilter", []));
+  const [categoryFilter, setCategoryFilter] = useState<string[]>(() => getPersistedState("categoryFilter", []));
+  const [priceRange, setPriceRange] = useState<[number, number]>(() => getPersistedState("priceRange", [0, 50000]));
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+
+  // Persistence effect
+  useMemo(() => {
+    if (clientId) {
+      const state = { statusFilter, categoryFilter, priceRange };
+      localStorage.setItem(`purchase_filters_${clientId}`, JSON.stringify(state));
+    }
+  }, [clientId, statusFilter, categoryFilter, priceRange]);
 
   const categories = useMemo(() => {
     if (!orders) return [];
