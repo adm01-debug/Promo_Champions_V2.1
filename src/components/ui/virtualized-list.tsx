@@ -14,17 +14,16 @@ const List = ({ children: Component, height, itemCount, itemSize, width, classNa
   const visibleItems = [];
   for (let i = startIndex; i <= endIndex; i++) {
     visibleItems.push(
-      <div 
+      <Component 
         key={i} 
+        index={i} 
         style={{ 
           position: 'absolute', 
           top: i * itemSize, 
           height: itemSize, 
           width: '100%' 
-        }}
-      >
-        <Component index={i} style={{}} />
-      </div>
+        }} 
+      />
     );
   }
 
