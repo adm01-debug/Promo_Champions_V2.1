@@ -46,7 +46,8 @@ export function useSoundSettings() {
   const playSound = useCallback((soundType: SoundType = selectedSound) => {
     if (soundType === 'none' || volume === 0) return;
 
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
     const audioContext = new AudioCtx();
     
     const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3) => {

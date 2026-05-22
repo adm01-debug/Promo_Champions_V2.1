@@ -59,9 +59,9 @@ export function useAuthForm() {
       }
     }
 
-    const { canAttempt } = await checkLoginAttempts(loginEmail);
+    const { canAttempt, lockoutStatus: currentLockout } = await checkLoginAttempts(loginEmail);
     if (!canAttempt) {
-      toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(lockoutStatus.remainingSeconds)}.`);
+      toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(currentLockout.remainingSeconds)}.`);
       return;
     }
     setIsLoading(true);
