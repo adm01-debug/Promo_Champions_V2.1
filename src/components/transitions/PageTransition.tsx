@@ -98,7 +98,7 @@ export const PageTransition: FC<PageTransitionProps> = memo(({ children, classNa
   }, [location.pathname, navigationType]);
 
   const transitionDivStyles = useMemo(() => 
-    cn("w-full min-h-full will-change-[transform,opacity]", className), 
+    cn("w-full min-h-full", className), 
   [className]);
 
   return (
