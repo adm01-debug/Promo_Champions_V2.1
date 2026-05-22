@@ -32,6 +32,8 @@ export function useAICopilot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const location = useLocation();
+  const loadingRef = useRef(false);
+  
   const { data: salesperson } = useQuery({
     queryKey: ['current-salesperson-copilot'],
     queryFn: async () => {
@@ -46,17 +48,19 @@ export function useAICopilot() {
     },
     staleTime: 5 * 60 * 1000,
   });
+
   const lastPageRef = useRef<string>('');
   const cooldownRef = useRef<number>(0);
 
   const fetchSuggestion = useCallback(async (action: string = 'page_suggestion', extra?: string) => {
-    if (isLoading) return;
+    if (loadingRef.current) return;
     
     // Cooldown: minimum 30s between auto-suggestions
     const now = Date.now();
     if (action === 'page_suggestion' && now - cooldownRef.current < 30000) return;
     cooldownRef.current = now;
 
+    loadingRef.current = true;
     setIsLoading(true);
     try {
       const page = PAGE_CONTEXT_MAP[location.pathname] || location.pathname;
@@ -80,28 +84,28 @@ export function useAICopilot() {
         setIsDismissed(false);
       }
     } catch (_err) {
-      // Errors are handled by central tracking; no need for console spam in prod
+      // Errors handled silently in prod to avoid noise
     } finally {
+      loadingRef.current = false;
       setIsLoading(false);
     }
-  }, [isLoading, location.pathname, salesperson?.id]);
+  }, [location.pathname, salesperson?.id]);
 
-  // Auto-suggest on page change (with debounce)
+  // Auto-suggest on page change
   useEffect(() => {
     if (location.pathname === lastPageRef.current) return;
     lastPageRef.current = location.pathname;
     
-    // Don't auto-suggest on assistant page (already has AI)
     if (location.pathname === '/assistente') return;
     
     const timer = setTimeout(() => {
       if (!isDismissed) {
         fetchSuggestion('page_suggestion');
       }
-    }, 3000); // Wait 3s after page load
+    }, 3000);
 
     return () => clearTimeout(timer);
-  }, [location.pathname, isDismissed]);
+  }, [location.pathname, isDismissed, fetchSuggestion]);
 
   const askCopilot = useCallback((question: string) => {
     fetchSuggestion('quick_answer', question);

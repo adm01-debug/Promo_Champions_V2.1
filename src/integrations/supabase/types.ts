@@ -18556,6 +18556,11 @@ export type Database = {
       }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
+      get_dashboard_kpis: {
+        Args: { end_date: string; start_date: string }
+        Returns: Json
+      }
+      get_detailed_kpis: { Args: never; Returns: Json }
       get_dialer_queue_stats: {
         Args: { _queue_id: string }
         Returns: {

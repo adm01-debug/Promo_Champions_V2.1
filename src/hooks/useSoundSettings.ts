@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useAudio } from '@/contexts/AudioContext';
 
 export type SoundType = 'fanfare' | 'chime' | 'bell' | 'success' | 'none';
 
@@ -20,6 +21,7 @@ const STORAGE_KEY = 'celebration-sound-preference';
 const VOLUME_STORAGE_KEY = 'celebration-sound-volume';
 
 export function useSoundSettings() {
+  const { playOscillator } = useAudio();
   const [selectedSound, setSelectedSound] = useState<SoundType>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem(STORAGE_KEY) as SoundType) || 'fanfare';
@@ -46,63 +48,35 @@ export function useSoundSettings() {
   const playSound = useCallback((soundType: SoundType = selectedSound) => {
     if (soundType === 'none' || volume === 0) return;
 
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const audioContext = new AudioCtx();
-    
-    const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3) => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = freq;
-      oscillator.type = 'sine';
-      
-      const adjustedGain = baseGain * volume;
-      gainNode.gain.setValueAtTime(adjustedGain, startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-      
-      oscillator.start(startTime);
-      oscillator.stop(startTime + duration);
-    };
-
-    const now = audioContext.currentTime;
-
     switch (soundType) {
       case 'fanfare':
-        // Victory fanfare (C-E-G-C)
-        playNote(523.25, now, 0.15);
-        playNote(659.25, now + 0.1, 0.15);
-        playNote(783.99, now + 0.2, 0.15);
-        playNote(1046.50, now + 0.3, 0.3);
+        playOscillator(523.25, 0, 0.15, 0.3 * volume);
+        playOscillator(659.25, 0.1, 0.15, 0.3 * volume);
+        playOscillator(783.99, 0.2, 0.15, 0.3 * volume);
+        playOscillator(1046.50, 0.3, 0.3, 0.3 * volume);
         break;
       
       case 'chime':
-        // Gentle chime (ascending)
-        playNote(880, now, 0.4, 0.2);
-        playNote(1108.73, now + 0.15, 0.35, 0.2);
-        playNote(1318.51, now + 0.3, 0.4, 0.15);
+        playOscillator(880, 0, 0.4, 0.2 * volume);
+        playOscillator(1108.73, 0.15, 0.35, 0.2 * volume);
+        playOscillator(1318.51, 0.3, 0.4, 0.15 * volume);
         break;
       
       case 'bell':
-        // Bell sound (rich harmonics)
-        playNote(659.25, now, 0.5, 0.25);
-        playNote(830.61, now, 0.5, 0.15);
-        playNote(987.77, now + 0.1, 0.4, 0.2);
-        playNote(1318.51, now + 0.2, 0.5, 0.15);
+        playOscillator(659.25, 0, 0.5, 0.25 * volume);
+        playOscillator(830.61, 0, 0.5, 0.15 * volume);
+        playOscillator(987.77, 0.1, 0.4, 0.2 * volume);
+        playOscillator(1318.51, 0.2, 0.5, 0.15 * volume);
         break;
       
       case 'success':
-        // Success tone (quick ascending)
-        playNote(440, now, 0.1, 0.25);
-        playNote(554.37, now + 0.08, 0.1, 0.25);
-        playNote(659.25, now + 0.16, 0.1, 0.25);
-        playNote(880, now + 0.24, 0.25, 0.3);
+        playOscillator(440, 0, 0.1, 0.25 * volume);
+        playOscillator(554.37, 0.08, 0.1, 0.25 * volume);
+        playOscillator(659.25, 0.16, 0.1, 0.25 * volume);
+        playOscillator(880, 0.24, 0.25, 0.3 * volume);
         break;
     }
-  }, [selectedSound, volume]);
+  }, [playOscillator, selectedSound, volume]);
 
   const previewSound = useCallback((soundType: SoundType) => {
     playSound(soundType);

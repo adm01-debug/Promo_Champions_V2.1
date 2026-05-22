@@ -10,6 +10,7 @@ import { motion, MotionConfig } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { I18nProvider } from "@/contexts/I18nContext";
 import { DashboardThemeProvider } from "@/contexts/DashboardThemeContext";
+import { AudioProvider } from "@/contexts/AudioContext";
 import { GlobalErrorBoundary } from "@/components/shared/GlobalErrorBoundary";
 import { XPToastProvider } from "@/components/gamification/XPToast";
 import { CommandPalette } from "@/components/command/CommandPalette";
@@ -92,10 +93,12 @@ const App = () => {
                       <AuthProvider>
                         <I18nProvider>
                           <DashboardThemeProvider>
-                            <CommandPalette />
-                            <RouteProgressBar />
-                            <AppRoutes />
-                            <DevOnly><PerformanceMonitor /></DevOnly>
+                            <AudioProvider>
+                              <CommandPalette />
+                              <RouteProgressBar />
+                              <AppRoutes />
+                              <DevOnly><PerformanceMonitor /></DevOnly>
+                            </AudioProvider>
                           </DashboardThemeProvider>
                         </I18nProvider>
                       </AuthProvider>
