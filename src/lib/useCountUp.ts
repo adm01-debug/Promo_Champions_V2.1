@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from 'react';
 /**
  * Animates a number from 0 to `end` over `duration` ms using easeOutExpo.
  * Returns the current animated value.
+ * Optimized to skip updates if the value hasn't changed enough based on decimals.
  */
 export function useCountUp(end: number, duration = 1200, decimals = 0): number {
   const [value, setValue] = useState(0);
   const prevEnd = useRef(0);
   const rafId = useRef<number>();
+  const lastValueRef = useRef(0);
 
   useEffect(() => {
     const start = prevEnd.current;
@@ -19,10 +21,17 @@ export function useCountUp(end: number, duration = 1200, decimals = 0): number {
     const tick = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
+      
       // easeOutExpo
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const current = start + diff * eased;
-      setValue(Number(current.toFixed(decimals)));
+      const rounded = Number(current.toFixed(decimals));
+
+      // Only update state if the rounded value actually changed
+      if (rounded !== lastValueRef.current) {
+        lastValueRef.current = rounded;
+        setValue(rounded);
+      }
 
       if (progress < 1) {
         rafId.current = requestAnimationFrame(tick);
