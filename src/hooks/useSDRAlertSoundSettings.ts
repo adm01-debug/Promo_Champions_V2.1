@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useAudio } from '@/contexts/AudioContext';
 
 export type SDRAlertSoundType = 'warning' | 'notification' | 'gentle' | 'chime' | 'none';
 
@@ -20,6 +21,7 @@ const STORAGE_KEY = 'sdr-alert-sound-preference';
 const VOLUME_STORAGE_KEY = 'sdr-alert-volume';
 
 export function useSDRAlertSoundSettings() {
+  const { playOscillator } = useAudio();
   const [selectedSound, setSelectedSound] = useState<SDRAlertSoundType>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem(STORAGE_KEY) as SDRAlertSoundType) || 'warning';
@@ -46,59 +48,33 @@ export function useSDRAlertSoundSettings() {
   const playSound = useCallback((soundType: SDRAlertSoundType = selectedSound) => {
     if (soundType === 'none' || volume === 0) return;
 
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const audioContext = new AudioCtx();
-    const now = audioContext.currentTime;
-    
-    const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.3, type: OscillatorType = 'sine') => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = freq;
-      oscillator.type = type;
-      
-      const adjustedGain = baseGain * volume;
-      gainNode.gain.setValueAtTime(adjustedGain, startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-      
-      oscillator.start(startTime);
-      oscillator.stop(startTime + duration);
-    };
-
     switch (soundType) {
       case 'warning':
-        // Two-tone warning - attention-grabbing but not alarming
-        playNote(523, now, 0.15, 0.35, 'triangle'); // C5
-        playNote(659, now + 0.15, 0.15, 0.35, 'triangle'); // E5
-        playNote(523, now + 0.35, 0.15, 0.3, 'triangle'); // C5
-        playNote(659, now + 0.5, 0.2, 0.3, 'triangle'); // E5
+        playOscillator(523, 0, 0.15, 0.35 * volume, 'triangle');
+        playOscillator(659, 0.15, 0.15, 0.35 * volume, 'triangle');
+        playOscillator(523, 0.35, 0.15, 0.3 * volume, 'triangle');
+        playOscillator(659, 0.5, 0.2, 0.3 * volume, 'triangle');
         break;
       
       case 'notification':
-        // Soft notification - gentle ascending tones
-        playNote(440, now, 0.12, 0.25, 'sine'); // A4
-        playNote(554, now + 0.12, 0.12, 0.25, 'sine'); // C#5
-        playNote(659, now + 0.24, 0.18, 0.3, 'sine'); // E5
+        playOscillator(440, 0, 0.12, 0.25 * volume, 'sine');
+        playOscillator(554, 0.12, 0.12, 0.25 * volume, 'sine');
+        playOscillator(659, 0.24, 0.18, 0.3 * volume, 'sine');
         break;
       
       case 'gentle':
-        // Single soft tone with fade
-        playNote(587, now, 0.4, 0.25, 'sine'); // D5
-        playNote(880, now + 0.15, 0.3, 0.15, 'sine'); // A5 (soft overlay)
+        playOscillator(587, 0, 0.4, 0.25 * volume, 'sine');
+        playOscillator(880, 0.15, 0.3, 0.15 * volume, 'sine');
         break;
       
       case 'chime':
-        // Melodic chime - pleasant bell-like sound
-        playNote(784, now, 0.25, 0.3, 'sine'); // G5
-        playNote(988, now + 0.1, 0.25, 0.25, 'sine'); // B5
-        playNote(1175, now + 0.2, 0.35, 0.2, 'sine'); // D6
-        playNote(784, now + 0.4, 0.15, 0.15, 'sine'); // G5
+        playOscillator(784, 0, 0.25, 0.3 * volume, 'sine');
+        playOscillator(988, 0.1, 0.25, 0.25 * volume, 'sine');
+        playOscillator(1175, 0.2, 0.35, 0.2 * volume, 'sine');
+        playOscillator(784, 0.4, 0.15, 0.15 * volume, 'sine');
         break;
     }
-  }, [selectedSound, volume]);
+  }, [playOscillator, selectedSound, volume]);
 
   const previewSound = useCallback((soundType: SDRAlertSoundType) => {
     playSound(soundType);
