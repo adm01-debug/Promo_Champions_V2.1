@@ -31,53 +31,13 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
   const end = format(endDate, "yyyy-MM-dd");
 
   try {
-    // Fetch sales and metrics in parallel with selected columns for performance
-    const [salesResult, metricsResult] = await Promise.all([
-      supabase
-        .from("sales")
-        .select("amount, status, is_first_sale, sdr_id, closer_id")
-        .gte("created_at", start)
-        .lte("created_at", end),
-      supabase
-        .from("daily_metrics")
-        .select("new_clients, conversion_rate")
-        .gte("date", start)
-        .lte("date", end),
-    ]);
+    const { data, error } = await supabase.rpc("get_dashboard_kpis", {
+      start_date: start,
+      end_date: end,
+    });
 
-    if (salesResult.error) throw salesResult.error;
-    if (metricsResult.error) throw metricsResult.error;
-
-    const sales = salesResult.data || [];
-    const metrics = metricsResult.data || [];
-
-    const completedSales = sales.filter(s => s.status === "completed");
-    const totalRevenue = completedSales.reduce((sum, s) => sum + Number(s.amount), 0);
-    
-    // Revenue logic: First sale counts for SDR Activation. 
-    // All recurring sales go to Closer Portfolio.
-    const firstSaleRevenue = completedSales
-      .filter(s => s.is_first_sale)
-      .reduce((sum, s) => sum + Number(s.amount), 0);
-    
-    const recurringRevenue = totalRevenue - firstSaleRevenue;
-    const totalSales = completedSales.length;
-    
-    const newClients = metrics.reduce((sum, m) => sum + m.new_clients, 0);
-    const avgConversion = metrics.length 
-      ? metrics.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / metrics.length 
-      : 0;
-    const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
-
-    return {
-      totalRevenue,
-      totalSales,
-      newClients,
-      conversionRate: avgConversion,
-      avgTicket,
-      firstSaleRevenue,
-      recurringRevenue,
-    };
+    if (error) throw error;
+    return data as KPIData;
   } catch (error) {
     captureException(error, "fetchPeriodData");
     throw error;
