@@ -8,6 +8,7 @@ import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
+import { DashboardThemeProvider } from '@/contexts/DashboardThemeContext';
 
 // Mock the hooks
 vi.mock('@/contexts/AuthContext');
