@@ -13,8 +13,34 @@ import React from 'react';
 vi.mock('@/contexts/AuthContext');
 vi.mock('@/hooks/dashboard/useDashboardKPIsPeriod');
 vi.mock('@/hooks/dashboard/useGoalsDashboard', () => ({
-  useGoalsDashboard: () => ({ data: { totalSales: 100, totalGoal: 1000 } })
+  useGoalsDashboard: () => ({ 
+    data: { 
+      totalSales: 100, 
+      totalGoal: 1000,
+      daysRemaining: 15,
+      salespeople: [
+        { 
+          id: '123', 
+          progress: 50, 
+          projection: 1000, 
+          goalAmount: 1000, 
+          currentSales: 500,
+          requiredDailyAverage: 33.3 
+        },
+        { 
+          id: '456', 
+          progress: 60, 
+          projection: 1200, 
+          goalAmount: 1000, 
+          currentSales: 600,
+          requiredDailyAverage: 26.6 
+        }
+      ]
+    },
+    isLoading: false
+  })
 }));
+
 vi.mock('@/hooks/sales/useSalesChartData', () => ({
   useSalesChartData: () => ({ data: [] })
 }));
