@@ -1,51 +1,21 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Index from './Index';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboardKPIsPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
-import { DashboardThemeProvider } from '@/contexts/DashboardThemeContext';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import React from 'react';
 
-// Mock hooks
+// Mock the hooks
 vi.mock('@/contexts/AuthContext');
 vi.mock('@/hooks/dashboard/useDashboardKPIsPeriod');
-vi.mock('@/hooks/dashboard/useGoalsDashboard', () => ({
-  useGoalsDashboard: () => ({ 
-    data: { 
-      totalSales: 100, 
-      totalGoal: 1000,
-      daysRemaining: 15,
-      salespeople: [
-        { 
-          id: '123', 
-          progress: 50, 
-          projection: 1000, 
-          goalAmount: 1000, 
-          currentSales: 500,
-          requiredDailyAverage: 33.3 
-        },
-        { 
-          id: '456', 
-          progress: 60, 
-          projection: 1200, 
-          goalAmount: 1000, 
-          currentSales: 600,
-          requiredDailyAverage: 26.6 
-        }
-      ]
-    },
-    isLoading: false
-  })
-}));
-
-vi.mock('@/hooks/sales/useSalesChartData', () => ({
-  useSalesChartData: () => ({ data: [] })
-}));
+vi.mock('@/hooks/dashboard/useGoalsDashboard');
+vi.mock('@/hooks/sales/useSalesChartData');
 vi.mock('@/hooks/dashboard/useDashboardPriorities', () => ({
-  useDashboardPriorities: () => ({ roleHint: 'Foque em agendamentos' })
+  useDashboardPriorities: () => ({ roleHint: 'Foco em Vendas' })
 }));
 vi.mock('@/hooks/sales/useSalesRealtime', () => ({
   useSalesRealtime: vi.fn()
@@ -54,79 +24,161 @@ vi.mock('@/hooks/dashboard/useDashboardRedirect', () => ({
   useDashboardRedirect: vi.fn()
 }));
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } }
-  });
-  return ({ children }: { children: React.ReactNode }) => (
+// Mock lazy components to avoid async loading issues in tests
+vi.mock('@/components/dashboard/modules/OverviewModule', () => ({
+  OverviewModule: () => <div data-testid="overview-module">Overview Module</div>
+}));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+const renderWithProviders = (ui: React.ReactNode) => {
+  return render(
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <DashboardThemeProvider>
-          <BrowserRouter>{children}</BrowserRouter>
-        </DashboardThemeProvider>
+        <BrowserRouter>
+          {ui}
+        </BrowserRouter>
       </QueryClientProvider>
     </HelmetProvider>
   );
 };
 
-describe('Dashboard Integration - Index Page', () => {
-  const mockKpis = {
+describe('Dashboard Integration Tests', () => {
+  const mockSalesperson = {
+    id: '123',
+    name: 'John Doe',
+    role: 'closer'
+  };
+
+  const mockKPIs = {
     current: {
-      totalRevenue: 50000,
-      totalSales: 100,
-      newClients: 20,
-      conversionRate: 15.5,
-      avgTicket: 500
+      totalRevenue: 10000,
+      totalSales: 50,
+      newClients: 10,
+      conversionRate: 5.5,
+      firstSaleRevenue: 2000,
+      recurringRevenue: 8000
     },
     previous: {
-      totalRevenue: 40000,
-      totalSales: 80,
-      newClients: 15,
-      conversionRate: 12.0,
-      avgTicket: 500
+      totalRevenue: 8000,
+      totalSales: 40,
+      newClients: 8,
+      conversionRate: 5.0,
+      firstSaleRevenue: 1500,
+      recurringRevenue: 6500
     },
     changes: {
       revenue: 25,
       sales: 25,
-      clients: 33.3,
-      conversion: 29.2,
-      avgTicket: 0
+      clients: 25,
+      conversion: 10,
+      firstSaleRevenue: 33.3,
+      recurringRevenue: 23.1
     }
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({
-      salesperson: { id: '123', role: 'closer' }
-    });
-    (useDashboardKPIsPeriod as any).mockReturnValue({
-      data: mockKpis,
-      isLoading: false
+    (useAuth as any).mockReturnValue({ salesperson: mockSalesperson });
+    (useDashboardKPIsPeriod as any).mockReturnValue({ data: mockKPIs, isLoading: false, isError: false });
+    (useGoalsDashboard as any).mockReturnValue({ data: { totalSales: 50, totalGoal: 100 }, isLoading: false });
+    (useSalesChartData as any).mockReturnValue({ data: [], isLoading: false });
+  });
+
+  it('recalculates KPIs when period is changed', async () => {
+    renderWithProviders(<Index />);
+    
+    // Check initial state (should be current_month by default in the hook or state)
+    expect(useDashboardKPIsPeriod).toHaveBeenCalledWith('current_month', '123', 'closer');
+
+    // Click on the period dropdown
+    const periodButton = screen.getByText(/PERÍODO:/);
+    fireEvent.click(periodButton);
+
+    // Select "Semana"
+    const weekOption = screen.getByText('Semana');
+    fireEvent.click(weekOption);
+
+    // Verify hook was called with new period
+    await waitFor(() => {
+      expect(useDashboardKPIsPeriod).toHaveBeenCalledWith('week', '123', 'closer');
     });
   });
 
-  it('deve renderizar o dashboard básico corretamente', async () => {
-    render(<Index />, { wrapper: createWrapper() });
+  it('shows skeleton states while loading', () => {
+    (useDashboardKPIsPeriod as any).mockReturnValue({ data: null, isLoading: true, isError: false });
     
-    // Verificar se elementos básicos do header estão presentes
-    await waitFor(() => {
-      expect(screen.getByText(/PERÍODO:/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    renderWithProviders(<Index />);
+    
+    // Check if aria-busy is present (SkeletonTransition uses this)
+    const skeleton = screen.getByLabelText('Carregando dashboard');
+    expect(skeleton).toBeInTheDocument();
   });
 
-  it('deve mostrar a checklist de onboarding', async () => {
-    render(<Index />, { wrapper: createWrapper() });
-    
-    await waitFor(() => {
-      expect(screen.getByText(/Complete seu perfil/i)).toBeInTheDocument();
+  it('handles data fetch failure and recovery', async () => {
+    // Mock failure
+    const mockRefetch = vi.fn();
+    (useDashboardKPIsPeriod as any).mockReturnValue({ 
+      data: null, 
+      isLoading: false, 
+      isError: true, 
+      error: new Error('Fetch failed'),
+      refetch: mockRefetch
     });
+
+    renderWithProviders(<Index />);
+
+    // Since Index.tsx doesn't have an explicit error boundary inside it for KPIs but uses SkeletonTransition,
+    // let's see how it behaves. Usually it shows the empty state if data is null.
+    // In Index.tsx: !hasRevenue && !hasSales && !hasClients shows DashboardEmptyState
+    
+    expect(screen.getByText(/Nenhum faturamento registrado/i)).toBeInTheDocument();
+
+    // Try to "recover" by changing period
+    const periodButton = screen.getByText(/PERÍODO:/);
+    fireEvent.click(periodButton);
+    const weekOption = screen.getByText('Semana');
+    fireEvent.click(weekOption);
+
+    await waitFor(() => {
+      expect(useDashboardKPIsPeriod).toHaveBeenCalledWith('week', '123', 'closer');
+    });
+  });
+
+  it('renders correct modules for Closer role', () => {
+    (useAuth as any).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'closer' } });
+    
+    renderWithProviders(<Index />);
+    
+    // For closer, it should show Faturamento Total
+    expect(screen.getByText('Faturamento Total')).toBeInTheDocument();
+    expect(screen.getByText('Venda Ativação')).toBeInTheDocument();
+    expect(screen.getByText('Venda Carteira')).toBeInTheDocument();
+    expect(screen.queryByText('Reuniões Agendadas')).not.toBeInTheDocument();
+  });
+
+  it('renders correct modules for SDR role', () => {
+    (useAuth as any).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'sdr' } });
+    (useDashboardKPIsPeriod as any).mockReturnValue({ 
+      data: {
+        ...mockKPIs,
+        current: { ...mockKPIs.current, meetingsScheduled: 15, qualifiedLeads: 20 }
+      }, 
+      isLoading: false 
+    });
+    
+    renderWithProviders(<Index />);
+    
+    // For SDR, it should show Taxa de Agendamento and Reuniões
+    expect(screen.getByText('Taxa de Agendamento')).toBeInTheDocument();
+    expect(screen.getByText('Reuniões Agendadas')).toBeInTheDocument();
+    expect(screen.getByText('Leads Qualificados')).toBeInTheDocument();
+    expect(screen.queryByText('Faturamento Total')).not.toBeInTheDocument();
   });
 });
-
-
-
-
-
-
-
-
