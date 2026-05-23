@@ -110,18 +110,19 @@ describe('Dashboard Integration - Index Page', () => {
     
     // Verificar se elementos básicos do header estão presentes
     await waitFor(() => {
-      expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
+      expect(screen.getByText(/PERÍODO:/i)).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 
-  it('deve carregar o componente principal do dashboard', async () => {
+  it('deve mostrar a checklist de onboarding', async () => {
     render(<Index />, { wrapper: createWrapper() });
     
     await waitFor(() => {
-      expect(screen.getByText(/PERÍODO:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Complete seu perfil/i)).toBeInTheDocument();
     });
   });
 });
+
 
 
 
