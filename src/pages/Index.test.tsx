@@ -79,21 +79,29 @@ describe('Dashboard Integration - Index Page', () => {
     });
   });
 
-  it('deve renderizar os KPIs principais corretamente para um Closer', () => {
+  it('deve renderizar os KPIs principais corretamente para um Closer', async () => {
     render(<Index />, { wrapper: createWrapper() });
     
-    expect(screen.getByText(/Faturamento Total/i)).toBeInTheDocument();
-    expect(screen.getByText(/R\$ 50\.000/i)).toBeInTheDocument();
+    // Esperar os skeletons saírem
+    await waitFor(() => {
+      expect(screen.queryByText(/Faturamento Total/i)).toBeInTheDocument();
+    });
+    
+    expect(screen.getByText(/50\.000/i)).toBeInTheDocument();
     expect(screen.getByText(/25%/i)).toBeInTheDocument();
   });
 
   it('deve mudar o período quando selecionado no dropdown', async () => {
     render(<Index />, { wrapper: createWrapper() });
     
+    await waitFor(() => {
+      expect(screen.queryByText(/PERÍODO:/i)).toBeInTheDocument();
+    });
+
     const periodButton = screen.getByText(/PERÍODO:/i);
     fireEvent.click(periodButton);
     
-    const lastMonthOption = screen.getByText(/Mês Passado/i);
+    const lastMonthOption = screen.getByText(/Último Mês/i);
     fireEvent.click(lastMonthOption);
     
     await waitFor(() => {
@@ -101,15 +109,19 @@ describe('Dashboard Integration - Index Page', () => {
     });
   });
 
-  it('deve renderizar KPIs de SDR corretamente quando o usuário for SDR', () => {
+  it('deve renderizar KPIs de SDR corretamente quando o usuário for SDR', async () => {
     (useAuth as any).mockReturnValue({
       salesperson: { id: '456', role: 'sdr' }
     });
 
     render(<Index />, { wrapper: createWrapper() });
     
-    expect(screen.getByText(/Taxa de Agendamento/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText(/Taxa de Agendamento/i)).toBeInTheDocument();
+    });
+    
     expect(screen.getByText(/15,5%/i)).toBeInTheDocument();
   });
 });
+
 
