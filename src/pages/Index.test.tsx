@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboardKPIsPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import { DashboardThemeProvider } from '@/contexts/DashboardThemeContext';
+import { HelmetProvider } from 'react-helmet-async';
 import React from 'react';
 
 // Mock hooks
@@ -31,9 +33,13 @@ const createWrapper = () => {
     defaultOptions: { queries: { retry: false } }
   });
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <DashboardThemeProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </DashboardThemeProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 
@@ -82,7 +88,7 @@ describe('Dashboard Integration - Index Page', () => {
   });
 
   it('deve mudar o período quando selecionado no dropdown', async () => {
-    const { rerender } = render(<Index />, { wrapper: createWrapper() });
+    render(<Index />, { wrapper: createWrapper() });
     
     const periodButton = screen.getByText(/PERÍODO:/i);
     fireEvent.click(periodButton);
@@ -106,3 +112,4 @@ describe('Dashboard Integration - Index Page', () => {
     expect(screen.getByText(/15,5%/i)).toBeInTheDocument();
   });
 });
+
