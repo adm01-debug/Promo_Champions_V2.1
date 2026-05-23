@@ -87,8 +87,9 @@ describe('Dashboard Integration - Index Page', () => {
       expect(screen.queryByText(/Faturamento Total/i)).toBeInTheDocument();
     });
     
-    expect(screen.getByText(/50\.000/i)).toBeInTheDocument();
-    expect(screen.getByText(/25%/i)).toBeInTheDocument();
+    // Usar uma função de busca flexível para lidar com texto quebrado por elementos ou animações
+    expect(screen.getByText((content) => content.includes('50.000'))).toBeInTheDocument();
+    expect(screen.getByText((content) => content.includes('25%'))).toBeInTheDocument();
   });
 
   it('deve mudar o período quando selecionado no dropdown', async () => {
@@ -120,8 +121,9 @@ describe('Dashboard Integration - Index Page', () => {
       expect(screen.queryByText(/Taxa de Agendamento/i)).toBeInTheDocument();
     });
     
-    expect(screen.getByText(/15,5%/i)).toBeInTheDocument();
+    expect(screen.getByText((content) => content.includes('15,5%'))).toBeInTheDocument();
   });
 });
+
 
 
