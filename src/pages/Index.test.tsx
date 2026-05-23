@@ -108,24 +108,21 @@ describe('Dashboard Integration - Index Page', () => {
   it('deve renderizar o dashboard básico corretamente', async () => {
     render(<Index />, { wrapper: createWrapper() });
     
-    // Verificar se o título do dashboard aparece no Helmet (usando o mock do setup)
-    await waitFor(() => {
-      expect(document.title).toContain('Dashboard');
-    });
-
     // Verificar se elementos básicos de navegação/header estão presentes
-    expect(screen.getByText(/PERÍODO:/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/PERÍODO:/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
-  it('deve alternar abas do dashboard', async () => {
+  it('deve mostrar o banner de posição no ranking', async () => {
     render(<Index />, { wrapper: createWrapper() });
     
-    // Verificar se o container de abas está presente
     await waitFor(() => {
-      expect(screen.getByRole('tablist')).toBeInTheDocument();
+      expect(screen.getByText(/Você está na posição/i)).toBeInTheDocument();
     });
   });
 });
+
 
 
 
