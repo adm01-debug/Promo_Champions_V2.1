@@ -41,11 +41,12 @@ describe('useDashboardKPIsPeriod', () => {
   });
 
   it('deve buscar KPIs corretamente', async () => {
-    const mockSales = [
+    const mockSales: any[] = [
       { amount: 1000, status: 'completed', created_at: new Date().toISOString() },
     ];
-    const mockTasks = [];
-    const mockMetrics = [];
+    const mockTasks: any[] = [];
+    const mockMetrics: any[] = [];
+
 
     (supabase.from as any).mockImplementation((table: string) => ({
       select: vi.fn().mockReturnThis(),
