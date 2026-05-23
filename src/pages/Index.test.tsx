@@ -109,8 +109,6 @@ describe('Dashboard Integration Tests', () => {
     
     expect(useDashboardKPIsPeriod).toHaveBeenCalledWith('current_month', '123', 'closer');
 
-    // Click on the button that triggers selection
-    // In our mock, the button "Semana" should be visible if we mock correctly
     const weekOption = screen.getByRole('button', { name: 'Semana' });
     fireEvent.click(weekOption);
 
@@ -124,8 +122,9 @@ describe('Dashboard Integration Tests', () => {
     
     renderWithProviders(<Index />);
     
-    // Check if Skeleton components are rendered (DashboardLoadingSkeleton is visible when isLoading is true)
-    expect(screen.getByRole('progressbar', { hidden: true }) || screen.getByTestId('dashboard-skeleton') || document.querySelector('.animate-shimmer')).toBeTruthy();
+    // Check for shimmer element which is part of skeletons
+    const shimmer = document.querySelector('.animate-shimmer');
+    expect(shimmer).toBeTruthy();
   });
 
   it('handles data fetch failure and recovery', async () => {
@@ -138,8 +137,8 @@ describe('Dashboard Integration Tests', () => {
 
     renderWithProviders(<Index />);
     
-    // Check for empty state message
-    expect(screen.getByText(/Nenhum faturamento registrado/i)).toBeInTheDocument();
+    // Check for empty state message using "Comece sua jornada" which is title when hero && type=revenue
+    expect(screen.getByText(/Comece sua jornada/i)).toBeInTheDocument();
 
     // Recover
     const weekOption = screen.getByRole('button', { name: 'Semana' });
