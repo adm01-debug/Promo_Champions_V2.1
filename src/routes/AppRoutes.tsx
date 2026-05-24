@@ -30,7 +30,7 @@ import {
   Analytics, Relatorios, BIVendedor, BIGestor, BISDR, BICloser,
   RelatorioAtividades, RelatoriosEmail, RelatoriosExecutivos, ScheduledReports, CustomReports,
   ROIDashboard, ForecastPonderado, PrevisaoDemanda, FunnelAnalysis, InteligenciaPreditiva,
-  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage, DealVelocityPage, EvolutionCurvesPage, ObjectionsLibraryPage, WinLossAnalysisPage, EmailAnalyticsPage, GamifiedProfilePage, BadgesGalleryPage, Intelligence,
+  TopProductsRanking, PriceEvolution, CategoryMetrics, HistoricalBenchmark, ClientHealthScore, CoachingInteligente, RevOpsHub, FunnelReport, CohortReport, EmbedReport, PurchaseIntelligence, DealIntelligence, WinLossIntelligence, ABCAnalysisPage, ClosingTimePage, DealVelocityPage, EvolutionCurvesPage, ObjectionsLibraryPage, WinLossAnalysisPage, EmailAnalyticsPage, GamifiedProfilePage, BadgesGalleryPage, Intelligence, BusinessIntelligencePage,
   // Gamificação & Social
   RankingCompetitivo, ArenaCompetitiva, RaceArena, RaceArenaCloser, RaceArenaSDR, RaceArenaAdmin, RaceArenaTV, RaceArenaGarage, RaceArenaCareer, DesafiosSemanais, HistoricoDesafiosDiarios,
   VictoryFeedPage, CompetitiveSeasonsAdmin, TeamActivityFeed,
@@ -207,6 +207,7 @@ export function AppRoutes() {
                       <Route path="/revops" element={<Manager><RevOpsHub /></Manager>} />
                       <Route path="/inteligencia" element={<Intelligence />} />
                       <Route path="/funil" element={<FunnelAnalysis />} />
+                      <Route path="/ferramentas/bi" element={<BusinessIntelligencePage />} />
                       <Route path="/relatorios/vendas" element={<ProtectedRoute><SalesReportPage /></ProtectedRoute>} />
                       <Route path="/relatorios/funil" element={<Manager><FunnelReport /></Manager>} />
                       <Route path="/relatorios/cohort" element={<Manager><CohortReport /></Manager>} />

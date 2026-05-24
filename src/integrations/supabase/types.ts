@@ -3498,6 +3498,7 @@ export type Database = {
           name: string
           phone: string | null
           phone_verified: boolean | null
+          ramo_atividade: string | null
           total_value: number
           updated_at: string
           user_id: string | null
@@ -3518,6 +3519,7 @@ export type Database = {
           name: string
           phone?: string | null
           phone_verified?: boolean | null
+          ramo_atividade?: string | null
           total_value?: number
           updated_at?: string
           user_id?: string | null
@@ -3538,6 +3540,7 @@ export type Database = {
           name?: string
           phone?: string | null
           phone_verified?: boolean | null
+          ramo_atividade?: string | null
           total_value?: number
           updated_at?: string
           user_id?: string | null

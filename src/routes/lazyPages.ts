@@ -114,6 +114,7 @@ export const DealVelocityPage = lazyWithPrefetch(() => import("@/pages/DealVeloc
 export const EvolutionCurvesPage = lazyWithPrefetch(() => import("@/pages/EvolutionCurvesPage"));
 export const ObjectionsLibraryPage = lazyWithPrefetch(() => import("@/pages/ObjectionsLibraryPage"));
 export const Intelligence = lazyWithPrefetch(() => import("@/pages/Intelligence"));
+export const BusinessIntelligencePage = lazyWithPrefetch(() => import("@/pages/BusinessIntelligencePage"));
 
 // ─── Gamificação & Social ───────────────────────────────────────────
 export const RankingCompetitivo = lazyWithPrefetch(() => import("@/pages/RankingCompetitivo"));
