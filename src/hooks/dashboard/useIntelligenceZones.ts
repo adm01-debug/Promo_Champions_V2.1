@@ -82,6 +82,70 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
       const hasEnoughClientData = clientSeasonality.length >= 3;
       const hasEnoughIndustryData = companyIds.length >= 3 && industrySeasonality.length >= 3;
 
+      // Logic for Next Peak and Strategic Insight
+      const getNextPeakInfo = (clientData: any[], industryData: any[]) => {
+        const next12Months = [];
+        const today = new Date();
+        for (let i = 1; i <= 12; i++) {
+          const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+          next12Months.push({ month: d.getMonth() + 1, name: d.toLocaleString('pt-BR', { month: 'long' }) });
+        }
+
+        // Find highest intensity in next 12 months (preferring client data if available)
+        const dataSource = clientData.length >= 3 ? clientData : industryData;
+        if (dataSource.length === 0) return { month: 'Novembro', insight: 'Aumento histórico de 22% no setor durante a Black Friday.' };
+
+        const monthMap = new Map(dataSource.map(d => [Number(d.month), Number(d.quotes_count || d.avg_quotes_per_company || 0)]));
+        let bestMonth = next12Months[0];
+        let maxVal = -1;
+
+        next12Months.forEach(m => {
+          const val = monthMap.get(m.month) || 0;
+          if (val > maxVal) {
+            maxVal = val;
+            bestMonth = m;
+          }
+        });
+
+        const intensity = maxVal > 0 ? "alta" : "moderada";
+        const insight = clientData.length >= 3 
+          ? `Historicamente, seu cliente apresenta demanda ${intensity} em ${bestMonth.name}.`
+          : `Empresas deste setor costumam ter pico de demanda em ${bestMonth.name}.`;
+
+        return { 
+          month: bestMonth.name.charAt(0).toUpperCase() + bestMonth.name.slice(1), 
+          insight: `${insight} Recomendamos antecipar o contato comercial em 30 dias.` 
+        };
+      };
+
+      const nextPeak = getNextPeakInfo(clientSeasonality, industrySeasonality);
+
+      // Resolve Expert Recommendations based on sector
+      const getExpertCurated = (ramo: string) => {
+        const recommendations: Record<string, { name: string, reason: string }[]> = {
+          'tecnologia': [
+            { name: 'Infraestrutura Serverless', reason: 'Redução de 30% no custo operacional para empresas de tech.' },
+            { name: 'Segurança Zero Trust', reason: 'Tendência crítica de conformidade para o próximo semestre.' }
+          ],
+          'industria': [
+            { name: 'Automação Pneumática', reason: 'Ganho de escala em linhas de produção de alto volume.' },
+            { name: 'Manutenção Preditiva IoT', reason: 'Redução de downtime em paradas não programadas.' }
+          ],
+          'varejo': [
+            { name: 'Omnichannel Connect', reason: 'Integração de estoque físico e digital em tempo real.' },
+            { name: 'CRM Predictor', reason: 'Aumento de 15% na recompra via segmentação comportamental.' }
+          ]
+        };
+        const normalizedRamo = ramo.toLowerCase();
+        for (const key in recommendations) {
+          if (normalizedRamo.includes(key)) return recommendations[key];
+        }
+        return [
+          { name: 'Consultoria de Eficiência', reason: 'Otimização de processos baseada nos benchmarks do setor.' },
+          { name: 'Programa de Fidelidade IA', reason: 'Aumento do LTV através de ofertas personalizadas.' }
+        ];
+      };
+
       return {
         isMocked: !hasEnoughClientData,
         isIndustryMocked: !hasEnoughIndustryData,
@@ -90,7 +154,7 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
           avgTicket: clientSeasonality.length 
             ? clientSeasonality.reduce((acc, curr) => acc + Number(curr.avg_ticket), 0) / clientSeasonality.length
             : 2450,
-          recency: 12,
+          recency: 12, // In a real scenario, this would be calculated from the last quote date
           orderCount: clientSeasonality.reduce((acc, curr) => acc + Number(curr.quotes_count), 0) || 48,
           lastOrders: [
             { id: 1, date: '2026-05-20', value: 3200, status: 'delivered' },
@@ -100,7 +164,7 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         },
         benchmarks: benchmarks.length > 0 ? benchmarks.map(b => ({
           metric: b.metric_name,
-          client: 85, // Need to calculate real client metric here or fetch it
+          client: 85, // Placeholder - should be real client metric
           sector: Number(b.industry_avg),
           unit: b.unit,
           insight: `${b.metric_name} estável vs setor.`
@@ -129,12 +193,9 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
           months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
           clientIntensity: normalizedClientSeasonality,
           industryIntensity: normalizedIndustrySeasonality,
-          nextPeak: { month: 'Novembro', insight: 'Aumento histórico de 22% no setor durante a Black Friday.' }
+          nextPeak: nextPeak
         },
-        expertCurated: [
-          { name: 'Kit Home Office Premium', reason: 'Essencial para o crescimento projetado do setor este trimestre.' },
-          { name: 'Segurança Cloud Pro', reason: 'Tendência crítica de conformidade para empresas do seu porte.' }
-        ]
+        expertCurated: getExpertCurated(ramoAtividade || 'geral')
       };
     },
     staleTime: 1000 * 60 * 5,

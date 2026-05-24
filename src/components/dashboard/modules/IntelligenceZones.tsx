@@ -300,6 +300,13 @@ export const IntelligenceZones = () => {
           </div>
         </div>
       </Card>
+      
+      {/* Footer Fixo Confidencial (Visual feedback within component) */}
+      <div className="flex justify-center py-4 border-t border-white/5 opacity-50">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+          Confidencial · Uso Interno Comercial
+        </p>
+      </div>
     </div>
   );
 };
