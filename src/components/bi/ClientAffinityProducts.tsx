@@ -1,7 +1,7 @@
 import { Target, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BIProductCard } from "@/components/dashboard/modules/BIProductCard";
+import { BIProductCard } from "./BIProductCard";
 
 interface ClientAffinityProductsProps {
   data: {
