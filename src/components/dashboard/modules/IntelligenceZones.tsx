@@ -296,7 +296,7 @@ export const IntelligenceZones = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10">
           <div className="lg:col-span-3 space-y-6">
             <div className="space-y-4">
-              <div className="grid grid-cols-13 gap-2 items-center">
+              <div className="grid gap-2 items-center" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
                 <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
                 {data?.seasonality.months.map((month, i) => (
                   <TooltipProvider key={month}>
@@ -318,7 +318,7 @@ export const IntelligenceZones = () => {
                 ))}
               </div>
 
-              <div className="grid grid-cols-13 gap-2 items-center">
+              <div className="grid gap-2 items-center" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
                 <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Setor</div>
                 {data?.seasonality.months.map((month, i) => (
                   <TooltipProvider key={month}>
@@ -340,7 +340,7 @@ export const IntelligenceZones = () => {
                 ))}
               </div>
 
-              <div className="grid grid-cols-13 gap-2">
+              <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
                 <div className="col-span-1" />
                 {data?.seasonality.months.map((month) => (
                   <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
