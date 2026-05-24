@@ -118,44 +118,19 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         };
       };
 
-      const nextPeak = getNextPeakInfo(clientSeasonality, industrySeasonality);
+      const nextPeak = getNextPeakInfo(finalClientSeasonality, finalIndustrySeasonality);
 
-      // Resolve Expert Recommendations based on sector
-      const getExpertCurated = (ramo: string) => {
-        const recommendations: Record<string, { name: string, reason: string }[]> = {
-          'tecnologia': [
-            { name: 'Infraestrutura Serverless', reason: 'Redução de 30% no custo operacional para empresas de tech.' },
-            { name: 'Segurança Zero Trust', reason: 'Tendência crítica de conformidade para o próximo semestre.' }
-          ],
-          'industria': [
-            { name: 'Automação Pneumática', reason: 'Ganho de escala em linhas de produção de alto volume.' },
-            { name: 'Manutenção Preditiva IoT', reason: 'Redução de downtime em paradas não programadas.' }
-          ],
-          'varejo': [
-            { name: 'Omnichannel Connect', reason: 'Integração de estoque físico e digital em tempo real.' },
-            { name: 'CRM Predictor', reason: 'Aumento de 15% na recompra via segmentação comportamental.' }
-          ]
-        };
-        const normalizedRamo = ramo.toLowerCase();
-        for (const key in recommendations) {
-          if (normalizedRamo.includes(key)) return recommendations[key];
-        }
-        return [
-          { name: 'Consultoria de Eficiência', reason: 'Otimização de processos baseada nos benchmarks do setor.' },
-          { name: 'Programa de Fidelidade IA', reason: 'Aumento do LTV através de ofertas personalizadas.' }
-        ];
-      };
-
+      // ... keep existing code
       return {
         isMocked: !hasEnoughClientData,
         isIndustryMocked: !hasEnoughIndustryData,
         customer360: {
-          ltv: clientSeasonality.reduce((acc, curr) => acc + Number(curr.total_revenue), 0) || 125000,
-          avgTicket: clientSeasonality.length 
-            ? clientSeasonality.reduce((acc, curr) => acc + Number(curr.avg_ticket), 0) / clientSeasonality.length
+          ltv: finalClientSeasonality.reduce((acc: number, curr: any) => acc + Number(curr.total_revenue), 0),
+          avgTicket: finalClientSeasonality.length 
+            ? finalClientSeasonality.reduce((acc: number, curr: any) => acc + Number(curr.avg_ticket), 0) / finalClientSeasonality.length
             : 2450,
-          recency: 12, // In a real scenario, this would be calculated from the last quote date
-          orderCount: clientSeasonality.reduce((acc, curr) => acc + Number(curr.quotes_count), 0) || 48,
+          recency: 12,
+          orderCount: finalClientSeasonality.reduce((acc: number, curr: any) => acc + Number(curr.quotes_count), 0),
           lastOrders: [
             { id: 1, date: '2026-05-20', value: 3200, status: 'delivered' },
             { id: 2, date: '2026-05-15', value: 1500, status: 'delivered' },
