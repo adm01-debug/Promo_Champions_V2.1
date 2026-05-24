@@ -7,8 +7,10 @@ import { CompetencyRadar } from "@/components/analytics/CompetencyRadar";
 import { useCompetencyData } from "@/hooks/useCompetencyData";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Brain, LayoutDashboard, Target } from "lucide-react";
+import { Sparkles, Brain, LayoutDashboard, Target, Zap } from "lucide-react";
 import { SDRDashboard } from "@/components/sdr/SDRDashboard";
+import { IntelligenceZones } from "./IntelligenceZones";
+
 
 export const IntelligenceModule = () => {
   const { salesperson } = useAuth();
@@ -27,10 +29,15 @@ export const IntelligenceModule = () => {
               <Sparkles className="w-4 h-4" />
               Skills & Analytics
             </TabsTrigger>
+            <TabsTrigger value="zones" className="data-[state=active]:bg-background gap-2 text-primary">
+              <Zap className="w-4 h-4" />
+              Zonas de Inteligência
+            </TabsTrigger>
             <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2">
               <Brain className="w-4 h-4" />
               Tactical Insights
             </TabsTrigger>
+
             <TabsTrigger value="sdr" className="data-[state=active]:bg-background gap-2">
               <Target className="w-4 h-4" />
               SDR Dashboard
@@ -63,7 +70,12 @@ export const IntelligenceModule = () => {
           </div>
         </TabsContent>
 
+        <TabsContent value="zones" className="mt-0 outline-none">
+          <IntelligenceZones />
+        </TabsContent>
+
         <TabsContent value="performance" className="mt-0 outline-none">
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
               <ActivityQualityWidget />
