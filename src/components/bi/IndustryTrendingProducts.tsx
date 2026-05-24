@@ -1,6 +1,6 @@
 import { TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { BIProductCard } from "@/components/dashboard/modules/BIProductCard";
+import { BIProductCard } from "./BIProductCard";
 
 interface IndustryTrendingProductsProps {
   data: { name: string; growth: string; sales: number }[];

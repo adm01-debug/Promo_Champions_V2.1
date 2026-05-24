@@ -14,7 +14,7 @@ import { useClientBI } from "@/hooks/bi/useClientBI";
 import { useClientVsIndustry } from "@/hooks/bi/useClientVsIndustry";
 import { useIndustryTrends, useClientSeasonality } from "@/hooks/bi/useIndustryTrends";
 import { useBIDossierExport } from "@/hooks/bi/useBIDossierExport";
-import { Button } from "@/components/ui/button";
+import { ExportDossierButton } from "@/components/bi/ExportDossierButton";
 import { toast } from "sonner";
 
 export default function BusinessIntelligencePage() {
@@ -69,15 +69,7 @@ export default function BusinessIntelligencePage() {
             </motion.div>
 
             {selectedClient && (
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                <Button 
-                  onClick={handleExport}
-                  className="bg-violet-600 hover:bg-violet-700 text-white gap-2 rounded-xl font-bold uppercase tracking-widest text-xs"
-                >
-                  <FileDown className="size-4" />
-                  Exportar Dossiê PDF
-                </Button>
-              </motion.div>
+              <ExportDossierButton onClick={handleExport} />
             )}
           </div>
 
