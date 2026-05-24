@@ -13,11 +13,13 @@ import {
   Lightbulb,
   Clock,
   Package,
-  Star
+  Star,
+  Brain
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+
 import { 
   Tooltip,
   TooltipContent,
