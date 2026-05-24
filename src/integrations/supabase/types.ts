@@ -18567,6 +18567,7 @@ export type Database = {
       get_client_top_products: {
         Args: { _client_id: string; _limit?: number }
         Returns: {
+          product_id: string
           product_name: string
           total_quantity: number
           total_revenue: number
@@ -18631,8 +18632,16 @@ export type Database = {
         }
         Returns: Json
       }
+      get_industry_benchmark_stats: {
+        Args: { _company_ids: string[]; _days?: number }
+        Returns: {
+          industry_avg: number
+          metric_name: string
+          unit: string
+        }[]
+      }
       get_industry_seasonality: {
-        Args: { _months?: number; _ramo_atividade: string }
+        Args: { _company_ids: string[]; _months?: number }
         Returns: {
           avg_quotes_per_company: number
           avg_revenue_per_company: number
@@ -18642,9 +18651,10 @@ export type Database = {
         }[]
       }
       get_industry_top_products: {
-        Args: { _days?: number; _limit?: number; _ramo_atividade: string }
+        Args: { _company_ids: string[]; _days?: number; _limit?: number }
         Returns: {
           growth_rate: number
+          product_id: string
           product_name: string
           total_sales: number
         }[]
