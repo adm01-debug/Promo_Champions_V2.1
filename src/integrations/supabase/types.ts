@@ -18554,6 +18554,24 @@ export type Database = {
           won_count: number
         }[]
       }
+      get_client_seasonality: {
+        Args: { _client_id: string; _months?: number }
+        Returns: {
+          avg_ticket: number
+          month: number
+          quotes_count: number
+          total_revenue: number
+          year: number
+        }[]
+      }
+      get_client_top_products: {
+        Args: { _client_id: string; _limit?: number }
+        Returns: {
+          product_name: string
+          total_quantity: number
+          total_revenue: number
+        }[]
+      }
       get_current_salesperson_id: { Args: never; Returns: string }
       get_current_user_email: { Args: never; Returns: string }
       get_dashboard_kpis: {
@@ -18612,6 +18630,24 @@ export type Database = {
           p_start_date: string
         }
         Returns: Json
+      }
+      get_industry_seasonality: {
+        Args: { _months?: number; _ramo_atividade: string }
+        Returns: {
+          avg_quotes_per_company: number
+          avg_revenue_per_company: number
+          companies_active: number
+          month: number
+          year: number
+        }[]
+      }
+      get_industry_top_products: {
+        Args: { _days?: number; _limit?: number; _ramo_atividade: string }
+        Returns: {
+          growth_rate: number
+          product_name: string
+          total_sales: number
+        }[]
       }
       get_mfa_status: {
         Args: never

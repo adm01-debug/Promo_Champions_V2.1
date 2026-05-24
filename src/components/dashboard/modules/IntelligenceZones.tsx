@@ -14,10 +14,14 @@ import {
   Package,
   Star,
   Brain,
-  Info
+  Info,
+  FileDown
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useBIDossierExport } from "@/hooks/dashboard/useBIDossierExport";
+
 import { 
   Tooltip,
   TooltipContent,
@@ -27,15 +31,17 @@ import {
 
 export const IntelligenceZones = () => {
   const { data, isLoading } = useIntelligenceZones();
+  const { exportToPDF, isExporting } = useBIDossierExport();
+
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse">
-        <div className="col-span-1 lg:col-span-2 h-64 bg-card/50 rounded-2xl" />
-        <div className="h-64 bg-card/50 rounded-2xl" />
-        <div className="h-64 bg-card/50 rounded-2xl" />
-        <div className="h-64 bg-card/50 rounded-2xl" />
-        <div className="col-span-full h-64 bg-card/50 rounded-2xl" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse p-6">
+        <div className="col-span-1 lg:col-span-2 h-64 bg-card/50 rounded-3xl" />
+        <div className="h-64 bg-card/50 rounded-3xl" />
+        <div className="h-64 bg-card/50 rounded-3xl" />
+        <div className="h-64 bg-card/50 rounded-3xl" />
+        <div className="col-span-full h-80 bg-card/50 rounded-3xl" />
       </div>
     );
   }
@@ -43,25 +49,51 @@ export const IntelligenceZones = () => {
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
-  const getIntensityColor = (value: number) => {
-    if (value >= 80) return 'bg-primary';
-    if (value >= 50) return 'bg-primary/60';
-    if (value >= 30) return 'bg-primary/30';
+  const getIntensityColor = (intensity: number) => {
+    // scale of 7 levels mapping to violet colors
+    if (intensity >= 85) return 'bg-violet-600';
+    if (intensity >= 70) return 'bg-violet-500';
+    if (intensity >= 55) return 'bg-violet-400';
+    if (intensity >= 40) return 'bg-violet-300';
+    if (intensity >= 25) return 'bg-violet-200';
+    if (intensity >= 10) return 'bg-violet-100';
     return 'bg-white/5';
   };
 
+  const currentMonth = new Date().getMonth() + 1; // 1-12
+
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pb-10">
+      {/* Header with real/simulated data status */}
+      <div className="flex items-center justify-between px-2">
+        <h2 className="text-2xl font-black uppercase italic tracking-tighter">Zonas de <span className="text-primary">Inteligência</span></h2>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-violet-950/20 border-violet-500/30 text-violet-400 hover:bg-violet-500 hover:text-white transition-all gap-2 rounded-xl text-[10px] font-black uppercase tracking-widest"
+            onClick={exportToPDF}
+            disabled={isExporting || !data}
+          >
+            <FileDown className="size-3" />
+            {isExporting ? "Gerando..." : "Exportar Dossiê PDF"}
+          </Button>
+          <Badge variant={data?.isMocked ? "secondary" : "default"} className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10">
+            {data?.isMocked ? "📊 Dados Simulados" : "⚡ Dados em Tempo Real"}
+          </Badge>
+        </div>
+      </div>
+
+
       {/* Row 1: 360 View & Expert Suggestions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Card className="lg:col-span-8 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group">
+        <Card className="lg:col-span-8 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
           
           <div className="flex items-center justify-between mb-8 relative z-10">
             <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2">
               <Users className="size-5 text-primary" /> Visão <span className="text-primary">360°</span> do Cliente
             </h3>
-            <Badge variant="outline" className="font-mono text-[10px] bg-primary/5 border-primary/20 text-primary">Live Data</Badge>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 relative z-10">
@@ -110,7 +142,7 @@ export const IntelligenceZones = () => {
           </div>
         </Card>
 
-        <Card className="lg:col-span-4 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group">
+        <Card className="lg:col-span-4 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:rotate-12 transition-transform">
             <Zap className="size-24 text-primary" />
           </div>
@@ -141,21 +173,12 @@ export const IntelligenceZones = () => {
               </motion.div>
             ))}
           </div>
-
-          <div className="mt-8 p-4 bg-primary/10 rounded-2xl border border-primary/20 relative overflow-hidden group/tip">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent -translate-x-full group-hover/tip:translate-x-full transition-transform duration-1000" />
-            <h4 className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 mb-1">
-              <Lightbulb className="size-3" /> Tip do Dia
-            </h4>
-            <p className="text-[10px] font-medium leading-relaxed">Foque em cross-sell de segurança este mês; a demanda no setor subiu 18%.</p>
-          </div>
         </Card>
       </div>
 
       {/* Row 2: Benchmark & Affinity & Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Benchmark */}
-        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl group">
+        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl group rounded-3xl">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2">
               <BarChart3 className="size-5 text-primary" /> Cliente × <span className="text-primary">Setor</span>
@@ -165,7 +188,7 @@ export const IntelligenceZones = () => {
                 <TooltipTrigger>
                   <Badge variant="outline" className="text-[9px] uppercase tracking-widest bg-emerald-500/5 text-emerald-500 border-emerald-500/20">±15% Tolerance</Badge>
                 </TooltipTrigger>
-                <TooltipContent>Métricas comparadas com a média do ramo dentro de uma tolerância de 15%.</TooltipContent>
+                <TooltipContent>Métricas comparadas com a média do ramo.</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
@@ -191,10 +214,7 @@ export const IntelligenceZones = () => {
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="h-full bg-primary relative z-10" 
                     />
-                    <div 
-                      className="absolute top-0 h-full w-0.5 bg-white/20 z-20" 
-                      style={{ left: '50%' }}
-                    />
+                    <div className="absolute top-0 h-full w-0.5 bg-white/20 z-20" style={{ left: '50%' }} />
                   </div>
                   <p className="text-[9px] text-muted-foreground font-medium italic mt-1 leading-tight">{b.insight}</p>
                 </div>
@@ -203,25 +223,18 @@ export const IntelligenceZones = () => {
           </div>
         </Card>
 
-        {/* Affinity Analysis */}
-        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl">
+        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
             <Target className="size-5 text-primary" /> Perfil de <span className="text-primary">Afinidade</span>
           </h3>
-
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
               {data?.affinity.topCategories.map((cat) => (
-                <Badge key={cat} className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-black uppercase tracking-widest text-[9px]">
-                  {cat}
-                </Badge>
+                <Badge key={cat} className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-black uppercase tracking-widest text-[9px]">{cat}</Badge>
               ))}
             </div>
-
             <div className="space-y-4">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                <CheckCircle2 className="size-3 text-emerald-500" /> Produtos Sugeridos
-              </p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2"><CheckCircle2 className="size-3 text-emerald-500" /> Produtos Sugeridos</p>
               {data?.affinity.suggestedProducts.map((prod, i) => (
                 <div key={prod.name} className="p-3 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-primary/20 transition-all">
                   <div className="flex items-center gap-3">
@@ -238,30 +251,18 @@ export const IntelligenceZones = () => {
           </div>
         </Card>
 
-        {/* Trends */}
-        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16" />
-          
+        <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8 relative z-10">
             <TrendingUp className="size-5 text-primary" /> Tendência <span className="text-primary">Setor</span>
           </h3>
-
           <div className="grid grid-cols-1 gap-4 relative z-10">
             {data?.sectorTrends.map((trend, i) => (
-              <motion.div 
-                key={trend.name}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"
-              >
+              <motion.div key={trend.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                 <div className="space-y-1">
                   <p className="text-[11px] font-black uppercase tracking-tighter">{trend.name}</p>
                   <p className="text-[9px] text-muted-foreground font-medium">{trend.sales.toLocaleString()} vendidos / 90d</p>
                 </div>
-                <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black text-[10px]">
-                  {trend.growth}
-                </Badge>
+                <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black text-[10px]">{trend.growth}</Badge>
               </motion.div>
             ))}
           </div>
@@ -269,125 +270,97 @@ export const IntelligenceZones = () => {
       </div>
 
       {/* Row 3: Seasonality Heatmap */}
-      <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group">
+      <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
         <div className="absolute bottom-0 right-0 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mb-32" />
-        
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
           <div>
             <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 mb-2">
               <CalendarDays className="size-6 text-primary" /> Sazonalidade <span className="text-primary">Heatmap</span>
             </h3>
-            <p className="text-xs text-muted-foreground font-medium">Heatmap 12 meses × 2 linhas: Cliente vs Média do Setor (Janela 24 meses)</p>
+            <p className="text-xs text-muted-foreground font-medium">Grid [80px_repeat(12,1fr)] × 2 linhas. Intensidade mapeada por volume.</p>
           </div>
-          
           <div className="flex gap-4">
-            <div className="p-4 bg-black/40 rounded-2xl border border-primary/20 flex items-center gap-4 group/peak">
-              <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover/peak:animate-pulse">
+            <div className="p-4 bg-violet-950/40 rounded-2xl border border-violet-500/20 flex items-center gap-4 group/peak">
+              <div className="size-10 bg-violet-500/20 rounded-xl flex items-center justify-center text-violet-400 group-hover/peak:animate-pulse">
                 <TrendingUp className="size-5" />
               </div>
               <div>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Próximo Pico</p>
-                <p className="text-sm font-black text-primary uppercase italic">{data?.seasonality.nextPeak.month}</p>
+                <p className="text-[10px] text-violet-300 font-black uppercase tracking-widest">Próximo Pico</p>
+                <p className="text-sm font-black text-violet-400 uppercase italic">{data?.seasonality.nextPeak.month}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10">
-          <div className="lg:col-span-3 space-y-6">
-            <div className="space-y-4">
-              <div className="grid gap-2 items-center" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
-                <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
-                {data?.seasonality.months.map((month, i) => (
+        <div className="grid grid-cols-1 gap-8 relative z-10">
+          <div className="space-y-4">
+            {/* Heatmap Grid */}
+            <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
+              <div className="text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
+              {data?.seasonality.months.map((month, i) => {
+                const monthIndex = i + 1;
+                const point = data.seasonality.clientIntensity.find(p => Number(p.month) === monthIndex);
+                const intensity = point?.intensity || 0;
+                return (
                   <TooltipProvider key={month}>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: i * 0.05 }}
-                          className={`h-12 rounded-lg ${getIntensityColor(data.seasonality.clientIntensity[i])} cursor-help border border-white/5 hover:border-white/20 transition-all`}
+                          className={`h-12 rounded-lg ${getIntensityColor(intensity)} cursor-help border border-white/5 hover:border-white/20 transition-all ${monthIndex === currentMonth ? 'ring-2 ring-violet-600' : ''}`}
                         />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="font-black uppercase text-[10px]">{month}</p>
-                        <p className="text-xs">Intensidade Cliente: {data.seasonality.clientIntensity[i]}%</p>
+                        <p className="text-xs">Intensidade: {intensity.toFixed(1)}%</p>
+                        <p className="text-[10px] text-muted-foreground">Volume: {point?.quotes_count || 0} quotes</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                ))}
-              </div>
-
-              <div className="grid gap-2 items-center" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
-                <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Setor</div>
-                {data?.seasonality.months.map((month, i) => (
-                  <TooltipProvider key={month}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 0.3 + (i * 0.05) }}
-                          className={`h-12 rounded-lg ${getIntensityColor(data.seasonality.sectorIntensity[i])} opacity-50 cursor-help border border-white/5 hover:border-white/20 transition-all`}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="font-black uppercase text-[10px]">{month}</p>
-                        <p className="text-xs">Intensidade Setor: {data.seasonality.sectorIntensity[i]}%</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
-              </div>
-
-              <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(13, minmax(0, 1fr))' }}>
-                <div className="col-span-1" />
-                {data?.seasonality.months.map((month) => (
-                  <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4">
-              <div className="p-3 bg-primary/20 rounded-2xl text-primary">
-                <Brain className="size-6" />
-              </div>
-              <div>
-                <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-1">Insight Preditivo</h4>
-                <p className="text-xs text-card-foreground font-medium leading-relaxed max-w-3xl">
-                  {data?.seasonality.nextPeak.insight} Recomendamos antecipar estoque em <span className="font-black text-primary">25%</span> e lançar campanha de aquisição em <span className="font-black text-primary">Setembro</span>.
-                </p>
-              </div>
+            <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
+              <div className="text-[9px] font-black text-muted-foreground uppercase">Setor</div>
+              {data?.seasonality.months.map((month, i) => {
+                const monthIndex = i + 1;
+                const point = data.seasonality.industryIntensity.find(p => Number(p.month) === monthIndex);
+                const intensity = point?.intensity || 0;
+                return (
+                  <TooltipProvider key={month}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.div 
+                          className={`h-12 rounded-lg ${getIntensityColor(intensity)} opacity-50 cursor-help border border-white/5 hover:border-white/20 transition-all`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-black uppercase text-[10px]">{month}</p>
+                        <p className="text-xs">Intensidade Setor: {intensity.toFixed(1)}%</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })}
+            </div>
+
+            <div className="grid gap-2" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
+              <div />
+              {data?.seasonality.months.map((month) => (
+                <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
-              <Info className="size-3 text-primary" /> Top 3 Picos
-            </h4>
-            
-            <div className="space-y-4">
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                <p className="text-[9px] font-black text-primary uppercase mb-2">Cliente</p>
-                <ul className="space-y-2">
-                  {data?.seasonality.clientPeaks.map((peak, i) => (
-                    <li key={peak} className="flex items-center gap-2 text-xs font-bold">
-                      <span className="text-primary font-mono">{i+1}.</span> {peak}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 opacity-60">
-                <p className="text-[9px] font-black text-muted-foreground uppercase mb-2">Setor</p>
-                <ul className="space-y-2">
-                  {data?.seasonality.sectorPeaks.map((peak, i) => (
-                    <li key={peak} className="flex items-center gap-2 text-xs font-bold">
-                      <span className="font-mono">{i+1}.</span> {peak}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div className="p-6 bg-violet-500/5 rounded-3xl border border-violet-500/10 flex items-start gap-4">
+            <div className="p-3 bg-violet-500/20 rounded-2xl text-violet-400">
+              <Brain className="size-6" />
+            </div>
+            <div>
+              <h4 className="text-sm font-black uppercase tracking-widest text-violet-400 mb-1">Insight Estratégico</h4>
+              <p className="text-xs text-card-foreground font-medium leading-relaxed max-w-3xl">
+                {data?.seasonality.nextPeak.insight} Recomendamos antecipar estoque e planejar ações de aquisição para o trimestre.
+              </p>
             </div>
           </div>
         </div>
