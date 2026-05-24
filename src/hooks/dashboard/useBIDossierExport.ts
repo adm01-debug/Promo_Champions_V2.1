@@ -19,23 +19,27 @@ export const useBIDossierExport = (clientId?: string, clientName?: string, ramoA
       const doc = new jsPDF();
       const timestamp = format(new Date(), "yyyy-MM-dd");
       const clientSlug = (clientName || "cliente").toLowerCase().replace(/\s+/g, "-");
+      const primaryColor = [76, 29, 149]; // Dark Violet
       
       // Page 1: Capa Violeta
-      doc.setFillColor(76, 29, 149); // Dark Violet
+      doc.setFillColor(76, 29, 149);
       doc.rect(0, 0, 210, 297, 'F');
       
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(40);
       doc.setFont("helvetica", "bold");
-      doc.text("Dossiê BI", 105, 100, { align: "center" });
+      doc.text("CIRCÜITO", 105, 80, { align: "center" });
+      doc.setFontSize(20);
+      doc.text("Dossiê de Inteligência BI", 105, 100, { align: "center" });
       
-      doc.setFontSize(24);
-      doc.text(clientName || "Relatório de Inteligência", 105, 120, { align: "center" });
+      doc.setFontSize(28);
+      doc.text(clientName || "Relatório Analítico", 105, 130, { align: "center" });
       
-      doc.setFontSize(12);
+      doc.setFontSize(14);
       doc.setFont("helvetica", "normal");
-      doc.text(`Vendedor: ${salesperson?.name || "N/A"}`, 105, 150, { align: "center" });
-      doc.text(`Data: ${format(new Date(), "dd/MM/yyyy")}`, 105, 160, { align: "center" });
+      doc.text(`Vendedor: ${salesperson?.name || "N/A"}`, 105, 160, { align: "center" });
+      doc.text(`Setor: ${ramoAtividade || "Geral"}`, 105, 170, { align: "center" });
+      doc.text(`Data de Emissão: ${format(new Date(), "dd/MM/yyyy")}`, 105, 180, { align: "center" });
       
       doc.setFontSize(10);
       doc.text("Confidencial · uso interno comercial", 105, 280, { align: "center" });
@@ -44,42 +48,51 @@ export const useBIDossierExport = (clientId?: string, clientName?: string, ramoA
       doc.addPage();
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(18);
-      doc.text("1. Visão 360° do Cliente", 20, 20);
+      doc.setFont("helvetica", "bold");
+      doc.text("1. Visão 360° do Cliente", 20, 30);
       
+      // KPI Boxes (Simulated with Rects)
       const kpis = [
-        ["LTV", `R$ ${biData.customer360.ltv.toLocaleString()}`],
-        ["Ticket Médio", `R$ ${biData.customer360.avgTicket.toLocaleString()}`],
-        ["Recência", `${biData.customer360.recency} dias`],
-        ["Total Pedidos", biData.customer360.orderCount.toString()]
+        { label: "LTV", value: `R$ ${biData.customer360.ltv.toLocaleString()}` },
+        { label: "Ticket Médio", value: `R$ ${biData.customer360.avgTicket.toLocaleString()}` },
+        { label: "Recência", value: `${biData.customer360.recency} dias` },
+        { label: "Total Pedidos", value: biData.customer360.orderCount.toString() }
       ];
 
-      (doc as any).autoTable({
-        startY: 30,
-        head: [['Métrica', 'Valor']],
-        body: kpis,
-        theme: 'striped',
-        headStyles: { fillColor: [76, 29, 149] }
+      kpis.forEach((kpi, i) => {
+        const x = 20 + (i * 45);
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(x, 40, 40, 30, 3, 3, 'F');
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(kpi.label, x + 20, 50, { align: "center" });
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont("helvetica", "bold");
+        doc.text(kpi.value, x + 20, 62, { align: "center" });
       });
 
-      doc.text("Timeline Recente", 20, (doc as any).lastAutoTable.finalY + 15);
+      doc.setFontSize(14);
+      doc.text("Timeline de Pedidos (Últimos 5)", 20, 90);
       
       const orders = biData.customer360.lastOrders.map(o => [
         format(new Date(o.date), "dd/MM/yyyy"),
         `R$ ${o.value.toLocaleString()}`,
-        o.status
+        o.status === 'delivered' ? 'Entregue' : o.status
       ]);
 
       (doc as any).autoTable({
-        startY: (doc as any).lastAutoTable.finalY + 20,
+        startY: 100,
         head: [['Data', 'Valor', 'Status']],
         body: orders,
-        theme: 'grid'
+        theme: 'striped',
+        headStyles: { fillColor: primaryColor }
       });
 
       // Page 3: Cliente vs Setor
       doc.addPage();
       doc.setFontSize(18);
-      doc.text("2. Benchmark Cliente vs Setor", 20, 20);
+      doc.text("2. Benchmark Cliente vs Setor", 20, 30);
       
       const benchmarkData = biData.benchmarks.map(b => {
         const diff = ((b.client - b.sector) / b.sector) * 100;
@@ -87,66 +100,98 @@ export const useBIDossierExport = (clientId?: string, clientName?: string, ramoA
       });
 
       (doc as any).autoTable({
-        startY: 30,
-        head: [['Métrica', 'Cliente', 'Média Setor', 'Delta']],
+        startY: 40,
+        head: [['Métrica', 'Cliente', 'Média Setor', 'Variação (Delta)']],
         body: benchmarkData,
-        theme: 'striped',
-        headStyles: { fillColor: [76, 29, 149] }
+        theme: 'grid',
+        headStyles: { fillColor: primaryColor }
       });
+
+      doc.setFontSize(12);
+      doc.text("Insights de Performance:", 20, (doc as any).lastAutoTable.finalY + 15);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "italic");
+      const insightText = biData.benchmarks.map(b => `• ${b.metric}: ${b.insight}`).join("\n");
+      doc.text(insightText, 25, (doc as any).lastAutoTable.finalY + 25);
 
       // Page 4: Recomendações
       doc.addPage();
       doc.setFontSize(18);
-      doc.text("3. Recomendações e Tendências", 20, 20);
+      doc.setFont("helvetica", "bold");
+      doc.text("3. Matriz de Recomendações", 20, 30);
       
       doc.setFontSize(14);
-      doc.text("Afinidade de Categorias", 20, 35);
+      doc.text("Afinidade de Categorias e Produtos", 20, 45);
+      const categoryText = `Categorias Dominantes: ${biData.affinity.topCategories.join(", ")}`;
       doc.setFontSize(10);
-      doc.text(biData.affinity.topCategories.join(", "), 20, 42);
+      doc.setFont("helvetica", "normal");
+      doc.text(categoryText, 20, 52);
 
       const suggestions = biData.affinity.suggestedProducts.map(p => [p.name, `${p.confidence}%`]);
       (doc as any).autoTable({
-        startY: 45,
-        head: [['Produto Sugerido', 'Confiança']],
+        startY: 60,
+        head: [['Produto Sugerido', 'Confiança da IA']],
         body: suggestions,
+        theme: 'striped',
+        headStyles: { fillColor: primaryColor }
+      });
+
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Tendências do Setor (Janela 90 dias)", 20, (doc as any).lastAutoTable.finalY + 15);
+      const trends = biData.sectorTrends.map(t => [t.name, t.growth, t.sales.toString()]);
+      (doc as any).autoTable({
+        startY: (doc as any).lastAutoTable.finalY + 25,
+        head: [['Produto em Alta', 'Crescimento', 'Volume de Vendas']],
+        body: trends,
         theme: 'grid'
       });
 
       doc.setFontSize(14);
-      doc.text("Tendências do Setor (90 dias)", 20, (doc as any).lastAutoTable.finalY + 15);
-      const trends = biData.sectorTrends.map(t => [t.name, t.growth, t.sales.toString()]);
+      doc.text("Sugestão do Especialista", 20, (doc as any).lastAutoTable.finalY + 15);
+      const curated = biData.expertCurated.map(e => [e.name, e.reason]);
       (doc as any).autoTable({
-        startY: (doc as any).lastAutoTable.finalY + 20,
-        head: [['Produto', 'Crescimento', 'Vendas']],
-        body: trends,
-        theme: 'grid'
+        startY: (doc as any).lastAutoTable.finalY + 25,
+        head: [['Produto Curadoria', 'Justificativa Estratégica']],
+        body: curated,
+        theme: 'striped'
       });
 
       // Page 5: Sazonalidade
       doc.addPage();
       doc.setFontSize(18);
-      doc.text("4. Análise de Sazonalidade (24 meses)", 20, 20);
+      doc.text("4. Análise de Sazonalidade (Fase 4)", 20, 30);
       
-      const monthsTable = biData.seasonality.months.map((m, i) => {
-        const clientVal = biData.seasonality.clientIntensity.find(p => Number(p.month) === i + 1)?.quotes_count || 0;
-        return [m, clientVal.toString()];
+      const seasonalityTable = biData.seasonality.months.map((m, i) => {
+        const clientPoint = biData.seasonality.clientIntensity.find(p => Number(p.month) === i + 1);
+        const sectorPoint = biData.seasonality.industryIntensity.find(p => Number(p.month) === i + 1);
+        const clientVol = clientPoint?.quotes_count || 0;
+        const totalYearVol = biData.seasonality.clientIntensity.reduce((acc, p) => acc + (p.quotes_count || 0), 0);
+        const share = totalYearVol > 0 ? ((clientVol / totalYearVol) * 100).toFixed(1) + "%" : "0%";
+        
+        return [m, clientVol.toString(), share, (sectorPoint?.intensity || 0).toFixed(1) + "%"];
       });
 
       (doc as any).autoTable({
-        startY: 30,
-        head: [['Mês', 'Volume Médio (Quotes)']],
-        body: monthsTable,
+        startY: 40,
+        head: [['Mês', 'Pedidos (Cliente)', '% do Ano', 'Intensidade Setor']],
+        body: seasonalityTable,
         theme: 'striped',
-        headStyles: { fillColor: [76, 29, 149] }
+        headStyles: { fillColor: primaryColor }
       });
 
+      const nextPeakY = (doc as any).lastAutoTable.finalY + 20;
+      doc.setFillColor(245, 245, 255);
+      doc.roundedRect(20, nextPeakY, 170, 35, 3, 3, 'F');
       doc.setFontSize(12);
-      doc.text(`Próximo Pico: ${biData.seasonality.nextPeak.month}`, 20, (doc as any).lastAutoTable.finalY + 15);
+      doc.setTextColor(76, 29, 149);
+      doc.text(`PRÓXIMO PICO ESTIMADO: ${biData.seasonality.nextPeak.month.toUpperCase()}`, 105, nextPeakY + 12, { align: "center" });
       doc.setFontSize(10);
-      const splitInsight = doc.splitTextToSize(`Insight: ${biData.seasonality.nextPeak.insight}`, 170);
-      doc.text(splitInsight, 20, (doc as any).lastAutoTable.finalY + 22);
+      doc.setTextColor(0, 0, 0);
+      const splitInsight = doc.splitTextToSize(`INSIGHT: ${biData.seasonality.nextPeak.insight}`, 150);
+      doc.text(splitInsight, 30, nextPeakY + 22);
 
-      // Rodapé Fixo em todas as páginas (exceto capa)
+      // Rodapé Fixo
       const pageCount = (doc as any).internal.getNumberOfPages();
       for (let i = 2; i <= pageCount; i++) {
         doc.setPage(i);
@@ -157,7 +202,7 @@ export const useBIDossierExport = (clientId?: string, clientName?: string, ramoA
       }
 
       doc.save(`dossie-bi-${clientSlug}-${timestamp}.pdf`);
-      toast.success("Dossiê exportado com sucesso!");
+      toast.success("Dossiê BI exportado com sucesso!");
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
       toast.error("Falha ao gerar o dossiê PDF.");
