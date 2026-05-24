@@ -33,7 +33,7 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         clientId 
           ? supabase.rpc('get_client_top_products', { _client_id: clientId, _limit: 5 })
           : Promise.resolve({ data: [] }),
-        supabase.rpc('get_industry_top_products', { _ramo_atividade: ramoAtividade || '', _days: 90, _limit: 5 }),
+        supabase.rpc('get_industry_top_products', { _ramo_atividade: ramoAtividade || null as any, _days: 90, _limit: 5 }),
 
         clientId
           ? supabase.rpc('get_client_seasonality', { _client_id: clientId, _months: 24 })
