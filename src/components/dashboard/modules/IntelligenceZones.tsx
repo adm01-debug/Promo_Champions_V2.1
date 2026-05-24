@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useBIDossierExport } from "@/hooks/dashboard/useBIDossierExport";
 import { cn } from "@/lib/utils";
+import { BIProductCard } from "./BIProductCard";
 
 import { 
   Tooltip,
@@ -50,7 +51,6 @@ export const IntelligenceZones = () => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
   const getIntensityColor = (intensity: number) => {
-    // scale of 7 levels mapping to violet colors
     if (intensity >= 85) return 'bg-violet-600';
     if (intensity >= 70) return 'bg-violet-500';
     if (intensity >= 55) return 'bg-violet-400';
@@ -61,11 +61,10 @@ export const IntelligenceZones = () => {
     return 'bg-white/5';
   };
 
-  const currentMonth = new Date().getMonth() + 1; // 1-12
+  const currentMonth = new Date().getMonth() + 1;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pb-10">
-      {/* Header with real/simulated data status */}
       <div className="flex items-center justify-between px-2">
         <h2 className="text-2xl font-black uppercase italic tracking-tighter">Zonas de <span className="text-primary">Inteligência</span></h2>
         <div className="flex items-center gap-3">
@@ -85,8 +84,8 @@ export const IntelligenceZones = () => {
         </div>
       </div>
 
-      {/* Row 1: 360 View & Expert Suggestions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ZONA 1: Visão 360° */}
         <Card className="lg:col-span-8 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
@@ -100,13 +99,7 @@ export const IntelligenceZones = () => {
               { label: "Recência", value: `${data?.customer360.recency} dias`, icon: Clock, color: "text-emerald-500" },
               { label: "Pedidos", value: data?.customer360.orderCount, icon: Package, color: "text-purple-500" },
             ].map((m, i) => (
-              <motion.div 
-                key={m.label} 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/20 transition-all"
-              >
+              <motion.div key={m.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/20 transition-all">
                 <div className="flex items-center gap-2 mb-2">
                   <m.icon className={`size-3.5 ${m.color}`} />
                   <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{m.label}</p>
@@ -121,7 +114,7 @@ export const IntelligenceZones = () => {
               <TrendingUp className="size-3 text-primary" /> Timeline 5 Últimos Pedidos
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-              {data?.customer360.lastOrders.map((order, i) => (
+              {data?.customer360.lastOrders.map((order) => (
                 <div key={order.id} className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all">
                   <p className="text-[9px] text-muted-foreground font-mono">{new Date(order.date).toLocaleDateString('pt-BR')}</p>
                   <p className="text-sm font-black text-primary mt-1">{formatCurrency(order.value)}</p>
@@ -131,6 +124,7 @@ export const IntelligenceZones = () => {
           </div>
         </Card>
 
+        {/* Sugestão do Especialista */}
         <Card className="lg:col-span-4 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:rotate-12 transition-transform">
             <Zap className="size-24 text-primary" />
@@ -154,8 +148,8 @@ export const IntelligenceZones = () => {
         </Card>
       </div>
 
-      {/* Row 2: Benchmark & Affinity & Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ZONA 2: Benchmark Cliente × Setor */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl group rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
             <BarChart3 className="size-5 text-primary" /> Cliente × <span className="text-primary">Setor</span>
@@ -185,6 +179,7 @@ export const IntelligenceZones = () => {
           </div>
         </Card>
 
+        {/* ZONA 3: Afinidade */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
             <Target className="size-5 text-primary" /> Perfil de <span className="text-primary">Afinidade</span>
@@ -197,41 +192,27 @@ export const IntelligenceZones = () => {
             </div>
             <div className="space-y-4">
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2"><CheckCircle2 className="size-3 text-emerald-500" /> Produtos Sugeridos</p>
-              {data?.affinity.suggestedProducts.map((prod, i) => (
-                <div key={prod.name} className="p-3 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-primary/20 transition-all">
-                  <div className="flex items-center gap-3">
-                    <div className="size-8 bg-black/40 rounded flex items-center justify-center text-[10px] font-bold text-primary">#{i+1}</div>
-                    <p className="text-xs font-bold uppercase tracking-tighter">{prod.name}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[8px] text-muted-foreground font-black uppercase">Confiança</p>
-                    <p className="text-[10px] font-black text-emerald-500">{prod.confidence}%</p>
-                  </div>
-                </div>
+              {data?.affinity.suggestedProducts.map((prod) => (
+                <BIProductCard key={prod.name} name={prod.name} confidence={prod.confidence} />
               ))}
             </div>
           </div>
         </Card>
 
+        {/* ZONA 4: Tendência Setor */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden rounded-3xl">
-          <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
+          <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8 relative z-10">
             <TrendingUp className="size-5 text-primary" /> Tendência <span className="text-primary">Setor</span>
           </h3>
           <div className="grid grid-cols-1 gap-4 relative z-10">
-            {data?.sectorTrends.map((trend, i) => (
-              <motion.div key={trend.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
-                <div className="space-y-1">
-                  <p className="text-[11px] font-black uppercase tracking-tighter">{trend.name}</p>
-                  <p className="text-[9px] text-muted-foreground font-medium">{trend.sales.toLocaleString()} vendidos / 90d</p>
-                </div>
-                <Badge className="bg-emerald-500/10 text-emerald-500 border-none font-black text-[10px]">{trend.growth}</Badge>
-              </motion.div>
+            {data?.sectorTrends.map((trend) => (
+              <BIProductCard key={trend.name} name={trend.name} sales={trend.sales} growth={trend.growth} />
             ))}
           </div>
         </Card>
       </div>
 
-      {/* Row 3: Seasonality Heatmap (Zona 5) */}
+      {/* ZONA 5: Sazonalidade Heatmap */}
       <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
         <div className="absolute bottom-0 right-0 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mb-32" />
         <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 mb-10">
@@ -251,13 +232,7 @@ export const IntelligenceZones = () => {
                   <TooltipProvider key={month}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <motion.div 
-                          className={cn(
-                            "h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm",
-                            getIntensityColor(intensity),
-                            monthIndex === currentMonth && "ring-2 ring-violet-600 ring-offset-2 ring-offset-background"
-                          )}
-                        />
+                        <motion.div className={cn("h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm", getIntensityColor(intensity), monthIndex === currentMonth && "ring-2 ring-violet-600 ring-offset-2 ring-offset-background")} />
                       </TooltipTrigger>
                       <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
                         <p className="font-black uppercase text-[10px] text-primary">{month}</p>
@@ -280,12 +255,7 @@ export const IntelligenceZones = () => {
                   <TooltipProvider key={month}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <motion.div 
-                          className={cn(
-                            "h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all",
-                            getIntensityColor(intensity)
-                          )}
-                        />
+                        <motion.div className={cn("h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all", getIntensityColor(intensity))} />
                       </TooltipTrigger>
                       <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
                         <p className="font-black uppercase text-[10px] text-primary">{month}</p>
