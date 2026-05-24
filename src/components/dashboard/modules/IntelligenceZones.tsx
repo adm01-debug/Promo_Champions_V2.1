@@ -31,6 +31,8 @@ import {
 
 export const IntelligenceZones = () => {
   const { data, isLoading } = useIntelligenceZones();
+  const { exportToPDF, isExporting } = useBIDossierExport();
+
 
   if (isLoading) {
     return (
