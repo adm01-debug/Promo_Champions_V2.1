@@ -9,17 +9,15 @@ import {
   Target, 
   CheckCircle2, 
   ArrowUpRight, 
-  ArrowDownRight, 
   Lightbulb,
   Clock,
   Package,
   Star,
-  Brain
+  Brain,
+  Info
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-
 import { 
   Tooltip,
   TooltipContent,
@@ -44,6 +42,13 @@ export const IntelligenceZones = () => {
 
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
+
+  const getIntensityColor = (value: number) => {
+    if (value >= 80) return 'bg-primary';
+    if (value >= 50) return 'bg-primary/60';
+    if (value >= 30) return 'bg-primary/30';
+    return 'bg-white/5';
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pb-10">
@@ -158,9 +163,9 @@ export const IntelligenceZones = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge variant="outline" className="text-[9px] uppercase tracking-widest bg-emerald-500/5 text-emerald-500 border-emerald-500/20">Benchmark OK</Badge>
+                  <Badge variant="outline" className="text-[9px] uppercase tracking-widest bg-emerald-500/5 text-emerald-500 border-emerald-500/20">±15% Tolerance</Badge>
                 </TooltipTrigger>
-                <TooltipContent>Métricas dentro da média do ramo (±15%)</TooltipContent>
+                <TooltipContent>Métricas comparadas com a média do ramo dentro de uma tolerância de 15%.</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
@@ -191,10 +196,7 @@ export const IntelligenceZones = () => {
                       style={{ left: '50%' }}
                     />
                   </div>
-                  <div className="flex justify-between text-[8px] text-muted-foreground uppercase font-bold tracking-tighter">
-                    <span>Cliente</span>
-                    <span>Setor: {b.sector}{b.unit}</span>
-                  </div>
+                  <p className="text-[9px] text-muted-foreground font-medium italic mt-1 leading-tight">{b.insight}</p>
                 </div>
               );
             })}
@@ -209,7 +211,7 @@ export const IntelligenceZones = () => {
 
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
-              {data?.affinity.topCategories.map((cat, i) => (
+              {data?.affinity.topCategories.map((cat) => (
                 <Badge key={cat} className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-black uppercase tracking-widest text-[9px]">
                   {cat}
                 </Badge>
@@ -273,9 +275,9 @@ export const IntelligenceZones = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 relative z-10">
           <div>
             <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 mb-2">
-              <CalendarDays className="size-6 text-primary" /> Sazonalidade <span className="text-primary">Estratégica</span>
+              <CalendarDays className="size-6 text-primary" /> Sazonalidade <span className="text-primary">Heatmap</span>
             </h3>
-            <p className="text-xs text-muted-foreground font-medium">Comparativo de volume mensal: Cliente vs Média do Setor (Janela 24 meses)</p>
+            <p className="text-xs text-muted-foreground font-medium">Heatmap 12 meses × 2 linhas: Cliente vs Média do Setor (Janela 24 meses)</p>
           </div>
           
           <div className="flex gap-4">
@@ -291,56 +293,101 @@ export const IntelligenceZones = () => {
           </div>
         </div>
 
-        <div className="space-y-8 relative z-10">
-          <div className="grid grid-cols-12 gap-2 h-48 items-end">
-            {data?.seasonality.months.map((month, i) => {
-              const clientVal = data.seasonality.clientData[i];
-              const sectorVal = data.seasonality.sectorData[i];
-              const maxVal = Math.max(...data.seasonality.clientData, ...data.seasonality.sectorData);
-              
-              return (
-                <div key={month} className="col-span-1 space-y-4 group/bar">
-                  <div className="relative h-full w-full flex gap-1 items-end justify-center">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div 
-                            initial={{ height: 0 }}
-                            animate={{ height: `${(sectorVal / maxVal) * 100}%` }}
-                            transition={{ duration: 1, delay: i * 0.05 }}
-                            className="w-1.5 bg-white/10 rounded-t-sm group-hover/bar:bg-white/20 transition-colors" 
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-card border-border/40">Setor: {sectorVal}%</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div 
-                            initial={{ height: 0 }}
-                            animate={{ height: `${(clientVal / maxVal) * 100}%` }}
-                            transition={{ duration: 1, delay: 0.2 + (i * 0.05) }}
-                            className="w-2.5 bg-primary rounded-t-sm relative shadow-[0_0_10px_rgba(var(--primary),0.3)] group-hover/bar:scale-x-125 transition-transform" 
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-primary text-primary-foreground">Cliente: {clientVal}%</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-center text-muted-foreground group-hover/bar:text-primary transition-colors">{month}</p>
-                </div>
-              );
-            })}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10">
+          <div className="lg:col-span-3 space-y-6">
+            <div className="space-y-4">
+              <div className="grid grid-cols-13 gap-2 items-center">
+                <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
+                {data?.seasonality.months.map((month, i) => (
+                  <TooltipProvider key={month}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: i * 0.05 }}
+                          className={`h-12 rounded-lg ${getIntensityColor(data.seasonality.clientIntensity[i])} cursor-help border border-white/5 hover:border-white/20 transition-all`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-black uppercase text-[10px]">{month}</p>
+                        <p className="text-xs">Intensidade Cliente: {data.seasonality.clientIntensity[i]}%</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-13 gap-2 items-center">
+                <div className="col-span-1 text-[9px] font-black text-muted-foreground uppercase">Setor</div>
+                {data?.seasonality.months.map((month, i) => (
+                  <TooltipProvider key={month}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.3 + (i * 0.05) }}
+                          className={`h-12 rounded-lg ${getIntensityColor(data.seasonality.sectorIntensity[i])} opacity-50 cursor-help border border-white/5 hover:border-white/20 transition-all`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-black uppercase text-[10px]">{month}</p>
+                        <p className="text-xs">Intensidade Setor: {data.seasonality.sectorIntensity[i]}%</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-13 gap-2">
+                <div className="col-span-1" />
+                {data?.seasonality.months.map((month) => (
+                  <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4">
+              <div className="p-3 bg-primary/20 rounded-2xl text-primary">
+                <Brain className="size-6" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-1">Insight Preditivo</h4>
+                <p className="text-xs text-card-foreground font-medium leading-relaxed max-w-3xl">
+                  {data?.seasonality.nextPeak.insight} Recomendamos antecipar estoque em <span className="font-black text-primary">25%</span> e lançar campanha de aquisição em <span className="font-black text-primary">Setembro</span>.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4">
-            <div className="p-3 bg-primary/20 rounded-2xl text-primary">
-              <Brain className="size-6" />
-            </div>
-            <div>
-              <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-1">Insight Preditivo</h4>
-              <p className="text-xs text-card-foreground font-medium leading-relaxed max-w-3xl">
-                {data?.seasonality.nextPeak.insight} Recomendamos antecipar estoque em <span className="font-black text-primary">25%</span> e lançar campanha de aquisição em <span className="font-black text-primary">Setembro</span>.
-              </p>
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
+              <Info className="size-3 text-primary" /> Top 3 Picos
+            </h4>
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                <p className="text-[9px] font-black text-primary uppercase mb-2">Cliente</p>
+                <ul className="space-y-2">
+                  {data?.seasonality.clientPeaks.map((peak, i) => (
+                    <li key={peak} className="flex items-center gap-2 text-xs font-bold">
+                      <span className="text-primary font-mono">{i+1}.</span> {peak}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 opacity-60">
+                <p className="text-[9px] font-black text-muted-foreground uppercase mb-2">Setor</p>
+                <ul className="space-y-2">
+                  {data?.seasonality.sectorPeaks.map((peak, i) => (
+                    <li key={peak} className="flex items-center gap-2 text-xs font-bold">
+                      <span className="font-mono">{i+1}.</span> {peak}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
