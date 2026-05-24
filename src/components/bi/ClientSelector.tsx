@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useClientSearch } from "@/hooks/bi/useClientSearch";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 interface ClientSelectorProps {
   onSelect: (client: { id: string; name: string; ramo_atividade: string | null }) => void;
@@ -26,7 +26,7 @@ interface ClientSelectorProps {
 export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const debouncedSearch = useDebounce(searchValue, 300);
+  const debouncedSearch = useDebouncedValue(searchValue, 300);
   
   const { data: clients, isLoading } = useClientSearch(debouncedSearch);
   const selectedClient = clients?.find((c) => c.id === selectedId);
@@ -58,7 +58,11 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
                   key={client.id}
                   value={client.name}
                   onSelect={() => {
-                    onSelect(client);
+                    onSelect({
+                      id: client.id,
+                      name: client.name,
+                      ramo_atividade: (client as any).ramo_atividade || null
+                    });
                     setOpen(false);
                   }}
                   className="flex items-center justify-between cursor-pointer"
@@ -66,7 +70,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
                   <div className="flex flex-col">
                     <span className="font-bold">{client.name}</span>
                     <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                      {client.ramo_atividade || "Sem ramo definido"}
+                      {(client as any).ramo_atividade || "Sem ramo definido"}
                     </span>
                   </div>
                   <Check
