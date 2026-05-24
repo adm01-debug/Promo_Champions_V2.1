@@ -149,7 +149,7 @@ export const useBIDossierExport = (clientId?: string, clientName?: string, ramoA
 
       doc.setFontSize(14);
       doc.text("Sugestão do Especialista", 20, (doc as any).lastAutoTable.finalY + 15);
-      const curated = biData.expertCurated.map(e => [e.name, e.reason]);
+      const curated = biData.expertCurated.map((e: any) => [e.name, e.reason]);
       (doc as any).autoTable({
         startY: (doc as any).lastAutoTable.finalY + 25,
         head: [['Produto Curadoria', 'Justificativa Estratégica']],

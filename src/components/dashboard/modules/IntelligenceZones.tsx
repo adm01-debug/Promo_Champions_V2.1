@@ -133,7 +133,7 @@ export const IntelligenceZones = () => {
             <Zap className="size-5 text-primary" /> Sugestão do <span className="text-primary">Especialista</span>
           </h3>
           <div className="space-y-4 relative z-10">
-            {data?.expertCurated.map((item, i) => (
+            {data?.expertCurated.map((item: any, i: number) => (
               <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform">
