@@ -13,6 +13,7 @@ import { EmpiricalRecommendations } from "@/components/bi/EmpiricalRecommendatio
 import { useClientBI } from "@/hooks/bi/useClientBI";
 import { useClientVsIndustry } from "@/hooks/bi/useClientVsIndustry";
 import { useIndustryTrends, useClientSeasonality } from "@/hooks/bi/useIndustryTrends";
+import { useBIDossierExport } from "@/hooks/bi/useBIDossierExport";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -23,12 +24,26 @@ export default function BusinessIntelligencePage() {
   const { data: comparison, isLoading: loadingComparison } = useClientVsIndustry(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
   const { data: trends, isLoading: loadingTrends } = useIndustryTrends(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
   const { data: seasonality, isLoading: loadingSeasonality } = useClientSeasonality(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
+  const { exportToPDF } = useBIDossierExport();
 
-  const handleExport = () => {
-    toast.info("A funcionalidade de exportação de Dossiê PDF está sendo inicializada...", {
-      description: "Aguarde a geração das 5 páginas do relatório."
+  const handleExport = async () => {
+    if (!selectedClient || !clientBI || !comparison || !trends || !seasonality) {
+      toast.error("Aguarde o carregamento completo dos dados para exportar.");
+      return;
+    }
+
+    toast.info("Gerando Dossiê PDF...", {
+      description: "Isso pode levar alguns segundos."
     });
-    // Placeholder for actual PDF generator call
+
+    await exportToPDF(
+      selectedClient.name,
+      selectedClient.ramo_atividade || "Geral",
+      clientBI,
+      comparison,
+      trends,
+      seasonality
+    );
   };
 
   return (
