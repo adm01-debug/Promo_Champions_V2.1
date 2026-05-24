@@ -20,10 +20,10 @@ const getMockZonesData = async () => {
       ]
     },
     benchmarks: [
-      { metric: 'Volume', client: 85, sector: 72, unit: 'un' },
-      { metric: 'Conversão', client: 12.4, sector: 10.8, unit: '%' },
-      { metric: 'Frequência', client: 4.2, sector: 3.5, unit: 'ped/mês' },
-      { metric: 'Satisfação', client: 92, sector: 88, unit: 'pts' },
+      { metric: 'Volume', client: 85, sector: 72, unit: 'un', insight: 'Volume 18% acima da média. Consolidar estoque.' },
+      { metric: 'Conversão', client: 12.4, sector: 10.8, unit: '%', insight: 'Eficiência superior. Manter estratégia atual.' },
+      { metric: 'Frequência', client: 4.2, sector: 3.5, unit: 'ped/mês', insight: 'Fidelidade alta. Oportunidade de up-sell.' },
+      { metric: 'Satisfação', client: 92, sector: 88, unit: 'pts', insight: 'NPS excelente vs concorrentes diretos.' },
     ],
     affinity: {
       topCategories: ['Eletrônicos', 'Periféricos', 'Office'],
@@ -41,8 +41,10 @@ const getMockZonesData = async () => {
     ],
     seasonality: {
       months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      clientData: [45, 52, 38, 65, 88, 72, 45, 55, 62, 78, 95, 110],
-      sectorData: [40, 45, 42, 58, 75, 80, 50, 60, 65, 70, 85, 120],
+      clientIntensity: [20, 30, 15, 45, 80, 70, 40, 50, 60, 70, 90, 100],
+      sectorIntensity: [30, 40, 40, 55, 70, 75, 45, 55, 60, 65, 80, 100],
+      clientPeaks: ['Dezembro', 'Novembro', 'Maio'],
+      sectorPeaks: ['Dezembro', 'Junho', 'Novembro'],
       nextPeak: { month: 'Novembro', insight: 'Aumento histórico de 22% no setor de Eletrônicos durante a Black Friday.' }
     },
     expertCurated: [
