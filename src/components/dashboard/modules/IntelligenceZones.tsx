@@ -67,10 +67,23 @@ export const IntelligenceZones = () => {
       {/* Header with real/simulated data status */}
       <div className="flex items-center justify-between px-2">
         <h2 className="text-2xl font-black uppercase italic tracking-tighter">Zonas de <span className="text-primary">Inteligência</span></h2>
-        <Badge variant={data?.isMocked ? "secondary" : "default"} className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10">
-          {data?.isMocked ? "📊 Dados Simulados (Amostra Baixa)" : "⚡ Dados em Tempo Real"}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-violet-950/20 border-violet-500/30 text-violet-400 hover:bg-violet-500 hover:text-white transition-all gap-2 rounded-xl text-[10px] font-black uppercase tracking-widest"
+            onClick={exportToPDF}
+            disabled={isExporting || !data}
+          >
+            <FileDown className="size-3" />
+            {isExporting ? "Gerando..." : "Exportar Dossiê PDF"}
+          </Button>
+          <Badge variant={data?.isMocked ? "secondary" : "default"} className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10">
+            {data?.isMocked ? "📊 Dados Simulados" : "⚡ Dados em Tempo Real"}
+          </Badge>
+        </div>
       </div>
+
 
       {/* Row 1: 360 View & Expert Suggestions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
