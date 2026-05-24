@@ -14,10 +14,14 @@ import {
   Package,
   Star,
   Brain,
-  Info
+  Info,
+  FileDown
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useBIDossierExport } from "@/hooks/dashboard/useBIDossierExport";
+
 import { 
   Tooltip,
   TooltipContent,
