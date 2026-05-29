@@ -13,7 +13,9 @@ const mockSale = {
   data: "19/05/2026",
   valor: 25000,
   ai_prediction_score: 85,
-  ai_prediction_reasoning: "Lead demonstrou alto engajamento em reuniões recentes."
+  ai_prediction_reasoning: "Lead demonstrou alto engajamento em reuniões recentes.",
+  created_at: "2026-05-19T10:00:00Z",
+  client_id: "client-uuid-123"
 };
 
 describe("SaleHUDCard", () => {

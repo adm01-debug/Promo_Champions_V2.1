@@ -130,7 +130,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
           </DialogHeader>
           <ActivityLogForm 
             saleId={sale.fullId} 
-            clientId={sale.client_id}
+            clientId={sale.client_id || ""}
             onSuccess={() => setShowLog(false)} 
           />
         </DialogContent>
