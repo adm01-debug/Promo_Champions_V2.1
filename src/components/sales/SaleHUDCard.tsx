@@ -125,6 +125,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) 
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Registrar Atividade Tática</DialogTitle>
+            <DialogHeader className="sr-only">Formulário para registrar atividades de vendas.</DialogHeader>
           </DialogHeader>
           <ActivityLogForm 
             saleId={sale.fullId} 
@@ -141,6 +142,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) 
               <BrainCircuit className="h-5 w-5 text-purple-500" />
               Inteligência Preditiva (IA)
             </DialogTitle>
+            <DialogHeader className="sr-only">Detalhes da predição de IA para esta venda.</DialogHeader>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10">
