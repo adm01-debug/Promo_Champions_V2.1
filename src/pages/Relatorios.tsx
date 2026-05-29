@@ -78,7 +78,7 @@ const Relatorios = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-card border-border" align="end">
-                  <Calendar initialFocus mode="range" defaultMonth={dateRange.from} selected={dateRange} onSelect={(range) => { setDateRange({ from: range?.from, to: range?.to }); if (range?.from && range?.to) setSelectedPeriod("custom"); }} numberOfMonths={2} locale={ptBR} className="p-3 pointer-events-auto" />
+                  <Calendar  mode="range" defaultMonth={dateRange.from} selected={dateRange} onSelect={(range) => { setDateRange({ from: range?.from, to: range?.to }); if (range?.from && range?.to) setSelectedPeriod("custom"); }} numberOfMonths={2} locale={ptBR} className="p-3 pointer-events-auto" />
                 </PopoverContent>
               </Popover>
             </div>

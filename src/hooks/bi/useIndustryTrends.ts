@@ -7,10 +7,12 @@ export const useIndustryTrends = (clientId?: string, ramoAtividade?: string) => 
     queryKey: ['bi-tool-industry-trends', clientId, ramoAtividade],
     enabled: !!ramoAtividade,
     queryFn: async () => {
+      if (!ramoAtividade) return getMockIndustryTrends();
+
       const { data: clientsInBranch } = await supabase
         .from('clients')
         .select('id')
-        .ilike('ramo_atividade', ramoAtividade || '')
+        .eq('ramo_atividade', ramoAtividade)
         .neq('id', clientId || '');
       
       const companyIds = (clientsInBranch || []).map(c => c.id);
@@ -39,11 +41,13 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
     queryKey: ['bi-tool-seasonality', clientId, ramoAtividade],
     enabled: !!clientId,
     queryFn: async () => {
-      const { data: clientsInBranch } = await supabase
-        .from('clients')
-        .select('id')
-        .ilike('ramo_atividade', ramoAtividade || '')
-        .neq('id', clientId || '');
+      const { data: clientsInBranch } = ramoAtividade 
+        ? await supabase
+            .from('clients')
+            .select('id')
+            .eq('ramo_atividade', ramoAtividade)
+            .neq('id', clientId || '')
+        : { data: [] };
       
       const companyIds = (clientsInBranch || []).map(c => c.id);
 

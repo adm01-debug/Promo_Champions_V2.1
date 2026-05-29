@@ -72,7 +72,7 @@ export const SalesReportHeader: FC<Props> = ({
                 mode="single"
                 selected={refDate}
                 onSelect={(d) => d && onDateChange(d)}
-                initialFocus
+                
                 locale={ptBR}
               />
             </PopoverContent>

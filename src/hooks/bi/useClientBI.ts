@@ -19,7 +19,7 @@ export const useClientBI = (clientId?: string, ramoAtividade?: string) => {
         supabase.rpc('get_client_seasonality', { _client_id: clientId, _months: 24 })
       ]);
 
-      const clientProducts = clientProductsRes || [];
+      const clientProducts = (clientProductsRes || []) as any[];
       const clientSeasonality = (clientSeasonalityRes || []) as any[];
       const hasEnoughData = clientSeasonality.length >= 3;
       const finalSeasonality = hasEnoughData ? clientSeasonality : getMockSeasonality(clientId);

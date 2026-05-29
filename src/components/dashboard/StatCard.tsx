@@ -130,13 +130,13 @@ export const StatCard = React.memo(({
       <CardContent className={cn("relative z-10 p-4 sm:p-5", hero && "sm:p-7")}>
         <div className="flex items-start justify-between">
           <div className={cn("space-y-1 sm:space-y-2 flex-1 min-w-0", hero && "space-y-2 sm:space-y-3")}>
-            <p className={cn(
+            <div className={cn(
               "text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground/80 transition-colors",
               hero && "text-xs sm:text-sm"
             )}>
               {title}
-            </p>
-            <p className={cn(
+            </div>
+            <div className={cn(
               "text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter truncate",
               hero && "text-2xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-2 sm:py-4 lg:py-6 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500 truncate",
               !hero && variant === "primary" && "text-primary",
@@ -172,7 +172,7 @@ export const StatCard = React.memo(({
                   </TooltipProvider>
                 </div>
               )}
-            </p>
+            </div>
             {change !== undefined && (
               <div className="flex items-center gap-2">
                 <span className={cn(

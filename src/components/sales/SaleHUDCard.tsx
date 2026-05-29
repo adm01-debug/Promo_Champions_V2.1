@@ -1,9 +1,10 @@
 import { useState, memo } from "react";
 import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail } from "lucide-react";
+import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
 import { WhatsAppDialog } from "@/components/sales/WhatsAppDialog";
@@ -17,7 +18,7 @@ const statusColors: Record<string, string> = {
   negotiation: "bg-accent/20 text-accent border-accent/30",
 };
 
-export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) => {
+export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number }) => {
   const [showLog, setShowLog] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
   const [showAIEmail, setShowAIEmail] = useState(false);
@@ -125,10 +126,11 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) 
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Registrar Atividade Tática</DialogTitle>
+            <DialogDescription className="sr-only">Formulário para registrar atividades de vendas.</DialogDescription>
           </DialogHeader>
           <ActivityLogForm 
             saleId={sale.fullId} 
-            clientId={sale.client_id}
+            clientId={sale.client_id || ""}
             onSuccess={() => setShowLog(false)} 
           />
         </DialogContent>
@@ -141,6 +143,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) 
               <BrainCircuit className="h-5 w-5 text-purple-500" />
               Inteligência Preditiva (IA)
             </DialogTitle>
+            <DialogDescription className="sr-only">Detalhes da predição de IA para esta venda.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10">
