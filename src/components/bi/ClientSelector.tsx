@@ -26,10 +26,11 @@ interface ClientSelectorProps {
 export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedClientName, setSelectedClientName] = useState<string>("");
   const debouncedSearch = useDebouncedValue(searchValue, 300);
   
   const { data: clients, isLoading } = useClientSearch(debouncedSearch);
-  const selectedClient = clients?.find((c) => c.id === selectedId);
+  const foundClient = clients?.find((c) => c.id === selectedId);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,7 +41,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
           aria-expanded={open}
           className="w-full justify-between bg-white/5 border-white/10 hover:bg-white/10 text-foreground"
         >
-          {selectedClient ? selectedClient.name : "Selecionar cliente para análise..."}
+          {foundClient?.name || selectedClientName || "Selecionar cliente para análise..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -58,6 +59,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
                   key={client.id}
                   value={client.name}
                   onSelect={() => {
+                    setSelectedClientName(client.name);
                     onSelect({
                       id: client.id,
                       name: client.name,
