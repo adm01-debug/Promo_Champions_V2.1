@@ -1,5 +1,6 @@
 import { useState, memo } from "react";
 import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail } from "lucide-react";
+import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ const statusColors: Record<string, string> = {
   negotiation: "bg-accent/20 text-accent border-accent/30",
 };
 
-export const SaleHUDCard = memo(({ sale, index }: { sale: any; index: number }) => {
+export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number }) => {
   const [showLog, setShowLog] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
   const [showAIEmail, setShowAIEmail] = useState(false);
