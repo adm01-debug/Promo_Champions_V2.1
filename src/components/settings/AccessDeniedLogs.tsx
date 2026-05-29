@@ -116,7 +116,7 @@ export function AccessDeniedLogs() {
                 <CalendarIcon className="mr-2 h-4 w-4" />{dateFrom ? format(dateFrom, "dd/MM/yyyy") : "Data inicial"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} locale={ptBR} initialFocus /></PopoverContent>
+            <PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} locale={ptBR}  /></PopoverContent>
           </Popover>
           <Popover>
             <PopoverTrigger asChild>
@@ -124,7 +124,7 @@ export function AccessDeniedLogs() {
                 <CalendarIcon className="mr-2 h-4 w-4" />{dateTo ? format(dateTo, "dd/MM/yyyy") : "Data final"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={dateTo} onSelect={setDateTo} locale={ptBR} initialFocus /></PopoverContent>
+            <PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={dateTo} onSelect={setDateTo} locale={ptBR}  /></PopoverContent>
           </Popover>
           {hasActiveFilters && <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground"><X className="h-4 w-4 mr-1" />Limpar</Button>}
         </div>
