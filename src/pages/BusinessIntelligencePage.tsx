@@ -19,6 +19,7 @@ import { toast } from "sonner";
 
 export default function BusinessIntelligencePage() {
   const [selectedClient, setSelectedClient] = useState<{ id: string; name: string; ramo_atividade: string | null } | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data: clientBI, isLoading: loadingBI } = useClientBI(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
   const { data: comparison, isLoading: loadingComparison } = useClientVsIndustry(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
@@ -32,18 +33,26 @@ export default function BusinessIntelligencePage() {
       return;
     }
 
+    setIsExporting(true);
     toast.info("Gerando Dossiê PDF...", {
       description: "Isso pode levar alguns segundos."
     });
 
-    await exportToPDF(
-      selectedClient.name,
-      selectedClient.ramo_atividade || "Geral",
-      clientBI,
-      comparison,
-      trends,
-      seasonality
-    );
+    try {
+      await exportToPDF(
+        selectedClient.name,
+        selectedClient.ramo_atividade || "Geral",
+        clientBI,
+        comparison,
+        trends,
+        seasonality
+      );
+    } catch (error) {
+      console.error("PDF Export Error:", error);
+      toast.error("Erro ao gerar PDF. Tente novamente.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -69,7 +78,7 @@ export default function BusinessIntelligencePage() {
             </motion.div>
 
             {selectedClient && (
-              <ExportDossierButton onClick={handleExport} />
+              <ExportDossierButton onClick={handleExport} isLoading={isExporting} />
             )}
           </div>
 

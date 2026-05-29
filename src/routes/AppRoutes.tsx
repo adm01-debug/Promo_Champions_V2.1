@@ -207,7 +207,7 @@ export function AppRoutes() {
                       <Route path="/revops" element={<Manager><RevOpsHub /></Manager>} />
                       <Route path="/inteligencia" element={<Intelligence />} />
                       <Route path="/funil" element={<FunnelAnalysis />} />
-                      <Route path="/ferramentas/bi" element={<BusinessIntelligencePage />} />
+                      <Route path="/ferramentas/bi" element={<Manager><BusinessIntelligencePage /></Manager>} />
                       <Route path="/relatorios/vendas" element={<ProtectedRoute><SalesReportPage /></ProtectedRoute>} />
                       <Route path="/relatorios/funil" element={<Manager><FunnelReport /></Manager>} />
                       <Route path="/relatorios/cohort" element={<Manager><CohortReport /></Manager>} />
