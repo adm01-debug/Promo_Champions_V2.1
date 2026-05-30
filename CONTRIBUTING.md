@@ -1,54 +1,72 @@
-# Contributing to SalesPro
+# Contribuindo com Promo Champions v2
 
-Thank you for your interest in contributing! 🎉
+Obrigado pelo interesse em contribuir! 🏆
 
-## Development Setup
+## Setup de Desenvolvimento
 
-1. Fork the repository
-2. Clone your fork
-3. Install dependencies: \`npm install\`
-4. Create a branch: \`git checkout -b feature/my-feature\`
-5. Make your changes
-6. Run tests: \`npm test\`
-7. Commit: \`git commit -m "feat: add awesome feature"\`
-8. Push: \`git push origin feature/my-feature\`
-9. Open a Pull Request
+1. Fork o repositório
+2. Clone seu fork: `git clone https://github.com/SEU_USER/promo-champions-v2.git`
+3. Instale dependências: `bun install` (recomendado) ou `npm install`
+4. Configure variáveis: `cp .env.example .env` (preencha credenciais Supabase)
+5. Inicie Supabase local: `supabase start`
+6. Crie uma branch: `git checkout -b feature/minha-feature`
+7. Faça suas alterações
+8. Execute testes: `bun test`
+9. Commit seguindo Conventional Commits com scopes do projeto
+10. Push: `git push origin feature/minha-feature`
+11. Abra um Pull Request
 
-## Commit Convention
+## Convenção de Commits
 
-We use Conventional Commits:
+Usamos [Conventional Commits](https://www.conventionalcommits.org/) com scopes customizados:
 
-- \`feat:\` - New feature
-- \`fix:\` - Bug fix
-- \`docs:\` - Documentation changes
-- \`style:\` - Code style changes
-- \`refactor:\` - Code refactoring
-- \`test:\` - Test changes
-- \`chore:\` - Build/config changes
+**Tipos:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`
 
-## Code Style
+**Scopes:** `auth`, `bi`, `crm`, `gamification`, `ui`, `hooks`, `services`, `db`, `config`, `deps`
 
-- TypeScript strict mode
-- ESLint + Prettier
-- Component naming: PascalCase
-- Hook naming: camelCase with 'use' prefix
-- File naming: kebab-case
+Exemplo: `fix(bi): corrigir classificação ABC com receita zero`
 
-## Testing
+## Estilo de Código
 
-- Unit tests: Vitest
-- E2E tests: Playwright
-- Coverage target: >80%
+- **TypeScript** modo estrito (`noImplicitAny`, `noUncheckedIndexedAccess`)
+- **ESLint** + **Prettier** (formatar antes de commitar)
+- **Tailwind-first**: sempre prefira classes Tailwind, evite `style={{}}` inline
+- **Componentes**: `PascalCase` com `displayName` e `forwardRef`
+- **Hooks**: `camelCase` com prefixo `use`
+- **Arquivos**: `kebab-case` para utilitários, `PascalCase` para componentes
+- **TODO/FIXME**: `// TODO(@user): #issue-id — descrição`
+- Veja [docs/style-guide.md](./docs/style-guide.md) e [docs/component-guidelines.md](./docs/component-guidelines.md)
 
-## Pull Request Process
+## Testes
 
-1. Update documentation
-2. Add tests for new features
-3. Ensure all tests pass
-4. Request review from maintainers
-5. Address review feedback
-6. Squash commits before merge
+- **Unitários**: Vitest (`bun test`)
+- **E2E**: Playwright (`bun test:e2e`)
+- **Cobertura**: mínimo 70% linhas, 60% branches
+- Adicione testes para novas features e correções de bugs
 
-## Questions?
+## Processo de Pull Request
 
-Open an issue or join our Discord.
+1. Atualize documentação se necessário
+2. Adicione testes para novas funcionalidades
+3. Garanta que todos os testes passam
+4. Solicite review dos maintainers
+5. Responda ao feedback
+6. Squash commits antes do merge
+
+## Arquitetura
+
+```
+src/
+├── components/   # UI + gamification (shadcn/ui + custom)
+├── contexts/     # Auth, Audio, Theme
+├── hooks/        # useAbortController, useMountedRef, etc.
+├── lib/          # gamification, bi-helpers, utils
+├── pages/        # Lazy-loaded route pages
+├── routes/       # AppRoutes + lazyPages com prefetch
+├── services/     # Camada Supabase (activity, bi, goals, etc.)
+└── types/        # Definições TypeScript
+```
+
+## Dúvidas?
+
+Abra uma issue ou entre em contato com a equipe.
