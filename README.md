@@ -1,123 +1,101 @@
-# Sales CRM - Sistema de Gestão de Vendas
+# 🏆 Promo Champions v2 — Sales Performance Platform
 
+Plataforma gamificada de CRM, BI e inteligência de vendas para equipes comerciais.
 
-## 🔗 Links Rápidos
+## 🚀 Quick Start
 
-- 📋 [Issues](https://github.com/adm01-debug/salespro/issues) - Bugs e features
-- 🎯 [Milestones](https://github.com/adm01-debug/salespro/milestones) - Roadmap
-- 📊 [Projects](https://github.com/adm01-debug/salespro/projects) - Kanban board
-- 📝 [Pull Requests](https://github.com/adm01-debug/salespro/pulls) - Code review
-- 🏷️ [Labels](https://github.com/adm01-debug/salespro/labels) - Categorização
+### Pré-requisitos
+- **Node.js** 18+ ou **Bun** 1.0+
+- **Supabase** (local ou cloud)
 
----
-
-## 📚 Documentação
-
-- [CONTRIBUTING.md](./CONTRIBUTING.md) - Como contribuir
-- [ARCHITECTURE.md](./docs/ARCHITECTURE.md) - Arquitetura do projeto
-- [CHANGELOG.md](./CHANGELOG.md) - Histórico de mudanças
-- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Código de conduta
-- [SECURITY.md](./SECURITY.md) - Política de segurança
-- [AUDIT_REPORT.md](./AUDIT_REPORT.md) - **Relatório de Auditoria Enterprise** ([PDF aqui](./AUDIT_REPORT.pdf))
-
----
-
-![E2E Tests](https://github.com/adm01-debug/salespro/actions/workflows/e2e-tests.yml/badge.svg)
-![PR Checks](https://github.com/adm01-debug/salespro/actions/workflows/pr-checks.yml/badge.svg)
-
-Sistema completo de CRM para equipes de vendas com SDRs e Closers, incluindo pipeline visual, gamificação, analytics avançados e IA para coaching.
-
-## Features
-
-- 📊 **Dashboard** - KPIs em tempo real, métricas de vendas, forecasts
-- 🎯 **Pipeline Kanban** - Drag-and-drop para gestão de deals
-- 🏆 **Gamificação** - Rankings competitivos, streaks, achievements
-- 📈 **Analytics** - Win/Loss analysis, velocidade de deals, conversão
-- 🤖 **IA Coaching** - Análise de performance e recomendações
-- 📋 **Playbooks** - Checklists por estágio do funil
-- 🔔 **Alertas** - Notificações de deals em risco e metas
-- 👥 **Roles** - Admin, Manager, Salesperson com RLS
-
-## Tech Stack
-
-- **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
-- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
-- **Testing**: Vitest (unit), Playwright (E2E)
-- **CI/CD**: GitHub Actions
-
-## Quick Start
+### Setup
 
 ```bash
-# Clone o repositório
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
+# 1. Clone o repositório
+git clone https://github.com/adm01-debug/promo-champions-v2.git
+cd promo-champions-v2
 
-# Instale dependências
+# 2. Instale as dependências (escolha um)
 npm install
+# ou
+bun install
 
-# Inicie o servidor de desenvolvimento
+# 3. Configure variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas credenciais do Supabase
+
+# 4. Inicie o Supabase local (opcional)
+supabase start
+
+# 5. Rode as migrações
+supabase db push
+
+# 6. Inicie o dev server
 npm run dev
+# ou
+bun run dev
 ```
 
-## Testing
+Acesse: **http://localhost:5173**
+
+## 🧪 Testes
 
 ```bash
-# Testes unitários
-npm test
+# Unit tests (Vitest)
+npm run test
 
-# Testes E2E
-npx playwright install chromium
-npx playwright test
+# E2E tests (Playwright)
+npm run test:e2e
 
-# Com interface visual
-npx playwright test --ui
+# Coverage report
+npm run test:coverage
 ```
 
-## Segurança
+## 📦 Stack
 
-O sistema implementa Row Level Security (RLS) com três níveis de acesso:
+| Categoria | Tecnologia |
+|-----------|-----------|
+| Frontend | React 18 + TypeScript + Vite |
+| UI | Tailwind CSS + shadcn/ui + Radix UI |
+| State | TanStack Query + React Context |
+| Backend | Supabase (PostgreSQL + Auth) |
+| Testing | Vitest + Playwright |
+| CI/Lint | ESLint + Prettier + Husky + Lighthouse CI |
 
-| Permissão | Salesperson | Manager | Admin |
-|-----------|-------------|---------|-------|
-| Ver dashboard | ✅ | ✅ | ✅ |
-| Ver rankings | ✅ | ✅ | ✅ |
-| Criar clientes | ❌ | ✅ | ✅ |
-| Criar produtos | ❌ | ✅ | ✅ |
-| Gerenciar roles | ❌ | ❌ | ✅ |
-| Ver logs de segurança | ❌ | ✅ | ✅ |
-
-## Estrutura do Projeto
+## 📁 Estrutura
 
 ```
 src/
-├── components/     # Componentes React
-│   ├── ui/         # shadcn/ui components
-│   ├── dashboard/  # Dashboard widgets
-│   ├── pipeline/   # Kanban pipeline
-│   └── ...
-├── hooks/          # React Query hooks
-├── pages/          # Páginas da aplicação
-├── contexts/       # React contexts (Auth)
-└── integrations/   # Supabase client
+├── components/    # UI + gamification components
+├── contexts/      # React contexts (Auth, Audio)
+├── hooks/         # Custom hooks
+├── lib/           # Utilities, BI helpers, gamification
+├── pages/         # Route pages (lazy loaded)
+├── routes/        # AppRoutes + lazyPages
+├── services/      # Supabase service layer
+├── types/         # TypeScript types
+└── utils/         # Helper functions
 
-e2e/                # Testes E2E Playwright
 supabase/
-├── functions/      # Edge Functions
-└── migrations/     # Database migrations
+└── migrations/    # Database migrations
+
+tests/
+├── e2e/           # Playwright tests
+└── load/          # Load tests
 ```
 
-## Documentação
+## 🔒 Segurança
 
-- [Design System](docs/DESIGN_SYSTEM.md)
-- [Hover Utilities](docs/HOVER_UTILITIES.md)
-- [E2E Tests](e2e/README.md)
-- [GitHub Actions](.github/workflows/README.md)
+- Todas as tabelas possuem **Row Level Security (RLS)**
+- **Nunca** commite o arquivo `.env`
+- Rotacione as chaves do Supabase periodicamente
 
-## Deployment
+## 🤝 Contribuindo
 
-1. Clique em **Share → Publish** no Lovable
-2. Ou conecte ao GitHub e use o CI/CD configurado
+Veja [CONTRIBUTING.md](./CONTRIBUTING.md) e [docs/style-guide.md](./docs/style-guide.md).
 
-## License
+Commits seguem [Conventional Commits](https://www.conventionalcommits.org/) com scopes: `auth`, `bi`, `crm`, `gamification`, `ui`, `hooks`, `services`, `db`, `config`, `deps`.
 
-MIT
+## 📄 Licença
+
+MIT © Promo Brindes
