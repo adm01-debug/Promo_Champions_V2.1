@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isOpenSaleStatus, isWonSaleStatus } from '@/constants';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export type NextActionPriority = 'high' | 'medium' | 'low';
 export type NextActionCategory = 'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
@@ -88,7 +89,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   const allActivities = activities || [];
   const suggestions: NextBestAction[] = [];
   const now = Date.now();
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayIso = getLocalISODate();
 
   const stagnantDeals = allSales.filter(s => {
     if (!isOpenSaleStatus(s.status)) return false;

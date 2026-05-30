@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ActivityRecord, ActivityStats, ActivityType, ActivityOutcome } from '@/types/activity';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export const activityService = {
   async getActivities(filters?: { userId?: string; clientId?: string }): Promise<ActivityRecord[]> {
@@ -25,7 +26,7 @@ export const activityService = {
   },
 
   async getActivityStats(salespersonId?: string): Promise<ActivityStats> {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalISODate();
 
     // Fetch all activities with type/outcome for aggregation (bounded by 2000)
     let allQuery = supabase
@@ -36,21 +37,10 @@ export const activityService = {
     const { data: allData, error: allError } = await allQuery;
     if (allError) throw allError;
 
-    // Fetch today-only count
-    let todayQuery = supabase
-      .from('activities')
-      .select('activity_type, outcome')
-      .gte('created_at', today)
-      .limit(2000);
-    if (salespersonId) todayQuery = todayQuery.eq('salesperson_id', salespersonId);
-    const { data: todayData, error: todayError } = await todayQuery;
-    if (todayError) throw todayError;
-
     const activities = (allData || []) as ActivityRecord[];
-    const todayActivities = (todayData || []) as Pick<
-      ActivityRecord,
-      'activity_type' | 'outcome'
-    >[];
+    const todayActivities = activities.filter(
+      a => a.created_at.slice(0, 10) === today
+    ) as Pick<ActivityRecord, 'activity_type' | 'outcome'>[];
 
     const byType: Record<ActivityType, number> = {
       call: 0,

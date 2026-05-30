@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek } from 'date-fns';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface WeeklyMatchup {
   id: string;
@@ -22,21 +23,31 @@ export function useWeeklyMatchups() {
 
       const { data, error } = await supabase
         .from('weekly_matchups')
-        .select(`
+        .select(
+          `
           *,
           sp_a:salesperson_a_id(id, name, avatar_url),
           sp_b:salesperson_b_id(id, name, avatar_url)
-        `)
-        .gte('week_start', weekStart.toISOString().split('T')[0])
+        `
+        )
+        .gte('week_start', getLocalISODate(weekStart))
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
       type SpRef = { id: string; name: string; avatar_url: string | null };
-      return (data || []).map((m) => ({
+      return (data || []).map(m => ({
         id: m.id,
-        salesperson_a: (m.sp_a as unknown as SpRef) || { id: m.salesperson_a_id, name: 'Vendedor A', avatar_url: null },
-        salesperson_b: (m.sp_b as unknown as SpRef) || { id: m.salesperson_b_id, name: 'Vendedor B', avatar_url: null },
+        salesperson_a: (m.sp_a as unknown as SpRef) || {
+          id: m.salesperson_a_id,
+          name: 'Vendedor A',
+          avatar_url: null,
+        },
+        salesperson_b: (m.sp_b as unknown as SpRef) || {
+          id: m.salesperson_b_id,
+          name: 'Vendedor B',
+          avatar_url: null,
+        },
         score_a: Number(m.score_a) || 0,
         score_b: Number(m.score_b) || 0,
         winner_id: m.winner_id,

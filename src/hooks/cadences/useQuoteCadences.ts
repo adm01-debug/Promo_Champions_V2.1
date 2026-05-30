@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface QuoteCadenceRow {
   id: string;
@@ -25,19 +26,21 @@ export interface QuoteCadenceRow {
 
 export function useQuoteCadences(quoteId?: string) {
   return useQuery({
-    queryKey: ["quote-cadences", quoteId ?? "all"],
+    queryKey: ['quote-cadences', quoteId ?? 'all'],
     queryFn: async () => {
       let query = supabase
-        .from("prospect_cadences")
-        .select(`
+        .from('prospect_cadences')
+        .select(
+          `
           id, quote_id, cadence_id, status, current_step, next_action_date, started_at, completed_at,
           cadence:cadences(name, cadence_type),
           quote:quotes(id, client_name, total_value, status, sent_at, seller_name, quote_number)
-        `)
-        .not("quote_id", "is", null)
-        .order("started_at", { ascending: false });
+        `
+        )
+        .not('quote_id', 'is', null)
+        .order('started_at', { ascending: false });
 
-      if (quoteId) query = query.eq("quote_id", quoteId);
+      if (quoteId) query = query.eq('quote_id', quoteId);
 
       const { data, error } = await query;
       if (error) throw error;
@@ -48,39 +51,44 @@ export function useQuoteCadences(quoteId?: string) {
 
 export function useQuoteCadenceStats() {
   return useQuery({
-    queryKey: ["quote-cadence-stats"],
+    queryKey: ['quote-cadence-stats'],
     queryFn: async () => {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = getLocalISODate();
 
-      const [{ count: active }, { count: completedTasksToday }, { data: convertedRows }, { count: overdue }] = await Promise.all([
+      const [
+        { count: active },
+        { count: completedTasksToday },
+        { data: convertedRows },
+        { count: overdue },
+      ] = await Promise.all([
         supabase
-          .from("prospect_cadences")
-          .select("id", { count: "exact", head: true })
-          .not("quote_id", "is", null)
-          .eq("status", "active"),
+          .from('prospect_cadences')
+          .select('id', { count: 'exact', head: true })
+          .not('quote_id', 'is', null)
+          .eq('status', 'active'),
         supabase
-          .from("cadence_tasks")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "completed")
-          .gte("completed_at", `${today}T00:00:00`)
-          .lte("completed_at", `${today}T23:59:59`),
+          .from('cadence_tasks')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'completed')
+          .gte('completed_at', `${today}T00:00:00`)
+          .lte('completed_at', `${today}T23:59:59`),
         supabase
-          .from("prospect_cadences")
-          .select("id, quote:quotes(status)")
-          .not("quote_id", "is", null)
-          .in("status", ["completed", "cancelled"]),
+          .from('prospect_cadences')
+          .select('id, quote:quotes(status)')
+          .not('quote_id', 'is', null)
+          .in('status', ['completed', 'cancelled']),
         supabase
-          .from("prospect_cadences")
-          .select("id", { count: "exact", head: true })
-          .not("quote_id", "is", null)
-          .eq("status", "active")
-          .lt("next_action_date", today),
+          .from('prospect_cadences')
+          .select('id', { count: 'exact', head: true })
+          .not('quote_id', 'is', null)
+          .eq('status', 'active')
+          .lt('next_action_date', today),
       ]);
 
       const finished = convertedRows ?? [];
-      const won = finished.filter((r) => {
+      const won = finished.filter(r => {
         const q = r.quote as { status?: string } | null;
-        return q?.status === "approved";
+        return q?.status === 'approved';
       }).length;
       const conversionRate = finished.length > 0 ? Math.round((won / finished.length) * 100) : 0;
 
@@ -100,7 +108,7 @@ export function useEnrollQuoteInCadence() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { quote_id: string; cadence_id: string }) => {
-      const { data, error } = await supabase.rpc("enroll_quote_in_cadence", {
+      const { data, error } = await supabase.rpc('enroll_quote_in_cadence', {
         _quote_id: input.quote_id,
         _cadence_id: input.cadence_id,
       });
@@ -108,16 +116,16 @@ export function useEnrollQuoteInCadence() {
       return data as string;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quote-cadences"] });
-      queryClient.invalidateQueries({ queryKey: ["quote-cadence-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
-      toast.success("Follow-up de orçamento iniciado!");
+      queryClient.invalidateQueries({ queryKey: ['quote-cadences'] });
+      queryClient.invalidateQueries({ queryKey: ['quote-cadence-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['todays-cadence-tasks'] });
+      toast.success('Follow-up de orçamento iniciado!');
     },
     onError: (err: Error & { code?: string }) => {
-      if (err.code === "23505") {
-        toast.error("Este orçamento já está em uma cadência ativa");
+      if (err.code === '23505') {
+        toast.error('Este orçamento já está em uma cadência ativa');
       } else {
-        toast.error("Erro ao iniciar follow-up");
+        toast.error('Erro ao iniciar follow-up');
         console.error(err);
       }
     },

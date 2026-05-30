@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Json } from '@/integrations/supabase/types';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 // Extended achievement type matching database schema
 export interface AchievementRecord {
@@ -60,16 +61,18 @@ export const useAchievements = (limit?: number) => {
     queryFn: async (): Promise<AchievementRecord[]> => {
       let query = supabase
         .from('achievements')
-        .select(`
+        .select(
+          `
           *,
           salesperson:salespeople(id, name, avatar_url, role)
-        `)
+        `
+        )
         .order('achievement_date', { ascending: false });
-      
+
       if (limit) {
         query = query.limit(limit);
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
       return (data || []) as AchievementRecord[];
@@ -88,11 +91,11 @@ export const useStreakRanking = () => {
         .from('salespeople')
         .select('id, name, avatar_url, role')
         .eq('is_active', true);
-      
+
       if (spError) throw spError;
-      
+
       const rankings: StreakRanking[] = [];
-      
+
       for (const sp of salespeople || []) {
         const { data: achievements } = await supabase
           .from('achievements')
@@ -100,16 +103,16 @@ export const useStreakRanking = () => {
           .eq('salesperson_id', sp.id)
           .eq('achievement_type', 'daily_goal')
           .order('achievement_date', { ascending: false });
-        
+
         // Calculate current and best streak
         let currentStreak = 0;
         let bestStreak = 0;
-        
+
         if (achievements && achievements.length > 0) {
           currentStreak = achievements.length > 0 ? 1 : 0;
           bestStreak = achievements.length;
         }
-        
+
         rankings.push({
           salesperson_id: sp.id,
           salesperson_name: sp.name,
@@ -125,11 +128,13 @@ export const useStreakRanking = () => {
           totalGoalsAchieved: achievements?.length || 0,
         });
       }
-      
+
       // Sort by current streak and assign ranks
       rankings.sort((a, b) => b.current_streak - a.current_streak);
-      rankings.forEach((r, i) => { r.rank = i + 1; });
-      
+      rankings.forEach((r, i) => {
+        r.rank = i + 1;
+      });
+
       return rankings;
     },
     staleTime: 5 * 60 * 1000, // Optimize: Ranking doesn't need to be hyper-reactive
@@ -145,18 +150,18 @@ export const useSalespersonStreak = (salespersonId?: string) => {
       if (!salespersonId) {
         return { current: 0, best: 0, lastAchievementDate: null };
       }
-      
+
       const { data: achievements } = await supabase
         .from('achievements')
         .select('achievement_date')
         .eq('salesperson_id', salespersonId)
         .eq('achievement_type', 'daily_goal')
         .order('achievement_date', { ascending: false });
-      
+
       const current = achievements?.length || 0;
       const best = achievements?.length || 0;
       const lastAchievementDate = achievements?.[0]?.achievement_date || null;
-      
+
       return { current, best, lastAchievementDate };
     },
     staleTime: 60 * 1000,
@@ -166,15 +171,19 @@ export const useSalespersonStreak = (salespersonId?: string) => {
 
 export const useRecordAchievement = () => {
   const queryClient = useQueryClient();
-  
-  return useMutation<RecordAchievementResult, Error, {
-    salespersonId: string;
-    achievementType: string;
-    details?: Record<string, unknown>;
-  }>({
+
+  return useMutation<
+    RecordAchievementResult,
+    Error,
+    {
+      salespersonId: string;
+      achievementType: string;
+      details?: Record<string, unknown>;
+    }
+  >({
     mutationFn: async ({ salespersonId, achievementType, details }) => {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = getLocalISODate();
+
       // Check if already recorded today
       const { data: existing } = await supabase
         .from('achievements')
@@ -183,23 +192,21 @@ export const useRecordAchievement = () => {
         .eq('achievement_type', achievementType)
         .eq('achievement_date', today)
         .single();
-      
+
       if (existing) {
         return { success: true };
       }
-      
+
       // Record the achievement
-      const { error } = await supabase
-        .from('achievements')
-        .insert({
-          salesperson_id: salespersonId,
-          achievement_type: achievementType,
-          achievement_date: today,
-          details: (details || null) as Json,
-        });
-      
+      const { error } = await supabase.from('achievements').insert({
+        salesperson_id: salespersonId,
+        achievement_type: achievementType,
+        achievement_date: today,
+        details: (details || null) as Json,
+      });
+
       if (error) throw error;
-      
+
       // Check for streak milestones
       const { data: allAchievements } = await supabase
         .from('achievements')
@@ -207,23 +214,21 @@ export const useRecordAchievement = () => {
         .eq('salesperson_id', salespersonId)
         .eq('achievement_type', 'daily_goal')
         .order('achievement_date', { ascending: false });
-      
+
       const streakCount = allAchievements?.length || 1;
       const streakMilestones = [3, 5, 7, 10, 15, 20, 30, 50, 100];
       const streakMilestone = streakMilestones.includes(streakCount) ? streakCount : undefined;
-      
+
       // Record streak achievement if milestone
       if (streakMilestone) {
-        await supabase
-          .from('achievements')
-          .insert({
-            salesperson_id: salespersonId,
-            achievement_type: `streak_${streakMilestone}`,
-            achievement_date: today,
-            details: { streak_count: streakMilestone } as Json,
-          });
+        await supabase.from('achievements').insert({
+          salesperson_id: salespersonId,
+          achievement_type: `streak_${streakMilestone}`,
+          achievement_date: today,
+          details: { streak_count: streakMilestone } as Json,
+        });
       }
-      
+
       return {
         success: true,
         streakMilestone,

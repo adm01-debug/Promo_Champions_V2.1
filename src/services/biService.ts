@@ -255,7 +255,7 @@ export const biService = {
     );
     const activitiesByType = helpers.computeActivitiesByType(activities);
 
-    const todayActivities = activities.filter(a => a.created_at?.slice(0, 10) === today).length;
+    const todayActivities = activities.filter(a => a.created_at && format(new Date(a.created_at), 'yyyy-MM-dd') === today).length;
     const totalGoalToday = activityGoals
       ? activityGoals.calls_goal +
         activityGoals.emails_goal +

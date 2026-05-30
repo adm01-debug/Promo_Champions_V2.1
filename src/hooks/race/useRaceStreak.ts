@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface RaceStreak {
   streakDays: number;
@@ -18,7 +19,7 @@ interface Params {
 }
 
 function toDayKey(iso: string): string {
-  return new Date(iso).toISOString().slice(0, 10);
+  return getLocalISODate(new Date(iso));
 }
 
 function computeStreak(saleDates: string[]): number {
@@ -27,15 +28,15 @@ function computeStreak(saleDates: string[]): number {
   let streak = 0;
   const cursor = new Date();
   // Allow grace: if no sale today, start from yesterday
-  let startKey = cursor.toISOString().slice(0, 10);
+  let startKey = getLocalISODate(cursor);
   if (!days.has(startKey)) {
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
-    startKey = cursor.toISOString().slice(0, 10);
+    cursor.setDate(cursor.getDate() - 1);
+    startKey = getLocalISODate(cursor);
     if (!days.has(startKey)) return 0;
   }
-  while (days.has(cursor.toISOString().slice(0, 10))) {
+  while (days.has(getLocalISODate(cursor))) {
     streak += 1;
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    cursor.setDate(cursor.getDate() - 1);
   }
   return streak;
 }
