@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef, ReactNode, useMemo } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode, useMemo, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -32,8 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const fetchedRef = useRef<string | null>(null);
 
-  const fetchSalesperson = async (authUserId: string, force = false) => {
-    // Prevent duplicate fetches for same user unless forced
+  const fetchSalesperson = useCallback(async (authUserId: string, force = false) => {
     if (!force && fetchedRef.current === authUserId) return;
     fetchedRef.current = authUserId;
 
@@ -46,20 +45,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error && data) {
       setSalesperson(data);
     } else {
-      if (!force) fetchedRef.current = null; // Allow retry on error if not forced
+      if (!force) fetchedRef.current = null;
     }
-  };
+  }, []);
 
-  const refreshSalesperson = async () => {
+  const refreshSalesperson = useCallback(async () => {
     if (user?.id) {
       await fetchSalesperson(user.id, true);
     }
-  };
+  }, [user, fetchSalesperson]);
 
   useEffect(() => {
     let mounted = true;
 
-    // Initialize session once
     const initSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!mounted) return;
@@ -94,21 +92,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchSalesperson]);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setSalesperson(null);
     setUser(null);
     setSession(null);
     fetchedRef.current = null;
     window.location.href = "/auth";
-  };
+  }, []);
 
   const value = useMemo(() => ({ 
     user, 
@@ -118,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshSalesperson, 
     signIn, 
     signOut 
-  }), [user, session, salesperson, isLoading]);
+  }), [user, session, salesperson, isLoading, refreshSalesperson, signIn, signOut]);
 
   return (
     <AuthContext.Provider value={value}>
