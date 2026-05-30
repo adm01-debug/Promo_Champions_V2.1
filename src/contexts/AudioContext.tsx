@@ -1,67 +1,64 @@
-import React, { createContext, useContext, useRef, useCallback } from "react";
+import React, { createContext, useContext, useCallback, useRef, useMemo } from 'react';
 
 interface AudioContextType {
-  playOscillator: (freq: number, startTime: number, duration: number, volume: number, type?: OscillatorType) => void;
+  playOscillator: (type: OscillatorType, frequency: number, duration: number, volume?: number) => void;
   getAudioContext: () => AudioContext | null;
 }
 
-const AudioContextInstance = createContext<AudioContextType | undefined>(undefined);
+const AudioCtx = createContext<AudioContextType | null>(null);
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
-  const getAudioContext = useCallback(() => {
-    if (typeof window === "undefined") return null;
-    
-    if (!audioContextRef.current) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioCtx) {
-        audioContextRef.current = new AudioCtx();
+  const getAudioContext = useCallback((): AudioContext | null => {
+    if (!audioCtxRef.current) {
+      try {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      } catch {
+        return null;
       }
     }
-
-    // Handle suspended state (browsers require user interaction)
-    if (audioContextRef.current?.state === "suspended") {
-      audioContextRef.current.resume();
-    }
-
-    return audioContextRef.current;
+    return audioCtxRef.current;
   }, []);
 
-  const playOscillator = useCallback((freq: number, startTimeOffset: number, duration: number, volume: number, type: OscillatorType = "sine") => {
-    const ctx = getAudioContext();
-    if (!ctx) return;
+  const playOscillator = useCallback(
+    (type: OscillatorType, frequency: number, duration: number, volume: number = 0.3) => {
+      const ctx = getAudioContext();
+      if (!ctx) return;
 
-    const now = ctx.currentTime;
-    const startTime = now + startTimeOffset;
-    
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    oscillator.frequency.value = freq;
-    oscillator.type = type;
-    
-    gainNode.gain.setValueAtTime(volume, startTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-    
-    oscillator.start(startTime);
-    oscillator.stop(startTime + duration);
-  }, [getAudioContext]);
+      try {
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
 
-  return (
-    <AudioContextInstance.Provider value={{ playOscillator, getAudioContext }}>
-      {children}
-    </AudioContextInstance.Provider>
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+        gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
+      } catch {
+        // Audio playback failed silently — non-critical feature
+      }
+    },
+    [getAudioContext]
   );
+
+  const value = useMemo(
+    () => ({ playOscillator, getAudioContext }),
+    [playOscillator, getAudioContext]
+  );
+
+  return <AudioCtx.Provider value={value}>{children}</AudioCtx.Provider>;
 };
 
-export const useAudio = () => {
-  const context = useContext(AudioContextInstance);
-  if (context === undefined) {
-    throw new Error("useAudio must be used within an AudioProvider");
+export const useAudio = (): AudioContextType => {
+  const ctx = useContext(AudioCtx);
+  if (!ctx) {
+    throw new Error('useAudio must be used within an AudioProvider');
   }
-  return context;
+  return ctx;
 };
