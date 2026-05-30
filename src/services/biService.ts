@@ -163,6 +163,7 @@ export const biService = {
       pipelineRes,
       convRes,
       rankingDataRes,
+      streakRes,
     ] = await Promise.all([
       supabase
         .from('sales')
@@ -226,6 +227,12 @@ export const biService = {
         .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', monthStart.toISOString())
         .lte('created_at', monthEnd.toISOString()),
+      supabase
+        .from('achievements')
+        .select('achievement_date')
+        .eq('salesperson_id', salesperson.id)
+        .eq('achievement_type', 'daily_goal')
+        .order('achievement_date', { ascending: false }),
     ]);
 
     const currentSales = currentSalesRes.data || [];
@@ -264,14 +271,8 @@ export const biService = {
         activityGoals.whatsapp_goal
       : 0;
 
-    const { data: streakAchievements } = await supabase
-      .from('achievements')
-      .select('achievement_date')
-      .eq('salesperson_id', salesperson.id)
-      .eq('achievement_type', 'daily_goal')
-      .order('achievement_date', { ascending: false });
     const { currentStreak, bestStreak } = helpers.computeStreak(
-      (streakAchievements || []).map(a => a.achievement_date),
+      ((streakRes.data || []) as { achievement_date: string }[]).map(a => a.achievement_date),
       now
     );
 
