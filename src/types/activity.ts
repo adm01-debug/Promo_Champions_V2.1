@@ -20,12 +20,6 @@ export interface ActivityStats {
   avgDuration: number;
   byTypeOutcome: Record<ActivityType, Record<ActivityOutcome, number>>;
   totalToday: number;
-  callsToday: number;
-  emailsToday: number;
-  meetingsToday: number;
-  linkedinToday: number;
-  whatsappToday: number;
-  notesToday: number;
-  connectedToday: number;
-  scheduledToday: number;
+  todayByType: Record<ActivityType, number>;
+  todayByOutcome: Partial<Record<ActivityOutcome, number>>;
 }
