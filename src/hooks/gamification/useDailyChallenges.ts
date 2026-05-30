@@ -1,15 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export const useDailyChallenges = () => {
   const { salesperson } = useAuth();
-  
+
   return useQuery({
     queryKey: ['daily-challenges', salesperson?.id],
     queryFn: async () => {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = getLocalISODate();
+
       const { data: challenges } = await supabase
         .from('daily_challenges')
         .select('*')
@@ -22,7 +23,10 @@ export const useDailyChallenges = () => {
         .from('daily_challenge_progress')
         .select('*')
         .eq('salesperson_id', salesperson.id)
-        .in('challenge_id', challenges.map(c => c.id));
+        .in(
+          'challenge_id',
+          challenges.map(c => c.id)
+        );
 
       return challenges.map(challenge => ({
         ...challenge,
@@ -38,9 +42,9 @@ export const useDailyChallengesWithProgress = (salespersonId?: string) => {
     queryKey: ['daily-challenges-with-progress', salespersonId],
     queryFn: async () => {
       if (!salespersonId) return [];
-      
-      const today = new Date().toISOString().split('T')[0];
-      
+
+      const today = getLocalISODate();
+
       const { data: challenges } = await supabase
         .from('daily_challenges')
         .select('*')
@@ -53,7 +57,10 @@ export const useDailyChallengesWithProgress = (salespersonId?: string) => {
         .from('daily_challenge_progress')
         .select('*')
         .eq('salesperson_id', salespersonId)
-        .in('challenge_id', challenges.map(c => c.id));
+        .in(
+          'challenge_id',
+          challenges.map(c => c.id)
+        );
 
       return challenges.map(challenge => ({
         ...challenge,
@@ -68,10 +75,14 @@ export const useClaimDailyChallengeReward = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ challengeId, salespersonId, xpReward }: { 
-      challengeId: string; 
-      salespersonId: string; 
-      xpReward: number 
+    mutationFn: async ({
+      challengeId,
+      salespersonId,
+      xpReward,
+    }: {
+      challengeId: string;
+      salespersonId: string;
+      xpReward: number;
     }) => {
       if (!salespersonId) throw new Error('User not found');
 
@@ -82,7 +93,7 @@ export const useClaimDailyChallengeReward = () => {
         .eq('salesperson_id', salespersonId);
 
       if (error) throw error;
-      
+
       return { challengeId, salespersonId, xpReward };
     },
     onSuccess: () => {

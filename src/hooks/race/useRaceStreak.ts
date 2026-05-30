@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
 import { useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface RaceStreak {
   streakDays: number;
@@ -17,7 +19,7 @@ interface Params {
 }
 
 function toDayKey(iso: string): string {
-  return new Date(iso).toISOString().slice(0, 10);
+  return getLocalISODate(new Date(iso));
 }
 
 function computeStreak(saleDates: string[]): number {
@@ -26,15 +28,15 @@ function computeStreak(saleDates: string[]): number {
   let streak = 0;
   const cursor = new Date();
   // Allow grace: if no sale today, start from yesterday
-  let startKey = cursor.toISOString().slice(0, 10);
+  let startKey = getLocalISODate(cursor);
   if (!days.has(startKey)) {
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
-    startKey = cursor.toISOString().slice(0, 10);
+    cursor.setDate(cursor.getDate() - 1);
+    startKey = getLocalISODate(cursor);
     if (!days.has(startKey)) return 0;
   }
-  while (days.has(cursor.toISOString().slice(0, 10))) {
+  while (days.has(getLocalISODate(cursor))) {
     streak += 1;
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    cursor.setDate(cursor.getDate() - 1);
   }
   return streak;
 }
@@ -50,11 +52,11 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
         .from('sales')
         .select('created_at')
         .eq('salesperson_id', salespersonId!)
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', seasonStart!)
         .lte('created_at', seasonEnd!);
       if (error) throw error;
-      return { dates: (data ?? []).map((d) => d.created_at as string) };
+      return { dates: (data ?? []).map(d => d.created_at as string) };
     },
     enabled,
     staleTime: 30_000,
@@ -66,10 +68,15 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
       .channel(`race-streak-${salespersonId}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'sales', filter: `salesperson_id=eq.${salespersonId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sales',
+          filter: `salesperson_id=eq.${salespersonId}`,
+        },
         () => {
           qc.invalidateQueries({ queryKey: ['race-streak', salespersonId] });
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -80,9 +87,7 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
   const streak: RaceStreak = useMemo(() => {
     const dates = query.data?.dates ?? [];
     const streakDays = computeStreak(dates);
-    const lastSaleAt = dates.length
-      ? dates.reduce((a, b) => (a > b ? a : b))
-      : null;
+    const lastSaleAt = dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : null;
     return {
       streakDays,
       salesCount: dates.length,

@@ -20,7 +20,7 @@ export function RaceCalmProvider({ children }: { children: ReactNode }) {
  */
 export function useRaceCalm(): RaceCalmContextValue {
   const ctx = useContext(RaceCalmContext);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const fallback = useCalmMode();
   return ctx ?? fallback;
 }

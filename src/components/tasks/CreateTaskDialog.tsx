@@ -6,6 +6,7 @@ import { useCreateTask, TaskPriority, TaskType } from '@/hooks/useTasks';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useClients } from '@/hooks/crm/useClients';
 import { useSalesData } from '@/hooks/sales/useSalesData';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import {
   Dialog,
   DialogContent,
@@ -23,23 +24,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Plus } from 'lucide-react';
 
 const taskSchema = z.object({
-  title: z.string()
+  title: z
+    .string()
     .trim()
-    .min(1, "Título é obrigatório")
-    .max(200, "Título deve ter no máximo 200 caracteres"),
-  description: z.string()
-    .max(1000, "Descrição deve ter no máximo 1000 caracteres")
-    .optional(),
+    .min(1, 'Título é obrigatório')
+    .max(200, 'Título deve ter no máximo 200 caracteres'),
+  description: z.string().max(1000, 'Descrição deve ter no máximo 1000 caracteres').optional(),
   salesperson_id: z.string().optional(),
   client_id: z.string().optional(),
   sale_id: z.string().optional(),
-  priority: z.enum(["high", "medium", "low"]),
-  task_type: z.enum(["call", "meeting", "follow_up", "email", "proposal", "linkedin", "whatsapp", "other"]),
-  due_date: z.string().min(1, "Data é obrigatória"),
+  priority: z.enum(['high', 'medium', 'low']),
+  task_type: z.enum([
+    'call',
+    'meeting',
+    'follow_up',
+    'email',
+    'proposal',
+    'linkedin',
+    'whatsapp',
+    'other',
+  ]),
+  due_date: z.string().min(1, 'Data é obrigatória'),
   due_time: z.string().optional(),
 });
 
@@ -53,7 +69,13 @@ interface CreateTaskDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open: controlledOpen, onOpenChange }: CreateTaskDialogProps) {
+export function CreateTaskDialog({
+  defaultSaleId,
+  defaultClientId,
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+}: CreateTaskDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = onOpenChange || setInternalOpen;
@@ -73,28 +95,31 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
       sale_id: defaultSaleId || '',
       priority: 'medium',
       task_type: 'other',
-      due_date: new Date().toISOString().split('T')[0],
+      due_date: getLocalISODate(),
       due_time: '',
     },
   });
 
   const handleSubmit = (data: TaskFormData) => {
-    createTask.mutate({
-      title: data.title,
-      description: data.description || undefined,
-      salesperson_id: data.salesperson_id || undefined,
-      client_id: data.client_id || undefined,
-      sale_id: data.sale_id || undefined,
-      priority: data.priority as TaskPriority,
-      task_type: data.task_type as TaskType,
-      due_date: data.due_date,
-      due_time: data.due_time || undefined,
-    }, {
-      onSuccess: () => {
-        setOpen(false);
-        form.reset();
+    createTask.mutate(
+      {
+        title: data.title,
+        description: data.description || undefined,
+        salesperson_id: data.salesperson_id || undefined,
+        client_id: data.client_id || undefined,
+        sale_id: data.sale_id || undefined,
+        priority: data.priority as TaskPriority,
+        task_type: data.task_type as TaskType,
+        due_date: data.due_date,
+        due_time: data.due_time || undefined,
       },
-    });
+      {
+        onSuccess: () => {
+          setOpen(false);
+          form.reset();
+        },
+      }
+    );
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -108,7 +133,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
         sale_id: defaultSaleId || '',
         priority: 'medium',
         task_type: 'other',
-        due_date: new Date().toISOString().split('T')[0],
+        due_date: getLocalISODate(),
         due_time: '',
       });
     }
@@ -137,11 +162,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                 <FormItem>
                   <FormLabel>Título *</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Ex: Ligar para cliente"
-                      maxLength={200}
-                    />
+                    <Input {...field} placeholder="Ex: Ligar para cliente" maxLength={200} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,10 +249,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                   <FormItem>
                     <FormLabel>Data *</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                      />
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,10 +263,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                   <FormItem>
                     <FormLabel>Horário</FormLabel>
                     <FormControl>
-                      <Input
-                        type="time"
-                        {...field}
-                      />
+                      <Input type="time" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -269,7 +284,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {salespeople?.map((sp) => (
+                      {salespeople?.map(sp => (
                         <SelectItem key={sp.id} value={sp.id}>
                           {sp.name}
                         </SelectItem>
@@ -296,7 +311,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="none">Nenhum</SelectItem>
-                        {clients?.map((client) => (
+                        {clients?.map(client => (
                           <SelectItem key={client.id} value={client.id}>
                             {client.name}
                           </SelectItem>
@@ -322,7 +337,7 @@ export function CreateTaskDialog({ defaultSaleId, defaultClientId, trigger, open
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="none">Nenhum</SelectItem>
-                        {sales?.map((sale) => (
+                        {sales?.map(sale => (
                           <SelectItem key={sale.fullId || sale.id} value={sale.fullId || sale.id}>
                             {sale.cliente} - {sale.produto}
                           </SelectItem>

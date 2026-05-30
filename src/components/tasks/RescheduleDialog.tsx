@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { Task, useUpdateTask } from '@/hooks/useTasks';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Calendar, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface RescheduleDialogProps {
   task: Task | null;
@@ -23,18 +19,16 @@ interface RescheduleDialogProps {
 export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogProps) {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [newDate, setNewDate] = useState(
-    new Date(Date.now() + 86400000).toISOString().split('T')[0] // Tomorrow
+    getLocalISODate(new Date(Date.now() + 86400000)) // Tomorrow (local TZ)
   );
   const [newTime, setNewTime] = useState('');
-  
+
   const updateTask = useUpdateTask();
   const { toast } = useToast();
 
   const handleToggleTask = (taskId: string) => {
-    setSelectedTasks(prev => 
-      prev.includes(taskId) 
-        ? prev.filter(id => id !== taskId)
-        : [...prev, taskId]
+    setSelectedTasks(prev =>
+      prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]
     );
   };
 
@@ -60,11 +54,11 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
       });
     }
 
-    toast({ 
+    toast({
       title: 'Tarefas reagendadas!',
-      description: `${selectedTasks.length} tarefa(s) movida(s) para ${formatDate(newDate)}`
+      description: `${selectedTasks.length} tarefa(s) movida(s) para ${formatDate(newDate)}`,
     });
-    
+
     setSelectedTasks([]);
     onClose();
   };
@@ -98,8 +92,8 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
                 id="newDate"
                 type="date"
                 value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                onChange={e => setNewDate(e.target.value)}
+                min={getLocalISODate()}
               />
             </div>
             <div className="space-y-2">
@@ -108,7 +102,7 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
                 id="newTime"
                 type="time"
                 value={newTime}
-                onChange={(e) => setNewTime(e.target.value)}
+                onChange={e => setNewTime(e.target.value)}
               />
             </div>
           </div>
@@ -118,11 +112,7 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
             <p className="text-sm text-muted-foreground">Reagendar para:</p>
             <p className="font-medium text-primary capitalize">
               {formatDate(newDate)}
-              {newTime && (
-                <span className="ml-2 text-muted-foreground">
-                  às {newTime}
-                </span>
-              )}
+              {newTime && <span className="ml-2 text-muted-foreground">às {newTime}</span>}
             </p>
           </div>
 
@@ -137,7 +127,7 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
 
             <ScrollArea className="h-[200px] rounded-lg border p-2">
               <div className="space-y-2">
-                {allTasks.map((t) => (
+                {allTasks.map(t => (
                   <div
                     key={t.id}
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
@@ -156,9 +146,7 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
                             {t.due_time.slice(0, 5)}
                           </>
                         )}
-                        {t.salesperson && (
-                          <span>• {t.salesperson.name}</span>
-                        )}
+                        {t.salesperson && <span>• {t.salesperson.name}</span>}
                       </div>
                     </div>
                   </div>
@@ -172,14 +160,13 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button 
+            <Button
               onClick={handleReschedule}
               disabled={selectedTasks.length === 0 || updateTask.isPending}
             >
-              {updateTask.isPending 
-                ? 'Reagendando...' 
-                : `Reagendar ${selectedTasks.length} tarefa(s)`
-              }
+              {updateTask.isPending
+                ? 'Reagendando...'
+                : `Reagendar ${selectedTasks.length} tarefa(s)`}
             </Button>
           </div>
         </div>

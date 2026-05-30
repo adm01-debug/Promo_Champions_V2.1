@@ -1,5 +1,13 @@
-import { differenceInDays, format, parseISO, differenceInBusinessDays, endOfMonth, startOfMonth } from "date-fns";
-import type { BISDRData } from "@/hooks/bi/useBISDR";
+import {
+  differenceInDays,
+  format,
+  parseISO,
+  differenceInBusinessDays,
+  endOfMonth,
+  startOfMonth,
+} from 'date-fns';
+import { isWonSaleStatus } from '@/constants';
+import type { BISDRData } from '@/hooks/bi/useBISDR';
 
 interface SaleRecord {
   id: string;
@@ -37,7 +45,12 @@ interface TransformParams {
   lastYearActivities: { id: string }[];
   activityGoals: ActivityGoals | null;
   allSDRs: { id: string; role: string }[];
-  recentActivitiesData: { activity_type: string; contact_name: string | null; outcome: string; created_at: string }[];
+  recentActivitiesData: {
+    activity_type: string;
+    contact_name: string | null;
+    outcome: string;
+    created_at: string;
+  }[];
   daysInPeriod: number;
   targetSalespersonId: string;
   sdrSalesCounts: Record<string, number>;
@@ -45,10 +58,18 @@ interface TransformParams {
 
 export function transformBISDRData(params: TransformParams): BISDRData {
   const {
-    currentSales, previousSales, lastYearSales,
-    activities, previousActivities, lastYearActivities,
-    activityGoals, allSDRs, recentActivitiesData,
-    daysInPeriod, targetSalespersonId, sdrSalesCounts
+    currentSales,
+    previousSales,
+    lastYearSales,
+    activities,
+    previousActivities,
+    lastYearActivities,
+    activityGoals,
+    allSDRs,
+    recentActivitiesData,
+    daysInPeriod,
+    targetSalespersonId,
+    sdrSalesCounts,
   } = params;
 
   const now = new Date();
@@ -56,60 +77,84 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   // Core metrics
   const totalLeadsGenerated = currentSales.length;
   const qualifiedLeads = currentSales.filter(s =>
-    ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
+    ['qualified', 'proposal', 'negotiation', 'completed'].includes(s.status)
   ).length;
-  const qualificationRate = totalLeadsGenerated > 0 ? (qualifiedLeads / totalLeadsGenerated) * 100 : 0;
+  const qualificationRate =
+    totalLeadsGenerated > 0 ? (qualifiedLeads / totalLeadsGenerated) * 100 : 0;
 
-  const qualifiedSales = currentSales.filter(s => s.status !== "pending" && s.status !== "lost");
-  const avgQualificationTime = qualifiedSales.length > 0
-    ? qualifiedSales.reduce((sum, s) => sum + differenceInDays(parseISO(s.updated_at), parseISO(s.created_at)), 0) / qualifiedSales.length
-    : 0;
+  const qualifiedSales = currentSales.filter(s => s.status !== 'pending' && s.status !== 'lost');
+  const avgQualificationTime =
+    qualifiedSales.length > 0
+      ? qualifiedSales.reduce(
+          (sum, s) => sum + differenceInDays(parseISO(s.updated_at), parseISO(s.created_at)),
+          0
+        ) / qualifiedSales.length
+      : 0;
 
   // Activities by type
   const activityTypeCounts: Record<string, { count: number; success: number }> = {};
   activities.forEach(a => {
-    if (!activityTypeCounts[a.activity_type]) activityTypeCounts[a.activity_type] = { count: 0, success: 0 };
+    if (!activityTypeCounts[a.activity_type])
+      activityTypeCounts[a.activity_type] = { count: 0, success: 0 };
     activityTypeCounts[a.activity_type].count++;
-    if (["qualified", "scheduled", "connected"].includes(a.outcome)) activityTypeCounts[a.activity_type].success++;
+    if (['qualified', 'scheduled', 'connected'].includes(a.outcome))
+      activityTypeCounts[a.activity_type].success++;
   });
   const activitiesByType = Object.entries(activityTypeCounts).map(([type, data]) => ({
-    type, count: data.count, successRate: data.count > 0 ? (data.success / data.count) * 100 : 0
+    type,
+    count: data.count,
+    successRate: data.count > 0 ? (data.success / data.count) * 100 : 0,
   }));
 
   const avgActivitiesPerDay = activities.length / daysInPeriod;
-  const connectRate = activities.length > 0 ? (activities.filter(a => ["connected", "qualified", "scheduled"].includes(a.outcome)).length / activities.length) * 100 : 0;
-  const bookingRate = activities.length > 0 ? (activities.filter(a => a.outcome === "scheduled").length / activities.length) * 100 : 0;
-  
-  const totalCalls = activities.filter(a => a.activity_type === "call").length;
-  const totalEmails = activities.filter(a => a.activity_type === "email").length;
-  const totalMeetings = activities.filter(a => a.activity_type === "meeting").length;
-  const totalLinkedin = activities.filter(a => a.activity_type === "linkedin").length;
-  const totalWhatsApp = activities.filter(a => a.activity_type === "whatsapp").length;
+  const connectRate =
+    activities.length > 0
+      ? (activities.filter(a => ['connected', 'qualified', 'scheduled'].includes(a.outcome))
+          .length /
+          activities.length) *
+        100
+      : 0;
+  const bookingRate =
+    activities.length > 0
+      ? (activities.filter(a => a.outcome === 'scheduled').length / activities.length) * 100
+      : 0;
+
+  const totalCalls = activities.filter(a => a.activity_type === 'call').length;
+  const totalEmails = activities.filter(a => a.activity_type === 'email').length;
+  const totalMeetings = activities.filter(a => a.activity_type === 'meeting').length;
+  const totalLinkedin = activities.filter(a => a.activity_type === 'linkedin').length;
+  const totalWhatsApp = activities.filter(a => a.activity_type === 'whatsapp').length;
 
   // Pipeline
-  const pipelineDeals = currentSales.filter(s => ["pending", "qualified"].includes(s.status));
+  const pipelineDeals = currentSales.filter(s => ['pending', 'qualified'].includes(s.status));
   const pipelineValue = pipelineDeals.reduce((sum, s) => sum + Number(s.amount), 0);
-  const pipelineByStage = ["pending", "qualified"].map(stage => ({
+  const pipelineByStage = ['pending', 'qualified'].map(stage => ({
     stage,
     count: pipelineDeals.filter(d => d.status === stage).length,
-    value: pipelineDeals.filter(d => d.status === stage).reduce((sum, d) => sum + Number(d.amount), 0)
+    value: pipelineDeals
+      .filter(d => d.status === stage)
+      .reduce((sum, d) => sum + Number(d.amount), 0),
   }));
 
   // Comparisons
   const previousPeriod = {
     totalLeads: previousSales.length,
-    qualifiedLeads: previousSales.filter(s => s.status !== "pending" && s.status !== "lost").length,
-    totalActivities: previousActivities.length
+    qualifiedLeads: previousSales.filter(s => s.status !== 'pending' && s.status !== 'lost').length,
+    totalActivities: previousActivities.length,
   };
   const sameLastYear = {
     totalLeads: lastYearSales.length,
-    qualifiedLeads: lastYearSales.filter(s => s.status !== "pending" && s.status !== "lost").length,
-    totalActivities: lastYearActivities.length
+    qualifiedLeads: lastYearSales.filter(s => s.status !== 'pending' && s.status !== 'lost').length,
+    totalActivities: lastYearActivities.length,
   };
 
   // Goals & projections
   const totalActivityGoal = activityGoals
-    ? activityGoals.calls_goal + activityGoals.emails_goal + activityGoals.meetings_goal + activityGoals.linkedin_goal + activityGoals.whatsapp_goal
+    ? activityGoals.calls_goal +
+      activityGoals.emails_goal +
+      activityGoals.meetings_goal +
+      activityGoals.linkedin_goal +
+      activityGoals.whatsapp_goal
     : 0;
   const monthEnd = endOfMonth(now);
   const monthStart = startOfMonth(now);
@@ -119,8 +164,11 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   const activityGoal = totalActivityGoal * daysInPeriod;
   const goalProgress = activityGoal > 0 ? (activities.length / activityGoal) * 100 : 0;
   const dailyLeadRate = daysElapsedInMonth > 0 ? totalLeadsGenerated / daysElapsedInMonth : 0;
-  const projectedLeads = totalLeadsGenerated + (dailyLeadRate * daysRemainingInMonth);
-  const dailyLeadsNeeded = daysRemainingInMonth > 0 ? Math.max(0, (leadGoal - totalLeadsGenerated) / daysRemainingInMonth) : 0;
+  const projectedLeads = totalLeadsGenerated + dailyLeadRate * daysRemainingInMonth;
+  const dailyLeadsNeeded =
+    daysRemainingInMonth > 0
+      ? Math.max(0, (leadGoal - totalLeadsGenerated) / daysRemainingInMonth)
+      : 0;
 
   // Ranking
   const rankings = Object.entries(sdrSalesCounts)
@@ -132,62 +180,108 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   const topProspects = pipelineDeals
     .sort((a, b) => Number(b.amount) - Number(a.amount))
     .slice(0, 5)
-    .map(s => ({ name: s.client_name, company: s.category, value: Number(s.amount), daysInPipeline: differenceInDays(now, parseISO(s.created_at)) }));
+    .map(s => ({
+      name: s.client_name,
+      company: s.category,
+      value: Number(s.amount),
+      daysInPipeline: differenceInDays(now, parseISO(s.created_at)),
+    }));
 
   // Recent activities
   const recentActivities = recentActivitiesData.map(a => ({
-    type: a.activity_type, clientName: a.contact_name || "N/A", date: format(parseISO(a.created_at), "dd/MM HH:mm"), outcome: a.outcome
+    type: a.activity_type,
+    clientName: a.contact_name || 'N/A',
+    date: format(parseISO(a.created_at), 'dd/MM HH:mm'),
+    outcome: a.outcome,
   }));
 
   // Charts
   const leadsByDayMap: Record<string, { generated: number; qualified: number }> = {};
   currentSales.forEach(sale => {
-    const day = format(parseISO(sale.created_at), "dd/MM");
+    const day = format(parseISO(sale.created_at), 'dd/MM');
     if (!leadsByDayMap[day]) leadsByDayMap[day] = { generated: 0, qualified: 0 };
     leadsByDayMap[day].generated++;
-    if (sale.status !== "pending" && sale.status !== "lost") leadsByDayMap[day].qualified++;
+    if (sale.status !== 'pending' && sale.status !== 'lost') leadsByDayMap[day].qualified++;
   });
   const leadsByDay = Object.entries(leadsByDayMap).map(([day, data]) => ({ day, ...data }));
 
   const activitiesByDayMap: Record<string, number> = {};
   activities.forEach(a => {
-    const day = format(parseISO(a.created_at), "dd/MM");
+    const day = format(parseISO(a.created_at), 'dd/MM');
     activitiesByDayMap[day] = (activitiesByDayMap[day] || 0) + 1;
   });
-  const activitiesByDay = Object.entries(activitiesByDayMap).map(([day, count]) => ({ day, count }));
+  const activitiesByDay = Object.entries(activitiesByDayMap).map(([day, count]) => ({
+    day,
+    count,
+  }));
 
   // Conversion funnel
   const conversionFunnel = [
-    { stage: "Leads Gerados", count: totalLeadsGenerated, percentage: 100 },
-    { stage: "Qualificados", count: qualifiedLeads, percentage: qualificationRate },
-    { stage: "Proposta", count: currentSales.filter(s => ["proposal", "negotiation", "completed"].includes(s.status)).length, percentage: 0 },
-    { stage: "Fechados", count: currentSales.filter(s => s.status === "completed").length, percentage: 0 }
+    { stage: 'Leads Gerados', count: totalLeadsGenerated, percentage: 100 },
+    { stage: 'Qualificados', count: qualifiedLeads, percentage: qualificationRate },
+    {
+      stage: 'Proposta',
+      count: currentSales.filter(s => ['proposal', 'negotiation', 'completed'].includes(s.status))
+        .length,
+      percentage: 0,
+    },
+    {
+      stage: 'Fechados',
+      count: currentSales.filter(s => isWonSaleStatus(s.status)).length,
+      percentage: 0,
+    },
   ];
   conversionFunnel.forEach((stage, i) => {
-    if (i > 0) stage.percentage = totalLeadsGenerated > 0 ? (stage.count / totalLeadsGenerated) * 100 : 0;
+    if (i > 0)
+      stage.percentage = totalLeadsGenerated > 0 ? (stage.count / totalLeadsGenerated) * 100 : 0;
   });
 
   // Leads by source
   const leadsBySourceMap: Record<string, { count: number; qualified: number }> = {};
   currentSales.forEach(sale => {
-    const source = sale.source || "other";
+    const source = sale.source || 'other';
     if (!leadsBySourceMap[source]) leadsBySourceMap[source] = { count: 0, qualified: 0 };
     leadsBySourceMap[source].count++;
-    if (sale.status !== "pending" && sale.status !== "lost") leadsBySourceMap[source].qualified++;
+    if (sale.status !== 'pending' && sale.status !== 'lost') leadsBySourceMap[source].qualified++;
   });
   const leadsBySource = Object.entries(leadsBySourceMap).map(([source, data]) => ({
-    source, count: data.count, qualificationRate: data.count > 0 ? (data.qualified / data.count) * 100 : 0
+    source,
+    count: data.count,
+    qualificationRate: data.count > 0 ? (data.qualified / data.count) * 100 : 0,
   }));
 
   return {
-    totalLeadsGenerated, qualifiedLeads, qualificationRate, avgQualificationTime,
-    totalActivities: activities.length, activitiesByType, avgActivitiesPerDay,
-    connectRate, bookingRate,
-    totalCalls, totalEmails, totalMeetings, totalLinkedin, totalWhatsApp,
-    pipelineValue, pipelineCount: pipelineDeals.length, pipelineByStage,
-    previousPeriod, sameLastYear,
-    leadGoal, activityGoal, goalProgress, projectedLeads, dailyLeadsNeeded,
-    currentRank, totalSDRs: allSDRs.length,
-    topProspects, recentActivities, leadsByDay, activitiesByDay, conversionFunnel, leadsBySource
+    totalLeadsGenerated,
+    qualifiedLeads,
+    qualificationRate,
+    avgQualificationTime,
+    totalActivities: activities.length,
+    activitiesByType,
+    avgActivitiesPerDay,
+    connectRate,
+    bookingRate,
+    totalCalls,
+    totalEmails,
+    totalMeetings,
+    totalLinkedin,
+    totalWhatsApp,
+    pipelineValue,
+    pipelineCount: pipelineDeals.length,
+    pipelineByStage,
+    previousPeriod,
+    sameLastYear,
+    leadGoal,
+    activityGoal,
+    goalProgress,
+    projectedLeads,
+    dailyLeadsNeeded,
+    currentRank,
+    totalSDRs: allSDRs.length,
+    topProspects,
+    recentActivities,
+    leadsByDay,
+    activitiesByDay,
+    conversionFunnel,
+    leadsBySource,
   };
 }

@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface TodaysQuoteCadenceTask {
   id: string;
@@ -19,7 +20,7 @@ interface TodaysQuoteCadenceTask {
  */
 export function useTodaysQuoteCadenceTasks() {
   return useQuery({
-    queryKey: ["todays-quote-cadence-tasks"],
+    queryKey: ['todays-quote-cadence-tasks'],
     queryFn: async () => {
       const { data: auth } = await supabase.auth.getUser();
       const userId = auth.user?.id;
@@ -27,28 +28,30 @@ export function useTodaysQuoteCadenceTasks() {
 
       // Resolve salesperson id for current user
       const { data: sp } = await supabase
-        .from("salespeople")
-        .select("id")
-        .eq("auth_user_id", userId)
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', userId)
         .maybeSingle();
       const salespersonId = sp?.id;
       if (!salespersonId) return { count: 0, tasks: [] as TodaysQuoteCadenceTask[] };
 
-      const today = new Date().toISOString().slice(0, 10);
+      const today = getLocalISODate();
 
       const { data, error } = await supabase
-        .from("cadence_tasks")
-        .select(`
+        .from('cadence_tasks')
+        .select(
+          `
           id, prospect_cadence_id, scheduled_date, status,
           prospect_cadence:prospect_cadences!inner(
             quote_id, salesperson_id,
             quote:quotes(client_name, quote_number)
           )
-        `)
-        .eq("scheduled_date", today)
-        .eq("status", "pending")
-        .eq("prospect_cadence.salesperson_id", salespersonId)
-        .not("prospect_cadence.quote_id", "is", null);
+        `
+        )
+        .eq('scheduled_date', today)
+        .eq('status', 'pending')
+        .eq('prospect_cadence.salesperson_id', salespersonId)
+        .not('prospect_cadence.quote_id', 'is', null);
 
       if (error) throw error;
 

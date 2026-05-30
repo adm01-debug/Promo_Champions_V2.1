@@ -1,23 +1,24 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
-import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+import { componentTagger } from 'lovable-tagger';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => ({
-  base: "/",
+  base: '/',
   server: {
     port: 8080,
-    host: "::",
-    force: mode === "development",
+    host: '::',
+    force: mode === 'development',
   },
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
+    mode === 'development' && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icon-192.png', 'icon-512.png'],
       workbox: {
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB — vendor bundle exceeds default 2 MiB limit
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         runtimeCaching: [
@@ -27,18 +28,18 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: 'supabase-api',
               cacheableResponse: {
-                statuses: [0, 200]
+                statuses: [0, 200],
               },
-              expiration: { 
-                maxEntries: 100, 
-                maxAgeSeconds: 86400 // 24 hours
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 86400, // 24 hours
               },
             },
           },
         ],
       },
       manifest: {
-        name: "Circuito de Vencedores",
+        name: 'Circuito de Vencedores',
         short_name: 'Circuito',
         description: 'Plataforma Inteligente de Gestão de Vendas e Performance Comercial 10/10.',
         start_url: '/',
@@ -55,15 +56,13 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
-    dedupe: [
-      "react", "react-dom", "react-router-dom", "framer-motion", "@tanstack/react-query"
-    ],
+    dedupe: ['react', 'react-dom', 'react-router-dom', 'framer-motion', '@tanstack/react-query'],
   },
   build: {
-    target: "esnext",
-    minify: "esbuild",
+    target: 'esnext',
+    minify: 'esbuild',
     cssCodeSplit: true,
     sourcemap: false,
     chunkSizeWarningLimit: 1000,

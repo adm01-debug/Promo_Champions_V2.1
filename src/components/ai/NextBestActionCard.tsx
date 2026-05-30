@@ -7,12 +7,27 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
-  Lightbulb, Phone, Mail, Users, ArrowRight, MessageSquare,
-  FileText, Loader2, AlertTriangle, Linkedin, MessagesSquare,
-  Sparkles, Plus, Target, RefreshCw, TrendingUp, Calendar,
+  Lightbulb,
+  Phone,
+  Mail,
+  Users,
+  ArrowRight,
+  MessageSquare,
+  FileText,
+  Loader2,
+  AlertTriangle,
+  Linkedin,
+  MessagesSquare,
+  Sparkles,
+  Plus,
+  Target,
+  RefreshCw,
+  TrendingUp,
+  Calendar,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface NextBestActionCardProps {
   salespersonId?: string;
@@ -36,12 +51,17 @@ const priorityStyles: Record<string, string> = {
 };
 
 const priorityLabels: Record<string, string> = {
-  high: 'Alta', medium: 'Média', low: 'Baixa',
+  high: 'Alta',
+  medium: 'Média',
+  low: 'Baixa',
 };
 
 const categoryLabels: Record<string, string> = {
-  urgent: 'Urgente', growth: 'Crescimento', retention: 'Retenção',
-  prospecting: 'Prospecção', admin: 'Admin',
+  urgent: 'Urgente',
+  growth: 'Crescimento',
+  retention: 'Retenção',
+  prospecting: 'Prospecção',
+  admin: 'Admin',
 };
 
 const categoryStyles: Record<string, string> = {
@@ -95,9 +115,22 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
 
         {data?.summary && (
           <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
-            <SummaryStat icon={<Target className="h-3 w-3" />} label="Pipeline" value={data.summary.totalDeals} />
-            <SummaryStat icon={<AlertTriangle className="h-3 w-3" />} label="Em risco" value={data.summary.atRisk} tone="danger" />
-            <SummaryStat icon={<TrendingUp className="h-3 w-3" />} label="Meta" value={`${Math.round(data.summary.goalProgress)}%`} />
+            <SummaryStat
+              icon={<Target className="h-3 w-3" />}
+              label="Pipeline"
+              value={data.summary.totalDeals}
+            />
+            <SummaryStat
+              icon={<AlertTriangle className="h-3 w-3" />}
+              label="Em risco"
+              value={data.summary.atRisk}
+              tone="danger"
+            />
+            <SummaryStat
+              icon={<TrendingUp className="h-3 w-3" />}
+              label="Meta"
+              value={`${Math.round(data.summary.goalProgress)}%`}
+            />
           </div>
         )}
       </CardHeader>
@@ -109,7 +142,9 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
               <Loader2 className="h-4 w-4 animate-spin" />
               Analisando contexto com IA...
             </div>
-            {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 w-full" />)}
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-24 w-full" />
+            ))}
           </div>
         )}
 
@@ -130,11 +165,21 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
 
             <Tabs value={filter} onValueChange={v => setFilter(v as FilterTab)}>
               <TabsList className="grid grid-cols-5 h-8">
-                <TabsTrigger value="all" className="text-xs">Todas</TabsTrigger>
-                <TabsTrigger value="urgent" className="text-xs">Urgente</TabsTrigger>
-                <TabsTrigger value="growth" className="text-xs">Cresc.</TabsTrigger>
-                <TabsTrigger value="retention" className="text-xs">Reten.</TabsTrigger>
-                <TabsTrigger value="prospecting" className="text-xs">Prosp.</TabsTrigger>
+                <TabsTrigger value="all" className="text-xs">
+                  Todas
+                </TabsTrigger>
+                <TabsTrigger value="urgent" className="text-xs">
+                  Urgente
+                </TabsTrigger>
+                <TabsTrigger value="growth" className="text-xs">
+                  Cresc.
+                </TabsTrigger>
+                <TabsTrigger value="retention" className="text-xs">
+                  Reten.
+                </TabsTrigger>
+                <TabsTrigger value="prospecting" className="text-xs">
+                  Prosp.
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -145,7 +190,7 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
                     Nenhuma ação nesta categoria.
                   </p>
                 ) : (
-                  filtered.map((action) => (
+                  filtered.map(action => (
                     <ActionItem
                       key={action._idx}
                       action={action}
@@ -163,11 +208,27 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
   );
 }
 
-function SummaryStat({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string | number; tone?: 'danger' }) {
+function SummaryStat({
+  icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  tone?: 'danger';
+}) {
   return (
     <div className="rounded-lg border bg-card p-2">
-      <div className={cn('flex items-center gap-1 text-[10px]', tone === 'danger' ? 'text-destructive' : 'text-muted-foreground')}>
-        {icon}{label}
+      <div
+        className={cn(
+          'flex items-center gap-1 text-[10px]',
+          tone === 'danger' ? 'text-destructive' : 'text-muted-foreground'
+        )}
+      >
+        {icon}
+        {label}
       </div>
       <div className="text-sm font-semibold mt-0.5">{value}</div>
     </div>
@@ -175,25 +236,51 @@ function SummaryStat({ icon, label, value, tone }: { icon: React.ReactNode; labe
 }
 
 function ActionItem({
-  action, salespersonId, onDismiss,
-}: { action: NextBestAction; salespersonId: string; onDismiss: () => void }) {
+  action,
+  salespersonId,
+  onDismiss,
+}: {
+  action: NextBestAction;
+  salespersonId: string;
+  onDismiss: () => void;
+}) {
   const createTask = useCreateTask();
 
   const handleCreate = () => {
-    const allowed: Array<NextBestAction['actionType']> = ['call', 'email', 'meeting', 'follow_up', 'proposal', 'other'];
+    const allowed: Array<NextBestAction['actionType']> = [
+      'call',
+      'email',
+      'meeting',
+      'follow_up',
+      'proposal',
+      'other',
+    ];
     const taskType = (allowed.includes(action.actionType) ? action.actionType : 'other') as
-      'call' | 'email' | 'meeting' | 'follow_up' | 'proposal' | 'other';
-    createTask.mutate({
-      title: action.title,
-      description: [action.description, action.rationale && `Rationale: ${action.rationale}`, action.expectedImpact && `Impacto: ${action.expectedImpact}`]
-        .filter(Boolean).join('\n\n'),
-      due_date: action.suggestedDate || new Date().toISOString().slice(0, 10),
-      due_time: action.suggestedTime || undefined,
-      task_type: taskType,
-      priority: action.priority,
-      salesperson_id: salespersonId,
-      sale_id: action.dealId || undefined,
-    }, { onSuccess: onDismiss });
+      | 'call'
+      | 'email'
+      | 'meeting'
+      | 'follow_up'
+      | 'proposal'
+      | 'other';
+    createTask.mutate(
+      {
+        title: action.title,
+        description: [
+          action.description,
+          action.rationale && `Rationale: ${action.rationale}`,
+          action.expectedImpact && `Impacto: ${action.expectedImpact}`,
+        ]
+          .filter(Boolean)
+          .join('\n\n'),
+        due_date: action.suggestedDate || getLocalISODate(),
+        due_time: action.suggestedTime || undefined,
+        task_type: taskType,
+        priority: action.priority,
+        salesperson_id: salespersonId,
+        sale_id: action.dealId || undefined,
+      },
+      { onSuccess: onDismiss }
+    );
   };
 
   const confidence = action.confidence != null ? Math.round(action.confidence * 100) : null;
@@ -239,13 +326,15 @@ function ActionItem({
           )}
           {action.suggestedDate && (
             <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />{action.suggestedDate}
+              <Calendar className="h-3 w-3" />
+              {action.suggestedDate}
               {action.suggestedTime && ` • ${action.suggestedTime}`}
             </span>
           )}
           {confidence != null && (
             <span className="flex items-center gap-1">
-              <Sparkles className="h-3 w-3" />{confidence}% confiança
+              <Sparkles className="h-3 w-3" />
+              {confidence}% confiança
             </span>
           )}
         </div>
@@ -259,8 +348,11 @@ function ActionItem({
 
         <div className="flex items-center gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
-            size="sm" variant="default" className="h-7 text-xs"
-            onClick={handleCreate} disabled={createTask.isPending}
+            size="sm"
+            variant="default"
+            className="h-7 text-xs"
+            onClick={handleCreate}
+            disabled={createTask.isPending}
           >
             <Plus className="h-3 w-3 mr-1" /> Criar tarefa
           </Button>

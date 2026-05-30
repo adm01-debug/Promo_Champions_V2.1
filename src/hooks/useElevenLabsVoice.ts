@@ -3,15 +3,45 @@ import { supabase } from '@/integrations/supabase/client';
 
 // Available ElevenLabs voices
 export const VOICE_OPTIONS = [
-  { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', description: 'Voz masculina profunda e profissional', gender: 'male' },
-  { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', description: 'Voz masculina clara e amigável', gender: 'male' },
-  { id: 'ThT5KcBeYPX3keUQqHPh', name: 'Dorothy', description: 'Voz feminina suave e acolhedora', gender: 'female' },
-  { id: 'jsCqWAovK2LkecY7zXl4', name: 'Freya', description: 'Voz feminina energética', gender: 'female' },
-  { id: 'TX3LPaxmHKxFdv7VOQHJ', name: 'Liam', description: 'Voz masculina jovem e dinâmica', gender: 'male' },
-  { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', description: 'Voz feminina profissional', gender: 'female' },
+  {
+    id: 'JBFqnCBsd6RMkjVDRZzb',
+    name: 'George',
+    description: 'Voz masculina profunda e profissional',
+    gender: 'male',
+  },
+  {
+    id: 'pNInz6obpgDQGcFmaJgB',
+    name: 'Adam',
+    description: 'Voz masculina clara e amigável',
+    gender: 'male',
+  },
+  {
+    id: 'ThT5KcBeYPX3keUQqHPh',
+    name: 'Dorothy',
+    description: 'Voz feminina suave e acolhedora',
+    gender: 'female',
+  },
+  {
+    id: 'jsCqWAovK2LkecY7zXl4',
+    name: 'Freya',
+    description: 'Voz feminina energética',
+    gender: 'female',
+  },
+  {
+    id: 'TX3LPaxmHKxFdv7VOQHJ',
+    name: 'Liam',
+    description: 'Voz masculina jovem e dinâmica',
+    gender: 'male',
+  },
+  {
+    id: 'XB0fDUnXU5powFXDhCwa',
+    name: 'Charlotte',
+    description: 'Voz feminina profissional',
+    gender: 'female',
+  },
 ] as const;
 
-export type VoiceId = typeof VOICE_OPTIONS[number]['id'];
+export type VoiceId = (typeof VOICE_OPTIONS)[number]['id'];
 
 interface UseElevenLabsVoiceOptions {
   defaultVoiceId?: string;
@@ -21,12 +51,7 @@ interface UseElevenLabsVoiceOptions {
 }
 
 export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
-  const {
-    defaultVoiceId = VOICE_OPTIONS[0].id,
-    onSpeakStart,
-    onSpeakEnd,
-    onError,
-  } = options;
+  const { defaultVoiceId = VOICE_OPTIONS[0].id, onSpeakStart, onSpeakEnd, onError } = options;
 
   const [voiceId, setVoiceId] = useState<string>(defaultVoiceId);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -37,118 +62,130 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
   const [useBrowserFallback, setUseBrowserFallback] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const recognitionRef = useRef<any>(null);
 
   // Check if ElevenLabs API is configured (we'll assume it is for now)
   const isApiConfigured = true;
 
   // Browser fallback TTS
-  const speakWithBrowserTTS = useCallback((text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'pt-BR';
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      
-      utterance.onstart = () => {
-        setIsSpeaking(true);
-        onSpeakStart?.();
-      };
-      
-      utterance.onend = () => {
-        setIsSpeaking(false);
-        onSpeakEnd?.();
-      };
-      
-      utterance.onerror = () => {
-        setIsSpeaking(false);
-        onError?.('Erro ao sintetizar voz');
-      };
-      
-      window.speechSynthesis.speak(utterance);
-    } else {
-      onError?.('Síntese de voz não suportada neste navegador');
-    }
-  }, [onSpeakStart, onSpeakEnd, onError]);
+  const speakWithBrowserTTS = useCallback(
+    (text: string) => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => {
+          setIsSpeaking(true);
+          onSpeakStart?.();
+        };
+
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          onSpeakEnd?.();
+        };
+
+        utterance.onerror = () => {
+          setIsSpeaking(false);
+          onError?.('Erro ao sintetizar voz');
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        onError?.('Síntese de voz não suportada neste navegador');
+      }
+    },
+    [onSpeakStart, onSpeakEnd, onError]
+  );
 
   // Main speak function
-  const speak = useCallback(async (text: string) => {
-    if (!text.trim()) return;
+  const speak = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
 
-    // Use browser fallback if enabled
-    if (useBrowserFallback) {
-      speakWithBrowserTTS(text);
-      return;
-    }
-
-    setIsLoadingTTS(true);
-    
-    try {
-      // Use ElevenLabs via edge function
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-voice`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`,
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        },
-        body: JSON.stringify({ text, voiceId }),
-      });
-
-      if (!response.ok) {
-        // Fallback to browser TTS
+      // Use browser fallback if enabled
+      if (useBrowserFallback) {
         speakWithBrowserTTS(text);
         return;
       }
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      if (audioRef.current) {
-        audioRef.current.pause();
-        URL.revokeObjectURL(audioRef.current.src);
-      }
-      
-      audioRef.current = new Audio(audioUrl);
-      
-      audioRef.current.onplay = () => {
-        setIsSpeaking(true);
-        onSpeakStart?.();
-      };
-      
-      audioRef.current.onended = () => {
-        setIsSpeaking(false);
-        onSpeakEnd?.();
-        URL.revokeObjectURL(audioUrl);
-      };
-      
-      audioRef.current.onerror = () => {
-        setIsSpeaking(false);
-        onError?.('Erro ao reproduzir áudio');
+      setIsLoadingTTS(true);
+
+      try {
+        // Use ElevenLabs via edge function
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-voice`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session?.access_token}`,
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            },
+            body: JSON.stringify({ text, voiceId }),
+          }
+        );
+
+        if (!response.ok) {
+          // Fallback to browser TTS
+          speakWithBrowserTTS(text);
+          return;
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        if (audioRef.current) {
+          audioRef.current.pause();
+          URL.revokeObjectURL(audioRef.current.src);
+        }
+
+        audioRef.current = new Audio(audioUrl);
+
+        audioRef.current.onplay = () => {
+          setIsSpeaking(true);
+          onSpeakStart?.();
+        };
+
+        audioRef.current.onended = () => {
+          setIsSpeaking(false);
+          onSpeakEnd?.();
+          URL.revokeObjectURL(audioUrl);
+        };
+
+        audioRef.current.onerror = () => {
+          setIsSpeaking(false);
+          onError?.('Erro ao reproduzir áudio');
+          // Fallback to browser TTS
+          speakWithBrowserTTS(text);
+        };
+
+        await audioRef.current.play();
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('TTS error:', error);
+        }
         // Fallback to browser TTS
         speakWithBrowserTTS(text);
-      };
-      
-      await audioRef.current.play();
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('TTS error:', error);
+      } finally {
+        setIsLoadingTTS(false);
       }
-      // Fallback to browser TTS
-      speakWithBrowserTTS(text);
-    } finally {
-      setIsLoadingTTS(false);
-    }
-  }, [voiceId, useBrowserFallback, speakWithBrowserTTS, onSpeakStart, onSpeakEnd, onError]);
+    },
+    [voiceId, useBrowserFallback, speakWithBrowserTTS, onSpeakStart, onSpeakEnd, onError]
+  );
 
   // Stop speaking
   const stopSpeaking = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      if (audioRef.current.src) URL.revokeObjectURL(audioRef.current.src);
     }
     window.speechSynthesis?.cancel();
     setIsSpeaking(false);
@@ -158,7 +195,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
   // Browser Speech Recognition
   const startListening = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       onError?.('Reconhecimento de voz não suportado neste navegador');
       return;
@@ -220,19 +257,19 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
     isLoadingTTS,
     voiceId,
     setVoiceId,
-    
+
     // STT
     startListening,
     stopListening,
     isListening,
     isProcessingSTT,
     transcript,
-    
+
     // Config
     isApiConfigured,
     useBrowserFallback,
     setUseBrowserFallback,
-    
+
     // Voice options
     VOICE_OPTIONS,
   };
@@ -244,9 +281,8 @@ export default useElevenLabsVoice;
 // Type declarations for browser APIs
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SpeechRecognition: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     webkitSpeechRecognition: any;
   }
 }

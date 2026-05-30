@@ -64,7 +64,9 @@ const ROLE_META: Record<RoleType, { title: string; emoji: string; subtitle: stri
   sdr: { title: 'Pista dos SDRs', emoji: '📞', subtitle: 'Corrida de prospecção e qualificação' },
 };
 
-interface Props { roleType: RoleType }
+interface Props {
+  roleType: RoleType;
+}
 
 export default function RaceArenaView({ roleType }: Props) {
   const meta = ROLE_META[roleType];
@@ -85,7 +87,10 @@ export default function RaceArenaView({ roleType }: Props) {
   const [boostingIds, setBoostingIds] = useState<Set<string>>(new Set());
   const lastEventIdRef = useRef<string | null>(null);
   const { recentOvertakes, dismissOvertake } = useOvertakeDetector(leaderboard);
-  const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(leaderboard, myCar?.salesperson_id);
+  const { takeover, clear: clearTakeover } = useLeaderTakeoverDetector(
+    leaderboard,
+    myCar?.salesperson_id
+  );
   const viewMode = useRaceViewMode();
   useRaceViewTelemetry(`/race-arena/${roleType}`, !isInitialLoading);
 
@@ -139,7 +144,6 @@ export default function RaceArenaView({ roleType }: Props) {
 
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recentOvertakes.length]);
 
   useEffect(() => {
@@ -147,15 +151,23 @@ export default function RaceArenaView({ roleType }: Props) {
     const newest = events[0];
     if (lastEventIdRef.current && lastEventIdRef.current !== newest.id) {
       const soundMap: Record<string, Parameters<typeof play>[0]> = {
-        boost: 'boost', overtake: 'overtake', checkpoint: 'checkpoint',
-        victory: 'victory', powerup: 'powerup', pitstop: 'pitstop',
+        boost: 'boost',
+        overtake: 'overtake',
+        checkpoint: 'checkpoint',
+        victory: 'victory',
+        powerup: 'powerup',
+        pitstop: 'pitstop',
       };
       const s = soundMap[newest.event_type];
       if (s) play(s);
       if (newest.event_type === 'boost' || newest.event_type === 'overtake') {
-        setBoostingIds((prev) => new Set(prev).add(newest.salesperson_id));
+        setBoostingIds(prev => new Set(prev).add(newest.salesperson_id));
         setTimeout(() => {
-          setBoostingIds((prev) => { const n = new Set(prev); n.delete(newest.salesperson_id); return n; });
+          setBoostingIds(prev => {
+            const n = new Set(prev);
+            n.delete(newest.salesperson_id);
+            return n;
+          });
         }, 1500);
       }
     }
@@ -169,27 +181,39 @@ export default function RaceArenaView({ roleType }: Props) {
       if (seen.includes(season.id)) return;
       const ageSec = differenceInSeconds(new Date(), new Date(season.start_date));
       if (ageSec < 10 && ageSec > -86400) {
-        setCountdownTrigger((t) => t + 1);
+        setCountdownTrigger(t => t + 1);
         localStorage.setItem(COUNTDOWN_SEEN_KEY, JSON.stringify([...seen, season.id]));
       } else if (ageSec >= 10) {
         localStorage.setItem(COUNTDOWN_SEEN_KEY, JSON.stringify([...seen, season.id]));
       }
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }, [season]);
 
-  const myEntry = leaderboard.find((e) => e.salesperson_id === myCar?.salesperson_id);
+  const myEntry = leaderboard.find(e => e.salesperson_id === myCar?.salesperson_id);
   const myProgress = Number(myEntry?.progress ?? 0);
-  const visiblePowerups = useMemo(() => myPowerups
-    .filter((p) => !p.used_at)
-    .map((p) => {
-      const pos = getPositionOnTrack(p.position_pct, 0);
-      return { ...p, x: pos.x, y: pos.y, reachable: myProgress >= p.position_pct };
-    }), [myPowerups, myProgress]);
+  const visiblePowerups = useMemo(
+    () =>
+      myPowerups
+        .filter(p => !p.used_at)
+        .map(p => {
+          const pos = getPositionOnTrack(p.position_pct, 0);
+          return { ...p, x: pos.x, y: pos.y, reachable: myProgress >= p.position_pct };
+        }),
+    [myPowerups, myProgress]
+  );
 
   const handleCollectPowerup = async (id: string, reachable: boolean) => {
-    if (!reachable) { toast.info('Você ainda não chegou neste power-up — venda mais!'); return; }
+    if (!reachable) {
+      toast.info('Você ainda não chegou neste power-up — venda mais!');
+      return;
+    }
     try {
-      const res = await collectRacePowerup(id) as { powerup_type?: string; badge_unlocked?: boolean };
+      const res = (await collectRacePowerup(id)) as {
+        powerup_type?: string;
+        badge_unlocked?: boolean;
+      };
       play('powerup');
       toast.success(`⚡ Power-up coletado: ${res?.powerup_type ?? ''}`);
       if (res?.badge_unlocked) toast.success('🏆 Badge desbloqueado: Powerup Collector!');
@@ -204,7 +228,10 @@ export default function RaceArenaView({ roleType }: Props) {
     <>
       <Helmet>
         <title>{meta.title} — Race Arena</title>
-        <meta name="description" content={`${meta.title}: ${meta.subtitle}. Acompanhe o ranking em tempo real.`} />
+        <meta
+          name="description"
+          content={`${meta.title}: ${meta.subtitle}. Acompanhe o ranking em tempo real.`}
+        />
       </Helmet>
 
       <div className="container mx-auto p-4 space-y-4">
@@ -226,7 +253,7 @@ export default function RaceArenaView({ roleType }: Props) {
               </Button>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />
               <RaceAudioPreferences />
-              <Button onClick={() => setCountdownTrigger((t) => t + 1)} variant="outline">
+              <Button onClick={() => setCountdownTrigger(t => t + 1)} variant="outline">
                 <Rocket className="w-4 h-4 mr-2" /> Largada!
               </Button>
               {isAdmin && (
@@ -254,12 +281,14 @@ export default function RaceArenaView({ roleType }: Props) {
             <div className="text-sm text-muted-foreground">
               <strong className="text-foreground">{season.name}</strong> ·{' '}
               {format(new Date(season.start_date), 'dd MMM', { locale: ptBR })} →{' '}
-              {format(new Date(season.end_date), 'dd MMM', { locale: ptBR })} ·{' '}
-              Meta {Number(season.goal_amount).toLocaleString('pt-BR')} pts
+              {format(new Date(season.end_date), 'dd MMM', { locale: ptBR })} · Meta{' '}
+              {Number(season.goal_amount).toLocaleString('pt-BR')} pts
             </div>
 
             <div className="grid grid-cols-12 gap-4" style={{ minHeight: '85vh' }}>
-              <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-2' : 'lg:col-span-3'} order-2 lg:order-1 space-y-3`}>
+              <div
+                className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-2' : 'lg:col-span-3'} order-2 lg:order-1 space-y-3`}
+              >
                 {viewMode.showCommentary && (
                   <RaceCommentaryPanel
                     items={commentary.items}
@@ -283,7 +312,9 @@ export default function RaceArenaView({ roleType }: Props) {
                   <RaceHighlightsTimeline events={events} cars={leaderboard} />
                 )}
               </div>
-              <div className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-10' : 'lg:col-span-9'} order-1 lg:order-2`}>
+              <div
+                className={`col-span-12 ${viewMode.isImmersive ? 'lg:col-span-10' : 'lg:col-span-9'} order-1 lg:order-2`}
+              >
                 <Arena
                   cars={leaderboard}
                   boostingIds={boostingIds}
@@ -292,19 +323,28 @@ export default function RaceArenaView({ roleType }: Props) {
                     <>
                       <GhostCar ghost={ghost} />
                       <AnimatePresence>
-                        {visiblePowerups.map((p) => (
-                          <PowerUpIcon key={p.id} type={p.powerup_type} x={p.x} y={p.y} onClick={() => handleCollectPowerup(p.id, p.reachable)} />
+                        {visiblePowerups.map(p => (
+                          <PowerUpIcon
+                            key={p.id}
+                            type={p.powerup_type}
+                            x={p.x}
+                            y={p.y}
+                            onClick={() => handleCollectPowerup(p.id, p.reachable)}
+                          />
                         ))}
                       </AnimatePresence>
                     </>
                   }
-                  
                 />
               </div>
             </div>
 
             {viewMode.showFeed && <FloatingEventFeed events={events} cars={leaderboard} />}
-            <VictoryLapOverlay events={events} cars={leaderboard} onPlaySound={() => play('victory')} />
+            <VictoryLapOverlay
+              events={events}
+              cars={leaderboard}
+              onPlaySound={() => play('victory')}
+            />
           </>
         )}
 
@@ -314,7 +354,11 @@ export default function RaceArenaView({ roleType }: Props) {
           onDismiss={dismissOvertake}
           currentUserSalespersonId={myCar?.salesperson_id}
         />
-        <LeaderTakeoverCelebration takeover={takeover} onClear={clearTakeover} onPlaySound={() => play('victory')} />
+        <LeaderTakeoverCelebration
+          takeover={takeover}
+          onClear={clearTakeover}
+          onPlaySound={() => play('victory')}
+        />
 
         <CarCustomizer open={customizerOpen} onOpenChange={setCustomizerOpen} />
         <PitStopPanel
@@ -324,21 +368,43 @@ export default function RaceArenaView({ roleType }: Props) {
           onPlaySound={() => play('pitstop')}
         />
         <RaceCountdown trigger={countdownTrigger} onTick={() => play('countdown')} />
-        <DailyCheckinModal open={dailyCheckin.open} onOpenChange={dailyCheckin.setOpen} data={dailyCheckin.data} />
+        <DailyCheckinModal
+          open={dailyCheckin.open}
+          onOpenChange={dailyCheckin.setOpen}
+          data={dailyCheckin.data}
+        />
         {season && (
           <RaceOnboardingChecklist
             items={[
-              { id: 'car', label: 'Personalize seu carro', done: !!myCar?.car_style, action: () => setCustomizerOpen(true) },
+              {
+                id: 'car',
+                label: 'Personalize seu carro',
+                done: !!myCar?.car_style,
+                action: () => setCustomizerOpen(true),
+              },
               { id: 'leaderboard', label: 'Veja o leaderboard', done: leaderboard.length > 0 },
-              { id: 'powerup', label: 'Colete um power-up', done: visiblePowerups.some((p) => p.reachable === false ? false : myPowerups.some((mp) => mp.used_at)) },
-              { id: 'pitstop', label: 'Visite o Pit Stop', done: false, action: () => setPitStopOpen(true) },
-              { id: 'view-mode', label: 'Experimente os modos de visualização', done: viewMode.mode !== 'competitive' },
+              {
+                id: 'powerup',
+                label: 'Colete um power-up',
+                done: visiblePowerups.some(p =>
+                  p.reachable === false ? false : myPowerups.some(mp => mp.used_at)
+                ),
+              },
+              {
+                id: 'pitstop',
+                label: 'Visite o Pit Stop',
+                done: false,
+                action: () => setPitStopOpen(true),
+              },
+              {
+                id: 'view-mode',
+                label: 'Experimente os modos de visualização',
+                done: viewMode.mode !== 'competitive',
+              },
             ]}
           />
         )}
-        {isAdmin && (
-          <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
-        )}
+        {isAdmin && <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />}
       </div>
     </>
   );

@@ -1,30 +1,46 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 // MainLayout is already applied at route level in App.tsx
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download, Filter } from "lucide-react";
-import { useSalespersonActivityReport, useActivityTrend } from "@/hooks/sales/useSalespersonActivityReport";
-import { SalespersonActivityTable } from "@/components/analytics/SalespersonActivityTable";
-import { ActivityVolumeChart } from "@/components/analytics/ActivityVolumeChart";
-import { ActivityOutcomesChart } from "@/components/analytics/ActivityOutcomesChart";
-import { ActivityTrendChart } from "@/components/analytics/ActivityTrendChart";
-import { RelatorioAtividadesLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
-import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { exportToCSV } from "@/utils/csvExport";
-import { toast } from "sonner";
-import { PageTransition } from "@/components/transitions/PageTransition";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download, Filter } from 'lucide-react';
+import {
+  useSalespersonActivityReport,
+  useActivityTrend,
+} from '@/hooks/sales/useSalespersonActivityReport';
+import { SalespersonActivityTable } from '@/components/analytics/SalespersonActivityTable';
+import { ActivityVolumeChart } from '@/components/analytics/ActivityVolumeChart';
+import { ActivityOutcomesChart } from '@/components/analytics/ActivityOutcomesChart';
+import { ActivityTrendChart } from '@/components/analytics/ActivityTrendChart';
+import { RelatorioAtividadesLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
+import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
+import { exportToCSV } from '@/utils/csvExport';
+import { getLocalISODate } from '@/utils/dateHelpers';
+import { toast } from 'sonner';
+import { PageTransition } from '@/components/transitions/PageTransition';
 
-type OutcomeFilter = 'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
+type OutcomeFilter =
+  | 'all'
+  | 'connected'
+  | 'scheduled'
+  | 'qualified'
+  | 'no_answer'
+  | 'not_interested';
 
 const outcomeLabels: Record<OutcomeFilter, string> = {
-  all: "Todos os outcomes",
-  connected: "Conectou",
-  scheduled: "Agendou",
-  qualified: "Qualificado",
-  no_answer: "Não atendeu",
-  not_interested: "Não interessado",
+  all: 'Todos os outcomes',
+  connected: 'Conectou',
+  scheduled: 'Agendou',
+  qualified: 'Qualificado',
+  no_answer: 'Não atendeu',
+  not_interested: 'Não interessado',
 };
 
 export default function RelatorioAtividades() {
@@ -47,17 +63,19 @@ export default function RelatorioAtividades() {
   }
 
   // Filter salespeople data based on outcome filter
-  const filteredSalespeople = data?.salespeople?.filter(sp => {
-    if (outcomeFilter === 'all') return true;
-    // Only show salespeople with at least 1 activity of the selected outcome
-    return sp[outcomeFilter] > 0;
-  }) || [];
+  const filteredSalespeople =
+    data?.salespeople?.filter(sp => {
+      if (outcomeFilter === 'all') return true;
+      // Only show salespeople with at least 1 activity of the selected outcome
+      return sp[outcomeFilter] > 0;
+    }) || [];
 
   // Recalculate team summary based on filtered data
   const filteredTeamSummary = {
-    total_activities: outcomeFilter === 'all' 
-      ? data?.teamSummary.total_activities || 0
-      : filteredSalespeople.reduce((sum, sp) => sum + sp[outcomeFilter], 0),
+    total_activities:
+      outcomeFilter === 'all'
+        ? data?.teamSummary.total_activities || 0
+        : filteredSalespeople.reduce((sum, sp) => sum + sp[outcomeFilter], 0),
     total_calls: data?.teamSummary.total_calls || 0,
     total_emails: data?.teamSummary.total_emails || 0,
     total_meetings: data?.teamSummary.total_meetings || 0,
@@ -68,62 +86,75 @@ export default function RelatorioAtividades() {
 
   const stats = [
     {
-      label: outcomeFilter === 'all' ? "Total Atividades" : outcomeLabels[outcomeFilter],
+      label: outcomeFilter === 'all' ? 'Total Atividades' : outcomeLabels[outcomeFilter],
       value: filteredTeamSummary.total_activities,
       icon: Users,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
     },
     {
-      label: "Calls",
+      label: 'Calls',
       value: filteredTeamSummary.total_calls,
       icon: Phone,
-      color: "text-success",
-      bgColor: "bg-success/10",
+      color: 'text-success',
+      bgColor: 'bg-success/10',
     },
     {
-      label: "Emails",
+      label: 'Emails',
       value: filteredTeamSummary.total_emails,
       icon: Mail,
-      color: "text-info",
-      bgColor: "bg-info/10",
+      color: 'text-info',
+      bgColor: 'bg-info/10',
     },
     {
-      label: "Reuniões",
+      label: 'Reuniões',
       value: filteredTeamSummary.total_meetings,
       icon: Calendar,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
     },
     {
-      label: "Taxa Conexão",
-      value: `${(filteredTeamSummary.avg_connection_rate).toFixed(0)}%`,
+      label: 'Taxa Conexão',
+      value: `${filteredTeamSummary.avg_connection_rate.toFixed(0)}%`,
       icon: Percent,
-      color: "text-success",
-      bgColor: "bg-success/80/10",
+      color: 'text-success',
+      bgColor: 'bg-success/80/10',
     },
     {
-      label: "Taxa Agendamento",
-      value: `${(filteredTeamSummary.avg_scheduling_rate).toFixed(0)}%`,
+      label: 'Taxa Agendamento',
+      value: `${filteredTeamSummary.avg_scheduling_rate.toFixed(0)}%`,
       icon: TrendingUp,
-      color: "text-rank-gold",
-      bgColor: "bg-rank-gold/10",
+      color: 'text-rank-gold',
+      bgColor: 'bg-rank-gold/10',
     },
   ];
 
   const handleExportCSV = () => {
     if (!filteredSalespeople.length) {
-      toast.error("Nenhum dado para exportar");
+      toast.error('Nenhum dado para exportar');
       return;
     }
 
     exportToCSV(
       filteredSalespeople as unknown as Record<string, unknown>[],
-      `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${new Date().toISOString().split('T')[0]}`,
-      ["salesperson_name", "calls", "emails", "meetings", "linkedin", "whatsapp", "total_activities", "connected", "scheduled", "no_answer", "connection_rate", "scheduling_rate"]
+      `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${getLocalISODate()}`,
+      [
+        'salesperson_name',
+        'calls',
+        'emails',
+        'meetings',
+        'linkedin',
+        'whatsapp',
+        'total_activities',
+        'connected',
+        'scheduled',
+        'no_answer',
+        'connection_rate',
+        'scheduling_rate',
+      ]
     );
 
-    toast.success("Relatório exportado com sucesso!");
+    toast.success('Relatório exportado com sucesso!');
   };
 
   return (
@@ -135,7 +166,7 @@ export default function RelatorioAtividades() {
       >
         <div className="space-y-6">
           {/* Header */}
-          <div className="animate-fade-in" style={{ animationDelay: "0ms" }}>
+          <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h1 className="text-page-title gradient-text">Relatório de Atividades</h1>
@@ -152,14 +183,19 @@ export default function RelatorioAtividades() {
                     </span>
                   </div>
                 )}
-                <Select value={outcomeFilter} onValueChange={(v) => setOutcomeFilter(v as OutcomeFilter)}>
+                <Select
+                  value={outcomeFilter}
+                  onValueChange={v => setOutcomeFilter(v as OutcomeFilter)}
+                >
                   <SelectTrigger className="w-[180px] gap-2">
                     <Filter className="h-4 w-4" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(outcomeLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -178,7 +214,10 @@ export default function RelatorioAtividades() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <div
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in"
+            style={{ animationDelay: '100ms' }}
+          >
             {stats.map((stat, index) => (
               <Card key={index} className="glass border-border/40 hover-lift-sm">
                 <CardContent className="p-4">
@@ -198,21 +237,21 @@ export default function RelatorioAtividades() {
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+            <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
               <ActivityVolumeChart data={filteredSalespeople} />
             </div>
-            <div className="animate-fade-in" style={{ animationDelay: "250ms" }}>
+            <div className="animate-fade-in" style={{ animationDelay: '250ms' }}>
               <ActivityOutcomesChart data={filteredSalespeople} />
             </div>
           </div>
 
           {/* Trend Chart */}
-          <div className="animate-fade-in" style={{ animationDelay: "300ms" }}>
+          <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
             <ActivityTrendChart data={trendData || []} />
           </div>
 
           {/* Salesperson Table */}
-          <div className="animate-fade-in" style={{ animationDelay: "350ms" }}>
+          <div className="animate-fade-in" style={{ animationDelay: '350ms' }}>
             <SalespersonActivityTable data={filteredSalespeople} />
           </div>
         </div>

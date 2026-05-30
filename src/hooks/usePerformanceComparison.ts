@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus } from '@/constants';
 
 export interface SalespersonPerformance {
   id: string;
@@ -66,38 +67,41 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
         .from('sales_goals')
         .select('salesperson_id, goal_amount');
 
-      const metrics: SalespersonPerformance[] = salespeople.map(sp => {
-        const spSales = (sales || []).filter(s => s.salesperson_id === sp.id);
-        const completedSales = spSales.filter(s => s.status === 'completed');
-        const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
-        const spOutcomes = (outcomes || []).filter(o => o.salesperson_id === sp.id);
-        const wins = spOutcomes.filter(o => o.outcome === 'won').length;
-        const totalOutcomes = spOutcomes.length;
+      const metrics: SalespersonPerformance[] = salespeople
+        .map(sp => {
+          const spSales = (sales || []).filter(s => s.salesperson_id === sp.id);
+          const completedSales = spSales.filter(s => isWonSaleStatus(s.status));
+          const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
+          const spOutcomes = (outcomes || []).filter(o => o.salesperson_id === sp.id);
+          const wins = spOutcomes.filter(o => o.outcome === 'won').length;
+          const totalOutcomes = spOutcomes.length;
 
-        const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
-        const spGoal = (goals || []).find(g => g.salesperson_id === sp.id);
-        const goalProgress = spGoal?.goal_amount ? (totalRevenue / spGoal.goal_amount) * 100 : 0;
+          const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
+          const spGoal = (goals || []).find(g => g.salesperson_id === sp.id);
+          const goalProgress = spGoal?.goal_amount ? (totalRevenue / spGoal.goal_amount) * 100 : 0;
 
-        return {
-          id: sp.id,
-          name: sp.name,
-          role: sp.role || 'hybrid',
-          avatar_url: sp.avatar_url,
-          avatarUrl: sp.avatar_url,
-          totalSales: completedSales.length,
-          totalRevenue,
-          avgDealSize: completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
-          winRate: totalOutcomes > 0 ? Math.round((wins / totalOutcomes) * 100) : 0,
-          activitiesCount: spActivities.length,
-          totalActivities: spActivities.length,
-          conversionRate: spSales.length > 0 ? Math.round((completedSales.length / spSales.length) * 100) : 0,
-          rank: 0,
-          goalProgress: Math.round(goalProgress),
-        };
-      }).sort((a, b) => b.totalRevenue - a.totalRevenue);
+          return {
+            id: sp.id,
+            name: sp.name,
+            role: sp.role || 'hybrid',
+            avatar_url: sp.avatar_url,
+            avatarUrl: sp.avatar_url,
+            totalSales: completedSales.length,
+            totalRevenue,
+            avgDealSize: completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
+            winRate: totalOutcomes > 0 ? Math.round((wins / totalOutcomes) * 100) : 0,
+            activitiesCount: spActivities.length,
+            totalActivities: spActivities.length,
+            conversionRate:
+              spSales.length > 0 ? Math.round((completedSales.length / spSales.length) * 100) : 0,
+            rank: 0,
+            goalProgress: Math.round(goalProgress),
+          };
+        })
+        .sort((a, b) => b.totalRevenue - a.totalRevenue);
 
       // Assign ranks
-      metrics.forEach((m, idx) => m.rank = idx + 1);
+      metrics.forEach((m, idx) => (m.rank = idx + 1));
 
       // Group by role
       const roleMap = new Map<string, SalespersonPerformance[]>();
@@ -108,22 +112,23 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
       });
 
       return Array.from(roleMap.entries()).map(([role, people]) => {
-        const avgRevenue = people.length > 0
-          ? people.reduce((sum, p) => sum + p.totalRevenue, 0) / people.length
-          : 0;
-        const avgWinRate = people.length > 0
-          ? people.reduce((sum, p) => sum + p.winRate, 0) / people.length
-          : 0;
-        const avgActivities = people.length > 0
-          ? people.reduce((sum, p) => sum + p.totalActivities, 0) / people.length
-          : 0;
-        const avgDealSize = people.length > 0
-          ? people.reduce((sum, p) => sum + p.avgDealSize, 0) / people.length
-          : 0;
+        const avgRevenue =
+          people.length > 0
+            ? people.reduce((sum, p) => sum + p.totalRevenue, 0) / people.length
+            : 0;
+        const avgWinRate =
+          people.length > 0 ? people.reduce((sum, p) => sum + p.winRate, 0) / people.length : 0;
+        const avgActivities =
+          people.length > 0
+            ? people.reduce((sum, p) => sum + p.totalActivities, 0) / people.length
+            : 0;
+        const avgDealSize =
+          people.length > 0 ? people.reduce((sum, p) => sum + p.avgDealSize, 0) / people.length : 0;
 
-        const topPerformer = people.length > 0
-          ? people.reduce((best, p) => p.totalRevenue > best.totalRevenue ? p : best)
-          : null;
+        const topPerformer =
+          people.length > 0
+            ? people.reduce((best, p) => (p.totalRevenue > best.totalRevenue ? p : best))
+            : null;
 
         return {
           role,

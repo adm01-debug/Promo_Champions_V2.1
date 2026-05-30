@@ -15,22 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { 
-  Sparkles, 
-  Loader2, 
-  Phone, 
-  Users, 
-  Mail, 
-  Clock, 
-  FileText, 
+import {
+  Sparkles,
+  Loader2,
+  Phone,
+  Users,
+  Mail,
+  Clock,
+  FileText,
   MoreHorizontal,
   Plus,
   Lightbulb,
   Zap,
   Linkedin,
-  MessageSquare
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface ActionSuggestion {
   title: string;
@@ -44,8 +45,14 @@ interface ActionSuggestion {
 
 const priorityConfig = {
   high: { label: 'Alta', className: 'bg-status-error/20 text-status-error border-status-error/30' },
-  medium: { label: 'Média', className: 'bg-status-warning/20 text-status-warning border-status-warning/30' },
-  low: { label: 'Baixa', className: 'bg-status-success/20 text-status-success border-status-success/30' },
+  medium: {
+    label: 'Média',
+    className: 'bg-status-warning/20 text-status-warning border-status-warning/30',
+  },
+  low: {
+    label: 'Baixa',
+    className: 'bg-status-success/20 text-status-success border-status-success/30',
+  },
 };
 
 const actionTypeConfig = {
@@ -77,7 +84,7 @@ export function NextBestAction() {
     // Map suggestion action types to supported TaskTypes
     let taskType: any = 'other';
     const type = suggestion.actionType;
-    
+
     if (type === 'call' || type === 'call_now') taskType = 'call';
     else if (type === 'email') taskType = 'email';
     else if (type === 'meeting') taskType = 'meeting';
@@ -90,9 +97,14 @@ export function NextBestAction() {
     createTask.mutate({
       title: suggestion.title,
       description: suggestion.description,
-      due_date: new Date().toISOString().split('T')[0],
+      due_date: getLocalISODate(),
       task_type: taskType,
-      priority: suggestion.priority === 'high' ? 'high' : suggestion.priority === 'medium' ? 'medium' : 'low',
+      priority:
+        suggestion.priority === 'high'
+          ? 'high'
+          : suggestion.priority === 'medium'
+            ? 'medium'
+            : 'low',
       salesperson_id: selectedSalesperson || undefined,
       sale_id: suggestion.dealId || undefined,
     });
@@ -115,7 +127,7 @@ export function NextBestAction() {
               <SelectValue placeholder="Selecione um vendedor" />
             </SelectTrigger>
             <SelectContent>
-              {salespeople?.map((sp) => (
+              {salespeople?.map(sp => (
                 <SelectItem key={sp.id} value={sp.id}>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5">
@@ -128,7 +140,10 @@ export function NextBestAction() {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={handleGenerate} disabled={!selectedSalesperson || nextBestAction.isPending}>
+          <Button
+            onClick={handleGenerate}
+            disabled={!selectedSalesperson || nextBestAction.isPending}
+          >
             {nextBestAction.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -149,16 +164,21 @@ export function NextBestAction() {
               <div className="p-1.5 rounded-lg bg-primary/20">
                 <Lightbulb className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-sm text-foreground font-medium italic">"{nextBestAction.data.insight}"</p>
+              <p className="text-sm text-foreground font-medium italic">
+                "{nextBestAction.data.insight}"
+              </p>
             </div>
 
             <div className="space-y-3">
               <h4 className="text-xs font-display font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                Ações Recomendadas para <span className="text-primary">{selectedPerson?.name}</span>:
+                Ações Recomendadas para <span className="text-primary">{selectedPerson?.name}</span>
+                :
               </h4>
-              
+
               {nextBestAction.data.suggestions.map((suggestion, index) => {
-                const actionType = actionTypeConfig[suggestion.actionType as keyof typeof actionTypeConfig] || actionTypeConfig.other;
+                const actionType =
+                  actionTypeConfig[suggestion.actionType as keyof typeof actionTypeConfig] ||
+                  actionTypeConfig.other;
                 const ActionIcon = actionType.icon;
                 const priority = priorityConfig[suggestion.priority];
 
@@ -166,19 +186,28 @@ export function NextBestAction() {
                   <div
                     key={index}
                     className={cn(
-                      "glass rounded-xl p-4 border border-border/40 hover-lift transition-all",
-                      suggestion.actionType === 'call_now' && "border-status-error/40 bg-status-error/5"
+                      'glass rounded-xl p-4 border border-border/40 hover-lift transition-all',
+                      suggestion.actionType === 'call_now' &&
+                        'border-status-error/40 bg-status-error/5'
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1">
-                        <div className={cn("p-2 rounded-lg bg-muted/50", actionType.color)}>
-                          <ActionIcon className={cn("h-4 w-4", suggestion.actionType === 'call_now' && "animate-pulse")} />
+                        <div className={cn('p-2 rounded-lg bg-muted/50', actionType.color)}>
+                          <ActionIcon
+                            className={cn(
+                              'h-4 w-4',
+                              suggestion.actionType === 'call_now' && 'animate-pulse'
+                            )}
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <h5 className="font-bold text-sm">{suggestion.title}</h5>
-                            <Badge variant="outline" className={cn("text-[10px] h-5 py-0", priority.className)}>
+                            <Badge
+                              variant="outline"
+                              className={cn('text-[10px] h-5 py-0', priority.className)}
+                            >
                               {priority.label}
                             </Badge>
                             {suggestion.actionType === 'call_now' && (
@@ -187,21 +216,28 @@ export function NextBestAction() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed">{suggestion.description}</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {suggestion.description}
+                          </p>
                           {suggestion.dealName && (
                             <div className="flex items-center gap-1 mt-2">
-                              <span className="text-[10px] text-muted-foreground uppercase">Oportunidade:</span>
-                              <span className="text-[10px] font-semibold text-primary">{suggestion.dealName}</span>
+                              <span className="text-[10px] text-muted-foreground uppercase">
+                                Oportunidade:
+                              </span>
+                              <span className="text-[10px] font-semibold text-primary">
+                                {suggestion.dealName}
+                              </span>
                             </div>
                           )}
                         </div>
                       </div>
                       <Button
-                        variant={suggestion.actionType === 'call_now' ? "default" : "secondary"}
+                        variant={suggestion.actionType === 'call_now' ? 'default' : 'secondary'}
                         size="sm"
                         className={cn(
-                          "shrink-0 text-xs h-8",
-                          suggestion.actionType === 'call_now' && "bg-status-error hover:bg-status-error/90"
+                          'shrink-0 text-xs h-8',
+                          suggestion.actionType === 'call_now' &&
+                            'bg-status-error hover:bg-status-error/90'
                         )}
                         onClick={() => handleCreateTask(suggestion)}
                       >

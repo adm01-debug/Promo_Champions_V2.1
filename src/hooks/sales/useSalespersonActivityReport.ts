@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 export interface SalespersonActivityData {
   salesperson_id: string;
@@ -48,39 +49,41 @@ export interface TeamActivitySummary {
 
 export function useSalespersonActivityReport(months: number = 1) {
   return useQuery({
-    queryKey: ["salesperson-activity-report", months],
+    queryKey: ['salesperson-activity-report', months],
     queryFn: async () => {
       const endDate = endOfMonth(new Date());
       const startDate = startOfMonth(subMonths(new Date(), months - 1));
-      const daysInPeriod = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysInPeriod = Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       // Fetch salespeople
       const { data: salespeople, error: spError } = await supabase
-        .from("salespeople")
-        .select("id, name, avatar_url, role")
-        .eq("is_active", true);
+        .from('salespeople')
+        .select('id, name, avatar_url, role')
+        .eq('is_active', true);
 
       if (spError) throw spError;
 
       // Fetch activities in period
       const { data: activities, error: actError } = await supabase
-        .from("activities")
-        .select("*")
-        .gte("created_at", startDate.toISOString())
-        .lte("created_at", endDate.toISOString());
+        .from('activities')
+        .select('*')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
 
       if (actError) throw actError;
 
       // Calculate per-salesperson data
       const salespersonData: SalespersonActivityData[] = (salespeople || []).map(sp => {
         const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
-        
+
         const calls = spActivities.filter(a => a.activity_type === 'call').length;
         const emails = spActivities.filter(a => a.activity_type === 'email').length;
         const meetings = spActivities.filter(a => a.activity_type === 'meeting').length;
         const linkedin = spActivities.filter(a => a.activity_type === 'linkedin').length;
         const whatsapp = spActivities.filter(a => a.activity_type === 'whatsapp').length;
-        
+
         const connected = spActivities.filter(a => a.outcome === 'connected').length;
         const scheduled = spActivities.filter(a => a.outcome === 'scheduled').length;
         const qualified = spActivities.filter(a => a.outcome === 'qualified').length;
@@ -89,7 +92,7 @@ export function useSalespersonActivityReport(months: number = 1) {
 
         const total = spActivities.length;
         const attempted = total;
-        
+
         return {
           salesperson_id: sp.id,
           salesperson_name: sp.name,
@@ -118,15 +121,21 @@ export function useSalespersonActivityReport(months: number = 1) {
       const totalCalls = salespersonData.reduce((sum, sp) => sum + sp.calls, 0);
       const totalEmails = salespersonData.reduce((sum, sp) => sum + sp.emails, 0);
       const totalMeetings = salespersonData.reduce((sum, sp) => sum + sp.meetings, 0);
-      
-      const avgConnectionRate = salespersonData.length > 0
-        ? salespersonData.reduce((sum, sp) => sum + sp.connection_rate, 0) / salespersonData.length
-        : 0;
-      const avgSchedulingRate = salespersonData.length > 0
-        ? salespersonData.reduce((sum, sp) => sum + sp.scheduling_rate, 0) / salespersonData.length
-        : 0;
 
-      const topPerformer = salespersonData.sort((a, b) => b.total_activities - a.total_activities)[0];
+      const avgConnectionRate =
+        salespersonData.length > 0
+          ? salespersonData.reduce((sum, sp) => sum + sp.connection_rate, 0) /
+            salespersonData.length
+          : 0;
+      const avgSchedulingRate =
+        salespersonData.length > 0
+          ? salespersonData.reduce((sum, sp) => sum + sp.scheduling_rate, 0) /
+            salespersonData.length
+          : 0;
+
+      const topPerformer = salespersonData.sort(
+        (a, b) => b.total_activities - a.total_activities
+      )[0];
 
       const teamSummary: TeamActivitySummary = {
         total_activities: totalActivities,
@@ -150,20 +159,20 @@ export function useSalespersonActivityReport(months: number = 1) {
 
 export function useActivityTrend(salespersonId?: string, days: number = 30) {
   return useQuery({
-    queryKey: ["activity-trend", salespersonId, days],
+    queryKey: ['activity-trend', salespersonId, days],
     queryFn: async () => {
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
       let query = supabase
-        .from("activities")
-        .select("created_at, activity_type")
-        .gte("created_at", startDate.toISOString())
-        .lte("created_at", endDate.toISOString());
+        .from('activities')
+        .select('created_at, activity_type')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
 
       if (salespersonId) {
-        query = query.eq("salesperson_id", salespersonId);
+        query = query.eq('salesperson_id', salespersonId);
       }
 
       const { data: activities, error } = await query;
@@ -171,14 +180,14 @@ export function useActivityTrend(salespersonId?: string, days: number = 30) {
 
       // Group by date
       const dailyData: Record<string, ActivityTrendData> = {};
-      
+
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().split('T')[0];
+        const dateStr = getLocalISODate(d);
         dailyData[dateStr] = { date: dateStr, calls: 0, emails: 0, meetings: 0, total: 0 };
       }
 
       (activities || []).forEach(activity => {
-        const dateStr = activity.created_at.split('T')[0];
+        const dateStr = getLocalISODate(new Date(activity.created_at));
         if (dailyData[dateStr]) {
           dailyData[dateStr].total++;
           if (activity.activity_type === 'call') dailyData[dateStr].calls++;

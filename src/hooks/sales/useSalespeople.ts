@@ -1,11 +1,19 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter } from "date-fns";
-import { PeriodFilter } from "@/components/vendedores/PeriodFilter";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfQuarter,
+  endOfQuarter,
+} from 'date-fns';
+import { PeriodFilter } from '@/components/vendedores/PeriodFilter';
 
 export type { PeriodFilter };
-export type SalespersonRole = "sdr" | "closer" | "hybrid";
+export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
 
 export interface Salesperson {
   id: string;
@@ -40,24 +48,27 @@ export interface SalespersonWithStats extends Salesperson {
 export function getDateRange(period: PeriodFilter): { start: Date; end: Date } {
   const now = new Date();
   switch (period) {
-    case "week":
-      return { start: startOfWeek(now, { weekStartsOn: 1 }), end: endOfWeek(now, { weekStartsOn: 1 }) };
-    case "month":
+    case 'week':
+      return {
+        start: startOfWeek(now, { weekStartsOn: 1 }),
+        end: endOfWeek(now, { weekStartsOn: 1 }),
+      };
+    case 'month':
       return { start: startOfMonth(now), end: endOfMonth(now) };
-    case "quarter":
+    case 'quarter':
       return { start: startOfQuarter(now), end: endOfQuarter(now) };
   }
 }
 
 export function useSalespeople() {
   return useQuery({
-    queryKey: ["salespeople"],
+    queryKey: ['salespeople'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("salespeople")
-        .select("*")
-        .eq("is_active", true)
-        .order("name");
+        .from('salespeople')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
 
       if (error) throw error;
       return (data || []).map(sp => ({
@@ -71,15 +82,12 @@ export function useSalespeople() {
 
 export function useSalesGoals(month?: Date) {
   const targetMonth = month || new Date();
-  const monthStr = targetMonth.toISOString().slice(0, 7) + "-01";
+  const monthStr = targetMonth.toISOString().slice(0, 7) + '-01';
 
   return useQuery({
-    queryKey: ["sales_goals", monthStr],
+    queryKey: ['sales_goals', monthStr],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sales_goals")
-        .select("*")
-        .eq("month", monthStr);
+      const { data, error } = await supabase.from('sales_goals').select('*').eq('month', monthStr);
 
       if (error) throw error;
       return data as SalesGoal[];
@@ -87,36 +95,36 @@ export function useSalesGoals(month?: Date) {
   });
 }
 
-export function useSalespeopleRanking(period: PeriodFilter = "month") {
+export function useSalespeopleRanking(period: PeriodFilter = 'month') {
   const { start, end } = getDateRange(period);
 
   return useQuery({
-    queryKey: ["salespeople_ranking", period],
+    queryKey: ['salespeople_ranking', period],
     queryFn: async () => {
       // Fetch salespeople
       const { data: salespeople, error: spError } = await supabase
-        .from("salespeople")
-        .select("*")
-        .eq("is_active", true);
+        .from('salespeople')
+        .select('*')
+        .eq('is_active', true);
 
       if (spError) throw spError;
 
       // Fetch current month goals (goals are always monthly)
-      const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
+      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
       const { data: goals, error: goalsError } = await supabase
-        .from("sales_goals")
-        .select("*")
-        .eq("month", currentMonth);
+        .from('sales_goals')
+        .select('*')
+        .eq('month', currentMonth);
 
       if (goalsError) throw goalsError;
 
       // Fetch sales for selected period
       const { data: sales, error: salesError } = await supabase
-        .from("sales")
-        .select("*")
-        .gte("created_at", start.toISOString())
-        .lte("created_at", end.toISOString())
-        .eq("status", "completed");
+        .from('sales')
+        .select('*')
+        .gte('created_at', start.toISOString())
+        .lte('created_at', end.toISOString())
+        .in('status', [...WON_SALE_STATUSES]);
 
       if (salesError) throw salesError;
 
@@ -126,15 +134,15 @@ export function useSalespeopleRanking(period: PeriodFilter = "month") {
         const totalSales = spSales.reduce((sum, s) => sum + Number(s.amount), 0);
         const goal = (goals || []).find(g => g.salesperson_id === sp.id);
         const goalAmount = goal ? Number(goal.goal_amount) : 0;
-        
+
         // Adjust goal based on period
         let adjustedGoal = goalAmount;
-        if (period === "week") {
+        if (period === 'week') {
           adjustedGoal = goalAmount / 4; // ~4 weeks per month
-        } else if (period === "quarter") {
+        } else if (period === 'quarter') {
           adjustedGoal = goalAmount * 3; // 3 months per quarter
         }
-        
+
         const goalProgress = adjustedGoal > 0 ? (totalSales / adjustedGoal) * 100 : 0;
         const commission = totalSales * (Number(sp.commission_rate) / 100);
 
@@ -168,20 +176,20 @@ export function useUpdateSalesperson(onSuccess?: () => void) {
   return useMutation({
     mutationFn: async ({ id, ...updates }: { id: string } & Partial<Salesperson>) => {
       const { data, error } = await supabase
-        .from("salespeople")
+        .from('salespeople')
         .update(updates)
-        .eq("id", id)
+        .eq('id', id)
         .select()
         .single();
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["salespeople"] });
-      queryClient.invalidateQueries({ queryKey: ["salespeople_ranking"] });
+      queryClient.invalidateQueries({ queryKey: ['salespeople'] });
+      queryClient.invalidateQueries({ queryKey: ['salespeople_ranking'] });
       onSuccess?.();
-      toast.success("Vendedor atualizado!");
+      toast.success('Vendedor atualizado!');
     },
-    onError: (e: Error) => toast.error("Erro ao atualizar: " + e.message),
+    onError: (e: Error) => toast.error('Erro ao atualizar: ' + e.message),
   });
 }

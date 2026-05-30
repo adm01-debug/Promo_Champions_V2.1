@@ -1,7 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useMemo } from "react";
-import { computeStageDeltas, type FunnelStageBasic, type StageDelta } from "@/components/reporting/funnelReportHelpers";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus } from '@/constants';
+import { useMemo } from 'react';
+import {
+  computeStageDeltas,
+  type FunnelStageBasic,
+  type StageDelta,
+} from '@/components/reporting/funnelReportHelpers';
 
 interface FunnelSnapshot {
   stages: FunnelStageBasic[];
@@ -13,39 +18,39 @@ interface FunnelSnapshot {
   wonCount: number;
 }
 
-const STAGE_ORDER = ["lead", "prospecting", "qualified", "proposal", "negotiation"];
+const STAGE_ORDER = ['lead', 'prospecting', 'qualified', 'proposal', 'negotiation'];
 
 const fetchFunnelSnapshot = async (startDate: Date, endDate: Date): Promise<FunnelSnapshot> => {
   const [{ data: stageHistory, error: shErr }, { data: sales, error: sErr }] = await Promise.all([
     supabase
-      .from("deal_stage_history")
-      .select("sale_id, stage, entered_at")
-      .gte("entered_at", startDate.toISOString())
-      .lt("entered_at", endDate.toISOString()),
+      .from('deal_stage_history')
+      .select('sale_id, stage, entered_at')
+      .gte('entered_at', startDate.toISOString())
+      .lt('entered_at', endDate.toISOString()),
     supabase
-      .from("sales")
-      .select("id, amount, status, created_at")
-      .gte("created_at", startDate.toISOString())
-      .lt("created_at", endDate.toISOString()),
+      .from('sales')
+      .select('id, amount, status, created_at')
+      .gte('created_at', startDate.toISOString())
+      .lt('created_at', endDate.toISOString()),
   ]);
 
   if (shErr) throw shErr;
   if (sErr) throw sErr;
 
   const stageGroups = new Map<string, Set<string>>();
-  STAGE_ORDER.forEach((s) => stageGroups.set(s, new Set()));
-  (stageHistory || []).forEach((r) => {
-    const s = (r.stage || "").toLowerCase();
-    if (stageGroups.has(s)) stageGroups.get(s)!.add(r.sale_id || "");
+  STAGE_ORDER.forEach(s => stageGroups.set(s, new Set()));
+  (stageHistory || []).forEach(r => {
+    const s = (r.stage || '').toLowerCase();
+    if (stageGroups.has(s)) stageGroups.get(s)!.add(r.sale_id || '');
   });
 
   const amountMap = new Map<string, number>();
-  (sales || []).forEach((s) => amountMap.set(s.id, s.amount || 0));
+  (sales || []).forEach(s => amountMap.set(s.id, s.amount || 0));
 
   const totalDeals = (sales || []).length;
   let prevCount = totalDeals || 1;
 
-  const stages: FunnelStageBasic[] = STAGE_ORDER.map((stage) => {
+  const stages: FunnelStageBasic[] = STAGE_ORDER.map(stage => {
     const ids = stageGroups.get(stage) || new Set();
     const count = ids.size;
     const value = Array.from(ids).reduce((sum, id) => sum + (amountMap.get(id) || 0), 0);
@@ -62,14 +67,15 @@ const fetchFunnelSnapshot = async (startDate: Date, endDate: Date): Promise<Funn
     return result;
   });
 
-  const won = (sales || []).filter((s) => s.status === "completed");
+  const won = (sales || []).filter(s => isWonSaleStatus(s.status));
   const overallConversion = totalDeals > 0 ? (won.length / totalDeals) * 100 : 0;
   const totalValue = won.reduce((sum, s) => sum + (s.amount || 0), 0);
   const avgDealSize = won.length > 0 ? totalValue / won.length : 0;
 
-  const topDropOffStage = stages.length > 0
-    ? stages.reduce((m, s) => (s.dropOffRate > m.dropOffRate ? s : m), stages[0]).stage
-    : "N/A";
+  const topDropOffStage =
+    stages.length > 0
+      ? stages.reduce((m, s) => (s.dropOffRate > m.dropOffRate ? s : m), stages[0]).stage
+      : 'N/A';
 
   return {
     stages,
@@ -106,7 +112,7 @@ export const useFunnelComparison = (timeframe: number = 30) => {
   }, [timeframe]);
 
   return useQuery<FunnelComparison>({
-    queryKey: ["funnel-comparison", timeframe],
+    queryKey: ['funnel-comparison', timeframe],
     queryFn: async () => {
       const [current, previous] = await Promise.all([
         fetchFunnelSnapshot(startCurr, endCurr),
@@ -117,7 +123,8 @@ export const useFunnelComparison = (timeframe: number = 30) => {
         previous,
         deltas: computeStageDeltas(current.stages, previous.stages),
         kpiDeltas: {
-          overallConversion: Math.round((current.overallConversion - previous.overallConversion) * 10) / 10,
+          overallConversion:
+            Math.round((current.overallConversion - previous.overallConversion) * 10) / 10,
           totalValue: current.totalValue - previous.totalValue,
           avgDealSize: current.avgDealSize - previous.avgDealSize,
           wonCount: current.wonCount - previous.wonCount,

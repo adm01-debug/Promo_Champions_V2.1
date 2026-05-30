@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
-import type { RaceEvent } from "@/hooks/race/useRaceEvents";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { RaceEvent } from '@/hooks/race/useRaceEvents';
 
 interface UseRaceCommentaryOpts {
   seasonId?: string;
@@ -47,46 +47,53 @@ export function useRaceCommentary({
   const lastEventIdRef = useRef<string | null>(null);
   const periodicTimerRef = useRef<number | null>(null);
 
-  const generate = useCallback(async (context: 'overtake' | 'leader_change' | 'checkpoint' | 'periodic') => {
-    if (!enabled || leaderboard.length === 0) return;
-    const now = Date.now();
-    if (now - lastCallRef.current < COOLDOWN_MS) return;
-    lastCallRef.current = now;
+  const generate = useCallback(
+    async (context: 'overtake' | 'leader_change' | 'checkpoint' | 'periodic') => {
+      if (!enabled || leaderboard.length === 0) return;
+      const now = Date.now();
+      if (now - lastCallRef.current < COOLDOWN_MS) return;
+      lastCallRef.current = now;
 
-    setIsGenerating(true);
-    try {
-      const payload = {
-        seasonName,
-        roleType,
-        leaderboard: leaderboard.slice(0, 5).map((e, i) => ({
-          rank: e.rank ?? i + 1,
-          name: e.salesperson_name,
-          progress: Number(e.progress),
-          total_sales: e.total_sales,
-          deals_count: e.deals_count,
-        })),
-        recentEvents: recentEvents.slice(0, 3).map(ev => ({
-          type: ev.event_type,
-          actor: leaderboard.find(l => l.salesperson_id === ev.salesperson_id)?.salesperson_name,
-        })),
-        context,
-        secondsToEnd,
-      };
-      const { data, error } = await supabase.functions.invoke('race-commentary', { body: payload });
-      if (error) throw error;
-      const text = (data as { commentary?: string })?.commentary?.trim();
-      if (!text) return;
-      setItems(prev => [
-        { id: `${context}-${now}`, text, context, generated_at: new Date().toISOString() },
-        ...prev,
-      ].slice(0, MAX_HISTORY));
-    } catch (err) {
-      // silent — narração é "nice to have", não bloqueia UX
-      console.warn('[race-commentary] generation failed', err);
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [enabled, leaderboard, recentEvents, seasonName, roleType, secondsToEnd]);
+      setIsGenerating(true);
+      try {
+        const payload = {
+          seasonName,
+          roleType,
+          leaderboard: leaderboard.slice(0, 5).map((e, i) => ({
+            rank: e.rank ?? i + 1,
+            name: e.salesperson_name,
+            progress: Number(e.progress),
+            total_sales: e.total_sales,
+            deals_count: e.deals_count,
+          })),
+          recentEvents: recentEvents.slice(0, 3).map(ev => ({
+            type: ev.event_type,
+            actor: leaderboard.find(l => l.salesperson_id === ev.salesperson_id)?.salesperson_name,
+          })),
+          context,
+          secondsToEnd,
+        };
+        const { data, error } = await supabase.functions.invoke('race-commentary', {
+          body: payload,
+        });
+        if (error) throw error;
+        const text = (data as { commentary?: string })?.commentary?.trim();
+        if (!text) return;
+        setItems(prev =>
+          [
+            { id: `${context}-${now}`, text, context, generated_at: new Date().toISOString() },
+            ...prev,
+          ].slice(0, MAX_HISTORY)
+        );
+      } catch (err) {
+        // silent — narração é "nice to have", não bloqueia UX
+        console.warn('[race-commentary] generation failed', err);
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    [enabled, leaderboard, recentEvents, seasonName, roleType, secondsToEnd]
+  );
 
   // Detecta mudança de líder
   useEffect(() => {
@@ -109,16 +116,20 @@ export function useRaceCommentary({
     else if (newest.event_type === 'checkpoint') generate('checkpoint');
   }, [recentEvents, enabled, generate]);
 
+  // Mantém a referência mais recente de `generate` sem recriar o timer
+  const generateRef = useRef(generate);
+  generateRef.current = generate;
+
   // Tick periódico
   useEffect(() => {
     if (!enabled || !seasonId) return;
     periodicTimerRef.current = window.setInterval(() => {
-      generate('periodic');
+      generateRef.current('periodic');
     }, PERIODIC_INTERVAL_MS);
     return () => {
       if (periodicTimerRef.current) window.clearInterval(periodicTimerRef.current);
     };
-  }, [enabled, seasonId, generate]);
+  }, [enabled, seasonId]);
 
   return { items, isGenerating, regenerate: () => generate('periodic') };
 }

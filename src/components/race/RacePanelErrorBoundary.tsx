@@ -28,7 +28,6 @@ export class RacePanelErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.error(`[RacePanel:${this.props.panelName}]`, error, info.componentStack);
     }
   }
@@ -46,7 +45,8 @@ export class RacePanelErrorBoundary extends Component<Props, State> {
             <div>
               <p className="text-sm font-semibold">Este painel está indisponível</p>
               <p className="text-xs text-muted-foreground">
-                Houve um erro ao carregar “{this.props.panelName}”. Os outros painéis continuam funcionando.
+                Houve um erro ao carregar “{this.props.panelName}”. Os outros painéis continuam
+                funcionando.
               </p>
             </div>
             <Button onClick={this.reset} size="sm" variant="outline">

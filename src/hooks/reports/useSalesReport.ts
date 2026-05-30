@@ -1,13 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-  subWeeks,
-  subMonths,
-} from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns';
 import {
   buildKpis,
   buildKpiDeltas,
@@ -20,10 +14,10 @@ import {
   type SalesReportData,
   type SaleRow,
   type SalespersonRow,
-} from "./salesReportHelpers";
+} from './salesReportHelpers';
 
 function getRange(period: ReportPeriod, refDate: Date) {
-  if (period === "weekly") {
+  if (period === 'weekly') {
     const start = startOfWeek(refDate, { weekStartsOn: 1 });
     const end = endOfWeek(refDate, { weekStartsOn: 1 });
     const prevStart = startOfWeek(subWeeks(refDate, 1), { weekStartsOn: 1 });
@@ -40,21 +34,21 @@ function getRange(period: ReportPeriod, refDate: Date) {
 
 export function useSalesReport(period: ReportPeriod, refDate: Date) {
   return useQuery<SalesReportData>({
-    queryKey: ["sales-report", period, refDate.toISOString().slice(0, 10)],
+    queryKey: ['sales-report', period, getLocalISODate(refDate)],
     queryFn: async () => {
       const { start, end, prevStart, prevEnd } = getRange(period, refDate);
       const [curRes, prevRes, spRes] = await Promise.all([
         supabase
-          .from("sales")
-          .select("id, amount, status, created_at, client_name, product_name, salesperson_id")
-          .gte("created_at", start.toISOString())
-          .lte("created_at", end.toISOString()),
+          .from('sales')
+          .select('id, amount, status, created_at, client_name, product_name, salesperson_id')
+          .gte('created_at', start.toISOString())
+          .lte('created_at', end.toISOString()),
         supabase
-          .from("sales")
-          .select("id, amount, status, created_at, client_name, product_name, salesperson_id")
-          .gte("created_at", prevStart.toISOString())
-          .lte("created_at", prevEnd.toISOString()),
-        supabase.from("salespeople_public").select("id, name"),
+          .from('sales')
+          .select('id, amount, status, created_at, client_name, product_name, salesperson_id')
+          .gte('created_at', prevStart.toISOString())
+          .lte('created_at', prevEnd.toISOString()),
+        supabase.from('salespeople_public').select('id, name'),
       ]);
 
       if (curRes.error) throw curRes.error;

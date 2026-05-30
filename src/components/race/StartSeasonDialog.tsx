@@ -1,21 +1,43 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useStartRaceSeason } from '@/hooks/race/useStartRaceSeason';
 import { Flag, Users, Target } from 'lucide-react';
 import { ScoringRulesEditor } from './admin/ScoringRulesEditor';
 import type { MetricCode } from '@/hooks/race/useRaceScoringRules';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
-interface Props { open: boolean; onOpenChange: (o: boolean) => void; }
+interface Props {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}
 
-type ScoringDraft = { metric_code: MetricCode; weight: number; points_per_unit: number; label: string };
+type ScoringDraft = {
+  metric_code: MetricCode;
+  weight: number;
+  points_per_unit: number;
+  label: string;
+};
 
 export function StartSeasonDialog({ open, onOpenChange }: Props) {
-  const today = new Date().toISOString().slice(0, 10);
-  const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+  const today = getLocalISODate();
+  const in30 = getLocalISODate(new Date(Date.now() + 30 * 86400000));
   const [name, setName] = useState('Nova Temporada 🏁');
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(in30);
@@ -29,12 +51,20 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
   const submit = () => {
     mutate(
       {
-        name, start_date: startDate, end_date: endDate,
-        goal_amount: Number(goal), track_type: track,
+        name,
+        start_date: startDate,
+        end_date: endDate,
+        goal_amount: Number(goal),
+        track_type: track,
         role_type: roleType,
         scoring_rules: customRules ?? undefined,
       },
-      { onSuccess: () => { onOpenChange(false); setCustomRules(null); } }
+      {
+        onSuccess: () => {
+          onOpenChange(false);
+          setCustomRules(null);
+        },
+      }
     );
   };
 
@@ -47,14 +77,23 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
               <Flag className="w-5 h-5 text-primary" /> Iniciar nova temporada
             </DialogTitle>
             <DialogDescription>
-              Cada papel (Closer/SDR) tem sua própria temporada simultânea com regras de pontuação dedicadas.
+              Cada papel (Closer/SDR) tem sua própria temporada simultânea com regras de pontuação
+              dedicadas.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
               <Label>Papel da corrida</Label>
-              <Select value={roleType} onValueChange={(v) => { setRoleType(v as 'closer' | 'sdr'); setCustomRules(null); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select
+                value={roleType}
+                onValueChange={v => {
+                  setRoleType(v as 'closer' | 'sdr');
+                  setCustomRules(null);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="closer">🎯 Closer — fechamento</SelectItem>
                   <SelectItem value="sdr">📞 SDR — prospecção</SelectItem>
@@ -63,26 +102,31 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
             </div>
             <div>
               <Label>Nome</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <Input value={name} onChange={e => setName(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label>Início</Label>
-                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
               </div>
               <div>
                 <Label>Fim</Label>
-                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
               </div>
             </div>
             <div>
               <Label>Meta total de pontos</Label>
-              <Input type="number" value={goal} onChange={(e) => setGoal(e.target.value)} />
+              <Input type="number" value={goal} onChange={e => setGoal(e.target.value)} />
             </div>
             <div>
               <Label>Tipo de pista</Label>
-              <Select value={track} onValueChange={(v) => setTrack(v as 'oval' | 'circuit' | 'street')}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select
+                value={track}
+                onValueChange={v => setTrack(v as 'oval' | 'circuit' | 'street')}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="oval">Oval</SelectItem>
                   <SelectItem value="circuit">Circuito</SelectItem>
@@ -92,11 +136,15 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
             </div>
             <Button variant="outline" className="w-full" onClick={() => setRulesEditorOpen(true)}>
               <Target className="w-4 h-4 mr-2" />
-              {customRules ? `Regras personalizadas (${customRules.length})` : 'Configurar regras de pontuação'}
+              {customRules
+                ? `Regras personalizadas (${customRules.length})`
+                : 'Configurar regras de pontuação'}
             </Button>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
             <Button onClick={submit} disabled={isPending}>
               <Users className="w-4 h-4 mr-2" />
               {isPending ? 'Iniciando…' : 'Largada!'}
@@ -109,8 +157,8 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
         open={rulesEditorOpen}
         onOpenChange={setRulesEditorOpen}
         roleType={roleType}
-        initialRules={customRules?.map((r) => ({ ...r, season_id: '' })) ?? undefined}
-        onConfirm={(rules) => setCustomRules(rules as ScoringDraft[])}
+        initialRules={customRules?.map(r => ({ ...r, season_id: '' })) ?? undefined}
+        onConfirm={rules => setCustomRules(rules as ScoringDraft[])}
       />
     </>
   );

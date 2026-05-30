@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 
 interface ForecastDeal {
   id: string;
@@ -39,37 +40,38 @@ export interface WeightedForecastData {
 }
 
 const STAGE_CONFIG: Record<string, { label: string; baseProbability: number; color: string }> = {
-  pending: { label: "Lead", baseProbability: 0.10, color: "hsl(var(--muted-foreground))" },
-  qualified: { label: "Qualificado", baseProbability: 0.30, color: "hsl(var(--primary))" },
-  proposal: { label: "Proposta", baseProbability: 0.55, color: "hsl(45, 93%, 47%)" },
-  negotiation: { label: "Negociação", baseProbability: 0.80, color: "hsl(142, 71%, 45%)" },
+  pending: { label: 'Lead', baseProbability: 0.1, color: 'hsl(var(--muted-foreground))' },
+  qualified: { label: 'Qualificado', baseProbability: 0.3, color: 'hsl(var(--primary))' },
+  proposal: { label: 'Proposta', baseProbability: 0.55, color: 'hsl(45, 93%, 47%)' },
+  negotiation: { label: 'Negociação', baseProbability: 0.8, color: 'hsl(142, 71%, 45%)' },
 };
 
 export function useWeightedForecast() {
   return useQuery({
-    queryKey: ["weighted-forecast"],
+    queryKey: ['weighted-forecast'],
     queryFn: async (): Promise<WeightedForecastData> => {
       const [salesRes, scoresRes, stageHistoryRes, goalsRes, wonSalesRes] = await Promise.all([
         supabase
-          .from("sales")
-          .select("id, client_name, product_name, amount, status, created_at")
-          .in("status", ["pending", "qualified", "proposal", "negotiation"]),
+          .from('sales')
+          .select('id, client_name, product_name, amount, status, created_at')
+          .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
+        supabase.from('lead_scores').select('sale_id, score'),
         supabase
-          .from("lead_scores")
-          .select("sale_id, score"),
+          .from('deal_stage_history')
+          .select('sale_id, stage, entered_at, exited_at')
+          .is('exited_at', null),
         supabase
-          .from("deal_stage_history")
-          .select("sale_id, stage, entered_at, exited_at")
-          .is("exited_at", null),
+          .from('sales_goals')
+          .select('goal_amount')
+          .gte('month', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
         supabase
-          .from("sales_goals")
-          .select("goal_amount")
-          .gte("month", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
-        supabase
-          .from("sales")
-          .select("amount, created_at")
-          .in("status", ["completed", "won"])
-          .gte("created_at", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
+          .from('sales')
+          .select('amount, created_at')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte(
+            'created_at',
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+          ),
       ]);
 
       if (salesRes.error) throw salesRes.error;
@@ -141,21 +143,29 @@ export function useWeightedForecast() {
       const monthlyGoal = (goalsRes.data || []).reduce((s, g) => s + Number(g.goal_amount), 0);
 
       const dayOfMonth = new Date().getDate();
-      const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+      const daysInMonth = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        0
+      ).getDate();
       const dailyRate = dayOfMonth > 0 ? currentRevenue / dayOfMonth : 0;
       const projectedRevenue = currentRevenue + dailyRate * (daysInMonth - dayOfMonth);
 
       const avgDealSize = deals.length > 0 ? totalPipeline / deals.length : 0;
-      const avgCloseTime = deals.length > 0
-        ? Math.round(deals.reduce((s, d) => s + d.days_in_stage, 0) / deals.length)
-        : 0;
+      const avgCloseTime =
+        deals.length > 0
+          ? Math.round(deals.reduce((s, d) => s + d.days_in_stage, 0) / deals.length)
+          : 0;
 
-      const confidenceScore = Math.min(100, Math.round(
-        (deals.length > 0 ? 20 : 0) +
-        (weightedForecast > 0 ? 30 : 0) +
-        (deals.filter(d => d.lead_score !== null).length / Math.max(1, deals.length)) * 30 +
-        (currentRevenue / Math.max(1, monthlyGoal)) * 20
-      ));
+      const confidenceScore = Math.min(
+        100,
+        Math.round(
+          (deals.length > 0 ? 20 : 0) +
+            (weightedForecast > 0 ? 30 : 0) +
+            (deals.filter(d => d.lead_score !== null).length / Math.max(1, deals.length)) * 30 +
+            (currentRevenue / Math.max(1, monthlyGoal)) * 20
+        )
+      );
 
       return {
         deals: deals.sort((a, b) => b.weighted_value - a.weighted_value),
