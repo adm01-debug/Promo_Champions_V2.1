@@ -1,4 +1,15 @@
 {
-  "//": "Local Deno config for tooling (deno check / deno test) only. The Supabase edge runtime auto-installs npm: specifiers at deploy time and ignores this file.",
-  "nodeModulesDir": "auto"
+  "tasks": {
+    "check": "deno check src/main.ts"
+  },
+  "lint": {
+    "files": {
+      "include": ["src"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["src"]
+    }
+  }
 }
