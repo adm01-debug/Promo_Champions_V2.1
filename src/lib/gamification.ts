@@ -53,6 +53,13 @@ export function getLevelFromXP(totalXP: number): LevelInfo {
   };
 }
 
+/** Get level info by level number (1-20). Returns LevelInfo without progressPercent. */
+export function getLevelInfo(level: number): Omit<LevelInfo, 'progressPercent'> {
+  const clampedLevel = Math.max(1, Math.min(level, LEVELS.length));
+  const info = LEVELS[clampedLevel - 1];
+  return { level: info.level, title: info.title, emoji: info.emoji, minXP: info.minXP, maxXP: info.maxXP };
+}
+
 export function getXPForNextLevel(totalXP: number): number {
   const currentLevel = getLevelFromXP(totalXP);
   if (!Number.isFinite(currentLevel.maxXP)) return 0;
