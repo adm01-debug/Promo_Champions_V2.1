@@ -138,37 +138,54 @@ export function buildABCAnalysis(performance: SalespersonPerformanceData[]) {
   const sorted = [...performance].sort((a, b) => b.revenue - a.revenue);
   const totalRevenue = sorted.reduce((sum, sp) => sum + sp.revenue, 0);
 
+  // Edge case: no revenue at all -> everyone is class C
+  if (totalRevenue === 0) {
+    return [
+      { classification: 'A' as const, count: 0, revenue: 0, percentage: 0 },
+      { classification: 'B' as const, count: 0, revenue: 0, percentage: 0 },
+      { classification: 'C' as const, count: sorted.length, revenue: 0, percentage: 100 },
+    ];
+  }
+
   let cumulative = 0;
-  const a: any[] = [],
-    b: any[] = [],
-    c: any[] = [];
+  const a: SalespersonPerformanceData[] = [];
+  const b: SalespersonPerformanceData[] = [];
+  const c: SalespersonPerformanceData[] = [];
 
   sorted.forEach(sp => {
     cumulative += sp.revenue;
-    const pct = totalRevenue > 0 ? (cumulative / totalRevenue) * 100 : 100;
-    if (pct <= 80 && a.length < sorted.length * 0.2) a.push(sp);
-    else if (pct <= 95 && b.length < sorted.length * 0.3) b.push(sp);
-    else c.push(sp);
+    const pct = (cumulative / totalRevenue) * 100;
+    if (pct <= 80) {
+      a.push(sp);
+    } else if (pct <= 95) {
+      b.push(sp);
+    } else {
+      c.push(sp);
+    }
   });
+
+  const aRevenue = a.reduce((s, x) => s + x.revenue, 0);
+  const bRevenue = b.reduce((s, x) => s + x.revenue, 0);
+  const cRevenue = c.reduce((s, x) => s + x.revenue, 0);
 
   return [
     {
-      classification: 'A',
+      classification: 'A' as const,
       count: a.length,
-      revenue: a.reduce((s: number, x: any) => s + x.revenue, 0),
-      percentage: 80,
+      revenue: aRevenue,
+      percentage: totalRevenue > 0 ? Math.round((aRevenue / totalRevenue) * 100) : 0,
     },
     {
-      classification: 'B',
+      classification: 'B' as const,
       count: b.length,
-      revenue: b.reduce((s: number, x: any) => s + x.revenue, 0),
-      percentage: 15,
+      revenue: bRevenue,
+      percentage: totalRevenue > 0 ? Math.round((bRevenue / totalRevenue) * 100) : 0,
     },
     {
-      classification: 'C',
+      classification: 'C' as const,
       count: c.length,
-      revenue: c.reduce((s: number, x: any) => s + x.revenue, 0),
-      percentage: 5,
+      revenue: cRevenue,
+      percentage: totalRevenue > 0 ? Math.round((cRevenue / totalRevenue) * 100) : 0,
     },
   ];
 }
