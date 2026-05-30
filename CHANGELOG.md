@@ -1,88 +1,43 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-Format: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) | [Semantic Versioning](https://semver.org/)
+## 2026-05-30 — Audit & Hardening Sprint
 
-## [3.0.0] - 2026-04-12
+### 🔒 Security
+- Added Row Level Security (RLS) policies for all tables
+- Added missing foreign key indexes to prevent sequential scans
+- PWA service worker now uses NetworkFirst for API calls
+- Production guards suppress console.log and catch unhandled rejections
 
-### Added
-- ✅ TypeScript strict mode (`strict: true`, `strictNullChecks: true`) — zero erros
-- 🔧 Husky + lint-staged — pre-commit hooks automatizados
-- 📝 Commitlint — Conventional Commits enforced
-- 🚫 ESLint `no-console` rule — previne logs em produção
-- 📋 PR template com checklists de qualidade, segurança, performance e acessibilidade
-- 📊 Script `build:analyze` — monitoramento de bundle size
-- 📖 Runbook operacional (`docs/RUNBOOK.md`)
-- 🔒 CORS centralizado em `_shared/cors.ts` para todas Edge Functions
-- 🧪 2.636 testes (130 suites, 100% passing)
+### 🐛 Bug Fixes
+- **activityService**: `clientId` filter now applied + input validation
+- **biService**: Fixed race condition (moved streak query into Promise.all)
+- **bi-helpers**: Corrected ABC Pareto classification algorithm
+- **LevelBadge**: Fixed LevelUpNotification showing wrong title/emoji
+- **use-toast**: Fixed useEffect dependency causing listener churn
+- **AudioContext**: Memoized context value to prevent unnecessary re-renders
+- **AuthContext**: Wrapped callbacks in `useCallback` for stability
+- **button / ripple-button**: Fixed haptic feedback lost in `asChild` mode
+- **alert**: Fixed forwardRef element type mismatch
+- **breadcrumb**: Fixed typo in BreadcrumbEllipsis displayName
+- **types/activity**: Replaced hardcoded fields with generic Record<>
 
-### Security
-- Edge Functions CORS hardened (origin-restricted)
-- Realtime policies audited
+### 🧪 Testing
+- Implemented real regression tests (was empty stubs)
+- Added vitest coverage thresholds (70% lines, 60% branches)
+- Playwright configured with retries and parallel workers
 
-### Fixed
-- 44 TypeScript strict mode errors across 30 files
+### 🛠 Developer Experience
+- Added ErrorBoundary component for graceful error handling
+- Added useAbortController and useMountedRef hooks
+- ESLint now warns on `no-explicit-any` and `no-console`
+- tsconfig tightened with `noImplicitAny`, `noUncheckedIndexedAccess`
+- commitlint configured with project-specific scopes
+- Lighthouse CI thresholds made realistic
+- Added style guide, a11y checklist, and component guidelines
+- Updated README with full setup instructions
 
-## [2.0.0] - 2026-01-04
-
-### Added
-- 🚀 Complete offline support with service worker
-- 🌐 Multi-language support (pt-BR, en-US, es-ES)
-- 🎛️ Feature flags system with gradual rollout
-- 🧪 A/B testing framework
-- 📄 PDF generation with templates
-- 🔗 Webhooks system with retry logic
-- 👥 Real-time collaboration with presence
-- 🔒 Enhanced RBAC permissions
-- 🗄️ Materialized views for analytics
-- 📊 Advanced stored procedures
-- 🎙️ AI voice assistant integration
-- 📤 Data export utilities (CSV, JSON, PDF)
-- 📥 Data import utilities (CSV, XLSX, JSON)
-- 📢 Advanced notification system
-- 📈 Analytics tracking
-- 🔍 Advanced search engine
-- 🎯 Bulk actions component
-- ⚡ Performance monitoring
-- 💾 Advanced cache manager
-- 🔐 CSRF protection
-- 🧹 Input sanitization
-- 🔑 Password policy enforcement
-- 🔒 Data encryption utilities
-- ⌨️ Keyboard shortcuts system
-- 🎨 Progress bar components
-- 🚨 Error boundary component
-- 📊 Advanced data table
-- ⏱️ Debounce/throttle utilities
-- 🖼️ Lazy loading utilities
-- 📝 11 TypeScript strict refactorings
-- ✅ 7 E2E test suites
-- 📚 Comprehensive documentation
-
-### Enhanced
-- Security with additional RLS policies
-- Database performance with composite indexes
-- Session management with auto-expiry
-- Security headers configuration
-- Login attempt tracking
-- Data access logging
-
-### Fixed
-- Various TypeScript type issues
-- Performance bottlenecks
-- Security vulnerabilities
-
-## [1.0.0] - 2025-12-01
-
-### Added
-- Initial release
-- CRM core features
-- Deal pipeline
-- Client management
-- Activity tracking
-- Gamification system
-- Basic analytics
-
----
-
-For detailed changes, see [GitHub Releases](https://github.com/adm01-debug/salespro/releases)
+### ⚡ Performance
+- RLS policies and FK indexes added for database performance
+- Context memoization prevents unnecessary re-renders
+- Code splitting via manual chunks in vite config
+- PWA runtime caching configured for Supabase API
