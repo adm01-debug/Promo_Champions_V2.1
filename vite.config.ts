@@ -1,88 +1,70 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
-import { componentTagger } from 'lovable-tagger';
+import { resolve } from 'path';
+import { vitePlugin as lovable } from '@lovable/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig(({ mode }) => ({
-  base: '/',
-  server: {
-    port: 8080,
-    host: '::',
-    force: mode === 'development',
-  },
+// https://vite.dev/config/
+export default defineConfig({
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    ...(process.env.NODE_ENV === 'development' ? [lovable()] : []),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       workbox: {
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB — vendor bundle exceeds default 2 MiB limit
-        navigateFallbackDenylist: [/^\/~oauth/],
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'supabase-api',
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 86400, // 24 hours
-              },
+              cacheName: 'api-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
+              networkTimeoutSeconds: 5,
             },
           },
         ],
       },
       manifest: {
-        name: 'Circuito de Vencedores',
-        short_name: 'Circuito',
-        description: 'Plataforma Inteligente de Gestão de Vendas e Performance Comercial 10/10.',
-        start_url: '/',
+        name: 'Promo Champions',
+        short_name: 'PromoChamp',
+        description: 'Sales Performance Platform',
+        theme_color: '#0f172a',
+        background_color: '#0f172a',
         display: 'standalone',
-        background_color: '#05060f',
-        theme_color: '#0ea5e9',
-        orientation: 'portrait-primary',
+        orientation: 'portrait',
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
     }),
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src'),
     },
-    dedupe: ['react', 'react-dom', 'react-router-dom', 'framer-motion', '@tanstack/react-query'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['@supabase/supabase-js'],
   },
   build: {
-    target: 'esnext',
-    minify: 'esbuild',
-    cssCodeSplit: true,
-    sourcemap: false,
-    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('framer-motion')) {
-              return 'vendor-core';
-            }
-            if (id.includes('lucide-react') || id.includes('radix-ui')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('supabase') || id.includes('tanstack')) {
-              return 'vendor-data';
-            }
-            return 'vendor';
-          }
+        manualChunks: {
+          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
+          'vendor-data': ['@tanstack/react-query', '@supabase/supabase-js'],
+          'vendor': ['framer-motion', 'recharts', 'date-fns'],
         },
       },
     },
   },
-}));
+  server: {
+    port: 5173,
+    strictPort: true,
+    host: true,
+  },
+});

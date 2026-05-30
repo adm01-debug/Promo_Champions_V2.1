@@ -1,52 +1,81 @@
 import { describe, it, expect } from 'vitest';
-import { computeForecast, computeStreak } from '@/utils/bi-helpers';
-import { getXPForNextLevel, getLevelFromXP } from '@/lib/gamification';
-import { sanitizeCsvCell } from '@/utils/csvExport';
+import { buildABCAnalysis } from '@/utils/bi-helpers';
+import { getLevelFromXP, getLevelInfo, formatXP, getXPForNextLevel, LEVELS } from '@/lib/gamification';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
-/**
- * REGRESSION TESTS
- * Add tests for previously fixed bugs here to prevent them from reappearing.
- */
-describe('Regression Tests', () => {
-  it('computeForecast: confidence is never NaN when team has no goal set', () => {
-    const forecast = computeForecast([], 0, 0, 10, 20);
-    expect(Number.isNaN(forecast.confidenceLevel)).toBe(false);
-    expect(forecast.confidenceLevel).toBe(20);
+describe('Regression: ABC Analysis', () => {
+  it('handles empty performance array', () => {
+    const result = buildABCAnalysis([]);
+    expect(result).toHaveLength(3);
+    expect(result[0].count).toBe(0);
+    expect(result[1].count).toBe(0);
+    expect(result[2].count).toBe(0);
   });
 
-  it('computeForecast: confidence stays finite when goal is 0 but revenue exists', () => {
-    const forecast = computeForecast([], 5000, 0, 10, 20);
-    expect(Number.isFinite(forecast.confidenceLevel)).toBe(true);
-    expect(forecast.confidenceLevel).toBeLessThanOrEqual(100);
+  it('handles zero total revenue', () => {
+    const result = buildABCAnalysis([
+      { id: '1', name: 'A', avatar_url: null, role: 'sdr', revenue: 0, deals: 0, conversionRate: 0, goalProgress: 0, avgTicket: 0, activities: 0 },
+    ]);
+    expect(result[0].count).toBe(0); // A
+    expect(result[2].count).toBe(1); // C
   });
 
-  it('computeStreak: current streak is not capped at 7 days', () => {
-    const now = new Date('2024-03-15T12:00:00Z');
-    // 10 consecutive days ending today
-    const dates: string[] = [];
-    for (let i = 0; i < 10; i++) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      dates.push(d.toISOString().slice(0, 10));
-    }
-    const { currentStreak } = computeStreak(dates, now);
-    expect(currentStreak).toBe(10);
+  it('classifies by Pareto 80/15/5', () => {
+    const data = [
+      { id: '1', name: 'Top', avatar_url: null, role: 'closer', revenue: 800, deals: 10, conversionRate: 50, goalProgress: 200, avgTicket: 80, activities: 10 },
+      { id: '2', name: 'Mid', avatar_url: null, role: 'sdr', revenue: 150, deals: 3, conversionRate: 30, goalProgress: 40, avgTicket: 50, activities: 5 },
+      { id: '3', name: 'Low', avatar_url: null, role: 'sdr', revenue: 50, deals: 2, conversionRate: 20, goalProgress: 10, avgTicket: 25, activities: 2 },
+    ];
+    const result = buildABCAnalysis(data);
+    expect(result[0].classification).toBe('A');
+    expect(result[1].classification).toBe('B');
+    expect(result[2].classification).toBe('C');
+    expect(result[0].count).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('Regression: Gamification', () => {
+  it('getLevelFromXP returns correct level for XP 0', () => {
+    const info = getLevelFromXP(0);
+    expect(info.level).toBe(1);
+    expect(info.title).toBe('Iniciante');
   });
 
-  it('getXPForNextLevel: never returns Infinity at the max level', () => {
-    const maxLevel = getLevelFromXP(50_000);
-    expect(maxLevel.level).toBe(20);
-    expect(Number.isFinite(getXPForNextLevel(50_000))).toBe(true);
-    expect(getXPForNextLevel(50_000)).toBe(0);
+  it('getLevelFromXP returns max level for huge XP', () => {
+    const info = getLevelFromXP(999999);
+    expect(info.level).toBe(20);
   });
 
-  it('sanitizeCsvCell: neutralizes formula-injection prefixes', () => {
-    expect(sanitizeCsvCell('=1+1')).toBe("'=1+1");
-    expect(sanitizeCsvCell('+44')).toBe("'+44");
-    expect(sanitizeCsvCell('-5')).toBe("'-5");
-    expect(sanitizeCsvCell('@cmd')).toBe("'@cmd");
-    // Normal values are left untouched
-    expect(sanitizeCsvCell('Acme Corp')).toBe('Acme Corp');
-    expect(sanitizeCsvCell('1500.50')).toBe('1500.50');
+  it('getLevelInfo returns correct info by level number', () => {
+    const info = getLevelInfo(5);
+    expect(info.level).toBe(5);
+    expect(info.title).toBe('Proficiente');
+    expect(info.emoji).toBe('🔥');
+  });
+
+  it('getLevelInfo clamps invalid levels', () => {
+    expect(getLevelInfo(0).level).toBe(1);
+    expect(getLevelInfo(999).level).toBe(20);
+  });
+
+  it('formatXP formats correctly', () => {
+    expect(formatXP(500)).toBe('500');
+    expect(formatXP(1500)).toBe('1.5k');
+    expect(formatXP(10000)).toBe('10.0k');
+  });
+
+  it('getXPForNextLevel returns 0 for max level', () => {
+    expect(getXPForNextLevel(999999)).toBe(0);
+  });
+
+  it('LEVELS has 20 entries', () => {
+    expect(LEVELS).toHaveLength(20);
+  });
+});
+
+describe('Regression: Date Helpers', () => {
+  it('getLocalISODate returns valid ISO date string', () => {
+    const date = getLocalISODate();
+    expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });

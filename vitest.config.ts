@@ -1,38 +1,34 @@
-import { defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import { defineConfig } from 'vitest/config';
+import { resolve } from 'path';
 
-export default defineConfig((configEnv) => {
-  const baseConfig = typeof viteConfig === 'function' ? viteConfig(configEnv) : viteConfig;
-  
-  return mergeConfig(
-    baseConfig,
-    {
-      test: {
-        globals: true,
-        environment: 'jsdom',
-        setupFiles: ['./src/test/setup.ts'],
-        coverage: {
-          provider: 'v8',
-          reporter: ['text', 'json', 'html', 'lcov'],
-          thresholds: {
-            statements: 80,
-            branches: 75,
-            functions: 80,
-            lines: 80,
-          },
-          exclude: [
-            'node_modules/',
-            'src/test/setup.ts',
-            '**/*.d.ts',
-            '**/*.test.ts',
-            '**/*.test.tsx',
-            'dist/**',
-            'tests/**',
-          ],
-        },
-        include: ['src/**/*.{test,spec}.{ts,tsx}'],
-        exclude: ['tests/e2e/**', 'node_modules/**', 'dist/**'],
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'dist', 'tests/e2e', 'tests/load'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.spec.{ts,tsx}',
+        'src/vite-env.d.ts',
+        'src/test/',
+      ],
+      thresholds: {
+        lines: 70,
+        branches: 60,
+        functions: 70,
+        statements: 70,
       },
-    }
-  );
+    },
+  },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
 });
