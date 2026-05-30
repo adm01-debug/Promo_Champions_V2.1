@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { getLevelFromXP } from '@/lib/gamification';
+import { getLevelFromXP, getLevelInfo } from '@/lib/gamification';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -103,7 +103,7 @@ export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
   newLevel,
   onClose
 }) => {
-  const newLevelInfo = getLevelFromXP(newLevel * 100);
+  const newLevelInfo = getLevelInfo(newLevel);
 
   return (
     <motion.div
