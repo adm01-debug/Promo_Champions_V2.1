@@ -1,13 +1,21 @@
-export async function withTelemetry(fnName: string, handler: (req: Request) => Promise<Response>): Promise<Response> {
+export async function withTelemetry(
+  fnName: string,
+  req: Request,
+  handler: (req: Request) => Promise<Response>
+): Promise<Response> {
   const start = Date.now();
   try {
-    const response = await handler();
+    const response = await handler(req);
     const duration = Date.now() - start;
-    console.info(`[TELEMETRY] ${fnName} success - duration: ${duration}ms - status: ${response.status}`);
+    console.info(
+      `[TELEMETRY] ${fnName} success - duration: ${duration}ms - status: ${response.status}`
+    );
     return response;
   } catch (err) {
     const duration = Date.now() - start;
-    console.error(`[TELEMETRY] ${fnName} failure - duration: ${duration}ms - error: ${err instanceof Error ? err.message : String(err)}`);
+    console.error(
+      `[TELEMETRY] ${fnName} failure - duration: ${duration}ms - error: ${err instanceof Error ? err.message : String(err)}`
+    );
     throw err;
   }
 }

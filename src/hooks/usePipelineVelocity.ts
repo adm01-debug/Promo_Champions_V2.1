@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, differenceInHours } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, differenceInHours } from 'date-fns';
 
 export interface VelocityData {
   salespersonId: string;
@@ -16,26 +16,30 @@ export interface VelocityData {
 
 export function usePipelineVelocity() {
   return useQuery({
-    queryKey: ["pipeline-velocity"],
+    queryKey: ['pipeline-velocity'],
     queryFn: async (): Promise<VelocityData[]> => {
       const now = new Date();
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
 
       const [spResult, stageResult, salesResult, allSalesResult] = await Promise.all([
-        supabase.from("salespeople").select("id, name").eq("is_active", true),
-        supabase.from("deal_stage_history").select("sale_id, stage, entered_at, exited_at"),
+        supabase.from('salespeople').select('id, name').eq('is_active', true),
         supabase
-          .from("sales")
-          .select("id, salesperson_id, amount, status, created_at")
-          .eq("status", "completed")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
+          .from('deal_stage_history')
+          .select('sale_id, stage, entered_at, exited_at')
+          .gte('entered_at', monthStart.toISOString())
+          .lte('entered_at', monthEnd.toISOString()),
         supabase
-          .from("sales")
-          .select("id, salesperson_id, status")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
+          .from('sales')
+          .select('id, salesperson_id, amount, status, created_at')
+          .eq('status', 'completed')
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
+        supabase
+          .from('sales')
+          .select('id, salesperson_id, status')
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
       ]);
 
       if (spResult.error) throw spResult.error;
@@ -45,9 +49,9 @@ export function usePipelineVelocity() {
       const completedSales = salesResult.data || [];
       const allSales = allSalesResult.data || [];
 
-      const results: VelocityData[] = salespeople.map((sp) => {
-        const spCompleted = completedSales.filter((s) => s.salesperson_id === sp.id);
-        const spAllSales = allSales.filter((s) => s.salesperson_id === sp.id);
+      const results: VelocityData[] = salespeople.map(sp => {
+        const spCompleted = completedSales.filter(s => s.salesperson_id === sp.id);
+        const spAllSales = allSales.filter(s => s.salesperson_id === sp.id);
         const totalRevenue = spCompleted.reduce((sum, s) => sum + Number(s.amount), 0);
         const avgDealSize = spCompleted.length > 0 ? totalRevenue / spCompleted.length : 0;
         const winRate = spAllSales.length > 0 ? spCompleted.length / spAllSales.length : 0;
@@ -57,9 +61,9 @@ export function usePipelineVelocity() {
         let totalCycleHours = 0;
         let cycleCount = 0;
 
-        spCompleted.forEach((sale) => {
+        spCompleted.forEach(sale => {
           const stages = stageHistory
-            .filter((sh) => sh.sale_id === sale.id)
+            .filter(sh => sh.sale_id === sale.id)
             .sort((a, b) => new Date(a.entered_at).getTime() - new Date(b.entered_at).getTime());
 
           if (stages.length > 0) {
@@ -71,7 +75,7 @@ export function usePipelineVelocity() {
             cycleCount++;
           }
 
-          stages.forEach((sh) => {
+          stages.forEach(sh => {
             if (sh.exited_at) {
               const hours = differenceInHours(new Date(sh.exited_at), new Date(sh.entered_at));
               if (!stageHoursMap[sh.stage]) stageHoursMap[sh.stage] = [];

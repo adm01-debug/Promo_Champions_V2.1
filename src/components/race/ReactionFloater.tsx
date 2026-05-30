@@ -16,13 +16,12 @@ export function ReactionFloater({ reactions }: Props) {
   useEffect(() => {
     if (reactions.length === 0) return;
     const newest = reactions[0];
-    if (visible.find((r) => r.id === newest.id)) return;
-    setVisible((prev) => [newest, ...prev].slice(0, 10));
+    if (visible.find(r => r.id === newest.id)) return;
+    setVisible(prev => [newest, ...prev].slice(0, 10));
     const t = setTimeout(() => {
-      setVisible((prev) => prev.filter((r) => r.id !== newest.id));
+      setVisible(prev => prev.filter(r => r.id !== newest.id));
     }, 1600);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reactions[0]?.id]);
 
   return (
@@ -35,7 +34,7 @@ export function ReactionFloater({ reactions }: Props) {
             animate={{ opacity: [0, 1, 1, 0], y: -38 - i * 4, scale: 1.2 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.6, ease: 'easeOut' }}
-            x={(i % 3 - 1) * 12}
+            x={((i % 3) - 1) * 12}
             y={-18}
             fontSize={16}
             textAnchor="middle"

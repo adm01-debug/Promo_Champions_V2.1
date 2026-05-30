@@ -41,19 +41,21 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
     }
     onPlaySound?.();
     const id = window.setInterval(() => {
-      setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
+      setSecondsLeft(s => (s > 0 ? s - 1 : 0));
     }, 1000);
     return () => window.clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const { myStats, nextRival, pace, recommendation, hasData } = analysis;
   const timerPct = ((PIT_STOP_SECONDS - secondsLeft) / PIT_STOP_SECONDS) * 100;
-  const paceRatio = pace && pace.requiredPerDay > 0
-    ? Math.min(150, (pace.currentPerDay / pace.requiredPerDay) * 100)
-    : 100;
+  const paceRatio =
+    pace && pace.requiredPerDay > 0
+      ? Math.min(150, (pace.currentPerDay / pace.requiredPerDay) * 100)
+      : 100;
 
-  const stagger = reduceMotion ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 } };
+  const stagger = reduceMotion
+    ? {}
+    : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 } };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -76,9 +78,7 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
         </SheetHeader>
 
         {!hasData ? (
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            {recommendation}
-          </div>
+          <div className="mt-8 text-center text-sm text-muted-foreground">{recommendation}</div>
         ) : (
           <div className="mt-6 space-y-4">
             {/* Status atual */}
@@ -115,22 +115,32 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                 </h3>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 border">
-                    {nextRival.avatarUrl && <AvatarImage src={nextRival.avatarUrl} alt={nextRival.name} />}
+                    {nextRival.avatarUrl && (
+                      <AvatarImage src={nextRival.avatarUrl} alt={nextRival.name} />
+                    )}
                     <AvatarFallback>{nextRival.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold truncate">{nextRival.name}</div>
-                    <div className="text-xs text-muted-foreground">P{nextRival.rank} · à frente</div>
+                    <div className="text-xs text-muted-foreground">
+                      P{nextRival.rank} · à frente
+                    </div>
                   </div>
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
                   <div className="text-right">
-                    <div className="text-sm font-bold tabular-nums">{fmtCurrency(nextRival.gap)}</div>
-                    <div className="text-[10px] uppercase text-muted-foreground tracking-wider">gap</div>
+                    <div className="text-sm font-bold tabular-nums">
+                      {fmtCurrency(nextRival.gap)}
+                    </div>
+                    <div className="text-[10px] uppercase text-muted-foreground tracking-wider">
+                      gap
+                    </div>
                   </div>
                 </div>
                 {nextRival.salesNeeded > 0 && (
                   <div className="mt-3 text-xs text-muted-foreground">
-                    Estimativa: <strong className="text-foreground">{nextRival.salesNeeded} deal(s)</strong> no seu ticket médio.
+                    Estimativa:{' '}
+                    <strong className="text-foreground">{nextRival.salesNeeded} deal(s)</strong> no
+                    seu ticket médio.
                   </div>
                 )}
               </motion.section>
@@ -149,10 +159,16 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                 <Progress value={Math.min(100, paceRatio)} className="h-2" />
                 <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    Atual: <strong className="text-foreground tabular-nums">{fmtCurrency(pace.currentPerDay)}/dia</strong>
+                    Atual:{' '}
+                    <strong className="text-foreground tabular-nums">
+                      {fmtCurrency(pace.currentPerDay)}/dia
+                    </strong>
                   </span>
                   <span className="text-muted-foreground">
-                    Necessário: <strong className="text-foreground tabular-nums">{fmtCurrency(pace.requiredPerDay)}/dia</strong>
+                    Necessário:{' '}
+                    <strong className="text-foreground tabular-nums">
+                      {fmtCurrency(pace.requiredPerDay)}/dia
+                    </strong>
                   </span>
                 </div>
                 <div className="mt-2 text-xs">
