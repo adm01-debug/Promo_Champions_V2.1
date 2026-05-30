@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { isWonSaleStatus, isOpenSaleStatus } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 
@@ -47,10 +48,8 @@ export const useContactDeals = (clientName?: string) => {
 
       const deals = (data || []) as ContactDeal[];
       const totalValue = deals.reduce((s, d) => s + Number(d.amount || 0), 0);
-      const won = deals.filter((d) => d.status === 'closed' || d.status === 'completed');
-      const open = deals.filter(
-        (d) => !['closed', 'completed', 'lost', 'cancelled'].includes(d.status),
-      );
+      const won = deals.filter(d => isWonSaleStatus(d.status));
+      const open = deals.filter(d => isOpenSaleStatus(d.status));
       const wonValue = won.reduce((s, d) => s + Number(d.amount || 0), 0);
       const openValue = open.reduce((s, d) => s + Number(d.amount || 0), 0);
 

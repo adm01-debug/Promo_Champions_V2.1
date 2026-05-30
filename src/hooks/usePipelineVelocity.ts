@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, differenceInHours } from 'date-fns';
 
 export interface VelocityData {
@@ -32,7 +33,7 @@ export function usePipelineVelocity() {
         supabase
           .from('sales')
           .select('id, salesperson_id, amount, status, created_at')
-          .eq('status', 'completed')
+          .in('status', [...WON_SALE_STATUSES])
           .gte('created_at', monthStart.toISOString())
           .lte('created_at', monthEnd.toISOString()),
         supabase

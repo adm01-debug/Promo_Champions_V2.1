@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, differenceInDays, format, getDaysInMonth } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, differenceInDays, format, getDaysInMonth } from 'date-fns';
 
 interface SalespersonGoalData {
   id: string;
@@ -39,12 +40,12 @@ interface TeamGoalData {
 
 export function useGoalsDashboard() {
   return useQuery({
-    queryKey: ["goals-dashboard"],
+    queryKey: ['goals-dashboard'],
     queryFn: async (): Promise<TeamGoalData> => {
       const now = new Date();
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
-      const currentMonth = format(now, "yyyy-MM") + "-01";
+      const currentMonth = format(now, 'yyyy-MM') + '-01';
       const totalDays = getDaysInMonth(now);
       const daysElapsed = differenceInDays(now, monthStart) + 1;
       const daysRemaining = totalDays - daysElapsed;
@@ -52,23 +53,20 @@ export function useGoalsDashboard() {
       // Fetch all data in parallel for better performance
       const [salespeopleResult, goalsResult, salesResult, predictionsResult] = await Promise.all([
         supabase
-          .from("salespeople")
-          .select("id, name, avatar_url, role, commission_rate")
-          .eq("is_active", true),
+          .from('salespeople')
+          .select('id, name, avatar_url, role, commission_rate')
+          .eq('is_active', true),
         supabase
-          .from("sales_goals")
-          .select("salesperson_id, goal_amount")
-          .eq("month", currentMonth),
+          .from('sales_goals')
+          .select('salesperson_id, goal_amount')
+          .eq('month', currentMonth),
         supabase
-          .from("sales")
-          .select("salesperson_id, amount")
-          .eq("status", "completed")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
-        supabase
-          .from("quota_attainment_predictions")
-          .select("*")
-          .eq("period_start", currentMonth),
+          .from('sales')
+          .select('salesperson_id, amount')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
+        supabase.from('quota_attainment_predictions').select('*').eq('period_start', currentMonth),
       ]);
 
       if (salespeopleResult.error) throw salespeopleResult.error;
@@ -90,9 +88,10 @@ export function useGoalsDashboard() {
         const progress = goalAmount > 0 ? (currentSales / goalAmount) * 100 : 0;
         const dailyAverage = daysElapsed > 0 ? currentSales / daysElapsed : 0;
         const projection = dailyAverage * totalDays;
-        const requiredDailyAverage = daysRemaining > 0 ? (goalAmount - currentSales) / daysRemaining : 0;
+        const requiredDailyAverage =
+          daysRemaining > 0 ? (goalAmount - currentSales) / daysRemaining : 0;
         const onTrack = projection >= goalAmount;
-        
+
         // Commission calculations
         const commissionRate = Number(sp.commission_rate) || 10;
         const currentCommission = currentSales * (commissionRate / 100);
@@ -113,13 +112,22 @@ export function useGoalsDashboard() {
           commissionRate,
           currentCommission,
           projectedCommission,
-          predictedAttainment: prediction ? Number(prediction.predicted_amount) / (goalAmount || 1) * 100 : (progress * (totalDays / daysElapsed)),
-          paceStatus: prediction?.risk_level === 'low' ? 'ahead' : prediction?.risk_level === 'medium' ? 'on_track' : 'behind',
+          predictedAttainment: prediction
+            ? (Number(prediction.predicted_amount) / (goalAmount || 1)) * 100
+            : progress * (totalDays / daysElapsed),
+          paceStatus:
+            prediction?.risk_level === 'low'
+              ? 'ahead'
+              : prediction?.risk_level === 'medium'
+                ? 'on_track'
+                : 'behind',
         };
       });
 
       // Calculate team totals
-      const teamPrediction = predictions.find(p => p.salesperson_id === '00000000-0000-0000-0000-000000000000'); // ID fictício para time ou lógica similar
+      const teamPrediction = predictions.find(
+        p => p.salesperson_id === '00000000-0000-0000-0000-000000000000'
+      ); // ID fictício para time ou lógica similar
       const totalGoal = salespeopleData.reduce((sum, sp) => sum + sp.goalAmount, 0);
       const totalSales = salespeopleData.reduce((sum, sp) => sum + sp.currentSales, 0);
       const teamProgress = totalGoal > 0 ? (totalSales / totalGoal) * 100 : 0;
@@ -128,8 +136,14 @@ export function useGoalsDashboard() {
       const teamRequiredDaily = daysRemaining > 0 ? (totalGoal - totalSales) / daysRemaining : 0;
 
       // Team commission totals
-      const totalCurrentCommission = salespeopleData.reduce((sum, sp) => sum + sp.currentCommission, 0);
-      const totalProjectedCommission = salespeopleData.reduce((sum, sp) => sum + sp.projectedCommission, 0);
+      const totalCurrentCommission = salespeopleData.reduce(
+        (sum, sp) => sum + sp.currentCommission,
+        0
+      );
+      const totalProjectedCommission = salespeopleData.reduce(
+        (sum, sp) => sum + sp.projectedCommission,
+        0
+      );
 
       return {
         totalGoal,
@@ -143,12 +157,14 @@ export function useGoalsDashboard() {
         requiredDailyAverage: Math.max(0, teamRequiredDaily),
         totalCurrentCommission,
         totalProjectedCommission,
-        teamPredictedAttainment: teamPrediction ? (Number(teamPrediction.predicted_amount) / (totalGoal || 1) * 100) : (teamProgress * (totalDays / daysElapsed)),
+        teamPredictedAttainment: teamPrediction
+          ? (Number(teamPrediction.predicted_amount) / (totalGoal || 1)) * 100
+          : teamProgress * (totalDays / daysElapsed),
         salespeople: salespeopleData.sort((a, b) => b.progress - a.progress),
       };
     },
     refetchInterval: false, // Optimize: manual refresh or on-stale only
-    staleTime: 60 * 1000, 
+    staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
 }

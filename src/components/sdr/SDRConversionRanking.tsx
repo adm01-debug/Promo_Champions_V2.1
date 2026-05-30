@@ -1,15 +1,23 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
-import { ArrowRightLeft, CalendarCheck, UserCheck, TrendingUp, Crown, Medal } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfQuarter, endOfQuarter } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PeriodFilter } from "@/hooks/useSDRMetrics";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { isWonSaleStatus } from '@/constants';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
+import { ArrowRightLeft, CalendarCheck, UserCheck, TrendingUp, Crown, Medal } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  startOfQuarter,
+  endOfQuarter,
+} from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PeriodFilter } from '@/hooks/useSDRMetrics';
+import { cn } from '@/lib/utils';
 
 interface SDRConversionRankingProps {
   period: PeriodFilter;
@@ -18,11 +26,14 @@ interface SDRConversionRankingProps {
 function getPeriodRange(period: PeriodFilter) {
   const now = new Date();
   switch (period) {
-    case "week":
-      return { start: startOfWeek(now, { weekStartsOn: 1 }), end: endOfWeek(now, { weekStartsOn: 1 }) };
-    case "month":
+    case 'week':
+      return {
+        start: startOfWeek(now, { weekStartsOn: 1 }),
+        end: endOfWeek(now, { weekStartsOn: 1 }),
+      };
+    case 'month':
       return { start: startOfMonth(now), end: endOfMonth(now) };
-    case "quarter":
+    case 'quarter':
       return { start: startOfQuarter(now), end: endOfQuarter(now) };
   }
 }
@@ -39,16 +50,16 @@ interface SDRConversionData {
 
 function useSDRConversionRanking(period: PeriodFilter) {
   return useQuery({
-    queryKey: ["sdr-conversion-ranking", period],
+    queryKey: ['sdr-conversion-ranking', period],
     queryFn: async (): Promise<SDRConversionData[]> => {
       const range = getPeriodRange(period);
 
       // Fetch SDRs
       const { data: sdrs } = await supabase
-        .from("salespeople")
-        .select("id, name, avatar_url")
-        .in("role", ["sdr", "hybrid"])
-        .eq("is_active", true);
+        .from('salespeople')
+        .select('id, name, avatar_url')
+        .in('role', ['sdr', 'hybrid'])
+        .eq('is_active', true);
 
       if (!sdrs || sdrs.length === 0) return [];
 
@@ -57,19 +68,19 @@ function useSDRConversionRanking(period: PeriodFilter) {
       // Fetch activities (meetings scheduled) and sales data in parallel
       const [activitiesResult, salesResult] = await Promise.all([
         supabase
-          .from("activities")
-          .select("salesperson_id, activity_type, outcome")
-          .in("salesperson_id", sdrIds)
-          .eq("activity_type", "meeting")
-          .eq("outcome", "scheduled")
-          .gte("created_at", range.start.toISOString())
-          .lte("created_at", range.end.toISOString()),
+          .from('activities')
+          .select('salesperson_id, activity_type, outcome')
+          .in('salesperson_id', sdrIds)
+          .eq('activity_type', 'meeting')
+          .eq('outcome', 'scheduled')
+          .gte('created_at', range.start.toISOString())
+          .lte('created_at', range.end.toISOString()),
         supabase
-          .from("sales")
-          .select("salesperson_id, status")
-          .in("salesperson_id", sdrIds)
-          .gte("created_at", range.start.toISOString())
-          .lte("created_at", range.end.toISOString()),
+          .from('sales')
+          .select('salesperson_id, status')
+          .in('salesperson_id', sdrIds)
+          .gte('created_at', range.start.toISOString())
+          .lte('created_at', range.end.toISOString()),
       ]);
 
       const activities = activitiesResult.data || [];
@@ -79,13 +90,17 @@ function useSDRConversionRanking(period: PeriodFilter) {
       const result = sdrs.map(sdr => {
         const sdrActivities = activities.filter(a => a.salesperson_id === sdr.id);
         const sdrSales = sales.filter(s => s.salesperson_id === sdr.id);
-        
+
         const totalLeads = sdrSales.length;
-        const qualifiedLeads = sdrSales.filter(s => 
-          s.status === "qualified" || s.status === "proposal" || s.status === "negotiation" || s.status === "completed"
+        const qualifiedLeads = sdrSales.filter(
+          s =>
+            s.status === 'qualified' ||
+            s.status === 'proposal' ||
+            s.status === 'negotiation' ||
+            isWonSaleStatus(s.status)
         ).length;
         const meetingsScheduled = sdrActivities.length;
-        
+
         // Conversion rate: meetings scheduled / total leads
         const conversionRate = totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
 
@@ -115,7 +130,8 @@ function useSDRConversionRanking(period: PeriodFilter) {
 function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
   const { data: sdrs, isLoading } = useSDRConversionRanking(period);
 
-  const periodLabel = period === "week" ? "esta semana" : period === "month" ? "este mês" : "este trimestre";
+  const periodLabel =
+    period === 'week' ? 'esta semana' : period === 'month' ? 'este mês' : 'este trimestre';
 
   const maxMeetings = sdrs?.[0]?.meetingsScheduled || 1;
 
@@ -170,7 +186,10 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
               <CalendarCheck className="h-3 w-3 mr-1" />
               {totalMeetings} reuniões
             </Badge>
-            <Badge variant="outline" className="text-xs bg-status-success/10 text-status-success border-status-success/30">
+            <Badge
+              variant="outline"
+              className="text-xs bg-status-success/10 text-status-success border-status-success/30"
+            >
               <UserCheck className="h-3 w-3 mr-1" />
               {totalQualified} qualificados
             </Badge>
@@ -185,21 +204,23 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
           <div
             key={sdr.id}
             className={cn(
-              "p-3 rounded-lg transition-all duration-200",
-              index === 0 
-                ? "bg-primary/10 border border-primary/30 hover-glow" 
-                : "bg-muted/50 hover:bg-muted"
+              'p-3 rounded-lg transition-all duration-200',
+              index === 0
+                ? 'bg-primary/10 border border-primary/30 hover-glow'
+                : 'bg-muted/50 hover:bg-muted'
             )}
           >
             <div className="flex items-center gap-3">
               {/* Rank */}
-              <div className={cn(
-                "flex items-center justify-center h-8 w-8 rounded-full font-bold text-sm",
-                index === 0 && "bg-warning/20 text-warning",
-                index === 1 && "bg-rank-silver/20 text-rank-silver",
-                index === 2 && "bg-rank-gold/20 text-rank-gold",
-                index > 2 && "bg-muted text-muted-foreground"
-              )}>
+              <div
+                className={cn(
+                  'flex items-center justify-center h-8 w-8 rounded-full font-bold text-sm',
+                  index === 0 && 'bg-warning/20 text-warning',
+                  index === 1 && 'bg-rank-silver/20 text-rank-silver',
+                  index === 2 && 'bg-rank-gold/20 text-rank-gold',
+                  index > 2 && 'bg-muted text-muted-foreground'
+                )}
+              >
                 {index === 0 ? (
                   <Crown className="h-4 w-4" />
                 ) : index < 3 ? (
@@ -212,10 +233,12 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
               {/* Avatar */}
               <Avatar className="h-10 w-10">
                 <AvatarImage src={sdr.avatar_url || undefined} />
-                <AvatarFallback className={cn(
-                  "text-sm font-medium",
-                  index === 0 ? "bg-primary/20 text-primary" : "bg-muted"
-                )}>
+                <AvatarFallback
+                  className={cn(
+                    'text-sm font-medium',
+                    index === 0 ? 'bg-primary/20 text-primary' : 'bg-muted'
+                  )}
+                >
                   {sdr.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -245,10 +268,12 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
 
               {/* Conversion Rate */}
               <div className="text-right">
-                <span className={cn(
-                  "text-lg font-bold",
-                  index === 0 ? "text-primary" : "text-foreground"
-                )}>
+                <span
+                  className={cn(
+                    'text-lg font-bold',
+                    index === 0 ? 'text-primary' : 'text-foreground'
+                  )}
+                >
                   {sdr.conversionRate.toFixed(0)}%
                 </span>
                 <p className="text-[10px] text-muted-foreground">conversão</p>
@@ -257,10 +282,7 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
 
             {/* Progress bar */}
             <div className="mt-2">
-              <Progress 
-                value={(sdr.meetingsScheduled / maxMeetings) * 100} 
-                className="h-1.5"
-              />
+              <Progress value={(sdr.meetingsScheduled / maxMeetings) * 100} className="h-1.5" />
             </div>
           </div>
         ))}

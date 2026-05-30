@@ -185,6 +185,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      if (audioRef.current.src) URL.revokeObjectURL(audioRef.current.src);
     }
     window.speechSynthesis?.cancel();
     setIsSpeaking(false);

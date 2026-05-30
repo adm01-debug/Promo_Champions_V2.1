@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { subDays, format, parseISO } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus } from '@/constants';
+import { subDays, format, parseISO } from 'date-fns';
 
 export interface MacroSellerData {
   id: string;
@@ -35,21 +36,18 @@ export interface VendasMacroData {
 
 export function useVendasMacro(days: number = 30) {
   return useQuery({
-    queryKey: ["vendas-macro", days],
+    queryKey: ['vendas-macro', days],
     queryFn: async (): Promise<VendasMacroData> => {
       const now = new Date();
       const startDate = subDays(now, days);
 
       const [salesRes, salespeopleRes] = await Promise.all([
         supabase
-          .from("sales")
-          .select("id, salesperson_id, amount, status, created_at")
-          .gte("created_at", startDate.toISOString())
-          .not("status", "eq", "lost"),
-        supabase
-          .from("salespeople")
-          .select("id, name, avatar_url")
-          .eq("is_active", true),
+          .from('sales')
+          .select('id, salesperson_id, amount, status, created_at')
+          .gte('created_at', startDate.toISOString())
+          .not('status', 'eq', 'lost'),
+        supabase.from('salespeople').select('id, name, avatar_url').eq('is_active', true),
       ]);
 
       const sales = salesRes.data || [];
@@ -57,7 +55,7 @@ export function useVendasMacro(days: number = 30) {
 
       // Separate quoted (pipeline) vs sold (completed)
       const quoted = sales; // all non-lost = total orçado
-      const sold = sales.filter(s => s.status === "completed");
+      const sold = sales.filter(s => isWonSaleStatus(s.status));
 
       const totalQuoted = quoted.length;
       const totalSold = sold.length;
@@ -74,16 +72,16 @@ export function useVendasMacro(days: number = 30) {
       const dailyMap = new Map<string, MacroDailyData>();
       for (let d = 0; d <= days; d++) {
         const date = subDays(now, days - d);
-        const key = format(date, "dd/MM");
+        const key = format(date, 'dd/MM');
         dailyMap.set(key, { day: key, quoted: 0, sold: 0, revenue: 0 });
       }
 
       sales.forEach(s => {
-        const key = format(parseISO(s.created_at), "dd/MM");
+        const key = format(parseISO(s.created_at), 'dd/MM');
         const entry = dailyMap.get(key);
         if (entry) {
           entry.quoted += 1;
-          if (s.status === "completed") {
+          if (isWonSaleStatus(s.status)) {
             entry.sold += 1;
             entry.revenue += Number(s.amount);
           }
@@ -93,13 +91,22 @@ export function useVendasMacro(days: number = 30) {
       const dailyData = Array.from(dailyMap.values());
 
       // Top sellers
-      const sellerMap = new Map<string, { quoted: number; sold: number; revenue: number; quotesCount: number; ordersCount: number }>();
+      const sellerMap = new Map<
+        string,
+        { quoted: number; sold: number; revenue: number; quotesCount: number; ordersCount: number }
+      >();
       sales.forEach(s => {
-        const sid = s.salesperson_id || "unknown";
-        const existing = sellerMap.get(sid) || { quoted: 0, sold: 0, revenue: 0, quotesCount: 0, ordersCount: 0 };
+        const sid = s.salesperson_id || 'unknown';
+        const existing = sellerMap.get(sid) || {
+          quoted: 0,
+          sold: 0,
+          revenue: 0,
+          quotesCount: 0,
+          ordersCount: 0,
+        };
         existing.quoted += 1;
         existing.quotesCount += 1;
-        if (s.status === "completed") {
+        if (isWonSaleStatus(s.status)) {
           existing.sold += 1;
           existing.ordersCount += 1;
           existing.revenue += Number(s.amount);
@@ -114,7 +121,7 @@ export function useVendasMacro(days: number = 30) {
           const sp = spMap.get(id);
           return {
             id,
-            name: sp?.name || "Desconhecido",
+            name: sp?.name || 'Desconhecido',
             avatar_url: sp?.avatar_url || null,
             unitsQuoted: data.quoted,
             unitsSold: data.sold,

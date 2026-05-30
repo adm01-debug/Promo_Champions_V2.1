@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { isOpenSaleStatus, isWonSaleStatus } from '@/constants';
 
 export type NextActionPriority = 'high' | 'medium' | 'low';
 export type NextActionCategory = 'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
@@ -90,7 +91,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   const todayIso = new Date().toISOString().slice(0, 10);
 
   const stagnantDeals = allSales.filter(s => {
-    if (s.status === 'completed' || s.status === 'lost') return false;
+    if (!isOpenSaleStatus(s.status)) return false;
     return (now - new Date(s.updated_at).getTime()) / 86400000 > 7;
   });
 
@@ -113,7 +114,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   });
 
   const last7d = allActivities.filter(
-    a => (now - new Date(a.created_at).getTime()) / 86400000 <= 7,
+    a => (now - new Date(a.created_at).getTime()) / 86400000 <= 7
   );
   if (last7d.length < 10) {
     suggestions.push({
@@ -131,11 +132,14 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Lógica para Gatilhos de Intenção e Respostas do Lead
-  const leadsWithResponse = allActivities.filter(a => a.activity_type === 'email' && (a.outcome as string) === 'connected');
+  const leadsWithResponse = allActivities.filter(
+    a => a.activity_type === 'email' && (a.outcome as string) === 'connected'
+  );
   if (leadsWithResponse.length > 0) {
     suggestions.push({
       title: 'Responder lead interessado',
-      description: 'Lead respondeu ao último e-mail. Sugestão: Oferecer demonstração personalizada ou tirar dúvidas técnicas.',
+      description:
+        'Lead respondeu ao último e-mail. Sugestão: Oferecer demonstração personalizada ou tirar dúvidas técnicas.',
       rationale: 'Engajamento detectado: lead respondeu ativamente.',
       actionType: 'follow_up',
       priority: 'high',
@@ -147,13 +151,17 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Gatilho de Intenção - Proposta Aberta / Cliques Repetidos
-  const highInterestEvents = allActivities.filter(a => 
-    (a.activity_type as string === 'proposal_view' || a.activity_type as string === 'price_click') && 
-    (now - new Date(a.created_at).getTime()) / 60000 < 60 // Última hora
+  const highInterestEvents = allActivities.filter(
+    a =>
+      ((a.activity_type as string) === 'proposal_view' ||
+        (a.activity_type as string) === 'price_click') &&
+      (now - new Date(a.created_at).getTime()) / 60000 < 60 // Última hora
   );
 
-  const priceClicks = highInterestEvents.filter(e => e.activity_type as string === 'price_click');
-  const proposalViews = highInterestEvents.filter(e => e.activity_type as string === 'proposal_view');
+  const priceClicks = highInterestEvents.filter(e => (e.activity_type as string) === 'price_click');
+  const proposalViews = highInterestEvents.filter(
+    e => (e.activity_type as string) === 'proposal_view'
+  );
 
   if (priceClicks.length >= 3) {
     suggestions.unshift({
@@ -184,7 +192,9 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   // Priorização baseada em histórico recente
-  const lastResponse = allActivities.find(a => a.activity_type === 'email' && (a.outcome as string) === 'connected');
+  const lastResponse = allActivities.find(
+    a => a.activity_type === 'email' && (a.outcome as string) === 'connected'
+  );
   if (lastResponse && (now - new Date(lastResponse.created_at).getTime()) / 86400000 < 1) {
     suggestions.unshift({
       title: 'Follow-up Imediato: Resposta Recebida',
@@ -198,12 +208,15 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
-  const highInterestDeals = allSales.filter(s => s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2);
+  const highInterestDeals = allSales.filter(
+    s => s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2
+  );
   if (highInterestDeals.length > 0) {
     suggestions.push({
       title: 'Gatilho de Desconto Estratégico',
       description: `Lead demonstrou alto interesse na proposta de ${highInterestDeals[0].client_name}.`,
-      rationale: 'IA detectou padrão de fechamento. Um desconto de 5-10% pode acelerar o "sim" hoje.',
+      rationale:
+        'IA detectou padrão de fechamento. Um desconto de 5-10% pode acelerar o "sim" hoje.',
       actionType: 'discount',
       priority: 'high',
       confidence: 0.88,
@@ -231,7 +244,7 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
-  const openDeals = allSales.filter(s => s.status !== 'completed' && s.status !== 'lost');
+  const openDeals = allSales.filter(s => isOpenSaleStatus(s.status));
   if (openDeals.length < 5) {
     suggestions.push({
       title: 'Reforçar prospecção',
@@ -247,9 +260,9 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
-  const completedCount = allSales.filter(s => s.status === 'completed').length;
+  const completedCount = allSales.filter(s => isWonSaleStatus(s.status)).length;
   const totalRevenue = allSales
-    .filter(s => s.status === 'completed')
+    .filter(s => isWonSaleStatus(s.status))
     .reduce((sum, s) => sum + (s.amount || 0), 0);
 
   const insight =

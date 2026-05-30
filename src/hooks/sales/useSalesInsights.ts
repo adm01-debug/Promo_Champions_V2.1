@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 export interface ClientInsight {
   name: string;
@@ -33,7 +34,7 @@ export interface SalesInsightsData {
 
 export function useSalesInsights() {
   return useQuery({
-    queryKey: ["sales-insights"],
+    queryKey: ['sales-insights'],
     queryFn: async (): Promise<SalesInsightsData> => {
       const now = new Date();
       const monthStart = startOfMonth(now);
@@ -43,25 +44,23 @@ export function useSalesInsights() {
 
       const [currentSalesRes, prevSalesRes, allSalesRes, clientsRes] = await Promise.all([
         supabase
-          .from("sales")
-          .select("client_name, amount")
-          .eq("status", "completed")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
+          .from('sales')
+          .select('client_name, amount')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
         supabase
-          .from("sales")
-          .select("client_name, amount")
-          .eq("status", "completed")
-          .gte("created_at", prevMonthStart.toISOString())
-          .lte("created_at", prevMonthEnd.toISOString()),
+          .from('sales')
+          .select('client_name, amount')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte('created_at', prevMonthStart.toISOString())
+          .lte('created_at', prevMonthEnd.toISOString()),
         supabase
-          .from("sales")
-          .select("client_name, amount, created_at")
-          .eq("status", "completed")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("clients")
-          .select("name, company"),
+          .from('sales')
+          .select('client_name, amount, created_at')
+          .in('status', [...WON_SALE_STATUSES])
+          .order('created_at', { ascending: false }),
+        supabase.from('clients').select('name, company'),
       ]);
 
       const currentSales = currentSalesRes.data || [];
@@ -80,9 +79,10 @@ export function useSalesInsights() {
 
       const avgTicketGlobal = calcAvgTicket(currentSales);
       const avgTicketPrevMonth = calcAvgTicket(prevSales);
-      const avgTicketChange = avgTicketPrevMonth > 0
-        ? ((avgTicketGlobal - avgTicketPrevMonth) / avgTicketPrevMonth) * 100
-        : 0;
+      const avgTicketChange =
+        avgTicketPrevMonth > 0
+          ? ((avgTicketGlobal - avgTicketPrevMonth) / avgTicketPrevMonth) * 100
+          : 0;
 
       // Top clients by avg ticket (current month)
       const clientTicketMap = new Map<string, { total: number; count: number }>();
@@ -113,9 +113,8 @@ export function useSalesInsights() {
 
       const totalUniqueClients = allClientMap.size;
       const totalRepurchaseClients = Array.from(allClientMap.values()).filter(c => c >= 2).length;
-      const repurchaseRateGlobal = totalUniqueClients > 0
-        ? (totalRepurchaseClients / totalUniqueClients) * 100
-        : 0;
+      const repurchaseRateGlobal =
+        totalUniqueClients > 0 ? (totalRepurchaseClients / totalUniqueClients) * 100 : 0;
 
       // Previous month repurchase
       const prevClientMap = new Map<string, number>();
@@ -125,9 +124,10 @@ export function useSalesInsights() {
       const prevUnique = prevClientMap.size;
       const prevRepurchase = Array.from(prevClientMap.values()).filter(c => c >= 2).length;
       const repurchaseRatePrevMonth = prevUnique > 0 ? (prevRepurchase / prevUnique) * 100 : 0;
-      const repurchaseRateChange = repurchaseRatePrevMonth > 0
-        ? ((repurchaseRateGlobal - repurchaseRatePrevMonth) / repurchaseRatePrevMonth) * 100
-        : 0;
+      const repurchaseRateChange =
+        repurchaseRatePrevMonth > 0
+          ? ((repurchaseRateGlobal - repurchaseRatePrevMonth) / repurchaseRatePrevMonth) * 100
+          : 0;
 
       // Top repurchase clients
       const topByRepurchase: RepurchaseInsight[] = Array.from(allClientMap.entries())

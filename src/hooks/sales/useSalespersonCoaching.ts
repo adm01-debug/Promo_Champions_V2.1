@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { isWonSaleStatus } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface CoachingInsight {
@@ -72,7 +73,7 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
       const { data: _allTeamSales } = await supabase
         .from('sales')
         .select('amount, status, salesperson_id');
-      
+
       const { data: allTeamOutcomes } = await supabase
         .from('deal_outcomes')
         .select('outcome, salesperson_id');
@@ -93,17 +94,20 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
       const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
 
       // Average deal value
-      const completedSales = allSales.filter(s => s.status === 'completed');
+      const completedSales = allSales.filter(s => isWonSaleStatus(s.status));
       const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
       const avgDealValue = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
 
       // Top loss reasons
       const lossReasons = allOutcomes
         .filter(o => o.outcome === 'lost' && o.reason)
-        .reduce((acc, o) => {
-          acc[o.reason] = (acc[o.reason] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
+        .reduce(
+          (acc, o) => {
+            acc[o.reason] = (acc[o.reason] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        );
 
       const topLossReasons = Object.entries(lossReasons)
         .map(([reason, count]) => ({
@@ -177,9 +181,10 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
         });
       }
 
-      const summary = winRate >= 40
-        ? `${sp.name} demonstra bom desempenho com taxa de conversão de ${winRate.toFixed(1)}%. Foco em manter consistência e escalar resultados.`
-        : `${sp.name} tem oportunidades de melhoria na conversão (${winRate.toFixed(1)}%). Recomenda-se foco em qualificação e tratamento de objeções.`;
+      const summary =
+        winRate >= 40
+          ? `${sp.name} demonstra bom desempenho com taxa de conversão de ${winRate.toFixed(1)}%. Foco em manter consistência e escalar resultados.`
+          : `${sp.name} tem oportunidades de melhoria na conversão (${winRate.toFixed(1)}%). Recomenda-se foco em qualificação e tratamento de objeções.`;
 
       return {
         salesperson: {

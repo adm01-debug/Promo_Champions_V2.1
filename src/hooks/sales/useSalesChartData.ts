@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { subDays, format, startOfWeek, startOfMonth, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -21,7 +22,7 @@ export function useSalesChartData(period: Period) {
       const { data: sales, error } = await supabase
         .from('sales')
         .select('amount, created_at')
-        .eq('status', 'completed')
+        .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', startDate.toISOString())
         .order('created_at', { ascending: true });
 
@@ -52,8 +53,10 @@ export function useSalesChartData(period: Period) {
           const saleDate = parseISO(s.created_at);
           const weekStart = startOfWeek(saleDate, { weekStartsOn: 1 });
           const nowWeekStart = startOfWeek(now, { weekStartsOn: 1 });
-          const weeksDiff = Math.floor((nowWeekStart.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
-          
+          const weeksDiff = Math.floor(
+            (nowWeekStart.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)
+          );
+
           if (weeksDiff >= 0 && weeksDiff <= 3) {
             const key = `Sem ${4 - weeksDiff}`;
             grouped.set(key, (grouped.get(key) || 0) + Number(s.amount));

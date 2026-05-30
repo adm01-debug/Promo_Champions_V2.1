@@ -1,10 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useMemo } from "react";
-import { startOfMonth, subMonths, startOfYear, subYears, endOfMonth, format, parseISO } from "date-fns";
-import { CACHE_TIMES } from "@/constants";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useMemo } from 'react';
+import {
+  startOfMonth,
+  subMonths,
+  startOfYear,
+  subYears,
+  endOfMonth,
+  format,
+  parseISO,
+} from 'date-fns';
+import { CACHE_TIMES, isWonSaleStatus } from '@/constants';
 
-export type BenchmarkPeriod = "mom" | "qoq" | "yoy";
+export type BenchmarkPeriod = 'mom' | 'qoq' | 'yoy';
 
 interface PeriodData {
   revenue: number;
@@ -19,8 +27,8 @@ export interface BenchmarkResult {
   previous: number;
   change: number;
   changePercent: number;
-  trend: "up" | "down" | "stable";
-  format: "currency" | "number" | "percent";
+  trend: 'up' | 'down' | 'stable';
+  format: 'currency' | 'number' | 'percent';
 }
 
 function getDateRanges(period: BenchmarkPeriod) {
@@ -28,19 +36,19 @@ function getDateRanges(period: BenchmarkPeriod) {
   let currentStart: Date, currentEnd: Date, previousStart: Date, previousEnd: Date;
 
   switch (period) {
-    case "mom":
+    case 'mom':
       currentStart = startOfMonth(now);
       currentEnd = now;
       previousStart = startOfMonth(subMonths(now, 1));
       previousEnd = endOfMonth(subMonths(now, 1));
       break;
-    case "qoq":
+    case 'qoq':
       currentStart = startOfMonth(subMonths(now, 2));
       currentEnd = now;
       previousStart = startOfMonth(subMonths(now, 5));
       previousEnd = endOfMonth(subMonths(now, 3));
       break;
-    case "yoy":
+    case 'yoy':
       currentStart = startOfYear(now);
       currentEnd = now;
       previousStart = startOfYear(subYears(now, 1));
@@ -58,13 +66,13 @@ export const useBenchmarkData = (period: BenchmarkPeriod) => {
   const ranges = useMemo(() => getDateRanges(period), [period]);
 
   const { data: currentSales } = useQuery({
-    queryKey: ["benchmark-current", period],
+    queryKey: ['benchmark-current', period],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sales")
-        .select("id, amount, status, created_at")
-        .gte("created_at", ranges.current.start)
-        .lte("created_at", ranges.current.end);
+        .from('sales')
+        .select('id, amount, status, created_at')
+        .gte('created_at', ranges.current.start)
+        .lte('created_at', ranges.current.end);
       if (error) throw error;
       return data || [];
     },
@@ -72,13 +80,13 @@ export const useBenchmarkData = (period: BenchmarkPeriod) => {
   });
 
   const { data: previousSales } = useQuery({
-    queryKey: ["benchmark-previous", period],
+    queryKey: ['benchmark-previous', period],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sales")
-        .select("id, amount, status, created_at")
-        .gte("created_at", ranges.previous.start)
-        .lte("created_at", ranges.previous.end);
+        .from('sales')
+        .select('id, amount, status, created_at')
+        .gte('created_at', ranges.previous.start)
+        .lte('created_at', ranges.previous.end);
       if (error) throw error;
       return data || [];
     },
@@ -89,7 +97,7 @@ export const useBenchmarkData = (period: BenchmarkPeriod) => {
     if (!currentSales || !previousSales) return [];
 
     const calc = (sales: typeof currentSales): PeriodData => {
-      const closed = sales.filter((s) => s.status === "closed");
+      const closed = sales.filter(s => isWonSaleStatus(s.status));
       const revenue = closed.reduce((sum, s) => sum + (s.amount || 0), 0);
       const avgTicket = closed.length > 0 ? revenue / closed.length : 0;
       const convRate = sales.length > 0 ? (closed.length / sales.length) * 100 : 0;
@@ -103,20 +111,25 @@ export const useBenchmarkData = (period: BenchmarkPeriod) => {
       metric: string,
       cur: number,
       prev: number,
-      fmt: "currency" | "number" | "percent"
+      fmt: 'currency' | 'number' | 'percent'
     ): BenchmarkResult => {
       const change = cur - prev;
       const changePercent = prev !== 0 ? (change / prev) * 100 : cur > 0 ? 100 : 0;
-      const trend: "up" | "down" | "stable" =
-        Math.abs(changePercent) < 1 ? "stable" : changePercent > 0 ? "up" : "down";
+      const trend: 'up' | 'down' | 'stable' =
+        Math.abs(changePercent) < 1 ? 'stable' : changePercent > 0 ? 'up' : 'down';
       return { metric, current: cur, previous: prev, change, changePercent, trend, format: fmt };
     };
 
     return [
-      makeBenchmark("Receita", current.revenue, previous.revenue, "currency"),
-      makeBenchmark("Deals Fechados", current.deals, previous.deals, "number"),
-      makeBenchmark("Ticket Médio", current.avgTicket, previous.avgTicket, "currency"),
-      makeBenchmark("Taxa de Conversão", current.conversionRate, previous.conversionRate, "percent"),
+      makeBenchmark('Receita', current.revenue, previous.revenue, 'currency'),
+      makeBenchmark('Deals Fechados', current.deals, previous.deals, 'number'),
+      makeBenchmark('Ticket Médio', current.avgTicket, previous.avgTicket, 'currency'),
+      makeBenchmark(
+        'Taxa de Conversão',
+        current.conversionRate,
+        previous.conversionRate,
+        'percent'
+      ),
     ];
   }, [currentSales, previousSales]);
 

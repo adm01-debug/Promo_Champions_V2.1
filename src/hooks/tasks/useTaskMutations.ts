@@ -21,18 +21,20 @@ export const useCreateTask = () => {
     }) => {
       const { data, error } = await supabase
         .from('tasks')
-        .insert([{
-          title: input.title,
-          description: input.description || null,
-          task_type: (input.task_type || 'other') as any,
-          priority: (input.priority || 'medium') as any,
-          due_date: input.due_date,
-          due_time: input.due_time || null,
-          sale_id: input.sale_id || null,
-          client_id: input.client_id || null,
-          salesperson_id: input.salesperson_id || null,
-          status: 'pending',
-        }])
+        .insert([
+          {
+            title: input.title,
+            description: input.description || null,
+            task_type: (input.task_type || 'other') as any,
+            priority: (input.priority || 'medium') as any,
+            due_date: input.due_date,
+            due_time: input.due_time || null,
+            sale_id: input.sale_id || null,
+            client_id: input.client_id || null,
+            salesperson_id: input.salesperson_id || null,
+            status: 'pending',
+          },
+        ])
         .select()
         .single();
 
@@ -53,7 +55,10 @@ export const useUpdateTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Omit<TaskRecord, 'sale' | 'salesperson'>> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: Partial<Omit<TaskRecord, 'sale' | 'salesperson'>> & { id: string }) => {
       const updateData: TableUpdate<'tasks'> = {
         updated_at: new Date().toISOString(),
       };
@@ -80,21 +85,19 @@ export const useUpdateTask = () => {
       if (error) throw error;
       return data;
     },
-    onMutate: async (newData) => {
+    onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previousTasks = queryClient.getQueryData(['tasks']);
+      const previousTasks = queryClient.getQueriesData<TaskRecord[]>({ queryKey: ['tasks'] });
 
-      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+      queryClient.setQueriesData<TaskRecord[]>({ queryKey: ['tasks'] }, old => {
         if (!old) return old;
-        return old.map(task =>
-          task.id === newData.id ? { ...task, ...newData } : task
-        );
+        return old.map(task => (task.id === newData.id ? { ...task, ...newData } : task));
       });
 
       return { previousTasks };
     },
     onError: (_err, _newData, context) => {
-      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      context?.previousTasks?.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Erro ao atualizar tarefa');
     },
     onSettled: () => {
@@ -122,11 +125,11 @@ export const useCompleteTask = () => {
       if (error) throw error;
       return data;
     },
-    onMutate: async (taskId) => {
+    onMutate: async taskId => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previousTasks = queryClient.getQueryData(['tasks']);
+      const previousTasks = queryClient.getQueriesData<TaskRecord[]>({ queryKey: ['tasks'] });
 
-      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+      queryClient.setQueriesData<TaskRecord[]>({ queryKey: ['tasks'] }, old => {
         if (!old) return old;
         return old.map(task =>
           task.id === taskId
@@ -141,7 +144,7 @@ export const useCompleteTask = () => {
       toast.success('Tarefa concluída!');
     },
     onError: (_err, _taskId, context) => {
-      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      context?.previousTasks?.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Erro ao concluir tarefa');
     },
     onSettled: () => {
@@ -155,18 +158,15 @@ export const useDeleteTask = () => {
 
   return useMutation({
     mutationFn: async (taskId: string) => {
-      const { error } = await supabase
-        .from('tasks')
-        .delete()
-        .eq('id', taskId);
+      const { error } = await supabase.from('tasks').delete().eq('id', taskId);
 
       if (error) throw error;
     },
-    onMutate: async (taskId) => {
+    onMutate: async taskId => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previousTasks = queryClient.getQueryData(['tasks']);
+      const previousTasks = queryClient.getQueriesData<TaskRecord[]>({ queryKey: ['tasks'] });
 
-      queryClient.setQueryData(['tasks'], (old: TaskRecord[] | undefined) => {
+      queryClient.setQueriesData<TaskRecord[]>({ queryKey: ['tasks'] }, old => {
         if (!old) return old;
         return old.filter(task => task.id !== taskId);
       });
@@ -177,7 +177,7 @@ export const useDeleteTask = () => {
       toast.success('Tarefa excluída');
     },
     onError: (_err, _taskId, context) => {
-      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      context?.previousTasks?.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Erro ao excluir tarefa');
     },
     onSettled: () => {
