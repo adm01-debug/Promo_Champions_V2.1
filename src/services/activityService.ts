@@ -10,6 +10,7 @@ export const activityService = {
       .order('created_at', { ascending: false })
       .limit(500);
     if (filters?.userId) query = query.eq('salesperson_id', filters.userId);
+    if (filters?.clientId) query = query.eq('client_id', filters.clientId);
     const { data, error } = await query;
     if (error) throw error;
     return (data || []) as ActivityRecord[];
@@ -209,6 +210,13 @@ export const activityService = {
   },
 
   async createActivity(input: Omit<ActivityRecord, 'id' | 'created_at'>) {
+    // Validate required fields
+    const requiredFields: (keyof typeof input)[] = ['activity_type', 'outcome', 'salesperson_id'];
+    for (const field of requiredFields) {
+      if (!input[field]) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
     const { data, error } = await supabase.from('activities').insert(input).select().single();
     if (error) throw error;
     return data;
