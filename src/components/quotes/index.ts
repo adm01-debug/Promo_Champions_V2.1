@@ -1,1 +1,0 @@
-export { QuoteDetailDialog } from './QuoteDetailDialog';
