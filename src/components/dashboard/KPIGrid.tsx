@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Activity, Receipt, Clock, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
-import { useCountUp } from "@/lib/useCountUp";
+import { useCountUp } from "@/hooks/useCountUp";
 import { useDashboardKPIs } from "@/hooks/dashboard/useDashboardKPIs";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ interface KPIItem {
 }
 
 const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, index }: { label: string; value: number; format: string; icon: any; index: number }) {
-  const animated = useCountUp(value, 800 + index * 150);
+  const animated = useCountUp(value, { duration: 800 + index * 150 });
   
   const formatted = (() => {
     switch (format) {

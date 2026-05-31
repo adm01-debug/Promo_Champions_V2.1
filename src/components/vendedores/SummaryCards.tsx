@@ -1,6 +1,6 @@
 import React from "react";
 import { DollarSign, Target, TrendingUp } from "lucide-react";
-import { useCountUp } from "@/lib/useCountUp";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface SummaryCardsProps {
   totalSales: number;
@@ -9,13 +9,13 @@ interface SummaryCardsProps {
 }
 
 const AnimatedCurrency = React.memo(({ value }: { value: number }) => {
-  const animated = useCountUp(value, 1400);
+  const animated = useCountUp(value, { duration: 1400 });
   return <>R$ {animated.toLocaleString("pt-BR")}</>;
 });
 AnimatedCurrency.displayName = "AnimatedCurrency";
 
 const AnimatedPercent = React.memo(({ value }: { value: number }) => {
-  const animated = useCountUp(value, 1200, 1);
+  const animated = useCountUp(value, { duration: 1200, decimals: 1 });
   return <>{animated.toFixed(1)}%</>;
 });
 AnimatedPercent.displayName = "AnimatedPercent";

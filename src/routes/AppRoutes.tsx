@@ -1,19 +1,12 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/templates/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";
 import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 import { Shimmer, KPICardSkeleton, ChartCardSkeleton, SkeletonCard } from "@/components/skeletons/SkeletonPrimitives";
-const Index = lazy(() => import("@/pages/Index"));
 import { RaceTransitionWrapper } from "@/components/race";
-const AdminTasksPage = lazy(() => import("@/pages/AdminTasksPage"));
-const RaceSpectator = lazy(() => import("@/pages/RaceSpectator"));
-const RetryTestStatusPage = lazy(() => import("@/pages/RetryTestStatusPage"));
-const OrderDetailPage = lazy(() => import("@/pages/OrderDetailPage"));
-const SalesReportPage = lazy(() => import("@/pages/SalesReportPage"));
 import {
   // Auth & System
   Auth, ResetPassword, NotFound, AccessDenied, Docs,
@@ -40,10 +33,12 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
+  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage,
   AdminComercial, Competencias,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
+  // Entry Point & Special Pages
+  Index, RaceSpectator, RetryTestStatusPage, OrderDetailPage, SalesReportPage,
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
