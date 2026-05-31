@@ -11,11 +11,8 @@ import { UserPlus } from 'lucide-react';
 import { useTaskCatalog } from '@/hooks/admin-tasks/useTaskCatalog';
 import { useTaskAssignments } from '@/hooks/admin-tasks/useTaskAssignments';
 import { useSquads } from '@/hooks/admin-tasks/useSquads';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useSalespeopleMin } from '@/hooks/sales/useSalespeopleMin';
 import { RECURRENCE_LABELS, type RecurrenceRule } from './taskConsoleHelpers';
-
-interface SimpleSalesperson { id: string; name: string }
 
 export function TaskAssignmentDialog() {
   const [open, setOpen] = useState(false);
@@ -28,16 +25,7 @@ export function TaskAssignmentDialog() {
   const { data: catalog } = useTaskCatalog();
   const { assign } = useTaskAssignments();
   const { data: squads, assignToSquad } = useSquads();
-
-  const { data: salespeople } = useQuery<SimpleSalesperson[]>({
-    queryKey: ['salespeople-min'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('salespeople_public').select('id, name').order('name');
-      if (error) throw error;
-      return (data || []).filter((s): s is SimpleSalesperson => !!s.id && !!s.name);
-    },
-    enabled: open,
-  });
+  const { data: salespeople } = useSalespeopleMin();
 
   const toggle = (id: string) => {
     const next = new Set(selected);

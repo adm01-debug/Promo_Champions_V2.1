@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,9 +12,7 @@ import { Plus, Trash2, Users, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSquads, useSquadMembers } from '@/hooks/admin-tasks/useSquads';
 import { SQUAD_COLOR_PRESETS } from './taskConsoleHelpers';
-import { supabase } from '@/integrations/supabase/client';
-
-interface SimpleSalesperson { id: string; name: string }
+import { useSalespeopleMin } from '@/hooks/sales/useSalespeopleMin';
 
 export function SquadManager() {
   const { data: squads, isLoading, create, remove, addMember, removeMember } = useSquads();
@@ -24,15 +21,7 @@ export function SquadManager() {
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(SQUAD_COLOR_PRESETS[0]);
   const [activeSquad, setActiveSquad] = useState<string | null>(null);
-
-  const { data: salespeople } = useQuery<SimpleSalesperson[]>({
-    queryKey: ['salespeople-min'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('salespeople_public').select('id, name').order('name');
-      if (error) throw error;
-      return (data || []).filter((s): s is SimpleSalesperson => !!s.id && !!s.name);
-    },
-  });
+  const { data: salespeople } = useSalespeopleMin();
 
   const { data: members } = useSquadMembers(activeSquad ?? undefined);
   const memberIds = new Set((members || []).map((m) => m.user_id));

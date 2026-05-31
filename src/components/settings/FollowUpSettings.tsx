@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,51 +15,29 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useUserRoles } from "@/hooks/useUserRoles";
+import { useFollowUpSettings } from "@/hooks/follow-up/useFollowUpData";
 
 const REQUIRED_VARIABLES = ["{{client_name}}", "{{product_name}}", "{{status}}"];
 
 export function FollowUpSettings() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { isAdmin } = useUserRoles();
   const [whatsappTemplate, setWhatsappTemplate] = useState("");
   const [cadenceDays, setCadenceDays] = useState("");
   const [autoReactivate, setAutoReactivate] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const { data: userRole } = useQuery({
-    queryKey: ["user-role", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user?.id || "")
-        .maybeSingle();
-      if (error) throw error;
-      return data?.role;
-    },
-    enabled: !!user?.id,
-  });
+  const { data: settings, isLoading } = useFollowUpSettings();
 
-  const isAdmin = userRole === "admin";
-
-  const { data: settings, isLoading } = useQuery({
-    queryKey: ["follow-up-settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("follow_up_settings")
-        .select("*")
-        .maybeSingle();
-
-      if (error) throw error;
-      
-      if (data) {
-        setWhatsappTemplate(data.whatsapp_template || "");
-        setCadenceDays(data.cadence_days?.join(", ") || "");
-        setAutoReactivate(data.auto_reactivate_class_a || false);
-      }
-      return data;
-    },
-  });
+  useEffect(() => {
+    if (settings) {
+      setWhatsappTemplate(settings.whatsapp_template || "");
+      setCadenceDays(settings.cadence_days?.join(", ") || "");
+      setAutoReactivate(settings.auto_reactivate_class_a || false);
+    }
+  }, [settings]);
 
   const { data: versions = [] } = useQuery({
     queryKey: ["template-versions", settings?.id],
