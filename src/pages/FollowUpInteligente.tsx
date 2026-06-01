@@ -10,13 +10,15 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, MessageCircle, History, Zap } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { getLocalISODate } from '@/utils/dateHelpers';
-import { differenceInHours, format } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { useFollowUpLeads, useFollowUpSettings, useFollowUpAuditLogs } from '@/hooks/follow-up/useFollowUpData';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
@@ -24,7 +26,7 @@ import { FollowUpStatsGrid } from '@/components/follow-up/FollowUpStatsGrid';
 import { FollowUpValueAtRisk } from '@/components/follow-up/FollowUpValueAtRisk';
 import { FollowUpLeadCard } from '@/components/follow-up/FollowUpLeadCard';
 import { FollowUpEmptyState } from '@/components/follow-up/FollowUpEmptyState';
-import { getTemperature, getSuggestedAction, type ColdLead } from '@/components/follow-up/types';
+import { type ColdLead } from '@/components/follow-up/types';
 import { FollowUpLoadingSkeleton } from '@/components/skeletons/FollowUpLoadingSkeleton';
 import {
   Dialog,
@@ -39,11 +41,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { Json } from '@/integrations/supabase/types';
 
 const FollowUpInteligente = memo(() => {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
+  const { isAdmin } = useUserRoles();
   const [filterTemp, setFilterTemp] = useState('all');
   const [minDaysInactive, setMinDaysInactive] = useState(3);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
@@ -56,144 +58,9 @@ const FollowUpInteligente = memo(() => {
   const [reactivationReason, setReactivationReason] = useState('');
   const [reactivationDate, setReactivationDate] = useState(getLocalISODate());
 
-  const { data: userRole } = useQuery({
-    queryKey: ['user-role', salesperson?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', salesperson?.id || '')
-        .maybeSingle();
-      if (error) throw error;
-      return data?.role;
-    },
-    enabled: !!salesperson?.id,
-  });
-
-  const isAdmin = userRole === 'admin';
-
-  const { data: followUpSettings } = useQuery({
-    queryKey: ['follow-up-settings'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('follow_up_settings').select('*').maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: auditLogs = [] } = useQuery({
-    queryKey: ['follow-up-audit-logs', selectedLeadForAudit?.id],
-    queryFn: async () => {
-      if (!selectedLeadForAudit?.id) return [];
-      const { data, error } = await supabase
-        .from('follow_up_audit_view')
-        .select('*')
-        .eq('sale_id', selectedLeadForAudit.id)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!selectedLeadForAudit?.id,
-  });
-
-  const { data: coldLeads = [], isLoading } = useQuery({
-    queryKey: ['cold-leads', salesperson?.id, minDaysInactive],
-    queryFn: async () => {
-      const { data: deals, error: dealsError } = await supabase
-        .from('sales')
-        .select(
-          `
-          id, 
-          client_name, 
-          product_name, 
-          amount, 
-          status, 
-          updated_at, 
-          salesperson_id,
-          lead_scores (score),
-          deal_probability_scores (calibrated_probability)
-        `
-        )
-        .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
-        .order('updated_at', { ascending: true });
-
-      if (dealsError) throw dealsError;
-
-      const { data: allTasks, error: tasksError } = await supabase
-        .from('tasks')
-        .select('sale_id, status, completed_at')
-        .order('completed_at', { ascending: false });
-
-      if (tasksError) throw tasksError;
-
-      const pendingTaskIds = new Set(
-        (allTasks || []).filter(t => t.status === 'pending').map(t => t.sale_id)
-      );
-      const completedTasksMap = (allTasks || [])
-        .filter(t => t.status === 'completed')
-        .reduce((acc: Record<string, number>, t) => {
-          if (t.sale_id) acc[t.sale_id] = (acc[t.sale_id] || 0) + 1;
-          return acc;
-        }, {});
-
-      const { data: activities, error: activitiesError } = await supabase
-        .from('activities')
-        .select('sale_id, notes, created_at, activity_type')
-        .order('created_at', { ascending: false });
-
-      if (activitiesError) throw activitiesError;
-
-      const activitiesMap = (activities || []).reduce(
-        (acc: Record<string, (typeof activities)[0]>, act) => {
-          if (act.sale_id && !acc[act.sale_id]) acc[act.sale_id] = act;
-          return acc;
-        },
-        {}
-      );
-
-      const now = new Date();
-      return (deals || [])
-        .map(deal => {
-          const hoursInactive = differenceInHours(now, new Date(deal.updated_at));
-          const daysInactive = Math.floor(hoursInactive / 24);
-          const temp = getTemperature(daysInactive);
-          const suggestion = getSuggestedAction(temp);
-          const lastActivity = activitiesMap[deal.id];
-          const score = (deal as any).lead_scores?.[0]?.score || 0;
-          const probability =
-            (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
-
-          // Enhanced AI Logic for Step 1
-          const healthScore = Math.max(0, Math.min(100, 100 - daysInactive * 5 + score / 10));
-          const velocity =
-            daysInactive < 5 ? 'increasing' : daysInactive > 10 ? 'decreasing' : 'stable';
-
-          return {
-            ...deal,
-            days_inactive: daysInactive,
-            temperature: temp,
-            suggested_action: suggestion.action,
-            suggested_channel: suggestion.channel,
-            last_activity: lastActivity
-              ? {
-                  notes: lastActivity.notes,
-                  created_at: lastActivity.created_at,
-                  type: lastActivity.activity_type,
-                }
-              : undefined,
-            score,
-            health_score: Math.round(healthScore),
-            interaction_velocity: velocity,
-            probability,
-            has_pending_task: pendingTaskIds.has(deal.id),
-            follow_up_count: completedTasksMap[deal.id] || 0,
-          } as ColdLead;
-        })
-        .filter(lead => lead.days_inactive >= minDaysInactive)
-        .sort((a, b) => b.days_inactive - a.days_inactive);
-    },
-    staleTime: 2 * 60 * 1000,
-  });
+  const { data: followUpSettings } = useFollowUpSettings();
+  const { data: auditLogs = [] } = useFollowUpAuditLogs(selectedLeadForAudit?.id);
+  const { data: coldLeads = [], isLoading } = useFollowUpLeads(minDaysInactive);
 
   const logAction = useMutation({
     mutationFn: async ({

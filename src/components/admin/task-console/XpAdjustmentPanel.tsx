@@ -6,27 +6,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useXpAdjustments } from '@/hooks/admin-tasks/useXpAdjustments';
 import { formatXp } from './taskConsoleHelpers';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useSalespeopleMin } from '@/hooks/sales/useSalespeopleMin';
 
 export function XpAdjustmentPanel() {
   const [userId, setUserId] = useState('');
   const [amount, setAmount] = useState<string>('');
   const [reason, setReason] = useState('');
   const { data: history, adjust } = useXpAdjustments(30);
-
-  const { data: salespeople } = useQuery<{ id: string; name: string }[]>({
-    queryKey: ['salespeople-min'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('salespeople_public').select('id, name').order('name');
-      if (error) throw error;
-      return (data || []).filter((s): s is { id: string; name: string } => !!s.id && !!s.name);
-    },
-  });
+  const { data: salespeople } = useSalespeopleMin();
 
   const handleSubmit = async () => {
     const n = Number(amount);

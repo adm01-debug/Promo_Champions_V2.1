@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 
 /**
  * Enhanced Lazy Utility with Prefetch capabilities
@@ -8,6 +8,9 @@ export const lazyWithPrefetch = (importStatement: () => Promise<any>) => {
   (Component as any).prefetch = importStatement;
   return Component;
 };
+
+// ─── Entry Point ────────────────────────────────────────────────────
+export const Index = lazyWithPrefetch(() => import("@/pages/Index"));
 
 // ─── Auth & System ──────────────────────────────────────────────────
 export const Auth = lazyWithPrefetch(() => import("@/pages/Auth"));
@@ -159,6 +162,7 @@ export const Configuracoes = lazyWithPrefetch(() => import("@/pages/Configuracoe
 
 // ─── Admin ──────────────────────────────────────────────────────────
 export const AdminDashboard = lazyWithPrefetch(() => import("@/pages/AdminDashboard"));
+export const AdminTasksPage = lazyWithPrefetch(() => import("@/pages/AdminTasksPage"));
 export const AdminTelemetria = lazyWithPrefetch(() => import("@/pages/AdminTelemetria"));
 export const UsageAnalytics = lazyWithPrefetch(() => import("@/pages/UsageAnalytics"));
 export const FeatureFlagsAdmin = lazyWithPrefetch(() => import("@/pages/FeatureFlagsAdmin"));
@@ -175,3 +179,9 @@ export const CustomerSuccess360Page = lazyWithPrefetch(() => import("@/pages/Cus
 export const AdminConexoesPage = lazyWithPrefetch(() => import("@/pages/admin/AdminConexoesPage"));
 export const AdminComercial = lazyWithPrefetch(() => import("@/pages/admin/AdminComercial"));
 export const Competencias = lazyWithPrefetch(() => import("@/pages/Competencias"));
+
+// ─── Special Pages (no MainLayout) ──────────────────────────────────
+export const RaceSpectator = lazyWithPrefetch(() => import("@/pages/RaceSpectator"));
+export const RetryTestStatusPage = lazyWithPrefetch(() => import("@/pages/RetryTestStatusPage"));
+export const OrderDetailPage = lazyWithPrefetch(() => import("@/pages/OrderDetailPage"));
+export const SalesReportPage = lazyWithPrefetch(() => import("@/pages/SalesReportPage"));
