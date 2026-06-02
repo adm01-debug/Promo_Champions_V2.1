@@ -81,7 +81,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
-    "@lovable/vite": "^0.2.0",
+    
     "@playwright/test": "^1.41.0",
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.1.0",
