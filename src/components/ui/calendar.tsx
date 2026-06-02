@@ -52,13 +52,13 @@ function Calendar({
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         hidden: "invisible",
         ...classNames,
-      }}
-      components={{
-        Chevron: ({ orientation }) => {
+      }) as any}
+      components={({
+        Chevron: ({ orientation }: any) => {
           const Icon = orientation === "left" ? ChevronLeft : ChevronRight
           return <Icon className="h-4 w-4" />
         },
-      }}
+      }) as any}
       {...props}
     />
   )
