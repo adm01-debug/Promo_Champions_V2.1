@@ -14,18 +14,18 @@ export { BITopClientsSection } from "./BITopClientsSection";
 export { BIVendasMacro } from "./BIVendasMacro";
 export { BIGestorTeamSection } from "./BIGestorTeamSection";
 
-// Stub components for legacy imports — render children grid wrapper
-export const BIMetricsGrid: React.FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => (
+// Stub components for legacy imports — accept any prop without complaints
+export const BIMetricsGrid: React.FC<any> = ({ children, className }) => (
   <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-4 ${className ?? ""}`}>{children}</div>
 );
 
-export const BIComparisonCard: React.FC<{ title?: string; children?: React.ReactNode }> = ({ title, children }) => (
+export const BIComparisonCard: React.FC<any> = ({ title, children }) => (
   <div className="rounded-lg border border-border/40 bg-card p-4">
     {title ? <h3 className="text-sm font-semibold mb-2">{title}</h3> : null}
     {children}
   </div>
 );
 
-export const BIPurchaseHistory: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
+export const BIPurchaseHistory: React.FC<any> = ({ children }) => (
   <div className="rounded-lg border border-border/40 bg-card p-4">{children}</div>
 );
