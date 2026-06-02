@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useCallback, useRef, useMemo } from 'react';
 
 interface AudioContextType {
-  playOscillator: (type: OscillatorType, frequency: number, duration: number, volume?: number) => void;
+  playOscillator: (
+    frequency: number,
+    delaySec?: number,
+    duration?: number,
+    volume?: number,
+    type?: OscillatorType
+  ) => void;
   getAudioContext: () => AudioContext | null;
 }
 
@@ -22,24 +28,31 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const playOscillator = useCallback(
-    (type: OscillatorType, frequency: number, duration: number, volume: number = 0.3) => {
+    (
+      frequency: number,
+      delaySec: number = 0,
+      duration: number = 0.2,
+      volume: number = 0.3,
+      type: OscillatorType = 'sine'
+    ) => {
       const ctx = getAudioContext();
       if (!ctx) return;
 
       try {
         const oscillator = ctx.createOscillator();
         const gainNode = ctx.createGain();
+        const startAt = ctx.currentTime + delaySec;
 
         oscillator.type = type;
-        oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
-        gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        oscillator.frequency.setValueAtTime(frequency, startAt);
+        gainNode.gain.setValueAtTime(volume, startAt);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startAt + duration);
 
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
 
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + duration);
+        oscillator.start(startAt);
+        oscillator.stop(startAt + duration);
       } catch {
         // Audio playback failed silently — non-critical feature
       }
