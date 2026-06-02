@@ -17,7 +17,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
-      classNames={{
+      classNames={({
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         month_caption: "flex justify-center pt-1 relative items-center",
@@ -52,13 +52,13 @@ function Calendar({
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         hidden: "invisible",
         ...classNames,
-      }}
-      components={{
-        Chevron: ({ orientation }) => {
+      }) as any}
+      components={({
+        Chevron: ({ orientation }: any) => {
           const Icon = orientation === "left" ? ChevronLeft : ChevronRight
           return <Icon className="h-4 w-4" />
         },
-      }}
+      }) as any}
       {...props}
     />
   )
