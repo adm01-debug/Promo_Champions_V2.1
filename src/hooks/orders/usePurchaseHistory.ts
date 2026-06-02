@@ -19,7 +19,7 @@ export function usePurchaseHistory(clientId?: string) {
       // In a real scenario, orders would be linked to clients.
       // Assuming a 'client_id' field exists in 'orders' table.
       // We'll also fetch items and seller info.
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("orders")
         .select(`
           *,
