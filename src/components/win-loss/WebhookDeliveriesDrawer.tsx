@@ -169,8 +169,8 @@ export function WebhookDeliveriesDrawer({
     
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
-      logReplayValidationFailure(ids, validation.message, { subscriptionId });
-      toast.error(validation.message);
+      logReplayValidationFailure(ids, (validation as any).message, { subscriptionId });
+      toast.error((validation as any).message);
       return;
     }
     

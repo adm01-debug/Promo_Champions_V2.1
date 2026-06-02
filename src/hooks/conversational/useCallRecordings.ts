@@ -76,7 +76,7 @@ export function useCallInsight(recordingId?: string) {
         .eq("recording_id", recordingId)
         .maybeSingle();
       if (error) throw error;
-      return data as CallInsight | null;
+      return data as unknown as CallInsight | null;
     },
     enabled: !!recordingId,
   });
