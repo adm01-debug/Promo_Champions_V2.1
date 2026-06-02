@@ -71,7 +71,7 @@ export function AIEmailComposerDialog({
   });
 
   const handleGenerate = async (values: ComposeFormValues) => {
-    const data = await compose.mutateAsync({
+    const data = await compose.mutateAsync({ goal: "follow_up",
       ...values,
       recipient_id: recipientId,
       recipient_type: recipientType,
