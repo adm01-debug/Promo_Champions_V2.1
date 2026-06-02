@@ -18,6 +18,7 @@ const buttonVariants = cva(
         glow: 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.5)] hover:bg-primary/90 hover:shadow-[0_0_30px_hsl(var(--primary)/0.7)]',
         'glow-pulse': 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.5)] hover:bg-primary/90 animate-pulse',
         'glow-pulse-success': 'bg-emerald-500 text-white shadow-[0_0_20px_hsl(142_76%_45%/0.5)] hover:bg-emerald-500/90 animate-pulse',
+        'glow-success': 'bg-emerald-500 text-white shadow-[0_0_20px_hsl(142_76%_45%/0.5)] hover:bg-emerald-500/90',
       },
       size: {
         default: 'h-10 px-4 py-2',
