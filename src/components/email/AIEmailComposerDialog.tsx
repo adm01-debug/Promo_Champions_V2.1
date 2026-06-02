@@ -71,14 +71,18 @@ export function AIEmailComposerDialog({
   });
 
   const handleGenerate = async (values: ComposeFormValues) => {
-    const data = await compose.mutateAsync({ goal: "follow_up", tone: "consultivo", language: "pt-BR", length: "medium",
+    const data = await compose.mutateAsync({
+      goal: "follow_up",
+      tone: "consultivo",
+      language: "pt-BR",
+      length: "medium",
       ...values,
       recipient_id: recipientId,
       recipient_type: recipientType,
       contact_context: recipientType === "manual" && recipientName
         ? { name: recipientName, company: recipientCompany }
         : undefined,
-    });
+    } as any);
     setResult(data);
     setEditedSubject(data.subject);
     setEditedBody(data.body_text);
