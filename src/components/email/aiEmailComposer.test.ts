@@ -44,8 +44,8 @@ describe("AIEmailComposer mapping logic", () => {
   });
 
   it("should use fallback values for missing fields", () => {
-    // @ts-expect-error - testing runtime fallback for partial object
-    const result = mapFormToComposeInput({ goal: "intro" }, {});
+    // Testing runtime fallback for partial object by casting to any
+    const result = mapFormToComposeInput({ goal: "intro" } as any, {});
     
     expect(result.goal).toBe("intro");
     expect(result.tone).toBe(DEFAULT_COMPOSE_VALUES.tone);
