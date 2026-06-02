@@ -71,18 +71,21 @@ export function AIEmailComposerDialog({
   });
 
   const handleGenerate = async (values: ComposeFormValues) => {
+    // zod resolver guarantees these are defined; merge with defaults defensively.
+    const merged: ComposeFormValues = { ...DEFAULT_COMPOSE_VALUES, ...values };
     const data = await compose.mutateAsync({
-      goal: "follow_up",
-      tone: "consultivo",
-      language: "pt-BR",
-      length: "medium",
-      ...values,
+      goal: merged.goal,
+      tone: merged.tone,
+      language: merged.language,
+      length: merged.length,
+      custom_instructions: merged.custom_instructions,
       recipient_id: recipientId,
       recipient_type: recipientType,
-      contact_context: recipientType === "manual" && recipientName
-        ? { name: recipientName, company: recipientCompany }
-        : undefined,
-    } as any);
+      contact_context:
+        recipientType === "manual" && recipientName
+          ? { name: recipientName, company: recipientCompany }
+          : undefined,
+    });
     setResult(data);
     setEditedSubject(data.subject);
     setEditedBody(data.body_text);
