@@ -177,4 +177,29 @@ test.describe('Authentication and Navigation Flows', () => {
         }
     }
   });
+
+  test('should allow user to request password reset', async ({ page }) => {
+    await page.goto('/auth');
+    
+    const forgotPasswordButton = page.getByRole('button', { name: /Esqueci a chave/i });
+    await expect(forgotPasswordButton).toBeVisible();
+    await forgotPasswordButton.click();
+
+    await expect(page.getByText(/RECUPERAR ACESSO/i)).toBeVisible();
+    
+    const resetEmailInput = page.getByPlaceholder(/Email cadastrado/i);
+    await resetEmailInput.fill('test@example.com');
+
+    // Mock the reset request
+    await page.route('**/auth/v1/recover', (route) => {
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({}) });
+    });
+
+    await page.getByRole('button', { name: /Enviar Resgate/i }).click();
+
+    // Verify success message (assuming a toast or dialog change)
+    // For now, we just ensure the button was clickable and processed
+    await expect(page.getByRole('button', { name: /Enviar Resgate/i })).toBeDisabled();
+  });
 });
+
