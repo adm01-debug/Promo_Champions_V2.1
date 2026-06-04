@@ -54,7 +54,7 @@ export function AchievementComparisonChart() {
 
   const chartData = data.slice(0, 10).map((sp) => ({
     ...sp,
-    shortName: sp.name.split(" ")[0].toUpperCase(),
+    shortName: (sp.name || "N/A").split(" ")[0].toUpperCase(),
   }));
 
   return (

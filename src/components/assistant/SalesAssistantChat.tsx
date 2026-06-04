@@ -57,7 +57,7 @@ export function SalesAssistantChat() {
   useEffect(() => {
     if (!isTTSEnabled || messages.length === 0) return;
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role === 'assistant' && lastMessage.content && lastMessage.id !== lastSpokenMessageRef.current && !isLoading) {
+    if (lastMessage && lastMessage.role === 'assistant' && lastMessage.content && lastMessage.id !== lastSpokenMessageRef.current && !isLoading) {
       lastSpokenMessageRef.current = lastMessage.id;
       speak(lastMessage.content);
     }

@@ -122,32 +122,43 @@ export const useSalesAssistant = (
     async (firstMessage: string) => {
       if (!salespersonId) return null;
       const title = firstMessage.slice(0, 50) + (firstMessage.length > 50 ? '...' : '');
-      const { data, error } = await supabase
-        .from('chat_conversations')
-        .insert({ salesperson_id: salespersonId, title })
-        .select()
-        .single();
-      if (error) {
+      try {
+        const { data, error } = await supabase
+          .from('chat_conversations')
+          .insert({ salesperson_id: salespersonId, title })
+          .select()
+          .single();
+        if (error) throw error;
+        setCurrentConversationId(data.id);
+        refetchConversations();
+        return data.id;
+      } catch (error) {
         console.error('Error creating conversation:', error);
         return null;
       }
-      setCurrentConversationId(data.id);
-      refetchConversations();
-      return data.id;
     },
     [salespersonId, refetchConversations]
   );
 
   const saveMessage = useCallback(
     async (conversationId: string, role: 'user' | 'assistant', content: string) => {
-      const { error } = await supabase
-        .from('chat_messages')
-        .insert({ conversation_id: conversationId, role, content });
-      if (error && import.meta.env.DEV) console.error('Error saving message:', error);
-      await supabase
-        .from('chat_conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', conversationId);
+      try {
+        const { error: msgError } = await supabase
+          .from('chat_messages')
+          .insert({ conversation_id: conversationId, role, content });
+        
+        if (msgError) throw msgError;
+
+        const { error: convError } = await supabase
+          .from('chat_conversations')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', conversationId);
+          
+        if (convError) throw convError;
+      } catch (error) {
+        console.error('Error saving message:', error);
+        // Only re-throw if it's critical, or handle gracefully
+      }
     },
     []
   );
@@ -165,11 +176,19 @@ export const useSalesAssistant = (
       setMessages(prev => [...prev, userMessage]);
 
       let convId = currentConversationId;
-      if (!convId) {
-        convId = await createConversation(content);
-      }
-      if (convId) {
-        await saveMessage(convId, 'user', content);
+      try {
+        if (!convId) {
+          convId = await createConversation(content);
+        }
+        if (convId) {
+          await saveMessage(convId, 'user', content);
+        } else {
+          throw new Error('Não foi possível criar ou encontrar uma conversa.');
+        }
+      } catch (error) {
+        console.error('Error in conversation/message setup:', error);
+        setIsLoading(false);
+        return;
       }
 
       const conversationHistory = messages.map(m => ({ role: m.role, content: m.content }));
