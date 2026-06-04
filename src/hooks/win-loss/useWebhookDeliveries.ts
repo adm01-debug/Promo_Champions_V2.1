@@ -25,24 +25,20 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
     staleTime: 15_000,
     queryFn: async (): Promise<WebhookDelivery[]> => {
       if (!subscriptionId) return [];
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (col: string, v: string) => {
-              order: (c: string, o: { ascending: boolean }) => {
-                limit: (n: number) => Promise<{ data: WebhookDelivery[] | null; error: Error | null }>;
-              };
-            };
-          };
-        };
-      })
+      
+      // Fallback for missing type definitions while maintaining safety
+      const { data, error } = await (supabase as any)
         .from("winloss_webhook_deliveries")
         .select("id, subscription_id, event, attempt, status, error_message, duration_ms, succeeded, created_at, payload")
         .eq("subscription_id", subscriptionId)
         .order("created_at", { ascending: false })
         .limit(limit);
-      if (error) throw error;
-      return data ?? [];
+
+      if (error) {
+        console.error("Error fetching deliveries:", error);
+        throw error;
+      }
+      return (data || []) as WebhookDelivery[];
     },
   });
 

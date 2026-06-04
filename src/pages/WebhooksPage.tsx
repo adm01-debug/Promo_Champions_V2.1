@@ -217,7 +217,7 @@ const WebhooksPage = () => {
                             <Send className="h-3 w-3" /> Testar
                           </Button>
                           <Button size="sm" variant="ghost" className="h-7 gap-1 text-destructive"
-                            onClick={() => { if (confirm("Remover webhook?")) deleteWh.mutate(wh.id); }}>
+                            onClick={() => { if (window.confirm("Remover webhook?")) deleteWh.mutate(wh.id); }}>
                             <Trash2 className="h-3 w-3" /> Remover
                           </Button>
                         </div>

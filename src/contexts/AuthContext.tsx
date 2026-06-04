@@ -34,18 +34,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchSalesperson = useCallback(async (authUserId: string, force = false) => {
     if (!force && fetchedRef.current === authUserId) return;
-    fetchedRef.current = authUserId;
+    
+    try {
+      const { data, error } = await supabase
+        .from("salespeople")
+        .select("id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email")
+        .eq("auth_user_id", authUserId)
+        .maybeSingle();
 
-    const { data, error } = await supabase
-      .from("salespeople")
-      .select("id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email")
-      .eq("auth_user_id", authUserId)
-      .maybeSingle();
-
-    if (!error && data) {
-      setSalesperson(data);
-    } else {
-      if (!force) fetchedRef.current = null;
+      if (error) throw error;
+      
+      if (data) {
+        setSalesperson(data);
+        fetchedRef.current = authUserId;
+      } else {
+        // User is logged in but has no salesperson record
+        setSalesperson(null);
+        fetchedRef.current = authUserId;
+      }
+    } catch (error) {
+      console.error("Error fetching salesperson profile:", error);
+      // Reset ref so we can try again on next mount/refresh
+      fetchedRef.current = null;
     }
   }, []);
 

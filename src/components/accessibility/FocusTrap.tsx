@@ -53,13 +53,13 @@ export const FocusTrap: FC<FocusTrapProps> = ({
       // Shift + Tab
       if (document.activeElement === firstElement) {
         e.preventDefault();
-        lastElement.focus();
+        lastElement?.focus();
       }
     } else {
       // Tab
       if (document.activeElement === lastElement) {
         e.preventDefault();
-        firstElement.focus();
+        firstElement?.focus();
       }
     }
   }, [active, getFocusableElements]);
@@ -75,7 +75,7 @@ export const FocusTrap: FC<FocusTrapProps> = ({
       if (focusableElements.length > 0) {
         // Try to focus first element after a short delay
         requestAnimationFrame(() => {
-          focusableElements[0].focus();
+          focusableElements[0]?.focus();
         });
       }
     }

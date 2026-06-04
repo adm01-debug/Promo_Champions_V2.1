@@ -32,6 +32,25 @@ export function useUserRoles() {
         .limit(1)
         .maybeSingle();
 
+      // Fallback: If no role found in user_roles but exists as salesperson
+      if (!data && !error && user?.id) {
+        const { data: spData } = await supabase
+          .from("salespeople")
+          .select("role")
+          .eq("auth_user_id", user.id)
+          .maybeSingle();
+        
+        if (spData) {
+          return {
+            id: 'temp-' + user.id,
+            user_id: user.id,
+            role: 'salesperson',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          } as UserRole;
+        }
+      }
+
       if (error) {
         if (import.meta.env.DEV) {
           console.error("Error fetching user role:", error);

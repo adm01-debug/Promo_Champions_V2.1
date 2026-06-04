@@ -5,20 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useActivityGoals, useUpdateActivityGoals } from "@/hooks/activities/useActivities";
 import { Target, Phone, Mail, Users, Linkedin, MessageCircle, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 
 export function ActivityGoalForm() {
-  const { data: currentUser } = useQuery({
-    queryKey: ['current-user-sp'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
-      const { data } = await supabase.from('salespeople').select('id').eq('auth_user_id', user.id).maybeSingle();
-      return data;
-    }
-  });
-
+  const { salesperson: currentUser } = useAuth();
   const { data: goals } = useActivityGoals(currentUser?.id);
   const updateGoals = useUpdateActivityGoals();
 
