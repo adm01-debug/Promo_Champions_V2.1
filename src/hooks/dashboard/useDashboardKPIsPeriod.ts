@@ -109,16 +109,12 @@ const fetchData = async (
   const sPrev = format(prevStart, "yyyy-MM-dd");
   const ePrev = format(prevEnd, "yyyy-MM-dd");
 
-  const allStart = prevStart < curStart ? sPrev : sCur;
-  const allEnd = prevEnd > curEnd ? ePrev + "T23:59:59.999Z" : eCur + "T23:59:59.999Z";
+  const allStart = sPrev < sCur ? sPrev : sCur;
+  const allEnd = ePrev > eCur ? ePrev + "T23:59:59.999Z" : eCur + "T23:59:59.999Z";
   
-  // Cache check for global metrics (no salesperson filter)
-  const isGlobal = !salespersonId;
-  const cacheKey = `global-metrics-${allStart}-${allEnd}`;
-
   let salesQuery = supabase
     .from("sales")
-    .select("amount, status, created_at, salesperson_id, sdr_id, closer_id, is_first_sale")
+    .select("amount, status, created_at, salesperson_id, sdr_id, closer_id, is_first_sale, client_name")
     .gte("created_at", allStart)
     .lte("created_at", allEnd);
     
@@ -138,24 +134,21 @@ const fetchData = async (
     .gte("created_at", allStart)
     .lte("created_at", allEnd);
 
-  const queries = [
-    salesQuery,
-    tasksQuery
-  ];
-  
-  // Only fetch daily_metrics if no salesperson filter is active (usually global)
-  // or if we really need it for conversion rate fallback
   const metricsQuery = supabase
-      .from("daily_metrics")
-      .select("new_clients, conversion_rate, date")
-      .gte("date", allStart)
-      .lte("date", allEnd.split('T')[0]);
+    .from("daily_metrics")
+    .select("new_clients, conversion_rate, date")
+    .gte("date", allStart)
+    .lte("date", allEnd.split('T')[0]);
       
   const [salesRes, tasksRes, metricsRes] = await Promise.all([
     salesQuery,
     tasksQuery,
     metricsQuery
   ]);
+
+  if (salesRes.error) throw salesRes.error;
+  if (tasksRes.error) throw tasksRes.error;
+  if (metricsRes.error) throw metricsRes.error;
 
   const allSales = salesRes.data ?? [];
   const allMetrics = metricsRes.data ?? [];
