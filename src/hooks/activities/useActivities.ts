@@ -107,19 +107,17 @@ export const useActivityStats = (salespersonId?: string) => {
     queryFn: async (): Promise<ActivityStats> => {
       const today = getLocalISODate();
 
-      let query = supabase.from('activities').select('*');
+      // Optimize: only fetch what's needed or fetch in parallel
+      const [allRes, todayRes] = await Promise.all([
+        supabase.from('activities').select('*').match(salespersonId ? { salesperson_id: salespersonId } : {}),
+        supabase.from('activities').select('*').match(salespersonId ? { salesperson_id: salespersonId } : {}).gte('created_at', today)
+      ]);
 
-      if (salespersonId) {
-        query = query.eq('salesperson_id', salespersonId);
-      }
+      if (allRes.error) throw allRes.error;
+      if (todayRes.error) throw todayRes.error;
 
-      const { data, error } = await query;
-      if (error) throw error;
-
-      const activities = (data || []) as ActivityRecord[];
-      const todayActivities = activities.filter(
-        a => format(new Date(a.created_at), 'yyyy-MM-dd') === today
-      );
+      const activities = (allRes.data || []) as ActivityRecord[];
+      const todayActivities = (todayRes.data || []) as ActivityRecord[];
 
       const byType: Record<ActivityType, number> = {
         call: 0,

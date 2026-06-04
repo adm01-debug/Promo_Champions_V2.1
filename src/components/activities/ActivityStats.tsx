@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useActivityStats, useActivityGoals } from "@/hooks/activities/useActivities";
 import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity, Linkedin, MessageCircle, FileText, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 
 export function ActivityStats() {
