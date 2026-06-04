@@ -129,6 +129,10 @@ export function useUpdateWebhook() {
       queryClient.invalidateQueries({ queryKey: ["webhooks"] });
       toast.success("Webhook atualizado");
     },
+    onError: (error) => {
+      console.error("Error updating webhook:", error);
+      toast.error("Erro ao atualizar webhook");
+    },
   });
 }
 
@@ -142,6 +146,10 @@ export function useDeleteWebhook() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["webhooks"] });
       toast.success("Webhook removido");
+    },
+    onError: (error) => {
+      console.error("Error deleting webhook:", error);
+      toast.error("Erro ao remover webhook");
     },
   });
 }
