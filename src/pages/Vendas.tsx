@@ -66,7 +66,7 @@ const Vendas = () => {
     
     // Improved Lost Deals Handling: Filtered list shows lost deals only if specifically requested
     if (!statusFilter || statusFilter !== "lost") {
-      filtered = filtered.filter(s => s.status !== "lost" && s.status !== "qualified");
+      filtered = filtered.filter(s => s.status !== "lost");
     }
     
     // Apply sorting
