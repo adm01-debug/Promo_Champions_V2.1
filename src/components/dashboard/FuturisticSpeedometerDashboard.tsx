@@ -99,20 +99,27 @@ export const FuturisticSpeedometerDashboard = () => {
     if (!user?.id) return;
     setIsSyncing(true);
     
-    const { data: existing } = await supabase
+    const { data: existing, error: fetchError } = await supabase
       .from("user_app_settings")
       .select("value")
       .eq("user_id", user.id)
       .eq("key", "speedometer_settings")
       .maybeSingle();
       
+    if (fetchError && import.meta.env.DEV) console.error("Error fetching settings:", fetchError);
+
     const updatedValue = { ...(existing?.value as any || {}), ...newSettings };
     
-    await supabase.from("user_app_settings").upsert({
+    const { error: upsertError } = await supabase.from("user_app_settings").upsert({
       user_id: user.id,
       key: "speedometer_settings",
       value: updatedValue
     });
+    
+    if (upsertError) {
+      toast.error("Erro ao salvar configurações");
+      if (import.meta.env.DEV) console.error("Upsert error:", upsertError);
+    }
     
     setIsSyncing(false);
   }, [user?.id]);
@@ -182,7 +189,11 @@ export const FuturisticSpeedometerDashboard = () => {
 
   const clearAlertHistory = useCallback(async () => {
     if (!user?.id) return;
-    await supabase.from("notifications").delete().eq("user_id", user.id);
+    const { error } = await supabase.from("notifications").delete().eq("user_id", user.id);
+    if (error) {
+      toast.error("Erro ao limpar histórico");
+      return;
+    }
     setAlertHistory([]);
     toast.info("Histórico de alertas removido");
   }, [user?.id]);
