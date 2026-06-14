@@ -194,7 +194,7 @@ export function CreateCadenceDialog() {
     steps.forEach((s, index) => {
       const result = stepInputSchema.safeParse(s);
       if (!result.success) {
-        errors[index] = result.error.errors.map(err => err.message);
+        errors[index] = result.error.issues.map(err => err.message);
         isValid = false;
       }
     });

@@ -153,7 +153,7 @@ export function EditCadenceDialog({
     newSteps.forEach((s, idx) => {
       const result = stepInputSchema.safeParse(s);
       if (!result.success) {
-        errors[idx] = result.error.errors.map(err => err.message);
+        errors[idx] = result.error.issues.map(err => err.message);
         isValid = false;
       }
     });
