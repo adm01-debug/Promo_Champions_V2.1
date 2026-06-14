@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Lightbulb, Sparkles, BrainCircuit, ShieldAlert, Zap } from "lucide-react";
-import { motion } from "framer-motion";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { BrainCircuit, ShieldAlert, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Props {
   narrative: string;
@@ -23,7 +23,7 @@ export const ForecastNarrativeCard: FC<Props> = ({ narrative, risks, opportuniti
         <div className="absolute top-0 right-0 p-8 opacity-5 -mr-4 -mt-4 group-hover:rotate-12 transition-transform duration-700">
           <BrainCircuit className="h-24 w-24" />
         </div>
-        
+
         <CardHeader className="pb-4 relative z-10">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2.5">
@@ -32,7 +32,10 @@ export const ForecastNarrativeCard: FC<Props> = ({ narrative, risks, opportuniti
               </div>
               Análise Preditiva Neural
             </CardTitle>
-            <Badge variant="live" className="h-5 px-2 bg-primary/10 text-primary border-primary/20 text-[8px] font-black uppercase tracking-tighter">
+            <Badge
+              variant="live"
+              className="h-5 px-2 bg-primary/10 text-primary border-primary/20 text-[8px] font-black uppercase tracking-tighter"
+            >
               IA Vision v2.4
             </Badge>
           </div>
@@ -55,19 +58,25 @@ export const ForecastNarrativeCard: FC<Props> = ({ narrative, risks, opportuniti
                   <div className="p-1.5 rounded-lg bg-destructive/20 text-destructive">
                     <ShieldAlert className="h-4 w-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-destructive">Vulnerabilidades</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-destructive">
+                    Vulnerabilidades
+                  </span>
                 </div>
                 <ul className="space-y-2.5">
                   {risks.map((r, i) => (
-                    <motion.li 
-                      key={i} 
+                    <motion.li
+                      key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1 }}
                       className="text-xs text-muted-foreground flex gap-3 group/item"
                     >
-                      <span className="text-destructive font-black mt-0.5 group-hover/item:scale-150 transition-transform">•</span>
-                      <span className="leading-tight group-hover/item:text-foreground transition-colors">{r}</span>
+                      <span className="text-destructive font-black mt-0.5 group-hover/item:scale-150 transition-transform">
+                        •
+                      </span>
+                      <span className="leading-tight group-hover/item:text-foreground transition-colors">
+                        {r}
+                      </span>
                     </motion.li>
                   ))}
                 </ul>
@@ -80,28 +89,36 @@ export const ForecastNarrativeCard: FC<Props> = ({ narrative, risks, opportuniti
                   <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-500">
                     <Zap className="h-4 w-4" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Pontos de Alavancagem</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                    Pontos de Alavancagem
+                  </span>
                 </div>
                 <ul className="space-y-2.5">
                   {opportunities.map((o, i) => (
-                    <motion.li 
-                      key={i} 
+                    <motion.li
+                      key={i}
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1 }}
                       className="text-xs text-muted-foreground flex gap-3 group/item"
                     >
-                      <span className="text-emerald-500 font-black mt-0.5 group-hover/item:scale-150 transition-transform">★</span>
-                      <span className="leading-tight group-hover/item:text-foreground transition-colors">{o}</span>
+                      <span className="text-emerald-500 font-black mt-0.5 group-hover/item:scale-150 transition-transform">
+                        ★
+                      </span>
+                      <span className="leading-tight group-hover/item:text-foreground transition-colors">
+                        {o}
+                      </span>
                     </motion.li>
                   ))}
                 </ul>
               </div>
             )}
           </div>
-          
+
           <div className="pt-4 border-t border-white/5 flex items-center justify-between opacity-50">
-            <span className="text-[8px] font-bold uppercase tracking-widest">Processado em tempo real via Neural Link</span>
+            <span className="text-[8px] font-bold uppercase tracking-widest">
+              Processado em tempo real via Neural Link
+            </span>
             <div className="flex gap-1">
               <div className="w-1 h-1 rounded-full bg-primary animate-ping" />
               <div className="w-1 h-1 rounded-full bg-primary animate-ping delay-75" />

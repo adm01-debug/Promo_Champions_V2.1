@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Bell, ShieldAlert, TrendingDown, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Bell, Save } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function SDRAlertSettings() {
   const [loading, setLoading] = useState(false);
@@ -35,10 +35,12 @@ export function SDRAlertSettings() {
 
       if (error) throw error;
 
-      toast.success("Configurações salvas: Seus alertas automáticos foram atualizados com sucesso.");
+      toast.success(
+        'Configurações salvas: Seus alertas automáticos foram atualizados com sucesso.'
+      );
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao salvar: Ocorreu um erro ao tentar salvar suas configurações.");
+      toast.error('Erro ao salvar: Ocorreu um erro ao tentar salvar suas configurações.');
     } finally {
       setLoading(false);
     }
@@ -56,62 +58,84 @@ export function SDRAlertSettings() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-xs font-bold uppercase tracking-wider">Taxa de Rejeição Crítica</Label>
-              <p className="text-[10px] text-muted-foreground">Alerta quando "Sem Interesse" supera este %</p>
+              <Label className="text-xs font-bold uppercase tracking-wider">
+                Taxa de Rejeição Crítica
+              </Label>
+              <p className="text-[10px] text-muted-foreground">
+                Alerta quando "Sem Interesse" supera este %
+              </p>
             </div>
             <div className="flex items-center gap-4">
-              <Input 
-                type="number" 
-                className="w-16 h-8 text-xs text-center" 
+              <Input
+                type="number"
+                className="w-16 h-8 text-xs text-center"
                 value={configs.rejection_rate.threshold}
-                onChange={(e) => setConfigs({
-                  ...configs, 
-                  rejection_rate: { ...configs.rejection_rate, threshold: Number(e.target.value) }
-                })}
+                onChange={e =>
+                  setConfigs({
+                    ...configs,
+                    rejection_rate: {
+                      ...configs.rejection_rate,
+                      threshold: Number(e.target.value),
+                    },
+                  })
+                }
               />
-              <Switch 
+              <Switch
                 checked={configs.rejection_rate.active}
-                onCheckedChange={(checked) => setConfigs({
-                  ...configs, 
-                  rejection_rate: { ...configs.rejection_rate, active: checked }
-                })}
+                onCheckedChange={checked =>
+                  setConfigs({
+                    ...configs,
+                    rejection_rate: { ...configs.rejection_rate, active: checked },
+                  })
+                }
               />
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-xs font-bold uppercase tracking-wider">Taxa de "Não Atendeu"</Label>
-              <p className="text-[10px] text-muted-foreground">Alerta quando a produtividade de voz cai</p>
+              <Label className="text-xs font-bold uppercase tracking-wider">
+                Taxa de "Não Atendeu"
+              </Label>
+              <p className="text-[10px] text-muted-foreground">
+                Alerta quando a produtividade de voz cai
+              </p>
             </div>
             <div className="flex items-center gap-4">
-              <Input 
-                type="number" 
-                className="w-16 h-8 text-xs text-center" 
+              <Input
+                type="number"
+                className="w-16 h-8 text-xs text-center"
                 value={configs.no_answer_rate.threshold}
-                onChange={(e) => setConfigs({
-                  ...configs, 
-                  no_answer_rate: { ...configs.no_answer_rate, threshold: Number(e.target.value) }
-                })}
+                onChange={e =>
+                  setConfigs({
+                    ...configs,
+                    no_answer_rate: {
+                      ...configs.no_answer_rate,
+                      threshold: Number(e.target.value),
+                    },
+                  })
+                }
               />
-              <Switch 
+              <Switch
                 checked={configs.no_answer_rate.active}
-                onCheckedChange={(checked) => setConfigs({
-                  ...configs, 
-                  no_answer_rate: { ...configs.no_answer_rate, active: checked }
-                })}
+                onCheckedChange={checked =>
+                  setConfigs({
+                    ...configs,
+                    no_answer_rate: { ...configs.no_answer_rate, active: checked },
+                  })
+                }
               />
             </div>
           </div>
         </div>
 
-        <Button 
-          className="w-full h-9 text-xs font-bold gap-2" 
+        <Button
+          className="w-full h-9 text-xs font-bold gap-2"
           onClick={handleSave}
           disabled={loading}
         >
           <Save className="h-3 w-3" />
-          {loading ? "Salvando..." : "Salvar Configurações"}
+          {loading ? 'Salvando...' : 'Salvar Configurações'}
         </Button>
       </CardContent>
     </Card>

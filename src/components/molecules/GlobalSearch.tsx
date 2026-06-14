@@ -1,8 +1,15 @@
-import { useState, useEffect, useCallback, forwardRef, useImperativeHandle, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, Briefcase, Plus, LayoutDashboard, Settings, Mail, ListTodo, Headphones, BookOpen } from "lucide-react";
-import Fuse from "fuse.js";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User, Briefcase, LayoutDashboard, Headphones, BookOpen } from 'lucide-react';
+import Fuse from 'fuse.js';
+import { supabase } from '@/integrations/supabase/client';
 import {
   CommandDialog,
   CommandEmpty,
@@ -10,12 +17,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
 
 interface SearchResult {
   id: string;
-  type: "deal" | "client";
+  type: 'deal' | 'client';
   title: string;
   subtitle?: string;
   status?: string;
@@ -28,7 +35,7 @@ export interface GlobalSearchHandle {
 
 export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [allData, setAllData] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -54,19 +61,19 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       return allData.slice(0, 15);
     }
     const fuseResults = fuse.search(query, { limit: 15 });
-    return fuseResults.map((result) => result.item);
+    return fuseResults.map(result => result.item);
   }, [query, fuse, allData]);
 
   // Keyboard shortcut: Ctrl/Cmd + K
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((o) => !o);
+        setOpen(o => !o);
       }
     };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
   }, []);
 
   // Load all searchable data when dialog opens
@@ -74,8 +81,8 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     setIsLoading(true);
     try {
       const { data: sales, error } = await supabase
-        .from("sales")
-        .select("id, client_name, product_name, status, amount")
+        .from('sales')
+        .select('id, client_name, product_name, status, amount')
         .limit(100);
 
       if (error) throw error;
@@ -84,11 +91,11 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       const clientsMap = new Map<string, SearchResult>();
       const deals: SearchResult[] = [];
 
-      (sales || []).forEach((sale) => {
+      (sales || []).forEach(sale => {
         // Add as deal
         deals.push({
           id: sale.id,
-          type: "deal",
+          type: 'deal',
           title: sale.product_name,
           subtitle: sale.client_name,
           status: sale.status,
@@ -99,7 +106,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
         if (!clientsMap.has(sale.client_name)) {
           clientsMap.set(sale.client_name, {
             id: sale.client_name,
-            type: "client",
+            type: 'client',
             title: sale.client_name,
           });
         }
@@ -108,7 +115,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       setAllData([...Array.from(clientsMap.values()), ...deals]);
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error("Search error:", error);
+        console.error('Search error:', error);
       }
     } finally {
       setIsLoading(false);
@@ -122,34 +129,37 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
     }
   }, [open, allData.length, loadSearchData]);
 
-
   const handleSelect = (result: SearchResult) => {
     setOpen(false);
-    setQuery("");
-    if (result.type === "deal") {
-      navigate("/pipeline");
+    setQuery('');
+    if (result.type === 'deal') {
+      navigate('/pipeline');
     } else {
-      navigate("/clientes");
+      navigate('/clientes');
     }
   };
 
   const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const statusColors: Record<string, string> = {
-    pending: "bg-rank-gold/10 text-rank-gold",
-    qualified: "bg-status-info/10 text-status-info",
-    proposal: "bg-status-purple/10 text-status-purple",
-    negotiation: "bg-status-warning/10 text-status-warning",
-    completed: "bg-status-success/10 text-status-success",
-    lost: "bg-status-error/10 text-status-error",
+    pending: 'bg-rank-gold/10 text-rank-gold',
+    qualified: 'bg-status-info/10 text-status-info',
+    proposal: 'bg-status-purple/10 text-status-purple',
+    negotiation: 'bg-status-warning/10 text-status-warning',
+    completed: 'bg-status-success/10 text-status-success',
+    lost: 'bg-status-error/10 text-status-error',
   };
 
-  const clients = results.filter((r) => r.type === "client");
-  const deals = results.filter((r) => r.type === "deal");
+  const clients = results.filter(r => r.type === 'client');
+  const deals = results.filter(r => r.type === 'deal');
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} className="bg-[#0d1117]/90 backdrop-blur-2xl border-primary/20 shadow-[0_0_50px_rgba(var(--primary),0.2)]">
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      className="bg-[#0d1117]/90 backdrop-blur-2xl border-primary/20 shadow-[0_0_50px_rgba(var(--primary),0.2)]"
+    >
       <CommandInput
         placeholder="Buscar deals, clientes ou ações... (Ctrl+K)"
         value={query}
@@ -157,23 +167,53 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       />
       <CommandList>
         <CommandEmpty>
-          {isLoading ? "Buscando..." : "Nenhum resultado encontrado."}
+          {isLoading ? 'Buscando...' : 'Nenhum resultado encontrado.'}
         </CommandEmpty>
 
-        <CommandGroup heading={<span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Ações Rápidas</span>}>
-          <CommandItem onSelect={() => { setOpen(false); navigate("/"); }} className="cursor-pointer">
+        <CommandGroup
+          heading={
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">
+              Ações Rápidas
+            </span>
+          }
+        >
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/');
+            }}
+            className="cursor-pointer"
+          >
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Ir para Dashboard</span>
           </CommandItem>
-          <CommandItem onSelect={() => { setOpen(false); navigate("/pipeline"); }} className="cursor-pointer">
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/pipeline');
+            }}
+            className="cursor-pointer"
+          >
             <Briefcase className="mr-2 h-4 w-4" />
             <span>Abrir Pipeline</span>
           </CommandItem>
-          <CommandItem onSelect={() => { setOpen(false); navigate("/sales-enablement"); }} className="cursor-pointer">
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/sales-enablement');
+            }}
+            className="cursor-pointer"
+          >
             <BookOpen className="mr-2 h-4 w-4" />
             <span>Abrir Enablement Hub</span>
           </CommandItem>
-          <CommandItem onSelect={() => { setOpen(false); navigate("/conversational-intelligence"); }} className="cursor-pointer">
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/conversational-intelligence');
+            }}
+            className="cursor-pointer"
+          >
             <Headphones className="mr-2 h-4 w-4" />
             <span>Inteligência de Chamadas</span>
           </CommandItem>
@@ -181,7 +221,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
 
         {clients.length > 0 && (
           <CommandGroup heading="Clientes">
-            {clients.map((result) => (
+            {clients.map(result => (
               <CommandItem
                 key={`client-${result.id}`}
                 onSelect={() => handleSelect(result)}
@@ -196,7 +236,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
 
         {deals.length > 0 && (
           <CommandGroup heading="Deals">
-            {deals.map((result) => (
+            {deals.map(result => (
               <CommandItem
                 key={`deal-${result.id}`}
                 onSelect={() => handleSelect(result)}
@@ -214,7 +254,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
                     {result.status && (
                       <Badge
                         variant="secondary"
-                        className={`text-[10px] ${statusColors[result.status] || ""}`}
+                        className={`text-[10px] ${statusColors[result.status] || ''}`}
                       >
                         {result.status}
                       </Badge>
@@ -235,4 +275,4 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
   );
 });
 
-GlobalSearch.displayName = "GlobalSearch";
+GlobalSearch.displayName = 'GlobalSearch';

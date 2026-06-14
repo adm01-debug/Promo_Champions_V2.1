@@ -1,12 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Gauge, RefreshCw, CalendarClock, TrendingUp, TrendingDown } from "lucide-react";
-import { useDealVelocityPrediction, usePredictDealVelocity } from "@/hooks/deal-intelligence/useDealVelocity";
-import { VelocityStatusBadge } from "./VelocityStatusBadge";
-import { VelocityForecastTimeline } from "./VelocityForecastTimeline";
-import { confidenceTierLabel, formatCloseDate, formatDaysRemaining, velocityRingColor } from "./velocityHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Gauge, RefreshCw, CalendarClock, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  useDealVelocityPrediction,
+  usePredictDealVelocity,
+} from '@/hooks/deal-intelligence/useDealVelocity';
+import { VelocityStatusBadge } from './VelocityStatusBadge';
+import { VelocityForecastTimeline } from './VelocityForecastTimeline';
+import {
+  confidenceTierLabel,
+  formatCloseDate,
+  formatDaysRemaining,
+  velocityRingColor,
+} from './velocityHelpers';
 
 export function DealVelocityCard({ saleId }: { saleId: string }) {
   const { data, isLoading } = useDealVelocityPrediction(saleId);
@@ -15,7 +22,9 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
   if (isLoading) {
     return (
       <Card variant="elevated" className="glass border-border/40">
-        <CardHeader><Skeleton className="h-6 w-48" /></CardHeader>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+        </CardHeader>
         <CardContent className="space-y-3">
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-16 w-full" />
@@ -33,8 +42,14 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center py-6">
-          <p className="text-sm text-muted-foreground mb-3">Previsão ainda não calculada</p>
-          <Button size="sm" onClick={() => predict.mutate({ saleId })} disabled={predict.isPending}>
+          <p className="text-sm text-muted-foreground mb-3">
+            Previsão ainda não calculada
+          </p>
+          <Button
+            size="sm"
+            onClick={() => predict.mutate({ saleId })}
+            disabled={predict.isPending}
+          >
             <Gauge className="h-3.5 w-3.5 mr-1" /> Prever agora
           </Button>
         </CardContent>
@@ -47,15 +62,26 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
   const offset = circumference - (conf / 100) * circumference;
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
+    <Card
+      variant="elevated"
+      className="glass border-border/40 dark:border-glow card-elevated animate-fade-in"
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Gauge className="h-4 w-4 text-primary" />
             <span className="gradient-text">Velocidade & Forecast</span>
           </CardTitle>
-          <Button variant="ghost" size="sm" onClick={() => predict.mutate({ saleId })} disabled={predict.isPending} className="h-7 w-7 p-0">
-            <RefreshCw className={`h-3.5 w-3.5 ${predict.isPending ? "animate-spin" : ""}`} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => predict.mutate({ saleId })}
+            disabled={predict.isPending}
+            className="h-7 w-7 p-0"
+          >
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${predict.isPending ? 'animate-spin' : ''}`}
+            />
           </Button>
         </div>
       </CardHeader>
@@ -63,9 +89,17 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
         <div className="flex items-center gap-4">
           <div className="relative w-24 h-24 shrink-0">
             <svg viewBox="0 0 88 88" className="w-full h-full -rotate-90">
-              <circle cx="44" cy="44" r="38" className="stroke-muted fill-none" strokeWidth="6" />
               <circle
-                cx="44" cy="44" r="38"
+                cx="44"
+                cy="44"
+                r="38"
+                className="stroke-muted fill-none"
+                strokeWidth="6"
+              />
+              <circle
+                cx="44"
+                cy="44"
+                r="38"
                 className={`fill-none ${velocityRingColor(data.velocity_status)} transition-all duration-700`}
                 strokeWidth="6"
                 strokeDasharray={circumference}
@@ -82,10 +116,16 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
             <VelocityStatusBadge status={data.velocity_status} />
             <div className="flex items-center gap-1.5 text-sm">
               <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="font-medium">{formatDaysRemaining(data.predicted_days_remaining)}</span>
-              <span className="text-xs text-muted-foreground">· {formatCloseDate(data.predicted_close_date)}</span>
+              <span className="font-medium">
+                {formatDaysRemaining(data.predicted_days_remaining)}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                · {formatCloseDate(data.predicted_close_date)}
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground">Confiança {confidenceTierLabel(data.confidence_tier)}</p>
+            <p className="text-xs text-muted-foreground">
+              Confiança {confidenceTierLabel(data.confidence_tier)}
+            </p>
           </div>
         </div>
 
@@ -98,7 +138,7 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
           />
         )}
 
-        {(data.factors?.drivers?.length || data.factors?.brakes?.length) ? (
+        {data.factors?.drivers?.length || data.factors?.brakes?.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {!!data.factors?.drivers?.length && (
               <div className="p-2 rounded-lg glass border border-emerald-500/20">
@@ -107,7 +147,9 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
                 </div>
                 <ul className="space-y-0.5">
                   {data.factors.drivers.slice(0, 3).map((d, i) => (
-                    <li key={i} className="text-[11px] text-foreground/80 leading-snug">• {d}</li>
+                    <li key={i} className="text-[11px] text-foreground/80 leading-snug">
+                      • {d}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -119,7 +161,9 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
                 </div>
                 <ul className="space-y-0.5">
                   {data.factors.brakes.slice(0, 3).map((b, i) => (
-                    <li key={i} className="text-[11px] text-foreground/80 leading-snug">• {b}</li>
+                    <li key={i} className="text-[11px] text-foreground/80 leading-snug">
+                      • {b}
+                    </li>
                   ))}
                 </ul>
               </div>

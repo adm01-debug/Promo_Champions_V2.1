@@ -1,5 +1,4 @@
 import { RaceCar } from './RaceCar';
-import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
 import type { RaceCarPreset } from './raceColors';
 import { cn } from '@/lib/utils';
@@ -29,7 +28,7 @@ export function CarPresetCard({ preset, selected, onSelect }: CarPresetCardProps
         'hover:scale-[1.04] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         selected
           ? 'border-primary bg-primary/10 shadow-lg ring-2 ring-primary/40'
-          : 'border-border bg-card hover:border-primary/40',
+          : 'border-border bg-card hover:border-primary/40'
       )}
     >
       {selected && (
@@ -54,9 +53,10 @@ export function CarPresetCard({ preset, selected, onSelect }: CarPresetCardProps
 
       <div className="flex w-full items-center justify-center gap-1">
         <span className="text-xs">{preset.emoji}</span>
-        <span className="truncate text-[10px] font-semibold leading-tight">{preset.name}</span>
+        <span className="truncate text-[10px] font-semibold leading-tight">
+          {preset.name}
+        </span>
       </div>
-
     </button>
   );
 }

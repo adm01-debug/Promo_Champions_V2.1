@@ -1,7 +1,7 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { PieChart as PieIcon } from "lucide-react";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart as PieIcon } from 'lucide-react';
 
 interface PortfolioDistributionChartProps {
   portfolio: Array<{
@@ -13,14 +13,14 @@ interface PortfolioDistributionChartProps {
 }
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(262, 60%, 65%)",
-  "hsl(var(--success))",
-  "hsl(var(--warning))",
-  "hsl(185, 90%, 48%)",
-  "hsl(30, 90%, 55%)",
-  "hsl(340, 75%, 55%)",
-  "hsl(210, 70%, 55%)",
+  'hsl(var(--primary))',
+  'hsl(262, 60%, 65%)',
+  'hsl(var(--success))',
+  'hsl(var(--warning))',
+  'hsl(185, 90%, 48%)',
+  'hsl(30, 90%, 55%)',
+  'hsl(340, 75%, 55%)',
+  'hsl(210, 70%, 55%)',
 ];
 
 export const PortfolioDistributionChart: FC<PortfolioDistributionChartProps> = ({
@@ -29,9 +29,9 @@ export const PortfolioDistributionChart: FC<PortfolioDistributionChartProps> = (
 }) => {
   const data = useMemo(() => {
     const counts: Record<string, number> = {};
-    portfolio.forEach((p) => {
-      const sp = salespeople.find((s) => s.id === p.salesperson_id);
-      const name = sp?.name?.split(" ")[0] || "N/A";
+    portfolio.forEach(p => {
+      const sp = salespeople.find(s => s.id === p.salesperson_id);
+      const name = sp?.name?.split(' ')[0] || 'N/A';
       counts[name] = (counts[name] || 0) + 1;
     });
     return Object.entries(counts)
@@ -76,8 +76,13 @@ export const PortfolioDistributionChart: FC<PortfolioDistributionChartProps> = (
               ))}
             </Pie>
             <Tooltip
-              formatter={(v: any) => [`${v} clientes`, "Carteira"]}
-              contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
+              formatter={(v: number | string) => [`${v} clientes`, 'Carteira']}
+              contentStyle={{
+                borderRadius: 8,
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                fontSize: 12,
+              }}
             />
             <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />
           </PieChart>

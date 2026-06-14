@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, memo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, memo } from 'react';
 import { Activity, X, Cpu, Database, Wifi, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +32,7 @@ function usePerfMetrics(enabled: boolean) {
       frameCount++;
       const now = performance.now();
       if (now - lastTime >= 1000) {
-        const fps = Math.round(frameCount * 1000 / (now - lastTime));
+        const fps = Math.round((frameCount * 1000) / (now - lastTime));
         const memInfo = (performance as any).memory;
         const memory = memInfo ? Math.round(memInfo.usedJSHeapSize / 1048576) : null;
 
@@ -74,7 +73,9 @@ interface PerformanceMonitorProps {
   isAdmin?: boolean;
 }
 
-export const PerformanceMonitor = memo(function PerformanceMonitor({ isAdmin = false }: PerformanceMonitorProps) {
+export const PerformanceMonitor = memo(function PerformanceMonitor({
+  isAdmin = false,
+}: PerformanceMonitorProps) {
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const metrics = usePerfMetrics(visible);
@@ -116,7 +117,11 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({ isAdmin = f
               className="h-5 w-5"
               onClick={() => setExpanded(e => !e)}
             >
-              {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
+              {expanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronUp className="h-3 w-3" />
+              )}
             </Button>
             <Button
               variant="ghost"
@@ -156,7 +161,10 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({ isAdmin = f
               <span className="text-muted-foreground flex items-center gap-1">
                 <Activity className="h-3 w-3" /> FPS
               </span>
-              <Badge variant={metrics.fps >= 55 ? 'default' : 'destructive'} className="text-[10px] h-4 px-1.5">
+              <Badge
+                variant={metrics.fps >= 55 ? 'default' : 'destructive'}
+                className="text-[10px] h-4 px-1.5"
+              >
                 {metrics.fps >= 55 ? 'Bom' : metrics.fps >= 30 ? 'Médio' : 'Lento'}
               </Badge>
             </div>
@@ -164,7 +172,9 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({ isAdmin = f
               <span className="text-muted-foreground flex items-center gap-1">
                 <Database className="h-3 w-3" /> Heap
               </span>
-              <span className="tabular-nums">{metrics.memory ? `${metrics.memory} MB` : 'N/A'}</span>
+              <span className="tabular-nums">
+                {metrics.memory ? `${metrics.memory} MB` : 'N/A'}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground flex items-center gap-1">

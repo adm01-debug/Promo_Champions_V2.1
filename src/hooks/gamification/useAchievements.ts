@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Json } from '@/integrations/supabase/types';
 import { getLocalISODate } from '@/utils/dateHelpers';
@@ -217,7 +216,9 @@ export const useRecordAchievement = () => {
 
       const streakCount = allAchievements?.length || 1;
       const streakMilestones = [3, 5, 7, 10, 15, 20, 30, 50, 100];
-      const streakMilestone = streakMilestones.includes(streakCount) ? streakCount : undefined;
+      const streakMilestone = streakMilestones.includes(streakCount)
+        ? streakCount
+        : undefined;
 
       // Record streak achievement if milestone
       if (streakMilestone) {

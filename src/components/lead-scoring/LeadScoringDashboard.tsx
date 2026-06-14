@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
-import { useLeadScoring, type ScoredLead } from '@/hooks/useLeadScoring';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useLeadScoring } from '@/hooks/useLeadScoring';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -19,25 +19,13 @@ import {
   ShieldAlert,
   Download,
   Search,
-  Filter,
   CheckCircle2,
-  Calendar,
   FileText,
   Activity,
-  UserPlus,
-  Zap,
-  Monitor,
   Wifi,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { LeadScoreExplainCard } from './LeadScoreExplainCard';
+
 import { LeadNeuralDossier } from './LeadNeuralDossier';
 import { LeadScoreDistribution } from './LeadScoreDistribution';
 import { useExplainBatch } from '@/hooks/scoring/useExplainBatch';
@@ -45,7 +33,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 const categoryConfig = {
@@ -61,7 +48,12 @@ const categoryConfig = {
     bg: 'bg-status-warning/10 border-status-warning/20',
     label: 'ACTIVE',
   },
-  Cold: { icon: Snowflake, color: 'text-info', bg: 'bg-info/10 border-info/20', label: 'STAGNANT' },
+  Cold: {
+    icon: Snowflake,
+    color: 'text-info',
+    bg: 'bg-info/10 border-info/20',
+    label: 'STAGNANT',
+  },
 };
 
 function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {
@@ -69,7 +61,11 @@ function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
   const color =
-    score >= 80 ? 'stroke-status-error' : score >= 50 ? 'stroke-status-warning' : 'stroke-blue-500';
+    score >= 80
+      ? 'stroke-status-error'
+      : score >= 50
+        ? 'stroke-status-warning'
+        : 'stroke-blue-500';
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -102,7 +98,15 @@ function ScoreRing({ score, size = 56 }: { score: number; size?: number }) {
   );
 }
 
-function FactorBar({ label, value, maxValue }: { label: string; value: number; maxValue: number }) {
+function FactorBar({
+  label,
+  value,
+  maxValue,
+}: {
+  label: string;
+  value: number;
+  maxValue: number;
+}) {
   const pct = Math.round((value / maxValue) * 100);
   return (
     <div className="space-y-1">
@@ -127,17 +131,25 @@ export function LeadScoringDashboard() {
   const [attendedAlerts, setAttendedAlerts] = useState<Set<string>>(new Set());
   const explainBatch = useExplainBatch();
 
-  useMemo(() => {
+  useEffect(() => {
     const channel = supabase
       .channel('lead-scoring-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_score_trends' }, () => {
-        setIsLoadingLeads(true);
-        refetch().finally(() => setIsLoadingLeads(false));
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'lead_churn_risk' }, () => {
-        setIsLoadingLeads(true);
-        refetch().finally(() => setIsLoadingLeads(false));
-      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lead_score_trends' },
+        () => {
+          setIsLoadingLeads(true);
+          refetch().finally(() => setIsLoadingLeads(false));
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lead_churn_risk' },
+        () => {
+          setIsLoadingLeads(true);
+          refetch().finally(() => setIsLoadingLeads(false));
+        }
+      )
       .subscribe(status => {
         if (status === 'SUBSCRIBED') setConnectionStatus('connected');
         else if (status === 'CLOSED') setConnectionStatus('connecting');
@@ -172,51 +184,10 @@ export function LeadScoringDashboard() {
       .sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
   }, [allLeads, attendedAlerts, churnFilter]);
 
-  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'error'>(
-    'connecting'
-  );
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connected' | 'connecting' | 'error'
+  >('connecting');
   const [isLoadingLeads, setIsLoadingLeads] = useState(false);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
-                <Target className="h-6 w-6 text-primary animate-pulse" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
-            </div>
-            <div>
-              <h1 className="font-display text-2xl font-bold italic uppercase tracking-tighter">
-                Lead Intelligence
-              </h1>
-              <div className="flex items-center gap-2 mt-0.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                  Neural Link Active
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-10 w-32 rounded-xl" />
-            <Skeleton className="h-10 w-32 rounded-xl" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <Skeleton className="md:col-span-8 h-96 rounded-xl" />
-          <Skeleton className="md:col-span-4 h-96 rounded-xl" />
-        </div>
-      </div>
-    );
-  }
 
   const hotCount = allLeads.filter(l => l.category === 'Hot').length;
   const warmCount = allLeads.filter(l => l.category === 'Warm').length;
@@ -303,6 +274,47 @@ export function LeadScoringDashboard() {
     return allLeads.find(l => l.id === selectedLeadId) || null;
   }, [allLeads, selectedLeadId]);
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="p-3 rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+                <Target className="h-6 w-6 text-primary animate-pulse" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-bold italic uppercase tracking-tighter">
+                Lead Intelligence
+              </h1>
+              <div className="flex items-center gap-2 mt-0.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Neural Link Active
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-32 rounded-xl" />
+            <Skeleton className="h-10 w-32 rounded-xl" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <Skeleton className="md:col-span-8 h-96 rounded-xl" />
+          <Skeleton className="md:col-span-4 h-96 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 p-1 sm:p-0 relative">
       <LeadNeuralDossier
@@ -372,12 +384,16 @@ export function LeadScoringDashboard() {
                 await explainBatch.mutateAsync(ids.slice(0, 50));
                 await supabase
                   .from('lead_score_trends')
-                  .insert(allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score })));
+                  .insert(
+                    allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score }))
+                  );
               }
             }}
             disabled={explainBatch.isPending}
           >
-            <Brain className={cn('h-4 w-4 mr-2', explainBatch.isPending && 'animate-spin')} />
+            <Brain
+              className={cn('h-4 w-4 mr-2', explainBatch.isPending && 'animate-spin')}
+            />
             Neural Analysis
           </Button>
 
@@ -431,7 +447,12 @@ export function LeadScoringDashboard() {
               )}
             >
               <CardContent className="p-6 flex items-center gap-5">
-                <div className={cn('p-4 rounded-2xl ring-1 ring-white/5 shadow-inner', cfg.bg)}>
+                <div
+                  className={cn(
+                    'p-4 rounded-2xl ring-1 ring-white/5 shadow-inner',
+                    cfg.bg
+                  )}
+                >
                   <Icon className={cn('h-6 w-6', cfg.color)} />
                 </div>
                 <div className="space-y-1">
@@ -442,7 +463,9 @@ export function LeadScoringDashboard() {
                     <span className="font-display font-black text-3xl tracking-tighter">
                       {count}
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground">UNIT</span>
+                    <span className="text-[10px] font-bold text-muted-foreground">
+                      UNIT
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -517,12 +540,16 @@ export function LeadScoringDashboard() {
                           churnFilter === 'high' &&
                             'bg-status-warning/20 ring-1 ring-status-warning/30'
                         )}
-                        onClick={() => setChurnFilter(churnFilter === 'high' ? 'all' : 'high')}
+                        onClick={() =>
+                          setChurnFilter(churnFilter === 'high' ? 'all' : 'high')
+                        }
                       >
                         <Activity className="h-3.5 w-3.5 text-status-warning" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent className="text-[10px] font-bold">Risco Alto</TooltipContent>
+                    <TooltipContent className="text-[10px] font-bold">
+                      Risco Alto
+                    </TooltipContent>
                   </Tooltip>
                 </div>
               </div>
@@ -552,7 +579,9 @@ export function LeadScoringDashboard() {
                             : 'bg-status-warning'
                         )}
                       >
-                        {lead.churnRisk?.risk_level === 'critical' ? 'CRÍTICO' : 'ALTO RISCO'}
+                        {lead.churnRisk?.risk_level === 'critical'
+                          ? 'CRÍTICO'
+                          : 'ALTO RISCO'}
                       </Badge>
                     </div>
 
@@ -561,7 +590,9 @@ export function LeadScoringDashboard() {
                         <span className="text-muted-foreground uppercase tracking-widest">
                           Intensidade
                         </span>
-                        <span className="text-status-error">{lead.churnRisk?.risk_score}%</span>
+                        <span className="text-status-error">
+                          {lead.churnRisk?.risk_score}%
+                        </span>
                       </div>
                       <Progress
                         value={lead.churnRisk?.risk_score}
@@ -612,7 +643,10 @@ export function LeadScoringDashboard() {
             </CardContent>
           </Card>
 
-          <Card variant="modern" className="overflow-hidden bg-primary/5 border-primary/20 glass">
+          <Card
+            variant="modern"
+            className="overflow-hidden bg-primary/5 border-primary/20 glass"
+          >
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 rounded-lg bg-primary/10 ring-1 ring-primary/20">
@@ -638,7 +672,10 @@ export function LeadScoringDashboard() {
       </div>
 
       {/* Elite Ranking Table */}
-      <Card variant="modern" className="overflow-hidden bg-card/40 backdrop-blur-md border-white/5">
+      <Card
+        variant="modern"
+        className="overflow-hidden bg-card/40 backdrop-blur-md border-white/5"
+      >
         <CardHeader className="p-6 border-b border-border/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
@@ -670,7 +707,9 @@ export function LeadScoringDashboard() {
                   disabled={isExporting}
                   className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
                 >
-                  <Download className={cn('h-3.5 w-3.5 mr-2', isExporting && 'animate-bounce')} />
+                  <Download
+                    className={cn('h-3.5 w-3.5 mr-2', isExporting && 'animate-bounce')}
+                  />
                   CSV
                 </Button>
                 <Button
@@ -680,7 +719,9 @@ export function LeadScoringDashboard() {
                   disabled={isExporting}
                   className="h-9 px-4 rounded-lg border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground"
                 >
-                  <FileText className={cn('h-3.5 w-3.5 mr-2', isExporting && 'animate-bounce')} />
+                  <FileText
+                    className={cn('h-3.5 w-3.5 mr-2', isExporting && 'animate-bounce')}
+                  />
                   PDF
                 </Button>
               </div>
@@ -828,7 +869,10 @@ export function LeadScoringDashboard() {
                                   : 'text-rose-500'
                               )}
                             >
-                              {Math.abs(lead.trend[lead.trend.length - 1] - lead.trend[0])}%
+                              {Math.abs(
+                                lead.trend[lead.trend.length - 1] - lead.trend[0]
+                              )}
+                              %
                             </span>
                           </div>
                         )}
@@ -902,7 +946,9 @@ export function LeadScoringDashboard() {
                                     Object.entries(lead.labels).map(([key, val]) => (
                                       <div key={key} className="space-y-1">
                                         <div className="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
-                                          <span className="text-muted-foreground">{key}</span>
+                                          <span className="text-muted-foreground">
+                                            {key}
+                                          </span>
                                           <span>{String(val)}</span>
                                         </div>
                                         <Progress value={70} className="h-1" />
@@ -912,8 +958,12 @@ export function LeadScoringDashboard() {
                                     <FactorBar
                                       label="Deal Momentum"
                                       value={
-                                        (lead.factors as unknown as Record<string, number>)
-                                          .dealValue
+                                        (
+                                          lead.factors as unknown as Record<
+                                            string,
+                                            number
+                                          >
+                                        ).dealValue
                                       }
                                       maxValue={25}
                                     />
@@ -932,14 +982,16 @@ export function LeadScoringDashboard() {
                                   <FactorBar
                                     label="ICP Fit"
                                     value={
-                                      (lead.factors as unknown as Record<string, number>).industry
+                                      (lead.factors as unknown as Record<string, number>)
+                                        .industry
                                     }
                                     maxValue={15}
                                   />
                                   <FactorBar
                                     label="Engajamento"
                                     value={
-                                      (lead.factors as unknown as Record<string, number>).engagement
+                                      (lead.factors as unknown as Record<string, number>)
+                                        .engagement
                                     }
                                     maxValue={25}
                                   />
@@ -980,7 +1032,9 @@ export function LeadScoringDashboard() {
                           <span
                             className={cn(
                               'text-[9px] font-black uppercase tracking-widest',
-                              lead.score > 70 ? 'text-emerald-500' : 'text-muted-foreground/60'
+                              lead.score > 70
+                                ? 'text-emerald-500'
+                                : 'text-muted-foreground/60'
                             )}
                           >
                             {lead.score > 70 ? 'TOP PRIORITY' : 'MONITORING'}

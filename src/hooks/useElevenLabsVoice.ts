@@ -51,7 +51,12 @@ interface UseElevenLabsVoiceOptions {
 }
 
 export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
-  const { defaultVoiceId = VOICE_OPTIONS[0].id, onSpeakStart, onSpeakEnd, onError } = options;
+  const {
+    defaultVoiceId = VOICE_OPTIONS[0].id,
+    onSpeakStart,
+    onSpeakEnd,
+    onError,
+  } = options;
 
   const [voiceId, setVoiceId] = useState<string>(defaultVoiceId);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -63,7 +68,7 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // Check if ElevenLabs API is configured (we'll assume it is for now)
   const isApiConfigured = true;
@@ -212,12 +217,12 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
       setTranscript('');
     };
 
-    recognition.onresult = (event: Event & { results: SpeechRecognitionResultList }) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const result = event.results[0][0].transcript;
       setTranscript(result);
     };
 
-    recognition.onerror = (event: Event & { error: string }) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (import.meta.env.DEV) {
         console.error('Speech recognition error:', event.error);
       }
@@ -278,11 +283,53 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
 // Re-export for backwards compatibility
 export default useElevenLabsVoice;
 
-// Type declarations for browser APIs
+// Type declarations for browser APIs (Web Speech API is not in the standard DOM lib)
 declare global {
-  interface Window {
-    SpeechRecognition: any;
+  interface SpeechRecognitionAlternativeMin {
+    readonly transcript: string;
+    readonly confidence: number;
+  }
 
-    webkitSpeechRecognition: any;
+  interface SpeechRecognitionResultMin {
+    readonly length: number;
+    item(index: number): SpeechRecognitionAlternativeMin;
+    [index: number]: SpeechRecognitionAlternativeMin;
+  }
+
+  interface SpeechRecognitionResultListMin {
+    readonly length: number;
+    item(index: number): SpeechRecognitionResultMin;
+    [index: number]: SpeechRecognitionResultMin;
+  }
+
+  interface SpeechRecognitionEvent extends Event {
+    readonly results: SpeechRecognitionResultListMin;
+  }
+
+  interface SpeechRecognitionErrorEvent extends Event {
+    readonly error: string;
+  }
+
+  interface SpeechRecognition extends EventTarget {
+    lang: string;
+    continuous: boolean;
+    interimResults: boolean;
+    maxAlternatives: number;
+    onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+    onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+    onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+    onend: ((this: SpeechRecognition, ev: Event) => void) | null;
+    start(): void;
+    stop(): void;
+    abort(): void;
+  }
+
+  interface SpeechRecognitionConstructor {
+    new (): SpeechRecognition;
+  }
+
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
   }
 }

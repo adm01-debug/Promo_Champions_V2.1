@@ -1,9 +1,9 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { corsHeaders } from '../_shared/cors.ts';
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 interface UnderperformingSDR {
   id: string;
@@ -14,18 +14,21 @@ interface UnderperformingSDR {
   dailyGoal: number;
 }
 
-async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: number = 3): Promise<UnderperformingSDR[]> {
-  console.info("Fetching SDRs and their activity goals...");
-  
+async function getUnderperformingSDRs(
+  supabase: SupabaseClient,
+  consecutiveThreshold: number = 3
+): Promise<UnderperformingSDR[]> {
+  console.info('Fetching SDRs and their activity goals...');
+
   // Get SDRs (role = 'sdr' or 'hybrid')
   const { data: sdrs, error: sdrsError } = await supabase
-    .from("salespeople")
-    .select("id, name, email, role")
-    .in("role", ["sdr", "hybrid"])
-    .eq("is_active", true);
+    .from('salespeople')
+    .select('id, name, email, role')
+    .in('role', ['sdr', 'hybrid'])
+    .eq('is_active', true);
 
   if (sdrsError) {
-    console.error("Error fetching SDRs:", sdrsError);
+    console.error('Error fetching SDRs:', sdrsError);
     throw sdrsError;
   }
 
@@ -33,35 +36,46 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
 
   // Get activity goals for SDRs
   const { data: goals, error: goalsError } = await supabase
-    .from("activity_goals")
-    .select("salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal");
+    .from('activity_goals')
+    .select(
+      'salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal'
+    );
 
   if (goalsError) {
-    console.error("Error fetching goals:", goalsError);
+    console.error('Error fetching goals:', goalsError);
     throw goalsError;
   }
 
   const goalsMap: Record<string, number> = {};
-  goals?.forEach((g: any) => {
-    goalsMap[g.salesperson_id] = 
-      (g.calls_goal || 0) + 
-      (g.emails_goal || 0) + 
-      (g.meetings_goal || 0) + 
-      (g.linkedin_goal || 0) + 
-      (g.whatsapp_goal || 0);
-  });
+  goals?.forEach(
+    (g: {
+      salesperson_id: string;
+      calls_goal?: number | null;
+      emails_goal?: number | null;
+      meetings_goal?: number | null;
+      linkedin_goal?: number | null;
+      whatsapp_goal?: number | null;
+    }) => {
+      goalsMap[g.salesperson_id] =
+        (g.calls_goal || 0) +
+        (g.emails_goal || 0) +
+        (g.meetings_goal || 0) +
+        (g.linkedin_goal || 0) +
+        (g.whatsapp_goal || 0);
+    }
+  );
 
   // Get activities from last 7 days
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const { data: activities, error: activitiesError } = await supabase
-    .from("activities")
-    .select("salesperson_id, created_at")
-    .gte("created_at", sevenDaysAgo.toISOString());
+    .from('activities')
+    .select('salesperson_id, created_at')
+    .gte('created_at', sevenDaysAgo.toISOString());
 
   if (activitiesError) {
-    console.error("Error fetching activities:", activitiesError);
+    console.error('Error fetching activities:', activitiesError);
     throw activitiesError;
   }
 
@@ -69,20 +83,20 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
 
   // Group activities by SDR and date
   const activityBySDRAndDate: Record<string, Record<string, number>> = {};
-  activities?.forEach((a: any) => {
+  activities?.forEach((a: { salesperson_id: string | null; created_at: string }) => {
     if (!a.salesperson_id) return;
-    const date = a.created_at.split("T")[0];
+    const date = a.created_at.split('T')[0];
     if (!activityBySDRAndDate[a.salesperson_id]) {
       activityBySDRAndDate[a.salesperson_id] = {};
     }
-    activityBySDRAndDate[a.salesperson_id][date] = 
+    activityBySDRAndDate[a.salesperson_id][date] =
       (activityBySDRAndDate[a.salesperson_id][date] || 0) + 1;
   });
 
   // Calculate consecutive days below goal for each SDR
   const underperforming: UnderperformingSDR[] = [];
   const today = new Date();
-  
+
   for (const sdr of sdrs || []) {
     const goal = goalsMap[sdr.id] || 0;
     if (goal <= 0) continue;
@@ -97,12 +111,12 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
     for (let i = 0; i < 7; i++) {
       const checkDate = new Date(today);
       checkDate.setDate(checkDate.getDate() - i);
-      const dateStr = checkDate.toISOString().split("T")[0];
+      const dateStr = checkDate.toISOString().split('T')[0];
       const dayActivities = sdrActivities[dateStr] || 0;
 
       if (dayActivities < goal) {
         consecutiveCount++;
-        totalDeficit += (goal - dayActivities);
+        totalDeficit += goal - dayActivities;
         deficitDays++;
         maxConsecutive = Math.max(maxConsecutive, consecutiveCount);
       } else {
@@ -127,7 +141,9 @@ async function getUnderperformingSDRs(supabase: any, consecutiveThreshold: numbe
 }
 
 function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
-  const sdrRows = sdrs.map(sdr => `
+  const sdrRows = sdrs
+    .map(
+      sdr => `
     <tr>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${sdr.name}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
@@ -140,7 +156,9 @@ function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
         -${sdr.avgDeficit}/dia
       </td>
     </tr>
-  `).join("");
+  `
+    )
+    .join('');
 
   return `
     <!DOCTYPE html>
@@ -193,9 +211,14 @@ function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
   `;
 }
 
-async function sendNotificationToSDR(sdr: UnderperformingSDR, supabase: any): Promise<void> {
+async function sendNotificationToSDR(
+  sdr: UnderperformingSDR,
+  supabase: SupabaseClient
+): Promise<void> {
   if (!sdr.email) {
-    console.info(`SDR ${sdr.name} has no email configured, skipping personal notification`);
+    console.info(
+      `SDR ${sdr.name} has no email configured, skipping personal notification`
+    );
     return;
   }
 
@@ -250,50 +273,51 @@ async function sendNotificationToSDR(sdr: UnderperformingSDR, supabase: any): Pr
 
   try {
     await resend.emails.send({
-      from: "CRM <onboarding@resend.dev>",
+      from: 'CRM <onboarding@resend.dev>',
       to: [sdr.email],
       subject,
       html,
     });
     console.info(`Personal notification sent to ${sdr.name} (${sdr.email})`);
-    
+
     // Log successful email
-    await supabase.from("email_logs").insert({
-      function_name: "sdr-consecutive-alerts",
+    await supabase.from('email_logs').insert({
+      function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
       subject,
-      status: "sent",
-      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays }
+      status: 'sent',
+      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Error sending email to ${sdr.email}:`, error);
-    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
     // Log failed email
-    await supabase.from("email_logs").insert({
-      function_name: "sdr-consecutive-alerts",
+    await supabase.from('email_logs').insert({
+      function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
       subject,
-      status: "failed",
-      error_message: error.message,
-      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays }
+      status: 'failed',
+      error_message: errorMessage,
+      metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays },
     });
   }
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.info("Starting SDR consecutive alerts check...");
+    console.info('Starting SDR consecutive alerts check...');
 
     // Check if this is a manual trigger
-    let triggeredBy = "cron";
+    let triggeredBy = 'cron';
     try {
       const body = await req.json();
-      if (body?.triggered_by === "manual") {
-        triggeredBy = "manual";
+      if (body?.triggered_by === 'manual') {
+        triggeredBy = 'manual';
       }
     } catch {
       // No body or invalid JSON, default to cron
@@ -302,29 +326,32 @@ const handler = async (req: Request): Promise<Response> => {
     console.info(`Triggered by: ${triggeredBy}`);
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     // Get the minimum consecutive threshold from notification preferences
     const { data: notifPrefs } = await supabase
-      .from("notification_preferences")
-      .select("consecutive_days_threshold")
-      .eq("is_active", true)
-      .order("consecutive_days_threshold", { ascending: true })
+      .from('notification_preferences')
+      .select('consecutive_days_threshold')
+      .eq('is_active', true)
+      .order('consecutive_days_threshold', { ascending: true })
       .limit(1);
 
     const consecutiveThreshold = notifPrefs?.[0]?.consecutive_days_threshold || 3;
     console.info(`Using consecutive threshold: ${consecutiveThreshold} days`);
 
-    const underperformingSDRs = await getUnderperformingSDRs(supabase, consecutiveThreshold);
+    const underperformingSDRs = await getUnderperformingSDRs(
+      supabase,
+      consecutiveThreshold
+    );
 
     if (underperformingSDRs.length === 0) {
-      console.info("No underperforming SDRs found, no alerts needed");
+      console.info('No underperforming SDRs found, no alerts needed');
 
       // Still log the check for manual triggers
-      if (triggeredBy === "manual") {
-        await supabase.from("sdr_alert_history").insert({
+      if (triggeredBy === 'manual') {
+        await supabase.from('sdr_alert_history').insert({
           triggered_by: triggeredBy,
           sdrs_notified: 0,
           threshold_used: consecutiveThreshold,
@@ -334,19 +361,19 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: "No alerts needed", count: 0 }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ success: true, message: 'No alerts needed', count: 0 }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
     // Get admin/manager emails for summary notification
     const { data: adminUsers, error: adminError } = await supabase
-      .from("user_roles")
-      .select("user_id")
-      .in("role", ["admin", "manager"]);
+      .from('user_roles')
+      .select('user_id')
+      .in('role', ['admin', 'manager']);
 
     if (adminError) {
-      console.error("Error fetching admin users:", adminError);
+      console.error('Error fetching admin users:', adminError);
     }
 
     const adminEmails: string[] = [];
@@ -365,36 +392,37 @@ const handler = async (req: Request): Promise<Response> => {
     if (adminEmails.length > 0) {
       const summaryHtml = buildEmailHtml(underperformingSDRs);
       const summarySubject = `⚠️ Alerta: ${underperformingSDRs.length} SDRs abaixo da meta por dias consecutivos`;
-      
+
       try {
         await resend.emails.send({
-          from: "CRM <onboarding@resend.dev>",
+          from: 'CRM <onboarding@resend.dev>',
           to: adminEmails,
           subject: summarySubject,
           html: summaryHtml,
         });
-        console.info("Summary email sent to admins/managers");
-        
+        console.info('Summary email sent to admins/managers');
+
         // Log successful emails for each admin
         for (const email of adminEmails) {
-          await supabase.from("email_logs").insert({
-            function_name: "sdr-consecutive-alerts",
+          await supabase.from('email_logs').insert({
+            function_name: 'sdr-consecutive-alerts',
             recipient_email: email,
             subject: summarySubject,
-            status: "sent",
-            metadata: { type: "admin_summary", sdrs_count: underperformingSDRs.length }
+            status: 'sent',
+            metadata: { type: 'admin_summary', sdrs_count: underperformingSDRs.length },
           });
         }
-      } catch (error: any) {
-        console.error("Error sending summary email:", error);
+      } catch (error: unknown) {
+        console.error('Error sending summary email:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         for (const email of adminEmails) {
-          await supabase.from("email_logs").insert({
-            function_name: "sdr-consecutive-alerts",
+          await supabase.from('email_logs').insert({
+            function_name: 'sdr-consecutive-alerts',
             recipient_email: email,
             subject: summarySubject,
-            status: "failed",
-            error_message: error.message,
-            metadata: { type: "admin_summary", sdrs_count: underperformingSDRs.length }
+            status: 'failed',
+            error_message: errorMessage,
+            metadata: { type: 'admin_summary', sdrs_count: underperformingSDRs.length },
           });
         }
       }
@@ -406,7 +434,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Log the alert to history
-    await supabase.from("sdr_alert_history").insert({
+    await supabase.from('sdr_alert_history').insert({
       triggered_by: triggeredBy,
       sdrs_notified: underperformingSDRs.length,
       threshold_used: consecutiveThreshold,
@@ -415,20 +443,21 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: `Alerts sent for ${underperformingSDRs.length} underperforming SDRs`,
         count: underperformingSDRs.length,
         sdrs: underperformingSDRs.map(s => s.name),
       }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
-  } catch (error: any) {
-    console.error("Error in SDR consecutive alerts:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+  } catch (error: unknown) {
+    console.error('Error in SDR consecutive alerts:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
   }
 };
 

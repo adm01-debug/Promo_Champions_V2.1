@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
 
 export interface AutomationRule {

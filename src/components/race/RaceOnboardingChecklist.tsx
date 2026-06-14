@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Check, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,10 +25,14 @@ const DISMISS_KEY = 'race_onboarding_dismissed';
  * Some quando 100% completo OU usuário dispensa explicitamente.
  */
 export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem(COLLAPSE_KEY) === '1');
-  const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISS_KEY) === '1');
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem(COLLAPSE_KEY) === '1'
+  );
+  const [dismissed, setDismissed] = useState(
+    () => localStorage.getItem(DISMISS_KEY) === '1'
+  );
 
-  const completed = items.filter((i) => i.done).length;
+  const completed = items.filter(i => i.done).length;
   const total = items.length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
   const allDone = completed === total && total > 0;
@@ -61,15 +64,21 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
           <CardHeader className="py-2 px-3 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-xs font-semibold flex items-center gap-2">
               <span>🏁 Entre na corrida</span>
-              <span className="text-[10px] font-normal text-muted-foreground">{completed}/{total}</span>
+              <span className="text-[10px] font-normal text-muted-foreground">
+                {completed}/{total}
+              </span>
             </CardTitle>
             <div className="flex gap-0.5">
               <button
-                onClick={() => setCollapsed((c) => !c)}
+                onClick={() => setCollapsed(c => !c)}
                 className="p-1 rounded hover:bg-muted text-muted-foreground"
                 aria-label={collapsed ? 'Expandir' : 'Recolher'}
               >
-                {collapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                {collapsed ? (
+                  <ChevronUp className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                )}
               </button>
               <button
                 onClick={handleDismiss}
@@ -92,7 +101,7 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
                 />
               </div>
               <ul className="space-y-1">
-                {items.map((item) => (
+                {items.map(item => (
                   <li key={item.id}>
                     <button
                       onClick={item.action}
@@ -102,7 +111,7 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
                         item.done
                           ? 'text-muted-foreground line-through'
                           : 'hover:bg-muted text-foreground',
-                        !item.action && 'cursor-default',
+                        !item.action && 'cursor-default'
                       )}
                     >
                       <span
@@ -110,7 +119,7 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
                           'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
                           item.done
                             ? 'bg-success border-success text-success-foreground'
-                            : 'border-muted-foreground/40',
+                            : 'border-muted-foreground/40'
                         )}
                       >
                         {item.done && <Check className="w-2.5 h-2.5" />}

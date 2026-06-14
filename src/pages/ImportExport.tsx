@@ -3,11 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getLocalISODate } from '@/utils/dateHelpers';
-import {
-  PageTransition,
-  containerVariants,
-  itemVariants,
-} from '@/components/transitions/PageTransition';
+import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,8 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import { Upload, Download, FileSpreadsheet, Check, AlertCircle, ArrowRight } from 'lucide-react';
+import { Upload, Download, Check, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLogAuditEvent } from '@/hooks/admin/useAuditLogs';
 
@@ -45,7 +40,7 @@ const TARGET_FIELDS = [
 
 const ImportExport = () => {
   const [step, setStep] = useState<ImportStep>('upload');
-  const [headers, setHeaders] = useState<string[]>([]);
+  const [_headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [mappings, setMappings] = useState<FieldMapping[]>([]);
   const [importedCount, setImportedCount] = useState(0);
@@ -82,7 +77,8 @@ const ImportExport = () => {
       setMappings(
         hdrs.map(h => ({
           source: h,
-          target: TARGET_FIELDS.find(f => h.toLowerCase().includes(f.value))?.value || 'skip',
+          target:
+            TARGET_FIELDS.find(f => h.toLowerCase().includes(f.value))?.value || 'skip',
         }))
       );
       setStep('mapping');
@@ -181,7 +177,10 @@ const ImportExport = () => {
       </Helmet>
       <PageTransition>
         <div className="container max-w-4xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
-          <motion.div variants={itemVariants} className="flex items-center justify-between">
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center justify-between"
+          >
             <div>
               <h1 className="text-page-title font-display">Import / Export</h1>
               <p className="text-sm text-muted-foreground mt-1">
@@ -195,20 +194,22 @@ const ImportExport = () => {
 
           {/* Step indicator */}
           <div className="flex items-center gap-2 text-xs">
-            {(['upload', 'mapping', 'preview', 'complete'] as ImportStep[]).map((s, i) => (
-              <React.Fragment key={s}>
-                {i > 0 && <ArrowRight className="h-3 w-3 text-muted-foreground" />}
-                <Badge variant={step === s ? 'default' : 'outline'} className="text-xs">
-                  {s === 'upload'
-                    ? 'Upload'
-                    : s === 'mapping'
-                      ? 'Mapear'
-                      : s === 'preview'
-                        ? 'Preview'
-                        : 'Concluído'}
-                </Badge>
-              </React.Fragment>
-            ))}
+            {(['upload', 'mapping', 'preview', 'complete'] as ImportStep[]).map(
+              (s, i) => (
+                <React.Fragment key={s}>
+                  {i > 0 && <ArrowRight className="h-3 w-3 text-muted-foreground" />}
+                  <Badge variant={step === s ? 'default' : 'outline'} className="text-xs">
+                    {s === 'upload'
+                      ? 'Upload'
+                      : s === 'mapping'
+                        ? 'Mapear'
+                        : s === 'preview'
+                          ? 'Preview'
+                          : 'Concluído'}
+                  </Badge>
+                </React.Fragment>
+              )
+            )}
           </div>
 
           {/* Upload step */}
@@ -245,7 +246,10 @@ const ImportExport = () => {
                 </p>
                 {mappings.map((m, i) => (
                   <div key={m.source} className="flex items-center gap-3">
-                    <Badge variant="outline" className="min-w-[120px] justify-center text-xs">
+                    <Badge
+                      variant="outline"
+                      className="min-w-[120px] justify-center text-xs"
+                    >
                       {m.source}
                     </Badge>
                     <ArrowRight className="h-3 w-3 text-muted-foreground" />
@@ -285,7 +289,10 @@ const ImportExport = () => {
                     <thead>
                       <tr className="border-b border-border/30">
                         {Object.keys(previewData[0] || {}).map(h => (
-                          <th key={h} className="py-2 px-2 text-left text-muted-foreground">
+                          <th
+                            key={h}
+                            className="py-2 px-2 text-left text-muted-foreground"
+                          >
                             {h}
                           </th>
                         ))}

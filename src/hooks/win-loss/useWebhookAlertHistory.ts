@@ -43,7 +43,8 @@ interface RawRow {
  */
 export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
   const limit = filters.limit ?? 200;
-  const since = filters.since ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const since =
+    filters.since ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const status = filters.status ?? 'all';
 
   return useQuery<WebhookAlertHistoryRow[]>({
@@ -61,7 +62,7 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
       // the new `suppressed` / `suppress_reason` columns we just added, so
       // we cast the builder to keep the file type-safe without touching the
       // auto-generated types module.
-      let q = (
+      const q = (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -73,7 +74,9 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
                   c: string,
                   o: { ascending: boolean }
                 ) => {
-                  limit: (n: number) => Promise<{ data: RawRow[] | null; error: Error | null }>;
+                  limit: (
+                    n: number
+                  ) => Promise<{ data: RawRow[] | null; error: Error | null }>;
                 } & {
                   eq: (
                     c: string,
@@ -83,7 +86,9 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
                       c: string,
                       o: { ascending: boolean }
                     ) => {
-                      limit: (n: number) => Promise<{ data: RawRow[] | null; error: Error | null }>;
+                      limit: (
+                        n: number
+                      ) => Promise<{ data: RawRow[] | null; error: Error | null }>;
                     } & {
                       eq: (
                         c: string,
@@ -105,9 +110,10 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
                               c: string,
                               o: { ascending: boolean }
                             ) => {
-                              limit: (
-                                n: number
-                              ) => Promise<{ data: RawRow[] | null; error: Error | null }>;
+                              limit: (n: number) => Promise<{
+                                data: RawRow[] | null;
+                                error: Error | null;
+                              }>;
                             };
                           };
                         };
@@ -129,12 +135,15 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
       // chained eq filters — apply only those provided
 
       let chain: any = q;
-      if (filters.subscriptionId) chain = chain.eq('subscription_id', filters.subscriptionId);
+      if (filters.subscriptionId)
+        chain = chain.eq('subscription_id', filters.subscriptionId);
       if (filters.kind) chain = chain.eq('kind', filters.kind);
       if (status === 'fired') chain = chain.eq('suppressed', false);
       else if (status === 'suppressed') chain = chain.eq('suppressed', true);
 
-      const { data, error } = await chain.order('fired_at', { ascending: false }).limit(limit);
+      const { data, error } = await chain
+        .order('fired_at', { ascending: false })
+        .limit(limit);
       if (error) throw error;
 
       return (data ?? []).map(

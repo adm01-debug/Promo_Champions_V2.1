@@ -41,25 +41,28 @@ describe('useDashboardKPIsPeriod', () => {
   });
 
   it('deve buscar KPIs corretamente', async () => {
-    const mockSales: any[] = [
+    const mockSales: Record<string, unknown>[] = [
       { amount: 1000, status: 'completed', created_at: new Date().toISOString() },
     ];
-    const mockTasks: any[] = [];
-    const mockMetrics: any[] = [];
+    const mockTasks: Record<string, unknown>[] = [];
+    const mockMetrics: Record<string, unknown>[] = [];
 
+    type QueryResult = { data: Record<string, unknown>[]; error: null };
 
-    (supabase.from as any).mockImplementation((table: string) => ({
-      select: vi.fn().mockReturnThis(),
-      gte: vi.fn().mockReturnThis(),
-      lte: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      then: (cb: any) => {
-        if (table === 'sales') return cb({ data: mockSales, error: null });
-        if (table === 'tasks') return cb({ data: mockTasks, error: null });
-        if (table === 'daily_metrics') return cb({ data: mockMetrics, error: null });
-        return cb({ data: [], error: null });
-      }
-    }));
+    (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (table: string) => ({
+        select: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        then: (cb: (result: QueryResult) => unknown) => {
+          if (table === 'sales') return cb({ data: mockSales, error: null });
+          if (table === 'tasks') return cb({ data: mockTasks, error: null });
+          if (table === 'daily_metrics') return cb({ data: mockMetrics, error: null });
+          return cb({ data: [], error: null });
+        },
+      })
+    );
 
     const { result } = renderHook(() => useDashboardKPIsPeriod('current_month'), {
       wrapper: createWrapper(),
@@ -71,4 +74,3 @@ describe('useDashboardKPIsPeriod', () => {
     expect(result.current.data?.current.totalSales).toBe(1);
   });
 });
-

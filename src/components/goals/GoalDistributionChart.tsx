@@ -1,8 +1,8 @@
-import React, { FC, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, Sector } from "recharts";
-import { PieChart as PieIcon } from "lucide-react";
+import React, { FC, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts';
+import { PieChart as PieIcon } from 'lucide-react';
 
 interface GoalDistributionChartProps {
   salespeople: {
@@ -14,20 +14,35 @@ interface GoalDistributionChartProps {
 }
 
 const STATUS_COLORS = {
-  exceeded: "hsl(var(--success))",
-  onTrack: "hsl(var(--primary))",
-  atRisk: "hsl(var(--warning))",
-  behind: "hsl(var(--destructive))",
+  exceeded: 'hsl(var(--success))',
+  onTrack: 'hsl(var(--primary))',
+  atRisk: 'hsl(var(--warning))',
+  behind: 'hsl(var(--destructive))',
 };
 
 const renderActiveShape = (props: any) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } =
+    props;
   return (
     <g>
-      <text x={cx} y={cy} dy={-8} textAnchor="middle" fill="hsl(var(--foreground))" className="text-xl font-bold font-display">
+      <text
+        x={cx}
+        y={cy}
+        dy={-8}
+        textAnchor="middle"
+        fill="hsl(var(--foreground))"
+        className="text-xl font-bold font-display"
+      >
         {value}
       </text>
-      <text x={cx} y={cy} dy={16} textAnchor="middle" fill="hsl(var(--muted-foreground))" className="text-[10px] uppercase font-bold tracking-wider">
+      <text
+        x={cx}
+        y={cy}
+        dy={16}
+        textAnchor="middle"
+        fill="hsl(var(--muted-foreground))"
+        className="text-[10px] uppercase font-bold tracking-wider"
+      >
         Vendedores
       </text>
       <Sector
@@ -52,7 +67,9 @@ const renderActiveShape = (props: any) => {
   );
 };
 
-export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeople }) => {
+export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
+  salespeople,
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const withGoals = salespeople.filter(sp => sp.goalAmount > 0);
 
@@ -62,10 +79,10 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
   const behind = withGoals.filter(sp => sp.progress < 40).length;
 
   const data = [
-    { name: "Batida", value: exceeded, color: STATUS_COLORS.exceeded },
-    { name: "No Ritmo", value: onTrack, color: STATUS_COLORS.onTrack },
-    { name: "Risco", value: atRisk, color: STATUS_COLORS.atRisk },
-    { name: "Atrasado", value: behind, color: STATUS_COLORS.behind },
+    { name: 'Batida', value: exceeded, color: STATUS_COLORS.exceeded },
+    { name: 'No Ritmo', value: onTrack, color: STATUS_COLORS.onTrack },
+    { name: 'Risco', value: atRisk, color: STATUS_COLORS.atRisk },
+    { name: 'Atrasado', value: behind, color: STATUS_COLORS.behind },
   ].filter(d => d.value > 0);
 
   if (data.length === 0) {
@@ -97,20 +114,25 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
                 activeIndex,
                 activeShape: renderActiveShape,
                 data,
-                cx: "50%",
-                cy: "50%",
+                cx: '50%',
+                cy: '50%',
                 innerRadius: 65,
                 outerRadius: 85,
                 paddingAngle: 6,
-                dataKey: "value",
-                stroke: "none",
+                dataKey: 'value',
+                stroke: 'none',
                 onMouseEnter: (_: any, index: number) => setActiveIndex(index),
                 children: data.map((entry, i) => (
-                  <Cell 
-                    key={i} 
-                    fill={entry.color} 
-                    className="transition-all duration-300 outline-none" 
-                    style={{ filter: activeIndex === i ? `drop-shadow(0 0 8px ${entry.color})` : 'none' }}
+                  <Cell
+                    key={i}
+                    fill={entry.color}
+                    className="transition-all duration-300 outline-none"
+                    style={{
+                      filter:
+                        activeIndex === i
+                          ? `drop-shadow(0 0 8px ${entry.color})`
+                          : 'none',
+                    }}
                   />
                 )),
               })}
@@ -119,14 +141,18 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
                   if (active && payload && payload.length) {
                     return (
                       <div className="glass p-3 rounded-xl border border-border/40 shadow-xl animate-in fade-in zoom-in duration-200">
-                        <p className="text-xs font-black uppercase tracking-wider mb-1" style={{ color: payload[0].payload.color }}>
+                        <p
+                          className="text-xs font-black uppercase tracking-wider mb-1"
+                          style={{ color: payload[0].payload.color }}
+                        >
                           {payload[0].name}
                         </p>
-                        <p className="text-sm font-bold">
-                          {payload[0].value} Vendedores
-                        </p>
+                        <p className="text-sm font-bold">{payload[0].value} Vendedores</p>
                         <p className="text-[10px] text-muted-foreground mt-1 italic">
-                          {((Number(payload[0].value) / withGoals.length) * 100).toFixed(0)}% da base
+                          {((Number(payload[0].value) / withGoals.length) * 100).toFixed(
+                            0
+                          )}
+                          % da base
                         </p>
                       </div>
                     );
@@ -144,22 +170,28 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({ salespeo
               key={i}
               onMouseEnter={() => setActiveIndex(i)}
               className={cn(
-                "flex items-center justify-between p-3 rounded-xl border transition-all text-left group/btn",
-                activeIndex === i 
-                  ? "bg-muted/50 border-border/40 shadow-lg translate-x-1 ring-1 ring-primary/20" 
-                  : "border-border/5 bg-background/20 opacity-70 hover:opacity-100 hover:bg-background/40"
+                'flex items-center justify-between p-3 rounded-xl border transition-all text-left group/btn',
+                activeIndex === i
+                  ? 'bg-muted/50 border-border/40 shadow-lg translate-x-1 ring-1 ring-primary/20'
+                  : 'border-border/5 bg-background/20 opacity-70 hover:opacity-100 hover:bg-background/40'
               )}
             >
               <div className="flex items-center gap-2.5">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor] animate-pulse" 
-                  style={{ backgroundColor: entry.color, color: entry.color }} 
+                <div
+                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_currentColor] animate-pulse"
+                  style={{ backgroundColor: entry.color, color: entry.color }}
                 />
-                <span className="text-[9px] font-black uppercase tracking-widest leading-none text-muted-foreground group-hover/btn:text-foreground transition-colors">{entry.name}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest leading-none text-muted-foreground group-hover/btn:text-foreground transition-colors">
+                  {entry.name}
+                </span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs font-black font-display gradient-text">{entry.value}</span>
-                <span className="text-[7px] font-bold text-muted-foreground/60 uppercase">Unity</span>
+                <span className="text-xs font-black font-display gradient-text">
+                  {entry.value}
+                </span>
+                <span className="text-[7px] font-bold text-muted-foreground/60 uppercase">
+                  Unity
+                </span>
               </div>
             </button>
           ))}

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,25 +6,29 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Settings2, Bell, Zap, BrainCircuit } from "lucide-react";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Settings2, Bell, BrainCircuit } from 'lucide-react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export const IntelligenceSettings = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 bg-primary/5 border-primary/20 hover:bg-primary/10">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 bg-primary/5 border-primary/20 hover:bg-primary/10"
+        >
           <Settings2 className="h-4 w-4" /> Configurar IA
         </Button>
       </DialogTrigger>
@@ -42,7 +46,9 @@ export const IntelligenceSettings = () => {
             <div className="flex items-center justify-between">
               <Label className="flex flex-col gap-1">
                 <span>Sensibilidade de Churn</span>
-                <span className="text-[10px] text-muted-foreground font-normal">Disparar alerta acima de:</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Disparar alerta acima de:
+                </span>
               </Label>
               <span className="text-xs font-mono font-bold text-primary">75%</span>
             </div>
@@ -53,7 +59,9 @@ export const IntelligenceSettings = () => {
             <div className="flex items-center justify-between">
               <Label className="flex flex-col gap-1">
                 <span>Limiar de Upsell</span>
-                <span className="text-[10px] text-muted-foreground font-normal">Confiança mínima para sugerir:</span>
+                <span className="text-[10px] text-muted-foreground font-normal">
+                  Confiança mínima para sugerir:
+                </span>
               </Label>
               <span className="text-xs font-mono font-bold text-primary">85%</span>
             </div>
@@ -63,7 +71,9 @@ export const IntelligenceSettings = () => {
           <div className="space-y-4">
             <Label className="flex flex-col gap-1">
               <span>Frequência de Notificações</span>
-              <span className="text-[10px] text-muted-foreground font-normal">Intervalo de varredura:</span>
+              <span className="text-[10px] text-muted-foreground font-normal">
+                Intervalo de varredura:
+              </span>
             </Label>
             <Select defaultValue="realtime">
               <SelectTrigger className="bg-white/5 border-white/10 h-8 text-xs">
@@ -84,15 +94,21 @@ export const IntelligenceSettings = () => {
               </div>
               <div className="space-y-0.5">
                 <p className="text-xs font-bold">Push Notifications</p>
-                <p className="text-[10px] text-muted-foreground">Alertas críticos no browser</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Alertas críticos no browser
+                </p>
               </div>
             </div>
             <Switch defaultChecked />
           </div>
         </div>
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="ghost" size="sm" className="text-xs">Resetar</Button>
-          <Button size="sm" className="text-xs font-bold">Salvar Alterações</Button>
+          <Button variant="ghost" size="sm" className="text-xs">
+            Resetar
+          </Button>
+          <Button size="sm" className="text-xs font-bold">
+            Salvar Alterações
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

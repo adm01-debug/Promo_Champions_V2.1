@@ -1,9 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, Lock, ArrowRight, Shield, Zap, PlayCircle } from "lucide-react";
-import type { Playbook } from "@/hooks/sales/useSalesEnablement";
-import { PlaybookExecutionDialog } from "./PlaybookExecutionDialog";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, Shield, Zap } from 'lucide-react';
+import type { Playbook } from '@/hooks/sales/useSalesEnablement';
+import { PlaybookExecutionDialog } from './PlaybookExecutionDialog';
 
 export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
   return (
@@ -13,8 +18,11 @@ export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
       </div>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 uppercase text-[10px] font-black">
-            {playbook.stage || "Geral"}
+          <Badge
+            variant="outline"
+            className="bg-primary/10 text-primary border-primary/30 uppercase text-[10px] font-black"
+          >
+            {playbook.stage || 'Geral'}
           </Badge>
           <Badge className="bg-success/10 text-success border-success/30 text-[10px]">
             <Zap className="size-3 mr-1" /> IA Ativa
@@ -24,13 +32,16 @@ export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
           {playbook.title}
         </CardTitle>
         <CardDescription className="line-clamp-2 text-xs">
-          {playbook.description || "Guia estratégico para condução de deals."}
+          {playbook.description || 'Guia estratégico para condução de deals.'}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          {playbook.items?.slice(0, 3).map((item) => (
-            <div key={item.id} className="flex items-center gap-2 text-xs text-muted-foreground">
+          {playbook.items?.slice(0, 3).map(item => (
+            <div
+              key={item.id}
+              className="flex items-center gap-2 text-xs text-muted-foreground"
+            >
               <div className="size-4 rounded-full border border-border flex items-center justify-center shrink-0">
                 <CheckCircle2 className="size-2.5 opacity-20" />
               </div>

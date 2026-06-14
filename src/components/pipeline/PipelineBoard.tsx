@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
 
@@ -32,8 +32,13 @@ import { PipelineSelector } from './PipelineSelector';
 import { PipelineHealthScore } from './PipelineHealthScore';
 import { DealCard } from './DealCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RefreshCw, Zap, TrendingUp, Sparkles, Filter, Database, Mic, Search } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { RefreshCw, Zap, TrendingUp, Sparkles, Filter, Database } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { useDealProbabilities } from '@/hooks/useDealProbability';
 import { useLeadScores, useCalculateLeadScores } from '@/hooks/useLeadScoring';
@@ -43,13 +48,15 @@ import { useICPByClientName } from '@/hooks/useICPData';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 export const PipelineBoard = () => {
-  const [selectedPipelineId, setSelectedPipelineId] = useState<string>(DEFAULT_PIPELINE_ID);
+  const [selectedPipelineId, setSelectedPipelineId] =
+    useState<string>(DEFAULT_PIPELINE_ID);
   const [ticketSimulation, setTicketSimulation] = useState(0); // Etapa 6: Simulator
   const [showFunnelLayer, setShowFunnelLayer] = useState(false); // Etapa 7: Funnel Layer
 
   // Multi-pipeline data
   const { data: pipelines, isLoading: pipelinesLoading } = usePipelines();
-  const { data: dynamicStages, isLoading: stagesLoading } = usePipelineStages(selectedPipelineId);
+  const { data: dynamicStages, isLoading: stagesLoading } =
+    usePipelineStages(selectedPipelineId);
   const {
     data: multiDealsByStage,
     isLoading: multiDealsLoading,
@@ -69,7 +76,9 @@ export const PipelineBoard = () => {
 
   const isDefaultPipeline = selectedPipelineId === DEFAULT_PIPELINE_ID;
   const isLoading =
-    pipelinesLoading || stagesLoading || (isDefaultPipeline ? legacyLoading : multiDealsLoading);
+    pipelinesLoading ||
+    stagesLoading ||
+    (isDefaultPipeline ? legacyLoading : multiDealsLoading);
   const isRefetching = isDefaultPipeline ? legacyRefetching : multiRefetching;
 
   // Current stages to render
@@ -102,7 +111,7 @@ export const PipelineBoard = () => {
         status: d.status,
         category: d.category,
         salesperson_id: d.salesperson_id,
-        sdr_id: (d as any).sdr_id || null,
+        sdr_id: (d as PipelineDeal & { sdr_id?: string | null }).sdr_id || null,
         source: d.source,
         created_at: d.created_at,
         updated_at: d.updated_at,
@@ -190,9 +199,10 @@ export const PipelineBoard = () => {
         const animationEnd = Date.now() + duration;
         const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-        const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+        const randomInRange = (min: number, max: number) =>
+          Math.random() * (max - min) + min;
 
-        const interval: any = setInterval(function () {
+        const interval: ReturnType<typeof setInterval> = setInterval(function () {
           const timeLeft = animationEnd - Date.now();
           if (timeLeft <= 0) return clearInterval(interval);
           const particleCount = 50 * (timeLeft / duration);
@@ -236,7 +246,11 @@ export const PipelineBoard = () => {
           if (isDefaultPipeline) {
             moveDeal.mutate({ dealId, newStage: stage.id as PipelineStageId });
           } else {
-            moveDealMulti.mutate({ dealId, newStage: stage.id, pipelineId: selectedPipelineId });
+            moveDealMulti.mutate({
+              dealId,
+              newStage: stage.id,
+              pipelineId: selectedPipelineId,
+            });
           }
           return;
         }
@@ -277,15 +291,6 @@ export const PipelineBoard = () => {
       </div>
     );
   }
-
-  const totalDeals = currentStages.reduce(
-    (sum, stage) => sum + (currentDealsByStage?.[stage.id]?.length || 0),
-    0
-  );
-  const totalValue = currentStages.reduce(
-    (sum, stage) => sum + (currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0),
-    0
-  );
 
   // Etapa 2: Pipeline Liquidity & Weighted Forecast + Simulator (Etapa 6)
   const weightedTotalValue = currentStages.reduce((sum, stage) => {
@@ -389,7 +394,11 @@ export const PipelineBoard = () => {
           <div className="flex items-center gap-1 bg-background/40 p-1 rounded-xl border border-border/20">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:text-primary"
+                >
                   <Database className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
@@ -399,7 +408,11 @@ export const PipelineBoard = () => {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-indigo-500">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:text-indigo-500"
+                >
                   <Filter className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
@@ -431,7 +444,9 @@ export const PipelineBoard = () => {
                 Pipeline Health (P2)
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-display font-black tracking-tighter">92.4%</span>
+                <span className="text-3xl font-display font-black tracking-tighter">
+                  92.4%
+                </span>
                 <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" /> Eficiência
                 </span>
@@ -493,7 +508,9 @@ export const PipelineBoard = () => {
               onClick={handleRefetch}
               disabled={isRefetching}
             >
-              <RefreshCw className={cn('h-3.5 w-3.5 mr-2', isRefetching ? 'animate-spin' : '')} />
+              <RefreshCw
+                className={cn('h-3.5 w-3.5 mr-2', isRefetching ? 'animate-spin' : '')}
+              />
               Sincronizar
             </Button>
           </div>
@@ -515,7 +532,9 @@ export const PipelineBoard = () => {
                 : 0;
               const conversionRate =
                 dealsInThisStage > 0
-                  ? Math.round((dealsInNextStage / (dealsInThisStage + dealsInNextStage)) * 100)
+                  ? Math.round(
+                      (dealsInNextStage / (dealsInThisStage + dealsInNextStage)) * 100
+                    )
                   : 0;
 
               return (

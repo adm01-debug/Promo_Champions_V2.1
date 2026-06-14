@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ReplayInvocation {
   id: string;
   request_id: string;
   actor_user_id: string;
   actor_email: string | null;
-  source: "dlq" | "delivery";
+  source: 'dlq' | 'delivery';
   item_count: number;
   succeeded_count: number;
   failed_count: number;
@@ -22,17 +22,17 @@ export interface ReplayInvocation {
  */
 export function useReplayInvocations(limit = 100) {
   return useQuery<ReplayInvocation[]>({
-    queryKey: ["winloss-replay-invocations", limit],
+    queryKey: ['winloss-replay-invocations', limit],
     staleTime: 15_000,
     queryFn: async (): Promise<ReplayInvocation[]> => {
       const { data, error } = await supabase
-        .from("winloss_webhook_replay_invocations")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('winloss_webhook_replay_invocations')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(limit);
-      
+
       if (error) throw error;
-      return (data || []) as any[];
+      return (data || []) as unknown as ReplayInvocation[];
     },
   });
 }

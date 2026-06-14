@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { differenceInDays, differenceInCalendarDays } from 'date-fns';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
-import type { RaceSeason } from "@/hooks/race/useRaceSeason";
+import { differenceInCalendarDays } from 'date-fns';
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
 export interface PitStopAnalysis {
   hasData: boolean;
@@ -31,7 +31,10 @@ export interface PitStopAnalysis {
 interface Params {
   leaderboard: RaceLeaderboardEntry[];
   mySalespersonId?: string;
-  season?: { start_date: string; end_date: string; goal_amount: number } | RaceSeason | null;
+  season?:
+    | { start_date: string; end_date: string; goal_amount: number }
+    | RaceSeason
+    | null;
 }
 
 /**
@@ -39,7 +42,11 @@ interface Params {
  * Computes user's current standing, gap to the rival immediately ahead,
  * pace vs. required pace, and a contextual recommendation string.
  */
-export function usePitStopAnalysis({ leaderboard, mySalespersonId, season }: Params): PitStopAnalysis {
+export function usePitStopAnalysis({
+  leaderboard,
+  mySalespersonId,
+  season,
+}: Params): PitStopAnalysis {
   return useMemo<PitStopAnalysis>(() => {
     if (!season || !mySalespersonId || leaderboard.length === 0) {
       return {
@@ -51,8 +58,10 @@ export function usePitStopAnalysis({ leaderboard, mySalespersonId, season }: Par
       };
     }
 
-    const sorted = [...leaderboard].sort((a, b) => Number(b.total_sales) - Number(a.total_sales));
-    const myIdx = sorted.findIndex((e) => e.salesperson_id === mySalespersonId);
+    const sorted = [...leaderboard].sort(
+      (a, b) => Number(b.total_sales) - Number(a.total_sales)
+    );
+    const myIdx = sorted.findIndex(e => e.salesperson_id === mySalespersonId);
     const me = myIdx >= 0 ? sorted[myIdx] : null;
 
     if (!me) {
@@ -61,7 +70,8 @@ export function usePitStopAnalysis({ leaderboard, mySalespersonId, season }: Par
         myStats: null,
         nextRival: null,
         pace: null,
-        recommendation: 'Você ainda não está na corrida desta season. Faça sua primeira venda!',
+        recommendation:
+          'Você ainda não está na corrida desta season. Faça sua primeira venda!',
       };
     }
 
@@ -73,28 +83,32 @@ export function usePitStopAnalysis({ leaderboard, mySalespersonId, season }: Par
     };
 
     const rivalEntry = myIdx > 0 ? sorted[myIdx - 1] : null;
-    const avgTicket = myStats.dealsCount > 0 ? myStats.totalSales / myStats.dealsCount : 0;
+    const avgTicket =
+      myStats.dealsCount > 0 ? myStats.totalSales / myStats.dealsCount : 0;
     const nextRival = rivalEntry
       ? {
           name: rivalEntry.salesperson_name,
           avatarUrl: rivalEntry.avatar_url,
           rank: myIdx,
           gap: Math.max(0, Number(rivalEntry.total_sales) - myStats.totalSales),
-          salesNeeded: avgTicket > 0
-            ? Math.ceil((Number(rivalEntry.total_sales) - myStats.totalSales) / avgTicket)
-            : 0,
+          salesNeeded:
+            avgTicket > 0
+              ? Math.ceil(
+                  (Number(rivalEntry.total_sales) - myStats.totalSales) / avgTicket
+                )
+              : 0,
         }
       : null;
 
     const start = new Date(season.start_date);
     const end = new Date(season.end_date);
     const now = new Date();
-    const totalDays = Math.max(1, differenceInDays(end, start));
     const daysElapsed = Math.max(1, differenceInCalendarDays(now, start) + 1);
     const daysRemaining = Math.max(0, differenceInCalendarDays(end, now));
     const currentPerDay = myStats.totalSales / daysElapsed;
     const goal = Number(season.goal_amount) || 0;
-    const requiredPerDay = daysRemaining > 0 ? Math.max(0, (goal - myStats.totalSales) / daysRemaining) : 0;
+    const requiredPerDay =
+      daysRemaining > 0 ? Math.max(0, (goal - myStats.totalSales) / daysRemaining) : 0;
     const onTrack = currentPerDay >= requiredPerDay;
 
     const pace = { daysElapsed, daysRemaining, currentPerDay, requiredPerDay, onTrack };

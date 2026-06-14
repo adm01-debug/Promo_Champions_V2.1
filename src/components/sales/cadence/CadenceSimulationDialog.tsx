@@ -1,16 +1,37 @@
-
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, FileText, MousePointerClick, History, CheckCircle2, GitBranch, Phone, XCircle } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useProspectCadences, useFunnelRules } from "@/hooks/cadences/useCadenceQueries";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Play,
+  FileText,
+  MousePointerClick,
+  History,
+  CheckCircle2,
+  GitBranch,
+  Phone,
+  XCircle,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useProspectCadences } from '@/hooks/cadences/useCadenceQueries';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface SimulationLog {
   id: string;
@@ -24,14 +45,22 @@ interface SimulationLog {
 
 export function CadenceSimulationDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedProspectId, setSelectedProspectId] = useState("");
+  const [selectedProspectId, setSelectedProspectId] = useState('');
   const [logs, setLogs] = useState<SimulationLog[]>([]);
   const { data: prospects } = useProspectCadences();
   const queryClient = useQueryClient();
 
-  const simulateEvent = async (type: "quote_open" | "price_click" | "reply" | "manual" | "call_outcome_atendeu" | "call_outcome_nao_atendeu") => {
+  const simulateEvent = async (
+    type:
+      | 'quote_open'
+      | 'price_click'
+      | 'reply'
+      | 'manual'
+      | 'call_outcome_atendeu'
+      | 'call_outcome_nao_atendeu'
+  ) => {
     if (!selectedProspectId) {
-      toast.error("Selecione um lead para a simulação");
+      toast.error('Selecione um lead para a simulação');
       return;
     }
 
@@ -39,14 +68,14 @@ export function CadenceSimulationDialog() {
     if (!prospect) return;
 
     const eventNames = {
-      quote_open: "Abertura de Proposta",
-      price_click: "Clique em Preço",
-      reply: "Resposta Recebida",
-      manual: "Ação Manual",
-      call_outcome_atendeu: "Desfecho: Atendeu",
-      call_outcome_nao_atendeu: "Desfecho: Não Atendeu"
+      quote_open: 'Abertura de Proposta',
+      price_click: 'Clique em Preço',
+      reply: 'Resposta Recebida',
+      manual: 'Ação Manual',
+      call_outcome_atendeu: 'Desfecho: Atendeu',
+      call_outcome_nao_atendeu: 'Desfecho: Não Atendeu',
     };
-    
+
     const eventName = eventNames[type];
     const leadName = prospect.id.substring(0, 8);
 
@@ -54,31 +83,33 @@ export function CadenceSimulationDialog() {
     const { data, error } = await supabase.rpc('process_lead_intent_event', {
       p_prospect_cadence_id: prospect.id,
       p_event_type: type,
-      p_details: { source: 'simulation' }
+      p_details: { source: 'simulation' },
     });
 
     if (error) {
-      toast.error("Erro ao processar evento no banco");
+      toast.error('Erro ao processar evento no banco');
       console.error(error);
       return;
     }
 
-    const result = data as { 
-      transitioned: boolean; 
-      new_stage: string; 
+    const result = data as {
+      transitioned: boolean;
+      new_stage: string;
       event_count: number;
       applied_rule?: any;
       planned_actions?: string[];
     };
 
     let resultMsg = `Evento registrado (${result.event_count} ocorrências)`;
-    let ruleDetails = result.applied_rule ? `Regra: ${result.applied_rule.condition}` : "Processamento padrão";
-    
+    const ruleDetails = result.applied_rule
+      ? `Regra: ${result.applied_rule.condition}`
+      : 'Processamento padrão';
+
     if (result.transitioned) {
       resultMsg = `Transição: ${prospect.funnel_stage} -> ${result.new_stage}`;
-      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
-      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ['prospect-cadences'] });
+      queryClient.invalidateQueries({ queryKey: ['todays-cadence-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     }
 
     const newLog: SimulationLog = {
@@ -87,8 +118,8 @@ export function CadenceSimulationDialog() {
       event: eventName,
       lead: `Lead ${leadName}`,
       result: resultMsg,
-      next_cadences: result.planned_actions || ["Follow-up Automático"],
-      rule_details: ruleDetails
+      next_cadences: result.planned_actions || ['Follow-up Automático'],
+      rule_details: ruleDetails,
     };
 
     setLogs([newLog, ...logs]);
@@ -101,7 +132,10 @@ export function CadenceSimulationDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 border-primary/30 hover:bg-primary/5 shadow-sm">
+        <Button
+          variant="outline"
+          className="gap-2 border-primary/30 hover:bg-primary/5 shadow-sm"
+        >
           <Play className="h-4 w-4 text-primary" />
           Simular Cenários
         </Button>
@@ -126,7 +160,7 @@ export function CadenceSimulationDialog() {
                   <SelectValue placeholder="Selecione o lead" />
                 </SelectTrigger>
                 <SelectContent>
-                  {prospects?.map((p) => (
+                  {prospects?.map(p => (
                     <SelectItem key={p.id} value={p.id}>
                       Lead {p.id.substring(0, 8)} ({p.funnel_stage})
                     </SelectItem>
@@ -137,55 +171,55 @@ export function CadenceSimulationDialog() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
-              onClick={() => simulateEvent("quote_open")}
+              onClick={() => simulateEvent('quote_open')}
             >
               <FileText className="h-8 w-8 text-primary" />
               <div className="text-xs font-semibold">Abrir Proposta</div>
               <div className="text-[9px] text-muted-foreground">Trigger: 1 clique</div>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all"
-              onClick={() => simulateEvent("price_click")}
+              onClick={() => simulateEvent('price_click')}
             >
               <MousePointerClick className="h-8 w-8 text-accent" />
               <div className="text-xs font-semibold">Clicar em Preço</div>
               <div className="text-[9px] text-muted-foreground">Trigger: 3 cliques</div>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-success/50 hover:bg-success/5 transition-all"
-              onClick={() => simulateEvent("reply")}
+              onClick={() => simulateEvent('reply')}
             >
               <History className="h-8 w-8 text-success" />
               <div className="text-xs font-semibold">Resposta Recebida</div>
               <div className="text-[9px] text-muted-foreground">Trigger: Manual/Bot</div>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-status-warning/50 hover:bg-status-warning/5 transition-all"
-              onClick={() => simulateEvent("manual")}
+              onClick={() => simulateEvent('manual')}
             >
               <CheckCircle2 className="h-8 w-8 text-status-warning" />
               <div className="text-xs font-semibold">Ação Manual</div>
               <div className="text-[9px] text-muted-foreground">Qualquer momento</div>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all"
-              onClick={() => simulateEvent("call_outcome_atendeu")}
+              onClick={() => simulateEvent('call_outcome_atendeu')}
             >
               <Phone className="h-8 w-8 text-blue-500" />
               <div className="text-xs font-semibold">Desfecho: Atendeu</div>
               <div className="text-[9px] text-muted-foreground">Regra de Transição</div>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-24 flex-col gap-2 hover:border-red-500/50 hover:bg-red-500/5 transition-all"
-              onClick={() => simulateEvent("call_outcome_nao_atendeu")}
+              onClick={() => simulateEvent('call_outcome_nao_atendeu')}
             >
               <XCircle className="h-8 w-8 text-red-500" />
               <div className="text-xs font-semibold">Desfecho: Ñ Atendeu</div>
@@ -199,7 +233,9 @@ export function CadenceSimulationDialog() {
                 <History className="h-4 w-4 text-muted-foreground" />
                 Logs de Auditoria (Sessão)
               </Label>
-              <Badge variant="outline" className="text-[10px]">{logs.length} eventos</Badge>
+              <Badge variant="outline" className="text-[10px]">
+                {logs.length} eventos
+              </Badge>
             </div>
             <ScrollArea className="h-[150px] w-full rounded-md border border-border/50 bg-muted/10 p-2">
               {logs.length === 0 ? (
@@ -208,8 +244,11 @@ export function CadenceSimulationDialog() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {logs.map((log) => (
-                    <div key={log.id} className="flex flex-col gap-2 p-3 rounded-lg bg-background/50 border border-border/30 text-[10px]">
+                  {logs.map(log => (
+                    <div
+                      key={log.id}
+                      className="flex flex-col gap-2 p-3 rounded-lg bg-background/50 border border-border/30 text-[10px]"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-1.5 font-medium">
@@ -217,20 +256,28 @@ export function CadenceSimulationDialog() {
                             <span>{log.event}</span>
                           </div>
                           <div className="text-muted-foreground">Lead: {log.lead}</div>
-                          <div className="text-primary/70 font-mono text-[9px]">{log.rule_details}</div>
+                          <div className="text-primary/70 font-mono text-[9px]">
+                            {log.rule_details}
+                          </div>
                         </div>
                         <div className="text-right space-y-0.5">
                           <div className="text-muted-foreground">{log.timestamp}</div>
                           <div className="text-primary font-bold">{log.result}</div>
                         </div>
                       </div>
-                      
+
                       {log.next_cadences && log.next_cadences.length > 0 && (
                         <div className="pt-2 border-t border-border/20">
-                          <div className="text-[9px] uppercase font-bold text-muted-foreground mb-1">Ações Planejadas / Próximas Cadências:</div>
+                          <div className="text-[9px] uppercase font-bold text-muted-foreground mb-1">
+                            Ações Planejadas / Próximas Cadências:
+                          </div>
                           <div className="flex flex-wrap gap-1">
                             {log.next_cadences.map((cadence, idx) => (
-                              <Badge key={idx} variant="secondary" className="bg-primary/5 text-primary text-[8px] h-4">
+                              <Badge
+                                key={idx}
+                                variant="secondary"
+                                className="bg-primary/5 text-primary text-[8px] h-4"
+                              >
                                 <GitBranch className="h-2 w-2 mr-1" />
                                 {cadence}
                               </Badge>
@@ -247,7 +294,9 @@ export function CadenceSimulationDialog() {
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setIsOpen(false)}>Fechar</Button>
+          <Button variant="ghost" onClick={() => setIsOpen(false)}>
+            Fechar
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

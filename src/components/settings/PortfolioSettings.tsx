@@ -1,12 +1,21 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Briefcase, Clock, RotateCcw, Users, Save, Loader2 } from "lucide-react";
-import { usePortfolioSettings, useUpdatePortfolioSetting, getSettingValue } from "@/hooks/usePortfolioSettings";
+import { useState, useEffect } from 'react';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Briefcase, Clock, RotateCcw, Users, Save, Loader2 } from 'lucide-react';
+import {
+  usePortfolioSettings,
+  useUpdatePortfolioSetting,
+  getSettingValue,
+} from '@/hooks/usePortfolioSettings';
 
 export function PortfolioSettings() {
   const { data: settings, isLoading } = usePortfolioSettings();
@@ -23,7 +32,9 @@ export function PortfolioSettings() {
       setInactivityDays(parseInt(getSettingValue(settings, 'inactivity_threshold_days')));
       setRotationStrategy(getSettingValue(settings, 'rotation_strategy'));
       setAutoReassign(getSettingValue(settings, 'auto_reassign_inactive') === 'true');
-      setMinDaysBeforeReassign(parseInt(getSettingValue(settings, 'min_days_before_reassign')));
+      setMinDaysBeforeReassign(
+        parseInt(getSettingValue(settings, 'min_days_before_reassign'))
+      );
     }
   }, [settings]);
 
@@ -32,22 +43,22 @@ export function PortfolioSettings() {
       updateSetting.mutateAsync({
         key: 'inactivity_threshold_days',
         value: inactivityDays.toString(),
-        description: 'Dias sem compra para cliente ser considerado inativo'
+        description: 'Dias sem compra para cliente ser considerado inativo',
       }),
       updateSetting.mutateAsync({
         key: 'rotation_strategy',
         value: rotationStrategy,
-        description: 'Estratégia de distribuição de leads'
+        description: 'Estratégia de distribuição de leads',
       }),
       updateSetting.mutateAsync({
         key: 'auto_reassign_inactive',
         value: autoReassign.toString(),
-        description: 'Reatribuir automaticamente clientes inativos'
+        description: 'Reatribuir automaticamente clientes inativos',
       }),
       updateSetting.mutateAsync({
         key: 'min_days_before_reassign',
         value: minDaysBeforeReassign.toString(),
-        description: 'Dias mínimos antes de permitir reatribuição'
+        description: 'Dias mínimos antes de permitir reatribuição',
       }),
     ]);
     setHasChanges(false);
@@ -72,7 +83,9 @@ export function PortfolioSettings() {
               <Briefcase className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">Portfolio Directives</h3>
+              <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">
+                Portfolio Directives
+              </h3>
               <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
                 Manage client inactivity and tactical redistribution
               </p>
@@ -80,7 +93,6 @@ export function PortfolioSettings() {
           </div>
         </div>
         <div className="p-6 space-y-8">
-
           {/* Inactivity Threshold */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -88,12 +100,16 @@ export function PortfolioSettings() {
               <Label className="text-base font-medium">Threshold de Inatividade</Label>
             </div>
             <p className="text-sm text-muted-foreground">
-              Clientes sem compras por mais de {inactivityDays} dias serão considerados inativos.
+              Clientes sem compras por mais de {inactivityDays} dias serão considerados
+              inativos.
             </p>
             <div className="space-y-2">
               <Slider
                 value={[inactivityDays]}
-                onValueChange={(v) => { setInactivityDays(v[0]); markChanged(); }}
+                onValueChange={v => {
+                  setInactivityDays(v[0]);
+                  markChanged();
+                }}
                 min={90}
                 max={365}
                 step={30}
@@ -116,9 +132,12 @@ export function PortfolioSettings() {
             <p className="text-sm text-muted-foreground">
               Como novos leads devem ser distribuídos entre os Closers.
             </p>
-            <Select 
-              value={rotationStrategy} 
-              onValueChange={(v) => { setRotationStrategy(v); markChanged(); }}
+            <Select
+              value={rotationStrategy}
+              onValueChange={v => {
+                setRotationStrategy(v);
+                markChanged();
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue />
@@ -160,14 +179,19 @@ export function PortfolioSettings() {
             </div>
             <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
               <div className="space-y-1">
-                <p className="text-sm font-medium">Reatribuir clientes inativos automaticamente</p>
+                <p className="text-sm font-medium">
+                  Reatribuir clientes inativos automaticamente
+                </p>
                 <p className="text-xs text-muted-foreground">
                   Clientes inativos serão redistribuídos conforme a estratégia de rotação
                 </p>
               </div>
               <Switch
                 checked={autoReassign}
-                onCheckedChange={(v) => { setAutoReassign(v); markChanged(); }}
+                onCheckedChange={v => {
+                  setAutoReassign(v);
+                  markChanged();
+                }}
               />
             </div>
 
@@ -176,7 +200,10 @@ export function PortfolioSettings() {
                 <Label className="text-sm">Dias mínimos antes de reatribuir</Label>
                 <Slider
                   value={[minDaysBeforeReassign]}
-                  onValueChange={(v) => { setMinDaysBeforeReassign(v[0]); markChanged(); }}
+                  onValueChange={v => {
+                    setMinDaysBeforeReassign(v[0]);
+                    markChanged();
+                  }}
                   min={7}
                   max={90}
                   step={7}
@@ -184,7 +211,9 @@ export function PortfolioSettings() {
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>7 dias</span>
-                  <span className="font-medium text-foreground">{minDaysBeforeReassign} dias</span>
+                  <span className="font-medium text-foreground">
+                    {minDaysBeforeReassign} dias
+                  </span>
                   <span>90 dias</span>
                 </div>
               </div>
@@ -208,7 +237,6 @@ export function PortfolioSettings() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

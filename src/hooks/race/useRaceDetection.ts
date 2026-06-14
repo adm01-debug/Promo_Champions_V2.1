@@ -1,6 +1,14 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { detectOvertakes, CHECKPOINTS, SECTOR_BOUNDARIES, getPositionOnTrack, isInDRSZone, makeCommentaryLine } from '@/components/race/raceTrackHelpers';
+import { useState, useRef, useEffect } from 'react';
+import {
+  detectOvertakes,
+  CHECKPOINTS,
+  SECTOR_BOUNDARIES,
+  getPositionOnTrack,
+  isInDRSZone,
+  makeCommentaryLine,
+} from '@/components/race/raceTrackHelpers';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { BroadcastEvent } from '@/hooks/race/useRaceDisplayEvents';
 
 interface UseRaceDetectionProps {
   sortedCars: RaceLeaderboardEntry[];
@@ -10,7 +18,7 @@ interface UseRaceDetectionProps {
   playLeaderTakeoverSound: () => void;
   pushCommentary: (text: string) => void;
   pushTickerEvent: (text: string, icon?: string) => void;
-  pushBroadcast: (evt: any) => void;
+  pushBroadcast: (evt: Omit<BroadcastEvent, 'id'>) => void;
 }
 
 export function useRaceDetection({
@@ -25,8 +33,12 @@ export function useRaceDetection({
 }: UseRaceDetectionProps) {
   const prevSnapshotRef = useRef<Array<{ id: string; progress: number }>>([]);
   const [flashingCars, setFlashingCars] = useState<Set<string>>(new Set());
-  const [dustBursts, setDustBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
-  const [sectorBadges, setSectorBadges] = useState<Array<{ id: string; name: string; x: number; y: number }>>([]);
+  const [dustBursts, setDustBursts] = useState<
+    Array<{ id: string; x: number; y: number }>
+  >([]);
+  const [sectorBadges, setSectorBadges] = useState<
+    Array<{ id: string; name: string; x: number; y: number }>
+  >([]);
   const prevLeaderIdRef = useRef<string | null>(null);
   const [overtakesTotal, setOvertakesTotal] = useState(0);
   const [yellowFlagUntil, setYellowFlagUntil] = useState<number>(0);
@@ -46,46 +58,52 @@ export function useRaceDetection({
   const lastLapCompletedRef = useRef<number>(0);
 
   useEffect(() => {
-    const curr = sortedCars.map((c) => ({ id: c.car_id, progress: Number(c.progress) }));
+    const curr = sortedCars.map(c => ({ id: c.car_id, progress: Number(c.progress) }));
     const prev = prevSnapshotRef.current;
-    
+
     if (prev.length > 0 && !reducedMotion) {
       const overtakes = detectOvertakes(prev, curr);
       if (overtakes.length > 0) {
-        setOvertakesTotal((n) => n + overtakes.length);
+        setOvertakesTotal(n => n + overtakes.length);
         setYellowFlagUntil(Date.now() + 3000);
-        
+
         const newFlash = new Set(flashingCars);
-        overtakes.forEach((o) => newFlash.add(o.overtaker));
+        overtakes.forEach(o => newFlash.add(o.overtaker));
         setFlashingCars(newFlash);
-        
+
         setTimeout(() => {
-          setFlashingCars((s) => {
+          setFlashingCars(s => {
             const next = new Set(s);
-            overtakes.forEach((o) => next.delete(o.overtaker));
+            overtakes.forEach(o => next.delete(o.overtaker));
             return next;
           });
         }, 700);
 
         const o = overtakes[0];
-        const attackerName = sortedCars.find((c) => c.car_id === o.overtaker)?.salesperson_name;
-        const defenderName = sortedCars.find((c) => c.car_id === o.overtaken)?.salesperson_name;
-        const inDRS = isInDRSZone(curr.find((x) => x.id === o.overtaker)?.progress ?? 0);
-        
-        pushCommentary(makeCommentaryLine({
-          type: inDRS ? 'drs' : 'overtake',
-          attacker: attackerName,
-          defender: defenderName,
-        }));
+        const attackerName = sortedCars.find(
+          c => c.car_id === o.overtaker
+        )?.salesperson_name;
+        const defenderName = sortedCars.find(
+          c => c.car_id === o.overtaken
+        )?.salesperson_name;
+        const inDRS = isInDRSZone(curr.find(x => x.id === o.overtaker)?.progress ?? 0);
+
+        pushCommentary(
+          makeCommentaryLine({
+            type: inDRS ? 'drs' : 'overtake',
+            attacker: attackerName,
+            defender: defenderName,
+          })
+        );
 
         if (attackerName && defenderName) {
           pushTickerEvent(
             `${attackerName.split(' ')[0]} ultrapassou ${defenderName.split(' ')[0]}`,
-            inDRS ? '⚡' : '🏁',
+            inDRS ? '⚡' : '🏁'
           );
         }
 
-        const overtakerNewRank = curr.findIndex((x) => x.id === o.overtaker);
+        const overtakerNewRank = curr.findIndex(x => x.id === o.overtaker);
         if (overtakerNewRank >= 0 && overtakerNewRank < 3 && !reducedMotion) {
           triggerShake();
           playOvertakeSound();
@@ -93,15 +111,17 @@ export function useRaceDetection({
             pushBroadcast({
               kind: 'overtake',
               title: `${attackerName.split(' ')[0]} ULTRAPASSOU ${defenderName.split(' ')[0]}`,
-              detail: inDRS ? `Zona DRS · P${overtakerNewRank + 1}` : `Manobra limpa · P${overtakerNewRank + 1}`,
+              detail: inDRS
+                ? `Zona DRS · P${overtakerNewRank + 1}`
+                : `Manobra limpa · P${overtakerNewRank + 1}`,
             });
           }
         }
       }
 
       const newDust: Array<{ id: string; x: number; y: number }> = [];
-      curr.forEach((c) => {
-        const p = prev.find((x) => x.id === c.id);
+      curr.forEach(c => {
+        const p = prev.find(x => x.id === c.id);
         if (!p) return;
         for (const cp of CHECKPOINTS) {
           if (p.progress < cp && c.progress >= cp) {
@@ -111,26 +131,30 @@ export function useRaceDetection({
         }
       });
       if (newDust.length > 0) {
-        setDustBursts((d) => [...d, ...newDust]);
+        setDustBursts(d => [...d, ...newDust]);
         setTimeout(() => {
-          setDustBursts((d) => d.filter((b) => !newDust.find((nb) => nb.id === b.id)));
+          setDustBursts(d => d.filter(b => !newDust.find(nb => nb.id === b.id)));
         }, 1200);
       }
 
       const leaderCurr = curr[0];
-      const leaderPrev = prev.find((x) => x.id === leaderCurr?.id);
+      const leaderPrev = prev.find(x => x.id === leaderCurr?.id);
       if (leaderCurr && leaderPrev) {
         SECTOR_BOUNDARIES.forEach((b, i) => {
           if (leaderPrev.progress < b && leaderCurr.progress >= b) {
             const pos = getPositionOnTrack(b, 0);
             const name = `S${i + 1}`;
             const badgeId = `${leaderCurr.id}-${name}-${Date.now()}`;
-            setSectorBadges((arr) => [...arr, { id: badgeId, name, x: pos.x, y: pos.y }]);
+            setSectorBadges(arr => [...arr, { id: badgeId, name, x: pos.x, y: pos.y }]);
             setTimeout(() => {
-              setSectorBadges((arr) => arr.filter((bd) => bd.id !== badgeId));
+              setSectorBadges(arr => arr.filter(bd => bd.id !== badgeId));
             }, 900);
-            const lname = sortedCars.find((c) => c.car_id === leaderCurr.id)?.salesperson_name;
-            pushCommentary(makeCommentaryLine({ type: 'sector', leader: lname, sector: name }));
+            const lname = sortedCars.find(
+              c => c.car_id === leaderCurr.id
+            )?.salesperson_name;
+            pushCommentary(
+              makeCommentaryLine({ type: 'sector', leader: lname, sector: name })
+            );
 
             const now = Date.now();
             const prevEnter = sectorEnterRef.current.get(i);
@@ -153,21 +177,32 @@ export function useRaceDetection({
             if (i === 2 && now - lastCinematicAtRef.current > 8000) {
               lastCinematicAtRef.current = now;
               setCinematicFocus(true);
-              if (cinematicTimerRef.current) window.clearTimeout(cinematicTimerRef.current);
-              cinematicTimerRef.current = window.setTimeout(() => setCinematicFocus(false), 1800);
+              if (cinematicTimerRef.current)
+                window.clearTimeout(cinematicTimerRef.current);
+              cinematicTimerRef.current = window.setTimeout(
+                () => setCinematicFocus(false),
+                1800
+              );
             }
           }
         });
 
-        if (leaderCurr.progress > 1 && Math.floor(leaderCurr.progress) > lastLapCompletedRef.current) {
+        if (
+          leaderCurr.progress > 1 &&
+          Math.floor(leaderCurr.progress) > lastLapCompletedRef.current
+        ) {
           lastLapCompletedRef.current = Math.floor(leaderCurr.progress);
-          setWaveTrigger((n) => n + 1);
+          setWaveTrigger(n => n + 1);
         }
       }
 
       const newLeaderId = leaderCurr?.id ?? null;
-      if (newLeaderId && prevLeaderIdRef.current && newLeaderId !== prevLeaderIdRef.current) {
-        const lname = sortedCars.find((c) => c.car_id === newLeaderId)?.salesperson_name;
+      if (
+        newLeaderId &&
+        prevLeaderIdRef.current &&
+        newLeaderId !== prevLeaderIdRef.current
+      ) {
+        const lname = sortedCars.find(c => c.car_id === newLeaderId)?.salesperson_name;
         pushCommentary(makeCommentaryLine({ type: 'leader', leader: lname }));
         if (lname) pushTickerEvent(`${lname.split(' ')[0]} assumiu P1`, '👑');
         playLeaderTakeoverSound();
@@ -182,7 +217,7 @@ export function useRaceDetection({
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
     prevSnapshotRef.current = curr;
-  }, [sortedCars.map((c) => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
+  }, [sortedCars.map(c => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
 
   return {
     flashingCars,

@@ -1,15 +1,37 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useProspectCadences } from "@/hooks/cadences/useCadenceQueries";
-import { Users, Flame, UserCheck, CalendarCheck, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useProspectCadences } from '@/hooks/cadences/useCadenceQueries';
+import { Users, Flame, UserCheck, CalendarCheck, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const STAGES = [
-  { id: "new", label: "Novo", icon: Users, color: "bg-blue-500", textColor: "text-blue-500" },
-  { id: "high_interest", label: "Interesse Alto", icon: Flame, color: "bg-orange-500", textColor: "text-orange-500" },
-  { id: "waiting_approval", label: "Aguardando Aprovação", icon: UserCheck, color: "bg-purple-500", textColor: "text-purple-500" },
-  { id: "scheduled", label: "Agendado", icon: CalendarCheck, color: "bg-green-500", textColor: "text-green-500" },
+  {
+    id: 'new',
+    label: 'Novo',
+    icon: Users,
+    color: 'bg-blue-500',
+    textColor: 'text-blue-500',
+  },
+  {
+    id: 'high_interest',
+    label: 'Interesse Alto',
+    icon: Flame,
+    color: 'bg-orange-500',
+    textColor: 'text-orange-500',
+  },
+  {
+    id: 'waiting_approval',
+    label: 'Aguardando Aprovação',
+    icon: UserCheck,
+    color: 'bg-purple-500',
+    textColor: 'text-purple-500',
+  },
+  {
+    id: 'scheduled',
+    label: 'Agendado',
+    icon: CalendarCheck,
+    color: 'bg-green-500',
+    textColor: 'text-green-500',
+  },
 ];
 
 export function CadenceFunnel() {
@@ -37,8 +59,11 @@ export function CadenceFunnel() {
             const percentage = total > 0 ? (count / total) * 100 : 0;
 
             return (
-              <div key={stage.id} className="flex-1 flex flex-col items-center group relative">
-                <motion.div 
+              <div
+                key={stage.id}
+                className="flex-1 flex flex-col items-center group relative"
+              >
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -52,9 +77,9 @@ export function CadenceFunnel() {
                       {stage.label}
                     </span>
                     <span className="text-2xl font-bold gradient-text">{count}</span>
-                    
+
                     <div className="w-full h-1 bg-muted/30 rounded-full mt-3 overflow-hidden">
-                      <motion.div 
+                      <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         className={`h-full ${stage.color}`}

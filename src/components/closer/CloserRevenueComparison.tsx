@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { WON_SALE_STATUSES } from '@/constants';
 import { Badge } from '@/components/ui/badge';
-import { Swords, TrendingUp, DollarSign, Zap } from 'lucide-react';
+import { Swords, DollarSign, Zap } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -12,8 +12,6 @@ import {
   startOfQuarter,
   endOfQuarter,
 } from 'date-fns';
-import { Skeleton } from '@/components/ui/skeleton';
-import { motion } from 'framer-motion';
 import {
   BarChart,
   Bar,
@@ -108,7 +106,11 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
   const { data: closers, isLoading } = useCloserRevenueComparison(period);
 
   const periodLabel =
-    period === 'week' ? 'ESTA SEMANA' : period === 'month' ? 'ESTE MÊS' : 'ESTE TRIMESTRE';
+    period === 'week'
+      ? 'ESTA SEMANA'
+      : period === 'month'
+        ? 'ESTE MÊS'
+        : 'ESTE TRIMESTRE';
 
   const formatCurrencyFull = (value: number | string) =>
     `R$ ${Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;

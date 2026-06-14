@@ -1,8 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
 
-export type ActionType = 'email' | 'call' | 'linkedin' | 'whatsapp' | 'meeting' | 'task' | 'other';
+export type ActionType =
+  | 'email'
+  | 'call'
+  | 'linkedin'
+  | 'whatsapp'
+  | 'meeting'
+  | 'task'
+  | 'other';
 export type CadenceStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 export type CadenceTaskStatus = 'pending' | 'completed' | 'skipped';
 
@@ -44,7 +51,7 @@ export interface ProspectCadence {
   updated_at: string;
   sale?: {
     client_name: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   client_name?: string;
 }
@@ -63,12 +70,12 @@ export interface CadenceTask {
 
 export function useCadences() {
   return useQuery({
-    queryKey: ["cadences"],
+    queryKey: ['cadences'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("cadences")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('cadences')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as Cadence[];
@@ -78,14 +85,14 @@ export function useCadences() {
 
 export function useCadenceSteps(cadenceId: string | undefined) {
   return useQuery({
-    queryKey: ["cadence-steps", cadenceId],
+    queryKey: ['cadence-steps', cadenceId],
     enabled: !!cadenceId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("cadence_steps")
-        .select("*")
-        .eq("cadence_id", cadenceId!)
-        .order("step_order", { ascending: true });
+        .from('cadence_steps')
+        .select('*')
+        .eq('cadence_id', cadenceId!)
+        .order('step_order', { ascending: true });
 
       if (error) throw error;
       return data as CadenceStep[];
@@ -95,18 +102,20 @@ export function useCadenceSteps(cadenceId: string | undefined) {
 
 export function useProspectCadences(saleId?: string) {
   return useQuery({
-    queryKey: ["prospect-cadences", saleId],
+    queryKey: ['prospect-cadences', saleId],
     queryFn: async () => {
       let query = supabase
-        .from("prospect_cadences")
-        .select(`
+        .from('prospect_cadences')
+        .select(
+          `
           *,
           sale:sales(client_name)
-        `)
-        .order("created_at", { ascending: false });
+        `
+        )
+        .order('created_at', { ascending: false });
 
       if (saleId) {
-        query = query.eq("sale_id", saleId);
+        query = query.eq('sale_id', saleId);
       }
 
       const { data, error } = await query;
@@ -118,33 +127,38 @@ export function useProspectCadences(saleId?: string) {
 
 export function useActiveCadencesBySaleIds(saleIds: string[]) {
   return useQuery({
-    queryKey: ["active-cadences-by-sales", saleIds],
+    queryKey: ['active-cadences-by-sales', saleIds],
     enabled: saleIds.length > 0,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("prospect_cadences")
-        .select(`
+        .from('prospect_cadences')
+        .select(
+          `
           sale_id,
           status,
           current_step,
           cadence:cadences(name)
-        `)
-        .in("sale_id", saleIds)
-        .in("status", ["active", "paused"]);
+        `
+        )
+        .in('sale_id', saleIds)
+        .in('status', ['active', 'paused']);
 
       if (error) throw error;
-      
-      const cadenceMap: Record<string, { cadenceName: string; currentStep: number; status: 'active' | 'paused' }> = {};
+
+      const cadenceMap: Record<
+        string,
+        { cadenceName: string; currentStep: number; status: 'active' | 'paused' }
+      > = {};
       data?.forEach(pc => {
         if (!pc.sale_id) return;
         const cadenceData = pc.cadence as { name: string } | null;
         cadenceMap[pc.sale_id] = {
-          cadenceName: cadenceData?.name || "Cadência",
+          cadenceName: cadenceData?.name || 'Cadência',
           currentStep: pc.current_step,
           status: pc.status as 'active' | 'paused',
         };
       });
-      
+
       return cadenceMap;
     },
   });
@@ -152,13 +166,12 @@ export function useActiveCadencesBySaleIds(saleIds: string[]) {
 
 export function useTodaysCadenceTasks() {
   return useQuery({
-    queryKey: ["todays-cadence-tasks"],
+    queryKey: ['todays-cadence-tasks'],
     queryFn: async () => {
-      const today = format(new Date(), "yyyy-MM-dd");
-      
       const { data, error } = await supabase
-        .from("cadence_tasks")
-        .select(`
+        .from('cadence_tasks')
+        .select(
+          `
           *,
           cadence_step:cadence_steps(*),
           prospect_cadence:prospect_cadences(
@@ -166,9 +179,10 @@ export function useTodaysCadenceTasks() {
             sale:sales(*),
             cadence:cadences(*)
           )
-        `)
-        .eq("status", "pending")
-        .order("priority", { ascending: false });
+        `
+        )
+        .eq('status', 'pending')
+        .order('priority', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -178,24 +192,25 @@ export function useTodaysCadenceTasks() {
 
 export function useCadenceStats() {
   return useQuery({
-    queryKey: ["cadence-stats"],
+    queryKey: ['cadence-stats'],
     queryFn: async () => {
-      const today = format(new Date(), "yyyy-MM-dd");
+      const today = format(new Date(), 'yyyy-MM-dd');
 
       const { count: prospectsInCadence } = await supabase
-        .from("prospect_cadences")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "active");
+        .from('prospect_cadences')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active');
 
       const { count: tasksCompletedToday } = await supabase
-        .from("cadence_tasks")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "completed")
-        .gte("completed_at", `${today}T00:00:00`)
-        .lte("completed_at", `${today}T23:59:59`);
+        .from('cadence_tasks')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'completed')
+        .gte('completed_at', `${today}T00:00:00`)
+        .lte('completed_at', `${today}T23:59:59`);
 
-      const { data: autoPaused } = await supabase
-        .rpc("get_auto_paused_count", { _days: 7 });
+      const { data: autoPaused } = await supabase.rpc('get_auto_paused_count', {
+        _days: 7,
+      });
 
       return {
         prospectsInCadence: prospectsInCadence || 0,
@@ -224,15 +239,15 @@ export interface FunnelRule {
 
 export function useFunnelRules(cadenceId?: string) {
   return useQuery({
-    queryKey: ["funnel-rules", cadenceId],
+    queryKey: ['funnel-rules', cadenceId],
     queryFn: async () => {
       let query = supabase
-        .from("cadence_funnel_rules")
-        .select("*")
-        .order("created_at", { ascending: true });
+        .from('cadence_funnel_rules')
+        .select('*')
+        .order('created_at', { ascending: true });
 
       if (cadenceId) {
-        query = query.eq("cadence_id", cadenceId);
+        query = query.eq('cadence_id', cadenceId);
       }
 
       const { data, error } = await query;

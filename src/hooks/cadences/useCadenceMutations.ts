@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { ActionType } from "@/hooks/cadences/useCadenceQueries";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { ActionType } from '@/hooks/cadences/useCadenceQueries';
+import type { Json } from '@/integrations/supabase/types';
 
 export function useCreateCadence() {
   const queryClient = useQueryClient();
@@ -9,7 +10,7 @@ export function useCreateCadence() {
   return useMutation({
     mutationFn: async (input: { name: string; description?: string }) => {
       const { data, error } = await supabase
-        .from("cadences")
+        .from('cadences')
         .insert(input)
         .select()
         .single();
@@ -18,11 +19,11 @@ export function useCreateCadence() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cadences"] });
-      toast.success("Cadência criada com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['cadences'] });
+      toast.success('Cadência criada com sucesso!');
     },
-    onError: (error) => {
-      toast.error("Erro ao criar cadência");
+    onError: error => {
+      toast.error('Erro ao criar cadência');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -34,12 +35,17 @@ export function useUpdateCadence() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: { id: string; name?: string; description?: string; is_active?: boolean }) => {
+    mutationFn: async (input: {
+      id: string;
+      name?: string;
+      description?: string;
+      is_active?: boolean;
+    }) => {
       const { id, ...updates } = input;
       const { data, error } = await supabase
-        .from("cadences")
+        .from('cadences')
         .update(updates)
-        .eq("id", id)
+        .eq('id', id)
         .select()
         .single();
 
@@ -47,11 +53,11 @@ export function useUpdateCadence() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cadences"] });
-      toast.success("Cadência atualizada!");
+      queryClient.invalidateQueries({ queryKey: ['cadences'] });
+      toast.success('Cadência atualizada!');
     },
-    onError: (error) => {
-      toast.error("Erro ao atualizar cadência");
+    onError: error => {
+      toast.error('Erro ao atualizar cadência');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -64,19 +70,16 @@ export function useDeleteCadence() {
 
   return useMutation({
     mutationFn: async (cadenceId: string) => {
-      const { error } = await supabase
-        .from("cadences")
-        .delete()
-        .eq("id", cadenceId);
+      const { error } = await supabase.from('cadences').delete().eq('id', cadenceId);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cadences"] });
-      toast.success("Cadência excluída!");
+      queryClient.invalidateQueries({ queryKey: ['cadences'] });
+      toast.success('Cadência excluída!');
     },
-    onError: (error) => {
-      toast.error("Erro ao excluir cadência");
+    onError: error => {
+      toast.error('Erro ao excluir cadência');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -98,10 +101,10 @@ export function useCreateCadenceStep() {
       step_order: number;
       needs_approval?: boolean;
       task_type?: 'manual' | 'automatic';
-      singu_variables?: any;
+      singu_variables?: Json;
     }) => {
       const { data, error } = await supabase
-        .from("cadence_steps")
+        .from('cadence_steps')
         .insert(input)
         .select()
         .single();
@@ -110,11 +113,13 @@ export function useCreateCadenceStep() {
       return data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["cadence-steps", variables.cadence_id] });
-      toast.success("Etapa adicionada!");
+      queryClient.invalidateQueries({
+        queryKey: ['cadence-steps', variables.cadence_id],
+      });
+      toast.success('Etapa adicionada!');
     },
-    onError: (error) => {
-      toast.error("Erro ao adicionar etapa");
+    onError: error => {
+      toast.error('Erro ao adicionar etapa');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -137,13 +142,13 @@ export function useUpdateCadenceStep() {
       step_order?: number;
       needs_approval?: boolean;
       task_type?: 'manual' | 'automatic';
-      singu_variables?: any;
+      singu_variables?: Json;
     }) => {
       const { id, cadence_id: _cadence_id, ...updates } = input;
       const { data, error } = await supabase
-        .from("cadence_steps")
+        .from('cadence_steps')
         .update(updates)
-        .eq("id", id)
+        .eq('id', id)
         .select()
         .single();
 
@@ -151,11 +156,13 @@ export function useUpdateCadenceStep() {
       return data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["cadence-steps", variables.cadence_id] });
-      toast.success("Etapa atualizada!");
+      queryClient.invalidateQueries({
+        queryKey: ['cadence-steps', variables.cadence_id],
+      });
+      toast.success('Etapa atualizada!');
     },
-    onError: (error) => {
-      toast.error("Erro ao atualizar etapa");
+    onError: error => {
+      toast.error('Erro ao atualizar etapa');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -168,20 +175,17 @@ export function useDeleteCadenceStep() {
 
   return useMutation({
     mutationFn: async ({ stepId, cadenceId }: { stepId: string; cadenceId: string }) => {
-      const { error } = await supabase
-        .from("cadence_steps")
-        .delete()
-        .eq("id", stepId);
+      const { error } = await supabase.from('cadence_steps').delete().eq('id', stepId);
 
       if (error) throw error;
       return cadenceId;
     },
-    onSuccess: (cadenceId) => {
-      queryClient.invalidateQueries({ queryKey: ["cadence-steps", cadenceId] });
-      toast.success("Etapa removida!");
+    onSuccess: cadenceId => {
+      queryClient.invalidateQueries({ queryKey: ['cadence-steps', cadenceId] });
+      toast.success('Etapa removida!');
     },
-    onError: (error) => {
-      toast.error("Erro ao remover etapa");
+    onError: error => {
+      toast.error('Erro ao remover etapa');
       if (import.meta.env.DEV) {
         console.error(error);
       }

@@ -1,22 +1,33 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Sparkles, Zap, Star } from "lucide-react";
-import { useCreateSale } from "@/hooks/sales/useSalesData";
-import { useSalespeople } from "@/hooks/sales/useSalespeople";
-import { useProducts } from "@/hooks/useProducts";
-import { useClients } from "@/hooks/crm/useClients";
-import { useProductRecommendations } from "@/hooks/useProductRecommendations";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Badge } from "@/components/ui/badge";
-import { motion, AnimatePresence } from "framer-motion";
-import { useFormGuard } from "@/hooks/useFormGuard";
-import { toast } from "sonner";
-import { useCelebration } from "@/hooks/useCelebration";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Plus, Sparkles, Zap } from 'lucide-react';
+import { useCreateSale } from '@/hooks/sales/useSalesData';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { useProducts } from '@/hooks/useProducts';
+import { useClients } from '@/hooks/crm/useClients';
+import { useProductRecommendations } from '@/hooks/useProductRecommendations';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useFormGuard } from '@/hooks/useFormGuard';
+import { useCelebration } from '@/hooks/useCelebration';
 import {
   Form,
   FormControl,
@@ -24,21 +35,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const saleSchema = z.object({
   client_id: z.string().optional(),
-  client_name: z.string().trim().min(1, "Nome do cliente é obrigatório"),
+  client_name: z.string().trim().min(1, 'Nome do cliente é obrigatório'),
   product_id: z.string().optional(),
-  product_name: z.string().trim().min(1, "Produto é obrigatório"),
-  amount: z.string().min(1, "Valor é obrigatório").refine((val) => {
-    const num = parseFloat(val);
-    return !isNaN(num) && num > 0;
-  }, "Valor deve ser maior que zero"),
+  product_name: z.string().trim().min(1, 'Produto é obrigatório'),
+  amount: z
+    .string()
+    .min(1, 'Valor é obrigatório')
+    .refine(val => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num > 0;
+    }, 'Valor deve ser maior que zero'),
   sdr_id: z.string().optional(),
   closer_id: z.string().optional(),
   is_first_sale: z.boolean().default(true),
-  source: z.string().default("other"),
+  source: z.string().default('other'),
 });
 
 type SaleFormData = z.infer<typeof saleSchema>;
@@ -54,25 +68,29 @@ export const CreateSaleDialog = () => {
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
     defaultValues: {
-      client_id: "",
-      client_name: "",
-      product_id: "",
-      product_name: "",
-      amount: "",
-      sdr_id: "",
-      closer_id: "",
+      client_id: '',
+      client_name: '',
+      product_id: '',
+      product_name: '',
+      amount: '',
+      sdr_id: '',
+      closer_id: '',
       is_first_sale: true,
-      source: "other",
+      source: 'other',
     },
   });
 
   const { isDirty } = form.formState;
-  
-  // Guard against navigation while form is dirty AND dialog is open
-  useFormGuard(isDirty && open, "Você tem dados de venda preenchidos. Deseja realmente sair sem salvar?");
 
-  const selectedProductId = form.watch("product_id");
-  const { data: recommendations, isLoading: loadingRecs } = useProductRecommendations(selectedProductId);
+  // Guard against navigation while form is dirty AND dialog is open
+  useFormGuard(
+    isDirty && open,
+    'Você tem dados de venda preenchidos. Deseja realmente sair sem salvar?'
+  );
+
+  const selectedProductId = form.watch('product_id');
+  const { data: recommendations, isLoading: loadingRecs } =
+    useProductRecommendations(selectedProductId);
 
   const onSubmit = (data: SaleFormData) => {
     createSale.mutate(
@@ -86,8 +104,9 @@ export const CreateSaleDialog = () => {
         closer_id: data.closer_id || undefined,
         is_first_sale: data.is_first_sale,
         source: data.source,
-        status: "pending",
-        sku: products?.find(p => p.id === data.product_id || p.name === data.product_name)?.sku
+        status: 'pending',
+        sku: products?.find(p => p.id === data.product_id || p.name === data.product_name)
+          ?.sku,
       },
       {
         onSuccess: () => {
@@ -102,28 +121,30 @@ export const CreateSaleDialog = () => {
   };
 
   const handleProductSelect = (productId: string) => {
-    form.setValue("product_id", productId);
-    const product = products?.find((p) => p.id === productId);
+    form.setValue('product_id', productId);
+    const product = products?.find(p => p.id === productId);
     if (product) {
-      form.setValue("product_name", product.name);
-      form.setValue("amount", product.price.toString());
+      form.setValue('product_name', product.name);
+      form.setValue('amount', product.price.toString());
     }
   };
 
   const handleClientSelect = (clientId: string) => {
-    form.setValue("client_id", clientId);
-    const client = clients?.find((c) => c.id === clientId);
+    form.setValue('client_id', clientId);
+    const client = clients?.find(c => c.id === clientId);
     if (client) {
-      form.setValue("client_name", client.name);
+      form.setValue('client_name', client.name);
     }
   };
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen && isDirty) {
-      const confirmClose = window.confirm("Existem alterações não salvas. Deseja realmente fechar?");
+      const confirmClose = window.confirm(
+        'Existem alterações não salvas. Deseja realmente fechar?'
+      );
       if (!confirmClose) return;
     }
-    
+
     setOpen(isOpen);
     if (!isOpen) {
       form.reset();
@@ -141,7 +162,9 @@ export const CreateSaleDialog = () => {
       <DialogContent className="glass border-border/50 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="gradient-text">Nova Venda</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">Registre uma nova transação comercial no ecossistema.</DialogDescription>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Registre uma nova transação comercial no ecossistema.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -158,9 +181,9 @@ export const CreateSaleDialog = () => {
                           <SelectValue placeholder="Selecione um cliente" />
                         </SelectTrigger>
                         <SelectContent>
-                          {clients.map((client) => (
+                          {clients.map(client => (
                             <SelectItem key={client.id} value={client.id}>
-                              {client.name} {client.company ? `(${client.company})` : ""}
+                              {client.name} {client.company ? `(${client.company})` : ''}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -169,7 +192,7 @@ export const CreateSaleDialog = () => {
                       <Input
                         placeholder="Nome do cliente"
                         className="bg-muted/50 border-border/50"
-                        onChange={(e) => form.setValue("client_name", e.target.value)}
+                        onChange={e => form.setValue('client_name', e.target.value)}
                       />
                     )}
                   </FormControl>
@@ -190,9 +213,9 @@ export const CreateSaleDialog = () => {
                           <SelectValue placeholder="Selecione um produto" />
                         </SelectTrigger>
                         <SelectContent>
-                          {products.map((product) => (
+                          {products.map(product => (
                             <SelectItem key={product.id} value={product.id}>
-                              {product.name} - R$ {product.price.toLocaleString("pt-BR")}
+                              {product.name} - R$ {product.price.toLocaleString('pt-BR')}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -214,16 +237,18 @@ export const CreateSaleDialog = () => {
               {recommendations && recommendations.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
+                  animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2 overflow-hidden"
                 >
                   <div className="flex items-center gap-2 px-1">
                     <Sparkles className="h-3 w-3 text-primary animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">Sugestões de Mix (Upsell)</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/80">
+                      Sugestões de Mix (Upsell)
+                    </span>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
-                    {recommendations.map((rec) => (
+                    {recommendations.map(rec => (
                       <button
                         key={rec.id}
                         type="button"
@@ -235,12 +260,18 @@ export const CreateSaleDialog = () => {
                             <Zap className="h-3.5 w-3.5 text-primary" />
                           </div>
                           <div>
-                            <p className="text-xs font-bold leading-none mb-1">{rec.name}</p>
-                            <p className="text-[10px] text-muted-foreground">Confiança: {Math.round(rec.confidence * 100)}%</p>
+                            <p className="text-xs font-bold leading-none mb-1">
+                              {rec.name}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              Confiança: {Math.round(rec.confidence * 100)}%
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs font-black text-primary">R$ {rec.price.toLocaleString("pt-BR")}</p>
+                          <p className="text-xs font-black text-primary">
+                            R$ {rec.price.toLocaleString('pt-BR')}
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -282,11 +313,13 @@ export const CreateSaleDialog = () => {
                           <SelectValue placeholder="Selecione o SDR" />
                         </SelectTrigger>
                         <SelectContent>
-                          {salespeople?.filter(sp => sp.role === 'sdr' || sp.role === 'hybrid').map((sp) => (
-                            <SelectItem key={sp.id} value={sp.id}>
-                              {sp.name}
-                            </SelectItem>
-                          ))}
+                          {salespeople
+                            ?.filter(sp => sp.role === 'sdr' || sp.role === 'hybrid')
+                            .map(sp => (
+                              <SelectItem key={sp.id} value={sp.id}>
+                                {sp.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -306,11 +339,13 @@ export const CreateSaleDialog = () => {
                           <SelectValue placeholder="Selecione o Closer" />
                         </SelectTrigger>
                         <SelectContent>
-                          {salespeople?.filter(sp => sp.role === 'closer' || sp.role === 'hybrid').map((sp) => (
-                            <SelectItem key={sp.id} value={sp.id}>
-                              {sp.name}
-                            </SelectItem>
-                          ))}
+                          {salespeople
+                            ?.filter(sp => sp.role === 'closer' || sp.role === 'hybrid')
+                            .map(sp => (
+                              <SelectItem key={sp.id} value={sp.id}>
+                                {sp.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -319,7 +354,7 @@ export const CreateSaleDialog = () => {
                 )}
               />
             </div>
-            
+
             <FormField
               control={form.control}
               name="is_first_sale"
@@ -366,11 +401,19 @@ export const CreateSaleDialog = () => {
               )}
             />
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="gradient-primary" disabled={createSale.isPending}>
-                {createSale.isPending ? "Criando..." : "Criar Venda"}
+              <Button
+                type="submit"
+                className="gradient-primary"
+                disabled={createSale.isPending}
+              >
+                {createSale.isPending ? 'Criando...' : 'Criar Venda'}
               </Button>
             </div>
           </form>

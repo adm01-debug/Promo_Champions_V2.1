@@ -1,41 +1,40 @@
-import { motion } from "framer-motion";
-import { Check, Moon, Sun, Monitor, Sparkles, Languages } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { useCustomTheme, AccentColor, ThemeMode } from "@/hooks/useCustomTheme";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import { Check, Moon, Sun, Monitor, Sparkles, Languages } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { useCustomTheme, AccentColor, ThemeMode } from '@/hooks/useCustomTheme';
+import { cn } from '@/lib/utils';
 
 const ACCENT_COLOR_LABELS: Record<AccentColor, string> = {
-  purple: "Roxo",
-  blue: "Azul",
-  green: "Verde",
-  orange: "Laranja",
-  pink: "Rosa",
-  cyan: "Ciano",
-  amber: "Âmbar",
-  rose: "Rosé",
+  purple: 'Roxo',
+  blue: 'Azul',
+  green: 'Verde',
+  orange: 'Laranja',
+  pink: 'Rosa',
+  cyan: 'Ciano',
+  amber: 'Âmbar',
+  rose: 'Rosé',
 };
 
 const ACCENT_COLOR_CLASSES: Record<AccentColor, string> = {
-  purple: "bg-purple-500",
-  blue: "bg-blue-500",
-  green: "bg-green-500",
-  orange: "bg-orange-500",
-  pink: "bg-pink-500",
-  cyan: "bg-cyan-500",
-  amber: "bg-amber-500",
-  rose: "bg-rose-500",
+  purple: 'bg-purple-500',
+  blue: 'bg-blue-500',
+  green: 'bg-green-500',
+  orange: 'bg-orange-500',
+  pink: 'bg-pink-500',
+  cyan: 'bg-cyan-500',
+  amber: 'bg-amber-500',
+  rose: 'bg-rose-500',
 };
 
 const MODE_OPTIONS: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
-  { value: "light", label: "Claro", icon: <Sun className="h-4 w-4" /> },
-  { value: "dark", label: "Escuro", icon: <Moon className="h-4 w-4" /> },
-  { value: "system", label: "Sistema", icon: <Monitor className="h-4 w-4" /> },
+  { value: 'light', label: 'Claro', icon: <Sun className="h-4 w-4" /> },
+  { value: 'dark', label: 'Escuro', icon: <Moon className="h-4 w-4" /> },
+  { value: 'system', label: 'Sistema', icon: <Monitor className="h-4 w-4" /> },
 ];
 
-import { useI18n } from "@/contexts/I18nContext";
+import { useI18n } from '@/contexts/I18nContext';
 
 export function ThemeCustomizer() {
   const { locale, setLocale } = useI18n();
@@ -61,15 +60,14 @@ export function ThemeCustomizer() {
         </p>
       </div>
       <div className="p-6 space-y-6">
-
         {/* Theme Mode */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Modo do Tema</Label>
           <div className="flex gap-2">
-            {MODE_OPTIONS.map((option) => (
+            {MODE_OPTIONS.map(option => (
               <Button
                 key={option.value}
-                variant={config.mode === option.value ? "default" : "outline"}
+                variant={config.mode === option.value ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setMode(option.value)}
                 className="flex-1 gap-2"
@@ -85,16 +83,17 @@ export function ThemeCustomizer() {
         <div className="space-y-3">
           <Label className="text-sm font-medium">Cor de Destaque</Label>
           <div className="grid grid-cols-4 gap-3">
-            {accentColors.map((color) => (
+            {accentColors.map(color => (
               <motion.button
                 key={color}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setAccentColor(color)}
                 className={cn(
-                  "relative h-12 rounded-lg transition-all",
+                  'relative h-12 rounded-lg transition-all',
                   ACCENT_COLOR_CLASSES[color],
-                  config.accentColor === color && "ring-2 ring-offset-2 ring-offset-background ring-foreground"
+                  config.accentColor === color &&
+                    'ring-2 ring-offset-2 ring-offset-background ring-foreground'
                 )}
                 title={ACCENT_COLOR_LABELS[color]}
               >
@@ -118,7 +117,7 @@ export function ThemeCustomizer() {
         {/* Accessibility Options */}
         <div className="space-y-4 pt-4 border-t border-border">
           <Label className="text-sm font-medium">Acessibilidade</Label>
-          
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="reduced-motion" className="text-sm">
@@ -159,25 +158,25 @@ export function ThemeCustomizer() {
           </Label>
           <div className="flex gap-2">
             <Button
-              variant={locale === "pt-BR" ? "default" : "outline"}
+              variant={locale === 'pt-BR' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setLocale("pt-BR")}
+              onClick={() => setLocale('pt-BR')}
               className="flex-1"
             >
               Português
             </Button>
             <Button
-              variant={locale === "en" ? "default" : "outline"}
+              variant={locale === 'en' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setLocale("en")}
+              onClick={() => setLocale('en')}
               className="flex-1"
             >
               English
             </Button>
             <Button
-              variant={locale === "es" ? "default" : "outline"}
+              variant={locale === 'es' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setLocale("es")}
+              onClick={() => setLocale('es')}
               className="flex-1"
             >
               Español
@@ -198,6 +197,5 @@ export function ThemeCustomizer() {
         </div>
       </div>
     </div>
-
   );
 }

@@ -1,27 +1,34 @@
-import { FC, useMemo } from "react";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Filter, Zap } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { FC } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Filter, Zap } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from 'recharts';
+import { motion } from 'framer-motion';
 
-const STAGE_ORDER = ["pending", "qualified", "proposal", "negotiation", "completed"];
+const STAGE_ORDER = ['pending', 'qualified', 'proposal', 'negotiation', 'completed'];
 const STAGE_LABELS: Record<string, string> = {
-  pending: "Leads",
-  qualified: "Verified",
-  proposal: "Proposal",
-  negotiation: "Sync",
-  completed: "Locked",
+  pending: 'Leads',
+  qualified: 'Verified',
+  proposal: 'Proposal',
+  negotiation: 'Sync',
+  completed: 'Locked',
 };
 const STAGE_COLORS = [
-  "rgba(14, 165, 233, 0.4)",
-  "rgba(14, 165, 233, 0.55)",
-  "rgba(14, 165, 233, 0.7)",
-  "rgba(14, 165, 233, 0.85)",
-  "rgba(34, 197, 94, 0.8)",
+  'rgba(14, 165, 233, 0.4)',
+  'rgba(14, 165, 233, 0.55)',
+  'rgba(14, 165, 233, 0.7)',
+  'rgba(14, 165, 233, 0.85)',
+  'rgba(34, 197, 94, 0.8)',
 ];
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -32,8 +39,9 @@ const CustomTooltip = ({ active, payload }: any) => {
           {payload[0].payload.stage}
         </p>
         <div className="flex items-center gap-2">
-           <p className="text-lg font-mono font-black text-foreground tabular-nums">
-            {payload[0].value} <span className="text-[10px] text-muted-foreground uppercase">Units</span>
+          <p className="text-lg font-mono font-black text-foreground tabular-nums">
+            {payload[0].value}{' '}
+            <span className="text-[10px] text-muted-foreground uppercase">Units</span>
           </p>
         </div>
       </div>
@@ -44,16 +52,14 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const FunnelChart: FC = React.memo(() => {
   const { data, isLoading } = useQuery({
-    queryKey: ["funnel-chart-real"],
+    queryKey: ['funnel-chart-real'],
     queryFn: async () => {
-      const { data: sales, error } = await supabase
-        .from("sales")
-        .select("status");
+      const { data: sales, error } = await supabase.from('sales').select('status');
       if (error) throw error;
 
       const counts: Record<string, number> = {};
       (sales || []).forEach(s => {
-        const status = s.status || "pending";
+        const status = s.status || 'pending';
         counts[status] = (counts[status] || 0) + 1;
       });
 
@@ -70,10 +76,12 @@ export const FunnelChart: FC = React.memo(() => {
     return (
       <Card className="h-full bg-black/40 border-white/5 backdrop-blur-md">
         <div className="p-6 h-[300px] flex items-center justify-center">
-           <div className="flex flex-col items-center gap-3">
-              <Zap className="h-8 w-8 text-primary/40 animate-pulse" />
-              <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-primary/40 animate-pulse">Mapping Funnel Layers</span>
-           </div>
+          <div className="flex flex-col items-center gap-3">
+            <Zap className="h-8 w-8 text-primary/40 animate-pulse" />
+            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-primary/40 animate-pulse">
+              Mapping Funnel Layers
+            </span>
+          </div>
         </div>
       </Card>
     );
@@ -99,17 +107,26 @@ export const FunnelChart: FC = React.memo(() => {
         {data && data.some(d => d.value > 0) ? (
           <div className="space-y-6">
             <div className="relative">
-               {/* Vertical decorative stream */}
+              {/* Vertical decorative stream */}
               <div className="absolute left-[79px] top-0 bottom-0 w-[1px] bg-white/5" />
-              
+
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={data} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 0 }}>
+                <BarChart
+                  data={data}
+                  layout="vertical"
+                  margin={{ top: 0, right: 30, bottom: 0, left: 0 }}
+                >
                   <XAxis type="number" hide />
                   <YAxis
                     type="category"
                     dataKey="stage"
                     width={80}
-                    tick={{ fontSize: 9, fill: "rgba(255,255,255,0.4)", fontWeight: "bold", fontFamily: "var(--font-mono)" }}
+                    tick={{
+                      fontSize: 9,
+                      fill: 'rgba(255,255,255,0.4)',
+                      fontWeight: 'bold',
+                      fontFamily: 'var(--font-mono)',
+                    }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -119,27 +136,40 @@ export const FunnelChart: FC = React.memo(() => {
                   />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={18}>
                     {data.map((entry, i) => (
-                      <Cell 
-                        key={i} 
-                        fill={entry.color} 
+                      <Cell
+                        key={i}
+                        fill={entry.color}
                         className="transition-all duration-300"
-                        style={{ filter: `drop-shadow(0 0 10px ${entry.color.replace('0.4', '0.2')})` }}
+                        style={{
+                          filter: `drop-shadow(0 0 10px ${entry.color.replace('0.4', '0.2')})`,
+                        }}
                       />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            
+
             {/* Macro Conversion stats */}
             <div className="grid grid-cols-4 gap-2 bg-black/40 p-2 rounded-xl border border-white/5">
               {data.slice(0, -1).map((stage, i) => {
                 const next = data[i + 1];
-                const convRate = stage.value > 0 ? Math.round((next.value / stage.value) * 100) : 0;
+                const convRate =
+                  stage.value > 0 ? Math.round((next.value / stage.value) * 100) : 0;
                 return (
-                  <div key={i} className="flex flex-col items-center justify-center p-1.5 border-r border-white/5 last:border-r-0">
-                    <span className="text-[10px] font-mono font-black text-primary" style={{ textShadow: '0 0 8px rgba(14,165,233,0.3)' }}>{convRate}%</span>
-                    <span className="text-[7px] font-mono uppercase tracking-tighter text-muted-foreground/60">Stage {i+1}</span>
+                  <div
+                    key={i}
+                    className="flex flex-col items-center justify-center p-1.5 border-r border-white/5 last:border-r-0"
+                  >
+                    <span
+                      className="text-[10px] font-mono font-black text-primary"
+                      style={{ textShadow: '0 0 8px rgba(14,165,233,0.3)' }}
+                    >
+                      {convRate}%
+                    </span>
+                    <span className="text-[7px] font-mono uppercase tracking-tighter text-muted-foreground/60">
+                      Stage {i + 1}
+                    </span>
                   </div>
                 );
               })}
@@ -148,13 +178,15 @@ export const FunnelChart: FC = React.memo(() => {
         ) : (
           <div className="flex flex-col items-center justify-center py-16 opacity-30">
             <Filter className="h-8 w-8 text-muted-foreground animate-pulse mb-3" />
-            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-center">Spectral frequency: Empty Vortex</p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-center">
+              Spectral frequency: Empty Vortex
+            </p>
           </div>
         )}
       </CardContent>
 
       {/* Decorative vertical scanline */}
-      <motion.div 
+      <motion.div
         className="absolute top-0 left-0 w-[1px] h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 3, repeat: Infinity }}
@@ -163,4 +195,4 @@ export const FunnelChart: FC = React.memo(() => {
   );
 });
 
-FunnelChart.displayName = "FunnelChart";
+FunnelChart.displayName = 'FunnelChart';

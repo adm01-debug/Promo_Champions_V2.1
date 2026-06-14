@@ -1,70 +1,83 @@
-import { Helmet } from "react-helmet-async";
-import { motion, AnimatePresence } from "framer-motion";
-import { Send, Download, LayoutDashboard, Settings2, ShieldCheck, Clock } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
-import { useQuoteCadences } from "@/hooks/cadences/useQuoteCadences";
-import { QuoteCadenceMetrics } from "@/components/cadences/quote/QuoteCadenceMetrics";
-import { QuoteCadenceConversionChart } from "@/components/cadences/quote/QuoteCadenceConversionChart";
-import { QuoteCadenceCard } from "@/components/cadences/quote/QuoteCadenceCard";
-import { QuoteCadenceComparison } from "@/components/cadences/quote/QuoteCadenceComparison";
-import { QuoteCadenceBulkBar } from "@/components/cadences/quote/QuoteCadenceBulkBar";
-import { SkeletonShimmer } from "@/components/ui/skeleton-shimmer";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useCallback, useMemo, useState } from "react";
-import { QuoteCadenceDetailDrawer } from "@/components/cadences/quote/QuoteCadenceDetailDrawer";
-import { QuoteCadenceEmptyState } from "@/components/cadences/quote/QuoteCadenceEmptyState";
-import type { QuoteCadenceRow } from "@/hooks/cadences/useQuoteCadences";
-import { QuoteCadenceFilters, emptyQuoteCadenceFilters, type QuoteCadenceFilterValues } from "@/components/cadences/quote/QuoteCadenceFilters";
-import { differenceInCalendarDays, isToday } from "date-fns";
-import { useQuoteCadenceRealtime } from "@/hooks/cadences/useQuoteCadenceRealtime";
-import { exportToCSV } from "@/lib/csvExporter";
-import { quoteCadencesToCsvRows } from "@/lib/quoteCadenceExport";
-import { useQuoteCadenceShortcuts } from "@/hooks/cadences/useQuoteCadenceShortcuts";
-import { CadenceTemplateManager } from "@/components/sales/cadence/CadenceTemplateManager";
-import { ContactFrequencyRules } from "@/components/sales/cadence/ContactFrequencyRules";
-import { ApprovalQueue } from "@/components/sales/cadence/ApprovalQueue";
-import { CadenceOutcomeConfig } from "@/components/sales/cadence/CadenceOutcomeConfig";
-import { CadenceAlertConfig } from "@/components/sales/cadence/CadenceAlertConfig";
-import { CadenceSimulationDialog } from "@/components/sales/cadence/CadenceSimulationDialog";
+import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Download, LayoutDashboard, Settings2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuoteCadences } from '@/hooks/cadences/useQuoteCadences';
+import { QuoteCadenceMetrics } from '@/components/cadences/quote/QuoteCadenceMetrics';
+import { QuoteCadenceConversionChart } from '@/components/cadences/quote/QuoteCadenceConversionChart';
+import { QuoteCadenceCard } from '@/components/cadences/quote/QuoteCadenceCard';
+import { QuoteCadenceComparison } from '@/components/cadences/quote/QuoteCadenceComparison';
+import { QuoteCadenceBulkBar } from '@/components/cadences/quote/QuoteCadenceBulkBar';
+import { SkeletonShimmer } from '@/components/ui/skeleton-shimmer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useCallback, useMemo, useState } from 'react';
+import { QuoteCadenceDetailDrawer } from '@/components/cadences/quote/QuoteCadenceDetailDrawer';
+import { QuoteCadenceEmptyState } from '@/components/cadences/quote/QuoteCadenceEmptyState';
+import type { QuoteCadenceRow } from '@/hooks/cadences/useQuoteCadences';
+import {
+  QuoteCadenceFilters,
+  emptyQuoteCadenceFilters,
+  type QuoteCadenceFilterValues,
+} from '@/components/cadences/quote/QuoteCadenceFilters';
+import { differenceInCalendarDays, isToday } from 'date-fns';
+import { useQuoteCadenceRealtime } from '@/hooks/cadences/useQuoteCadenceRealtime';
+import { exportToCSV } from '@/lib/csvExporter';
+import { quoteCadencesToCsvRows } from '@/lib/quoteCadenceExport';
+import { useQuoteCadenceShortcuts } from '@/hooks/cadences/useQuoteCadenceShortcuts';
+import { CadenceTemplateManager } from '@/components/sales/cadence/CadenceTemplateManager';
+import { ContactFrequencyRules } from '@/components/sales/cadence/ContactFrequencyRules';
+import { ApprovalQueue } from '@/components/sales/cadence/ApprovalQueue';
+import { CadenceOutcomeConfig } from '@/components/sales/cadence/CadenceOutcomeConfig';
+import { CadenceAlertConfig } from '@/components/sales/cadence/CadenceAlertConfig';
+import { CadenceSimulationDialog } from '@/components/sales/cadence/CadenceSimulationDialog';
 
-type Filter = "all" | "active" | "paused" | "completed";
-type ViewMode = "monitoring" | "strategy";
+type Filter = 'all' | 'active' | 'paused' | 'completed';
+type ViewMode = 'monitoring' | 'strategy';
 
 export default function QuoteCadencesPage() {
   useQuoteCadenceRealtime();
   const { data, isLoading } = useQuoteCadences();
   const [searchParams, setSearchParams] = useSearchParams();
-  const todayOnly = searchParams.get("filter") === "today";
-  const [filter, setFilter] = useState<Filter>("active");
-  const [viewMode, setViewMode] = useState<ViewMode>("monitoring");
+  const todayOnly = searchParams.get('filter') === 'today';
+  const [filter, setFilter] = useState<Filter>('active');
+  const [viewMode, setViewMode] = useState<ViewMode>('monitoring');
   const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
-  const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(emptyQuoteCadenceFilters);
+  const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(
+    emptyQuoteCadenceFilters
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const toggleSelect = (id: string) =>
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
 
   const rows = useMemo(() => {
-    const base = (data ?? []).filter((r) => filter === "all" || r.status === filter);
+    const base = (data ?? []).filter(r => filter === 'all' || r.status === filter);
     const search = advanced.search.trim().toLowerCase();
     const seller = advanced.seller.trim().toLowerCase();
-    const min = advanced.minValue !== "" ? Number(advanced.minValue) : null;
-    const max = advanced.maxValue !== "" ? Number(advanced.maxValue) : null;
+    const min = advanced.minValue !== '' ? Number(advanced.minValue) : null;
+    const max = advanced.maxValue !== '' ? Number(advanced.maxValue) : null;
     const today = new Date();
 
-    return base.filter((r) => {
+    return base.filter(r => {
       const q = r.quote;
-      if (search && !(q?.client_name ?? "").toLowerCase().includes(search)) return false;
-      if (seller && !(q?.seller_name ?? "").toLowerCase().includes(seller)) return false;
+      if (search && !(q?.client_name ?? '').toLowerCase().includes(search)) return false;
+      if (seller && !(q?.seller_name ?? '').toLowerCase().includes(seller)) return false;
       if (min !== null && (q?.total_value ?? 0) < min) return false;
       if (max !== null && (q?.total_value ?? 0) > max) return false;
       if (advanced.daysWithoutResponse > 0) {
-        const sentAt = q?.sent_at ? new Date(q.sent_at) : (r.started_at ? new Date(r.started_at) : null);
+        const sentAt = q?.sent_at
+          ? new Date(q.sent_at)
+          : r.started_at
+            ? new Date(r.started_at)
+            : null;
         if (!sentAt) return false;
-        if (differenceInCalendarDays(today, sentAt) < advanced.daysWithoutResponse) return false;
+        if (differenceInCalendarDays(today, sentAt) < advanced.daysWithoutResponse)
+          return false;
       }
       if (todayOnly) {
         if (!r.next_action_date) return false;
@@ -74,10 +87,13 @@ export default function QuoteCadencesPage() {
     });
   }, [data, filter, advanced, todayOnly]);
 
-  const handleExport = useCallback(() => exportToCSV(quoteCadencesToCsvRows(rows), "cadencias-orcamentos"), [rows]);
+  const handleExport = useCallback(
+    () => exportToCSV(quoteCadencesToCsvRows(rows), 'cadencias-orcamentos'),
+    [rows]
+  );
 
   const handleSelectAll = useCallback(() => {
-    setSelectedIds((prev) => (prev.length === rows.length ? [] : rows.map((r) => r.id)));
+    setSelectedIds(prev => (prev.length === rows.length ? [] : rows.map(r => r.id)));
   }, [rows]);
 
   useQuoteCadenceShortcuts({
@@ -91,7 +107,7 @@ export default function QuoteCadencesPage() {
 
   const clearTodayFilter = () => {
     const next = new URLSearchParams(searchParams);
-    next.delete("filter");
+    next.delete('filter');
     setSearchParams(next, { replace: true });
   };
 
@@ -103,15 +119,24 @@ export default function QuoteCadencesPage() {
           name="description"
           content="Follow-up automatizado de orçamentos: acompanhe etapas, conversão e tarefas do dia em uma cadência inteligente."
         />
-        <link rel="canonical" href="https://championgifts.lovable.app/cadencias-orcamentos" />
+        <link
+          rel="canonical"
+          href="https://championgifts.lovable.app/cadencias-orcamentos"
+        />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://championgifts.lovable.app/cadencias-orcamentos" />
+        <meta
+          property="og:url"
+          content="https://championgifts.lovable.app/cadencias-orcamentos"
+        />
         <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
           property="og:description"
           content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
         />
-        <meta property="og:image" content="https://championgifts.lovable.app/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://championgifts.lovable.app/favicon.ico"
+        />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
@@ -120,7 +145,11 @@ export default function QuoteCadencesPage() {
         />
       </Helmet>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 p-4 md:p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6 p-4 md:p-6"
+      >
         <header className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
@@ -128,17 +157,29 @@ export default function QuoteCadencesPage() {
             </div>
             <div>
               <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
-              <p className="text-sm text-muted-foreground">Follow-up automatizado de propostas enviadas</p>
+              <p className="text-sm text-muted-foreground">
+                Follow-up automatizado de propostas enviadas
+              </p>
             </div>
           </div>
           <div className="flex gap-2">
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)} className="bg-muted p-1 rounded-lg">
+            <Tabs
+              value={viewMode}
+              onValueChange={v => setViewMode(v as ViewMode)}
+              className="bg-muted p-1 rounded-lg"
+            >
               <TabsList className="bg-transparent h-8">
-                <TabsTrigger value="monitoring" className="text-xs data-[state=active]:bg-background">
+                <TabsTrigger
+                  value="monitoring"
+                  className="text-xs data-[state=active]:bg-background"
+                >
                   <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
                   Monitoramento
                 </TabsTrigger>
-                <TabsTrigger value="strategy" className="text-xs data-[state=active]:bg-background">
+                <TabsTrigger
+                  value="strategy"
+                  className="text-xs data-[state=active]:bg-background"
+                >
                   <Settings2 className="h-3.5 w-3.5 mr-1.5" />
                   Estratégia e Regras
                 </TabsTrigger>
@@ -158,7 +199,7 @@ export default function QuoteCadencesPage() {
         </header>
 
         <AnimatePresence mode="wait">
-          {viewMode === "monitoring" ? (
+          {viewMode === 'monitoring' ? (
             <motion.div
               key="monitoring"
               initial={{ opacity: 0, x: -10 }}
@@ -172,14 +213,19 @@ export default function QuoteCadencesPage() {
                 <div className="lg:col-span-2 space-y-6">
                   <QuoteCadenceConversionChart />
                   <QuoteCadenceComparison />
-                  
+
                   {todayOnly && (
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="gap-1.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                         Tarefas para hoje
                       </Badge>
-                      <Button variant="ghost" size="sm" onClick={clearTodayFilter} aria-label="Limpar filtro de hoje">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearTodayFilter}
+                        aria-label="Limpar filtro de hoje"
+                      >
                         Limpar filtro
                       </Button>
                     </div>
@@ -187,7 +233,11 @@ export default function QuoteCadencesPage() {
 
                   <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
 
-                  <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)} className="space-y-4">
+                  <Tabs
+                    value={filter}
+                    onValueChange={v => setFilter(v as Filter)}
+                    className="space-y-4"
+                  >
                     <TabsList>
                       <TabsTrigger value="active">Ativos</TabsTrigger>
                       <TabsTrigger value="paused">Pausados</TabsTrigger>
@@ -206,7 +256,7 @@ export default function QuoteCadencesPage() {
                         <QuoteCadenceEmptyState />
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {rows.map((r) => (
+                          {rows.map(r => (
                             <motion.button
                               key={r.id}
                               type="button"
@@ -227,7 +277,7 @@ export default function QuoteCadencesPage() {
                     </TabsContent>
                   </Tabs>
                 </div>
-                
+
                 <div className="lg:col-span-1">
                   <ApprovalQueue />
                 </div>
@@ -250,7 +300,9 @@ export default function QuoteCadencesPage() {
                   <TabsList>
                     <TabsTrigger value="outcomes">Desfechos de Ligação</TabsTrigger>
                     <TabsTrigger value="alerts">Templates de Alerta</TabsTrigger>
-                    <TabsTrigger value="templates">Mensagens (WhatsApp/Email)</TabsTrigger>
+                    <TabsTrigger value="templates">
+                      Mensagens (WhatsApp/Email)
+                    </TabsTrigger>
                   </TabsList>
                   <TabsContent value="outcomes" className="mt-4">
                     <CadenceOutcomeConfig />
@@ -291,7 +343,7 @@ export default function QuoteCadencesPage() {
       <QuoteCadenceDetailDrawer
         row={selected}
         open={!!selected}
-        onOpenChange={(o) => !o && setSelected(null)}
+        onOpenChange={o => !o && setSelected(null)}
       />
     </>
   );

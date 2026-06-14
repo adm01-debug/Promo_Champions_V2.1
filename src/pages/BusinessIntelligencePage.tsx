@@ -1,55 +1,71 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { Sparkles, FileDown, Brain } from "lucide-react";
-import { motion } from "framer-motion";
-import { ClientSelector } from "@/components/bi/ClientSelector";
-import { ClientOverview360 } from "@/components/bi/ClientOverview360";
-import { ClientVsIndustryComparison } from "@/components/bi/ClientVsIndustryComparison";
-import { ClientAffinityProducts } from "@/components/bi/ClientAffinityProducts";
-import { IndustryTrendingProducts } from "@/components/bi/IndustryTrendingProducts";
-import { ClientSeasonalityHeatmap } from "@/components/bi/ClientSeasonalityHeatmap";
-import { EmpiricalRecommendations } from "@/components/bi/EmpiricalRecommendations";
-import { useClientBI } from "@/hooks/bi/useClientBI";
-import { useClientVsIndustry } from "@/hooks/bi/useClientVsIndustry";
-import { useIndustryTrends, useClientSeasonality } from "@/hooks/bi/useIndustryTrends";
-import { useBIDossierExport } from "@/hooks/bi/useBIDossierExport";
-import { ExportDossierButton } from "@/components/bi/ExportDossierButton";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { Sparkles, Brain } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ClientSelector } from '@/components/bi/ClientSelector';
+import { ClientOverview360 } from '@/components/bi/ClientOverview360';
+import { ClientVsIndustryComparison } from '@/components/bi/ClientVsIndustryComparison';
+import { ClientAffinityProducts } from '@/components/bi/ClientAffinityProducts';
+import { IndustryTrendingProducts } from '@/components/bi/IndustryTrendingProducts';
+import { ClientSeasonalityHeatmap } from '@/components/bi/ClientSeasonalityHeatmap';
+import { EmpiricalRecommendations } from '@/components/bi/EmpiricalRecommendations';
+import { useClientBI } from '@/hooks/bi/useClientBI';
+import { useClientVsIndustry } from '@/hooks/bi/useClientVsIndustry';
+import { useIndustryTrends, useClientSeasonality } from '@/hooks/bi/useIndustryTrends';
+import { useBIDossierExport } from '@/hooks/bi/useBIDossierExport';
+import { ExportDossierButton } from '@/components/bi/ExportDossierButton';
+import { toast } from 'sonner';
 
 export default function BusinessIntelligencePage() {
-  const [selectedClient, setSelectedClient] = useState<{ id: string; name: string; ramo_atividade: string | null } | null>(null);
+  const [selectedClient, setSelectedClient] = useState<{
+    id: string;
+    name: string;
+    ramo_atividade: string | null;
+  } | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: clientBI, isLoading: loadingBI } = useClientBI(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
-  const { data: comparison, isLoading: loadingComparison } = useClientVsIndustry(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
-  const { data: trends, isLoading: loadingTrends } = useIndustryTrends(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
-  const { data: seasonality, isLoading: loadingSeasonality } = useClientSeasonality(selectedClient?.id, selectedClient?.ramo_atividade || undefined);
+  const { data: clientBI, isLoading: loadingBI } = useClientBI(
+    selectedClient?.id,
+    selectedClient?.ramo_atividade || undefined
+  );
+  const { data: comparison, isLoading: loadingComparison } = useClientVsIndustry(
+    selectedClient?.id,
+    selectedClient?.ramo_atividade || undefined
+  );
+  const { data: trends, isLoading: loadingTrends } = useIndustryTrends(
+    selectedClient?.id,
+    selectedClient?.ramo_atividade || undefined
+  );
+  const { data: seasonality, isLoading: loadingSeasonality } = useClientSeasonality(
+    selectedClient?.id,
+    selectedClient?.ramo_atividade || undefined
+  );
   const { exportToPDF } = useBIDossierExport();
 
   const handleExport = async () => {
     if (!selectedClient || !clientBI || !comparison || !trends || !seasonality) {
-      toast.error("Aguarde o carregamento completo dos dados para exportar.");
+      toast.error('Aguarde o carregamento completo dos dados para exportar.');
       return;
     }
 
     setIsExporting(true);
-    toast.info("Gerando Dossiê PDF...", {
-      description: "Isso pode levar alguns segundos."
+    toast.info('Gerando Dossiê PDF...', {
+      description: 'Isso pode levar alguns segundos.',
     });
 
     try {
       await exportToPDF(
         selectedClient.name,
-        selectedClient.ramo_atividade || "Geral",
+        selectedClient.ramo_atividade || 'Geral',
         clientBI,
         comparison,
         trends,
         seasonality
       );
     } catch (error) {
-      console.error("PDF Export Error:", error);
-      toast.error("Erro ao gerar PDF. Tente novamente.");
+      console.error('PDF Export Error:', error);
+      toast.error('Erro ao gerar PDF. Tente novamente.');
     } finally {
       setIsExporting(false);
     }
@@ -63,7 +79,7 @@ export default function BusinessIntelligencePage() {
       <PageTransition>
         <div className="space-y-6 p-6 lg:p-8 pb-20">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -72,8 +88,12 @@ export default function BusinessIntelligencePage() {
                 <Sparkles className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl font-black uppercase italic tracking-tighter">Business <span className="text-primary">Intelligence</span></h1>
-                <p className="text-sm text-muted-foreground/80 font-medium">Análise avançada 360°, benchmarking e insights preditivos.</p>
+                <h1 className="text-3xl font-black uppercase italic tracking-tighter">
+                  Business <span className="text-primary">Intelligence</span>
+                </h1>
+                <p className="text-sm text-muted-foreground/80 font-medium">
+                  Análise avançada 360°, benchmarking e insights preditivos.
+                </p>
               </div>
             </motion.div>
 
@@ -83,9 +103,9 @@ export default function BusinessIntelligencePage() {
           </div>
 
           <div className="max-w-2xl">
-            <ClientSelector 
-              selectedId={selectedClient?.id} 
-              onSelect={setSelectedClient} 
+            <ClientSelector
+              selectedId={selectedClient?.id}
+              onSelect={setSelectedClient}
             />
           </div>
 
@@ -93,7 +113,12 @@ export default function BusinessIntelligencePage() {
             <div className="space-y-6 animate-in fade-in duration-700">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-8">
-                  {clientBI && <ClientOverview360 data={clientBI.customer360} isMocked={clientBI.isMocked} />}
+                  {clientBI && (
+                    <ClientOverview360
+                      data={clientBI.customer360}
+                      isMocked={clientBI.isMocked}
+                    />
+                  )}
                 </div>
                 <div className="lg:col-span-4">
                   {clientBI && <EmpiricalRecommendations data={clientBI.expertCurated} />}
@@ -120,8 +145,13 @@ export default function BusinessIntelligencePage() {
                 <Sparkles className="size-12 text-primary" />
               </div>
               <div className="max-w-xs">
-                <p className="text-lg font-black uppercase italic tracking-tight">Aguardando Seleção</p>
-                <p className="text-xs font-medium">Selecione um cliente acima para gerar a análise de inteligência completa.</p>
+                <p className="text-lg font-black uppercase italic tracking-tight">
+                  Aguardando Seleção
+                </p>
+                <p className="text-xs font-medium">
+                  Selecione um cliente acima para gerar a análise de inteligência
+                  completa.
+                </p>
               </div>
             </div>
           )}

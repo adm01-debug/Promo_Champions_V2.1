@@ -5,11 +5,44 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useObjectionsLibrary, useAddObjection, useUpdateObjection, useIncrementObjectionUsage, useDeleteObjection } from '@/hooks/useObjectionsLibrary';
-import { BookOpen, Plus, Copy, Trash2, Search, ThumbsUp, MessageSquare, CheckCircle2, Sparkles, Tag, Star, Edit3, X, Filter, BarChart3, TrendingUp, Maximize2, Zap } from 'lucide-react';
+import {
+  useObjectionsLibrary,
+  useAddObjection,
+  useUpdateObjection,
+  useIncrementObjectionUsage,
+  useDeleteObjection,
+} from '@/hooks/useObjectionsLibrary';
+import {
+  BookOpen,
+  Plus,
+  Copy,
+  Trash2,
+  Search,
+  ThumbsUp,
+  MessageSquare,
+  CheckCircle2,
+  Sparkles,
+  Star,
+  Edit3,
+  X,
+  Maximize2,
+  Zap,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Slider } from '@/components/ui/slider';
@@ -40,12 +73,12 @@ export function ObjectionsLibrary() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingObjection, setEditingObjection] = useState<any>(null);
-  const [newObjection, setNewObjection] = useState({ 
-    objection: '', 
-    response: '', 
-    category: 'general', 
-    tags: [] as string[], 
-    effectiveness_score: 5 
+  const [newObjection, setNewObjection] = useState({
+    objection: '',
+    response: '',
+    category: 'general',
+    tags: [] as string[],
+    effectiveness_score: 5,
   });
   const [tagInput, setTagInput] = useState('');
 
@@ -114,7 +147,7 @@ export function ObjectionsLibrary() {
       response: obj.response,
       category: obj.category,
       tags: obj.tags || [],
-      effectiveness_score: obj.effectiveness_score || 5
+      effectiveness_score: obj.effectiveness_score || 5,
     });
     setIsAddDialogOpen(true);
   };
@@ -126,19 +159,34 @@ export function ObjectionsLibrary() {
     }
 
     if (editingObjection) {
-      updateObjection.mutate({ id: editingObjection.id, ...newObjection }, {
-        onSuccess: () => {
-          setEditingObjection(null);
-          setNewObjection({ objection: '', response: '', category: 'general', tags: [], effectiveness_score: 5 });
-          setIsAddDialogOpen(false);
+      updateObjection.mutate(
+        { id: editingObjection.id, ...newObjection },
+        {
+          onSuccess: () => {
+            setEditingObjection(null);
+            setNewObjection({
+              objection: '',
+              response: '',
+              category: 'general',
+              tags: [],
+              effectiveness_score: 5,
+            });
+            setIsAddDialogOpen(false);
+          },
         }
-      });
+      );
     } else {
       addObjection.mutate(newObjection, {
         onSuccess: () => {
-          setNewObjection({ objection: '', response: '', category: 'general', tags: [], effectiveness_score: 5 });
+          setNewObjection({
+            objection: '',
+            response: '',
+            category: 'general',
+            tags: [],
+            effectiveness_score: 5,
+          });
           setIsAddDialogOpen(false);
-        }
+        },
       });
     }
   };
@@ -168,22 +216,31 @@ export function ObjectionsLibrary() {
           </CardTitle>
           <div className="flex items-center gap-2">
             {!isDedicatedPage && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 rounded-full hover:bg-primary/10"
                 onClick={() => navigate('/analytics/objections')}
               >
                 <Maximize2 className="h-4 w-4" />
               </Button>
             )}
-            <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
-              setIsAddDialogOpen(open);
-              if (!open) {
-                setEditingObjection(null);
-                setNewObjection({ objection: '', response: '', category: 'general', tags: [], effectiveness_score: 5 });
-              }
-            }}>
+            <Dialog
+              open={isAddDialogOpen}
+              onOpenChange={open => {
+                setIsAddDialogOpen(open);
+                if (!open) {
+                  setEditingObjection(null);
+                  setNewObjection({
+                    objection: '',
+                    response: '',
+                    category: 'general',
+                    tags: [],
+                    effectiveness_score: 5,
+                  });
+                }
+              }}
+            >
               <DialogTrigger asChild>
                 <Button size="sm" variant="glow" className="gap-1.5 hover-lift">
                   <Plus className="h-4 w-4" />
@@ -200,34 +257,46 @@ export function ObjectionsLibrary() {
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Objeção do Cliente</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                        Objeção do Cliente
+                      </label>
                       <Textarea
                         placeholder="Ex: Está muito caro..."
                         value={newObjection.objection}
-                        onChange={(e) => setNewObjection({ ...newObjection, objection: e.target.value })}
+                        onChange={e =>
+                          setNewObjection({ ...newObjection, objection: e.target.value })
+                        }
                         className="glass border-border/50 focus:border-primary/50 min-h-[80px]"
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Resposta Recomendada</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                        Resposta Recomendada
+                      </label>
                       <Textarea
                         placeholder="Ex: Entendo sua preocupação..."
                         value={newObjection.response}
-                        onChange={(e) => setNewObjection({ ...newObjection, response: e.target.value })}
+                        onChange={e =>
+                          setNewObjection({ ...newObjection, response: e.target.value })
+                        }
                         className="glass border-border/50 focus:border-primary/50 min-h-[120px]"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Categoria</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                        Categoria
+                      </label>
                       <Select
                         value={newObjection.category}
-                        onValueChange={(value) => setNewObjection({ ...newObjection, category: value })}
+                        onValueChange={value =>
+                          setNewObjection({ ...newObjection, category: value })
+                        }
                       >
                         <SelectTrigger className="glass border-border/50">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="glass border-border/50">
-                          {CATEGORIES.filter(c => c.value !== 'all').map((cat) => (
+                          {CATEGORIES.filter(c => c.value !== 'all').map(cat => (
                             <SelectItem key={cat.value} value={cat.value}>
                               {cat.label}
                             </SelectItem>
@@ -236,45 +305,73 @@ export function ObjectionsLibrary() {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Efetividade (1-10)</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                        Efetividade (1-10)
+                      </label>
                       <div className="flex items-center gap-3 pt-2">
-                        <Slider 
-                          value={[newObjection.effectiveness_score]} 
-                          max={10} 
-                          min={1} 
-                          step={1} 
-                          onValueChange={(val) => setNewObjection({ ...newObjection, effectiveness_score: val[0] })}
+                        <Slider
+                          value={[newObjection.effectiveness_score]}
+                          max={10}
+                          min={1}
+                          step={1}
+                          onValueChange={val =>
+                            setNewObjection({
+                              ...newObjection,
+                              effectiveness_score: val[0],
+                            })
+                          }
                           className="flex-1"
                         />
-                        <span className="text-lg font-bold text-primary w-6 text-center">{newObjection.effectiveness_score}</span>
+                        <span className="text-lg font-bold text-primary w-6 text-center">
+                          {newObjection.effectiveness_score}
+                        </span>
                       </div>
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">Tags</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 block">
+                        Tags
+                      </label>
                       <div className="flex gap-2 mb-2">
-                        <Input 
-                          placeholder="Adicionar tag..." 
+                        <Input
+                          placeholder="Adicionar tag..."
                           value={tagInput}
-                          onChange={(e) => setTagInput(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                          onChange={e => setTagInput(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleAddTag()}
                           className="glass border-border/50"
                         />
-                        <Button variant="outline" onClick={handleAddTag} className="glass">
+                        <Button
+                          variant="outline"
+                          onClick={handleAddTag}
+                          className="glass"
+                        >
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         {newObjection.tags.map(tag => (
-                          <Badge key={tag} className="gap-1 bg-primary/10 text-primary border-primary/20">
+                          <Badge
+                            key={tag}
+                            className="gap-1 bg-primary/10 text-primary border-primary/20"
+                          >
                             {tag}
-                            <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => removeTag(tag)} />
+                            <X
+                              className="h-3 w-3 cursor-pointer hover:text-destructive"
+                              onClick={() => removeTag(tag)}
+                            />
                           </Badge>
                         ))}
                       </div>
                     </div>
                   </div>
-                  <Button onClick={handleSave} className="w-full hover-lift" variant="glow-pulse" disabled={addObjection.isPending || updateObjection.isPending}>
-                    {addObjection.isPending || updateObjection.isPending ? 'Salvando...' : 'Salvar Objeção'}
+                  <Button
+                    onClick={handleSave}
+                    className="w-full hover-lift"
+                    variant="glow-pulse"
+                    disabled={addObjection.isPending || updateObjection.isPending}
+                  >
+                    {addObjection.isPending || updateObjection.isPending
+                      ? 'Salvando...'
+                      : 'Salvar Objeção'}
                   </Button>
                 </div>
               </DialogContent>
@@ -290,7 +387,7 @@ export function ObjectionsLibrary() {
             <Input
               placeholder="Buscar por objeção, resposta ou tags..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-9 glass border-border/50 focus:border-primary/50"
             />
           </div>
@@ -299,7 +396,7 @@ export function ObjectionsLibrary() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="glass border-border/50">
-              {CATEGORIES.map((cat) => (
+              {CATEGORIES.map(cat => (
                 <SelectItem key={cat.value} value={cat.value}>
                   {cat.label}
                 </SelectItem>
@@ -311,9 +408,9 @@ export function ObjectionsLibrary() {
         {/* Objections List */}
         {isLoading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div 
-                key={i} 
+            {[1, 2, 3].map(i => (
+              <div
+                key={i}
                 className="h-28 glass rounded-xl animate-pulse border border-border/30"
                 style={{ animationDelay: `${i * 100}ms` }}
               />
@@ -323,15 +420,18 @@ export function ObjectionsLibrary() {
           <ScrollArea className={`${isDedicatedPage ? 'h-[70vh]' : 'h-[500px]'} pr-3`}>
             <div className="grid grid-cols-1 gap-3">
               {filteredObjections.map((obj, index) => (
-                <div 
-                  key={obj.id} 
+                <div
+                  key={obj.id}
                   className="glass rounded-xl p-4 border border-border/40 dark:border-glow hover:border-primary/40 transition-all duration-300 hover-lift animate-fade-in group"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1 space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className={`${getCategoryColor(obj.category)} text-[10px] border px-2 py-0`}>
+                        <Badge
+                          variant="outline"
+                          className={`${getCategoryColor(obj.category)} text-[10px] border px-2 py-0`}
+                        >
                           {getCategoryLabel(obj.category)}
                         </Badge>
                         <div className="flex items-center gap-1 bg-status-success/10 text-status-success px-2 py-0.5 rounded-full text-[10px] border border-status-success/20">
@@ -343,14 +443,20 @@ export function ObjectionsLibrary() {
                           {obj.usage_count || 0} usos
                         </span>
                         {(obj.tags || []).map((tag: string) => (
-                          <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted/50">
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="text-[10px] px-1.5 py-0 bg-muted/50"
+                          >
                             #{tag}
                           </Badge>
                         ))}
                       </div>
                       <p className="text-sm font-medium flex items-start gap-2 pt-1">
                         <MessageSquare className="h-4 w-4 text-status-error mt-0.5 shrink-0 opacity-70" />
-                        <span className="italic text-muted-foreground leading-relaxed">"{obj.objection}"</span>
+                        <span className="italic text-muted-foreground leading-relaxed">
+                          "{obj.objection}"
+                        </span>
                       </p>
                     </div>
                     <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">

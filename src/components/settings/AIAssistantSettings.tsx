@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useSalespersonPreferences, ResponseMode } from '@/hooks/sales/useSalespersonPreferences';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  useSalespersonPreferences,
+  ResponseMode,
+} from '@/hooks/sales/useSalespersonPreferences';
 import { VoiceId } from '@/hooks/useElevenLabsVoice';
 import { Bot, Sparkles, Save, Loader2, Volume2, MessageSquare, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -20,17 +29,17 @@ const SUGGESTED_NAMES = [
 ];
 
 export function AIAssistantSettings() {
-  const { 
-    aiAssistantName, 
+  const {
+    aiAssistantName,
     responseMode: savedResponseMode,
     voiceId: savedVoiceId,
     voiceName: _savedVoiceName,
-    updatePreferences, 
-    isUpdating, 
+    updatePreferences,
+    isUpdating,
     isLoading,
     VOICE_OPTIONS,
   } = useSalespersonPreferences();
-  
+
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [responseMode, setResponseMode] = useState<ResponseMode>('text');
@@ -45,7 +54,7 @@ export function AIAssistantSettings() {
 
   const handleSave = () => {
     const selectedVoice = VOICE_OPTIONS.find(v => v.id === voiceId);
-    updatePreferences({ 
+    updatePreferences({
       ai_assistant_name: name.trim() || undefined,
       response_mode: responseMode,
       voice_id: voiceId,
@@ -61,22 +70,22 @@ export function AIAssistantSettings() {
     setIsTestingVoice(true);
     try {
       const testText = `Olá! Eu sou ${name || 'seu assistente'}. Estou aqui para ajudar você a vender mais!`;
-      
+
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({ text: testText, voiceId }),
         }
       );
 
       const data = await response.json();
-      
+
       if (data.error === 'api_key_not_configured') {
         toast({
           title: 'API não configurada',
@@ -105,9 +114,9 @@ export function AIAssistantSettings() {
     }
   };
 
-  const hasChanges = 
-    name !== aiAssistantName || 
-    responseMode !== savedResponseMode || 
+  const hasChanges =
+    name !== aiAssistantName ||
+    responseMode !== savedResponseMode ||
     voiceId !== savedVoiceId;
 
   if (isLoading) {
@@ -132,7 +141,6 @@ export function AIAssistantSettings() {
         </p>
       </div>
       <div className="p-6 space-y-6">
-
         {/* Current Assistant Display */}
         <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
           <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
@@ -159,11 +167,11 @@ export function AIAssistantSettings() {
             id="ai-name"
             placeholder="Digite o nome..."
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             maxLength={30}
           />
           <div className="flex flex-wrap gap-2 mt-2">
-            {SUGGESTED_NAMES.map((suggestion) => (
+            {SUGGESTED_NAMES.map(suggestion => (
               <Button
                 key={suggestion.name}
                 variant="outline"
@@ -183,12 +191,17 @@ export function AIAssistantSettings() {
           <Label>Como você prefere receber as respostas?</Label>
           <RadioGroup
             value={responseMode}
-            onValueChange={(v) => setResponseMode(v as ResponseMode)}
+            onValueChange={v => setResponseMode(v as ResponseMode)}
             className="grid grid-cols-1 sm:grid-cols-3 gap-3"
           >
-            <div className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'text' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}>
+            <div
+              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'text' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}
+            >
               <RadioGroupItem value="text" id="mode-text" />
-              <Label htmlFor="mode-text" className="cursor-pointer flex items-center gap-2 flex-1">
+              <Label
+                htmlFor="mode-text"
+                className="cursor-pointer flex items-center gap-2 flex-1"
+              >
                 <MessageSquare className="h-4 w-4" />
                 <div>
                   <p className="font-medium">Texto</p>
@@ -196,9 +209,14 @@ export function AIAssistantSettings() {
                 </div>
               </Label>
             </div>
-            <div className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'audio' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}>
+            <div
+              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'audio' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}
+            >
               <RadioGroupItem value="audio" id="mode-audio" />
-              <Label htmlFor="mode-audio" className="cursor-pointer flex items-center gap-2 flex-1">
+              <Label
+                htmlFor="mode-audio"
+                className="cursor-pointer flex items-center gap-2 flex-1"
+              >
                 <Volume2 className="h-4 w-4" />
                 <div>
                   <p className="font-medium">Áudio</p>
@@ -206,9 +224,14 @@ export function AIAssistantSettings() {
                 </div>
               </Label>
             </div>
-            <div className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'both' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}>
+            <div
+              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${responseMode === 'both' ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'}`}
+            >
               <RadioGroupItem value="both" id="mode-both" />
-              <Label htmlFor="mode-both" className="cursor-pointer flex items-center gap-2 flex-1">
+              <Label
+                htmlFor="mode-both"
+                className="cursor-pointer flex items-center gap-2 flex-1"
+              >
                 <div className="flex items-center">
                   <MessageSquare className="h-4 w-4" />
                   <span className="mx-0.5">+</span>
@@ -228,24 +251,26 @@ export function AIAssistantSettings() {
           <div className="space-y-3 animate-fade-in">
             <Label>Escolha a voz do seu assistente</Label>
             <div className="flex gap-2">
-              <Select value={voiceId} onValueChange={(v) => setVoiceId(v as VoiceId)}>
+              <Select value={voiceId} onValueChange={v => setVoiceId(v as VoiceId)}>
                 <SelectTrigger className="flex-1">
                   <SelectValue placeholder="Selecione uma voz" />
                 </SelectTrigger>
                 <SelectContent>
-                  {VOICE_OPTIONS.map((voice) => (
+                  {VOICE_OPTIONS.map(voice => (
                     <SelectItem key={voice.id} value={voice.id}>
                       <div className="flex items-center gap-2">
                         <span>{voice.gender === 'male' ? '👨' : '👩'}</span>
                         <span>{voice.name}</span>
-                        <span className="text-muted-foreground text-xs">({voice.gender})</span>
+                        <span className="text-muted-foreground text-xs">
+                          ({voice.gender})
+                        </span>
                       </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="icon"
                 aria-label="Testar voz"
                 onClick={handleTestVoice}
@@ -266,8 +291,8 @@ export function AIAssistantSettings() {
         )}
 
         {/* Save Button */}
-        <Button 
-          onClick={handleSave} 
+        <Button
+          onClick={handleSave}
           disabled={isUpdating || !hasChanges}
           className="w-full"
         >
@@ -283,12 +308,11 @@ export function AIAssistantSettings() {
         <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
           <p className="flex items-center gap-1">
             <span>🔒</span>
-            <strong>Privacidade:</strong> Seus dados de vendas são exclusivamente seus. 
+            <strong>Privacidade:</strong> Seus dados de vendas são exclusivamente seus.
             Outros vendedores não têm acesso às suas informações.
           </p>
         </div>
       </div>
     </div>
-
   );
 }

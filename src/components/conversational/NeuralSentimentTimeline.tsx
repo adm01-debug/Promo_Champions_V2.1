@@ -1,17 +1,25 @@
-import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Sparkles, TrendingUp, AlertTriangle, ShieldCheck, MessageSquare, Zap } from "lucide-react";
-import { SentimentTimelineChart } from "./SentimentTimelineChart";
-import { TalkRatioBar } from "./TalkRatioBar";
-import { DiarizationTimeline } from "./DiarizationTimeline";
-import { useCallRecordings } from "@/hooks/conversational/useCallRecordings";
-import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
-import { type DiarizationTurn } from "./diarizationHelpers";
-import { type Objection } from "./meetingSummaryHelpers";
-import { type Intent } from "./IntentTracker";
-import { Badge } from "@/components/ui/badge";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Brain,
+  Sparkles,
+  TrendingUp,
+  AlertTriangle,
+  ShieldCheck,
+  MessageSquare,
+  Zap,
+} from 'lucide-react';
+import { SentimentTimelineChart } from './SentimentTimelineChart';
+import { TalkRatioBar } from './TalkRatioBar';
+import { DiarizationTimeline } from './DiarizationTimeline';
+import { useCallRecordings } from '@/hooks/conversational/useCallRecordings';
+import { useCriticalMoments } from '@/hooks/conversational/useCriticalMoments';
+import { type DiarizationTurn } from './diarizationHelpers';
+import { type Objection } from './meetingSummaryHelpers';
+import { type Intent } from './IntentTracker';
+import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface Props {
   recordingId: string;
@@ -19,26 +27,28 @@ interface Props {
 
 export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
   const { data: recordings } = useCallRecordings();
-  const rec = recordings?.find((r) => r.id === recordingId) ?? null;
+  const rec = recordings?.find(r => r.id === recordingId) ?? null;
   const { data: moments } = useCriticalMoments(recordingId);
 
   const derivedIntents: Intent[] = useMemo(() => {
     if (!rec) return [];
-    const intents: Intent[] = (rec.objections_summary as Objection[] ?? []).map((o, idx) => ({
-      type: o.category === "preço" ? "objection" : "followup",
-      label: o.text,
-      confidence: 0.85,
-      timestamp_sec: 120 + idx * 45,
-      excerpt: o.text
-    }));
+    const intents: Intent[] = ((rec.objections_summary as Objection[]) ?? []).map(
+      (o, idx) => ({
+        type: o.category === 'preço' ? 'objection' : 'followup',
+        label: o.text,
+        confidence: 0.85,
+        timestamp_sec: 120 + idx * 45,
+        excerpt: o.text,
+      })
+    );
 
-    if (rec.key_topics?.includes("Competitor")) {
+    if (rec.key_topics?.includes('Competitor')) {
       intents.push({
-        type: "comparison",
-        label: "Menção a Concorrente",
+        type: 'comparison',
+        label: 'Menção a Concorrente',
         confidence: 0.92,
         timestamp_sec: 300,
-        excerpt: "O cliente mencionou o concorrente principal ao falar sobre preço."
+        excerpt: 'O cliente mencionou o concorrente principal ao falar sobre preço.',
       });
     }
     return intents;
@@ -59,10 +69,15 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
               <Zap className="size-5 text-primary animate-pulse" />
               Neural Sentiment Timeline
             </CardTitle>
-            <p className="text-xs text-muted-foreground font-medium">Oscilação emocional e detecção de objeções em tempo real</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Oscilação emocional e detecção de objeções em tempo real
+            </p>
           </div>
           <div className="flex gap-2">
-            <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-black text-[10px]">
+            <Badge
+              variant="outline"
+              className="bg-primary/5 border-primary/20 text-primary font-black text-[10px]"
+            >
               AI POWERED
             </Badge>
           </div>
@@ -79,9 +94,9 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
             </h4>
           </div>
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
-            <SentimentTimelineChart 
-              recordingId={recordingId} 
-              moments={moments ?? []} 
+            <SentimentTimelineChart
+              recordingId={recordingId}
+              moments={moments ?? []}
               intents={derivedIntents}
               hideTitle
             />
@@ -97,10 +112,13 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
                 Diarização & Talk Ratio
               </h4>
               <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
-                <TalkRatioBar seller={rec.talk_ratio_seller} client={rec.talk_ratio_client} />
-                <DiarizationTimeline 
-                  turns={rec.diarization as DiarizationTurn[]} 
-                  totalSeconds={rec.duration_seconds} 
+                <TalkRatioBar
+                  seller={rec.talk_ratio_seller}
+                  client={rec.talk_ratio_client}
+                />
+                <DiarizationTimeline
+                  turns={rec.diarization as DiarizationTurn[]}
+                  totalSeconds={rec.duration_seconds}
                 />
               </div>
             </div>
@@ -115,32 +133,44 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
               {derivedIntents.length === 0 ? (
                 <div className="p-4 rounded-xl border border-dashed border-white/10 text-center">
-                  <p className="text-xs text-muted-foreground italic">Nenhuma objeção crítica mapeada na timeline.</p>
+                  <p className="text-xs text-muted-foreground italic">
+                    Nenhuma objeção crítica mapeada na timeline.
+                  </p>
                 </div>
               ) : (
                 derivedIntents.map((intent, i) => (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    key={i} 
+                    key={i}
                     className={cn(
-                      "p-3 rounded-xl border transition-all flex items-start gap-3 group/item relative overflow-hidden shadow-lg",
-                      intent.type === "objection" 
-                        ? "bg-warning/5 border-warning/20 hover:bg-warning/10" 
-                        : "bg-primary/5 border-primary/20 hover:bg-primary/10"
+                      'p-3 rounded-xl border transition-all flex items-start gap-3 group/item relative overflow-hidden shadow-lg',
+                      intent.type === 'objection'
+                        ? 'bg-warning/5 border-warning/20 hover:bg-warning/10'
+                        : 'bg-primary/5 border-primary/20 hover:bg-primary/10'
                     )}
                   >
-                    <div className={cn(
-                      "absolute top-0 left-0 w-1 h-full",
-                      intent.type === "objection" ? "bg-warning" : "bg-primary"
-                    )} />
-                    
-                    <div className={cn(
-                      "mt-0.5 size-6 rounded-lg flex items-center justify-center border shrink-0",
-                      intent.type === "objection" ? "bg-warning/10 border-warning/20 text-warning" : "bg-primary/10 border-primary/20 text-primary"
-                    )}>
-                      {intent.type === "objection" ? <AlertTriangle className="size-3" /> : <Sparkles className="size-3" />}
+                    <div
+                      className={cn(
+                        'absolute top-0 left-0 w-1 h-full',
+                        intent.type === 'objection' ? 'bg-warning' : 'bg-primary'
+                      )}
+                    />
+
+                    <div
+                      className={cn(
+                        'mt-0.5 size-6 rounded-lg flex items-center justify-center border shrink-0',
+                        intent.type === 'objection'
+                          ? 'bg-warning/10 border-warning/20 text-warning'
+                          : 'bg-primary/10 border-primary/20 text-primary'
+                      )}
+                    >
+                      {intent.type === 'objection' ? (
+                        <AlertTriangle className="size-3" />
+                      ) : (
+                        <Sparkles className="size-3" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
@@ -148,19 +178,24 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
                           {intent.label}
                         </span>
                         <span className="text-[9px] font-mono text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
-                          {Math.floor(intent.timestamp_sec / 60)}:{(intent.timestamp_sec % 60).toString().padStart(2, "0")}
+                          {Math.floor(intent.timestamp_sec / 60)}:
+                          {(intent.timestamp_sec % 60).toString().padStart(2, '0')}
                         </span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground italic line-clamp-2 leading-relaxed">"{intent.excerpt}"</p>
-                      
-                      {intent.type === "objection" && (
+                      <p className="text-[10px] text-muted-foreground italic line-clamp-2 leading-relaxed">
+                        "{intent.excerpt}"
+                      </p>
+
+                      {intent.type === 'objection' && (
                         <div className="mt-3 p-2 rounded-lg bg-black/40 border border-warning/10 space-y-2">
-                           <p className="text-[9px] font-black text-warning uppercase tracking-widest flex items-center gap-1">
-                             <Zap className="size-2.5" /> Neural Recommendation
-                           </p>
-                           <p className="text-[10px] text-white/80 font-medium">
-                             O cliente demonstra hesitação financeira. <strong>Sugestão:</strong> Foque na "Proteção de Margem" e ofereça o plano trimestral antecipado com 12% off.
-                           </p>
+                          <p className="text-[9px] font-black text-warning uppercase tracking-widest flex items-center gap-1">
+                            <Zap className="size-2.5" /> Neural Recommendation
+                          </p>
+                          <p className="text-[10px] text-white/80 font-medium">
+                            O cliente demonstra hesitação financeira.{' '}
+                            <strong>Sugestão:</strong> Foque na "Proteção de Margem" e
+                            ofereça o plano trimestral antecipado com 12% off.
+                          </p>
                         </div>
                       )}
                     </div>

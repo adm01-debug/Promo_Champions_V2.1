@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Users } from 'lucide-react';
@@ -34,7 +34,9 @@ interface ROIRankingListProps {
   roiData: ROIEntry[];
 }
 
-export const ROIRankingList = React.memo(function ROIRankingList({ roiData }: ROIRankingListProps) {
+export const ROIRankingList = React.memo(function ROIRankingList({
+  roiData,
+}: ROIRankingListProps) {
   if (roiData.length === 0) {
     return (
       <Card className="border-dashed">
@@ -66,8 +68,10 @@ export const ROIRankingList = React.memo(function ROIRankingList({ roiData }: RO
                     'h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0',
                     i === 0 &&
                       'bg-rank-gold/20 text-rank-gold dark:bg-rank-gold/30 dark:text-rank-gold',
-                    i === 1 && 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
-                    i === 2 && 'bg-streak/20 text-streak dark:bg-streak/30 dark:text-streak',
+                    i === 1 &&
+                      'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+                    i === 2 &&
+                      'bg-streak/20 text-streak dark:bg-streak/30 dark:text-streak',
                     i > 2 && 'bg-muted text-muted-foreground'
                   )}
                 >
@@ -75,7 +79,9 @@ export const ROIRankingList = React.memo(function ROIRankingList({ roiData }: RO
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-foreground truncate">{sp.name}</span>
+                    <span className="font-semibold text-foreground truncate">
+                      {sp.name}
+                    </span>
                     <Badge variant="outline" className="text-[10px] shrink-0">
                       {sp.role === 'sdr' ? 'SDR' : 'Closer'}
                     </Badge>

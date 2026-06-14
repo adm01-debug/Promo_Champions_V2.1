@@ -1,10 +1,10 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-
 /**
  * Mock utility for Supabase client in tests.
  * Allows intercepting and providing mock data for database calls.
  */
-export function createMockSupabaseClient(mockData: Record<string, any[]> = {}) {
+export function createMockSupabaseClient(
+  mockData: Record<string, Record<string, unknown>[]> = {}
+) {
   const queryBuilder = (tableName: string) => {
     const builder = {
       select: () => builder,
@@ -14,7 +14,7 @@ export function createMockSupabaseClient(mockData: Record<string, any[]> = {}) {
       gte: () => builder,
       order: () => builder,
       upsert: () => Promise.resolve({ data: null, error: null }),
-      then: (resolve: any) => {
+      then: (resolve: (result: { data: unknown; error: null }) => void) => {
         resolve({ data: mockData[tableName] || [], error: null });
         return Promise.resolve();
       },
@@ -25,15 +25,16 @@ export function createMockSupabaseClient(mockData: Record<string, any[]> = {}) {
   return {
     from: (name: string) => queryBuilder(name),
     auth: {
-      getUser: () => Promise.resolve({ data: { user: { id: 'test-user' } }, error: null }),
-    }
-  } as any;
+      getUser: () =>
+        Promise.resolve({ data: { user: { id: 'test-user' } }, error: null }),
+    },
+  };
 }
 
 /**
  * Mock utility for Edge Function requests.
  */
-export function createMockRequest(body: any, method = 'POST') {
+export function createMockRequest(body: unknown, method = 'POST') {
   return new Request('https://edge-function.test', {
     method,
     headers: { 'Content-Type': 'application/json' },

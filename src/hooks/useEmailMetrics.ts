@@ -9,7 +9,7 @@ interface EmailLog {
   subject: string | null;
   status: string;
   error_message: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 
@@ -88,7 +88,8 @@ export function useEmailMetrics(days: number = 30) {
       const totalOpened = trackingEvents.filter(e => e.event_type === 'open').length;
       const totalClicked = trackingEvents.filter(e => e.event_type === 'click').length;
 
-      const successRate = emailLogs.length > 0 ? (totalSent / emailLogs.length) * 100 : 100;
+      const successRate =
+        emailLogs.length > 0 ? (totalSent / emailLogs.length) * 100 : 100;
       const openRate = totalSent > 0 ? (totalOpened / totalSent) * 100 : 0;
       const clickRate = totalSent > 0 ? (totalClicked / totalSent) * 100 : 0;
 
@@ -118,7 +119,10 @@ export function useEmailMetrics(days: number = 30) {
       });
 
       // Subject performance (A/B comparisons)
-      const subjectMap = new Map<string, { sent: number; opens: number; clicks: number }>();
+      const subjectMap = new Map<
+        string,
+        { sent: number; opens: number; clicks: number }
+      >();
       emailLogs.forEach(log => {
         if (!log.subject || log.status !== 'sent') return;
         const s = subjectMap.get(log.subject) || { sent: 0, opens: 0, clicks: 0 };
@@ -160,7 +164,10 @@ export function useEmailMetrics(days: number = 30) {
           sent: stats.sent,
           failed: stats.failed,
           total: stats.sent + stats.failed,
-          successRate: (stats.sent + stats.failed) > 0 ? (stats.sent / (stats.sent + stats.failed)) * 100 : 100
+          successRate:
+            stats.sent + stats.failed > 0
+              ? (stats.sent / (stats.sent + stats.failed)) * 100
+              : 100,
         }))
         .sort((a, b) => b.total - a.total);
 
@@ -184,7 +191,9 @@ export function useEmailMetrics(days: number = 30) {
         successRate,
         openRate,
         clickRate,
-        dailyStats: Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date)),
+        dailyStats: Array.from(dailyMap.values()).sort((a, b) =>
+          a.date.localeCompare(b.date)
+        ),
         bySubject,
         byFunction,
         topRecipients,

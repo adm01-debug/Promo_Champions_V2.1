@@ -1,21 +1,20 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   useChannelStats,
   useChannelInteractions,
   useMessageTemplates,
   Channel,
-} from "@/hooks/useMultichannel";
-import { ChannelStatsCards } from "./ChannelStatsCards";
-import { ChannelChart } from "./ChannelChart";
-import { InteractionTimeline } from "./InteractionTimeline";
-import { TemplateManager } from "./TemplateManager";
-import { AIEmailComposerButton } from "@/components/email/AIEmailComposerButton";
+} from '@/hooks/useMultichannel';
+import { ChannelStatsCards } from './ChannelStatsCards';
+import { ChannelChart } from './ChannelChart';
+import { InteractionTimeline } from './InteractionTimeline';
+import { TemplateManager } from './TemplateManager';
+import { AIEmailComposerButton } from '@/components/email/AIEmailComposerButton';
 import {
   MessageSquare,
   Mail,
@@ -24,23 +23,26 @@ import {
   Smartphone,
   Search,
   FileText,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const CHANNEL_CONFIG: Record<Channel, { label: string; icon: typeof Mail; color: string }> = {
-  whatsapp: { label: "WhatsApp", icon: MessageSquare, color: "text-success" },
-  email: { label: "Email", icon: Mail, color: "text-primary" },
-  linkedin: { label: "Linkedin", icon: Linkedin, color: "text-info" },
-  sms: { label: "SMS", icon: Smartphone, color: "text-status-warning" },
-  phone: { label: "Telefone", icon: Phone, color: "text-status-info" },
+const CHANNEL_CONFIG: Record<
+  Channel,
+  { label: string; icon: typeof Mail; color: string }
+> = {
+  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'text-success' },
+  email: { label: 'Email', icon: Mail, color: 'text-primary' },
+  linkedin: { label: 'Linkedin', icon: Linkedin, color: 'text-info' },
+  sms: { label: 'SMS', icon: Smartphone, color: 'text-status-warning' },
+  phone: { label: 'Telefone', icon: Phone, color: 'text-status-info' },
 };
 
 export { CHANNEL_CONFIG };
 
 export function MultichannelDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
   const [channelFilter, setChannelFilter] = useState<Channel | undefined>();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const { data: stats, isLoading: loadingStats } = useChannelStats(30);
   const { data: interactions, isLoading: loadingInteractions } = useChannelInteractions({
     channel: channelFilter,
@@ -86,34 +88,37 @@ export function MultichannelDashboard() {
       {/* Channel Filter Chips */}
       <div className="flex flex-wrap gap-2">
         <Button
-          variant={!channelFilter ? "default" : "outline"}
+          variant={!channelFilter ? 'default' : 'outline'}
           size="sm"
           onClick={() => setChannelFilter(undefined)}
         >
           Todos
         </Button>
-        {(Object.entries(CHANNEL_CONFIG) as [Channel, typeof CHANNEL_CONFIG["whatsapp"]][]).map(
-          ([ch, cfg]) => {
-            const Icon = cfg.icon;
-            return (
-              <Button
-                key={ch}
-                variant={channelFilter === ch ? "default" : "outline"}
-                size="sm"
-                onClick={() => setChannelFilter(channelFilter === ch ? undefined : ch)}
-                className="gap-1.5"
-              >
-                <Icon className={cn("h-3.5 w-3.5", channelFilter !== ch && cfg.color)} />
-                {cfg.label}
-                {stats?.stats.find(s => s.channel === ch)?.total ? (
-                  <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
-                    {stats.stats.find(s => s.channel === ch)!.total}
-                  </Badge>
-                ) : null}
-              </Button>
-            );
-          }
-        )}
+        {(
+          Object.entries(CHANNEL_CONFIG) as [
+            Channel,
+            (typeof CHANNEL_CONFIG)['whatsapp'],
+          ][]
+        ).map(([ch, cfg]) => {
+          const Icon = cfg.icon;
+          return (
+            <Button
+              key={ch}
+              variant={channelFilter === ch ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setChannelFilter(channelFilter === ch ? undefined : ch)}
+              className="gap-1.5"
+            >
+              <Icon className={cn('h-3.5 w-3.5', channelFilter !== ch && cfg.color)} />
+              {cfg.label}
+              {stats?.stats.find(s => s.channel === ch)?.total ? (
+                <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0">
+                  {stats.stats.find(s => s.channel === ch)!.total}
+                </Badge>
+              ) : null}
+            </Button>
+          );
+        })}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -146,7 +151,7 @@ export function MultichannelDashboard() {
             <Input
               placeholder="Buscar por contato..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>

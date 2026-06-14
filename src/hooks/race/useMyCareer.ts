@@ -27,7 +27,10 @@ export interface CareerSummary {
 export function useMyCareer(salespersonId?: string) {
   return useQuery({
     queryKey: ['my-career', salespersonId],
-    queryFn: async (): Promise<{ entries: CareerSeasonEntry[]; summary: CareerSummary }> => {
+    queryFn: async (): Promise<{
+      entries: CareerSeasonEntry[];
+      summary: CareerSummary;
+    }> => {
       const empty: CareerSummary = {
         total_seasons: 0,
         total_titles: 0,
@@ -38,7 +41,7 @@ export function useMyCareer(salespersonId?: string) {
       if (!salespersonId) return { entries: [], summary: empty };
 
       // Busca todos os carros do salesperson (1 por season normalmente)
-      const { data: cars } = await supabase
+      await supabase
         .from('race_cars')
         .select('id, salesperson_id')
         .eq('salesperson_id', salespersonId);
@@ -61,9 +64,9 @@ export function useMyCareer(salespersonId?: string) {
 
         if (!lb || lb.length === 0) continue;
         const sorted = [...lb].sort(
-          (a, b) => Number(b.total_sales) - Number(a.total_sales),
+          (a, b) => Number(b.total_sales) - Number(a.total_sales)
         );
-        const idx = sorted.findIndex((r) => r.salesperson_id === salespersonId);
+        const idx = sorted.findIndex(r => r.salesperson_id === salespersonId);
         if (idx === -1) continue;
 
         const rank = idx + 1;
@@ -80,14 +83,14 @@ export function useMyCareer(salespersonId?: string) {
         });
       }
 
-      const finished = entries.filter((e) => e.final_rank !== null);
+      const finished = entries.filter(e => e.final_rank !== null);
       const summary: CareerSummary = {
         total_seasons: entries.length,
-        total_titles: entries.filter((e) => e.was_champion).length,
-        total_podiums: finished.filter((e) => (e.final_rank ?? 99) <= 3).length,
+        total_titles: entries.filter(e => e.was_champion).length,
+        total_podiums: finished.filter(e => (e.final_rank ?? 99) <= 3).length,
         total_points: entries.reduce((a, e) => a + e.total_sales, 0),
         best_rank: finished.length
-          ? Math.min(...finished.map((e) => e.final_rank ?? 99))
+          ? Math.min(...finished.map(e => e.final_rank ?? 99))
           : null,
       };
 

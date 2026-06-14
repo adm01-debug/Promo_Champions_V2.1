@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Sparkles, AlertTriangle, CheckCircle, ArrowRight, Clock } from 'lucide-react';
-import { differenceInDays, format } from 'date-fns';
+import { Sparkles, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
+import { differenceInDays } from 'date-fns';
 import { isOpenSaleStatus } from '@/constants';
-import { ptBR } from 'date-fns/locale';
 
 interface DealAutoSummaryProps {
   deal: {
@@ -95,9 +94,12 @@ function DealAutoSummaryComponent({
           variant="outline"
           className={cn(
             'text-[9px] ml-auto',
-            summary.overallStatus === 'good' && 'text-status-success border-status-success/30',
-            summary.overallStatus === 'warning' && 'text-status-warning border-status-warning/30',
-            summary.overallStatus === 'critical' && 'text-destructive border-destructive/30'
+            summary.overallStatus === 'good' &&
+              'text-status-success border-status-success/30',
+            summary.overallStatus === 'warning' &&
+              'text-status-warning border-status-warning/30',
+            summary.overallStatus === 'critical' &&
+              'text-destructive border-destructive/30'
           )}
         >
           {summary.statusText}
@@ -111,7 +113,8 @@ function DealAutoSummaryComponent({
             deal.amount
           )}
         </span>{' '}
-        aberto há {summary.daysSinceCreation} dias com {activitiesCount} interações registradas.
+        aberto há {summary.daysSinceCreation} dias com {activitiesCount} interações
+        registradas.
       </p>
 
       {summary.risks.length > 0 && (

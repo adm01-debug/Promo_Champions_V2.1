@@ -1,9 +1,9 @@
-import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { corsHeaders } from '../_shared/cors.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface HealthFactor {
   label: string;
-  status: "good" | "warning" | "bad";
+  status: 'good' | 'warning' | 'bad';
   value: string;
 }
 
@@ -13,7 +13,7 @@ interface AccountHealth {
   tier: string;
   health_status: string;
   health_score: number;
-  churn_risk: "low" | "medium" | "high" | "critical";
+  churn_risk: 'low' | 'medium' | 'high' | 'critical';
   expansion_potential: number;
   days_since_last_activity: number;
   total_revenue: number;
@@ -27,60 +27,73 @@ interface AccountHealth {
   };
 }
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+Deno.serve(async req => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
     const { data: accounts } = await supabase
-      .from("accounts")
-      .select("id, name, tier, health_status, account_score, annual_revenue, updated_at")
-      .order("annual_revenue", { ascending: false, nullsFirst: false })
+      .from('accounts')
+      .select('id, name, tier, health_status, account_score, annual_revenue, updated_at')
+      .order('annual_revenue', { ascending: false, nullsFirst: false })
       .limit(100);
 
     if (!accounts) {
       return new Response(JSON.stringify({ accounts: [], summary: {} }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const now = Date.now();
     const enriched: AccountHealth[] = await Promise.all(
-      accounts.map(async (acc) => {
+      accounts.map(async acc => {
         const { data: lastActivity } = await supabase
-          .from("account_activities")
-          .select("occurred_at")
-          .eq("account_id", acc.id)
-          .order("occurred_at", { ascending: false })
+          .from('account_activities')
+          .select('occurred_at')
+          .eq('account_id', acc.id)
+          .order('occurred_at', { ascending: false })
           .limit(1)
           .maybeSingle();
 
-        const lastDate = lastActivity?.occurred_at ? new Date(lastActivity.occurred_at).getTime() : new Date(acc.updated_at).getTime();
+        const lastDate = lastActivity?.occurred_at
+          ? new Date(lastActivity.occurred_at).getTime()
+          : new Date(acc.updated_at).getTime();
         const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
 
         const score = acc.account_score ?? 50;
-        let churnRisk: AccountHealth["churn_risk"] = "low";
-        if (daysSince > 90 || score < 30) churnRisk = "critical";
-        else if (daysSince > 60 || score < 50) churnRisk = "high";
-        else if (daysSince > 30 || score < 70) churnRisk = "medium";
+        let churnRisk: AccountHealth['churn_risk'] = 'low';
+        if (daysSince > 90 || score < 30) churnRisk = 'critical';
+        else if (daysSince > 60 || score < 50) churnRisk = 'high';
+        else if (daysSince > 30 || score < 70) churnRisk = 'medium';
 
-        const expansionPotential = Math.max(0, Math.min(100, score - daysSince + (acc.tier === "enterprise" ? 20 : 0)));
+        const expansionPotential = Math.max(
+          0,
+          Math.min(100, score - daysSince + (acc.tier === 'enterprise' ? 20 : 0))
+        );
 
-        let action = "Manter cadência regular";
+        const action = 'Manter cadência regular';
         const factors: HealthFactor[] = [
-          { label: "Atividade", status: daysSince > 30 ? "bad" : daysSince > 14 ? "warning" : "good", value: `${daysSince}d` },
-          { label: "Sentimento", status: score < 40 ? "bad" : score < 70 ? "warning" : "good", value: score > 70 ? "Positivo" : score > 40 ? "Neutro" : "Negativo" },
-          { label: "Suporte", status: "good", value: "Normal" }
+          {
+            label: 'Atividade',
+            status: daysSince > 30 ? 'bad' : daysSince > 14 ? 'warning' : 'good',
+            value: `${daysSince}d`,
+          },
+          {
+            label: 'Sentimento',
+            status: score < 40 ? 'bad' : score < 70 ? 'warning' : 'good',
+            value: score > 70 ? 'Positivo' : score > 40 ? 'Neutro' : 'Negativo',
+          },
+          { label: 'Suporte', status: 'good', value: 'Normal' },
         ];
 
         const radar = {
           usage: Math.round(score * 0.8),
           sentiment: score,
           support: 90,
-          financial: 100
+          financial: 100,
         };
 
         return {
@@ -95,29 +108,36 @@ Deno.serve(async (req) => {
           total_revenue: acc.annual_revenue ?? 0,
           recommended_action: action,
           health_factors: factors,
-          engagement_radar: radar
+          engagement_radar: radar,
         };
       })
     );
 
     const summary = {
       total_accounts: enriched.length,
-      at_risk: enriched.filter((a) => a.churn_risk === "high" || a.churn_risk === "critical").length,
-      critical: enriched.filter((a) => a.churn_risk === "critical").length,
-      expansion_ready: enriched.filter((a) => a.expansion_potential > 70).length,
+      at_risk: enriched.filter(
+        a => a.churn_risk === 'high' || a.churn_risk === 'critical'
+      ).length,
+      critical: enriched.filter(a => a.churn_risk === 'critical').length,
+      expansion_ready: enriched.filter(a => a.expansion_potential > 70).length,
       total_revenue_at_risk: enriched
-        .filter((a) => a.churn_risk === "high" || a.churn_risk === "critical")
+        .filter(a => a.churn_risk === 'high' || a.churn_risk === 'critical')
         .reduce((sum, a) => sum + a.total_revenue, 0),
-      avg_health_score: Math.round(enriched.reduce((s, a) => s + a.health_score, 0) / Math.max(enriched.length, 1)),
+      avg_health_score: Math.round(
+        enriched.reduce((s, a) => s + a.health_score, 0) / Math.max(enriched.length, 1)
+      ),
     };
 
     return new Response(JSON.stringify({ accounts: enriched, summary }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 });

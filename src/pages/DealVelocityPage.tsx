@@ -1,28 +1,37 @@
-import { Helmet } from "react-helmet-async";
-import { DealVelocityChart } from "@/components/analytics/DealVelocityChart";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { Clock, TrendingUp, Filter, Download, ArrowLeftRight, Users, Calendar } from "lucide-react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useDealVelocity } from "@/hooks/deal-intelligence/useDealAnalyticsVelocity";
-import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Helmet } from 'react-helmet-async';
+import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { Clock, TrendingUp, Download, ArrowLeftRight, Calendar } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useDealVelocity } from '@/hooks/deal-intelligence/useDealAnalyticsVelocity';
+import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function DealVelocityPage() {
   const [timeframe, setTimeframe] = useState(90);
-  const { data, isLoading } = useDealVelocity(undefined, timeframe);
+  useDealVelocity(undefined, timeframe);
 
   return (
     <>
       <Helmet>
         <title>Velocidade de Deals | Promo Champions</title>
-        <meta name="description" content="Dashboard histórico de velocidade de pipeline e benchmarks" />
+        <meta
+          name="description"
+          content="Dashboard histórico de velocidade de pipeline e benchmarks"
+        />
       </Helmet>
       <PageTransition>
         <div className="space-y-6 p-6 lg:p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -33,12 +42,17 @@ export default function DealVelocityPage() {
               </div>
               <div>
                 <h1 className="text-page-title gradient-text">Velocidade de Pipeline</h1>
-                <p className="text-sm text-muted-foreground/80">Monitoramento histórico de fluidez e tempo de conversão</p>
+                <p className="text-sm text-muted-foreground/80">
+                  Monitoramento histórico de fluidez e tempo de conversão
+                </p>
               </div>
             </motion.div>
 
             <div className="flex items-center gap-2">
-              <Select value={String(timeframe)} onValueChange={(v) => setTimeframe(Number(v))}>
+              <Select
+                value={String(timeframe)}
+                onValueChange={v => setTimeframe(Number(v))}
+              >
                 <SelectTrigger className="w-[180px] glass border-border/50">
                   <Calendar className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Período" />
@@ -50,7 +64,11 @@ export default function DealVelocityPage() {
                   <SelectItem value="365">Último ano</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="sm" className="glass gap-2 border-border/50">
+              <Button
+                variant="outline"
+                size="sm"
+                className="glass gap-2 border-border/50"
+              >
                 <Download className="h-4 w-4" />
                 Exportar
               </Button>
@@ -59,7 +77,7 @@ export default function DealVelocityPage() {
 
           <div className="grid grid-cols-1 gap-6">
             <DealVelocityChart />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="glass border-border/40 overflow-hidden group">
                 <CardHeader className="pb-2 border-b border-border/30 bg-muted/20">
@@ -71,26 +89,39 @@ export default function DealVelocityPage() {
                 <CardContent className="p-0">
                   <div className="divide-y divide-border/30">
                     {[
-                      { name: "Carlos Silva", avg: 12.4, deals: 45, perf: "high" },
-                      { name: "Ana Beatriz", avg: 15.2, deals: 38, perf: "mid" },
-                      { name: "João Pereira", avg: 18.9, deals: 29, perf: "low" },
-                      { name: "Mariana Costa", avg: 13.1, deals: 41, perf: "high" },
+                      { name: 'Carlos Silva', avg: 12.4, deals: 45, perf: 'high' },
+                      { name: 'Ana Beatriz', avg: 15.2, deals: 38, perf: 'mid' },
+                      { name: 'João Pereira', avg: 18.9, deals: 29, perf: 'low' },
+                      { name: 'Mariana Costa', avg: 13.1, deals: 41, perf: 'high' },
                     ].map((v, i) => (
-                      <div key={i} className="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors cursor-pointer group/item">
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors cursor-pointer group/item"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${
-                            v.perf === 'high' ? 'bg-status-success shadow-[0_0_8px_rgba(var(--status-success-rgb),0.5)]' : 
-                            v.perf === 'mid' ? 'bg-status-warning shadow-[0_0_8px_rgba(var(--status-warning-rgb),0.5)]' : 
-                            'bg-status-error shadow-[0_0_8px_rgba(var(--status-error-rgb),0.5)]'
-                          }`} />
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              v.perf === 'high'
+                                ? 'bg-status-success shadow-[0_0_8px_rgba(var(--status-success-rgb),0.5)]'
+                                : v.perf === 'mid'
+                                  ? 'bg-status-warning shadow-[0_0_8px_rgba(var(--status-warning-rgb),0.5)]'
+                                  : 'bg-status-error shadow-[0_0_8px_rgba(var(--status-error-rgb),0.5)]'
+                            }`}
+                          />
                           <div>
-                            <p className="text-sm font-medium group-hover/item:text-primary transition-colors">{v.name}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{v.deals} deals ativos</p>
+                            <p className="text-sm font-medium group-hover/item:text-primary transition-colors">
+                              {v.name}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                              {v.deals} deals ativos
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-bold font-display">{v.avg}d</p>
-                          <p className="text-[10px] text-muted-foreground">Velocidade Média</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            Velocidade Média
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -107,16 +138,28 @@ export default function DealVelocityPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-                    <h5 className="text-xs font-semibold text-primary mb-1 uppercase tracking-wider">Oportunidade de Ganho</h5>
+                    <h5 className="text-xs font-semibold text-primary mb-1 uppercase tracking-wider">
+                      Oportunidade de Ganho
+                    </h5>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Reduzir o tempo na etapa de <span className="text-foreground font-medium">Qualificação</span> em apenas 1 dia pode aumentar o volume de fechamento em <span className="text-status-success font-bold">12%</span> no próximo trimestre.
+                      Reduzir o tempo na etapa de{' '}
+                      <span className="text-foreground font-medium">Qualificação</span> em
+                      apenas 1 dia pode aumentar o volume de fechamento em{' '}
+                      <span className="text-status-success font-bold">12%</span> no
+                      próximo trimestre.
                     </p>
                   </div>
-                  
+
                   <div className="p-4 rounded-xl bg-status-warning/5 border border-status-warning/20">
-                    <h5 className="text-xs font-semibold text-status-warning mb-1 uppercase tracking-wider">Atenção Necessária</h5>
+                    <h5 className="text-xs font-semibold text-status-warning mb-1 uppercase tracking-wider">
+                      Atenção Necessária
+                    </h5>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Deals com mais de <span className="text-foreground font-medium">25 dias</span> sem movimentação têm <span className="text-status-error font-bold">75%</span> de chance de churn. Ativar cadência de reaquecimento.
+                      Deals com mais de{' '}
+                      <span className="text-foreground font-medium">25 dias</span> sem
+                      movimentação têm{' '}
+                      <span className="text-status-error font-bold">75%</span> de chance
+                      de churn. Ativar cadência de reaquecimento.
                     </p>
                   </div>
                 </CardContent>

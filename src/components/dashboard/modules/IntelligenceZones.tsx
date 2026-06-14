@@ -1,35 +1,32 @@
-import { useIntelligenceZones } from "@/hooks/dashboard/useIntelligenceZones";
-import { Card } from "@/components/ui/card";
-import { 
-  Users, 
-  TrendingUp, 
-  BarChart3, 
-  Zap, 
-  CalendarDays, 
-  Target, 
-  CheckCircle2, 
-  ArrowUpRight, 
-  Lightbulb,
+import { useIntelligenceZones } from '@/hooks/dashboard/useIntelligenceZones';
+import { Card } from '@/components/ui/card';
+import {
+  Users,
+  TrendingUp,
+  BarChart3,
+  Zap,
+  CalendarDays,
+  Target,
+  CheckCircle2,
   Clock,
   Package,
   Star,
   Brain,
-  Info,
-  FileDown
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useBIDossierExport } from "@/hooks/dashboard/useBIDossierExport";
-import { cn } from "@/lib/utils";
-import { BIProductCard } from "./BIProductCard";
+  FileDown,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useBIDossierExport } from '@/hooks/dashboard/useBIDossierExport';
+import { cn } from '@/lib/utils';
+import { BIProductCard } from './BIProductCard';
 
-import { 
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 export const IntelligenceZones = () => {
   const { data, isLoading } = useIntelligenceZones();
@@ -47,8 +44,12 @@ export const IntelligenceZones = () => {
     );
   }
 
-  const formatCurrency = (val: number) => 
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0,
+    }).format(val);
 
   const getIntensityColor = (intensity: number) => {
     if (intensity >= 85) return 'bg-violet-600';
@@ -66,20 +67,25 @@ export const IntelligenceZones = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pb-10">
       <div className="flex items-center justify-between px-2">
-        <h2 className="text-2xl font-black uppercase italic tracking-tighter">Zonas de <span className="text-primary">Inteligência</span></h2>
+        <h2 className="text-2xl font-black uppercase italic tracking-tighter">
+          Zonas de <span className="text-primary">Inteligência</span>
+        </h2>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="bg-violet-950/20 border-violet-500/30 text-violet-400 hover:bg-violet-500 hover:text-white transition-all gap-2 rounded-xl text-[10px] font-black uppercase tracking-widest"
             onClick={exportToPDF}
             disabled={isExporting || !data}
           >
             <FileDown className="size-3" />
-            {isExporting ? "Gerando..." : "Exportar Dossiê PDF"}
+            {isExporting ? 'Gerando...' : 'Exportar Dossiê PDF'}
           </Button>
-          <Badge variant={data?.isMocked ? "secondary" : "default"} className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10">
-            {data?.isMocked ? "📊 Dados Simulados" : "⚡ Dados em Tempo Real"}
+          <Badge
+            variant={data?.isMocked ? 'secondary' : 'default'}
+            className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10"
+          >
+            {data?.isMocked ? '📊 Dados Simulados' : '⚡ Dados em Tempo Real'}
           </Badge>
         </div>
       </div>
@@ -89,20 +95,49 @@ export const IntelligenceZones = () => {
         <Card className="lg:col-span-8 p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
-            <Users className="size-5 text-primary" /> Visão <span className="text-primary">360°</span> do Cliente
+            <Users className="size-5 text-primary" /> Visão{' '}
+            <span className="text-primary">360°</span> do Cliente
           </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 relative z-10">
             {[
-              { label: "LTV", value: formatCurrency(data?.customer360.ltv || 0), icon: Star, color: "text-amber-500" },
-              { label: "Ticket Médio", value: formatCurrency(data?.customer360.avgTicket || 0), icon: Target, color: "text-blue-500" },
-              { label: "Recência", value: `${data?.customer360.recency} dias`, icon: Clock, color: "text-emerald-500" },
-              { label: "Pedidos", value: data?.customer360.orderCount, icon: Package, color: "text-purple-500" },
+              {
+                label: 'LTV',
+                value: formatCurrency(data?.customer360.ltv || 0),
+                icon: Star,
+                color: 'text-amber-500',
+              },
+              {
+                label: 'Ticket Médio',
+                value: formatCurrency(data?.customer360.avgTicket || 0),
+                icon: Target,
+                color: 'text-blue-500',
+              },
+              {
+                label: 'Recência',
+                value: `${data?.customer360.recency} dias`,
+                icon: Clock,
+                color: 'text-emerald-500',
+              },
+              {
+                label: 'Pedidos',
+                value: data?.customer360.orderCount,
+                icon: Package,
+                color: 'text-purple-500',
+              },
             ].map((m, i) => (
-              <motion.div key={m.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/20 transition-all">
+              <motion.div
+                key={m.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/20 transition-all"
+              >
                 <div className="flex items-center gap-2 mb-2">
                   <m.icon className={`size-3.5 ${m.color}`} />
-                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{m.label}</p>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+                    {m.label}
+                  </p>
                 </div>
                 <p className="text-xl font-black font-mono tracking-tighter">{m.value}</p>
               </motion.div>
@@ -114,10 +149,17 @@ export const IntelligenceZones = () => {
               <TrendingUp className="size-3 text-primary" /> Timeline 5 Últimos Pedidos
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-              {data?.customer360.lastOrders.map((order) => (
-                <div key={order.id} className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all">
-                  <p className="text-[9px] text-muted-foreground font-mono">{new Date(order.date).toLocaleDateString('pt-BR')}</p>
-                  <p className="text-sm font-black text-primary mt-1">{formatCurrency(order.value)}</p>
+              {data?.customer360.lastOrders.map(order => (
+                <div
+                  key={order.id}
+                  className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all"
+                >
+                  <p className="text-[9px] text-muted-foreground font-mono">
+                    {new Date(order.date).toLocaleDateString('pt-BR')}
+                  </p>
+                  <p className="text-sm font-black text-primary mt-1">
+                    {formatCurrency(order.value)}
+                  </p>
                 </div>
               ))}
             </div>
@@ -130,18 +172,29 @@ export const IntelligenceZones = () => {
             <Zap className="size-24 text-primary" />
           </div>
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
-            <Zap className="size-5 text-primary" /> Sugestão do <span className="text-primary">Especialista</span>
+            <Zap className="size-5 text-primary" /> Sugestão do{' '}
+            <span className="text-primary">Especialista</span>
           </h3>
           <div className="space-y-4 relative z-10">
             {data?.expertCurated.map((item: any, i: number) => (
-              <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
                   <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform">
                     <Brain className="size-5" />
                   </div>
-                  <p className="text-sm font-black uppercase tracking-tighter">{item.name}</p>
+                  <p className="text-sm font-black uppercase tracking-tighter">
+                    {item.name}
+                  </p>
                 </div>
-                <p className="text-[10px] text-muted-foreground leading-relaxed italic">{item.reason}</p>
+                <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+                  {item.reason}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -152,7 +205,8 @@ export const IntelligenceZones = () => {
         {/* ZONA 2: Benchmark Cliente × Setor */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl group rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
-            <BarChart3 className="size-5 text-primary" /> Cliente × <span className="text-primary">Setor</span>
+            <BarChart3 className="size-5 text-primary" /> Cliente ×{' '}
+            <span className="text-primary">Setor</span>
           </h3>
           <div className="space-y-6">
             {data?.benchmarks.map((b, i) => {
@@ -160,19 +214,37 @@ export const IntelligenceZones = () => {
               return (
                 <div key={b.metric} className="space-y-2">
                   <div className="flex justify-between items-end">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{b.metric}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      {b.metric}
+                    </p>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-black font-mono">{b.client}{b.unit}</span>
-                      <span className={`text-[9px] font-bold ${diff >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                        {diff >= 0 ? '+' : ''}{diff.toFixed(1)}%
+                      <span className="text-xs font-black font-mono">
+                        {b.client}
+                        {b.unit}
+                      </span>
+                      <span
+                        className={`text-[9px] font-bold ${diff >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}
+                      >
+                        {diff >= 0 ? '+' : ''}
+                        {diff.toFixed(1)}%
                       </span>
                     </div>
                   </div>
                   <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden relative">
-                    <motion.div initial={{ width: 0 }} animate={{ width: `${(b.client / (b.client + b.sector)) * 100}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="h-full bg-primary relative z-10" />
-                    <div className="absolute top-0 h-full w-0.5 bg-white/20 z-20" style={{ left: '50%' }} />
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(b.client / (b.client + b.sector)) * 100}%` }}
+                      transition={{ duration: 1, delay: i * 0.1 }}
+                      className="h-full bg-primary relative z-10"
+                    />
+                    <div
+                      className="absolute top-0 h-full w-0.5 bg-white/20 z-20"
+                      style={{ left: '50%' }}
+                    />
                   </div>
-                  <p className="text-[9px] text-muted-foreground font-medium italic mt-1 leading-tight">{b.insight}</p>
+                  <p className="text-[9px] text-muted-foreground font-medium italic mt-1 leading-tight">
+                    {b.insight}
+                  </p>
                 </div>
               );
             })}
@@ -182,18 +254,30 @@ export const IntelligenceZones = () => {
         {/* ZONA 3: Afinidade */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
-            <Target className="size-5 text-primary" /> Perfil de <span className="text-primary">Afinidade</span>
+            <Target className="size-5 text-primary" /> Perfil de{' '}
+            <span className="text-primary">Afinidade</span>
           </h3>
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
-              {data?.affinity.topCategories.map((cat) => (
-                <Badge key={cat} className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-black uppercase tracking-widest text-[9px]">{cat}</Badge>
+              {data?.affinity.topCategories.map(cat => (
+                <Badge
+                  key={cat}
+                  className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-black uppercase tracking-widest text-[9px]"
+                >
+                  {cat}
+                </Badge>
               ))}
             </div>
             <div className="space-y-4">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2"><CheckCircle2 className="size-3 text-emerald-500" /> Produtos Sugeridos</p>
-              {data?.affinity.suggestedProducts.map((prod) => (
-                <BIProductCard key={prod.name} name={prod.name} confidence={prod.confidence} />
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <CheckCircle2 className="size-3 text-emerald-500" /> Produtos Sugeridos
+              </p>
+              {data?.affinity.suggestedProducts.map(prod => (
+                <BIProductCard
+                  key={prod.name}
+                  name={prod.name}
+                  confidence={prod.confidence}
+                />
               ))}
             </div>
           </div>
@@ -202,11 +286,17 @@ export const IntelligenceZones = () => {
         {/* ZONA 4: Tendência Setor */}
         <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden rounded-3xl">
           <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8 relative z-10">
-            <TrendingUp className="size-5 text-primary" /> Tendência <span className="text-primary">Setor</span>
+            <TrendingUp className="size-5 text-primary" /> Tendência{' '}
+            <span className="text-primary">Setor</span>
           </h3>
           <div className="grid grid-cols-1 gap-4 relative z-10">
-            {data?.sectorTrends.map((trend) => (
-              <BIProductCard key={trend.name} name={trend.name} sales={trend.sales} growth={trend.growth} />
+            {data?.sectorTrends.map(trend => (
+              <BIProductCard
+                key={trend.name}
+                name={trend.name}
+                sales={Number(trend.sales)}
+                growth={trend.growth}
+              />
             ))}
           </div>
         </Card>
@@ -216,28 +306,49 @@ export const IntelligenceZones = () => {
       <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
         <div className="absolute bottom-0 right-0 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mb-32" />
         <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 mb-10">
-          <CalendarDays className="size-6 text-primary" /> Sazonalidade <span className="text-primary">Estratégica</span>
+          <CalendarDays className="size-6 text-primary" /> Sazonalidade{' '}
+          <span className="text-primary">Estratégica</span>
         </h3>
 
         <div className="grid grid-cols-1 gap-12 relative z-10">
           <div className="space-y-4">
             {/* Heatmap Grid [80px_repeat(12,1fr)] */}
-            <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
-              <div className="text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
+            <div
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+            >
+              <div className="text-[9px] font-black text-muted-foreground uppercase">
+                Cliente
+              </div>
               {data?.seasonality.months.map((month, i) => {
                 const monthIndex = i + 1;
-                const point = data.seasonality.clientIntensity.find(p => Number(p.month) === monthIndex);
+                const point = data.seasonality.clientIntensity.find(
+                  p => Number(p.month) === monthIndex
+                );
                 const intensity = point?.intensity || 0;
                 return (
                   <TooltipProvider key={month}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <motion.div className={cn("h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm", getIntensityColor(intensity), monthIndex === currentMonth && "ring-2 ring-violet-600 ring-offset-2 ring-offset-background")} />
+                        <motion.div
+                          className={cn(
+                            'h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm',
+                            getIntensityColor(intensity),
+                            monthIndex === currentMonth &&
+                              'ring-2 ring-violet-600 ring-offset-2 ring-offset-background'
+                          )}
+                        />
                       </TooltipTrigger>
                       <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
-                        <p className="font-black uppercase text-[10px] text-primary">{month}</p>
-                        <p className="text-xs font-bold">Intensidade: {intensity.toFixed(1)}%</p>
-                        <p className="text-[10px] text-muted-foreground">Volume: {point?.quotes_count || 0} quotes</p>
+                        <p className="font-black uppercase text-[10px] text-primary">
+                          {month}
+                        </p>
+                        <p className="text-xs font-bold">
+                          Intensidade: {intensity.toFixed(1)}%
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          Volume: {point?.quotes_count || 0} quotes
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -245,21 +356,37 @@ export const IntelligenceZones = () => {
               })}
             </div>
 
-            <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
-              <div className="text-[9px] font-black text-muted-foreground uppercase">Setor</div>
+            <div
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+            >
+              <div className="text-[9px] font-black text-muted-foreground uppercase">
+                Setor
+              </div>
               {data?.seasonality.months.map((month, i) => {
                 const monthIndex = i + 1;
-                const point = data.seasonality.industryIntensity.find(p => Number(p.month) === monthIndex);
+                const point = data.seasonality.industryIntensity.find(
+                  p => Number(p.month) === monthIndex
+                );
                 const intensity = point?.intensity || 0;
                 return (
                   <TooltipProvider key={month}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <motion.div className={cn("h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all", getIntensityColor(intensity))} />
+                        <motion.div
+                          className={cn(
+                            'h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all',
+                            getIntensityColor(intensity)
+                          )}
+                        />
                       </TooltipTrigger>
                       <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
-                        <p className="font-black uppercase text-[10px] text-primary">{month}</p>
-                        <p className="text-xs font-bold">Setor: {intensity.toFixed(1)}%</p>
+                        <p className="font-black uppercase text-[10px] text-primary">
+                          {month}
+                        </p>
+                        <p className="text-xs font-bold">
+                          Setor: {intensity.toFixed(1)}%
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -267,10 +394,18 @@ export const IntelligenceZones = () => {
               })}
             </div>
 
-            <div className="grid gap-2" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
+            <div
+              className="grid gap-2"
+              style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+            >
               <div />
-              {data?.seasonality.months.map((month) => (
-                <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
+              {data?.seasonality.months.map(month => (
+                <p
+                  key={month}
+                  className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest"
+                >
+                  {month}
+                </p>
               ))}
             </div>
           </div>
@@ -281,8 +416,12 @@ export const IntelligenceZones = () => {
                 <TrendingUp className="size-6" />
               </div>
               <div>
-                <p className="text-[10px] text-violet-300 font-black uppercase tracking-widest mb-1">Próximo Pico Estimado</p>
-                <p className="text-lg font-black text-violet-400 uppercase italic">{data?.seasonality.nextPeak.month}</p>
+                <p className="text-[10px] text-violet-300 font-black uppercase tracking-widest mb-1">
+                  Próximo Pico Estimado
+                </p>
+                <p className="text-lg font-black text-violet-400 uppercase italic">
+                  {data?.seasonality.nextPeak.month}
+                </p>
               </div>
             </div>
 
@@ -291,16 +430,19 @@ export const IntelligenceZones = () => {
                 <Brain className="size-6" />
               </div>
               <div>
-                <h4 className="text-sm font-black uppercase tracking-widest text-violet-400 mb-1 text-primary">Insight Estratégico</h4>
+                <h4 className="text-sm font-black uppercase tracking-widest text-violet-400 mb-1 text-primary">
+                  Insight Estratégico
+                </h4>
                 <p className="text-xs text-card-foreground font-medium leading-relaxed">
-                  {data?.seasonality.nextPeak.insight} Planeje campanhas de aquisição agressivas e ajuste níveis de estoque com 45 dias de antecedência.
+                  {data?.seasonality.nextPeak.insight} Planeje campanhas de aquisição
+                  agressivas e ajuste níveis de estoque com 45 dias de antecedência.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </Card>
-      
+
       {/* Footer Fixo Confidencial (Visual feedback within component) */}
       <div className="flex justify-center py-4 border-t border-white/5 opacity-50">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">

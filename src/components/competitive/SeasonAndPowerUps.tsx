@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Star, Flame, Calendar, Sparkles, TrendingUp, Trophy, Clock } from 'lucide-react';
+import { Zap, Shield, Star, Flame, Calendar, Sparkles, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -53,28 +53,39 @@ const SeasonAndPowerUpsComponent: FC = () => {
                       </Badge>
                       <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     </div>
-                    <CardTitle className="text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">{currentSeason.name}</CardTitle>
+                    <CardTitle className="text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">
+                      {currentSeason.name}
+                    </CardTitle>
                     <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">
                       Season #{currentSeason.season_number} • Global Rankings
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-end">
-                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Multiplier</div>
+                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      XP Multiplier
+                    </div>
                     <div className="flex items-center gap-2">
-                       <Zap className="h-5 w-5 text-primary animate-pulse" />
-                       <span className="text-4xl font-black italic tracking-tighter text-primary">{currentSeason.xp_multiplier}x</span>
+                      <Zap className="h-5 w-5 text-primary animate-pulse" />
+                      <span className="text-4xl font-black italic tracking-tighter text-primary">
+                        {currentSeason.xp_multiplier}x
+                      </span>
                     </div>
                   </div>
                   <div className="h-12 w-px bg-white/10 hidden md:block" />
                   <div className="flex flex-col items-end">
-                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Time Remaining</div>
+                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      Time Remaining
+                    </div>
                     <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-xl border border-white/5">
                       <Calendar className="h-4 w-4 text-muted-foreground/60" />
                       <span className="text-xs font-black uppercase tracking-widest text-foreground">
-                        {formatDistanceToNow(new Date(currentSeason.ends_at), { addSuffix: false, locale: ptBR })}
+                        {formatDistanceToNow(new Date(currentSeason.ends_at), {
+                          addSuffix: false,
+                          locale: ptBR,
+                        })}
                       </span>
                     </div>
                   </div>
@@ -83,10 +94,10 @@ const SeasonAndPowerUpsComponent: FC = () => {
             </CardHeader>
             <CardContent className="pt-0 pb-6">
               <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: '65%' }}
-                  transition={{ duration: 1.5, ease: "circOut" }}
+                  transition={{ duration: 1.5, ease: 'circOut' }}
                   className="h-full bg-gradient-to-r from-primary to-accent relative"
                 >
                   <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
@@ -101,8 +112,12 @@ const SeasonAndPowerUpsComponent: FC = () => {
             <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4 border border-white/5 opacity-40">
               <Flame className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-xl font-black italic uppercase tracking-tighter gradient-text">Interseason Period</p>
-            <p className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-widest">Next season starting soon...</p>
+            <p className="text-xl font-black italic uppercase tracking-tighter gradient-text">
+              Interseason Period
+            </p>
+            <p className="text-xs text-muted-foreground font-medium mt-1 uppercase tracking-widest">
+              Next season starting soon...
+            </p>
           </CardContent>
         </Card>
       )}
@@ -127,36 +142,49 @@ const SeasonAndPowerUpsComponent: FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <div className={cn(
-                    'group relative flex items-center gap-5 p-5 rounded-3xl border glass overflow-hidden transition-all duration-500 hover:border-primary/40',
-                    'bg-gradient-to-br',
-                    color
-                  )}>
+                  <div
+                    className={cn(
+                      'group relative flex items-center gap-5 p-5 rounded-3xl border glass overflow-hidden transition-all duration-500 hover:border-primary/40',
+                      'bg-gradient-to-br',
+                      color
+                    )}
+                  >
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:rotate-12 transition-transform">
                       <Icon className="size-12" />
                     </div>
-                    
+
                     <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform relative z-10">
                       <Icon className="h-7 w-7 text-primary" />
                     </div>
-                    
+
                     <div className="flex-1 min-w-0 relative z-10">
                       <div className="flex justify-between items-start mb-1">
                         <p className="text-sm font-black italic uppercase tracking-tighter">
                           {powerUpLabels[pu.power_up_type] || pu.power_up_type}
                         </p>
-                        <Badge variant="outline" className="text-[9px] font-black uppercase bg-black/40 border-white/10 text-foreground">
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] font-black uppercase bg-black/40 border-white/10 text-foreground"
+                        >
                           {pu.multiplier}x
                         </Badge>
                       </div>
                       <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-3 truncate">
-                        {(pu as Record<string, unknown> & { salespeople?: { name: string } }).salespeople?.name || 'Global Buff'}
+                        {(
+                          pu as Record<string, unknown> & {
+                            salespeople?: { name: string };
+                          }
+                        ).salespeople?.name || 'Global Buff'}
                       </p>
-                      
+
                       <div className="flex items-center gap-2 bg-black/20 px-2 py-1 rounded-lg w-fit border border-white/5">
                         <Clock className="h-3 w-3 text-muted-foreground/60" />
                         <span className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
-                          Expires {formatDistanceToNow(new Date(pu.expires_at), { addSuffix: true, locale: ptBR })}
+                          Expires{' '}
+                          {formatDistanceToNow(new Date(pu.expires_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
                         </span>
                       </div>
                     </div>
@@ -170,6 +198,5 @@ const SeasonAndPowerUpsComponent: FC = () => {
     </div>
   );
 };
-
 
 export const SeasonAndPowerUps = React.memo(SeasonAndPowerUpsComponent);

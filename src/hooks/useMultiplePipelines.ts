@@ -75,14 +75,15 @@ export interface PipelineDeal {
   updated_at: string;
 }
 
-export const usePipelineDealsByPipeline = (pipelineId: string | null, stages: PipelineStageConfig[]) => {
+export const usePipelineDealsByPipeline = (
+  pipelineId: string | null,
+  stages: PipelineStageConfig[]
+) => {
   return useQuery<Record<string, PipelineDeal[]>>({
     queryKey: ['pipeline-deals-multi', pipelineId],
     queryFn: async () => {
       if (!pipelineId || stages.length === 0) return {};
 
-      const stageNames = stages.map(s => s.name);
-      
       let query = supabase
         .from('sales')
         .select('*')
@@ -99,9 +100,11 @@ export const usePipelineDealsByPipeline = (pipelineId: string | null, stages: Pi
       if (error) throw error;
 
       const grouped: Record<string, PipelineDeal[]> = {};
-      stages.forEach(s => { grouped[s.name] = []; });
+      stages.forEach(s => {
+        grouped[s.name] = [];
+      });
 
-      (data || []).forEach((sale) => {
+      (data || []).forEach(sale => {
         const status = sale.status as string;
         if (grouped[status]) {
           grouped[status].push(sale as unknown as PipelineDeal);
@@ -126,10 +129,22 @@ export const useMoveDealMultiPipeline = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ dealId, newStage, pipelineId }: { dealId: string; newStage: string; pipelineId: string }) => {
+    mutationFn: async ({
+      dealId,
+      newStage,
+      pipelineId,
+    }: {
+      dealId: string;
+      newStage: string;
+      pipelineId: string;
+    }) => {
       const { data, error } = await supabase
         .from('sales')
-        .update({ status: newStage, pipeline_id: pipelineId, updated_at: new Date().toISOString() })
+        .update({
+          status: newStage,
+          pipeline_id: pipelineId,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', dealId)
         .select()
         .single();

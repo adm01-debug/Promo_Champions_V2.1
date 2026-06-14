@@ -1,10 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { corsHeaders } from '../_shared/cors.ts';
 
-
-
-serve(async (req) => {
+serve(async req => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -13,10 +11,10 @@ serve(async (req) => {
     const { salespersonId } = await req.json();
 
     if (!salespersonId) {
-      return new Response(
-        JSON.stringify({ error: 'salespersonId is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'salespersonId is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -31,10 +29,10 @@ serve(async (req) => {
       .single();
 
     if (!salesperson) {
-      return new Response(
-        JSON.stringify({ error: 'Salesperson not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Salesperson not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // Fetch win/loss data for this salesperson (last 90 days)
@@ -43,10 +41,12 @@ serve(async (req) => {
 
     const { data: outcomes } = await supabase
       .from('deal_outcomes')
-      .select(`
+      .select(
+        `
         *,
         sales:sale_id (product_name, amount, client_name)
-      `)
+      `
+      )
       .eq('salesperson_id', salespersonId)
       .gte('created_at', ninetyDaysAgo.toISOString());
 
@@ -81,9 +81,11 @@ serve(async (req) => {
 
     // Team loss reasons
     const teamLossReasons: Record<string, number> = {};
-    teamOutcomes?.filter(o => o.outcome === 'lost').forEach(l => {
-      teamLossReasons[l.reason] = (teamLossReasons[l.reason] || 0) + 1;
-    });
+    teamOutcomes
+      ?.filter(o => o.outcome === 'lost')
+      .forEach(l => {
+        teamLossReasons[l.reason] = (teamLossReasons[l.reason] || 0) + 1;
+      });
 
     // Prepare context for AI
     const context = {
@@ -97,15 +99,29 @@ serve(async (req) => {
       topLossReasons: Object.entries(lossReasons)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
-        .map(([reason, count]) => ({ reason, count, percentage: ((count / losses.length) * 100).toFixed(1) })),
+        .map(([reason, count]) => ({
+          reason,
+          count,
+          percentage: ((count / losses.length) * 100).toFixed(1),
+        })),
       topWinReasons: Object.entries(winReasons)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
-        .map(([reason, count]) => ({ reason, count, percentage: ((count / wins.length) * 100).toFixed(1) })),
+        .map(([reason, count]) => ({
+          reason,
+          count,
+          percentage: ((count / wins.length) * 100).toFixed(1),
+        })),
       comparisonToTeam: winRate - teamWinRate,
-      avgDealValue: wins.length > 0 
-        ? wins.reduce((sum, w) => sum + (Number((w.sales as any)?.amount) || 0), 0) / wins.length 
-        : 0
+      avgDealValue:
+        wins.length > 0
+          ? wins.reduce(
+              (sum, w) =>
+                sum +
+                (Number((w.sales as { amount?: number | string } | null)?.amount) || 0),
+              0
+            ) / wins.length
+          : 0,
     };
 
     console.info('Coaching context:', JSON.stringify(context, null, 2));
@@ -148,14 +164,14 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          { role: 'user', content: userPrompt },
         ],
         tools: [
           {
@@ -168,7 +184,7 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
                 properties: {
                   summary: {
                     type: 'string',
-                    description: 'Resumo geral da performance em 1-2 frases'
+                    description: 'Resumo geral da performance em 1-2 frases',
                   },
                   strengths: {
                     type: 'array',
@@ -176,11 +192,11 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
                       type: 'object',
                       properties: {
                         title: { type: 'string' },
-                        description: { type: 'string' }
+                        description: { type: 'string' },
                       },
-                      required: ['title', 'description']
+                      required: ['title', 'description'],
                     },
-                    description: 'Pontos fortes identificados (1-3 itens)'
+                    description: 'Pontos fortes identificados (1-3 itens)',
                   },
                   improvements: {
                     type: 'array',
@@ -189,11 +205,11 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
                       properties: {
                         title: { type: 'string' },
                         description: { type: 'string' },
-                        priority: { type: 'string', enum: ['alta', 'média', 'baixa'] }
+                        priority: { type: 'string', enum: ['alta', 'média', 'baixa'] },
                       },
-                      required: ['title', 'description', 'priority']
+                      required: ['title', 'description', 'priority'],
                     },
-                    description: 'Áreas de melhoria (2-4 itens)'
+                    description: 'Áreas de melhoria (2-4 itens)',
                   },
                   actions: {
                     type: 'array',
@@ -202,19 +218,19 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
                       properties: {
                         action: { type: 'string' },
                         timeline: { type: 'string' },
-                        expectedImpact: { type: 'string' }
+                        expectedImpact: { type: 'string' },
                       },
-                      required: ['action', 'timeline', 'expectedImpact']
+                      required: ['action', 'timeline', 'expectedImpact'],
                     },
-                    description: 'Ações recomendadas específicas (2-4 itens)'
-                  }
+                    description: 'Ações recomendadas específicas (2-4 itens)',
+                  },
                 },
-                required: ['summary', 'strengths', 'improvements', 'actions']
-              }
-            }
-          }
+                required: ['summary', 'strengths', 'improvements', 'actions'],
+              },
+            },
+          },
         ],
-        tool_choice: { type: 'function', function: { name: 'provide_coaching' } }
+        tool_choice: { type: 'function', function: { name: 'provide_coaching' } },
       }),
     });
 
@@ -226,7 +242,7 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
 
     const aiData = await aiResponse.json();
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-    
+
     if (!toolCall?.function?.arguments) {
       throw new Error('Invalid AI response structure');
     }
@@ -238,7 +254,7 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
         salesperson: {
           id: salesperson.id,
           name: salesperson.name,
-          avatar_url: salesperson.avatar_url
+          avatar_url: salesperson.avatar_url,
         },
         metrics: {
           totalDeals: context.totalDeals,
@@ -249,20 +265,20 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
           comparisonToTeam: context.comparisonToTeam,
           avgDealValue: context.avgDealValue,
           topLossReasons: context.topLossReasons,
-          topWinReasons: context.topWinReasons
+          topWinReasons: context.topWinReasons,
         },
         coaching,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error: unknown) {
     console.error('Coaching error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to generate coaching';
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to generate coaching';
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

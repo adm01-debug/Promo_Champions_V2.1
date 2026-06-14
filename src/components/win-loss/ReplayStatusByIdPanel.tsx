@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Search,
   RotateCcw,
@@ -16,56 +16,68 @@ import {
   History,
   Loader2,
   Copy,
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useWebhookDeadLetters, type DeadLetter } from "@/hooks/win-loss/useWebhookDeadLetters";
-import { useReplayAuditForDeadLetter } from "@/hooks/win-loss/useReplayAudit";
-import { ReplayAuditTrail } from "@/components/win-loss/ReplayAuditTrail";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  useWebhookDeadLetters,
+  type DeadLetter,
+} from '@/hooks/win-loss/useWebhookDeadLetters';
+import { useReplayAuditForDeadLetter } from '@/hooks/win-loss/useReplayAudit';
+import { ReplayAuditTrail } from '@/components/win-loss/ReplayAuditTrail';
+import { toast } from 'sonner';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-interface DeadLetterByIdRow extends Omit<DeadLetter, "subscription_url"> {
+interface DeadLetterByIdRow extends Omit<DeadLetter, 'subscription_url'> {
   subscription_url: string | null;
   winloss_webhook_subscriptions?: { url: string } | null;
 }
 
 function useDeadLetterById(id: string | null) {
   return useQuery({
-    queryKey: ["winloss-dead-letter-by-id", id],
-    enabled: !!id && UUID_RE.test(id ?? ""),
+    queryKey: ['winloss-dead-letter-by-id', id],
+    enabled: !!id && UUID_RE.test(id ?? ''),
     staleTime: 10_000,
     queryFn: async (): Promise<DeadLetterByIdRow | null> => {
       const { data, error } = await supabase
-        .from("winloss_webhook_dead_letters")
-        .select("*, winloss_webhook_subscriptions(url)")
-        .eq("id", id!)
+        .from('winloss_webhook_dead_letters')
+        .select('*, winloss_webhook_subscriptions(url)')
+        .eq('id', id!)
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      const row = data as unknown as DeadLetterByIdRow & { winloss_webhook_subscriptions: { url: string } | null };
+      const row = data as unknown as DeadLetterByIdRow & {
+        winloss_webhook_subscriptions: { url: string } | null;
+      };
       return { ...row, subscription_url: row.winloss_webhook_subscriptions?.url ?? null };
     },
   });
 }
 
 export function ReplayStatusByIdPanel() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [searchId, setSearchId] = useState<string | null>(null);
-  const { data: dl, isLoading, isError, error, refetch, isFetching } = useDeadLetterById(searchId);
+  const {
+    data: dl,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useDeadLetterById(searchId);
   const { data: audit } = useReplayAuditForDeadLetter(searchId ?? undefined);
   // Use the same mutation hook so cache invalidation stays consistent.
-  const { replay, isReplaying } = useWebhookDeadLetters("pending");
+  const { replay, isReplaying } = useWebhookDeadLetters('pending');
 
   const onSearch = () => {
     const trimmed = input.trim();
     if (!trimmed) {
-      toast.error("Cole o ID do dead-letter para buscar.");
+      toast.error('Cole o ID do dead-letter para buscar.');
       return;
     }
     if (!UUID_RE.test(trimmed)) {
-      toast.error("ID inválido — esperado um UUID.");
+      toast.error('ID inválido — esperado um UUID.');
       return;
     }
     setSearchId(trimmed);
@@ -80,21 +92,24 @@ export function ReplayStatusByIdPanel() {
   const onCopy = (value: string, label: string) => {
     void navigator.clipboard?.writeText(value).then(
       () => toast.success(`${label} copiado`),
-      () => toast.error("Falha ao copiar"),
+      () => toast.error('Falha ao copiar')
     );
   };
 
   const lastReplayBadge = (() => {
     if (!dl || dl.replay_count === 0) return null;
-    const ok = dl.last_replay_status && dl.last_replay_status >= 200 && dl.last_replay_status < 300;
+    const ok =
+      dl.last_replay_status &&
+      dl.last_replay_status >= 200 &&
+      dl.last_replay_status < 300;
     return (
-      <Badge variant={ok ? "secondary" : "destructive"} className="text-[10px]">
+      <Badge variant={ok ? 'secondary' : 'destructive'} className="text-[10px]">
         {ok ? (
           <CheckCircle2 className="h-3 w-3 mr-1" />
         ) : (
           <XCircle className="h-3 w-3 mr-1" />
         )}
-        Último replay HTTP {dl.last_replay_status ?? "—"}
+        Último replay HTTP {dl.last_replay_status ?? '—'}
       </Badge>
     );
   })();
@@ -113,8 +128,8 @@ export function ReplayStatusByIdPanel() {
             <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onSearch()}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onSearch()}
               placeholder="Cole o ID do dead-letter (UUID)…"
               className="pl-8 font-mono text-xs"
               aria-label="ID do dead-letter"
@@ -146,7 +161,7 @@ export function ReplayStatusByIdPanel() {
         {searchId && isError && (
           <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>{error instanceof Error ? error.message : "Erro ao buscar."}</span>
+            <span>{error instanceof Error ? error.message : 'Erro ao buscar.'}</span>
           </div>
         )}
 
@@ -161,15 +176,17 @@ export function ReplayStatusByIdPanel() {
             {/* Identification */}
             <div className="rounded-md border bg-muted/20 p-3 space-y-2">
               <div className="flex flex-wrap items-center gap-1.5">
-                <Badge variant="outline" className="text-[10px]">{dl.event}</Badge>
+                <Badge variant="outline" className="text-[10px]">
+                  {dl.event}
+                </Badge>
                 <Badge
-                  variant={dl.status === "pending" ? "destructive" : "secondary"}
+                  variant={dl.status === 'pending' ? 'destructive' : 'secondary'}
                   className="text-[10px] capitalize"
                 >
                   {dl.status}
                 </Badge>
                 <Badge variant="outline" className="text-[10px]">
-                  HTTP {dl.last_status || "—"}
+                  HTTP {dl.last_status || '—'}
                 </Badge>
                 <Badge variant="outline" className="text-[10px]">
                   {dl.attempts} tentativas
@@ -195,7 +212,7 @@ export function ReplayStatusByIdPanel() {
                     size="sm"
                     variant="ghost"
                     className="h-5 w-5 p-0 shrink-0"
-                    onClick={() => onCopy(dl.id, "ID")}
+                    onClick={() => onCopy(dl.id, 'ID')}
                     aria-label="Copiar ID"
                   >
                     <Copy className="h-3 w-3" />
@@ -209,7 +226,7 @@ export function ReplayStatusByIdPanel() {
                       size="sm"
                       variant="ghost"
                       className="h-5 w-5 p-0 shrink-0"
-                      onClick={() => onCopy(dl.request_id!, "requestId")}
+                      onClick={() => onCopy(dl.request_id!, 'requestId')}
                       aria-label="Copiar requestId"
                     >
                       <Copy className="h-3 w-3" />
@@ -218,7 +235,7 @@ export function ReplayStatusByIdPanel() {
                 )}
               </div>
               <p className="text-[10px] text-muted-foreground">
-                Criado{" "}
+                Criado{' '}
                 {formatDistanceToNow(new Date(dl.created_at), {
                   addSuffix: true,
                   locale: ptBR,
@@ -231,12 +248,12 @@ export function ReplayStatusByIdPanel() {
               <div className="rounded-md border bg-background/60 p-3 space-y-1 text-[11px]">
                 <p className="font-medium text-foreground">Resumo do último replay</p>
                 <p>
-                  <span className="text-muted-foreground">Replays totais:</span>{" "}
+                  <span className="text-muted-foreground">Replays totais:</span>{' '}
                   <strong>{dl.replay_count}</strong>
                 </p>
                 {dl.last_replay_at && (
                   <p>
-                    <span className="text-muted-foreground">Quando:</span>{" "}
+                    <span className="text-muted-foreground">Quando:</span>{' '}
                     {formatDistanceToNow(new Date(dl.last_replay_at), {
                       addSuffix: true,
                       locale: ptBR,
@@ -244,12 +261,12 @@ export function ReplayStatusByIdPanel() {
                   </p>
                 )}
                 <p>
-                  <span className="text-muted-foreground">Status HTTP:</span>{" "}
-                  <strong>{dl.last_replay_status ?? "—"}</strong>
+                  <span className="text-muted-foreground">Status HTTP:</span>{' '}
+                  <strong>{dl.last_replay_status ?? '—'}</strong>
                 </p>
                 {dl.last_replay_error && (
                   <p className="text-destructive break-words">
-                    <span className="text-muted-foreground">Erro:</span>{" "}
+                    <span className="text-muted-foreground">Erro:</span>{' '}
                     {dl.last_replay_error}
                   </p>
                 )}
@@ -272,7 +289,7 @@ export function ReplayStatusByIdPanel() {
               <Button
                 size="sm"
                 onClick={onReplay}
-                disabled={isReplaying || dl.status === "archived"}
+                disabled={isReplaying || dl.status === 'archived'}
               >
                 {isReplaying ? (
                   <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
@@ -286,9 +303,9 @@ export function ReplayStatusByIdPanel() {
             {/* Full audit trail */}
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-foreground">
-                Trilha de auditoria de replays{" "}
-                {audit && (audit as any[]).length > 0 && (
-                  <span className="text-muted-foreground">({(audit as any[]).length})</span>
+                Trilha de auditoria de replays{' '}
+                {audit && audit.length > 0 && (
+                  <span className="text-muted-foreground">({audit.length})</span>
                 )}
               </p>
               <ScrollArea className="max-h-72 rounded-md border bg-muted/10 p-2">
@@ -302,7 +319,7 @@ export function ReplayStatusByIdPanel() {
                 Ver payload
               </summary>
               <pre className="text-[11px] bg-muted/40 p-3 overflow-x-auto whitespace-pre-wrap break-words rounded-b-md">
-{JSON.stringify(dl.payload, null, 2)}
+                {JSON.stringify(dl.payload, null, 2)}
               </pre>
             </details>
           </div>
