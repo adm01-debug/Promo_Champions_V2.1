@@ -283,33 +283,8 @@ export function useElevenLabsVoice(options: UseElevenLabsVoiceOptions = {}) {
 // Re-export for backwards compatibility
 export default useElevenLabsVoice;
 
-// Type declarations for browser APIs (Web Speech API is not in the standard DOM lib)
+// Type declarations for browser APIs (Web Speech API constructor aliases are not fully standardized)
 declare global {
-  interface SpeechRecognitionAlternativeMin {
-    readonly transcript: string;
-    readonly confidence: number;
-  }
-
-  interface SpeechRecognitionResultMin {
-    readonly length: number;
-    item(index: number): SpeechRecognitionAlternativeMin;
-    [index: number]: SpeechRecognitionAlternativeMin;
-  }
-
-  interface SpeechRecognitionResultListMin {
-    readonly length: number;
-    item(index: number): SpeechRecognitionResultMin;
-    [index: number]: SpeechRecognitionResultMin;
-  }
-
-  interface SpeechRecognitionEvent extends Event {
-    readonly results: SpeechRecognitionResultListMin;
-  }
-
-  interface SpeechRecognitionErrorEvent extends Event {
-    readonly error: string;
-  }
-
   interface SpeechRecognition extends EventTarget {
     lang: string;
     continuous: boolean;
