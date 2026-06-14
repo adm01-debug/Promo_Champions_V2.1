@@ -1,48 +1,42 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 import {
   useDashboardLayout,
   useSaveDashboardLayout,
   AVAILABLE_WIDGETS,
   WidgetConfig,
-} from "@/hooks/dashboard/useDashboardLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/hooks/dashboard/useDashboardLayout';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  LayoutGrid,
-  Plus,
-  Settings2,
-  Save,
-  RotateCcw,
-} from "lucide-react";
-import { toast } from "sonner";
+} from '@/components/ui/dialog';
+import { LayoutGrid, Plus, Settings2, Save, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Real widget components
-import { RevenueKpiWidget } from "./widgets/RevenueKpiWidget";
-import { ActivitiesTodayWidget } from "./widgets/ActivitiesTodayWidget";
-import { ConversionRateWidget } from "./widgets/ConversionRateWidget";
-import { GoalProgressWidget } from "./widgets/GoalProgressWidget";
-import { ForecastWidget } from "./widgets/ForecastWidget";
-import { PipelineFunnelWidget } from "./widgets/PipelineFunnelWidget";
-import { TopDealsWidget } from "./widgets/TopDealsWidget";
-import { RecentActivitiesWidget } from "./widgets/RecentActivitiesWidget";
-import { TeamRankingWidget } from "./widgets/TeamRankingWidget";
-import { CalendarPreviewWidget } from "./widgets/CalendarPreviewWidget";
-import { CustomReportWidget } from "./widgets/CustomReportWidget";
-import { CustomReportWidgetEditor } from "./widgets/CustomReportWidgetEditor";
-import { Pencil } from "lucide-react";
-import { DashboardEmptyState } from "./DashboardEmptyState";
-import { AISalesCoachWidget } from "./widgets/AISalesCoachWidget";
+import { RevenueKpiWidget } from './widgets/RevenueKpiWidget';
+import { ActivitiesTodayWidget } from './widgets/ActivitiesTodayWidget';
+import { ConversionRateWidget } from './widgets/ConversionRateWidget';
+import { GoalProgressWidget } from './widgets/GoalProgressWidget';
+import { ForecastWidget } from './widgets/ForecastWidget';
+import { PipelineFunnelWidget } from './widgets/PipelineFunnelWidget';
+import { TopDealsWidget } from './widgets/TopDealsWidget';
+import { RecentActivitiesWidget } from './widgets/RecentActivitiesWidget';
+import { TeamRankingWidget } from './widgets/TeamRankingWidget';
+import { CalendarPreviewWidget } from './widgets/CalendarPreviewWidget';
+import { CustomReportWidget } from './widgets/CustomReportWidget';
+import { CustomReportWidgetEditor } from './widgets/CustomReportWidgetEditor';
+import { Pencil } from 'lucide-react';
+import { DashboardEmptyState } from './DashboardEmptyState';
+import { AISalesCoachWidget } from './widgets/AISalesCoachWidget';
 
 const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
   revenue_kpi: RevenueKpiWidget,
@@ -59,7 +53,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType> = {
 };
 
 function RealWidget({ config, onEdit }: { config: WidgetConfig; onEdit?: () => void }) {
-  if (config.type === "custom_report") {
+  if (config.type === 'custom_report') {
     const cfg = (config.config ?? {}) as { report_id?: string; height?: number };
     return (
       <div className="relative h-full group">
@@ -136,14 +130,23 @@ function WidgetManagerDialog({
                   </div>
                   {isActive ? (
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-[10px]">Ativo</Badge>
+                      <Badge variant="secondary" className="text-[10px]">
+                        Ativo
+                      </Badge>
                       <Switch
                         checked={existingWidget?.visible ?? true}
-                        onCheckedChange={() => existingWidget && onToggleWidget(existingWidget.id)}
+                        onCheckedChange={() =>
+                          existingWidget && onToggleWidget(existingWidget.id)
+                        }
                       />
                     </div>
                   ) : (
-                    <Button size="sm" variant="outline" className="gap-1 h-7 text-xs" onClick={() => onAddWidget(widget.type)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-1 h-7 text-xs"
+                      onClick={() => onAddWidget(widget.type)}
+                    >
                       <Plus className="h-3 w-3" />
                       Adicionar
                     </Button>
@@ -165,44 +168,56 @@ export function CustomizableDashboard() {
   const [hasChanges, setHasChanges] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const currentLayout = layout || savedLayout || [];
   const editingWidget = currentLayout.find(w => w.id === editingId) ?? null;
 
-  const handleToggleWidget = useCallback((id: string) => {
-    const updated = currentLayout.map(w =>
-      w.id === id ? { ...w, visible: !w.visible } : w
-    );
-    setLayout(updated);
-    setHasChanges(true);
-  }, [currentLayout]);
+  const handleToggleWidget = useCallback(
+    (id: string) => {
+      const updated = currentLayout.map(w =>
+        w.id === id ? { ...w, visible: !w.visible } : w
+      );
+      setLayout(updated);
+      setHasChanges(true);
+    },
+    [currentLayout]
+  );
 
-  const handleAddWidget = useCallback((type: string) => {
-    const widgetMeta = AVAILABLE_WIDGETS.find(w => w.type === type);
-    if (!widgetMeta) return;
+  const handleAddWidget = useCallback(
+    (type: string) => {
+      const widgetMeta = AVAILABLE_WIDGETS.find(w => w.type === type);
+      if (!widgetMeta) return;
 
-    const newWidget: WidgetConfig = {
-      id: `w${Date.now()}`,
-      type,
-      title: widgetMeta.title,
-      x: 0,
-      y: currentLayout.length,
-      w: widgetMeta.defaultW,
-      h: widgetMeta.defaultH,
-      visible: true,
-    };
+      const newWidget: WidgetConfig = {
+        id: `w${Date.now()}`,
+        type,
+        title: widgetMeta.title,
+        x: 0,
+        y: currentLayout.length,
+        w: widgetMeta.defaultW,
+        h: widgetMeta.defaultH,
+        visible: true,
+      };
 
-    setLayout([...currentLayout, newWidget]);
-    setHasChanges(true);
-    toast.success(`Widget "${widgetMeta.title}" adicionado!`);
-    if (type === "custom_report") setEditingId(newWidget.id);
-  }, [currentLayout]);
+      setLayout([...currentLayout, newWidget]);
+      setHasChanges(true);
+      toast.success(`Widget "${widgetMeta.title}" adicionado!`);
+      if (type === 'custom_report') setEditingId(newWidget.id);
+    },
+    [currentLayout]
+  );
 
-  const handleSaveCustomReport = useCallback((cfg: { report_id: string; height: number }) => {
-    if (!editingId) return;
-    const updated = currentLayout.map(w => w.id === editingId ? { ...w, config: cfg } : w);
-    setLayout(updated);
-    setHasChanges(true);
-  }, [currentLayout, editingId]);
+  const handleSaveCustomReport = useCallback(
+    (cfg: { report_id: string; height: number }) => {
+      if (!editingId) return;
+      const updated = currentLayout.map(w =>
+        w.id === editingId ? { ...w, config: cfg } : w
+      );
+      setLayout(updated);
+      setHasChanges(true);
+    },
+    [currentLayout, editingId]
+  );
 
   const handleSave = useCallback(() => {
     saveLayout.mutate(currentLayout, {
@@ -220,7 +235,9 @@ export function CustomizableDashboard() {
       <div className="space-y-6 p-4 lg:p-8">
         <Skeleton className="h-10 w-64" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-40 rounded-xl" />)}
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
         </div>
       </div>
     );
@@ -240,7 +257,9 @@ export function CustomizableDashboard() {
           </div>
           <div>
             <h1 className="text-2xl font-display font-bold">Meu Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Personalize seus widgets e métricas favoritas</p>
+            <p className="text-sm text-muted-foreground">
+              Personalize seus widgets e métricas favoritas
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -255,9 +274,14 @@ export function CustomizableDashboard() {
                 <RotateCcw className="h-4 w-4" />
                 Desfazer
               </Button>
-              <Button size="sm" onClick={handleSave} disabled={saveLayout.isPending} className="gap-2">
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={saveLayout.isPending}
+                className="gap-2"
+              >
                 <Save className="h-4 w-4" />
-                {saveLayout.isPending ? "Salvando..." : "Salvar Layout"}
+                {saveLayout.isPending ? 'Salvando...' : 'Salvar Layout'}
               </Button>
             </>
           )}
@@ -268,7 +292,15 @@ export function CustomizableDashboard() {
       {smallWidgets.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {smallWidgets.map(widget => (
-            <RealWidget key={widget.id} config={widget} onEdit={widget.type === "custom_report" ? () => setEditingId(widget.id) : undefined} />
+            <RealWidget
+              key={widget.id}
+              config={widget}
+              onEdit={
+                widget.type === 'custom_report'
+                  ? () => setEditingId(widget.id)
+                  : undefined
+              }
+            />
           ))}
         </div>
       )}
@@ -277,7 +309,15 @@ export function CustomizableDashboard() {
       {largeWidgets.length > 0 && (
         <div className="grid lg:grid-cols-2 gap-4">
           {largeWidgets.map(widget => (
-            <RealWidget key={widget.id} config={widget} onEdit={widget.type === "custom_report" ? () => setEditingId(widget.id) : undefined} />
+            <RealWidget
+              key={widget.id}
+              config={widget}
+              onEdit={
+                widget.type === 'custom_report'
+                  ? () => setEditingId(widget.id)
+                  : undefined
+              }
+            />
           ))}
         </div>
       )}
@@ -289,9 +329,11 @@ export function CustomizableDashboard() {
       )}
 
       <CustomReportWidgetEditor
-        open={!!editingWidget && editingWidget.type === "custom_report"}
-        onOpenChange={(o) => !o && setEditingId(null)}
-        initialReportId={(editingWidget?.config as { report_id?: string } | undefined)?.report_id}
+        open={!!editingWidget && editingWidget.type === 'custom_report'}
+        onOpenChange={o => !o && setEditingId(null)}
+        initialReportId={
+          (editingWidget?.config as { report_id?: string } | undefined)?.report_id
+        }
         initialHeight={(editingWidget?.config as { height?: number } | undefined)?.height}
         onSave={handleSaveCustomReport}
       />

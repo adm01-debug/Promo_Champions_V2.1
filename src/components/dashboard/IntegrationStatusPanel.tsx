@@ -1,30 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  ShieldCheck, 
-  Mail, 
-  Smartphone, 
-  RefreshCw, 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  ShieldCheck,
+  Mail,
+  Smartphone,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
   Terminal,
   Clock,
   Settings2,
-  AlertCircle
-} from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+  AlertCircle,
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface IntegrationStatus {
   id: string;
   name: string;
-  type: "email" | "push";
-  status: "active" | "error" | "pending";
+  type: 'email' | 'push';
+  status: 'active' | 'error' | 'pending';
   lastCheck: string;
   errorCount: number;
   configValid: boolean;
@@ -33,9 +39,9 @@ interface IntegrationStatus {
 interface LogEntry {
   id: string;
   timestamp: string;
-  type: "email" | "push" | "auth";
+  type: 'email' | 'push' | 'auth';
   event: string;
-  status: "success" | "error";
+  status: 'success' | 'error';
   details: string;
   recipient?: string;
 }
@@ -44,23 +50,23 @@ export const IntegrationStatusPanel = () => {
   const [loading, setLoading] = useState(false);
   const [integrations, setIntegrations] = useState<IntegrationStatus[]>([
     {
-      id: "email-infrastructure",
-      name: "Infraestrutura de Email",
-      type: "email",
-      status: "active",
+      id: 'email-infrastructure',
+      name: 'Infraestrutura de Email',
+      type: 'email',
+      status: 'active',
       lastCheck: new Date().toISOString(),
       errorCount: 0,
-      configValid: true
+      configValid: true,
     },
     {
-      id: "push-notifications",
-      name: "Notificações Push",
-      type: "push",
-      status: "active",
+      id: 'push-notifications',
+      name: 'Notificações Push',
+      type: 'push',
+      status: 'active',
       lastCheck: new Date().toISOString(),
       errorCount: 0,
-      configValid: true
-    }
+      configValid: true,
+    },
   ]);
 
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -76,7 +82,10 @@ export const IntegrationStatusPanel = () => {
         .limit(30);
 
       if (unifiedError) {
-        console.warn("Unified logs table not accessible, falling back to email_logs", unifiedError);
+        console.warn(
+          'Unified logs table not accessible, falling back to email_logs',
+          unifiedError
+        );
         // Fallback para email_logs se a tabela unificada falhar (compatibilidade)
         const { data: emailLogs, error: emailError } = await supabase
           .from('email_logs' as any)
@@ -89,11 +98,11 @@ export const IntegrationStatusPanel = () => {
         const formattedLogs: LogEntry[] = (emailLogs || []).map((log: any) => ({
           id: log.id,
           timestamp: log.created_at,
-          type: "email",
-          event: log.subject || "Email Notification",
+          type: 'email',
+          event: log.subject || 'Email Notification',
           status: log.status === 'sent' ? 'success' : 'error',
           details: log.error_message || `Enviado para ${log.recipient_email}`,
-          recipient: log.recipient_email
+          recipient: log.recipient_email,
         }));
 
         setLogs(formattedLogs);
@@ -102,28 +111,49 @@ export const IntegrationStatusPanel = () => {
           id: log.id,
           timestamp: log.timestamp,
           type: log.integration_type,
-          event: log.event_type === 'config_check' ? `Diagnóstico: ${log.integration_type}` : log.event_type,
+          event:
+            log.event_type === 'config_check'
+              ? `Diagnóstico: ${log.integration_type}`
+              : log.event_type,
           status: log.status === 'success' ? 'success' : 'error',
-          details: log.error_message || (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
-          recipient: log.recipient
+          details:
+            log.error_message ||
+            (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
+          recipient: log.recipient,
         }));
         setLogs(formattedLogs);
       }
 
       // Atualiza status de infraestrutura baseado nos logs
-      const emailFails = logs.filter(l => l.type === 'email' && l.status === 'error').length;
-      const pushFails = logs.filter(l => l.type === 'push' && l.status === 'error').length;
-      
-      setIntegrations(prev => prev.map(i => {
-        if (i.type === 'email') return { ...i, errorCount: emailFails, status: emailFails > 5 ? 'error' : 'active' };
-        if (i.type === 'push') return { ...i, errorCount: pushFails, status: pushFails > 3 ? 'error' : 'active' };
-        return i;
-      }));
+      const emailFails = logs.filter(
+        l => l.type === 'email' && l.status === 'error'
+      ).length;
+      const pushFails = logs.filter(
+        l => l.type === 'push' && l.status === 'error'
+      ).length;
 
-      toast.success("Diagnóstico concluído com sucesso");
+      setIntegrations(prev =>
+        prev.map(i => {
+          if (i.type === 'email')
+            return {
+              ...i,
+              errorCount: emailFails,
+              status: emailFails > 5 ? 'error' : 'active',
+            };
+          if (i.type === 'push')
+            return {
+              ...i,
+              errorCount: pushFails,
+              status: pushFails > 3 ? 'error' : 'active',
+            };
+          return i;
+        })
+      );
+
+      toast.success('Diagnóstico concluído com sucesso');
     } catch (error) {
-      console.error("Error fetching logs:", error);
-      toast.error("Erro ao carregar logs de integração");
+      console.error('Error fetching logs:', error);
+      toast.error('Erro ao carregar logs de integração');
     } finally {
       setLoading(false);
     }
@@ -131,26 +161,29 @@ export const IntegrationStatusPanel = () => {
 
   useEffect(() => {
     fetchLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, []);
 
-  const testIntegration = async (type: "email" | "push") => {
+  const testIntegration = async (type: 'email' | 'push') => {
     toast.promise(
       async () => {
         // Simula disparo de teste e loga no banco para validação
-        const { error } = await supabase.from('integration_logs' as any).insert([{
-          integration_type: type,
-          event_type: 'test_dispatch',
-          status: 'success',
-          details: { method: 'manual_trigger', origin: 'integration_panel' },
-          recipient: 'user@example.com'
-        }]);
+        const { error } = await supabase.from('integration_logs' as any).insert([
+          {
+            integration_type: type,
+            event_type: 'test_dispatch',
+            status: 'success',
+            details: { method: 'manual_trigger', origin: 'integration_panel' },
+            recipient: 'user@example.com',
+          },
+        ]);
         if (error) throw error;
         await fetchLogs();
       },
       {
         loading: `Enviando teste de ${type}...`,
         success: `${type === 'email' ? 'Email' : 'Push'} de teste enviado com sucesso!`,
-        error: `Falha ao testar ${type}`
+        error: `Falha ao testar ${type}`,
       }
     );
   };
@@ -172,42 +205,67 @@ export const IntegrationStatusPanel = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            {integrations.map((integration) => (
-              <div key={integration.id} className="p-3 rounded-lg border border-white/5 bg-white/5 space-y-3">
+            {integrations.map(integration => (
+              <div
+                key={integration.id}
+                className="p-3 rounded-lg border border-white/5 bg-white/5 space-y-3"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {integration.type === "email" ? <Mail className="h-4 w-4 text-primary" /> : <Smartphone className="h-4 w-4 text-success" />}
-                    <span className="text-xs font-bold uppercase tracking-tight">{integration.name}</span>
+                    {integration.type === 'email' ? (
+                      <Mail className="h-4 w-4 text-primary" />
+                    ) : (
+                      <Smartphone className="h-4 w-4 text-success" />
+                    )}
+                    <span className="text-xs font-bold uppercase tracking-tight">
+                      {integration.name}
+                    </span>
                   </div>
-                  <Badge variant={integration.status === "active" ? "default" : "destructive"} className="text-[9px] h-5 uppercase">
+                  <Badge
+                    variant={integration.status === 'active' ? 'default' : 'destructive'}
+                    className="text-[9px] h-5 uppercase"
+                  >
                     {integration.status}
                   </Badge>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <div className="space-y-1">
-                    <p className="text-[9px] text-muted-foreground uppercase font-mono">Config</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-mono">
+                      Config
+                    </p>
                     <div className="flex items-center gap-1">
                       {integration.configValid ? (
                         <CheckCircle2 className="h-3 w-3 text-success" />
                       ) : (
                         <XCircle className="h-3 w-3 text-destructive" />
                       )}
-                      <span className="text-[10px] font-mono">{integration.configValid ? "VÁLIDA" : "INVÁLIDA"}</span>
+                      <span className="text-[10px] font-mono">
+                        {integration.configValid ? 'VÁLIDA' : 'INVÁLIDA'}
+                      </span>
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[9px] text-muted-foreground uppercase font-mono">Falhas (24h)</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-mono">
+                      Falhas (24h)
+                    </p>
                     <div className="flex items-center gap-1">
-                      <AlertTriangle className={cn("h-3 w-3", integration.errorCount > 0 ? "text-warning" : "text-success")} />
-                      <span className="text-[10px] font-mono">{integration.errorCount} ERROS</span>
+                      <AlertTriangle
+                        className={cn(
+                          'h-3 w-3',
+                          integration.errorCount > 0 ? 'text-warning' : 'text-success'
+                        )}
+                      />
+                      <span className="text-[10px] font-mono">
+                        {integration.errorCount} ERROS
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="w-full h-7 text-[9px] font-mono uppercase tracking-widest border border-white/5 hover:bg-primary/10 hover:text-primary"
                   onClick={() => testIntegration(integration.type)}
                 >
@@ -217,13 +275,13 @@ export const IntegrationStatusPanel = () => {
             ))}
           </div>
 
-          <Button 
+          <Button
             className="w-full bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 transition-all font-mono text-[10px] uppercase tracking-[0.2em]"
             onClick={fetchLogs}
             disabled={loading}
           >
-            <RefreshCw className={cn("h-3 w-3 mr-2", loading && "animate-spin")} />
-            {loading ? "Analisando..." : "Diagnóstico Global"}
+            <RefreshCw className={cn('h-3 w-3 mr-2', loading && 'animate-spin')} />
+            {loading ? 'Analisando...' : 'Diagnóstico Global'}
           </Button>
         </CardContent>
       </Card>
@@ -239,7 +297,10 @@ export const IntegrationStatusPanel = () => {
               Fluxo de eventos reais do sistema
             </CardDescription>
           </div>
-          <Badge variant="outline" className="border-primary/30 text-primary font-mono text-[9px]">
+          <Badge
+            variant="outline"
+            className="border-primary/30 text-primary font-mono text-[9px]"
+          >
             {logs.length} EVENTOS
           </Badge>
         </CardHeader>
@@ -249,44 +310,66 @@ export const IntegrationStatusPanel = () => {
               {logs.length === 0 && !loading && (
                 <div className="flex flex-col items-center justify-center h-40 text-muted-foreground gap-2">
                   <AlertCircle className="h-8 w-8 opacity-20" />
-                  <p className="text-xs font-mono uppercase">Nenhum log recente encontrado</p>
+                  <p className="text-xs font-mono uppercase">
+                    Nenhum log recente encontrado
+                  </p>
                 </div>
               )}
               {logs.map((log, idx) => (
                 <div key={log.id} className="relative group">
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-1 pt-1">
-                      <div className={cn(
-                        "h-2 w-2 rounded-full",
-                        log.status === "success" ? "bg-success" : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]"
-                      )} />
-                      {idx !== logs.length - 1 && <div className="w-[1px] h-12 bg-white/5" />}
+                      <div
+                        className={cn(
+                          'h-2 w-2 rounded-full',
+                          log.status === 'success'
+                            ? 'bg-success'
+                            : 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]'
+                        )}
+                      />
+                      {idx !== logs.length - 1 && (
+                        <div className="w-[1px] h-12 bg-white/5" />
+                      )}
                     </div>
-                    
+
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "text-[10px] font-mono px-1.5 py-0.5 rounded border uppercase",
-                            log.type === "email" ? "border-primary/20 text-primary bg-primary/5" : "border-success/20 text-success bg-success/5"
-                          )}>
+                          <span
+                            className={cn(
+                              'text-[10px] font-mono px-1.5 py-0.5 rounded border uppercase',
+                              log.type === 'email'
+                                ? 'border-primary/20 text-primary bg-primary/5'
+                                : 'border-success/20 text-success bg-success/5'
+                            )}
+                          >
                             {log.type}
                           </span>
-                          <span className="text-xs font-bold uppercase tracking-tight">{log.event}</span>
+                          <span className="text-xs font-bold uppercase tracking-tight">
+                            {log.event}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Clock className="h-3 w-3" />
-                          <span className="text-[10px] font-mono">{new Date(log.timestamp).toLocaleString('pt-BR')}</span>
+                          <span className="text-[10px] font-mono">
+                            {new Date(log.timestamp).toLocaleString('pt-BR')}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="p-3 rounded border border-white/5 bg-white/5 group-hover:bg-white/10 transition-colors">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-[11px] font-mono text-foreground/80 break-all">{log.details}</p>
-                            {log.recipient && <p className="text-[9px] text-muted-foreground mt-1 font-mono">{log.recipient}</p>}
+                            <p className="text-[11px] font-mono text-foreground/80 break-all">
+                              {log.details}
+                            </p>
+                            {log.recipient && (
+                              <p className="text-[9px] text-muted-foreground mt-1 font-mono">
+                                {log.recipient}
+                              </p>
+                            )}
                           </div>
-                          {log.status === "error" && (
+                          {log.status === 'error' && (
                             <AlertTriangle className="h-3 w-3 text-destructive" />
                           )}
                         </div>

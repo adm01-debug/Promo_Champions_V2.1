@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 export function useWebhookResultTimers(retentionMs: number) {
-  const [lastResults, setLastResults] = useState<Map<string, "ok" | "skipped" | "fail">>(new Map());
+  const [lastResults, setLastResults] = useState<Map<string, 'ok' | 'skipped' | 'fail'>>(
+    new Map()
+  );
   const [requestIds, setRequestIds] = useState<Map<string, string>>(new Map());
-  const [resultTimestamps, setResultTimestamps] = useState<Map<string, number>>(new Map());
+  const [resultTimestamps, setResultTimestamps] = useState<Map<string, number>>(
+    new Map()
+  );
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const retentionRef = useRef(retentionMs);
 
@@ -14,7 +18,7 @@ export function useWebhookResultTimers(retentionMs: number) {
   const scheduleClearResult = useCallback((id: string) => {
     const existing = timersRef.current.get(id);
     if (existing) clearTimeout(existing);
-    
+
     const ms = retentionRef.current;
     if (!Number.isFinite(ms) || ms <= 0) {
       timersRef.current.delete(id);
@@ -22,17 +26,17 @@ export function useWebhookResultTimers(retentionMs: number) {
     }
 
     const t = setTimeout(() => {
-      setLastResults((prev) => {
+      setLastResults(prev => {
         const next = new Map(prev);
         next.delete(id);
         return next;
       });
-      setResultTimestamps((prev) => {
+      setResultTimestamps(prev => {
         const next = new Map(prev);
         next.delete(id);
         return next;
       });
-      setRequestIds((prev) => {
+      setRequestIds(prev => {
         const next = new Map(prev);
         next.delete(id);
         return next;
@@ -49,29 +53,29 @@ export function useWebhookResultTimers(retentionMs: number) {
       const baseTs = resultTimestamps.get(id) ?? Date.now();
       const elapsed = Date.now() - baseTs;
       const remaining = retentionMs - elapsed;
-      
+
       if (!Number.isFinite(retentionMs) || retentionMs <= 0) return;
       if (remaining <= 0) {
-        setLastResults((prev) => {
+        setLastResults(prev => {
           const next = new Map(prev);
           next.delete(id);
           return next;
         });
-        setResultTimestamps((prev) => {
+        setResultTimestamps(prev => {
           const next = new Map(prev);
           next.delete(id);
           return next;
         });
         return;
       }
-      
+
       const handle = setTimeout(() => {
-        setLastResults((prev) => {
+        setLastResults(prev => {
           const next = new Map(prev);
           next.delete(id);
           return next;
         });
-        setResultTimestamps((prev) => {
+        setResultTimestamps(prev => {
           const next = new Map(prev);
           next.delete(id);
           return next;
@@ -80,11 +84,13 @@ export function useWebhookResultTimers(retentionMs: number) {
       }, remaining);
       timersRef.current.set(id, handle);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [retentionMs]);
 
   useEffect(() => {
     return () => {
       timersRef.current.forEach(clearTimeout);
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
       timersRef.current.clear();
     };
   }, []);

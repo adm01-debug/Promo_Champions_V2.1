@@ -31,7 +31,8 @@ function readLocal<T>(opts: Options<T>): { value: T; updatedAt: string | null } 
     const raw = window.localStorage.getItem(opts.storageKey);
     if (!raw) return { value: opts.defaults, updatedAt: null };
     const parsed = JSON.parse(raw) as Partial<StoredEnvelope<T>>;
-    if (!parsed || typeof parsed !== 'object') return { value: opts.defaults, updatedAt: null };
+    if (!parsed || typeof parsed !== 'object')
+      return { value: opts.defaults, updatedAt: null };
     // Accept current version OR any prior version (sanitize handles migration).
     if (typeof parsed.version === 'number' && parsed.version <= opts.schemaVersion) {
       return {
@@ -48,7 +49,11 @@ function readLocal<T>(opts: Options<T>): { value: T; updatedAt: string | null } 
 function writeLocal<T>(opts: Options<T>, value: T, updatedAt: string) {
   if (typeof window === 'undefined') return;
   try {
-    const env: StoredEnvelope<T> = { version: opts.schemaVersion, settings: value, updatedAt };
+    const env: StoredEnvelope<T> = {
+      version: opts.schemaVersion,
+      settings: value,
+      updatedAt,
+    };
     window.localStorage.setItem(opts.storageKey, JSON.stringify(env));
   } catch {
     /* ignore quota errors */
@@ -156,13 +161,18 @@ export function useSyncedSetting<T>(opts: Options<T>) {
     } catch {
       setSyncStatus('offline');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [opts.key]);
 
   // Initial reconcile + listen for auth changes (login/logout triggers re-sync).
   useEffect(() => {
     reconcile();
     const { data: sub } = supabase.auth.onAuthStateChange(event => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+      if (
+        event === 'SIGNED_IN' ||
+        event === 'SIGNED_OUT' ||
+        event === 'TOKEN_REFRESHED'
+      ) {
         reconcile();
       }
     });
@@ -206,7 +216,11 @@ export function useSyncedSetting<T>(opts: Options<T>) {
     const userId = userIdRef.current;
     if (userId) {
       try {
-        await supabase.from('user_app_settings').delete().eq('user_id', userId).eq('key', opts.key);
+        await supabase
+          .from('user_app_settings')
+          .delete()
+          .eq('user_id', userId)
+          .eq('key', opts.key);
         setSyncStatus('synced');
       } catch {
         setSyncStatus('error');

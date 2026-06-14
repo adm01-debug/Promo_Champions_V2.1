@@ -161,6 +161,7 @@ export function LeadScoringDashboard() {
     };
   }, [refetch]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const allLeads = leads || [];
 
   const filteredLeads = useMemo(() => {

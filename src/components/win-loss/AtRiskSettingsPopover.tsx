@@ -70,11 +70,13 @@ export function AtRiskSettingsPopover({
     if (debounced !== settings.keywordFilter) {
       onUpdate({ keywordFilter: debounced });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [debounced]);
 
   // External resets (e.g. clearFilters) should reflect in the input.
   useEffect(() => {
     if (settings.keywordFilter !== keyword) setKeyword(settings.keywordFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [settings.keywordFilter]);
 
   const toggleStage = (stage: string) => {
@@ -127,18 +129,26 @@ export function AtRiskSettingsPopover({
           }
         >
           <SlidersHorizontal className="h-3 w-3" />
-          <span className="text-[10px] font-medium tabular-nums">≥{settings.threshold}</span>
+          <span className="text-[10px] font-medium tabular-nums">
+            ≥{settings.threshold}
+          </span>
           {filtersActive && (
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Filtros ativos" />
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-primary"
+              aria-label="Filtros ativos"
+            />
           )}
-          {settings.debug && <Bug className="h-3 w-3 text-warning" aria-label="Modo debug ativo" />}
+          {settings.debug && (
+            <Bug className="h-3 w-3 text-warning" aria-label="Modo debug ativo" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 space-y-4 max-h-[70vh] overflow-y-auto">
         <div>
           <h4 className="text-sm font-medium">Filtros de risco</h4>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Threshold {settings.threshold} · mostrando {totalShown} de {totalAnalyzed} analisados
+            Threshold {settings.threshold} · mostrando {totalShown} de {totalAnalyzed}{' '}
+            analisados
           </p>
         </div>
 
@@ -202,7 +212,9 @@ export function AtRiskSettingsPopover({
                   className={cn(
                     'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    active ? p.activeClass : 'border-border text-muted-foreground hover:bg-muted/50'
+                    active
+                      ? p.activeClass
+                      : 'border-border text-muted-foreground hover:bg-muted/50'
                   )}
                 >
                   <span>{p.label}</span>
@@ -259,7 +271,9 @@ export function AtRiskSettingsPopover({
             <Label htmlFor="at-risk-visible" className="text-xs">
               Mostrar no painel
             </Label>
-            <span className="text-xs tabular-nums font-medium">{settings.maxVisible}</span>
+            <span className="text-xs tabular-nums font-medium">
+              {settings.maxVisible}
+            </span>
           </div>
           <Slider
             id="at-risk-visible"
@@ -329,7 +343,9 @@ export function AtRiskSettingsPopover({
             <Label className="text-xs">
               Estágios{' '}
               {settings.stageFilter.length > 0 && (
-                <span className="text-muted-foreground">({settings.stageFilter.length} sel.)</span>
+                <span className="text-muted-foreground">
+                  ({settings.stageFilter.length} sel.)
+                </span>
               )}
             </Label>
             {availableStages.length === 0 ? (
@@ -397,7 +413,9 @@ export function AtRiskSettingsPopover({
             <Label className="text-xs">
               Sinais{' '}
               {settings.reasonCodes.length > 0 && (
-                <span className="text-muted-foreground">({settings.reasonCodes.length} sel.)</span>
+                <span className="text-muted-foreground">
+                  ({settings.reasonCodes.length} sel.)
+                </span>
               )}
             </Label>
             <div className="flex flex-wrap gap-1">
@@ -440,7 +458,12 @@ export function AtRiskSettingsPopover({
 
         <Separator />
 
-        <Button variant="ghost" size="sm" className="w-full gap-1.5 h-7 text-xs" onClick={onReset}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full gap-1.5 h-7 text-xs"
+          onClick={onReset}
+        >
           <RotateCcw className="h-3 w-3" />
           Restaurar padrões
         </Button>

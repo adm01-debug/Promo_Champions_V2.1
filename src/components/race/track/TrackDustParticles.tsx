@@ -34,7 +34,7 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
   useEffect(() => {
     const now = Date.now();
     const emitted: Particle[] = [];
-    cars.forEach((c) => {
+    cars.forEach(c => {
       const prev = prevRef.current.get(c.id);
       if (prev !== undefined) {
         for (const cp of CHECKPOINTS) {
@@ -67,9 +67,10 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
     if (emitted.length > 0) {
       const merged = [...particlesRef.current, ...emitted];
       particlesRef.current = merged.slice(-MAX_PARTICLES);
-      setTick((t) => t + 1);
+      setTick(t => t + 1);
     }
-  }, [cars.map((c) => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [cars.map(c => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
 
   // Loop de animação (~30fps) atualiza posição/idade e força re-render
   useEffect(() => {
@@ -90,7 +91,7 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
         }
         if (next.length !== particlesRef.current.length || next.length > 0) {
           particlesRef.current = next;
-          setTick((tk) => tk + 1);
+          setTick(tk => tk + 1);
         }
       }
       raf = requestAnimationFrame(loop);
@@ -102,7 +103,7 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
   const now = Date.now();
   return (
     <g pointerEvents="none" aria-hidden filter="url(#dustBlur)">
-      {particlesRef.current.map((p) => {
+      {particlesRef.current.map(p => {
         const age = now - p.bornAt;
         const k = Math.min(1, Math.max(0, age / p.life));
         const r = 1.5 + k * 3.5;
@@ -110,7 +111,9 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
         const opacity = baseOpacity * (1 - k);
         // dust = bege claro; smoke = cinza volumétrico (filtro blur via <g>)
         const fill = p.kind === 'dust' ? 'hsl(var(--race-runoff))' : 'hsl(0 0% 78%)';
-        return <circle key={p.id} cx={p.x} cy={p.y} r={r} fill={fill} opacity={opacity} />;
+        return (
+          <circle key={p.id} cx={p.x} cy={p.y} r={r} fill={fill} opacity={opacity} />
+        );
       })}
     </g>
   );

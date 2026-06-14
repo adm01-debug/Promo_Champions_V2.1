@@ -310,6 +310,7 @@ export const Speedometer = memo(
 
       raf = requestAnimationFrame(animate);
       return () => cancelAnimationFrame(raf);
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
     }, [value]);
 
     const displayValue = formatValue

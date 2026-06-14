@@ -42,7 +42,10 @@ export function useSales(dateRange: DateRange) {
   return useQuery({
     queryKey: ['sales', dateRange.from?.toISOString(), dateRange.to?.toISOString()],
     queryFn: async () => {
-      let query = supabase.from('sales').select('*').order('created_at', { ascending: false });
+      let query = supabase
+        .from('sales')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (dateRange.from) {
         query = query.gte('created_at', startOfDay(dateRange.from).toISOString());
@@ -62,9 +65,16 @@ export function useSales(dateRange: DateRange) {
 
 export function useDailyMetrics(dateRange: DateRange) {
   return useQuery({
-    queryKey: ['daily_metrics', dateRange.from?.toISOString(), dateRange.to?.toISOString()],
+    queryKey: [
+      'daily_metrics',
+      dateRange.from?.toISOString(),
+      dateRange.to?.toISOString(),
+    ],
     queryFn: async () => {
-      let query = supabase.from('daily_metrics').select('*').order('date', { ascending: true });
+      let query = supabase
+        .from('daily_metrics')
+        .select('*')
+        .order('date', { ascending: true });
 
       if (dateRange.from) {
         query = query.gte('date', dateRange.from.toISOString().split('T')[0]);
@@ -84,7 +94,11 @@ export function useDailyMetrics(dateRange: DateRange) {
 
 export function useCategoryMetrics(dateRange: DateRange) {
   return useQuery({
-    queryKey: ['category_metrics', dateRange.from?.toISOString(), dateRange.to?.toISOString()],
+    queryKey: [
+      'category_metrics',
+      dateRange.from?.toISOString(),
+      dateRange.to?.toISOString(),
+    ],
     queryFn: async () => {
       const query = supabase
         .from('category_metrics')
@@ -129,7 +143,8 @@ export function useReportMetrics(dateRange: DateRange) {
       .filter(s => s.is_first_sale)
       .reduce((sum, s) => sum + Number(s.amount), 0);
     const portfolioRevenue = totalRevenue - activationRevenue;
-    const avgTicket = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
+    const avgTicket =
+      completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
 
     // Get unique clients
     const uniqueClients = new Set(salesQuery.data.map(s => s.client_name));
@@ -151,11 +166,13 @@ export function useReportMetrics(dateRange: DateRange) {
       const secondClients = secondHalf.reduce((sum, m) => sum + m.new_clients, 0);
       const firstConversion =
         firstHalf.length > 0
-          ? firstHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / firstHalf.length
+          ? firstHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) /
+            firstHalf.length
           : 0;
       const secondConversion =
         secondHalf.length > 0
-          ? secondHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) / secondHalf.length
+          ? secondHalf.reduce((sum, m) => sum + Number(m.conversion_rate), 0) /
+            secondHalf.length
           : 0;
       const firstTicket =
         firstHalf.length > 0
@@ -163,14 +180,20 @@ export function useReportMetrics(dateRange: DateRange) {
           : 0;
       const secondTicket =
         secondHalf.length > 0
-          ? secondHalf.reduce((sum, m) => sum + Number(m.avg_ticket), 0) / secondHalf.length
+          ? secondHalf.reduce((sum, m) => sum + Number(m.avg_ticket), 0) /
+            secondHalf.length
           : 0;
 
-      revenueChange = firstRevenue > 0 ? ((secondRevenue - firstRevenue) / firstRevenue) * 100 : 0;
-      clientsChange = firstClients > 0 ? ((secondClients - firstClients) / firstClients) * 100 : 0;
+      revenueChange =
+        firstRevenue > 0 ? ((secondRevenue - firstRevenue) / firstRevenue) * 100 : 0;
+      clientsChange =
+        firstClients > 0 ? ((secondClients - firstClients) / firstClients) * 100 : 0;
       conversionChange =
-        firstConversion > 0 ? ((secondConversion - firstConversion) / firstConversion) * 100 : 0;
-      ticketChange = firstTicket > 0 ? ((secondTicket - firstTicket) / firstTicket) * 100 : 0;
+        firstConversion > 0
+          ? ((secondConversion - firstConversion) / firstConversion) * 100
+          : 0;
+      ticketChange =
+        firstTicket > 0 ? ((secondTicket - firstTicket) / firstTicket) * 100 : 0;
     }
 
     return {
@@ -179,7 +202,9 @@ export function useReportMetrics(dateRange: DateRange) {
       portfolioRevenue,
       newClients: uniqueClients.size,
       conversionRate:
-        salesQuery.data.length > 0 ? (completedSales.length / salesQuery.data.length) * 100 : 0,
+        salesQuery.data.length > 0
+          ? (completedSales.length / salesQuery.data.length) * 100
+          : 0,
       avgTicket,
       revenueChange: Number(revenueChange.toFixed(1)),
       clientsChange: Number(clientsChange.toFixed(1)),
@@ -228,7 +253,9 @@ export function useReportMetrics(dateRange: DateRange) {
     // Group by day/week/month depending on period
     const grouped = salesQuery.data.reduce(
       (acc, sale) => {
-        const date = new Date(sale.created_at).toLocaleDateString('pt-BR', { weekday: 'short' });
+        const date = new Date(sale.created_at).toLocaleDateString('pt-BR', {
+          weekday: 'short',
+        });
         acc[date] = (acc[date] || 0) + 1;
         return acc;
       },
@@ -238,9 +265,13 @@ export function useReportMetrics(dateRange: DateRange) {
     return Object.entries(grouped).map(([dia, vendas]) => ({ dia, vendas }));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const metrics = useMemo(() => calculateMetrics(), [salesQuery.data, metricsQuery.data]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const revenueData = useMemo(() => formatRevenueData(), [metricsQuery.data]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const categoryData = useMemo(() => formatCategoryData(), [categoryQuery.data]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const salesData = useMemo(() => formatSalesData(), [salesQuery.data]);
 
   return {

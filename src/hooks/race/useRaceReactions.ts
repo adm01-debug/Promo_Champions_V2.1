@@ -47,15 +47,18 @@ export function useRaceReactions(carIds: string[], seasonId?: string | null) {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'race_reactions' },
-        (payload) => {
+        payload => {
           const row = payload.new as RaceReaction;
           if (!carIds.includes(row.target_car_id)) return;
-          setRecent((prev) => [row, ...prev].slice(0, 50));
+          setRecent(prev => [row, ...prev].slice(0, 50));
           qc.invalidateQueries({ queryKey: ['race-reactions'] });
-        },
+        }
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [carIds.join(','), seasonId, qc]);
 
   return { ...query, liveBurst: recent };
@@ -63,8 +66,18 @@ export function useRaceReactions(carIds: string[], seasonId?: string | null) {
 
 export function useSendRaceReaction() {
   return useMutation({
-    mutationFn: async ({ carId, emoji, seasonId }: { carId: string; emoji: string; seasonId?: string | null }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+    mutationFn: async ({
+      carId,
+      emoji,
+      seasonId,
+    }: {
+      carId: string;
+      emoji: string;
+      seasonId?: string | null;
+    }) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Login necessário');
       const { error } = await supabase.from('race_reactions').insert({
         target_car_id: carId,

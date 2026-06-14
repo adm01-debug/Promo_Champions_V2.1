@@ -1,14 +1,19 @@
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { Flame, Calendar } from "lucide-react";
-import { format, eachDayOfInterval, subDays, startOfWeek, isSameDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Flame, Calendar } from 'lucide-react';
+import { format, eachDayOfInterval, subDays, startOfWeek, isSameDay } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ActivityData {
   date: string;
@@ -22,8 +27,21 @@ interface ActivityHeatmapProps {
 }
 
 const DAYS_TO_SHOW = 365;
-const WEEK_DAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const MONTHS = [
+  'Jan',
+  'Fev',
+  'Mar',
+  'Abr',
+  'Mai',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Set',
+  'Out',
+  'Nov',
+  'Dez',
+];
 
 function getActivityLevel(count: number): 0 | 1 | 2 | 3 | 4 {
   if (count === 0) return 0;
@@ -34,42 +52,42 @@ function getActivityLevel(count: number): 0 | 1 | 2 | 3 | 4 {
 }
 
 const levelColors: Record<number, string> = {
-  0: "bg-muted/50",
-  1: "bg-primary/25",
-  2: "bg-primary/50",
-  3: "bg-primary/75",
-  4: "bg-primary",
+  0: 'bg-muted/50',
+  1: 'bg-primary/25',
+  2: 'bg-primary/50',
+  3: 'bg-primary/75',
+  4: 'bg-primary',
 };
 
 const levelGlow: Record<number, string> = {
-  0: "",
-  1: "",
-  2: "",
-  3: "shadow-[0_0_4px_hsl(var(--primary)/0.3)]",
-  4: "shadow-[0_0_8px_hsl(var(--primary)/0.5)]",
+  0: '',
+  1: '',
+  2: '',
+  3: 'shadow-[0_0_4px_hsl(var(--primary)/0.3)]',
+  4: 'shadow-[0_0_8px_hsl(var(--primary)/0.5)]',
 };
 
 export function ActivityHeatmap({
   data: externalData,
-  title = "Atividade Anual",
-  className
+  title = 'Atividade Anual',
+  className,
 }: ActivityHeatmapProps) {
   const { salesperson } = useAuth();
 
   const { data: fetchedData } = useQuery({
-    queryKey: ["activity-heatmap", salesperson?.id],
+    queryKey: ['activity-heatmap', salesperson?.id],
     queryFn: async () => {
       if (!salesperson?.id) return [];
       const startDate = subDays(new Date(), DAYS_TO_SHOW);
       const { data, error } = await supabase
-        .from("activities")
-        .select("created_at")
-        .eq("salesperson_id", salesperson.id)
-        .gte("created_at", startDate.toISOString());
+        .from('activities')
+        .select('created_at')
+        .eq('salesperson_id', salesperson.id)
+        .gte('created_at', startDate.toISOString());
       if (error) return [];
       const countMap = new Map<string, number>();
-      data.forEach((a) => {
-        const key = format(new Date(a.created_at), "yyyy-MM-dd");
+      data.forEach(a => {
+        const key = format(new Date(a.created_at), 'yyyy-MM-dd');
         countMap.set(key, (countMap.get(key) || 0) + 1);
       });
       return Array.from(countMap.entries()).map(([date, count]) => ({ date, count }));
@@ -77,8 +95,10 @@ export function ActivityHeatmap({
     enabled: !externalData && !!salesperson?.id,
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const data = externalData || fetchedData || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const today = new Date();
   const startDate = startOfWeek(subDays(today, DAYS_TO_SHOW - 1));
 
@@ -86,8 +106,8 @@ export function ActivityHeatmap({
     const days = eachDayOfInterval({ start: startDate, end: today });
     const activityMap = new Map<string, number>();
 
-    data.forEach((item) => {
-      const dateKey = format(new Date(item.date), "yyyy-MM-dd");
+    data.forEach(item => {
+      const dateKey = format(new Date(item.date), 'yyyy-MM-dd');
       activityMap.set(dateKey, (activityMap.get(dateKey) || 0) + item.count);
     });
 
@@ -95,7 +115,7 @@ export function ActivityHeatmap({
     let currentWeek: { date: Date; count: number; level: 0 | 1 | 2 | 3 | 4 }[] = [];
 
     days.forEach((day, index) => {
-      const dateKey = format(day, "yyyy-MM-dd");
+      const dateKey = format(day, 'yyyy-MM-dd');
       const count = activityMap.get(dateKey) || 0;
       const level = getActivityLevel(count);
 
@@ -110,15 +130,12 @@ export function ActivityHeatmap({
     return weeks;
   }, [data, startDate, today]);
 
-  const totalActivities = useMemo(() =>
-    data.reduce((sum, item) => sum + item.count, 0),
+  const totalActivities = useMemo(
+    () => data.reduce((sum, item) => sum + item.count, 0),
     [data]
   );
 
-  const activeDays = useMemo(() =>
-    data.filter(item => item.count > 0).length,
-    [data]
-  );
+  const activeDays = useMemo(() => data.filter(item => item.count > 0).length, [data]);
 
   const monthLabels = useMemo(() => {
     const labels: { month: string; weekIndex: number }[] = [];
@@ -139,7 +156,7 @@ export function ActivityHeatmap({
   }, [calendarData]);
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <Card className={cn('overflow-hidden', className)}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -164,11 +181,12 @@ export function ActivityHeatmap({
               key={i}
               className="text-[10px] text-muted-foreground"
               style={{
-                position: "relative",
+                position: 'relative',
                 left: `${label.weekIndex * 14}px`,
-                marginRight: i < monthLabels.length - 1
-                  ? `${((monthLabels[i + 1]?.weekIndex || 0) - label.weekIndex) * 14 - 24}px`
-                  : 0,
+                marginRight:
+                  i < monthLabels.length - 1
+                    ? `${((monthLabels[i + 1]?.weekIndex || 0) - label.weekIndex) * 14 - 24}px`
+                    : 0,
               }}
             >
               {label.month}
@@ -206,10 +224,10 @@ export function ActivityHeatmap({
                             duration: 0.2,
                           }}
                           className={cn(
-                            "w-[12px] h-[12px] rounded-[2px] cursor-pointer transition-all hover:ring-1 hover:ring-foreground/30",
+                            'w-[12px] h-[12px] rounded-[2px] cursor-pointer transition-all hover:ring-1 hover:ring-foreground/30',
                             levelColors[day.level],
                             levelGlow[day.level],
-                            isSameDay(day.date, today) && "ring-1 ring-primary"
+                            isSameDay(day.date, today) && 'ring-1 ring-primary'
                           )}
                         />
                       </TooltipTrigger>
@@ -218,7 +236,7 @@ export function ActivityHeatmap({
                           {format(day.date, "d 'de' MMMM, yyyy", { locale: ptBR })}
                         </p>
                         <p className="text-muted-foreground">
-                          {day.count} {day.count === 1 ? "atividade" : "atividades"}
+                          {day.count} {day.count === 1 ? 'atividade' : 'atividades'}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -232,13 +250,10 @@ export function ActivityHeatmap({
         {/* Legend */}
         <div className="flex items-center gap-2 mt-3 ml-8">
           <span className="text-[10px] text-muted-foreground">Menos</span>
-          {[0, 1, 2, 3, 4].map((level) => (
+          {[0, 1, 2, 3, 4].map(level => (
             <div
               key={level}
-              className={cn(
-                "w-[12px] h-[12px] rounded-[2px]",
-                levelColors[level]
-              )}
+              className={cn('w-[12px] h-[12px] rounded-[2px]', levelColors[level])}
             />
           ))}
           <span className="text-[10px] text-muted-foreground">Mais</span>

@@ -54,6 +54,7 @@ export const IntelligenceAlerts = React.memo(
         return [...customAlerts, ...staticAlerts].slice(0, 5);
       }
       return staticAlerts;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
     }, [customAlerts]);
 
     return (

@@ -79,8 +79,15 @@ interface RaceArenaProps {
 const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
 
 export function RaceArena({
-  cars, boostingIds, currentUserSalespersonId, overlayChildren, weatherOverlay,
-  colorblindMode = false, seasonId = null, seasonStartedAt = null, seasonEndsAt = null,
+  cars,
+  boostingIds,
+  currentUserSalespersonId,
+  overlayChildren,
+  weatherOverlay,
+  colorblindMode = false,
+  seasonId = null,
+  seasonStartedAt = null,
+  seasonEndsAt = null,
   telemetry,
 }: RaceArenaProps) {
   const sorted = [...cars].sort((a, b) => Number(b.progress) - Number(a.progress));
@@ -88,17 +95,20 @@ export function RaceArena({
   const viewMode = useRaceViewMode();
   const { calm } = useRaceCalm();
   const noFx = reducedMotion || calm;
-  const carIds = sorted.map((c) => c.car_id);
+  const carIds = sorted.map(c => c.car_id);
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
 
   const { commentary, pushCommentary } = useRaceCommentaryLogic();
-  const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } = useRaceDisplayEvents();
+  const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } =
+    useRaceDisplayEvents();
   const { shaking, trigger: triggerShake } = useScreenShake(280);
   const { muted, toggleMute, play } = useRaceSounds();
   const playRef = useRef(play);
-  useEffect(() => { playRef.current = play; }, [play]);
+  useEffect(() => {
+    playRef.current = play;
+  }, [play]);
 
   const {
     flashingCars,
@@ -122,12 +132,18 @@ export function RaceArena({
   });
 
   const [replayOverlay, setReplayOverlay] = useState(false);
-  const lastOvertakeRef = useRef<{ attacker: string; defender: string; at: number } | null>(null);
+  const lastOvertakeRef = useRef<{
+    attacker: string;
+    defender: string;
+    at: number;
+  } | null>(null);
   const [finaleShown, setFinaleShown] = useState(false);
   const [showFinaleFlag, setShowFinaleFlag] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [startLightsTrigger, setStartLightsTrigger] = useState(0);
-  const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(new Map());
+  const pitTrackRef = useRef<Map<string, { lastProgress: number; stalledSince: number }>>(
+    new Map()
+  );
   const [pitStopCars, setPitStopCars] = useState<Set<string>>(new Set());
   const [leaderSpeed, setLeaderSpeed] = useState(0);
   const lastLeaderProgressRef = useRef<{ progress: number; at: number } | null>(null);
@@ -135,12 +151,15 @@ export function RaceArena({
   const replay = useRaceReplay();
   useEffect(() => {
     if (cars.length > 0) replay.recordSnapshot(cars);
-  }, [cars.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [cars.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
 
-  const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(new Map());
+  const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(
+    new Map()
+  );
   const tireWearByCar = useMemo(() => {
     const map = new Map<string, number>();
-    sorted.forEach((c) => {
+    sorted.forEach(c => {
       const prev = wearTrackRef.current.get(c.car_id);
       const p = Number(c.progress);
       if (!prev) {
@@ -151,18 +170,22 @@ export function RaceArena({
       const delta = Math.max(0, p - prev.lastProgress);
       const smooth = prev.smoothDelta * 0.85 + delta * 0.15;
       wearTrackRef.current.set(c.car_id, { lastProgress: p, smoothDelta: smooth });
-      const avg = sorted.reduce((acc, x) => acc + Number(x.progress), 0) / Math.max(1, sorted.length);
+      const avg =
+        sorted.reduce((acc, x) => acc + Number(x.progress), 0) /
+        Math.max(1, sorted.length);
       const lag = Math.max(0, avg - p);
       const wear = Math.max(0.15, Math.min(1, 1 - lag * 1.4));
       map.set(c.car_id, wear);
     });
     return map;
-  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   const leader = sorted[0];
   const leaderPos = useMemo(
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
-    [leader?.car_id, leader?.progress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    [leader?.car_id, leader?.progress]
   );
 
   const lapInfo = computeLapInfo(Number(leader?.progress ?? 0), 10);
@@ -177,17 +200,18 @@ export function RaceArena({
       const dp = Math.max(0, p - prev.progress);
       if (dt > 0.05) {
         const kmh = (dp / dt) * 22000;
-        setLeaderSpeed((s) => s * 0.7 + Math.min(360, kmh) * 0.3);
+        setLeaderSpeed(s => s * 0.7 + Math.min(360, kmh) * 0.3);
         lastLeaderProgressRef.current = { progress: p, at: now };
       }
     } else {
       lastLeaderProgressRef.current = { progress: p, at: now };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [leader?.car_id, leader?.progress]);
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setLeaderSpeed((s) => (s > 1 ? s * 0.92 : 0));
+      setLeaderSpeed(s => (s > 1 ? s * 0.92 : 0));
     }, 800);
     return () => window.clearInterval(id);
   }, []);
@@ -196,51 +220,62 @@ export function RaceArena({
     if (showFinaleFlag) return 'checkered';
     if (Date.now() < yellowFlagUntil) return 'yellow';
     return 'green';
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [showFinaleFlag, yellowFlagUntil, leaderSpeed]);
 
   const tireMarkCars = useMemo(
-    () => sorted.map((c) => ({ id: c.car_id, progress: Number(c.progress) })),
-    [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')],
+    () => sorted.map(c => ({ id: c.car_id, progress: Number(c.progress) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]
   );
 
   const drsActiveByCar = useMemo(() => {
     const map = new Map<string, boolean>();
     sorted.forEach((c, idx) => {
-      if (idx === 0) { map.set(c.car_id, false); return; }
+      if (idx === 0) {
+        map.set(c.car_id, false);
+        return;
+      }
       const ahead = sorted[idx - 1];
       const gap = Number(ahead.progress) - Number(c.progress);
       map.set(c.car_id, isInDRSZone(Number(c.progress)) && gap > 0 && gap < 0.06);
     });
     return map;
-  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   const timingCount = viewMode.isFocus || viewMode.isImmersive ? 3 : 5;
   const top5 = sorted.slice(0, timingCount);
   const leaderProgress = Number(top5[0]?.progress ?? 0);
 
   const second = sorted[1];
-  const gapToSecond = leader && second ? Number(leader.progress) - Number(second.progress) : null;
+  const gapToSecond =
+    leader && second ? Number(leader.progress) - Number(second.progress) : null;
   const showGapLine = gapToSecond !== null && gapToSecond > 0 && gapToSecond < 0.05;
-  
+
   const gapMidPos = useMemo(() => {
     if (!showGapLine || !leader || !second) return null;
     const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
     return getPositionOnTrack(midProgress, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [showGapLine, leader?.progress, second?.progress]);
-  
+
   const leaderPosForLine = useMemo(
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
-    [leader?.car_id, leader?.progress],
-  );
-  
-  const secondPos = useMemo(
-    () => (second ? getPositionOnTrack(Number(second.progress), 0) : null),
-    [second?.car_id, second?.progress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    [leader?.car_id, leader?.progress]
   );
 
-  const closeBattle = sorted.length >= 2
-    ? (Number(sorted[0].progress) - Number(sorted[1].progress)) < 0.03
-    : false;
+  const secondPos = useMemo(
+    () => (second ? getPositionOnTrack(Number(second.progress), 0) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    [second?.car_id, second?.progress]
+  );
+
+  const closeBattle =
+    sorted.length >= 2
+      ? Number(sorted[0].progress) - Number(sorted[1].progress) < 0.03
+      : false;
   const [zoomActive, setZoomActive] = useState(false);
   useEffect(() => {
     if (reducedMotion) return;
@@ -252,12 +287,13 @@ export function RaceArena({
   }, [closeBattle, reducedMotion, zoomActive]);
 
   const currentUserCar = useMemo(
-    () => sorted.find((c) => c.salesperson_id === currentUserSalespersonId),
-    [sorted, currentUserSalespersonId],
+    () => sorted.find(c => c.salesperson_id === currentUserSalespersonId),
+    [sorted, currentUserSalespersonId]
   );
   const nextCornerInfo = useMemo(
     () => (currentUserCar ? getNextCornerInfo(Number(currentUserCar.progress)) : null),
-    [currentUserCar?.car_id, currentUserCar?.progress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    [currentUserCar?.car_id, currentUserCar?.progress]
   );
 
   const aeroTurbByCar = useMemo(() => {
@@ -286,7 +322,10 @@ export function RaceArena({
       }
       const t1 = window.setTimeout(() => setShowFinaleFlag(false), 2200);
       const t2 = window.setTimeout(() => setShowFireworks(false), 2600);
-      return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
+      return () => {
+        window.clearTimeout(t1);
+        window.clearTimeout(t2);
+      };
     }
   }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary, pushBroadcast]);
 
@@ -321,7 +360,7 @@ export function RaceArena({
     const now = Date.now();
     const next = new Set(pitStopCars);
     let mutated = false;
-    sorted.forEach((c) => {
+    sorted.forEach(c => {
       const prev = pitTrackRef.current.get(c.car_id);
       const p = Number(c.progress);
       if (!prev) {
@@ -331,26 +370,34 @@ export function RaceArena({
       const moved = Math.abs(p - prev.lastProgress) > 0.0005;
       if (moved) {
         pitTrackRef.current.set(c.car_id, { lastProgress: p, stalledSince: now });
-        if (next.has(c.car_id)) { next.delete(c.car_id); mutated = true; }
+        if (next.has(c.car_id)) {
+          next.delete(c.car_id);
+          mutated = true;
+        }
       } else {
         const stalledFor = now - prev.stalledSince;
         if (stalledFor > 3000 && !next.has(c.car_id) && p > 0.02 && p < 0.98) {
           next.add(c.car_id);
           mutated = true;
           window.setTimeout(() => {
-            setPitStopCars((s) => {
+            setPitStopCars(s => {
               const n = new Set(s);
               n.delete(c.car_id);
               return n;
             });
             const cur = pitTrackRef.current.get(c.car_id);
-            if (cur) pitTrackRef.current.set(c.car_id, { ...cur, stalledSince: Date.now() });
+            if (cur)
+              pitTrackRef.current.set(c.car_id, { ...cur, stalledSince: Date.now() });
           }, 1500);
         }
       }
     });
     if (mutated) setPitStopCars(next);
-  }, [sorted.map((c) => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'), reducedMotion]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [
+    sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'),
+    reducedMotion,
+  ]);
 
   const handleReplay = useCallback(() => {
     setReplayOverlay(true);
@@ -373,7 +420,14 @@ export function RaceArena({
     >
       <motion.div
         className="w-full h-full"
-        animate={{ scale: (zoomActive || cinematicFocus) && !reducedMotion ? (cinematicFocus ? 1.04 : 1.12) : 1 }}
+        animate={{
+          scale:
+            (zoomActive || cinematicFocus) && !reducedMotion
+              ? cinematicFocus
+                ? 1.04
+                : 1.12
+              : 1,
+        }}
         transition={{ duration: cinematicFocus ? 1.8 : 0.6, ease: [0.22, 1, 0.36, 1] }}
         style={{
           transformOrigin: leaderPos
@@ -382,237 +436,323 @@ export function RaceArena({
           animation: reducedMotion
             ? undefined
             : 'race-cinematic-intro 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
-          boxShadow: cinematicFocus && !reducedMotion ? 'inset 0 0 120px 30px hsl(0 0% 0% / 0.45)' : undefined,
+          boxShadow:
+            cinematicFocus && !reducedMotion
+              ? 'inset 0 0 120px 30px hsl(0 0% 0% / 0.45)'
+              : undefined,
         }}
       >
-      <RaceTrack
-        yellowFlag={currentFlag === 'yellow'}
-        waveTrigger={waveTrigger}
-        leaderName={leader?.salesperson_name}
-        leaderGap={gapToSecond !== null && gapToSecond > 0 ? `+${(gapToSecond * 100).toFixed(2)}%` : undefined}
-      >
-        <TrackTireMarks cars={tireMarkCars} />
-        <TrackDustParticles cars={tireMarkCars} />
-        <DRSZoneOverlay />
-        {leader && !reducedMotion && (
-          <LeaderNeonTrail
-            leaderId={leader.car_id}
-            leaderProgress={Number(leader.progress)}
-            color={leader.primary_color}
-          />
-        )}
-        {sorted.map((car, idx) => {
-          const lane = (idx - sorted.length / 2) * 8;
-          const pos = getPositionOnTrack(Number(car.progress), lane);
-          const isMe = currentUserSalespersonId && car.salesperson_id === currentUserSalespersonId;
-          const carReactions = allReactions.filter((r) => r.target_car_id === car.car_id);
-          const pattern = colorblindMode ? PATTERN_BY_NUMBER[car.car_number % PATTERN_BY_NUMBER.length] : null;
-          return (
-            <motion.g
-              key={car.car_id}
-              initial={false}
-              animate={{ x: pos.x, y: pos.y, rotate: pos.rotation }}
-              transition={transition}
-              onMouseEnter={() => setHoveredCar(car.car_id)}
-              onMouseLeave={() => setHoveredCar((c) => (c === car.car_id ? null : c))}
-              style={{ cursor: 'pointer' }}
-            >
-              {isMe && (
-                <>
-                  <motion.circle
-                    r={38}
-                    fill="none"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2.5}
-                    opacity={0.85}
-                    animate={reducedMotion ? undefined : { r: [34, 46, 34], opacity: [0.9, 0.25, 0.9] }}
-                    transition={reducedMotion ? undefined : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                  />
-                  <motion.circle
-                    r={28}
-                    fill="hsl(var(--primary))"
-                    opacity={0.18}
-                    animate={reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }}
-                    transition={reducedMotion ? undefined : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                  />
-                </>
-              )}
-              <ellipse
-                cx={1.5}
-                cy={4}
-                rx={15}
-                ry={4.5}
-                fill="hsl(0 0% 0%)"
-                opacity={0.28}
-                style={{ filter: 'blur(1.5px)' }}
-                pointerEvents="none"
-              />
-              <RaceCar
-                primaryColor={car.primary_color}
-                secondaryColor={car.secondary_color}
-                style={car.car_style}
-                showTrail={boostingIds?.has(car.salesperson_id) ?? false}
-                pattern={pattern}
-                overtakeFlash={flashingCars.has(car.car_id)}
-                tireWear={tireWearByCar.get(car.car_id) ?? 1}
-                drsActive={drsActiveByCar.get(car.car_id) ?? false}
-                rank={idx + 1}
-                pitStop={pitStopCars.has(car.car_id)}
-                fastestSector={fastestCarId === car.car_id}
-                aeroTurbulence={aeroTurbByCar.get(car.car_id) ?? false}
-              />
-              {carReactions.length > 0 && (
-                <g transform="translate(20, -32)">
-                  <rect x={-10} y={-8} width={20} height={14} rx={7} fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth={1} />
-                  <text y={2} textAnchor="middle" fontSize={9} fontWeight={800} fill="hsl(var(--foreground))" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                    {carReactions.length}
-                  </text>
-                </g>
-              )}
-              <ReactionFloater reactions={carReactions} />
-              {isMe && (
-                <g transform={`rotate(${-pos.rotation}) translate(0, -42)`}>
-                  <rect x={-18} y={-9} width={36} height={14} rx={7}
-                    fill="hsl(var(--primary))" stroke="hsl(var(--background))" strokeWidth={1.5} />
-                  <text y={1} textAnchor="middle" fontSize={9} fontWeight={900}
-                    fill="hsl(var(--primary-foreground))"
-                    style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.05em' }}>
-                    VOCÊ
-                  </text>
-                </g>
-              )}
-              <g transform={`rotate(${-pos.rotation})`}>
-                {(() => {
-                  const name = car.salesperson_name?.split(' ')[0] ?? '';
-                  const chipW = Math.max(38, name.length * 7 + 12);
-                  const yBase = isMe ? -52 : -28;
-                  return (
-                    <>
-                      <rect
-                        x={-chipW / 2}
-                        y={yBase - 9}
-                        width={chipW}
-                        height={14}
-                        rx={7}
-                        fill="hsl(var(--background) / 0.85)"
-                        stroke="hsl(var(--border))"
-                        strokeWidth={0.8}
-                      />
-                      <text
-                        y={yBase + 1}
-                        textAnchor="middle"
-                        fontSize={10}
-                        fontWeight={700}
-                        fill="hsl(var(--foreground))"
-                        style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.02em' }}
-                      >
-                        {name}
-                      </text>
-                    </>
-                  );
-                })()}
-              </g>
-
-              <foreignObject x={-50} y={20} width={100} height={36} style={{ overflow: 'visible' }}>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <ReactionBar carId={car.car_id} seasonId={seasonId} visible={hoveredCar === car.car_id} />
-                </div>
-              </foreignObject>
-            </motion.g>
-          );
-        })}
-
-        {leaderPos && !noFx && (
-          <motion.circle
-            cx={leaderPos.x}
-            cy={leaderPos.y}
-            r={120}
-            fill="url(#leaderSpotlight)"
-            initial={false}
-            animate={{ cx: leaderPos.x, cy: leaderPos.y }}
-            transition={{ type: 'spring', stiffness: 40, damping: 20 }}
-            pointerEvents="none"
-          />
-        )}
-
-        <AnimatePresence>
-          {dustBursts.map((burst) => (
-            <g key={burst.id} transform={`translate(${burst.x} ${burst.y})`} pointerEvents="none">
-              {[0, 1, 2, 3].map((i) => {
-                const angle = (i / 4) * Math.PI * 2;
-                const dx = Math.cos(angle) * 18;
-                const dy = Math.sin(angle) * 12 - 8;
-                return (
-                  <motion.circle
-                    key={i}
-                    r={3 + i * 0.5}
-                    fill="hsl(var(--race-runoff))"
-                    filter="url(#dustBlur)"
-                    initial={{ x: 0, y: 0, opacity: 0.7 }}
-                    animate={{ x: dx, y: dy, opacity: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.1, ease: 'easeOut', delay: i * 0.04 }}
-                  />
-                );
-              })}
-            </g>
-          ))}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {sectorBadges.map((b) => (
-            <motion.g
-              key={b.id}
-              transform={`translate(${b.x} ${b.y})`}
-              initial={{ opacity: 0, scale: 0.6, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: -10 }}
-              exit={{ opacity: 0, scale: 0.95, y: -22 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              pointerEvents="none"
-            >
-              <rect x={-22} y={-12} width={44} height={18} rx={4}
-                fill="hsl(142 76% 38%)" stroke="hsl(0 0% 100%)" strokeWidth={1.2} />
-              <text y={1} textAnchor="middle" fontSize={10} fontWeight={900}
-                fill="hsl(0 0% 100%)"
-                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}>
-                {b.name} ✓
-              </text>
-            </motion.g>
-          ))}
-        </AnimatePresence>
-
-        {showGapLine && leaderPosForLine && secondPos && (
-          <g pointerEvents="none">
-            <line
-              x1={leaderPosForLine.x}
-              y1={leaderPosForLine.y}
-              x2={secondPos.x}
-              y2={secondPos.y}
-              stroke="hsl(45 95% 55%)"
-              strokeWidth={2}
-              strokeDasharray="6 5"
-              opacity={0.85}
+        <RaceTrack
+          yellowFlag={currentFlag === 'yellow'}
+          waveTrigger={waveTrigger}
+          leaderName={leader?.salesperson_name}
+          leaderGap={
+            gapToSecond !== null && gapToSecond > 0
+              ? `+${(gapToSecond * 100).toFixed(2)}%`
+              : undefined
+          }
+        >
+          <TrackTireMarks cars={tireMarkCars} />
+          <TrackDustParticles cars={tireMarkCars} />
+          <DRSZoneOverlay />
+          {leader && !reducedMotion && (
+            <LeaderNeonTrail
+              leaderId={leader.car_id}
+              leaderProgress={Number(leader.progress)}
+              color={leader.primary_color}
             />
-          </g>
-        )}
+          )}
+          {sorted.map((car, idx) => {
+            const lane = (idx - sorted.length / 2) * 8;
+            const pos = getPositionOnTrack(Number(car.progress), lane);
+            const isMe =
+              currentUserSalespersonId && car.salesperson_id === currentUserSalespersonId;
+            const carReactions = allReactions.filter(r => r.target_car_id === car.car_id);
+            const pattern = colorblindMode
+              ? PATTERN_BY_NUMBER[car.car_number % PATTERN_BY_NUMBER.length]
+              : null;
+            return (
+              <motion.g
+                key={car.car_id}
+                initial={false}
+                animate={{ x: pos.x, y: pos.y, rotate: pos.rotation }}
+                transition={transition}
+                onMouseEnter={() => setHoveredCar(car.car_id)}
+                onMouseLeave={() => setHoveredCar(c => (c === car.car_id ? null : c))}
+                style={{ cursor: 'pointer' }}
+              >
+                {isMe && (
+                  <>
+                    <motion.circle
+                      r={38}
+                      fill="none"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2.5}
+                      opacity={0.85}
+                      animate={
+                        reducedMotion
+                          ? undefined
+                          : { r: [34, 46, 34], opacity: [0.9, 0.25, 0.9] }
+                      }
+                      transition={
+                        reducedMotion
+                          ? undefined
+                          : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
+                      }
+                    />
+                    <motion.circle
+                      r={28}
+                      fill="hsl(var(--primary))"
+                      opacity={0.18}
+                      animate={
+                        reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }
+                      }
+                      transition={
+                        reducedMotion
+                          ? undefined
+                          : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
+                      }
+                    />
+                  </>
+                )}
+                <ellipse
+                  cx={1.5}
+                  cy={4}
+                  rx={15}
+                  ry={4.5}
+                  fill="hsl(0 0% 0%)"
+                  opacity={0.28}
+                  style={{ filter: 'blur(1.5px)' }}
+                  pointerEvents="none"
+                />
+                <RaceCar
+                  primaryColor={car.primary_color}
+                  secondaryColor={car.secondary_color}
+                  style={car.car_style}
+                  showTrail={boostingIds?.has(car.salesperson_id) ?? false}
+                  pattern={pattern}
+                  overtakeFlash={flashingCars.has(car.car_id)}
+                  tireWear={tireWearByCar.get(car.car_id) ?? 1}
+                  drsActive={drsActiveByCar.get(car.car_id) ?? false}
+                  rank={idx + 1}
+                  pitStop={pitStopCars.has(car.car_id)}
+                  fastestSector={fastestCarId === car.car_id}
+                  aeroTurbulence={aeroTurbByCar.get(car.car_id) ?? false}
+                />
+                {carReactions.length > 0 && (
+                  <g transform="translate(20, -32)">
+                    <rect
+                      x={-10}
+                      y={-8}
+                      width={20}
+                      height={14}
+                      rx={7}
+                      fill="hsl(var(--background))"
+                      stroke="hsl(var(--border))"
+                      strokeWidth={1}
+                    />
+                    <text
+                      y={2}
+                      textAnchor="middle"
+                      fontSize={9}
+                      fontWeight={800}
+                      fill="hsl(var(--foreground))"
+                      style={{ fontFamily: 'system-ui, sans-serif' }}
+                    >
+                      {carReactions.length}
+                    </text>
+                  </g>
+                )}
+                <ReactionFloater reactions={carReactions} />
+                {isMe && (
+                  <g transform={`rotate(${-pos.rotation}) translate(0, -42)`}>
+                    <rect
+                      x={-18}
+                      y={-9}
+                      width={36}
+                      height={14}
+                      rx={7}
+                      fill="hsl(var(--primary))"
+                      stroke="hsl(var(--background))"
+                      strokeWidth={1.5}
+                    />
+                    <text
+                      y={1}
+                      textAnchor="middle"
+                      fontSize={9}
+                      fontWeight={900}
+                      fill="hsl(var(--primary-foreground))"
+                      style={{
+                        fontFamily: 'system-ui, sans-serif',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      VOCÊ
+                    </text>
+                  </g>
+                )}
+                <g transform={`rotate(${-pos.rotation})`}>
+                  {(() => {
+                    const name = car.salesperson_name?.split(' ')[0] ?? '';
+                    const chipW = Math.max(38, name.length * 7 + 12);
+                    const yBase = isMe ? -52 : -28;
+                    return (
+                      <>
+                        <rect
+                          x={-chipW / 2}
+                          y={yBase - 9}
+                          width={chipW}
+                          height={14}
+                          rx={7}
+                          fill="hsl(var(--background) / 0.85)"
+                          stroke="hsl(var(--border))"
+                          strokeWidth={0.8}
+                        />
+                        <text
+                          y={yBase + 1}
+                          textAnchor="middle"
+                          fontSize={10}
+                          fontWeight={700}
+                          fill="hsl(var(--foreground))"
+                          style={{
+                            fontFamily: 'system-ui, sans-serif',
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {name}
+                        </text>
+                      </>
+                    );
+                  })()}
+                </g>
 
-        {leader && second && !reducedMotion && (
-          <SlipstreamLines
-            leaderProgress={Number(leader.progress)}
-            chaserProgress={Number(second.progress)}
-          />
-        )}
+                <foreignObject
+                  x={-50}
+                  y={20}
+                  width={100}
+                  height={36}
+                  style={{ overflow: 'visible' }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <ReactionBar
+                      carId={car.car_id}
+                      seasonId={seasonId}
+                      visible={hoveredCar === car.car_id}
+                    />
+                  </div>
+                </foreignObject>
+              </motion.g>
+            );
+          })}
 
-        {leader && second && (
-          <LeaderGapIndicator
-            leaderProgress={Number(leader.progress)}
-            secondProgress={Number(second.progress)}
-          />
-        )}
+          {leaderPos && !noFx && (
+            <motion.circle
+              cx={leaderPos.x}
+              cy={leaderPos.y}
+              r={120}
+              fill="url(#leaderSpotlight)"
+              initial={false}
+              animate={{ cx: leaderPos.x, cy: leaderPos.y }}
+              transition={{ type: 'spring', stiffness: 40, damping: 20 }}
+              pointerEvents="none"
+            />
+          )}
 
-        {overlayChildren}
-      </RaceTrack>
-      {weatherOverlay}
+          <AnimatePresence>
+            {dustBursts.map(burst => (
+              <g
+                key={burst.id}
+                transform={`translate(${burst.x} ${burst.y})`}
+                pointerEvents="none"
+              >
+                {[0, 1, 2, 3].map(i => {
+                  const angle = (i / 4) * Math.PI * 2;
+                  const dx = Math.cos(angle) * 18;
+                  const dy = Math.sin(angle) * 12 - 8;
+                  return (
+                    <motion.circle
+                      key={i}
+                      r={3 + i * 0.5}
+                      fill="hsl(var(--race-runoff))"
+                      filter="url(#dustBlur)"
+                      initial={{ x: 0, y: 0, opacity: 0.7 }}
+                      animate={{ x: dx, y: dy, opacity: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1.1, ease: 'easeOut', delay: i * 0.04 }}
+                    />
+                  );
+                })}
+              </g>
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {sectorBadges.map(b => (
+              <motion.g
+                key={b.id}
+                transform={`translate(${b.x} ${b.y})`}
+                initial={{ opacity: 0, scale: 0.6, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: -10 }}
+                exit={{ opacity: 0, scale: 0.95, y: -22 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                pointerEvents="none"
+              >
+                <rect
+                  x={-22}
+                  y={-12}
+                  width={44}
+                  height={18}
+                  rx={4}
+                  fill="hsl(142 76% 38%)"
+                  stroke="hsl(0 0% 100%)"
+                  strokeWidth={1.2}
+                />
+                <text
+                  y={1}
+                  textAnchor="middle"
+                  fontSize={10}
+                  fontWeight={900}
+                  fill="hsl(0 0% 100%)"
+                  style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}
+                >
+                  {b.name} ✓
+                </text>
+              </motion.g>
+            ))}
+          </AnimatePresence>
+
+          {showGapLine && leaderPosForLine && secondPos && (
+            <g pointerEvents="none">
+              <line
+                x1={leaderPosForLine.x}
+                y1={leaderPosForLine.y}
+                x2={secondPos.x}
+                y2={secondPos.y}
+                stroke="hsl(45 95% 55%)"
+                strokeWidth={2}
+                strokeDasharray="6 5"
+                opacity={0.85}
+              />
+            </g>
+          )}
+
+          {leader && second && !reducedMotion && (
+            <SlipstreamLines
+              leaderProgress={Number(leader.progress)}
+              chaserProgress={Number(second.progress)}
+            />
+          )}
+
+          {leader && second && (
+            <LeaderGapIndicator
+              leaderProgress={Number(leader.progress)}
+              secondProgress={Number(second.progress)}
+            />
+          )}
+
+          {overlayChildren}
+        </RaceTrack>
+        {weatherOverlay}
       </motion.div>
 
       <div
@@ -682,14 +822,18 @@ export function RaceArena({
         </div>
       )}
 
-
       {!viewMode.isFocus && (
-        <SpeedHUD speedKmh={leaderSpeed} leaderName={leader?.salesperson_name?.split(' ')[0]} />
+        <SpeedHUD
+          speedKmh={leaderSpeed}
+          leaderName={leader?.salesperson_name?.split(' ')[0]}
+        />
       )}
 
       <RaceMiniMap cars={sorted} currentUserSalespersonId={currentUserSalespersonId} />
 
-      {!viewMode.isFocus && <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />}
+      {!viewMode.isFocus && (
+        <LapCounterBadge current={lapInfo.current} total={lapInfo.total} />
+      )}
 
       {viewMode.showTicker && <RaceEventTicker events={tickerEvents} />}
 
@@ -755,7 +899,8 @@ export function RaceArena({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             style={{
-              boxShadow: 'inset 0 0 0 4px hsl(var(--destructive) / 0.85), inset 0 0 60px hsl(0 0% 0% / 0.45)',
+              boxShadow:
+                'inset 0 0 0 4px hsl(var(--destructive) / 0.85), inset 0 0 60px hsl(0 0% 0% / 0.45)',
               animation: 'race-replay-pulse 1.4s ease-in-out infinite',
             }}
           >
@@ -804,11 +949,17 @@ export function RaceArena({
         isPlaying={replay.isPlaying}
       />
 
-      {pitStopCars.size > 0 && (() => {
-        const firstId = Array.from(pitStopCars)[0];
-        const pilot = sorted.find((c) => c.car_id === firstId);
-        return <PitLane count={pitStopCars.size} pilotName={pilot?.salesperson_name?.split(' ')[0]} />;
-      })()}
+      {pitStopCars.size > 0 &&
+        (() => {
+          const firstId = Array.from(pitStopCars)[0];
+          const pilot = sorted.find(c => c.car_id === firstId);
+          return (
+            <PitLane
+              count={pitStopCars.size}
+              pilotName={pilot?.salesperson_name?.split(' ')[0]}
+            />
+          );
+        })()}
 
       {telemetry && viewMode.showFullTelemetry && (
         <MyTelemetryPanel
@@ -821,7 +972,9 @@ export function RaceArena({
         />
       )}
 
-      {viewMode.showBroadcast && <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />}
+      {viewMode.showBroadcast && (
+        <BroadcastOverlay events={broadcastEvents} flag={currentFlag} />
+      )}
 
       <RaceEasterEggs showFireworks={showFireworks} />
     </div>

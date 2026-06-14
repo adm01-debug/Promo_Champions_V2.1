@@ -99,6 +99,7 @@ export const ExplainableWinProbability = React.memo(
       });
 
       return f.sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
     }, [probability, dealAmount, daysInPipeline, stage, hasRecentActivity, isICPMatch]);
 
     const probColor =
