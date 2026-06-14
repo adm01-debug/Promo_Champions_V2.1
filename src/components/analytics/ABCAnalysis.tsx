@@ -2,18 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/bi/useABCAnalysis';
-import {
-  Package,
-  Users,
-  Layers,
-  Download,
-  Filter,
-  MousePointer2,
-  Brain,
-  MoveRight,
-  Bot,
-  Sparkles,
-} from 'lucide-react';
+import { Package, Users, Layers, Download, Filter, Brain, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
@@ -69,7 +58,9 @@ export function ABCAnalysis() {
     }));
 
     exportToCSV(exportData, `analise_abc_${type}_${getLocalISODate()}`);
-    toast.success(`Exportação de ${type === 'products' ? 'produtos' : 'clientes'} concluída`);
+    toast.success(
+      `Exportação de ${type === 'products' ? 'produtos' : 'clientes'} concluída`
+    );
   };
 
   return (

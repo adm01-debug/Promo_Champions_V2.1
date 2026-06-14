@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -23,13 +23,11 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   Search,
-  Filter,
   MessageCircle,
   Zap,
   UserPlus,
   Clock,
   History,
-  AlertTriangle,
   RotateCw,
   Send,
 } from 'lucide-react';
@@ -39,8 +37,15 @@ import { Helmet } from 'react-helmet-async';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 
-const actionIcons: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-  whatsapp_sent: { icon: MessageCircle, color: 'text-green-500', label: 'WhatsApp Enviado' },
+const actionIcons: Record<
+  string,
+  { icon: React.ElementType; color: string; label: string }
+> = {
+  whatsapp_sent: {
+    icon: MessageCircle,
+    color: 'text-green-500',
+    label: 'WhatsApp Enviado',
+  },
   whatsapp_attempt: { icon: Send, color: 'text-blue-400', label: 'Tentativa WhatsApp' },
   task_created: { icon: UserPlus, color: 'text-blue-500', label: 'Tarefa Criada' },
   lead_reactivated: { icon: Zap, color: 'text-amber-500', label: 'Lead Reativado' },
@@ -76,7 +81,8 @@ const FollowUpAudit = () => {
           action_type: 'intent_trigger',
           user_name: 'Sistema (IA)',
           status: 'success',
-          details: 'Cliques repetidos em Preços (4x). Sugestão de Next Best Action gerada.',
+          details:
+            'Cliques repetidos em Preços (4x). Sugestão de Next Best Action gerada.',
           retry_count: 0,
         },
       ];
@@ -124,7 +130,8 @@ const FollowUpAudit = () => {
       } else {
         details = log.details;
       }
-      const message = details?.message_preview || 'Olá! Gostaríamos de retomar nosso contato.';
+      const message =
+        details?.message_preview || 'Olá! Gostaríamos de retomar nosso contato.';
 
       window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
 
@@ -203,7 +210,9 @@ const FollowUpAudit = () => {
                 <Input
                   type="date"
                   value={dateRange.from}
-                  onChange={e => setDateRange(prev => ({ ...prev, from: e.target.value }))}
+                  onChange={e =>
+                    setDateRange(prev => ({ ...prev, from: e.target.value }))
+                  }
                   className="h-9 text-[10px]"
                 />
                 <Input
@@ -241,7 +250,10 @@ const FollowUpAudit = () => {
                   <TableBody>
                     {logs.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                        <TableCell
+                          colSpan={6}
+                          className="h-32 text-center text-muted-foreground"
+                        >
                           Nenhum registro encontrado para os filtros aplicados.
                         </TableCell>
                       </TableRow>
@@ -256,7 +268,10 @@ const FollowUpAudit = () => {
                         const ActionIcon = action.icon;
 
                         return (
-                          <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">
+                          <TableRow
+                            key={log.id}
+                            className="hover:bg-muted/30 transition-colors"
+                          >
                             <TableCell className="text-xs font-medium">
                               {log.created_at
                                 ? format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
@@ -264,7 +279,9 @@ const FollowUpAudit = () => {
                                   })
                                 : '-'}
                             </TableCell>
-                            <TableCell className="font-semibold">{log.lead_name}</TableCell>
+                            <TableCell className="font-semibold">
+                              {log.lead_name}
+                            </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <ActionIcon className={`h-4 w-4 ${action.color}`} />
@@ -276,7 +293,9 @@ const FollowUpAudit = () => {
                                 <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                                   {log.user_name?.substring(0, 2).toUpperCase() || 'UN'}
                                 </div>
-                                <span className="text-xs">{log.user_name || 'Sistema'}</span>
+                                <span className="text-xs">
+                                  {log.user_name || 'Sistema'}
+                                </span>
                               </div>
                             </TableCell>
                             <TableCell>

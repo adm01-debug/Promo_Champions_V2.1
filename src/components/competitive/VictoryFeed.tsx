@@ -1,10 +1,7 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Trophy, Flame, Rocket, ThumbsUp, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { useVictoryFeed } from '@/hooks/useVictoryFeed';
 import { VictoryFeedItem } from './VictoryFeedItem';
 import { PostVictoryForm } from './PostVictoryForm';
@@ -35,7 +32,9 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => <div key={i} className="h-24 rounded-xl bg-muted/30 animate-pulse" />)}
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-24 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -46,7 +45,9 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
       {currentSalespersonId && (
         <PostVictoryForm
           salespersonId={currentSalespersonId}
-          onPost={(data) => postVictory.mutate({ salesperson_id: currentSalespersonId, ...data })}
+          onPost={data =>
+            postVictory.mutate({ salesperson_id: currentSalespersonId, ...data })
+          }
           isPosting={postVictory.isPending}
         />
       )}
@@ -56,7 +57,9 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
         <Card className="border-dashed">
           <CardContent className="p-8 text-center">
             <Trophy className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-            <p className="text-sm text-muted-foreground">Nenhuma vitória ainda. Feche um negócio para aparecer aqui! 🚀</p>
+            <p className="text-sm text-muted-foreground">
+              Nenhuma vitória ainda. Feche um negócio para aparecer aqui! 🚀
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -76,11 +79,19 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
                 eventColors={eventColors}
                 onReaction={(feedItemId, reaction) => {
                   if (!currentSalespersonId) return;
-                  addReaction.mutate({ feedItemId, salespersonId: currentSalespersonId, reaction });
+                  addReaction.mutate({
+                    feedItemId,
+                    salespersonId: currentSalespersonId,
+                    reaction,
+                  });
                 }}
                 onComment={(feedItemId, content) => {
                   if (!currentSalespersonId) return;
-                  addComment.mutate({ feedItemId, salespersonId: currentSalespersonId, content });
+                  addComment.mutate({
+                    feedItemId,
+                    salespersonId: currentSalespersonId,
+                    content,
+                  });
                 }}
               />
             </motion.div>

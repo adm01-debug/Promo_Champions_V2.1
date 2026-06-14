@@ -1,20 +1,48 @@
-import { Volume2, PartyPopper, TrendingDown, ShieldAlert, Bell } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSoundSettings, SoundType } from "@/hooks/useSoundSettings";
-import { useSecurityAlertSoundSettings, SecurityAlertSoundType } from "@/hooks/useSecurityAlertSoundSettings";
-import { useSDRAlertSoundSettings, SDRAlertSoundType } from "@/hooks/useSDRAlertSoundSettings";
-import { useSystemSoundSettings } from "@/hooks/useSystemSoundSettings";
-import { CelebrationTab } from "./sound/CelebrationTab";
-import { VolumeControl } from "./sound/VolumeControl";
-import { SoundRadioGroup } from "./sound/SoundRadioGroup";
-import { SystemTab } from "./sound/SystemTab";
+import { Volume2, PartyPopper, TrendingDown, ShieldAlert, Bell } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useSoundSettings } from '@/hooks/useSoundSettings';
+import {
+  useSecurityAlertSoundSettings,
+  SecurityAlertSoundType,
+} from '@/hooks/useSecurityAlertSoundSettings';
+import {
+  useSDRAlertSoundSettings,
+  SDRAlertSoundType,
+} from '@/hooks/useSDRAlertSoundSettings';
+import { useSystemSoundSettings } from '@/hooks/useSystemSoundSettings';
+import { CelebrationTab } from './sound/CelebrationTab';
+import { VolumeControl } from './sound/VolumeControl';
+import { SoundRadioGroup } from './sound/SoundRadioGroup';
+import { SystemTab } from './sound/SystemTab';
 
 export function SoundSettingsTabs() {
-  const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } = useSoundSettings();
-  const { selectedSound: securitySound, setSelectedSound: setSecuritySound, volume: securityVolume, setVolume: setSecurityVolume, previewSound: previewSecuritySound, soundOptions: securitySoundOptions } = useSecurityAlertSoundSettings();
-  const { selectedSound: sdrSound, setSelectedSound: setSDRSound, volume: sdrVolume, setVolume: setSDRVolume, previewSound: previewSDRSound, soundOptions: sdrSoundOptions } = useSDRAlertSoundSettings();
-  const { preferences: systemPreferences, updatePreference: updateSystemPreference, volume: systemVolume, setVolume: setSystemVolume, previewSound: previewSystemSound, playReadySound, soundOptions: systemSoundOptions } = useSystemSoundSettings();
+  const { selectedSound, setSelectedSound, volume, setVolume, previewSound, playSound } =
+    useSoundSettings();
+  const {
+    selectedSound: securitySound,
+    setSelectedSound: setSecuritySound,
+    volume: securityVolume,
+    setVolume: setSecurityVolume,
+    previewSound: previewSecuritySound,
+    soundOptions: securitySoundOptions,
+  } = useSecurityAlertSoundSettings();
+  const {
+    selectedSound: sdrSound,
+    setSelectedSound: setSDRSound,
+    volume: sdrVolume,
+    setVolume: setSDRVolume,
+    previewSound: previewSDRSound,
+    soundOptions: sdrSoundOptions,
+  } = useSDRAlertSoundSettings();
+  const {
+    preferences: systemPreferences,
+    updatePreference: updateSystemPreference,
+    volume: systemVolume,
+    setVolume: setSystemVolume,
+    previewSound: previewSystemSound,
+    playReadySound,
+    soundOptions: systemSoundOptions,
+  } = useSystemSoundSettings();
 
   return (
     <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
@@ -24,7 +52,9 @@ export function SoundSettingsTabs() {
             <Volume2 className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">Acoustic Telemetry</h3>
+            <h3 className="font-display font-black text-lg uppercase tracking-tighter italic">
+              Acoustic Telemetry
+            </h3>
             <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">
               Configure operational audio feedback and tactical alerts
             </p>
@@ -32,7 +62,6 @@ export function SoundSettingsTabs() {
         </div>
       </div>
       <div className="p-6">
-
         <Tabs defaultValue="celebration" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="celebration" className="flex items-center gap-2">
@@ -75,9 +104,9 @@ export function SoundSettingsTabs() {
             <VolumeControl volume={sdrVolume} onVolumeChange={setSDRVolume} />
             <SoundRadioGroup
               value={sdrSound}
-              onValueChange={(v) => setSDRSound(v as SDRAlertSoundType)}
+              onValueChange={v => setSDRSound(v as SDRAlertSoundType)}
               options={sdrSoundOptions}
-              onPreview={(id) => previewSDRSound(id as SDRAlertSoundType)}
+              onPreview={id => previewSDRSound(id as SDRAlertSoundType)}
               disabled={sdrVolume === 0}
               idPrefix="sdr-"
             />
@@ -93,9 +122,9 @@ export function SoundSettingsTabs() {
             <VolumeControl volume={securityVolume} onVolumeChange={setSecurityVolume} />
             <SoundRadioGroup
               value={securitySound}
-              onValueChange={(v) => setSecuritySound(v as SecurityAlertSoundType)}
+              onValueChange={v => setSecuritySound(v as SecurityAlertSoundType)}
               options={securitySoundOptions}
-              onPreview={(id) => previewSecuritySound(id as SecurityAlertSoundType)}
+              onPreview={id => previewSecuritySound(id as SecurityAlertSoundType)}
               disabled={securityVolume === 0}
               idPrefix="security-"
             />
@@ -104,7 +133,12 @@ export function SoundSettingsTabs() {
           <TabsContent value="system" className="mt-0">
             <SystemTab
               preferences={systemPreferences}
-              updatePreference={(key: string, patch) => updateSystemPreference(key as 'newTask' | 'newSale' | 'dealUpdate' | 'ready', patch)}
+              updatePreference={(key: string, patch) =>
+                updateSystemPreference(
+                  key as 'newTask' | 'newSale' | 'dealUpdate' | 'ready',
+                  patch
+                )
+              }
               volume={systemVolume}
               setVolume={setSystemVolume}
               previewSound={previewSystemSound}
@@ -114,6 +148,5 @@ export function SoundSettingsTabs() {
         </Tabs>
       </div>
     </div>
-
   );
 }

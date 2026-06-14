@@ -1,15 +1,31 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ClipboardCheck, XCircle, Timer, Wallet, UserCog, AlertCircle, ArrowRightLeft, UserPlus } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useSalespeopleList } from "@/hooks/sales/useSalespeopleList";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import {
+  CheckCircle2,
+  ClipboardCheck,
+  XCircle,
+  Timer,
+  Wallet,
+  UserCog,
+  AlertCircle,
+  ArrowRightLeft,
+  UserPlus,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useSalespeopleList } from '@/hooks/sales/useSalespeopleList';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface MQLQualificationFormProps {
   saleId?: string | null;
@@ -19,37 +35,38 @@ interface MQLQualificationFormProps {
 export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFormProps) {
   const queryClient = useQueryClient();
   const { data: salespeople } = useSalespeopleList();
-  const [status, setStatus] = useState("pending");
+  const [status, setStatus] = useState('pending');
   const [loading, setLoading] = useState(false);
-  const [closerId, setCloserId] = useState<string>("");
+  const [closerId, setCloserId] = useState<string>('');
   const [formData, setFormData] = useState({
-    budget: "",
-    authority: "",
-    timing: "",
-    pains: ""
+    budget: '',
+    authority: '',
+    timing: '',
+    pains: '',
   });
 
   // Filter closers only
-  const closers = salespeople?.filter(s => s.role === 'closer' || s.role === 'hybrid') || [];
+  const closers =
+    salespeople?.filter(s => s.role === 'closer' || s.role === 'hybrid') || [];
 
   const handleSave = async () => {
     if (!saleId) {
-      toast.error("Nenhum lead selecionado", {
-        description: "Selecione um prospect na lista ao lado para qualificar."
+      toast.error('Nenhum lead selecionado', {
+        description: 'Selecione um prospect na lista ao lado para qualificar.',
       });
       return;
     }
 
     if (!formData.budget || !formData.authority || !formData.pains) {
-      toast.error("Preencha os campos obrigatórios", {
-        description: "Orçamento, Autoridade e Dores são necessários para a qualificação."
+      toast.error('Preencha os campos obrigatórios', {
+        description: 'Orçamento, Autoridade e Dores são necessários para a qualificação.',
       });
       return;
     }
 
     if (status === 'qualified' && !closerId) {
-      toast.error("Handoff necessário", {
-        description: "Selecione um Closer para assumir este lead qualificado."
+      toast.error('Handoff necessário', {
+        description: 'Selecione um Closer para assumir este lead qualificado.',
       });
       return;
     }
@@ -58,57 +75,62 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
     try {
       // Update Sale
       const { error: saleError } = await supabase
-        .from("sales")
+        .from('sales')
         .update({
           status: status === 'qualified' ? 'qualified' : 'lead',
           closer_id: status === 'qualified' ? closerId : null,
           salesperson_id: status === 'qualified' ? closerId : undefined, // Transfer ownership if qualified
           enrichment_data: {
             ...formData,
-            qualification_date: new Date().toISOString()
-          }
+            qualification_date: new Date().toISOString(),
+          },
         })
-        .eq("id", saleId);
+        .eq('id', saleId);
 
       if (saleError) throw saleError;
 
       // Create Notification for Closer
       if (status === 'qualified' && closerId) {
         const selectedCloser = closers.find(c => c.id === closerId);
-        
+
         // Find auth_user_id for closer to send notification
         const { data: closerData } = await supabase
-          .from("salespeople")
-          .select("auth_user_id")
-          .eq("id", closerId)
+          .from('salespeople')
+          .select('auth_user_id')
+          .eq('id', closerId)
           .single();
 
         if (closerData?.auth_user_id) {
-          await supabase.from("notifications").insert({
+          await supabase.from('notifications').insert({
             user_id: closerData.auth_user_id,
-            type: "lead_handoff",
-            category: "sales",
-            priority: "high",
-            title: "🚀 Novo Lead Qualificado (MQL)",
+            type: 'lead_handoff',
+            category: 'sales',
+            priority: 'high',
+            title: '🚀 Novo Lead Qualificado (MQL)',
             message: `O SDR prospectou ${clientName || 'um novo cliente'} e ele está pronto para você!`,
-            icon: "Zap",
-            action_label: "Ver Deal",
-            metadata: { sale_id: saleId }
+            icon: 'Zap',
+            action_label: 'Ver Deal',
+            metadata: { sale_id: saleId },
           });
         }
       }
 
-      toast.success(status === 'qualified' ? "Lead Qualificado e Enviado!" : "Análise Salva", {
-        description: status === 'qualified' ? `Handoff realizado com sucesso para o Closer.` : "A qualificação foi registrada."
-      });
+      toast.success(
+        status === 'qualified' ? 'Lead Qualificado e Enviado!' : 'Análise Salva',
+        {
+          description:
+            status === 'qualified'
+              ? `Handoff realizado com sucesso para o Closer.`
+              : 'A qualificação foi registrada.',
+        }
+      );
 
       // Invalidate queries to refresh UI
-      queryClient.invalidateQueries({ queryKey: ["recent-prospects"] });
-      queryClient.invalidateQueries({ queryKey: ["sdr-metrics"] });
-      
+      queryClient.invalidateQueries({ queryKey: ['recent-prospects'] });
+      queryClient.invalidateQueries({ queryKey: ['sdr-metrics'] });
     } catch (error: any) {
-      console.error("Error saving qualification:", error);
-      toast.error("Erro ao salvar qualificação: " + error.message);
+      console.error('Error saving qualification:', error);
+      toast.error('Erro ao salvar qualificação: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -120,16 +142,24 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base font-display">
             <ClipboardCheck className="h-5 w-5 text-primary" />
-            Qualificação MQL {clientName ? `- ${clientName}` : ""}
+            Qualificação MQL {clientName ? `- ${clientName}` : ''}
           </CardTitle>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">BANT Analysis</Badge>
+          <Badge
+            variant="outline"
+            className="bg-primary/10 text-primary border-primary/20"
+          >
+            BANT Analysis
+          </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-5 pt-6">
         {!saleId && (
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-center gap-3 text-sm text-primary animate-pulse">
             <AlertCircle className="h-5 w-5" />
-            <p>Selecione um prospect na lista de "Prospects Recentes" para iniciar a qualificação.</p>
+            <p>
+              Selecione um prospect na lista de "Prospects Recentes" para iniciar a
+              qualificação.
+            </p>
           </div>
         )}
 
@@ -138,7 +168,10 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
             <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
               <Wallet className="h-3 w-3" /> Orçamento (Budget)
             </Label>
-            <Select onValueChange={(v) => setFormData({...formData, budget: v})} disabled={!saleId}>
+            <Select
+              onValueChange={v => setFormData({ ...formData, budget: v })}
+              disabled={!saleId}
+            >
               <SelectTrigger className="h-9 bg-background/50 border-white/10">
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
@@ -149,12 +182,15 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
             <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
               <UserCog className="h-3 w-3" /> Autoridade
             </Label>
-            <Select onValueChange={(v) => setFormData({...formData, authority: v})} disabled={!saleId}>
+            <Select
+              onValueChange={v => setFormData({ ...formData, authority: v })}
+              disabled={!saleId}
+            >
               <SelectTrigger className="h-9 bg-background/50 border-white/10">
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
@@ -170,7 +206,10 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
             <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
               <Timer className="h-3 w-3" /> Tempo (Timing)
             </Label>
-            <Select onValueChange={(v) => setFormData({...formData, timing: v})} disabled={!saleId}>
+            <Select
+              onValueChange={v => setFormData({ ...formData, timing: v })}
+              disabled={!saleId}
+            >
               <SelectTrigger className="h-9 bg-background/50 border-white/10">
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
@@ -188,13 +227,15 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
             <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
               <AlertCircle className="h-3 w-3" /> Dores Principais (Pain Points)
             </Label>
-            <span className="text-[10px] text-muted-foreground">Obrigatório para MQL</span>
+            <span className="text-[10px] text-muted-foreground">
+              Obrigatório para MQL
+            </span>
           </div>
-          <Textarea 
-            placeholder="Descreva as dores identificadas, problemas atuais e necessidades..." 
+          <Textarea
+            placeholder="Descreva as dores identificadas, problemas atuais e necessidades..."
             className="min-h-[100px] bg-background/50 text-sm border-white/10 focus:border-primary/50"
             value={formData.pains}
-            onChange={(e) => setFormData({...formData, pains: e.target.value})}
+            onChange={e => setFormData({ ...formData, pains: e.target.value })}
             disabled={!saleId}
           />
         </div>
@@ -227,18 +268,22 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
           <div className="flex gap-2 w-full sm:w-auto">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant={status === 'qualified' ? 'default' : 'outline'}
-              className={status === 'qualified' ? 'bg-success hover:bg-success/90 h-9 gap-1.5 flex-1' : 'h-9 gap-1.5 flex-1'}
+              className={
+                status === 'qualified'
+                  ? 'bg-success hover:bg-success/90 h-9 gap-1.5 flex-1'
+                  : 'h-9 gap-1.5 flex-1'
+              }
               onClick={() => setStatus('qualified')}
               disabled={!saleId}
             >
               <CheckCircle2 className="h-4 w-4" />
               Qualificar
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant={status === 'unqualified' ? 'destructive' : 'outline'}
               className="h-9 gap-1.5 flex-1"
               onClick={() => setStatus('unqualified')}
@@ -248,13 +293,17 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
               Descartar
             </Button>
           </div>
-          <Button 
-            size="sm" 
-            onClick={handleSave} 
+          <Button
+            size="sm"
+            onClick={handleSave}
             disabled={loading || !saleId}
             className="h-9 px-8 bg-primary hover:bg-primary/90 w-full sm:w-auto"
           >
-            {loading ? "Processando..." : (status === 'qualified' ? "Finalizar e Enviar" : "Salvar Rascunho")}
+            {loading
+              ? 'Processando...'
+              : status === 'qualified'
+                ? 'Finalizar e Enviar'
+                : 'Salvar Rascunho'}
           </Button>
         </div>
       </CardContent>

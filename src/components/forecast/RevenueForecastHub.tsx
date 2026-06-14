@@ -1,18 +1,14 @@
 import { FC, useMemo, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
   RefreshCw,
-  TrendingUp,
   Target,
-  Activity,
   Zap,
-  History,
-  ChevronRight,
   ShieldCheck,
   BrainCircuit,
   Workflow,

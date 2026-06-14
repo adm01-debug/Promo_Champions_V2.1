@@ -1,10 +1,5 @@
 import { assert, assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import {
-  dispatchOne,
-  MAX_ATTEMPTS,
-  type Subscription,
-  type DispatchDeps,
-} from './retry.ts';
+import { dispatchOne, type Subscription, type DispatchDeps } from './retry.ts';
 
 const SUB: Subscription = {
   id: 'sub-fuzz',

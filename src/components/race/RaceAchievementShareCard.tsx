@@ -3,9 +3,12 @@ import { Trophy, Share2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { fmtCompact } from './raceFormatters';
 
-export type AchievementType = 'overtake_top3' | 'race_win' | 'personal_record' | 'streak_milestone';
+export type AchievementType =
+  | 'overtake_top3'
+  | 'race_win'
+  | 'personal_record'
+  | 'streak_milestone';
 
 interface Props {
   type: AchievementType;
@@ -16,19 +19,50 @@ interface Props {
   seasonName?: string;
 }
 
-const TYPE_META: Record<AchievementType, { title: string; emoji: string; gradient: string }> = {
-  overtake_top3:    { title: 'Subiu ao TOP 3',     emoji: '🚀', gradient: 'from-primary/30 via-primary/10 to-background' },
-  race_win:         { title: 'Vitória na Corrida', emoji: '🏆', gradient: 'from-warning/30 via-warning/10 to-background' },
-  personal_record:  { title: 'Recorde Pessoal',    emoji: '⚡', gradient: 'from-success/30 via-success/10 to-background' },
-  streak_milestone: { title: 'Streak Marcante',    emoji: '🔥', gradient: 'from-destructive/30 via-destructive/10 to-background' },
+const TYPE_META: Record<
+  AchievementType,
+  { title: string; emoji: string; gradient: string }
+> = {
+  overtake_top3: {
+    title: 'Subiu ao TOP 3',
+    emoji: '🚀',
+    gradient: 'from-primary/30 via-primary/10 to-background',
+  },
+  race_win: {
+    title: 'Vitória na Corrida',
+    emoji: '🏆',
+    gradient: 'from-warning/30 via-warning/10 to-background',
+  },
+  personal_record: {
+    title: 'Recorde Pessoal',
+    emoji: '⚡',
+    gradient: 'from-success/30 via-success/10 to-background',
+  },
+  streak_milestone: {
+    title: 'Streak Marcante',
+    emoji: '🔥',
+    gradient: 'from-destructive/30 via-destructive/10 to-background',
+  },
 };
 
 /** Cartão exportável de conquista. PNG + Web Share API com fallback download. */
-export function RaceAchievementShareCard({ type, pilotName, avatarUrl, detail, value, seasonName }: Props) {
+export function RaceAchievementShareCard({
+  type,
+  pilotName,
+  avatarUrl,
+  detail,
+  value,
+  seasonName,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const meta = TYPE_META[type];
-  const initials = pilotName.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+  const initials = pilotName
+    .split(' ')
+    .slice(0, 2)
+    .map(p => p[0])
+    .join('')
+    .toUpperCase();
 
   async function generateBlob(): Promise<Blob | null> {
     if (!ref.current) return null;
@@ -42,9 +76,16 @@ export function RaceAchievementShareCard({ type, pilotName, avatarUrl, detail, v
       const blob = await generateBlob();
       if (!blob) throw new Error('Falha ao gerar imagem');
       const file = new File([blob], `race-${type}.png`, { type: 'image/png' });
-      const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean; share?: (d: ShareData) => Promise<void> };
+      const nav = navigator as Navigator & {
+        canShare?: (d: ShareData) => boolean;
+        share?: (d: ShareData) => Promise<void>;
+      };
       if (nav.share && nav.canShare?.({ files: [file] })) {
-        await nav.share({ files: [file], title: meta.title, text: `${meta.emoji} ${detail}` });
+        await nav.share({
+          files: [file],
+          title: meta.title,
+          text: `${meta.emoji} ${detail}`,
+        });
         toast.success('Compartilhado!');
       } else {
         const url = URL.createObjectURL(blob);
@@ -105,7 +146,9 @@ export function RaceAchievementShareCard({ type, pilotName, avatarUrl, detail, v
         </div>
         <div className="mt-4 pt-4 border-t border-primary/20 text-center">
           <p className="text-sm text-muted-foreground">{detail}</p>
-          {value && <p className="text-3xl font-display font-black tabular-nums mt-1">{value}</p>}
+          {value && (
+            <p className="text-3xl font-display font-black tabular-nums mt-1">{value}</p>
+          )}
         </div>
       </div>
 
@@ -113,7 +156,13 @@ export function RaceAchievementShareCard({ type, pilotName, avatarUrl, detail, v
         <Button onClick={handleShare} disabled={busy} size="sm" className="flex-1">
           <Share2 className="w-4 h-4 mr-2" /> Compartilhar
         </Button>
-        <Button onClick={handleDownload} disabled={busy} size="sm" variant="outline" className="flex-1">
+        <Button
+          onClick={handleDownload}
+          disabled={busy}
+          size="sm"
+          variant="outline"
+          className="flex-1"
+        >
           <Download className="w-4 h-4 mr-2" /> Baixar
         </Button>
       </div>

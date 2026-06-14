@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   Target,
   Sparkles,
-  ArrowUpRight,
   ShieldCheck,
   Zap,
 } from 'lucide-react';

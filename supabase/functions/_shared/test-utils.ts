@@ -1,5 +1,3 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-
 /**
  * Mock utility for Supabase client in tests.
  * Allows intercepting and providing mock data for database calls.
@@ -25,8 +23,9 @@ export function createMockSupabaseClient(mockData: Record<string, any[]> = {}) {
   return {
     from: (name: string) => queryBuilder(name),
     auth: {
-      getUser: () => Promise.resolve({ data: { user: { id: 'test-user' } }, error: null }),
-    }
+      getUser: () =>
+        Promise.resolve({ data: { user: { id: 'test-user' } }, error: null }),
+    },
   } as any;
 }
 

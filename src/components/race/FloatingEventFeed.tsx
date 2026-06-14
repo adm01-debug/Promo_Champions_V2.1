@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Radio, X, Minimize2 } from 'lucide-react';
+import { Radio, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RaceEventFeed } from './RaceEventFeed';
 import type { RaceEvent } from '@/hooks/race/useRaceEvents';
@@ -24,7 +24,7 @@ export function FloatingEventFeed({ events, cars }: Props) {
       setUnread(0);
       return;
     }
-    const idx = events.findIndex((e) => e.id === lastSeenIdRef.current);
+    const idx = events.findIndex(e => e.id === lastSeenIdRef.current);
     setUnread(idx === -1 ? events.length : idx);
   }, [events, isOpen]);
 

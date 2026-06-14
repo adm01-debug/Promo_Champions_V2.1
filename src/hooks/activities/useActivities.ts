@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { getLocalISODate } from '@/utils/dateHelpers';
-import { format } from 'date-fns';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
@@ -68,7 +67,10 @@ export const useActivities = (filters?: UseActivitiesOptions) => {
   return useQuery<ActivityRecord[]>({
     queryKey: ['activities', filters],
     queryFn: async (): Promise<ActivityRecord[]> => {
-      let query = supabase.from('activities').select('*').order('created_at', { ascending: false });
+      let query = supabase
+        .from('activities')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (filters?.userId) {
         query = query.eq('salesperson_id', filters.userId);
@@ -109,8 +111,15 @@ export const useActivityStats = (salespersonId?: string) => {
 
       // Optimize: only fetch what's needed or fetch in parallel
       const [allRes, todayRes] = await Promise.all([
-        supabase.from('activities').select('*').match(salespersonId ? { salesperson_id: salespersonId } : {}),
-        supabase.from('activities').select('*').match(salespersonId ? { salesperson_id: salespersonId } : {}).gte('created_at', today)
+        supabase
+          .from('activities')
+          .select('*')
+          .match(salespersonId ? { salesperson_id: salespersonId } : {}),
+        supabase
+          .from('activities')
+          .select('*')
+          .match(salespersonId ? { salesperson_id: salespersonId } : {})
+          .gte('created_at', today),
       ]);
 
       if (allRes.error) throw allRes.error;
@@ -247,7 +256,10 @@ export const useActivityStats = (salespersonId?: string) => {
         if (a.outcome in byOutcome) {
           byOutcome[a.outcome]++;
         }
-        if (a.activity_type in byTypeOutcome && a.outcome in byTypeOutcome[a.activity_type]) {
+        if (
+          a.activity_type in byTypeOutcome &&
+          a.outcome in byTypeOutcome[a.activity_type]
+        ) {
           byTypeOutcome[a.activity_type][a.outcome]++;
         }
         if (a.duration_minutes) {
@@ -392,7 +404,9 @@ export const useUpdateActivityGoals = () => {
       return data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['activity-goals', variables.salesperson_id] });
+      queryClient.invalidateQueries({
+        queryKey: ['activity-goals', variables.salesperson_id],
+      });
       toast.success('Metas atualizadas!');
     },
   });
@@ -413,7 +427,11 @@ export const useCreateActivity = () => {
       client_id?: string;
       salesperson_id?: string;
     }) => {
-      const { data, error } = await supabase.from('activities').insert(input).select().single();
+      const { data, error } = await supabase
+        .from('activities')
+        .insert(input)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;

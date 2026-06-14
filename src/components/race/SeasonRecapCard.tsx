@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { Crown, Download, Share2 } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
@@ -34,7 +33,7 @@ export function SeasonRecapCard({
   const initials = championName
     .split(' ')
     .slice(0, 2)
-    .map((p) => p[0])
+    .map(p => p[0])
     .join('')
     .toUpperCase();
 
@@ -43,7 +42,9 @@ export function SeasonRecapCard({
     setBusy(true);
     try {
       // Lazy import: html-to-image (~80kb) só entra no bundle ao clicar em compartilhar.
-      const { toPng, toBlob } = await import(/* webpackChunkName: "html-to-image" */ 'html-to-image');
+      const { toPng, toBlob } = await import(
+        /* webpackChunkName: "html-to-image" */ 'html-to-image'
+      );
       if (action === 'download') {
         const url = await toPng(ref.current, { pixelRatio: 2, cacheBust: true });
         const a = document.createElement('a');
@@ -81,14 +82,21 @@ export function SeasonRecapCard({
               {avatarUrl && <AvatarImage src={avatarUrl} alt={championName} />}
               <AvatarFallback className="text-lg font-black">{initials}</AvatarFallback>
             </Avatar>
-            <Crown className="absolute -top-3 -right-1 w-6 h-6 text-warning fill-warning drop-shadow" aria-hidden />
+            <Crown
+              className="absolute -top-3 -right-1 w-6 h-6 text-warning fill-warning drop-shadow"
+              aria-hidden
+            />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
               Race Arena · {seasonName}
             </p>
-            <p className="text-2xl font-display font-black truncate leading-tight">{championName}</p>
-            <p className="text-sm font-semibold text-warning">P{rank} · {fmtCompact(totalSales)} pts</p>
+            <p className="text-2xl font-display font-black truncate leading-tight">
+              {championName}
+            </p>
+            <p className="text-sm font-semibold text-warning">
+              P{rank} · {fmtCompact(totalSales)} pts
+            </p>
           </div>
         </div>
 
@@ -100,7 +108,12 @@ export function SeasonRecapCard({
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={() => exportPng('download')} disabled={busy} size="sm" className="flex-1">
+        <Button
+          onClick={() => exportPng('download')}
+          disabled={busy}
+          size="sm"
+          className="flex-1"
+        >
           <Download className="w-4 h-4 mr-2" /> Baixar PNG
         </Button>
         <Button
@@ -121,7 +134,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
       <div className="text-lg font-display font-black tabular-nums">{value}</div>
-      <div className="text-[9px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-[9px] uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }

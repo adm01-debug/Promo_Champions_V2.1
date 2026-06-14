@@ -1,31 +1,42 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Activity, Receipt, Clock, RotateCcw } from "lucide-react";
-import { motion } from "framer-motion";
-import { useCountUp } from "@/hooks/useCountUp";
-import { useDashboardKPIs } from "@/hooks/dashboard/useDashboardKPIs";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart3, Activity, Receipt, RotateCcw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useCountUp } from '@/hooks/useCountUp';
+import { useDashboardKPIs } from '@/hooks/dashboard/useDashboardKPIs';
 
 interface KPIItem {
   label: string;
   value: number;
-  format: "currency" | "days" | "number";
+  format: 'currency' | 'days' | 'number';
   id: string;
 }
 
-const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, index }: { label: string; value: number; format: string; icon: any; index: number }) {
+const KPIRow = React.memo(function KPIRow({
+  label,
+  value,
+  format,
+  icon: Icon,
+  index,
+}: {
+  label: string;
+  value: number;
+  format: string;
+  icon: any;
+  index: number;
+}) {
   const animated = useCountUp(value, { duration: 800 + index * 150 });
-  
+
   const formatted = (() => {
     switch (format) {
-      case "currency":
-        return `R$ ${animated.toLocaleString("pt-BR")}`;
-      case "days":
+      case 'currency':
+        return `R$ ${animated.toLocaleString('pt-BR')}`;
+      case 'days':
         return `${animated}d`;
-      case "percent":
+      case 'percent':
         return `${animated.toFixed(1)}%`;
       default:
-        return animated.toLocaleString("pt-BR");
+        return animated.toLocaleString('pt-BR');
     }
   })();
 
@@ -36,12 +47,24 @@ const KPIRow = React.memo(function KPIRow({ label, value, format, icon: Icon, in
       transition={{ delay: index * 0.1 }}
       className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
     >
-      <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.25em] group-hover:text-primary transition-all duration-300 z-10">{label}</span>
+      <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.25em] group-hover:text-primary transition-all duration-300 z-10">
+        {label}
+      </span>
       <div className="flex flex-col">
-        <span className="text-[min(10vw,12rem)] sm:text-[min(6vw,18rem)] lg:text-[min(4vw,24rem)] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] transition-all duration-500" style={{ textShadow: '0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4), 0 0 120px hsl(var(--primary) / 0.1)' }}>{formatted}</span>
+        <span
+          className="text-[min(10vw,12rem)] sm:text-[min(6vw,18rem)] lg:text-[min(4vw,24rem)] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] transition-all duration-500"
+          style={{
+            textShadow:
+              '0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4), 0 0 120px hsl(var(--primary) / 0.1)',
+          }}
+        >
+          {formatted}
+        </span>
         <div className="flex items-center gap-2 mt-[-1rem] mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
           <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,0.8)]" />
-          <span className="text-[9px] font-mono font-bold text-primary/70 tracking-widest uppercase">IA Verified</span>
+          <span className="text-[9px] font-mono font-bold text-primary/70 tracking-widest uppercase">
+            IA Verified
+          </span>
         </div>
       </div>
 
@@ -60,9 +83,24 @@ export const KPIGrid = React.memo(function KPIGrid() {
   const { data: kpis } = useDashboardKPIs();
 
   const metrics = [
-    { label: "Venda Ativação (SDR)", value: kpis?.current.firstSaleRevenue ?? 0, format: "currency", icon: Receipt },
-    { label: "Venda Carteira (Closer)", value: kpis?.current.recurringRevenue ?? 0, format: "currency", icon: RotateCcw },
-    { label: "Conversão SDR", value: kpis?.current.conversionRate ?? 0, format: "percent", icon: Activity },
+    {
+      label: 'Venda Ativação (SDR)',
+      value: kpis?.current.firstSaleRevenue ?? 0,
+      format: 'currency',
+      icon: Receipt,
+    },
+    {
+      label: 'Venda Carteira (Closer)',
+      value: kpis?.current.recurringRevenue ?? 0,
+      format: 'currency',
+      icon: RotateCcw,
+    },
+    {
+      label: 'Conversão SDR',
+      value: kpis?.current.conversionRate ?? 0,
+      format: 'percent',
+      icon: Activity,
+    },
   ];
   return (
     <Card className="h-full relative overflow-hidden bg-black/40 border-white/5 backdrop-blur-md group">
@@ -79,10 +117,17 @@ export const KPIGrid = React.memo(function KPIGrid() {
           System Metrics
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
         {metrics.map((kpi, index) => (
-          <KPIRow key={kpi.label} label={kpi.label} value={kpi.value} format={kpi.format} icon={kpi.icon} index={index} />
+          <KPIRow
+            key={kpi.label}
+            label={kpi.label}
+            value={kpi.value}
+            format={kpi.format}
+            icon={kpi.icon}
+            index={index}
+          />
         ))}
       </CardContent>
 

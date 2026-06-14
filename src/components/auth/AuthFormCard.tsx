@@ -1,10 +1,16 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Crown, Zap, Sparkles, Loader2, Eye, EyeOff, ArrowRight, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Crown, Zap, Loader2, Eye, EyeOff, ArrowRight, Lock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface AuthFormCardProps {
   showPwd: boolean;
@@ -30,10 +36,25 @@ interface AuthFormCardProps {
 
 export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCardProps) {
   const {
-    showPwd, setShowPwd, isLoading, isGoogleLoading,
-    loginEmail, setLoginEmail, loginPassword, setLoginPassword, resetEmail, setResetEmail,
-    isResetLoading, resetDialogOpen, setResetDialogOpen, countdown, lockoutStatus,
-    handleAuth, handlePasswordReset, handleGoogleSignIn, isLoginDisabled
+    showPwd,
+    setShowPwd,
+    isLoading,
+    isGoogleLoading,
+    loginEmail,
+    setLoginEmail,
+    loginPassword,
+    setLoginPassword,
+    resetEmail,
+    setResetEmail,
+    isResetLoading,
+    resetDialogOpen,
+    setResetDialogOpen,
+    countdown,
+    lockoutStatus,
+    handleAuth,
+    handlePasswordReset,
+    handleGoogleSignIn,
+    isLoginDisabled,
   } = props;
 
   return (
@@ -54,25 +75,42 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
       <div className="relative">
         <motion.div
           className="absolute -inset-[1px] rounded-2xl opacity-60"
-          style={{ background: "linear-gradient(135deg, #22d3ee, #a855f7, #ec4899, #22d3ee)", backgroundSize: "300% 300%" }}
-          animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
-          transition={{ duration: 6, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
+          style={{
+            background: 'linear-gradient(135deg, #22d3ee, #a855f7, #ec4899, #22d3ee)',
+            backgroundSize: '300% 300%',
+          }}
+          animate={{ backgroundPosition: ['0% 50%', '100% 50%'] }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            repeatType: 'reverse',
+            ease: 'linear',
+          }}
         />
 
         <div className="relative rounded-2xl bg-[#0a0b1a]/95 backdrop-blur-xl p-7 sm:p-9 border border-white/5">
           <div className="mb-7">
             <div className="flex items-center gap-2 mb-2">
-              <Zap className="h-4 w-4 text-cyan-400" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
-              <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">ACESSO AO CIRCUITO</span>
+              <Zap
+                className="h-4 w-4 text-cyan-400"
+                style={{ filter: 'drop-shadow(0 0 6px #22d3ee)' }}
+              />
+              <span className="text-[10px] tracking-[0.3em] text-cyan-300 font-bold">
+                ACESSO AO CIRCUITO
+              </span>
             </div>
             <h2 className="text-3xl font-black">Pronto para vencer?</h2>
             <p className="text-sm text-white/50 mt-1">Entre e suba no ranking agora.</p>
           </div>
 
           <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
-            <Lock className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" style={{ filter: "drop-shadow(0 0 6px #22d3ee)" }} />
+            <Lock
+              className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0"
+              style={{ filter: 'drop-shadow(0 0 6px #22d3ee)' }}
+            />
             <p className="text-[11px] text-white/60 leading-relaxed">
-              Acesso restrito à equipe Promo Brindes. Novos cadastros são criados exclusivamente por um administrador.
+              Acesso restrito à equipe Promo Brindes. Novos cadastros são criados
+              exclusivamente por um administrador.
             </p>
           </div>
 
@@ -83,13 +121,27 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
             className="w-full h-11 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
             variant="outline"
           >
-            {isGoogleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+            {isGoogleLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
               <>
                 <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
                 </svg>
                 Continuar com Google
               </>
@@ -97,7 +149,9 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
           </Button>
 
           <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10"></div>
+            </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
               <span className="bg-[#0a0b1a] px-3 text-white/30">ou via credenciais</span>
             </div>
@@ -105,9 +159,18 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider">E-mail de Acesso</Label>
+              <Label
+                htmlFor="email"
+                className="text-[11px] font-bold text-white/40 ml-1 uppercase tracking-wider"
+              >
+                E-mail de Acesso
+              </Label>
               <Input
-                id="email" type="email" placeholder="seu@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={loginEmail}
+                onChange={e => setLoginEmail(e.target.value)}
                 className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
                 required
               />
@@ -115,22 +178,45 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between ml-1">
-                <Label htmlFor="password" className="text-[11px] font-bold text-white/40 uppercase tracking-wider">Senha de Acesso</Label>
+                <Label
+                  htmlFor="password"
+                  className="text-[11px] font-bold text-white/40 uppercase tracking-wider"
+                >
+                  Senha de Acesso
+                </Label>
                 <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
                   <DialogTrigger asChild>
-                    <button type="button" className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest">Esqueci a chave</button>
+                    <button
+                      type="button"
+                      className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest"
+                    >
+                      Esqueci a chave
+                    </button>
                   </DialogTrigger>
                   <DialogContent className="bg-[#0a0b1a] border-white/10 text-white">
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-black italic">RECUPERAR ACESSO</DialogTitle>
+                      <DialogTitle className="text-xl font-black italic">
+                        RECUPERAR ACESSO
+                      </DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handlePasswordReset} className="space-y-4 pt-4">
                       <Input
-                        placeholder="Email cadastrado" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)}
-                        className="bg-white/5 border-white/10" required
+                        placeholder="Email cadastrado"
+                        value={resetEmail}
+                        onChange={e => setResetEmail(e.target.value)}
+                        className="bg-white/5 border-white/10"
+                        required
                       />
-                      <Button type="submit" disabled={isResetLoading} className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest">
-                        {isResetLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar Resgate"}
+                      <Button
+                        type="submit"
+                        disabled={isResetLoading}
+                        className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest"
+                      >
+                        {isResetLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          'Enviar Resgate'
+                        )}
                       </Button>
                     </form>
                   </DialogContent>
@@ -138,11 +224,19 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
               </div>
               <div className="relative group/field">
                 <Input
-                  id="password" type={showPwd ? "text" : "password"} placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}
+                  id="password"
+                  type={showPwd ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
                   className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl pr-10"
                   required
                 />
-                <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setShowPwd(!showPwd)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 transition-colors"
+                >
                   {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -155,7 +249,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
             >
               <motion.div
                 className="absolute inset-0 bg-white/10 translate-x-[-100%]"
-                whileHover={{ translateX: "100%" }}
+                whileHover={{ translateX: '100%' }}
                 transition={{ duration: 0.6 }}
               />
               <div className="relative flex items-center justify-center gap-2">

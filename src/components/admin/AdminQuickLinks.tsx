@@ -1,30 +1,65 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Settings, Users, Activity, FileText, Bell, Database, BarChart3, 
-  TrendingUp, AlertTriangle, History, SlidersHorizontal, Plug, 
-  Wallet, Target, Webhook 
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Settings,
+  Activity,
+  FileText,
+  Bell,
+  Database,
+  BarChart3,
+  TrendingUp,
+  AlertTriangle,
+  Plug,
+  Wallet,
+  Target,
+  Webhook,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
 
 const QUICK_LINKS = [
-  { to: "/admin/comercial", icon: TrendingUp, label: "Gestão Comercial", color: "text-emerald-500" },
-  { to: "/admin/comissoes", icon: Wallet, label: "Comissões", color: "text-primary" },
-  { to: "/admin/telemetria", icon: Activity, label: "Telemetria", color: "text-chart-1" },
-  { to: "/admin/conexoes", icon: Plug, label: "Conexões", color: "text-chart-2" },
-  { to: "/times", icon: Activity, label: "Atribuições SDR", color: "text-chart-3" },
-  { to: "/metas", icon: Target, label: "Metas Atuais", color: "text-chart-4" },
-  { to: "/notificacoes", icon: Bell, label: "Notificações", color: "text-warning" },
-  { to: "/analytics", icon: BarChart3, label: "Analytics Vendas", color: "text-chart-5" },
-  { to: "/audit-logs", icon: FileText, label: "Audit Trail", color: "text-primary" },
-  { to: "/bitrix24", icon: Database, label: "Bitrix24", color: "text-chart-1" },
-  { to: "/playbooks", icon: FileText, label: "Playbooks", color: "text-chart-2" },
-  { to: "/icp", icon: TrendingUp, label: "ICP / Persona", color: "text-chart-3" },
-  { to: "/configuracoes", icon: Settings, label: "Configurações", color: "text-muted-foreground" },
-  { to: "/admin/webhooks-timeline", icon: Webhook, label: "Webhooks", color: "text-chart-4" },
-  { to: "/usage-analytics", icon: BarChart3, label: "Uso / Acessos", color: "text-chart-5" },
+  {
+    to: '/admin/comercial',
+    icon: TrendingUp,
+    label: 'Gestão Comercial',
+    color: 'text-emerald-500',
+  },
+  { to: '/admin/comissoes', icon: Wallet, label: 'Comissões', color: 'text-primary' },
+  { to: '/admin/telemetria', icon: Activity, label: 'Telemetria', color: 'text-chart-1' },
+  { to: '/admin/conexoes', icon: Plug, label: 'Conexões', color: 'text-chart-2' },
+  { to: '/times', icon: Activity, label: 'Atribuições SDR', color: 'text-chart-3' },
+  { to: '/metas', icon: Target, label: 'Metas Atuais', color: 'text-chart-4' },
+  { to: '/notificacoes', icon: Bell, label: 'Notificações', color: 'text-warning' },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics Vendas', color: 'text-chart-5' },
+  { to: '/audit-logs', icon: FileText, label: 'Audit Trail', color: 'text-primary' },
+  { to: '/bitrix24', icon: Database, label: 'Bitrix24', color: 'text-chart-1' },
+  { to: '/playbooks', icon: FileText, label: 'Playbooks', color: 'text-chart-2' },
+  { to: '/icp', icon: TrendingUp, label: 'ICP / Persona', color: 'text-chart-3' },
+  {
+    to: '/configuracoes',
+    icon: Settings,
+    label: 'Configurações',
+    color: 'text-muted-foreground',
+  },
+  {
+    to: '/admin/webhooks-timeline',
+    icon: Webhook,
+    label: 'Webhooks',
+    color: 'text-chart-4',
+  },
+  {
+    to: '/usage-analytics',
+    icon: BarChart3,
+    label: 'Uso / Acessos',
+    color: 'text-chart-5',
+  },
 ];
 
 export function AdminQuickLinks() {
@@ -44,8 +79,13 @@ export function AdminQuickLinks() {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {QUICK_LINKS.map((link) => (
-            <Button key={link.to} asChild variant="outline" className="h-auto flex-col gap-2 py-4 hover:bg-muted/50">
+          {QUICK_LINKS.map(link => (
+            <Button
+              key={link.to}
+              asChild
+              variant="outline"
+              className="h-auto flex-col gap-2 py-4 hover:bg-muted/50"
+            >
               <Link to={link.to}>
                 <link.icon className={`h-5 w-5 ${link.color}`} />
                 <span className="text-xs">{link.label}</span>
@@ -57,7 +97,10 @@ export function AdminQuickLinks() {
             variant="outline"
             className="h-auto flex-col gap-2 py-4 hover:bg-muted/50 relative"
           >
-            <Link to="/admin/webhooks-dead-letters" aria-label={`Dead-Letters de Webhooks${pending > 0 ? ` (${pending} pendentes)` : ""}`}>
+            <Link
+              to="/admin/webhooks-dead-letters"
+              aria-label={`Dead-Letters de Webhooks${pending > 0 ? ` (${pending} pendentes)` : ''}`}
+            >
               <AlertTriangle className="h-5 w-5 text-amber-500" />
               <span className="text-xs">Dead-Letters</span>
               {pending > 0 && (
@@ -65,7 +108,7 @@ export function AdminQuickLinks() {
                   variant="destructive"
                   className="absolute -top-1 -right-1 text-[10px] h-5 min-w-[20px] px-1 flex items-center justify-center"
                 >
-                  {pending > 99 ? "99+" : pending}
+                  {pending > 99 ? '99+' : pending}
                 </Badge>
               )}
             </Link>

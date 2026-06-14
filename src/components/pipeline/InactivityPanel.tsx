@@ -1,15 +1,33 @@
-import React from "react";
-import { useInactiveDeals, InactiveDeal } from "@/hooks/useInactiveDeals";
-import { Clock, AlertOctagon, AlertTriangle, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import React from 'react';
+import { useInactiveDeals } from '@/hooks/useInactiveDeals';
+import { Clock, AlertOctagon, AlertTriangle, Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const SeverityConfig = {
-  critical: { icon: AlertOctagon, color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30", label: "Crítico" },
-  moderate: { icon: AlertTriangle, color: "text-yellow-500", bg: "bg-yellow-500/10", border: "border-yellow-500/30", label: "Moderado" },
-  mild: { icon: Info, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30", label: "Leve" },
+  critical: {
+    icon: AlertOctagon,
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive/30',
+    label: 'Crítico',
+  },
+  moderate: {
+    icon: AlertTriangle,
+    color: 'text-yellow-500',
+    bg: 'bg-yellow-500/10',
+    border: 'border-yellow-500/30',
+    label: 'Moderado',
+  },
+  mild: {
+    icon: Info,
+    color: 'text-blue-500',
+    bg: 'bg-blue-500/10',
+    border: 'border-blue-500/30',
+    label: 'Leve',
+  },
 };
 
 export const InactivityPanel = React.memo(() => {
@@ -31,17 +49,20 @@ export const InactivityPanel = React.memo(() => {
       <div className="flex gap-2 text-xs">
         {summary.critical > 0 && (
           <span className="flex items-center gap-1 text-destructive">
-            <AlertOctagon className="h-3 w-3" />{summary.critical}
+            <AlertOctagon className="h-3 w-3" />
+            {summary.critical}
           </span>
         )}
         {summary.moderate > 0 && (
           <span className="flex items-center gap-1 text-yellow-500">
-            <AlertTriangle className="h-3 w-3" />{summary.moderate}
+            <AlertTriangle className="h-3 w-3" />
+            {summary.moderate}
           </span>
         )}
         {summary.mild > 0 && (
           <span className="flex items-center gap-1 text-blue-500">
-            <Info className="h-3 w-3" />{summary.mild}
+            <Info className="h-3 w-3" />
+            {summary.mild}
           </span>
         )}
       </div>
@@ -53,23 +74,31 @@ export const InactivityPanel = React.memo(() => {
             Nenhum deal inativo 🎉
           </div>
         ) : (
-          inactiveDeals.slice(0, 15).map((deal) => {
+          inactiveDeals.slice(0, 15).map(deal => {
             const config = SeverityConfig[deal.severity];
             const Icon = config.icon;
             return (
               <div
                 key={deal.id}
-                className={cn("rounded-lg p-2.5 border", config.border, config.bg)}
+                className={cn('rounded-lg p-2.5 border', config.border, config.bg)}
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <Icon className={cn("h-3.5 w-3.5 shrink-0", config.color)} />
-                    <span className="text-xs font-medium truncate">{deal.clientName}</span>
+                    <Icon className={cn('h-3.5 w-3.5 shrink-0', config.color)} />
+                    <span className="text-xs font-medium truncate">
+                      {deal.clientName}
+                    </span>
                   </div>
-                  <Badge variant="outline" className="text-[9px] shrink-0">{deal.daysInactive}d</Badge>
+                  <Badge variant="outline" className="text-[9px] shrink-0">
+                    {deal.daysInactive}d
+                  </Badge>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                  Última atividade: {formatDistanceToNow(parseISO(deal.lastActivityDate), { addSuffix: true, locale: ptBR })}
+                  Última atividade:{' '}
+                  {formatDistanceToNow(parseISO(deal.lastActivityDate), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
                 </p>
               </div>
             );
@@ -80,4 +109,4 @@ export const InactivityPanel = React.memo(() => {
   );
 });
 
-InactivityPanel.displayName = "InactivityPanel";
+InactivityPanel.displayName = 'InactivityPanel';

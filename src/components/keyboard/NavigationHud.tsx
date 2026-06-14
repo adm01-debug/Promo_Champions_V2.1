@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Keyboard, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface NavigationHudProps {
   isVisible: boolean;
@@ -29,14 +29,24 @@ export const NavigationHud: FC<NavigationHudProps> = ({ isVisible, baseKey }) =>
               <ArrowRight className="h-5 w-5 text-muted-foreground animate-pulse" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-black text-primary uppercase tracking-widest">Sequência Iniciada</span>
-              <span className="text-[10px] text-muted-foreground font-medium">Pressione a próxima tecla para navegar</span>
+              <span className="text-xs font-black text-primary uppercase tracking-widest">
+                Sequência Iniciada
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium">
+                Pressione a próxima tecla para navegar
+              </span>
             </div>
             <div className="h-8 w-px bg-border/20 mx-2" />
             <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
-              <span className="flex items-center gap-1"><kbd className="bg-muted px-1.5 py-0.5 rounded">D</kbd> Dash</span>
-              <span className="flex items-center gap-1"><kbd className="bg-muted px-1.5 py-0.5 rounded">V</kbd> Vendas</span>
-              <span className="flex items-center gap-1"><kbd className="bg-muted px-1.5 py-0.5 rounded">C</kbd> Clientes</span>
+              <span className="flex items-center gap-1">
+                <kbd className="bg-muted px-1.5 py-0.5 rounded">D</kbd> Dash
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="bg-muted px-1.5 py-0.5 rounded">V</kbd> Vendas
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="bg-muted px-1.5 py-0.5 rounded">C</kbd> Clientes
+              </span>
             </div>
           </div>
         </motion.div>

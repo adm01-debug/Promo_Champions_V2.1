@@ -7,7 +7,6 @@ import {
   Copy,
   Check,
   MoreHorizontal,
-  FileText,
   Share2,
   Printer,
   ExternalLink,

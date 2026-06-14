@@ -2,19 +2,9 @@ import { FC, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  TrendingDown,
-  TrendingUp,
-  Target,
-  Sparkles,
-  Brain,
-  Cpu,
-  Zap,
-  LucideIcon,
-} from 'lucide-react';
+import { TrendingDown, Target, Sparkles, Zap, LucideIcon } from 'lucide-react';
 import {
   formatCompactBRL,
-  scenarioColor,
   scenarioLabel,
   type ScenarioKey,
   deltaPct,

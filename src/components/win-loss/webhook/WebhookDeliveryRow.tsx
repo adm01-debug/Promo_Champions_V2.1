@@ -1,19 +1,24 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, SkipForward, Copy } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { getEventLabel } from "../webhookHelpers";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { getEventLabel } from '../webhookHelpers';
 
 interface WebhookDeliveryRowProps {
   delivery: any;
   isSelected: boolean;
   onToggle: (id: string) => void;
   isProcessing: boolean;
-  lastResult?: "ok" | "skipped" | "fail";
+  lastResult?: 'ok' | 'skipped' | 'fail';
   requestId?: string;
   onReplay: (id: string) => void;
 }
@@ -32,10 +37,12 @@ export function WebhookDeliveryRow({
   return (
     <div
       className={cn(
-        "group flex items-center gap-3 rounded-lg border p-3 transition-all",
-        isSelected ? "border-primary/50 bg-primary/5 shadow-sm" : "bg-card hover:border-border/80",
-        lastResult === "ok" && "border-emerald-500/30 bg-emerald-500/5",
-        lastResult === "fail" && "border-destructive/30 bg-destructive/5"
+        'group flex items-center gap-3 rounded-lg border p-3 transition-all',
+        isSelected
+          ? 'border-primary/50 bg-primary/5 shadow-sm'
+          : 'bg-card hover:border-border/80',
+        lastResult === 'ok' && 'border-emerald-500/30 bg-emerald-500/5',
+        lastResult === 'fail' && 'border-destructive/30 bg-destructive/5'
       )}
     >
       <Checkbox
@@ -47,7 +54,10 @@ export function WebhookDeliveryRow({
 
       <div className="flex flex-1 flex-col gap-1 min-w-0">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-wider shrink-0">
+          <Badge
+            variant="outline"
+            className="font-mono text-[10px] uppercase tracking-wider shrink-0"
+          >
             {getEventLabel(event)}
           </Badge>
           <span className="text-[10px] text-muted-foreground shrink-0">
@@ -57,13 +67,20 @@ export function WebhookDeliveryRow({
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px] uppercase font-bold animate-in fade-in zoom-in duration-300",
-                lastResult === "ok" && "border-emerald-500/50 text-emerald-500 bg-emerald-500/10",
-                lastResult === "skipped" && "border-amber-500/50 text-amber-500 bg-amber-500/10",
-                lastResult === "fail" && "border-destructive/50 text-destructive bg-destructive/10"
+                'text-[10px] uppercase font-bold animate-in fade-in zoom-in duration-300',
+                lastResult === 'ok' &&
+                  'border-emerald-500/50 text-emerald-500 bg-emerald-500/10',
+                lastResult === 'skipped' &&
+                  'border-amber-500/50 text-amber-500 bg-amber-500/10',
+                lastResult === 'fail' &&
+                  'border-destructive/50 text-destructive bg-destructive/10'
               )}
             >
-              {lastResult === "ok" ? "Sucesso" : lastResult === "skipped" ? "Ignorado" : "Falhou"}
+              {lastResult === 'ok'
+                ? 'Sucesso'
+                : lastResult === 'skipped'
+                  ? 'Ignorado'
+                  : 'Falhou'}
             </Badge>
           )}
         </div>
@@ -75,7 +92,7 @@ export function WebhookDeliveryRow({
             <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
           )}
           <span className="truncate text-xs font-medium">
-            {succeeded ? "Entrega concluída" : error_message || "Falha na entrega"}
+            {succeeded ? 'Entrega concluída' : error_message || 'Falha na entrega'}
           </span>
         </div>
 
@@ -83,9 +100,7 @@ export function WebhookDeliveryRow({
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" /> Status {status}
           </span>
-          <span className="flex items-center gap-1">
-            Tentativa {attempt}
-          </span>
+          <span className="flex items-center gap-1">Tentativa {attempt}</span>
           {requestId && (
             <TooltipProvider>
               <Tooltip>

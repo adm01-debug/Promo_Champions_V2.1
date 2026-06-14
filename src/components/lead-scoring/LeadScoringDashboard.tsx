@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { useLeadScoring, type ScoredLead } from '@/hooks/useLeadScoring';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useLeadScoring } from '@/hooks/useLeadScoring';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -19,25 +19,13 @@ import {
   ShieldAlert,
   Download,
   Search,
-  Filter,
   CheckCircle2,
-  Calendar,
   FileText,
   Activity,
-  UserPlus,
-  Zap,
-  Monitor,
   Wifi,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { LeadScoreExplainCard } from './LeadScoreExplainCard';
+
 import { LeadNeuralDossier } from './LeadNeuralDossier';
 import { LeadScoreDistribution } from './LeadScoreDistribution';
 import { useExplainBatch } from '@/hooks/scoring/useExplainBatch';
@@ -45,7 +33,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 const categoryConfig = {

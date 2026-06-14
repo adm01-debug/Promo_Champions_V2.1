@@ -1,10 +1,8 @@
-import { FC } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Layers, CheckCircle2, Star, Timer, LucideIcon } from "lucide-react";
-import { formatCompactBRL } from "./forecastHelpers";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { FC } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Layers, CheckCircle2, Star, Timer, LucideIcon } from 'lucide-react';
+import { formatCompactBRL } from './forecastHelpers';
+import { cn } from '@/lib/utils';
 
 interface Props {
   categories: {
@@ -17,11 +15,11 @@ interface Props {
 
 export const CategoryForecastCard: FC<Props> = ({ categories, goal }) => {
   const total = categories.commit + categories.best_case + categories.pipeline;
-  
+
   return (
     <Card className="glass relative overflow-hidden border-2 border-white/5 bg-background/20 hover:shadow-xl transition-all duration-500">
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      
+
       <CardContent className="p-7 relative z-10">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -41,38 +39,40 @@ export const CategoryForecastCard: FC<Props> = ({ categories, goal }) => {
 
         <div className="space-y-5">
           {/* Commit */}
-          <CategoryItem 
-            label="Commit" 
-            value={categories.commit} 
-            total={total} 
-            color="bg-emerald-500" 
-            icon={CheckCircle2} 
+          <CategoryItem
+            label="Commit"
+            value={categories.commit}
+            total={total}
+            color="bg-emerald-500"
+            icon={CheckCircle2}
             iconColor="text-emerald-500"
           />
-          
+
           {/* Best Case */}
-          <CategoryItem 
-            label="Best Case" 
-            value={categories.best_case} 
-            total={total} 
-            color="bg-primary" 
-            icon={Star} 
+          <CategoryItem
+            label="Best Case"
+            value={categories.best_case}
+            total={total}
+            color="bg-primary"
+            icon={Star}
             iconColor="text-primary"
           />
-          
+
           {/* Pipeline */}
-          <CategoryItem 
-            label="Pipeline" 
-            value={categories.pipeline} 
-            total={total} 
-            color="bg-blue-500" 
-            icon={Timer} 
+          <CategoryItem
+            label="Pipeline"
+            value={categories.pipeline}
+            total={total}
+            color="bg-blue-500"
+            icon={Timer}
             iconColor="text-blue-500"
           />
         </div>
 
         <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Pipeline Total</span>
+          <span className="text-[10px] font-black uppercase tracking-widest opacity-40">
+            Pipeline Total
+          </span>
           <span className="text-xs font-black">{formatCompactBRL(total)}</span>
         </div>
       </CardContent>
@@ -89,21 +89,30 @@ interface CategoryItemProps {
   iconColor: string;
 }
 
-function CategoryItem({ label, value, total, color, icon: Icon, iconColor }: CategoryItemProps) {
+function CategoryItem({
+  label,
+  value,
+  total,
+  color,
+  icon: Icon,
+  iconColor,
+}: CategoryItemProps) {
   const percentage = total > 0 ? (value / total) * 100 : 0;
-  
+
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon className={cn("h-3 w-3", iconColor)} />
+          <Icon className={cn('h-3 w-3', iconColor)} />
           <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
         </div>
-        <span className="text-[10px] font-mono opacity-60">{formatCompactBRL(value)}</span>
+        <span className="text-[10px] font-mono opacity-60">
+          {formatCompactBRL(value)}
+        </span>
       </div>
       <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-        <div 
-          className={cn("h-full rounded-full transition-all duration-1000", color)}
+        <div
+          className={cn('h-full rounded-full transition-all duration-1000', color)}
           style={{ width: `${percentage}%` }}
         />
       </div>

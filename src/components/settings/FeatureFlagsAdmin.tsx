@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,7 +33,10 @@ export const FeatureFlagsAdmin: FC = () => {
   const { data: flags = [], isLoading } = useQuery({
     queryKey: ['admin-feature-flags'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('feature_flags').select('*').order('key');
+      const { data, error } = await supabase
+        .from('feature_flags')
+        .select('*')
+        .order('key');
       if (error) throw error;
       return (data ?? []) as FeatureFlag[];
     },
@@ -41,7 +44,10 @@ export const FeatureFlagsAdmin: FC = () => {
 
   const toggleFlag = useMutation({
     mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
-      const { error } = await supabase.from('feature_flags').update({ is_enabled }).eq('id', id);
+      const { error } = await supabase
+        .from('feature_flags')
+        .update({ is_enabled })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -52,8 +58,17 @@ export const FeatureFlagsAdmin: FC = () => {
   });
 
   const updateRollout = useMutation({
-    mutationFn: async ({ id, rollout_percentage }: { id: string; rollout_percentage: number }) => {
-      const { error } = await supabase.from('feature_flags').update({ rollout_percentage }).eq('id', id);
+    mutationFn: async ({
+      id,
+      rollout_percentage,
+    }: {
+      id: string;
+      rollout_percentage: number;
+    }) => {
+      const { error } = await supabase
+        .from('feature_flags')
+        .update({ rollout_percentage })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -74,7 +89,13 @@ export const FeatureFlagsAdmin: FC = () => {
   });
 
   if (isLoading) {
-    return <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />)}</div>;
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -84,20 +105,36 @@ export const FeatureFlagsAdmin: FC = () => {
           <Flag className="h-4 w-4 text-primary" />
           Feature Flags ({flags.length})
         </h3>
-        <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setShowCreate(true)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 text-xs"
+          onClick={() => setShowCreate(true)}
+        >
           <Plus className="h-3 w-3 mr-1" /> Nova Flag
         </Button>
       </div>
 
       <div className="space-y-2">
         {flags.map(flag => (
-          <Card key={flag.id} className={cn('border-none shadow-sm transition-all', flag.is_enabled && 'ring-1 ring-success/30')}>
+          <Card
+            key={flag.id}
+            className={cn(
+              'border-none shadow-sm transition-all',
+              flag.is_enabled && 'ring-1 ring-success/30'
+            )}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <code className="text-sm font-mono font-semibold text-foreground">{flag.key}</code>
-                    <Badge variant={flag.is_enabled ? 'default' : 'secondary'} className="text-[10px] h-5">
+                    <code className="text-sm font-mono font-semibold text-foreground">
+                      {flag.key}
+                    </code>
+                    <Badge
+                      variant={flag.is_enabled ? 'default' : 'secondary'}
+                      className="text-[10px] h-5"
+                    >
                       {flag.is_enabled ? 'ON' : 'OFF'}
                     </Badge>
                     {flag.rollout_percentage < 100 && (
@@ -113,17 +150,35 @@ export const FeatureFlagsAdmin: FC = () => {
                       </Badge>
                     )}
                   </div>
-                  {flag.description && <p className="text-xs text-muted-foreground mt-1 truncate">{flag.description}</p>}
+                  {flag.description && (
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {flag.description}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Switch
                     checked={flag.is_enabled}
-                    onCheckedChange={checked => toggleFlag.mutate({ id: flag.id, is_enabled: checked })}
+                    onCheckedChange={checked =>
+                      toggleFlag.mutate({ id: flag.id, is_enabled: checked })
+                    }
                   />
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditFlag(flag)} aria-label={`Editar flag ${flag.key}`}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => setEditFlag(flag)}
+                    aria-label={`Editar flag ${flag.key}`}
+                  >
                     <Pencil className="h-3 w-3" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFlag.mutate(flag.id)} aria-label={`Excluir flag ${flag.key}`}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-destructive"
+                    onClick={() => deleteFlag.mutate(flag.id)}
+                    aria-label={`Excluir flag ${flag.key}`}
+                  >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
@@ -131,16 +186,22 @@ export const FeatureFlagsAdmin: FC = () => {
               {/* Rollout slider */}
               {flag.is_enabled && (
                 <div className="mt-3 flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground w-14 shrink-0">Rollout</span>
+                  <span className="text-xs text-muted-foreground w-14 shrink-0">
+                    Rollout
+                  </span>
                   <Slider
                     value={[flag.rollout_percentage]}
                     min={0}
                     max={100}
                     step={5}
                     className="flex-1"
-                    onValueCommit={([val]) => updateRollout.mutate({ id: flag.id, rollout_percentage: val })}
+                    onValueCommit={([val]) =>
+                      updateRollout.mutate({ id: flag.id, rollout_percentage: val })
+                    }
                   />
-                  <span className="text-xs font-mono text-foreground w-10 text-right">{flag.rollout_percentage}%</span>
+                  <span className="text-xs font-mono text-foreground w-10 text-right">
+                    {flag.rollout_percentage}%
+                  </span>
                 </div>
               )}
             </CardContent>
@@ -158,12 +219,21 @@ export const FeatureFlagsAdmin: FC = () => {
       )}
 
       <CreateFlagDialog open={showCreate} onOpenChange={setShowCreate} />
-      {editFlag && <EditFlagDialog flag={editFlag} open={!!editFlag} onOpenChange={open => !open && setEditFlag(null)} />}
+      {editFlag && (
+        <EditFlagDialog
+          flag={editFlag}
+          open={!!editFlag}
+          onOpenChange={open => !open && setEditFlag(null)}
+        />
+      )}
     </div>
   );
 };
 
-const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }> = ({ open, onOpenChange }) => {
+const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }> = ({
+  open,
+  onOpenChange,
+}) => {
   const queryClient = useQueryClient();
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
@@ -172,30 +242,55 @@ const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }
   const handleCreate = async () => {
     if (!key.trim()) return;
     setIsPending(true);
-    const { error } = await supabase.from('feature_flags').insert({ key: key.trim(), description: description.trim() || null });
+    const { error } = await supabase
+      .from('feature_flags')
+      .insert({ key: key.trim(), description: description.trim() || null });
     setIsPending(false);
-    if (error) { toast.error('Erro ao criar flag'); return; }
+    if (error) {
+      toast.error('Erro ao criar flag');
+      return;
+    }
     queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
     toast.success('Flag criada');
-    setKey(''); setDescription('');
+    setKey('');
+    setDescription('');
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Nova Feature Flag</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Nova Feature Flag</DialogTitle>
+        </DialogHeader>
         <div className="space-y-4 pt-2">
           <div className="space-y-2">
             <Label>Chave</Label>
-            <Input value={key} onChange={e => setKey(e.target.value)} placeholder="ex: new_dashboard_v2" className="font-mono" />
+            <Input
+              value={key}
+              onChange={e => setKey(e.target.value)}
+              placeholder="ex: new_dashboard_v2"
+              className="font-mono"
+            />
           </div>
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Descrição opcional" />
+            <Input
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Descrição opcional"
+            />
           </div>
-          <Button className="w-full" onClick={handleCreate} disabled={!key.trim() || isPending}>
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Flag className="h-4 w-4 mr-2" />}
+          <Button
+            className="w-full"
+            onClick={handleCreate}
+            disabled={!key.trim() || isPending}
+          >
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Flag className="h-4 w-4 mr-2" />
+            )}
             Criar Flag
           </Button>
         </div>
@@ -204,7 +299,11 @@ const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }
   );
 };
 
-const EditFlagDialog: FC<{ flag: FeatureFlag; open: boolean; onOpenChange: (v: boolean) => void }> = ({ flag, open, onOpenChange }) => {
+const EditFlagDialog: FC<{
+  flag: FeatureFlag;
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}> = ({ flag, open, onOpenChange }) => {
   const queryClient = useQueryClient();
   const [description, setDescription] = useState(flag.description || '');
   const [roles, setRoles] = useState((flag.allowed_roles || []).join(', '));
@@ -212,13 +311,22 @@ const EditFlagDialog: FC<{ flag: FeatureFlag; open: boolean; onOpenChange: (v: b
 
   const handleSave = async () => {
     setIsPending(true);
-    const allowed_roles = roles.split(',').map(r => r.trim()).filter(Boolean);
-    const { error } = await supabase.from('feature_flags').update({
-      description: description.trim() || null,
-      allowed_roles: allowed_roles.length > 0 ? allowed_roles : null,
-    }).eq('id', flag.id);
+    const allowed_roles = roles
+      .split(',')
+      .map(r => r.trim())
+      .filter(Boolean);
+    const { error } = await supabase
+      .from('feature_flags')
+      .update({
+        description: description.trim() || null,
+        allowed_roles: allowed_roles.length > 0 ? allowed_roles : null,
+      })
+      .eq('id', flag.id);
     setIsPending(false);
-    if (error) { toast.error('Erro ao salvar'); return; }
+    if (error) {
+      toast.error('Erro ao salvar');
+      return;
+    }
     queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
     toast.success('Flag atualizada');
     onOpenChange(false);
@@ -227,7 +335,9 @@ const EditFlagDialog: FC<{ flag: FeatureFlag; open: boolean; onOpenChange: (v: b
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Editar: {flag.key}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Editar: {flag.key}</DialogTitle>
+        </DialogHeader>
         <div className="space-y-4 pt-2">
           <div className="space-y-2">
             <Label>Descrição</Label>
@@ -235,7 +345,11 @@ const EditFlagDialog: FC<{ flag: FeatureFlag; open: boolean; onOpenChange: (v: b
           </div>
           <div className="space-y-2">
             <Label>Roles permitidos (separados por vírgula)</Label>
-            <Input value={roles} onChange={e => setRoles(e.target.value)} placeholder="admin, manager" />
+            <Input
+              value={roles}
+              onChange={e => setRoles(e.target.value)}
+              placeholder="admin, manager"
+            />
           </div>
           <Button className="w-full" onClick={handleSave} disabled={isPending}>
             {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}

@@ -24,7 +24,6 @@ import {
   RaceAudioPreferences,
   PitStopPanel,
   TrackConditionsBadge,
-  TrackWeatherOverlay,
   GhostCar,
   GhostStatusBadge,
   RaceCommentaryPanel,
@@ -60,8 +59,16 @@ import { useQueryClient } from '@tanstack/react-query';
 const COUNTDOWN_SEEN_KEY = 'race_countdown_seen_seasons';
 
 const ROLE_META: Record<RoleType, { title: string; emoji: string; subtitle: string }> = {
-  closer: { title: 'Pista dos Closers', emoji: '🎯', subtitle: 'Corrida de fechamento de vendas' },
-  sdr: { title: 'Pista dos SDRs', emoji: '📞', subtitle: 'Corrida de prospecção e qualificação' },
+  closer: {
+    title: 'Pista dos Closers',
+    emoji: '🎯',
+    subtitle: 'Corrida de fechamento de vendas',
+  },
+  sdr: {
+    title: 'Pista dos SDRs',
+    emoji: '📞',
+    subtitle: 'Corrida de prospecção e qualificação',
+  },
 };
 
 interface Props {
@@ -74,7 +81,8 @@ export default function RaceArenaView({ roleType }: Props) {
   const { isAdmin } = useUserRoles();
   const { data: season, isLoading: loadingSeason } = useRaceSeasonByRole(roleType);
   const { data: leaderboard = [], isLoading: loadingLb } = useRaceLeaderboard(season?.id);
-  const isInitialLoading = loadingSeason || (!!season && loadingLb && leaderboard.length === 0);
+  const isInitialLoading =
+    loadingSeason || (!!season && loadingLb && leaderboard.length === 0);
   const { data: events = [] } = useRaceEvents(season?.id);
   const { data: rules = [] } = useRaceScoringRules(season?.id);
   const { data: myCar } = useMyRaceCar();
@@ -177,7 +185,9 @@ export default function RaceArenaView({ roleType }: Props) {
   useEffect(() => {
     if (!season) return;
     try {
-      const seen = JSON.parse(localStorage.getItem(COUNTDOWN_SEEN_KEY) || '[]') as string[];
+      const seen = JSON.parse(
+        localStorage.getItem(COUNTDOWN_SEEN_KEY) || '[]'
+      ) as string[];
       if (seen.includes(season.id)) return;
       const ageSec = differenceInSeconds(new Date(), new Date(season.start_date));
       if (ageSec < 10 && ageSec > -86400) {
@@ -248,7 +258,11 @@ export default function RaceArenaView({ roleType }: Props) {
               <RaceViewModeToggle mode={viewMode.mode} onChange={viewMode.setMode} />
               {season && <TrackConditionsBadge conditions={trackConditions} />}
               {season && <GhostStatusBadge ghost={ghost} />}
-              <Button onClick={() => setPitStopOpen(true)} variant="outline" disabled={!season}>
+              <Button
+                onClick={() => setPitStopOpen(true)}
+                variant="outline"
+                disabled={!season}
+              >
                 <Wrench className="w-4 h-4 mr-2" /> Pit Stop
               </Button>
               <RaceSoundToggle muted={muted} onToggle={toggleMute} />
@@ -339,7 +353,9 @@ export default function RaceArenaView({ roleType }: Props) {
               </div>
             </div>
 
-            {viewMode.showFeed && <FloatingEventFeed events={events} cars={leaderboard} />}
+            {viewMode.showFeed && (
+              <FloatingEventFeed events={events} cars={leaderboard} />
+            )}
             <VictoryLapOverlay
               events={events}
               cars={leaderboard}
@@ -382,7 +398,11 @@ export default function RaceArenaView({ roleType }: Props) {
                 done: !!myCar?.car_style,
                 action: () => setCustomizerOpen(true),
               },
-              { id: 'leaderboard', label: 'Veja o leaderboard', done: leaderboard.length > 0 },
+              {
+                id: 'leaderboard',
+                label: 'Veja o leaderboard',
+                done: leaderboard.length > 0,
+              },
               {
                 id: 'powerup',
                 label: 'Colete um power-up',
@@ -404,7 +424,9 @@ export default function RaceArenaView({ roleType }: Props) {
             ]}
           />
         )}
-        {isAdmin && <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />}
+        {isAdmin && (
+          <StartSeasonDialog open={startSeasonOpen} onOpenChange={setStartSeasonOpen} />
+        )}
       </div>
     </>
   );

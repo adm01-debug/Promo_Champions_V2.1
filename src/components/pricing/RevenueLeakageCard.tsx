@@ -5,7 +5,6 @@ import {
   AlertCircle,
   ShieldOff,
   Sparkles,
-  ChevronRight,
   Info,
   PieChart,
   ArrowDownRight,

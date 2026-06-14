@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { isWonSaleStatus } from '@/constants';
 import { Helmet } from 'react-helmet-async';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,14 +12,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
   HeartPulse,
-  TrendingUp,
   TrendingDown,
   AlertTriangle,
   CheckCircle,
   Users,
   Ticket,
   RefreshCw,
-  Activity,
   Zap,
   Calendar,
   BarChart3,
@@ -101,7 +99,9 @@ const ClientHealthScore = () => {
         const lastActivity =
           clientSales.length > 0
             ? Math.min(
-                ...clientSales.map(s => differenceInDays(new Date(), new Date(s.created_at)))
+                ...clientSales.map(s =>
+                  differenceInDays(new Date(), new Date(s.created_at))
+                )
               )
             : 999;
         const recencyScore =
@@ -216,7 +216,9 @@ const ClientHealthScore = () => {
               ) : healthData.length === 0 ? (
                 <Card className="p-12 text-center glass border-border/40">
                   <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-20" />
-                  <p className="text-muted-foreground">Nenhum dado de saúde disponível ainda.</p>
+                  <p className="text-muted-foreground">
+                    Nenhum dado de saúde disponível ainda.
+                  </p>
                 </Card>
               ) : (
                 <div className="grid gap-3">
@@ -237,7 +239,12 @@ const ClientHealthScore = () => {
                                 cfg.bg
                               )}
                             >
-                              <span className={cn('font-display font-bold text-lg', cfg.color)}>
+                              <span
+                                className={cn(
+                                  'font-display font-bold text-lg',
+                                  cfg.color
+                                )}
+                              >
                                 {client.score}
                               </span>
                               <svg
@@ -272,7 +279,9 @@ const ClientHealthScore = () => {
 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-sm truncate">{client.name}</p>
+                                <p className="font-bold text-sm truncate">
+                                  {client.name}
+                                </p>
                                 <Badge
                                   variant="outline"
                                   className={cn(
@@ -392,14 +401,18 @@ function RenewalView() {
                 <Calendar className="h-3.5 w-3.5" />
                 Expira em{' '}
                 {ren.contract_end_date
-                  ? format(parseISO(ren.contract_end_date), "dd 'de' MMM, yyyy", { locale: ptBR })
+                  ? format(parseISO(ren.contract_end_date), "dd 'de' MMM, yyyy", {
+                      locale: ptBR,
+                    })
                   : 'N/A'}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <p className="text-sm font-bold">R$ {ren.renewal_value?.toLocaleString()}</p>
+              <p className="text-sm font-bold">
+                R$ {ren.renewal_value?.toLocaleString()}
+              </p>
               <Badge
                 variant={
                   ren.risk_level === 'high'
@@ -418,7 +431,10 @@ function RenewalView() {
                 {ren.probability}% Prob.
               </p>
               <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-primary" style={{ width: `${ren.probability}%` }} />
+                <div
+                  className="h-full bg-primary"
+                  style={{ width: `${ren.probability}%` }}
+                />
               </div>
             </div>
           </div>
@@ -466,7 +482,9 @@ function UsageAnalyticsView() {
           <div className="flex items-end justify-between">
             <div>
               <p className="text-2xl font-black tracking-tighter">{u.usage_count}</p>
-              <p className="text-[10px] text-muted-foreground font-bold">EVENTOS NO PERÍODO</p>
+              <p className="text-[10px] text-muted-foreground font-bold">
+                EVENTOS NO PERÍODO
+              </p>
             </div>
             <BarChart3 className="h-8 w-8 text-primary/20" />
           </div>
@@ -513,7 +531,9 @@ function SupportTicketsView() {
                   {(t.clients as any)?.name} · {t.source}
                 </p>
                 <h4 className="font-bold text-sm mt-0.5">{t.subject}</h4>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.description}</p>
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                  {t.description}
+                </p>
               </div>
             </div>
             <div className="flex flex-col items-end gap-2">

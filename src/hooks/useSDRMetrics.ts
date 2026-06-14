@@ -11,7 +11,6 @@ import {
   subMonths,
   subQuarters,
   subDays,
-  format,
 } from 'date-fns';
 import { captureException } from '@/lib/errorTracking';
 
@@ -113,22 +112,30 @@ export function useSDRMetrics(
             .lte('created_at', range.end.toISOString());
         };
 
-        const [currentSalesRes, prevSalesRes, currentTasksRes, prevTasksRes, leadScoresRes] =
-          await Promise.all([
-            buildSalesQuery(currentRange),
-            buildSalesQuery(previousRange),
-            buildTasksQuery(currentRange),
-            buildTasksQuery(previousRange),
-            supabase
-              .from('lead_scores')
-              .select('sale_id, score')
-              .in(
-                'sale_id',
-                (await buildSalesQuery(currentRange).select('id')).data?.map(s => s.id) || []
-              ),
-          ]);
+        const [
+          currentSalesRes,
+          prevSalesRes,
+          currentTasksRes,
+          prevTasksRes,
+          leadScoresRes,
+        ] = await Promise.all([
+          buildSalesQuery(currentRange),
+          buildSalesQuery(previousRange),
+          buildTasksQuery(currentRange),
+          buildTasksQuery(previousRange),
+          supabase
+            .from('lead_scores')
+            .select('sale_id, score')
+            .in(
+              'sale_id',
+              (await buildSalesQuery(currentRange).select('id')).data?.map(s => s.id) ||
+                []
+            ),
+        ]);
 
-        const scoreMap = new Map(leadScoresRes.data?.map(s => [s.sale_id, s.score]) || []);
+        const scoreMap = new Map(
+          leadScoresRes.data?.map(s => [s.sale_id, s.score]) || []
+        );
 
         const calculateMetrics = (
           sales: Array<{ id: string; status: string }>,
@@ -139,7 +146,8 @@ export function useSDRMetrics(
             ['qualified', 'proposal', 'negotiation', 'completed'].includes(s.status)
           ).length;
           const meetingsScheduled = tasks.length;
-          const schedulingRate = totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
+          const schedulingRate =
+            totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
 
           let coldLeads = 0,
             warmLeads = 0,
@@ -168,8 +176,14 @@ export function useSDRMetrics(
           };
         };
 
-        const current = calculateMetrics(currentSalesRes.data || [], currentTasksRes.data || []);
-        const previous = calculateMetrics(prevSalesRes.data || [], prevTasksRes.data || []);
+        const current = calculateMetrics(
+          currentSalesRes.data || [],
+          currentTasksRes.data || []
+        );
+        const previous = calculateMetrics(
+          prevSalesRes.data || [],
+          prevTasksRes.data || []
+        );
 
         const calcChange = (curr: number, prev: number) =>
           prev > 0 ? ((curr - prev) / prev) * 100 : curr > 0 ? 100 : 0;
@@ -289,10 +303,30 @@ export function useLeadTemperatureDistribution() {
         const total = leadScores?.length || 1;
 
         return [
-          { name: 'Quentes', value: hot, percentage: (hot / total) * 100, color: '#ef4444' },
-          { name: 'Mornos', value: warm, percentage: (warm / total) * 100, color: '#f97316' },
-          { name: 'Frios', value: cold, percentage: (cold / total) * 100, color: '#3b82f6' },
-          { name: 'Gelados', value: frozen, percentage: (frozen / total) * 100, color: '#6b7280' },
+          {
+            name: 'Quentes',
+            value: hot,
+            percentage: (hot / total) * 100,
+            color: '#ef4444',
+          },
+          {
+            name: 'Mornos',
+            value: warm,
+            percentage: (warm / total) * 100,
+            color: '#f97316',
+          },
+          {
+            name: 'Frios',
+            value: cold,
+            percentage: (cold / total) * 100,
+            color: '#3b82f6',
+          },
+          {
+            name: 'Gelados',
+            value: frozen,
+            percentage: (frozen / total) * 100,
+            color: '#6b7280',
+          },
         ];
       } catch (error) {
         captureException(error, 'useLeadTemperatureDistribution');

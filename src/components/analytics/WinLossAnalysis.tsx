@@ -3,7 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
-import { Trophy, XCircle, TrendingUp, BarChart3, Maximize2, Users, Package, Clock, Filter } from 'lucide-react';
+import {
+  Trophy,
+  XCircle,
+  TrendingUp,
+  BarChart3,
+  Maximize2,
+  Users,
+  Package,
+  Clock,
+} from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -13,14 +22,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  Cell,
-  PieChart,
-  Pie
 } from 'recharts';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const WinLossAnalysis: FC = () => {
   const { data, isLoading } = useWinLossAnalysis();
@@ -33,8 +38,12 @@ export const WinLossAnalysis: FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[1, 2, 3, 4].map(i => (
           <Card key={i} className="glass border-border/40">
-            <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
-            <CardContent><Skeleton className="h-[200px] w-full" /></CardContent>
+            <CardHeader>
+              <Skeleton className="h-5 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[200px] w-full" />
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -50,11 +59,13 @@ export const WinLossAnalysis: FC = () => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-success" />
-            <h3 className="font-display font-semibold gradient-text">Análise de Ganhos e Perdas</h3>
+            <h3 className="font-display font-semibold gradient-text">
+              Análise de Ganhos e Perdas
+            </h3>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="gap-2 hover:bg-primary/10"
             onClick={() => navigate('/analytics/win-loss')}
           >
@@ -73,7 +84,9 @@ export const WinLossAnalysis: FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold font-display">{data.totalWins}</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Vitórias</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                Vitórias
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -84,7 +97,9 @@ export const WinLossAnalysis: FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold font-display">{data.totalLosses}</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Perdas</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                Perdas
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -95,7 +110,9 @@ export const WinLossAnalysis: FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold font-display">{data.winRate}%</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Win Rate Geral</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                Win Rate Geral
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -114,24 +131,45 @@ export const WinLossAnalysis: FC = () => {
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.monthlyTrend}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" vertical={false} />
-                  <XAxis 
-                    dataKey="month" 
-                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-border/30"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis 
-                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
+                  <YAxis
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
                   />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                  <Bar dataKey="wins" name="Vitórias" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="losses" name="Perdas" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                  <Legend
+                    iconType="circle"
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                  />
+                  <Bar
+                    dataKey="wins"
+                    name="Vitórias"
+                    fill="hsl(var(--success))"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="losses"
+                    name="Perdas"
+                    fill="hsl(var(--destructive))"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -155,8 +193,8 @@ export const WinLossAnalysis: FC = () => {
                     <span className="font-bold">{r.count}</span>
                   </div>
                   <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-success/60 rounded-full" 
+                    <div
+                      className="h-full bg-success/60 rounded-full"
                       style={{ width: `${(r.count / data.totalWins) * 100}%` }}
                     />
                   </div>
@@ -180,8 +218,8 @@ export const WinLossAnalysis: FC = () => {
                     <span className="font-bold">{r.count}</span>
                   </div>
                   <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-destructive/60 rounded-full" 
+                    <div
+                      className="h-full bg-destructive/60 rounded-full"
                       style={{ width: `${(r.count / data.totalLosses) * 100}%` }}
                     />
                   </div>
@@ -209,11 +247,21 @@ export const WinLossAnalysis: FC = () => {
                     <div key={i} className="p-4 hover:bg-primary/5 transition-colors">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium">{sp.name}</span>
-                        <Badge variant="outline" className="text-[10px]">{sp.winRate}% WR</Badge>
+                        <Badge variant="outline" className="text-[10px]">
+                          {sp.winRate}% WR
+                        </Badge>
                       </div>
                       <div className="flex gap-1 items-center">
-                        <div className="h-1.5 bg-success/40 rounded-full" style={{ width: `${(sp.wins / (sp.wins + sp.losses)) * 100}%` }} />
-                        <div className="h-1.5 bg-destructive/40 rounded-full" style={{ width: `${(sp.losses / (sp.wins + sp.losses)) * 100}%` }} />
+                        <div
+                          className="h-1.5 bg-success/40 rounded-full"
+                          style={{ width: `${(sp.wins / (sp.wins + sp.losses)) * 100}%` }}
+                        />
+                        <div
+                          className="h-1.5 bg-destructive/40 rounded-full"
+                          style={{
+                            width: `${(sp.losses / (sp.wins + sp.losses)) * 100}%`,
+                          }}
+                        />
                       </div>
                       <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                         <span>{sp.wins} vitórias</span>
@@ -240,13 +288,19 @@ export const WinLossAnalysis: FC = () => {
                   {data.byProduct.map((p, i) => (
                     <div key={i} className="p-4 hover:bg-primary/5 transition-colors">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium truncate max-w-[150px]">{p.name}</span>
-                        <span className="text-xs font-bold text-primary">{p.winRate}% WR</span>
+                        <span className="text-sm font-medium truncate max-w-[150px]">
+                          {p.name}
+                        </span>
+                        <span className="text-xs font-bold text-primary">
+                          {p.winRate}% WR
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-success">{p.wins} W</span>
                         <span className="text-destructive">{p.losses} L</span>
-                        <span className="text-muted-foreground">{p.wins + p.losses} Total</span>
+                        <span className="text-muted-foreground">
+                          {p.wins + p.losses} Total
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -275,15 +329,28 @@ export const WinLossAnalysis: FC = () => {
                           ) : (
                             <XCircle className="h-3.5 w-3.5 text-destructive" />
                           )}
-                          <span className="text-xs font-medium">{d.sales?.client_name || 'Desconhecido'}</span>
+                          <span className="text-xs font-medium">
+                            {d.sales?.client_name || 'Desconhecido'}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-muted-foreground">{new Date(d.created_at).toLocaleDateString()}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(d.created_at).toLocaleDateString()}
+                        </span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground line-clamp-1 italic">"{d.reason}"</p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                        "{d.reason}"
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-[9px] px-1 py-0">{d.salespeople?.name || 'Vendedor'}</Badge>
+                        <Badge variant="outline" className="text-[9px] px-1 py-0">
+                          {d.salespeople?.name || 'Vendedor'}
+                        </Badge>
                         <span className="text-[9px] font-bold text-primary">
-                          {d.sales?.amount ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(d.sales.amount) : ''}
+                          {d.sales?.amount
+                            ? new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                              }).format(d.sales.amount)
+                            : ''}
                         </span>
                       </div>
                     </div>

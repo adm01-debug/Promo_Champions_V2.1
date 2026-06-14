@@ -13,7 +13,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts';
-import { TrendingUp, Users, Activity, Zap } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import {
   format,
   startOfWeek,
@@ -23,7 +23,6 @@ import {
   eachWeekOfInterval,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -32,7 +31,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { motion } from 'framer-motion';
 
 type PeriodFilter = 'week' | 'month' | 'quarter';
 
@@ -100,7 +98,8 @@ const useCloserRevenueEvolution = (period: PeriodFilter) => {
       }
 
       const chartData = intervals.map(date => {
-        const periodStart = groupBy === 'week' ? startOfWeek(date, { weekStartsOn: 1 }) : date;
+        const periodStart =
+          groupBy === 'week' ? startOfWeek(date, { weekStartsOn: 1 }) : date;
         const periodEnd =
           groupBy === 'week'
             ? new Date(periodStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1)
@@ -222,8 +221,15 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
         />
 
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData} margin={{ top: 10, right: 30, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="5 5" stroke="rgba(255,255,255,0.05)" vertical={false} />
+          <LineChart
+            data={chartData}
+            margin={{ top: 10, right: 30, left: -20, bottom: 0 }}
+          >
+            <CartesianGrid
+              strokeDasharray="5 5"
+              stroke="rgba(255,255,255,0.05)"
+              vertical={false}
+            />
             <XAxis
               dataKey="date"
               axisLine={false}
@@ -271,11 +277,16 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
                         .map(entry => {
                           const closer = closers.find(c => c.id === entry.dataKey);
                           return (
-                            <div key={String(entry.dataKey)} className="flex items-center gap-2">
+                            <div
+                              key={String(entry.dataKey)}
+                              className="flex items-center gap-2"
+                            >
                               <div
                                 className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]"
                                 style={{
-                                  backgroundColor: String(entry.stroke ?? entry.color ?? ''),
+                                  backgroundColor: String(
+                                    entry.stroke ?? entry.color ?? ''
+                                  ),
                                 }}
                               />
                               <span className="text-[9px] font-mono font-bold text-muted-foreground uppercase tracking-wider truncate max-w-[120px]">

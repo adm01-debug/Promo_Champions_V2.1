@@ -1,12 +1,26 @@
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Info, Calculator, TrendingUp, Sparkles, TrendingDown, Cpu, Network, Gauge } from "lucide-react";
-import { formatCompactBRL } from "./forecastHelpers";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { useState, useMemo } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+  Info,
+  TrendingUp,
+  Sparkles,
+  TrendingDown,
+  Cpu,
+  Network,
+  Gauge,
+} from 'lucide-react';
+import { formatCompactBRL } from './forecastHelpers';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface Props {
   baseForecast: number;
@@ -14,7 +28,11 @@ interface Props {
   baseWinRate: number;
 }
 
-export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinRate }: Props) => {
+export const ForecastScenarioSimulator = ({
+  baseForecast,
+  baseCoverage,
+  baseWinRate,
+}: Props) => {
   const [coverageMult, setCoverageMult] = useState(1);
   const [winRateMult, setWinRateMult] = useState(1);
 
@@ -37,13 +55,18 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
               <div className="p-2 rounded-xl bg-primary/20 text-primary border border-primary/30 shadow-lg">
                 <Cpu className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-black tracking-tight">Laboratório What-If Neural</CardTitle>
+              <CardTitle className="text-xl font-black tracking-tight">
+                Laboratório What-If Neural
+              </CardTitle>
             </div>
             <CardDescription className="text-[10px] font-black uppercase tracking-widest opacity-60">
               Modelagem Preditiva de Alavancagem Comercial
             </CardDescription>
           </div>
-          <Badge variant="live" className="gap-1.5 px-4 py-1.5 bg-primary/20 text-primary border-primary/30 font-black tracking-widest uppercase text-[10px]">
+          <Badge
+            variant="live"
+            className="gap-1.5 px-4 py-1.5 bg-primary/20 text-primary border-primary/30 font-black tracking-widest uppercase text-[10px]"
+          >
             <Sparkles className="h-3.5 w-3.5 animate-pulse" />
             Active Prediction
           </Badge>
@@ -68,7 +91,9 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
                   <span className="text-sm font-black font-mono text-blue-500">
                     {(coverageMult * 100).toFixed(0)}
                   </span>
-                  <span className="text-[10px] font-black text-blue-500 opacity-60">%</span>
+                  <span className="text-[10px] font-black text-blue-500 opacity-60">
+                    %
+                  </span>
                 </div>
               </div>
               <div className="px-1">
@@ -82,9 +107,13 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
                 />
               </div>
               <div className="flex justify-between text-[8px] font-black uppercase tracking-tighter opacity-40">
-                <span className="flex items-center gap-1"><TrendingDown className="h-3 w-3" /> Erosão (-50%)</span>
+                <span className="flex items-center gap-1">
+                  <TrendingDown className="h-3 w-3" /> Erosão (-50%)
+                </span>
                 <span>Baseline Atual</span>
-                <span className="flex items-center gap-1 text-blue-500">Expansão (+100%) <TrendingUp className="h-3 w-3" /></span>
+                <span className="flex items-center gap-1 text-blue-500">
+                  Expansão (+100%) <TrendingUp className="h-3 w-3" />
+                </span>
               </div>
             </div>
 
@@ -102,7 +131,9 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
                   <span className="text-sm font-black font-mono text-emerald-500">
                     {(winRateMult * 100).toFixed(0)}
                   </span>
-                  <span className="text-[10px] font-black text-emerald-500 opacity-60">%</span>
+                  <span className="text-[10px] font-black text-emerald-500 opacity-60">
+                    %
+                  </span>
                 </div>
               </div>
               <div className="px-1">
@@ -116,33 +147,39 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
                 />
               </div>
               <div className="flex justify-between text-[8px] font-black uppercase tracking-tighter opacity-40">
-                <span className="flex items-center gap-1"><TrendingDown className="h-3 w-3" /> Retração (-20%)</span>
+                <span className="flex items-center gap-1">
+                  <TrendingDown className="h-3 w-3" /> Retração (-20%)
+                </span>
                 <span>Baseline Atual</span>
-                <span className="flex items-center gap-1 text-emerald-500">Otimização (+50%) <TrendingUp className="h-3 w-3" /></span>
+                <span className="flex items-center gap-1 text-emerald-500">
+                  Otimização (+50%) <TrendingUp className="h-3 w-3" />
+                </span>
               </div>
             </div>
           </div>
 
           {/* Result Engine */}
           <div className="relative group">
-            <div className={cn(
-              "absolute inset-0 blur-3xl opacity-10 transition-colors duration-700 rounded-3xl",
-              isPositive ? "bg-emerald-500" : "bg-orange-500"
-            )} />
-            
+            <div
+              className={cn(
+                'absolute inset-0 blur-3xl opacity-10 transition-colors duration-700 rounded-3xl',
+                isPositive ? 'bg-emerald-500' : 'bg-orange-500'
+              )}
+            />
+
             <div className="relative h-full flex flex-col items-center justify-center p-10 rounded-3xl bg-background/60 border border-white/10 shadow-inner overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-              
+
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
                   <Cpu className="h-8 w-8 text-primary animate-pulse" />
                 </div>
-                
+
                 <div className="space-y-1">
                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
                     Impacto Projetado
                   </p>
-                  <motion.div 
+                  <motion.div
                     key={simulatedForecast}
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -157,26 +194,34 @@ export const ForecastScenarioSimulator = ({ baseForecast, baseCoverage, baseWinR
 
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={isPositive ? "pos" : "neg"}
+                    key={isPositive ? 'pos' : 'neg'}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -15 }}
                     className={cn(
-                      "flex items-center gap-2.5 px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg",
-                      isPositive 
-                        ? "bg-emerald-500 text-white shadow-emerald-500/20" 
-                        : "bg-orange-500 text-white shadow-orange-500/20"
+                      'flex items-center gap-2.5 px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg',
+                      isPositive
+                        ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+                        : 'bg-orange-500 text-white shadow-orange-500/20'
                     )}
                   >
-                    {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                    {isPositive ? "GANHO" : "PERDA"} DE {formatCompactBRL(Math.abs(delta))}
+                    {isPositive ? (
+                      <TrendingUp className="h-4 w-4" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4" />
+                    )}
+                    {isPositive ? 'GANHO' : 'PERDA'} DE{' '}
+                    {formatCompactBRL(Math.abs(delta))}
                   </motion.div>
                 </AnimatePresence>
 
                 <div className="mt-8 pt-8 border-t border-white/5 w-full">
                   <div className="flex items-center gap-3 text-[9px] text-muted-foreground font-black uppercase tracking-widest text-center justify-center leading-relaxed">
                     <Info className="h-3.5 w-3.5 text-primary" />
-                    <span>Algoritmo de regressão linear baseado em {baseForecast > 0 ? "dados reais" : "benchmarks de mercado"}</span>
+                    <span>
+                      Algoritmo de regressão linear baseado em{' '}
+                      {baseForecast > 0 ? 'dados reais' : 'benchmarks de mercado'}
+                    </span>
                   </div>
                 </div>
               </div>

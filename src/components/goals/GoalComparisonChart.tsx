@@ -1,7 +1,15 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell, Legend, ComposedChart, ReferenceLine } from "recharts";
-import { BarChart3 } from "lucide-react";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+  ComposedChart,
+} from 'recharts';
+import { BarChart3 } from 'lucide-react';
 
 interface GoalComparisonChartProps {
   salespeople: {
@@ -20,7 +28,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
     .sort((a, b) => b.progress - a.progress)
     .slice(0, 8)
     .map(sp => ({
-      name: sp.name.split(" ")[0],
+      name: sp.name.split(' ')[0],
       vendido: sp.currentSales,
       meta: sp.goalAmount,
       progress: sp.progress,
@@ -69,70 +77,84 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
           <ComposedChart data={data} margin={{ top: 10, right: 10, bottom: 5, left: 5 }}>
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fontWeight: 600, fill: "hsl(var(--muted-foreground))" }}
+              tick={{
+                fontSize: 11,
+                fontWeight: 600,
+                fill: 'hsl(var(--muted-foreground))',
+              }}
               axisLine={false}
               tickLine={false}
               dy={10}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={false}
               tickLine={false}
               width={50}
-              tickFormatter={(v) => `R$ ${(v / 1000).toFixed(0)}k`}
+              tickFormatter={v => `R$ ${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
               cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
               formatter={(v: any, name: any) => [
-                `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-                name === "vendido" ? "Vendido" : name === "meta" ? "Meta" : "Forecast",
+                `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                name === 'vendido' ? 'Vendido' : name === 'meta' ? 'Meta' : 'Forecast',
               ]}
-              contentStyle={{ 
-                borderRadius: 12, 
-                border: "1px solid hsl(var(--border)/0.5)", 
-                backgroundColor: "hsl(var(--background)/0.95)",
-                backdropFilter: "blur(4px)",
-                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)", 
-                fontSize: 12 
+              contentStyle={{
+                borderRadius: 12,
+                border: '1px solid hsl(var(--border)/0.5)',
+                backgroundColor: 'hsl(var(--background)/0.95)',
+                backdropFilter: 'blur(4px)',
+                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)',
+                fontSize: 12,
               }}
             />
-            <Bar 
-              dataKey="meta" 
-              fill="hsl(var(--primary)/0.05)" 
-              radius={[6, 6, 0, 0]} 
-              barSize={40} 
-              name="meta" 
+            <Bar
+              dataKey="meta"
+              fill="hsl(var(--primary)/0.05)"
+              radius={[6, 6, 0, 0]}
+              barSize={40}
+              name="meta"
               stroke="hsl(var(--primary)/0.1)"
               strokeDasharray="4 2"
             />
-            <Bar 
-              dataKey="projecao" 
-              fill="hsl(var(--primary)/0.15)" 
-              radius={[6, 6, 0, 0]} 
-              barSize={20} 
-              name="forecast" 
-              dx={0} 
+            <Bar
+              dataKey="projecao"
+              fill="hsl(var(--primary)/0.15)"
+              radius={[6, 6, 0, 0]}
+              barSize={20}
+              name="forecast"
+              dx={0}
             />
-            <Bar dataKey="vendido" radius={[4, 4, 0, 0]} barSize={18} name="vendido" dx={-8}>
+            <Bar
+              dataKey="vendido"
+              radius={[4, 4, 0, 0]}
+              barSize={18}
+              name="vendido"
+              dx={-8}
+            >
               {data.map((entry, i) => (
                 <Cell
                   key={i}
                   className="transition-all duration-700 hover:brightness-125"
                   fill={
                     entry.progress >= 100
-                      ? "url(#colorSuccess)"
+                      ? 'url(#colorSuccess)'
                       : entry.progress >= 70
-                      ? "url(#colorPrimary)"
-                      : entry.progress >= 40
-                      ? "url(#colorWarning)"
-                      : "url(#colorDestructive)"
+                        ? 'url(#colorPrimary)'
+                        : entry.progress >= 40
+                          ? 'url(#colorWarning)'
+                          : 'url(#colorDestructive)'
                   }
-                  style={{ 
+                  style={{
                     filter: `drop-shadow(0 0 6px ${
-                      entry.progress >= 100 ? "rgba(34,197,94,0.4)" : 
-                      entry.progress >= 70 ? "rgba(var(--primary),0.3)" : 
-                      entry.progress >= 40 ? "rgba(var(--warning),0.3)" : "rgba(var(--destructive),0.3)"
-                    })` 
+                      entry.progress >= 100
+                        ? 'rgba(34,197,94,0.4)'
+                        : entry.progress >= 70
+                          ? 'rgba(var(--primary),0.3)'
+                          : entry.progress >= 40
+                            ? 'rgba(var(--warning),0.3)'
+                            : 'rgba(var(--destructive),0.3)'
+                    })`,
                   }}
                 />
               ))}
@@ -152,7 +174,11 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
               </linearGradient>
               <linearGradient id="colorDestructive" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={1} />
-                <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.8} />
+                <stop
+                  offset="100%"
+                  stopColor="hsl(var(--destructive))"
+                  stopOpacity={0.8}
+                />
               </linearGradient>
             </defs>
           </ComposedChart>

@@ -1,29 +1,32 @@
-import { Search, Filter, SlidersHorizontal, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SDRAdvancedFiltersProps {
   onSearch: (value: string) => void;
   onFilterChange: (filters: any) => void;
 }
 
-export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFiltersProps) {
+export function SDRAdvancedFilters({
+  onSearch,
+  onFilterChange,
+}: SDRAdvancedFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
-    channel: "all",
-    status: "all",
-    temp: "all",
-    sdr: "all"
+    channel: 'all',
+    status: 'all',
+    temp: 'all',
+    sdr: 'all',
   });
 
   const updateFilter = (key: string, value: string) => {
@@ -39,14 +42,14 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
 
   const clearFilters = () => {
     const defaultFilters = {
-      channel: "all",
-      status: "all",
-      temp: "all",
-      sdr: "all"
+      channel: 'all',
+      status: 'all',
+      temp: 'all',
+      sdr: 'all',
     };
     setFilters(defaultFilters);
-    setSearchTerm("");
-    onSearch("");
+    setSearchTerm('');
+    onSearch('');
     onFilterChange(defaultFilters);
   };
 
@@ -55,34 +58,40 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
       <div className="flex flex-col md:flex-row items-center gap-4">
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar por lead, empresa ou SDR..." 
+          <Input
+            placeholder="Buscar por lead, empresa ou SDR..."
             className="pl-10 h-10 glass focus:ring-primary/30"
             value={searchTerm}
             onChange={handleSearchChange}
           />
           {searchTerm && (
-            <button 
-              onClick={() => { setSearchTerm(""); onSearch(""); }}
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                onSearch('');
+              }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className={`h-10 gap-2 border-primary/20 hover:bg-primary/5 ${isExpanded ? 'bg-primary/10 border-primary/40' : ''}`}
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filtros Avançados
           </Button>
-          
-          <Select value={filters.channel} onValueChange={(val) => updateFilter("channel", val)}>
+
+          <Select
+            value={filters.channel}
+            onValueChange={val => updateFilter('channel', val)}
+          >
             <SelectTrigger className="w-[140px] h-10 glass">
               <SelectValue placeholder="Canal" />
             </SelectTrigger>
@@ -101,7 +110,7 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
@@ -110,7 +119,10 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Status de Qualificação
                 </label>
-                <Select value={filters.status} onValueChange={(val) => updateFilter("status", val)}>
+                <Select
+                  value={filters.status}
+                  onValueChange={val => updateFilter('status', val)}
+                >
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -128,7 +140,10 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   Temperatura
                 </label>
-                <Select value={filters.temp} onValueChange={(val) => updateFilter("temp", val)}>
+                <Select
+                  value={filters.temp}
+                  onValueChange={val => updateFilter('temp', val)}
+                >
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="Temperatura" />
                   </SelectTrigger>
@@ -145,7 +160,10 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
                 <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">
                   SDR Responsável
                 </label>
-                <Select value={filters.sdr} onValueChange={(val) => updateFilter("sdr", val)}>
+                <Select
+                  value={filters.sdr}
+                  onValueChange={val => updateFilter('sdr', val)}
+                >
                   <SelectTrigger className="h-9 bg-background/50 border-primary/10">
                     <SelectValue placeholder="SDR" />
                   </SelectTrigger>
@@ -158,9 +176,9 @@ export function SDRAdvancedFilters({ onSearch, onFilterChange }: SDRAdvancedFilt
               </div>
 
               <div className="flex items-end">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="w-full h-9 text-xs font-medium hover:text-primary"
                   onClick={clearFilters}
                 >

@@ -1,8 +1,8 @@
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { CACHE_TIMES } from "@/constants";
-import { differenceInHours, differenceInDays, parseISO } from "date-fns";
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { CACHE_TIMES } from '@/constants';
+import { differenceInHours, parseISO } from 'date-fns';
 
 export interface SLAConfig {
   stage: string;
@@ -12,12 +12,12 @@ export interface SLAConfig {
 }
 
 export const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
-  { stage: "lead", maxHours: 24, escalationHours: 12, label: "Lead" },
-  { stage: "qualified", maxHours: 48, escalationHours: 24, label: "Qualificado" },
-  { stage: "proposal", maxHours: 72, escalationHours: 36, label: "Proposta" },
-  { stage: "negotiation", maxHours: 96, escalationHours: 48, label: "Negociação" },
-  { stage: "won", maxHours: 168, escalationHours: 120, label: "Ganho" },
-  { stage: "lost", maxHours: 240, escalationHours: 168, label: "Perdido" },
+  { stage: 'lead', maxHours: 24, escalationHours: 12, label: 'Lead' },
+  { stage: 'qualified', maxHours: 48, escalationHours: 24, label: 'Qualificado' },
+  { stage: 'proposal', maxHours: 72, escalationHours: 36, label: 'Proposta' },
+  { stage: 'negotiation', maxHours: 96, escalationHours: 48, label: 'Negociação' },
+  { stage: 'won', maxHours: 168, escalationHours: 120, label: 'Ganho' },
+  { stage: 'lost', maxHours: 240, escalationHours: 168, label: 'Perdido' },
 ];
 
 export interface DealSLAStatus {
@@ -27,19 +27,19 @@ export interface DealSLAStatus {
   hoursInStage: number;
   maxHours: number;
   percentUsed: number;
-  status: "ok" | "warning" | "breached";
+  status: 'ok' | 'warning' | 'breached';
   daysRemaining: number;
 }
 
 export const useDealSLAs = () => {
   const { data: stageHistory } = useQuery({
-    queryKey: ["deal-stage-history-sla"],
+    queryKey: ['deal-stage-history-sla'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("deal_stage_history")
-        .select("sale_id, stage, entered_at, exited_at")
-        .is("exited_at", null)
-        .order("entered_at", { ascending: false });
+        .from('deal_stage_history')
+        .select('sale_id, stage, entered_at, exited_at')
+        .is('exited_at', null)
+        .order('entered_at', { ascending: false });
       if (error) throw error;
       return data || [];
     },
@@ -47,12 +47,12 @@ export const useDealSLAs = () => {
   });
 
   const { data: sales } = useQuery({
-    queryKey: ["sales-for-sla"],
+    queryKey: ['sales-for-sla'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sales")
-        .select("id, client_name, status, updated_at")
-        .not("status", "in", '("closed")');
+        .from('sales')
+        .select('id, client_name, status, updated_at')
+        .not('status', 'in', '("closed")');
       if (error) throw error;
       return data || [];
     },
@@ -64,15 +64,15 @@ export const useDealSLAs = () => {
     const now = new Date();
     const historyMap = new Map<string, { stage: string; entered_at: string }>();
 
-    (stageHistory || []).forEach((h) => {
+    (stageHistory || []).forEach(h => {
       if (h.sale_id) {
         historyMap.set(h.sale_id, { stage: h.stage, entered_at: h.entered_at });
       }
     });
 
     return sales
-      .map((sale) => {
-        const config = DEFAULT_SLA_CONFIGS.find((c) => c.stage === sale.status);
+      .map(sale => {
+        const config = DEFAULT_SLA_CONFIGS.find(c => c.stage === sale.status);
         if (!config) return null;
 
         const historyEntry = historyMap.get(sale.id);
@@ -84,9 +84,9 @@ export const useDealSLAs = () => {
         const percentUsed = Math.min((hoursInStage / config.maxHours) * 100, 150);
         const hoursRemaining = config.maxHours - hoursInStage;
 
-        let status: "ok" | "warning" | "breached" = "ok";
-        if (hoursInStage >= config.maxHours) status = "breached";
-        else if (hoursInStage >= config.escalationHours) status = "warning";
+        let status: 'ok' | 'warning' | 'breached' = 'ok';
+        if (hoursInStage >= config.maxHours) status = 'breached';
+        else if (hoursInStage >= config.escalationHours) status = 'warning';
 
         return {
           dealId: sale.id,
@@ -103,9 +103,9 @@ export const useDealSLAs = () => {
   }, [sales, stageHistory]);
 
   const summary = useMemo(() => {
-    const breached = slaStatuses.filter((s) => s.status === "breached").length;
-    const warning = slaStatuses.filter((s) => s.status === "warning").length;
-    const ok = slaStatuses.filter((s) => s.status === "ok").length;
+    const breached = slaStatuses.filter(s => s.status === 'breached').length;
+    const warning = slaStatuses.filter(s => s.status === 'warning').length;
+    const ok = slaStatuses.filter(s => s.status === 'ok').length;
     return { breached, warning, ok, total: slaStatuses.length };
   }, [slaStatuses]);
 

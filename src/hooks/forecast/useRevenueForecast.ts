@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { ForecastHorizon } from "@/components/forecast/forecastHelpers";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface RevenueForecastResponse {
   horizon_days: number;
@@ -53,9 +52,9 @@ interface Options {
 export function useRevenueForecast(options: Options = {}) {
   const { horizonDays = 30, ownerId = null, includeAI = true } = options;
   return useQuery({
-    queryKey: ["revenue-forecast-ai", horizonDays, ownerId, includeAI],
+    queryKey: ['revenue-forecast-ai', horizonDays, ownerId, includeAI],
     queryFn: async (): Promise<RevenueForecastResponse> => {
-      const { data, error } = await supabase.functions.invoke("revenue-forecast-ai", {
+      const { data, error } = await supabase.functions.invoke('revenue-forecast-ai', {
         body: { horizon_days: horizonDays, owner_id: ownerId, include_ai: includeAI },
       });
       if (error) throw error;

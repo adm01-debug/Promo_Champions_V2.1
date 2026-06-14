@@ -1,79 +1,116 @@
-import { Helmet } from "react-helmet-async";
-import React, { Suspense, lazy, useState } from "react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { RankingPositionBanner } from "@/components/ranking/RankingPositionBanner";
-import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
-import { CompetitiveStatusBar } from "@/components/gamification/CompetitiveStatusBar";
+import { Helmet } from 'react-helmet-async';
+import React, { Suspense, lazy, useState } from 'react';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { RankingPositionBanner } from '@/components/ranking/RankingPositionBanner';
+import { OnboardingChecklist } from '@/components/onboarding/OnboardingChecklist';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
+import { CompetitiveStatusBar } from '@/components/gamification/CompetitiveStatusBar';
 // Removed unused useDashboardKPIs import
-import { useDashboardKPIsPeriod, KPIPeriod, PERIOD_LABELS } from "@/hooks/dashboard/useDashboardKPIsPeriod";
-import { useSalesRealtime } from "@/hooks/sales/useSalesRealtime";
-import { useSalesChartData } from "@/hooks/sales/useSalesChartData";
-import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
-import { useAuth } from "@/contexts/AuthContext";
-import { useDashboardPriorities } from "@/hooks/dashboard/useDashboardPriorities";
-import { DashboardLoadingSkeleton } from "@/components/skeletons/PageLoadingSkeleton";
-import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
-import { motion, AnimatePresence } from "framer-motion";
-import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
+import {
+  useDashboardKPIsPeriod,
+  KPIPeriod,
+  PERIOD_LABELS,
+} from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import { useSalesRealtime } from '@/hooks/sales/useSalesRealtime';
+import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { useAuth } from '@/contexts/AuthContext';
+import { useDashboardPriorities } from '@/hooks/dashboard/useDashboardPriorities';
+import { DashboardLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
+import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  PageTransition,
+  containerVariants,
+  itemVariants,
+} from '@/components/transitions/PageTransition';
 import {
   DollarSign,
-  ShoppingBag,
   Users,
   TrendingUp,
   Zap,
-  Receipt,
   Calendar,
   ChevronDown,
   RotateCcw,
-} from "lucide-react";
-import { useParams, Navigate, useNavigate } from "react-router-dom";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { useDashboardRedirect } from "@/hooks/dashboard/useDashboardRedirect";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from 'lucide-react';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { useDashboardRedirect } from '@/hooks/dashboard/useDashboardRedirect';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 // Lazy-loaded modules for better performance
-const OverviewModule = lazy(() => import("@/components/dashboard/modules/OverviewModule").then(m => ({ default: m.OverviewModule })));
-const PerformanceModule = lazy(() => import("@/components/dashboard/modules/PerformanceModule").then(m => ({ default: m.PerformanceModule })));
-const AnalyticsModule = lazy(() => import("@/components/dashboard/modules/AnalyticsModule").then(m => ({ default: m.AnalyticsModule })));
-const CompetitionModule = lazy(() => import("@/components/dashboard/modules/CompetitionModule").then(m => ({ default: m.CompetitionModule })));
-const IntelligenceModule = lazy(() => import("@/components/dashboard/modules/IntelligenceModule").then(m => ({ default: m.IntelligenceModule })));
-const EngagementModule = lazy(() => import("@/components/dashboard/modules/EngagementModule").then(m => ({ default: m.EngagementModule })));
+const OverviewModule = lazy(() =>
+  import('@/components/dashboard/modules/OverviewModule').then(m => ({
+    default: m.OverviewModule,
+  }))
+);
+const PerformanceModule = lazy(() =>
+  import('@/components/dashboard/modules/PerformanceModule').then(m => ({
+    default: m.PerformanceModule,
+  }))
+);
+const AnalyticsModule = lazy(() =>
+  import('@/components/dashboard/modules/AnalyticsModule').then(m => ({
+    default: m.AnalyticsModule,
+  }))
+);
+const CompetitionModule = lazy(() =>
+  import('@/components/dashboard/modules/CompetitionModule').then(m => ({
+    default: m.CompetitionModule,
+  }))
+);
+const IntelligenceModule = lazy(() =>
+  import('@/components/dashboard/modules/IntelligenceModule').then(m => ({
+    default: m.IntelligenceModule,
+  }))
+);
+const EngagementModule = lazy(() =>
+  import('@/components/dashboard/modules/EngagementModule').then(m => ({
+    default: m.EngagementModule,
+  }))
+);
 
 // Preload the next modules after initial render
 const preloadModules = () => {
-  import("@/components/dashboard/modules/PerformanceModule");
-  import("@/components/dashboard/modules/AnalyticsModule");
+  import('@/components/dashboard/modules/PerformanceModule');
+  import('@/components/dashboard/modules/AnalyticsModule');
 };
 
 const SECTION_MAP: Record<string, string> = {
-  performance: "performance",
-  analises: "analytics",
-  competicao: "competition",
-  inteligencia: "intelligence",
-  engajamento: "engagement",
+  performance: 'performance',
+  analises: 'analytics',
+  competicao: 'competition',
+  inteligencia: 'intelligence',
+  engajamento: 'engagement',
 };
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();
   const navigate = useNavigate();
   useDashboardRedirect();
-  const [period, setPeriod] = useState<KPIPeriod>("current_month");
+  const [period, setPeriod] = useState<KPIPeriod>('current_month');
   const { salesperson } = useAuth();
 
-  const { data: kpis, isLoading } = useDashboardKPIsPeriod(period, salesperson?.id, salesperson?.role);
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(
+    period,
+    salesperson?.id,
+    salesperson?.role
+  );
   const { data: goalsData } = useGoalsDashboard();
-  const { data: salesTrend } = useSalesChartData("30d");
+  const { data: salesTrend } = useSalesChartData('30d');
   const priorities = useDashboardPriorities();
-  
-  useSalesRealtime(salesperson?.id, salesperson?.role as "sdr" | "closer" | "hybrid" | undefined);
+
+  useSalesRealtime(
+    salesperson?.id,
+    salesperson?.role as 'sdr' | 'closer' | 'hybrid' | undefined
+  );
 
   React.useEffect(() => {
     // Small delay to allow main thread to breathe after mounting
@@ -82,16 +119,16 @@ const Index = () => {
   }, []);
 
   // Validate section
-  const isValidSection = section && (section in SECTION_MAP || section === "visao-geral");
-  
+  const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
+
   if (section && !isValidSection) {
     return <Navigate to="/404" replace />;
   }
 
-  const activeTab = section ? (SECTION_MAP[section] ?? "overview") : "overview";
+  const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
 
-  const formatCurrency = (value: number) => 
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  const formatCurrency = (value: number) =>
+    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const isSDR = salesperson?.role === 'sdr';
   const isCloser = salesperson?.role === 'closer' || salesperson?.role === 'hybrid';
@@ -105,19 +142,26 @@ const Index = () => {
     <PageTransition className="pb-10 overflow-x-hidden">
       <Helmet>
         <title>Dashboard | Circuito de Vencedores</title>
-        <meta name="description" content="Acompanhe sua performance em tempo real no Circuito de Vencedores. KPIs de vendas, ranking competitivo e inteligência comercial 10/10." />
-        <meta name="keywords" content="vendas, dashboard, performance, CRM, inteligência comercial" />
+        <meta
+          name="description"
+          content="Acompanhe sua performance em tempo real no Circuito de Vencedores. KPIs de vendas, ranking competitivo e inteligência comercial 10/10."
+        />
+        <meta
+          name="keywords"
+          content="vendas, dashboard, performance, CRM, inteligência comercial"
+        />
         <link rel="canonical" href="https://promochampions.com.br/dashboard" />
         <script type="application/ld+json">
           {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "Circuito de Vencedores Dashboard",
-            "description": "Plataforma inteligente de gestão de vendas e performance comercial.",
-            "publisher": {
-              "@type": "Organization",
-              "name": "Promo Champions"
-            }
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Circuito de Vencedores Dashboard',
+            description:
+              'Plataforma inteligente de gestão de vendas e performance comercial.',
+            publisher: {
+              '@type': 'Organization',
+              name: 'Promo Champions',
+            },
           })}
         </script>
       </Helmet>
@@ -130,20 +174,26 @@ const Index = () => {
           <div className="flex-1">
             <DashboardHeader />
           </div>
-          
+
           <div className="flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-card/60 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4">
+                <Button
+                  variant="outline"
+                  className="bg-card/60 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4"
+                >
                   <Calendar className="mr-2 h-4 w-4" />
                   PERÍODO: {PERIOD_LABELS[period].label}
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover/95 border-primary/30 backdrop-blur-xl">
-                {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map((p) => (
-                  <DropdownMenuItem 
-                    key={p} 
+              <DropdownMenuContent
+                align="end"
+                className="bg-popover/95 border-primary/30 backdrop-blur-xl"
+              >
+                {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map(p => (
+                  <DropdownMenuItem
+                    key={p}
                     onClick={() => setPeriod(p)}
                     className="text-xs font-mono uppercase tracking-widest text-foreground focus:bg-primary/20 focus:text-primary cursor-pointer"
                   >
@@ -154,7 +204,7 @@ const Index = () => {
             </DropdownMenu>
           </div>
         </div>
-        
+
         {/* Priority Hint based on role */}
         <AnimatePresence>
           {priorities.roleHint && (
@@ -168,7 +218,9 @@ const Index = () => {
               <div className="p-1.5 rounded-full bg-current/10 relative z-10">
                 <Zap className="h-4 w-4 animate-pulse" />
               </div>
-              <p className="text-sm font-bold uppercase tracking-tight relative z-10">{priorities.roleHint}</p>
+              <p className="text-sm font-bold uppercase tracking-tight relative z-10">
+                {priorities.roleHint}
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -177,7 +229,7 @@ const Index = () => {
           <div className="space-y-8">
             {/* KPI Overview */}
             {!hasRevenue && !hasSales && !hasClients ? (
-              <motion.div 
+              <motion.div
                 variants={itemVariants}
                 initial="hidden"
                 animate="visible"
@@ -186,7 +238,7 @@ const Index = () => {
                 <DashboardEmptyState type="revenue" hero />
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -210,7 +262,9 @@ const Index = () => {
                       value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
                       numericValue={kpis?.current.totalRevenue ?? 0}
                       change={kpis?.changes.revenue ?? 0}
-                      previousValue={kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined}
+                      previousValue={
+                        kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined
+                      }
                       icon={DollarSign}
                       variant="primary"
                       hero
@@ -220,8 +274,11 @@ const Index = () => {
                     <DashboardEmptyState type="revenue" hero />
                   )}
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3">
+
+                <motion.div
+                  variants={itemVariants}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3"
+                >
                   {/* Card 1: Vendas or Reuniões */}
                   <motion.div variants={itemVariants}>
                     {isSDR ? (
@@ -239,13 +296,17 @@ const Index = () => {
                         value={formatCurrency(kpis?.current.firstSaleRevenue ?? 0)}
                         numericValue={kpis?.current.firstSaleRevenue ?? 0}
                         change={kpis?.changes.firstSaleRevenue ?? 0}
-                        previousValue={kpis ? formatCurrency(kpis.previous.firstSaleRevenue ?? 0) : undefined}
+                        previousValue={
+                          kpis
+                            ? formatCurrency(kpis.previous.firstSaleRevenue ?? 0)
+                            : undefined
+                        }
                         icon={Zap}
                         variant="success"
                       />
                     )}
                   </motion.div>
-                  
+
                   {/* Card 2: Venda Carteira or Leads Qualificados */}
                   <motion.div variants={itemVariants}>
                     {isSDR ? (
@@ -263,7 +324,11 @@ const Index = () => {
                         value={formatCurrency(kpis?.current.recurringRevenue ?? 0)}
                         numericValue={kpis?.current.recurringRevenue ?? 0}
                         change={kpis?.changes.recurringRevenue ?? 0}
-                        previousValue={kpis ? formatCurrency(kpis.previous.recurringRevenue ?? 0) : undefined}
+                        previousValue={
+                          kpis
+                            ? formatCurrency(kpis.previous.recurringRevenue ?? 0)
+                            : undefined
+                        }
                         icon={RotateCcw}
                         variant="primary"
                       />
@@ -274,13 +339,15 @@ const Index = () => {
                   <motion.div variants={itemVariants}>
                     {hasClients ? (
                       <StatCard
-                        title={isSDR ? "Novos Leads" : "Novos Clientes"}
+                        title={isSDR ? 'Novos Leads' : 'Novos Clientes'}
                         value={String(kpis?.current.newClients ?? 0)}
                         numericValue={kpis?.current.newClients ?? 0}
                         change={kpis?.changes.clients ?? 0}
-                        previousValue={kpis ? String(kpis.previous.newClients) : undefined}
+                        previousValue={
+                          kpis ? String(kpis.previous.newClients) : undefined
+                        }
                         icon={Users}
-                        variant={isSDR ? "warning" : "success"}
+                        variant={isSDR ? 'warning' : 'success'}
                       />
                     ) : (
                       <DashboardEmptyState type="clients" />
@@ -295,7 +362,9 @@ const Index = () => {
                         value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
                         numericValue={kpis?.current.conversionRate ?? 0}
                         change={kpis?.changes.conversion ?? 0}
-                        previousValue={kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined}
+                        previousValue={
+                          kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined
+                        }
                         icon={Zap}
                         variant="warning"
                       />
@@ -308,10 +377,12 @@ const Index = () => {
             )}
 
             {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
-            <Tabs 
-              value={activeTab} 
-              onValueChange={(value) => {
-                const sectionKey = Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) || "visao-geral";
+            <Tabs
+              value={activeTab}
+              onValueChange={value => {
+                const sectionKey =
+                  Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) ||
+                  'visao-geral';
                 navigate(`/dashboard/${sectionKey}`);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -325,37 +396,55 @@ const Index = () => {
                   exit={{ opacity: 0, scale: 1.02, y: -10 }}
                   transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 >
-                  <TabsContent value="overview" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="overview"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <OverviewModule goalsData={goalsData} kpis={kpis} />
                     </Suspense>
                   </TabsContent>
 
-                  <TabsContent value="performance" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="performance"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <PerformanceModule />
                     </Suspense>
                   </TabsContent>
 
-                  <TabsContent value="analytics" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="analytics"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <AnalyticsModule />
                     </Suspense>
                   </TabsContent>
 
-                  <TabsContent value="competition" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="competition"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <CompetitionModule salesperson={salesperson} />
                     </Suspense>
                   </TabsContent>
 
-                  <TabsContent value="intelligence" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="intelligence"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <IntelligenceModule />
                     </Suspense>
                   </TabsContent>
 
-                  <TabsContent value="engagement" className="mt-0 focus-visible:outline-none">
+                  <TabsContent
+                    value="engagement"
+                    className="mt-0 focus-visible:outline-none"
+                  >
                     <Suspense fallback={<DashboardLoadingSkeleton />}>
                       <EngagementModule />
                     </Suspense>

@@ -1,35 +1,33 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Calculator, 
-  TrendingUp, 
-  TrendingDown, 
-  AlertCircle,
-  Percent,
-  CheckCircle2,
-  HelpCircle
-} from "lucide-react";
-import { 
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
+import { Calculator, TrendingUp, Percent, CheckCircle2, HelpCircle } from 'lucide-react';
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 export const DiscountOptimizer = () => {
   const [discount, setDiscount] = useState([10]);
-  
+
   // Mock elasticity logic: lower discount = lower win rate but higher margin
   const winRateBase = 0.35;
   const winRateElasticity = 0.8; // change in winrate per % discount
   const currentWinRate = winRateBase + (discount[0] / 100) * winRateElasticity;
-  
+
   const dealValue = 50000;
   const marginBase = 0.6;
-  const currentMargin = marginBase - (discount[0] / 100);
-  
+  const currentMargin = marginBase - discount[0] / 100;
+
   const expectedRevenue = dealValue * currentWinRate;
   const expectedProfit = dealValue * currentMargin * currentWinRate;
 
@@ -70,17 +68,20 @@ export const DiscountOptimizer = () => {
                     <HelpCircle className="size-3.5 text-muted-foreground" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-xs text-xs">A elasticidade é calculada com base no histórico de deals similares fechados nos últimos 12 meses.</p>
+                    <p className="max-w-xs text-xs">
+                      A elasticidade é calculada com base no histórico de deals similares
+                      fechados nos últimos 12 meses.
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </label>
             <span className="text-2xl font-black text-primary">{discount[0]}%</span>
           </div>
-          <Slider 
-            value={discount} 
-            onValueChange={setDiscount} 
-            max={40} 
+          <Slider
+            value={discount}
+            onValueChange={setDiscount}
+            max={40}
             step={1}
             className="py-4"
           />
@@ -92,19 +93,19 @@ export const DiscountOptimizer = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <MetricBlock 
-            label="Win-Rate Previsto" 
-            value={`${(currentWinRate * 100).toFixed(1)}%`} 
+          <MetricBlock
+            label="Win-Rate Previsto"
+            value={`${(currentWinRate * 100).toFixed(1)}%`}
             icon={Percent}
-            subValue={discount[0] > 15 ? "Probabilidade Alta" : "Resistência Média"}
-            status={discount[0] > 20 ? "warning" : "success"}
+            subValue={discount[0] > 15 ? 'Probabilidade Alta' : 'Resistência Média'}
+            status={discount[0] > 20 ? 'warning' : 'success'}
           />
-          <MetricBlock 
-            label="Margem de Contribuição" 
-            value={`${(currentMargin * 100).toFixed(1)}%`} 
+          <MetricBlock
+            label="Margem de Contribuição"
+            value={`${(currentMargin * 100).toFixed(1)}%`}
             icon={TrendingUp}
             subValue={`R$ ${(dealValue * currentMargin).toLocaleString()} por deal`}
-            status={currentMargin < 0.4 ? "critical" : "success"}
+            status={currentMargin < 0.4 ? 'critical' : 'success'}
           />
         </div>
 
@@ -116,7 +117,10 @@ export const DiscountOptimizer = () => {
             </h4>
           </div>
           <p className="text-sm text-card-foreground/80 leading-relaxed italic">
-            "Para este deal, um desconto de <span className="font-bold text-primary">12%</span> maximiza o lucro esperado (R$ {(expectedProfit).toLocaleString()}). Acima de 18%, a erosão de margem supera o ganho de volume."
+            "Para este deal, um desconto de{' '}
+            <span className="font-bold text-primary">12%</span> maximiza o lucro esperado
+            (R$ {expectedProfit.toLocaleString()}). Acima de 18%, a erosão de margem
+            supera o ganho de volume."
           </p>
         </div>
       </CardContent>
@@ -126,10 +130,10 @@ export const DiscountOptimizer = () => {
 
 const MetricBlock = ({ label, value, icon: Icon, subValue, status }: any) => {
   const statusColors = {
-    success: "text-success",
-    warning: "text-warning",
-    critical: "text-destructive",
-  }[status as "success" | "warning" | "critical"];
+    success: 'text-success',
+    warning: 'text-warning',
+    critical: 'text-destructive',
+  }[status as 'success' | 'warning' | 'critical'];
 
   return (
     <div className="p-4 rounded-xl border bg-card/40 space-y-1">

@@ -1,6 +1,5 @@
-import { useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface KeyboardShortcut {
   key: string;
@@ -36,123 +35,133 @@ export function useGlobalKeyboardShortcuts({
   // Define all shortcuts
   shortcutsRef.current = [
     // Navigation shortcuts - Seq G sequences handled in KeyboardShortcutsProvider
-    
+
     // Back navigation shortcuts
     {
-      key: "Escape",
-      description: "Voltar / Fechar",
+      key: 'Escape',
+      description: 'Voltar / Fechar',
       action: () => {
         // BackButton component now handles Esc globally when not in inputs
         // This hook can focus on other global actions
       },
     },
     {
-      key: "ArrowLeft",
+      key: 'ArrowLeft',
       alt: true,
-      description: "Voltar",
+      description: 'Voltar',
       action: () => {
         if (window.history.length > 1) {
           navigate(-1);
         }
       },
     },
-    
+
     // Action shortcuts with Ctrl/Cmd
     {
-      key: "k",
+      key: 'k',
       ctrl: true,
       meta: true,
-      description: "Abrir busca global",
+      description: 'Abrir busca global',
       action: () => onSearch?.(),
       global: true,
     },
     {
-      key: "/",
-      description: "Abrir busca global",
+      key: '/',
+      description: 'Abrir busca global',
       action: () => onSearch?.(),
     },
     {
-      key: "n",
+      key: 'n',
       ctrl: true,
       meta: true,
-      description: "Nova venda",
+      description: 'Nova venda',
       action: () => onNewSale?.(),
       global: true,
     },
     {
-      key: "j",
+      key: 'j',
       ctrl: true,
       meta: true,
-      description: "Novo cliente",
+      description: 'Novo cliente',
       action: () => onNewClient?.(),
       global: true,
     },
-    
+
     // Utility shortcuts
     {
-      key: "\\",
+      key: '\\',
       ctrl: true,
       meta: true,
-      description: "Alternar tema",
+      description: 'Alternar tema',
       action: () => onToggleTheme?.(),
       global: true,
     },
     {
-      key: "?",
+      key: '?',
       shift: true,
-      description: "Mostrar atalhos",
+      description: 'Mostrar atalhos',
       action: () => {
         onShowShortcuts?.();
       },
     },
   ];
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!enabled) return;
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!enabled) return;
 
-    // Ignore if user is typing in an input, textarea, or contenteditable
-    const target = event.target as HTMLElement;
-    const isInputElement = 
-      target.tagName === "INPUT" ||
-      target.tagName === "TEXTAREA" ||
-      target.isContentEditable;
+      // Ignore if user is typing in an input, textarea, or contenteditable
+      const target = event.target as HTMLElement;
+      const isInputElement =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
 
-    // For global shortcuts (with Ctrl/Cmd), allow even in inputs
-    const isModifierPressed = event.ctrlKey || event.metaKey;
-    
-    if (isInputElement && !isModifierPressed) return;
+      // For global shortcuts (with Ctrl/Cmd), allow even in inputs
+      const isModifierPressed = event.ctrlKey || event.metaKey;
 
-    const key = event.key.toLowerCase();
-    
-    for (const shortcut of shortcutsRef.current) {
-      const matchesKey = shortcut.key.toLowerCase() === key;
-      const matchesCtrl = shortcut.ctrl ? (event.ctrlKey || event.metaKey) : !event.ctrlKey;
-      const matchesShift = shortcut.shift ? event.shiftKey : !event.shiftKey;
-      const matchesAlt = shortcut.alt ? event.altKey : !event.altKey;
+      if (isInputElement && !isModifierPressed) return;
 
-      // For shortcuts that require Ctrl/Meta
-      if (shortcut.ctrl || shortcut.meta) {
-        if (matchesKey && (event.ctrlKey || event.metaKey) && matchesShift && matchesAlt) {
-          event.preventDefault();
-          shortcut.action();
-          return;
-        }
-      } else if (matchesKey && matchesCtrl && matchesShift && matchesAlt) {
-        // Only trigger non-modifier shortcuts when not in input
-        if (!isInputElement) {
-          event.preventDefault();
-          shortcut.action();
-          return;
+      const key = event.key.toLowerCase();
+
+      for (const shortcut of shortcutsRef.current) {
+        const matchesKey = shortcut.key.toLowerCase() === key;
+        const matchesCtrl = shortcut.ctrl
+          ? event.ctrlKey || event.metaKey
+          : !event.ctrlKey;
+        const matchesShift = shortcut.shift ? event.shiftKey : !event.shiftKey;
+        const matchesAlt = shortcut.alt ? event.altKey : !event.altKey;
+
+        // For shortcuts that require Ctrl/Meta
+        if (shortcut.ctrl || shortcut.meta) {
+          if (
+            matchesKey &&
+            (event.ctrlKey || event.metaKey) &&
+            matchesShift &&
+            matchesAlt
+          ) {
+            event.preventDefault();
+            shortcut.action();
+            return;
+          }
+        } else if (matchesKey && matchesCtrl && matchesShift && matchesAlt) {
+          // Only trigger non-modifier shortcuts when not in input
+          if (!isInputElement) {
+            event.preventDefault();
+            shortcut.action();
+            return;
+          }
         }
       }
-    }
-  }, [enabled]);
+    },
+    [enabled]
+  );
 
   useEffect(() => {
     if (!enabled) return;
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown, enabled]);
 
   return {
@@ -162,42 +171,46 @@ export function useGlobalKeyboardShortcuts({
 
 // Hook for showing keyboard shortcut hints
 export function useKeyboardShortcutHint() {
-  const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-  
-  const getModifierSymbol = (modifier: "ctrl" | "alt" | "shift" | "meta") => {
+  const isMac =
+    typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+  const getModifierSymbol = (modifier: 'ctrl' | 'alt' | 'shift' | 'meta') => {
     if (isMac) {
       switch (modifier) {
-        case "ctrl":
-        case "meta":
-          return "⌘";
-        case "alt":
-          return "⌥";
-        case "shift":
-          return "⇧";
+        case 'ctrl':
+        case 'meta':
+          return '⌘';
+        case 'alt':
+          return '⌥';
+        case 'shift':
+          return '⇧';
         default:
           return modifier;
       }
     }
     switch (modifier) {
-      case "ctrl":
-      case "meta":
-        return "Ctrl";
-      case "alt":
-        return "Alt";
-      case "shift":
-        return "Shift";
+      case 'ctrl':
+      case 'meta':
+        return 'Ctrl';
+      case 'alt':
+        return 'Alt';
+      case 'shift':
+        return 'Shift';
       default:
         return modifier;
     }
   };
 
-  const formatShortcut = (key: string, modifiers?: { ctrl?: boolean; alt?: boolean; shift?: boolean }) => {
+  const formatShortcut = (
+    key: string,
+    modifiers?: { ctrl?: boolean; alt?: boolean; shift?: boolean }
+  ) => {
     const parts: string[] = [];
-    if (modifiers?.ctrl) parts.push(getModifierSymbol("ctrl"));
-    if (modifiers?.alt) parts.push(getModifierSymbol("alt"));
-    if (modifiers?.shift) parts.push(getModifierSymbol("shift"));
+    if (modifiers?.ctrl) parts.push(getModifierSymbol('ctrl'));
+    if (modifiers?.alt) parts.push(getModifierSymbol('alt'));
+    if (modifiers?.shift) parts.push(getModifierSymbol('shift'));
     parts.push(key.toUpperCase());
-    return parts.join(isMac ? "" : "+");
+    return parts.join(isMac ? '' : '+');
   };
 
   return {

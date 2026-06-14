@@ -2,9 +2,16 @@ import React, { FC, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, UserX, Shield, TrendingDown, Clock, Mail, Phone, Activity } from 'lucide-react';
+import {
+  AlertTriangle,
+  UserX,
+  Shield,
+  TrendingDown,
+  Clock,
+  Activity,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useChurnPrediction, ChurnPredictionItem } from './useChurnPrediction';
+import { useChurnPrediction } from './useChurnPrediction';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -15,12 +22,34 @@ interface ChurnPredictionProps {
 }
 
 const riskConfig = {
-  high: { color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/30', label: 'Alto', icon: AlertTriangle },
-  medium: { color: 'text-streak', bg: 'bg-streak/10', border: 'border-streak/30', label: 'Médio', icon: TrendingDown },
-  low: { color: 'text-success', bg: 'bg-success/10', border: 'border-success/30', label: 'Baixo', icon: Shield },
+  high: {
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive/30',
+    label: 'Alto',
+    icon: AlertTriangle,
+  },
+  medium: {
+    color: 'text-streak',
+    bg: 'bg-streak/10',
+    border: 'border-streak/30',
+    label: 'Médio',
+    icon: TrendingDown,
+  },
+  low: {
+    color: 'text-success',
+    bg: 'bg-success/10',
+    border: 'border-success/30',
+    label: 'Baixo',
+    icon: Shield,
+  },
 };
 
-const CHART_COLORS = ['hsl(var(--destructive))', 'hsl(var(--warning, 45 93% 47%))', 'hsl(var(--success))'];
+const CHART_COLORS = [
+  'hsl(var(--destructive))',
+  'hsl(var(--warning, 45 93% 47%))',
+  'hsl(var(--success))',
+];
 
 export const ChurnPrediction: FC<ChurnPredictionProps> = ({
   clientId,
@@ -34,7 +63,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
     const high = data.filter(c => c.riskLevel === 'high');
     const medium = data.filter(c => c.riskLevel === 'medium');
     const low = data.filter(c => c.riskLevel === 'low');
-    const avgScore = Math.round(data.reduce((sum, c) => sum + c.riskScore, 0) / data.length);
+    const avgScore = Math.round(
+      data.reduce((sum, c) => sum + c.riskScore, 0) / data.length
+    );
     const pieData = [
       { name: 'Alto', value: high.length },
       { name: 'Médio', value: medium.length },
@@ -46,7 +77,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => <div key={i} className="h-20 rounded-xl bg-muted/30 animate-pulse" />)}
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-20 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -68,7 +101,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
         <CardContent className="p-8 text-center">
           <Shield className="h-10 w-10 mx-auto text-success/50 mb-3" />
           <p className="text-sm font-semibold text-foreground">Nenhum cliente em risco</p>
-          <p className="text-xs text-muted-foreground mt-1">Todos os clientes estão ativos! 🎉</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Todos os clientes estão ativos! 🎉
+          </p>
         </CardContent>
       </Card>
     );
@@ -84,7 +119,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
               <UserX className="h-4 w-4 text-destructive" />
             </div>
             <div>
-              <p className="text-lg font-bold font-display text-destructive">{stats.high.length}</p>
+              <p className="text-lg font-bold font-display text-destructive">
+                {stats.high.length}
+              </p>
               <p className="text-xs text-muted-foreground">Alto Risco</p>
             </div>
           </CardContent>
@@ -95,7 +132,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
               <TrendingDown className="h-4 w-4 text-streak" />
             </div>
             <div>
-              <p className="text-lg font-bold font-display text-streak">{stats.medium.length}</p>
+              <p className="text-lg font-bold font-display text-streak">
+                {stats.medium.length}
+              </p>
               <p className="text-xs text-muted-foreground">Risco Médio</p>
             </div>
           </CardContent>
@@ -133,19 +172,39 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
           <CardContent>
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
-                <Pie data={stats.pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value">
+                <Pie
+                  data={stats.pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={45}
+                  outerRadius={70}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
                   {stats.pieData.map((_, i) => (
                     <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
             <div className="flex justify-center gap-4 text-xs">
               {stats.pieData.map((d, i) => (
                 <div key={d.name} className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: CHART_COLORS[i] }} />
-                  <span className="text-muted-foreground">{d.name}: {d.value}</span>
+                  <div
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: CHART_COLORS[i] }}
+                  />
+                  <span className="text-muted-foreground">
+                    {d.name}: {d.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -160,7 +219,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
                 <AlertTriangle className="h-4 w-4 text-destructive" />
                 Clientes em Risco
               </CardTitle>
-              <Badge variant="outline" className="text-xs">{stats.high.length + stats.medium.length} alertas</Badge>
+              <Badge variant="outline" className="text-xs">
+                {stats.high.length + stats.medium.length} alertas
+              </Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -176,7 +237,8 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
                     transition={{ delay: i * 0.03 }}
                     className={cn(
                       'p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm',
-                      config.bg, config.border
+                      config.bg,
+                      config.border
                     )}
                     onClick={() => onClientClick?.(client.clientId)}
                   >
@@ -184,7 +246,9 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
                       <div className="flex items-center gap-2 min-w-0">
                         <Icon className={cn('h-4 w-4 shrink-0', config.color)} />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{client.clientName}</p>
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {client.clientName}
+                          </p>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                             <Clock className="h-3 w-3" />
                             <span>{client.daysSinceLastPurchase}d sem atividade</span>
@@ -193,20 +257,37 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="text-right">
-                          <Badge variant={client.riskLevel === 'high' ? 'destructive' : 'secondary'} className="text-[10px] h-5">
+                          <Badge
+                            variant={
+                              client.riskLevel === 'high' ? 'destructive' : 'secondary'
+                            }
+                            className="text-[10px] h-5"
+                          >
                             {config.label}
                           </Badge>
                         </div>
                         <div className="w-12">
                           <Progress value={client.riskScore} className="h-1.5" />
-                          <p className={cn('text-[10px] font-mono text-right mt-0.5', config.color)}>{client.riskScore}%</p>
+                          <p
+                            className={cn(
+                              'text-[10px] font-mono text-right mt-0.5',
+                              config.color
+                            )}
+                          >
+                            {client.riskScore}%
+                          </p>
                         </div>
                       </div>
                     </div>
                     {client.factors.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {client.factors.map((f, j) => (
-                          <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-background/50 text-muted-foreground">{f}</span>
+                          <span
+                            key={j}
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-background/50 text-muted-foreground"
+                          >
+                            {f}
+                          </span>
                         ))}
                       </div>
                     )}

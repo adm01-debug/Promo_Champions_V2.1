@@ -7,10 +7,8 @@ import {
   subMonths,
   startOfQuarter,
   endOfQuarter,
-  subQuarters,
   startOfYear,
   endOfYear,
-  subYears,
   eachMonthOfInterval,
   eachWeekOfInterval,
   startOfWeek,
@@ -40,15 +38,31 @@ const getRange = (period: KPIPeriod) => {
         granularity: 'day' as const,
       };
     case 'current_month':
-      return { start: startOfMonth(now), end: endOfMonth(now), granularity: 'week' as const };
+      return {
+        start: startOfMonth(now),
+        end: endOfMonth(now),
+        granularity: 'week' as const,
+      };
     case 'last_month': {
       const last = subMonths(now, 1);
-      return { start: startOfMonth(last), end: endOfMonth(last), granularity: 'week' as const };
+      return {
+        start: startOfMonth(last),
+        end: endOfMonth(last),
+        granularity: 'week' as const,
+      };
     }
     case 'quarter':
-      return { start: startOfQuarter(now), end: endOfQuarter(now), granularity: 'month' as const };
+      return {
+        start: startOfQuarter(now),
+        end: endOfQuarter(now),
+        granularity: 'month' as const,
+      };
     case 'year':
-      return { start: startOfYear(now), end: endOfYear(now), granularity: 'month' as const };
+      return {
+        start: startOfYear(now),
+        end: endOfYear(now),
+        granularity: 'month' as const,
+      };
   }
 };
 
@@ -102,7 +116,10 @@ export const usePeriodTrend = (period: KPIPeriod) => {
 
       return buckets.map(b => {
         const inBucket = completed.filter(r =>
-          isWithinInterval(new Date(r.created_at as string), { start: b.start, end: b.end })
+          isWithinInterval(new Date(r.created_at as string), {
+            start: b.start,
+            end: b.end,
+          })
         );
         return {
           label: b.label,

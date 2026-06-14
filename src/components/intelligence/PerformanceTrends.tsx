@@ -1,17 +1,20 @@
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { TrendingUp, Activity } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Activity } from 'lucide-react';
 
 const data = [
   { name: 'Week 1', revenue: 4000, forecast: 4400 },
@@ -32,7 +35,9 @@ export const PerformanceTrends = () => {
               <Activity className="size-4 text-primary" />
               Revenue <span className="text-primary">Performance Trends</span>
             </CardTitle>
-            <CardDescription className="text-[10px] uppercase font-bold opacity-60">Real vs. Predicted (Weekly)</CardDescription>
+            <CardDescription className="text-[10px] uppercase font-bold opacity-60">
+              Real vs. Predicted (Weekly)
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -41,41 +46,45 @@ export const PerformanceTrends = () => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false} 
-              tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }} 
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="rgba(255,255,255,0.05)"
+            />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
             />
             <YAxis hide />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: 'rgba(0,0,0,0.8)', 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'rgba(0,0,0,0.8)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '12px',
                 fontSize: '10px',
-                fontWeight: 'bold'
-              }} 
+                fontWeight: 'bold',
+              }}
             />
-            <Area 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke="hsl(var(--primary))" 
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="hsl(var(--primary))"
               strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorRevenue)" 
+              fillOpacity={1}
+              fill="url(#colorRevenue)"
             />
-            <Area 
-              type="monotone" 
-              dataKey="forecast" 
-              stroke="rgba(255,255,255,0.2)" 
+            <Area
+              type="monotone"
+              dataKey="forecast"
+              stroke="rgba(255,255,255,0.2)"
               strokeDasharray="5 5"
-              fill="transparent" 
+              fill="transparent"
             />
           </AreaChart>
         </ResponsiveContainer>

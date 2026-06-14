@@ -1,17 +1,23 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useRef, useEffect } from "react";
-import { useGlobalKeyboardShortcuts, useKeyboardShortcutHint } from "@/hooks/useGlobalKeyboardShortcuts";
-import { useTheme } from "next-themes";
-import { useNavigate } from "react-router-dom";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Keyboard, Search, Plus, Moon, Command, ArrowRight } from "lucide-react";
-import { triggerHaptic } from "@/lib/haptics";
-import { NavigationHud } from "./NavigationHud";
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  useRef,
+  useEffect,
+} from 'react';
+import {
+  useGlobalKeyboardShortcuts,
+  useKeyboardShortcutHint,
+} from '@/hooks/useGlobalKeyboardShortcuts';
+import { useTheme } from 'next-themes';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Keyboard, Search, Plus, Moon, Command } from 'lucide-react';
+import { triggerHaptic } from '@/lib/haptics';
+import { NavigationHud } from './NavigationHud';
 
 interface KeyboardShortcutsContextType {
   openSearch: () => void;
@@ -28,7 +34,9 @@ const KeyboardShortcutsContext = createContext<KeyboardShortcutsContextType | nu
 export function useKeyboardShortcutsContext() {
   const context = useContext(KeyboardShortcutsContext);
   if (!context) {
-    throw new Error("useKeyboardShortcutsContext must be used within KeyboardShortcutsProvider");
+    throw new Error(
+      'useKeyboardShortcutsContext must be used within KeyboardShortcutsProvider'
+    );
   }
   return context;
 }
@@ -63,7 +71,7 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [theme, setTheme]);
 
   const showShortcutsDialog = useCallback(() => {
@@ -86,7 +94,8 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return;
 
       if (e.key.toLowerCase() === 'g') {
         setIsGKeyDown(true);
@@ -100,15 +109,33 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
         let targetPath = '';
 
         switch (key) {
-          case 'd': targetPath = '/dashboard'; break;
-          case 'v': targetPath = '/vendas'; break;
-          case 'c': targetPath = '/clientes'; break;
-          case 'p': targetPath = '/pipeline'; break;
-          case 'm': targetPath = '/metas'; break;
-          case 'a': targetPath = '/atividades'; break;
-          case 'r': targetPath = '/ranking'; break;
-          case 'i': targetPath = '/assistente'; break;
-          case 's': targetPath = '/configuracoes'; break;
+          case 'd':
+            targetPath = '/dashboard';
+            break;
+          case 'v':
+            targetPath = '/vendas';
+            break;
+          case 'c':
+            targetPath = '/clientes';
+            break;
+          case 'p':
+            targetPath = '/pipeline';
+            break;
+          case 'm':
+            targetPath = '/metas';
+            break;
+          case 'a':
+            targetPath = '/atividades';
+            break;
+          case 'r':
+            targetPath = '/ranking';
+            break;
+          case 'i':
+            targetPath = '/assistente';
+            break;
+          case 's':
+            targetPath = '/configuracoes';
+            break;
         }
 
         if (targetPath) {
@@ -140,35 +167,51 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
 
   const shortcutGroups = [
     {
-      title: "Ir para (Sequência G + ...)",
+      title: 'Ir para (Sequência G + ...)',
       shortcuts: [
-        { key: "G + D", description: "Dashboard" },
-        { key: "G + V", description: "Vendas" },
-        { key: "G + C", description: "Clientes" },
-        { key: "G + P", description: "Pipeline" },
-        { key: "G + M", description: "Metas" },
-        { key: "G + A", description: "Atividades" },
-        { key: "G + R", description: "Ranking" },
-        { key: "G + I", description: "IA Assistente" },
-        { key: "G + S", description: "Configurações" },
+        { key: 'G + D', description: 'Dashboard' },
+        { key: 'G + V', description: 'Vendas' },
+        { key: 'G + C', description: 'Clientes' },
+        { key: 'G + P', description: 'Pipeline' },
+        { key: 'G + M', description: 'Metas' },
+        { key: 'G + A', description: 'Atividades' },
+        { key: 'G + R', description: 'Ranking' },
+        { key: 'G + I', description: 'IA Assistente' },
+        { key: 'G + S', description: 'Configurações' },
       ],
     },
     {
-      title: "Navegação por Teclado",
+      title: 'Navegação por Teclado',
       shortcuts: [
-        { key: "Alt + ←", description: "Voltar (Smart Back)" },
-        { key: "Esc", description: "Fechar modal / Voltar" },
-        { key: "?", description: "Mostrar atalhos", icon: Keyboard },
+        { key: 'Alt + ←', description: 'Voltar (Smart Back)' },
+        { key: 'Esc', description: 'Fechar modal / Voltar' },
+        { key: '?', description: 'Mostrar atalhos', icon: Keyboard },
       ],
     },
     {
-      title: "Ações Globais",
+      title: 'Ações Globais',
       shortcuts: [
-        { key: formatShortcut("K", { ctrl: true }), description: "Abrir busca global", icon: Search },
-        { key: "/", description: "Abrir busca global (alternativo)", icon: Search },
-        { key: formatShortcut("N", { ctrl: true }), description: "Nova venda", icon: Plus },
-        { key: formatShortcut("J", { ctrl: true }), description: "Novo cliente", icon: Plus },
-        { key: formatShortcut("\\", { ctrl: true }), description: "Alternar tema", icon: Moon },
+        {
+          key: formatShortcut('K', { ctrl: true }),
+          description: 'Abrir busca global',
+          icon: Search,
+        },
+        { key: '/', description: 'Abrir busca global (alternativo)', icon: Search },
+        {
+          key: formatShortcut('N', { ctrl: true }),
+          description: 'Nova venda',
+          icon: Plus,
+        },
+        {
+          key: formatShortcut('J', { ctrl: true }),
+          description: 'Novo cliente',
+          icon: Plus,
+        },
+        {
+          key: formatShortcut('\\', { ctrl: true }),
+          description: 'Alternar tema',
+          icon: Moon,
+        },
       ],
     },
   ];
@@ -200,19 +243,21 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
           </DialogHeader>
 
           <div className="space-y-6 py-4">
-            {shortcutGroups.map((group) => (
+            {shortcutGroups.map(group => (
               <div key={group.title}>
                 <h4 className="text-sm font-semibold text-muted-foreground mb-3">
                   {group.title}
                 </h4>
                 <div className="space-y-2">
-                  {group.shortcuts.map((shortcut) => (
+                  {group.shortcuts.map(shortcut => (
                     <div
                       key={shortcut.key}
                       className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                     >
                       <span className="text-sm flex items-center gap-2">
-                        {shortcut.icon && <shortcut.icon className="h-4 w-4 text-muted-foreground" />}
+                        {shortcut.icon && (
+                          <shortcut.icon className="h-4 w-4 text-muted-foreground" />
+                        )}
                         {shortcut.description}
                       </span>
                       <Badge variant="outline" className="font-mono text-xs">
@@ -231,9 +276,7 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
                     <Command className="h-3 w-3" /> = Command (⌘)
                   </>
                 ) : (
-                  <>
-                    Ctrl = Control
-                  </>
+                  <>Ctrl = Control</>
                 )}
               </p>
             </div>

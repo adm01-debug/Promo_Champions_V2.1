@@ -1,13 +1,17 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Info, Flame, Zap } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, Info, Flame, Zap } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
-import { useActivities } from "@/hooks/activities/useActivities";
-import { format, subDays, startOfDay, isSameDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useActivities } from '@/hooks/activities/useActivities';
+import { format, subDays, isSameDay } from 'date-fns';
 
 export const ActivityHeatmap: React.FC = () => {
   const { data: activities } = useActivities();
@@ -15,8 +19,9 @@ export const ActivityHeatmap: React.FC = () => {
   // Generate last 35 days
   const last35Days = Array.from({ length: 35 }, (_, i) => {
     const date = subDays(new Date(), 34 - i);
-    const dayActivities = activities?.filter(a => isSameDay(new Date(a.created_at), date)) || [];
-    
+    const dayActivities =
+      activities?.filter(a => isSameDay(new Date(a.created_at), date)) || [];
+
     // Intensity logic: 0: 0, 1: 1-2, 2: 3-5, 3: 6-10, 4: >10
     const count = dayActivities.length;
     let intensity = 0;
@@ -29,21 +34,31 @@ export const ActivityHeatmap: React.FC = () => {
       day: i + 1,
       intensity,
       count,
-      date: format(date, "dd/MM/yyyy"),
+      date: format(date, 'dd/MM/yyyy'),
       fullDate: date,
-      connections: dayActivities.filter(a => ['connected', 'scheduled', 'qualified'].includes(a.outcome)).length,
-      deals: dayActivities.filter(a => a.outcome === 'scheduled' || a.outcome === 'qualified').length
+      connections: dayActivities.filter(a =>
+        ['connected', 'scheduled', 'qualified'].includes(a.outcome)
+      ).length,
+      deals: dayActivities.filter(
+        a => a.outcome === 'scheduled' || a.outcome === 'qualified'
+      ).length,
     };
   });
 
   const getIntensityColor = (intensity: number) => {
     switch (intensity) {
-      case 0: return "bg-white/5 border-white/5";
-      case 1: return "bg-primary/10 border-primary/20 hover:bg-primary/20";
-      case 2: return "bg-primary/30 border-primary/40 shadow-sm hover:shadow-glow-primary/20";
-      case 3: return "bg-primary/60 border-primary/60 shadow-glow-primary/10 hover:shadow-glow-primary/30";
-      case 4: return "bg-primary border-primary shadow-glow-primary animate-pulse scale-105 z-10";
-      default: return "bg-white/5";
+      case 0:
+        return 'bg-white/5 border-white/5';
+      case 1:
+        return 'bg-primary/10 border-primary/20 hover:bg-primary/20';
+      case 2:
+        return 'bg-primary/30 border-primary/40 shadow-sm hover:shadow-glow-primary/20';
+      case 3:
+        return 'bg-primary/60 border-primary/60 shadow-glow-primary/10 hover:shadow-glow-primary/30';
+      case 4:
+        return 'bg-primary border-primary shadow-glow-primary animate-pulse scale-105 z-10';
+      default:
+        return 'bg-white/5';
     }
   };
 
@@ -55,7 +70,10 @@ export const ActivityHeatmap: React.FC = () => {
   }
 
   return (
-    <Card variant="glass" className="overflow-hidden border-border/20 bg-background/40 backdrop-blur-xl relative group/heatmap">
+    <Card
+      variant="glass"
+      className="overflow-hidden border-border/20 bg-background/40 backdrop-blur-xl relative group/heatmap"
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 pointer-events-none" />
       <CardHeader className="pb-3 border-b border-border/10 relative z-10">
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center justify-between">
@@ -73,7 +91,9 @@ export const ActivityHeatmap: React.FC = () => {
                 </div>
               </TooltipTrigger>
               <TooltipContent className="glass-morphism border-primary/20 p-3 text-[10px] font-bold max-w-[200px] shadow-2xl">
-                <p className="text-primary mb-1 uppercase tracking-widest">Heatmap de Performance</p>
+                <p className="text-primary mb-1 uppercase tracking-widest">
+                  Heatmap de Performance
+                </p>
                 Visualização de densidade de atividades diárias em relação à meta global.
               </TooltipContent>
             </Tooltip>
@@ -84,15 +104,20 @@ export const ActivityHeatmap: React.FC = () => {
         <div className="flex flex-col gap-6">
           <div className="grid grid-cols-7 gap-2 justify-items-center">
             {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((d, i) => (
-              <span key={i} className="text-[9px] font-black text-muted-foreground/40 mb-1">{d}</span>
+              <span
+                key={i}
+                className="text-[9px] font-black text-muted-foreground/40 mb-1"
+              >
+                {d}
+              </span>
             ))}
-            {last35Days.map((day) => (
+            {last35Days.map(day => (
               <TooltipProvider key={day.day}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div 
+                    <div
                       className={cn(
-                        "w-full aspect-square max-w-[32px] rounded-md border transition-all duration-300 hover:scale-125 cursor-pointer relative group/day",
+                        'w-full aspect-square max-w-[32px] rounded-md border transition-all duration-300 hover:scale-125 cursor-pointer relative group/day',
                         getIntensityColor(day.intensity)
                       )}
                     >
@@ -106,21 +131,28 @@ export const ActivityHeatmap: React.FC = () => {
                   <TooltipContent className="glass border-primary/20 p-3 shadow-2xl min-w-[140px]">
                     <div className="space-y-2">
                       <div className="flex justify-between items-center gap-4">
-                        <p className="text-[10px] font-black uppercase tracking-tighter text-primary">{day.date}</p>
-                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">{day.count} Atividades</Badge>
+                        <p className="text-[10px] font-black uppercase tracking-tighter text-primary">
+                          {day.date}
+                        </p>
+                        <Badge className="text-[7px] bg-primary/20 text-primary border-none h-3">
+                          {day.count} Atividades
+                        </Badge>
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                           <span>Conexões</span>
-                           <span className="text-foreground">{day.connections}</span>
-                         </div>
-                         <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-                           <span>Conversões</span>
-                           <span className="text-foreground">{day.deals}</span>
+                          <span>Conexões</span>
+                          <span className="text-foreground">{day.connections}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <span>Conversões</span>
+                          <span className="text-foreground">{day.deals}</span>
                         </div>
                       </div>
                       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-1">
-                        <div className="h-full bg-primary" style={{ width: `${day.intensity * 25}%` }} />
+                        <div
+                          className="h-full bg-primary"
+                          style={{ width: `${day.intensity * 25}%` }}
+                        />
                       </div>
                     </div>
                   </TooltipContent>
@@ -128,25 +160,37 @@ export const ActivityHeatmap: React.FC = () => {
               </TooltipProvider>
             ))}
           </div>
-          
+
           <div className="flex flex-col gap-4 mt-2 pt-4 border-t border-border/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Ritmo</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
+                  Ritmo
+                </span>
                 <div className="flex gap-1.5">
                   {[0, 1, 2, 3, 4].map(i => (
-                    <div key={i} className={cn("w-3 h-3 rounded-sm border transition-all", getIntensityColor(i))} />
+                    <div
+                      key={i}
+                      className={cn(
+                        'w-3 h-3 rounded-sm border transition-all',
+                        getIntensityColor(i)
+                      )}
+                    />
                   ))}
                 </div>
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-success/10 border border-status-success/20 shadow-glow-success/5 animate-pulse">
                 <Flame className="h-3.5 w-3.5 text-status-success" />
-                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">Streak: {streak} Dias</span>
+                <span className="text-[9px] font-black text-status-success uppercase tracking-widest">
+                  Streak: {streak} Dias
+                </span>
               </div>
             </div>
-            
+
             <p className="text-[9px] text-muted-foreground font-medium leading-relaxed italic opacity-80 group-hover/heatmap:opacity-100 transition-opacity">
-              Sua consistência está <span className="text-primary font-black uppercase">15% superior</span> à média do ciclo anterior. Mantenha o fogo aceso!
+              Sua consistência está{' '}
+              <span className="text-primary font-black uppercase">15% superior</span> à
+              média do ciclo anterior. Mantenha o fogo aceso!
             </p>
           </div>
         </div>

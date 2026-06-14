@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flag, Trophy, Clock, Flame, Rocket, X, Sparkles } from 'lucide-react';
+import { Flag, Trophy, Flame, Rocket, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { BriefingData } from '@/hooks/race/useDailyBriefing';
@@ -29,16 +29,25 @@ const SLIDE_DURATION = 1400;
  * Daily Briefing: 4 slides cinemáticos (saudação → posição → streak → CTA),
  * auto-dismiss em ~5.5s, skip disponível, mostrado 1x/dia.
  */
-export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500, whatIf }: Props) {
+export function DailyBriefingModal({
+  open,
+  data,
+  onDismiss,
+  autoDismissMs = 5500,
+  whatIf,
+}: Props) {
   const reduced = useReducedMotion();
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
-    if (!open) { setSlide(0); return; }
+    if (!open) {
+      setSlide(0);
+      return;
+    }
     const total = 4;
     const stepMs = autoDismissMs / total;
     const id = window.setInterval(() => {
-      setSlide((s) => {
+      setSlide(s => {
         if (s + 1 >= total) {
           window.clearInterval(id);
           window.setTimeout(onDismiss, 400);
@@ -62,17 +71,24 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
     {
       icon: Trophy,
       title: data.rank ? `Você está em P${data.rank}` : 'Bem-vindo à pista',
-      subtitle: data.gapToLeaderPercent !== null
-        ? `${data.gapToLeaderPercent.toFixed(1)}% atrás do líder`
-        : data.rank === 1 ? 'Liderança em suas mãos' : `Entre os ${data.totalPilots} pilotos`,
+      subtitle:
+        data.gapToLeaderPercent !== null
+          ? `${data.gapToLeaderPercent.toFixed(1)}% atrás do líder`
+          : data.rank === 1
+            ? 'Liderança em suas mãos'
+            : `Entre os ${data.totalPilots} pilotos`,
       tone: 'text-foreground',
     },
     {
       icon: Flame,
-      title: data.streakDays > 0 ? `🔥 ${data.streakDays} ${data.streakDays === 1 ? 'dia' : 'dias'}` : 'Acenda o motor',
-      subtitle: data.streakDays > 0
-        ? 'Você acendeu o motor em sequência'
-        : 'Comece sua sequência hoje',
+      title:
+        data.streakDays > 0
+          ? `🔥 ${data.streakDays} ${data.streakDays === 1 ? 'dia' : 'dias'}`
+          : 'Acenda o motor',
+      subtitle:
+        data.streakDays > 0
+          ? 'Você acendeu o motor em sequência'
+          : 'Comece sua sequência hoje',
       tone: flameClass(data.streakDays),
     },
     {
@@ -119,10 +135,14 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
                 transition={{ duration: reduced ? 0.2 : 0.55, ease: [0.22, 1, 0.36, 1] }}
                 className="space-y-4"
               >
-                <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-card ring-1 ring-border shadow-lg ${current.tone}`}>
+                <div
+                  className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-card ring-1 ring-border shadow-lg ${current.tone}`}
+                >
                   <Icon className="h-8 w-8" strokeWidth={2.2} />
                 </div>
-                <h2 className={`text-3xl md:text-4xl font-black font-display tracking-tight ${current.tone}`}>
+                <h2
+                  className={`text-3xl md:text-4xl font-black font-display tracking-tight ${current.tone}`}
+                >
                   {current.title}
                 </h2>
                 <p className="text-base text-muted-foreground">{current.subtitle}</p>
@@ -132,13 +152,22 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
                       <Sparkles className="w-3 h-3" /> E se você…
                     </p>
                     <div className="space-y-1.5">
-                      {whatIf.map((s) => (
-                        <div key={s.label} className="flex items-center justify-between text-sm">
+                      {whatIf.map(s => (
+                        <div
+                          key={s.label}
+                          className="flex items-center justify-between text-sm"
+                        >
                           <span className="text-muted-foreground">
-                            <span className="font-semibold text-foreground">{s.label}</span> · +{fmtCompact(s.delta)} pts
+                            <span className="font-semibold text-foreground">
+                              {s.label}
+                            </span>{' '}
+                            · +{fmtCompact(s.delta)} pts
                           </span>
-                          <span className={`tabular-nums font-bold ${s.positionsGained > 0 ? 'text-success' : 'text-muted-foreground'}`}>
-                            {s.positionsGained > 0 ? `↑${s.positionsGained}` : '—'} → P{s.newRank}
+                          <span
+                            className={`tabular-nums font-bold ${s.positionsGained > 0 ? 'text-success' : 'text-muted-foreground'}`}
+                          >
+                            {s.positionsGained > 0 ? `↑${s.positionsGained}` : '—'} → P
+                            {s.newRank}
                           </span>
                         </div>
                       ))}
@@ -154,7 +183,11 @@ export function DailyBriefingModal({ open, data, onDismiss, autoDismissMs = 5500
                 <span
                   key={i}
                   className={`h-1 rounded-full transition-all duration-500 ${
-                    i === slide ? 'w-8 bg-primary' : i < slide ? 'w-4 bg-primary/50' : 'w-4 bg-muted'
+                    i === slide
+                      ? 'w-8 bg-primary'
+                      : i < slide
+                        ? 'w-4 bg-primary/50'
+                        : 'w-4 bg-muted'
                   }`}
                   style={{ transitionDuration: `${SLIDE_DURATION}ms` }}
                 />

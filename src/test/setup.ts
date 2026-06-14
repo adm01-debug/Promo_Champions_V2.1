@@ -1,13 +1,15 @@
-import "@testing-library/jest-dom";
-import { vi, beforeAll, afterAll, afterEach } from "vitest";
-import { cleanup } from "@testing-library/react";
+import '@testing-library/jest-dom';
+import { vi, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
 
 // Mock Supabase
-vi.mock("@supabase/supabase-js", () => ({
+vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      })),
     },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),

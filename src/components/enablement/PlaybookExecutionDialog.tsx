@@ -12,9 +12,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CheckCircle2, ArrowRight, Shield, Zap, PlayCircle, FileText, Target } from 'lucide-react';
+import { ArrowRight, Zap, PlayCircle, FileText, Target } from 'lucide-react';
 import type { Playbook } from '@/hooks/sales/useSalesEnablement';
-import { useTogglePlaybookItem, useAllPlaybookProgress } from '@/hooks/sales/useSalesEnablement';
+import {
+  useTogglePlaybookItem,
+  useAllPlaybookProgress,
+} from '@/hooks/sales/useSalesEnablement';
 import { useSalesData } from '@/hooks/sales/useSalesData';
 import {
   Select,
@@ -35,7 +38,10 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full h-8 text-xs font-bold gap-2 group-hover:glow" variant="secondary">
+        <Button
+          className="w-full h-8 text-xs font-bold gap-2 group-hover:glow"
+          variant="secondary"
+        >
           Executar Playbook
           <ArrowRight className="size-3 group-hover:translate-x-1 transition-transform" />
         </Button>
@@ -74,9 +80,10 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
                 {activeSales.map((sale: any) => (
                   <SelectItem key={sale.fullId} value={sale.fullId}>
                     {sale.cliente} -{' '}
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                      sale.valor
-                    )}
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(sale.valor)}
                   </SelectItem>
                 ))}
               </SelectContent>

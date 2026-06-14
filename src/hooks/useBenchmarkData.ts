@@ -1,15 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
-import {
-  startOfMonth,
-  subMonths,
-  startOfYear,
-  subYears,
-  endOfMonth,
-  format,
-  parseISO,
-} from 'date-fns';
+import { startOfMonth, subMonths, startOfYear, subYears, endOfMonth } from 'date-fns';
 import { CACHE_TIMES, isWonSaleStatus } from '@/constants';
 
 export type BenchmarkPeriod = 'mom' | 'qoq' | 'yoy';
@@ -117,7 +109,15 @@ export const useBenchmarkData = (period: BenchmarkPeriod) => {
       const changePercent = prev !== 0 ? (change / prev) * 100 : cur > 0 ? 100 : 0;
       const trend: 'up' | 'down' | 'stable' =
         Math.abs(changePercent) < 1 ? 'stable' : changePercent > 0 ? 'up' : 'down';
-      return { metric, current: cur, previous: prev, change, changePercent, trend, format: fmt };
+      return {
+        metric,
+        current: cur,
+        previous: prev,
+        change,
+        changePercent,
+        trend,
+        format: fmt,
+      };
     };
 
     return [
