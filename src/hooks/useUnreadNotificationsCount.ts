@@ -11,7 +11,7 @@ export function useUnreadNotificationsCount() {
   useEffect(() => {
     if (!user?.id) return;
     const channel = supabase
-      .channel(`notifications-count:${user.id}`)
+      .channel(`notifications-count:${user.id}:${crypto.randomUUID()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
