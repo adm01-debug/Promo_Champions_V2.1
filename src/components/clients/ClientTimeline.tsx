@@ -4,8 +4,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, Mail, Users, FileText, MessageSquare, Calendar, Clock, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Phone,
+  Mail,
+  Users,
+  FileText,
+  MessageSquare,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+} from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BehavioralAnalysisDialog } from '@/components/ai/BehavioralAnalysisDialog';
@@ -73,7 +90,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
     queryFn: async () => {
       // Fetch interactions from dedicated table
       const { data: interactions, error: intError } = await supabase
-        .from('client_interactions' as any)
+        .from('client_interactions' as never)
         .select('*')
         .eq('client_id', clientId)
         .order('created_at', { ascending: false });
@@ -91,8 +108,18 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
       if (salesError) throw salesError;
 
       const saleIds = (sales || []).map(s => s.id);
-      
-      let activities: Array<{ id: string; activity_type: string; created_at: string; notes: string | null; outcome?: string; contact_name?: string; duration_minutes?: number; sale_id?: string }> = [];
+
+      type ActivityRow = {
+        id: string;
+        activity_type: string;
+        created_at: string;
+        notes: string | null;
+        outcome?: string;
+        contact_name?: string;
+        duration_minutes?: number;
+        sale_id?: string;
+      };
+      let activities: ActivityRow[] = [];
       if (saleIds.length > 0) {
         const { data: actData, error: actError } = await supabase
           .from('activities')
@@ -100,9 +127,9 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
           .order('created_at', { ascending: false })
           .limit(100);
-        
+
         if (actError) throw actError;
-        activities = (actData || []) as any;
+        activities = (actData || []) as unknown as ActivityRow[];
       } else {
         const { data: actData, error: actError } = await supabase
           .from('activities')
@@ -110,13 +137,20 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .eq('client_id', clientId)
           .order('created_at', { ascending: false })
           .limit(100);
-        
-        if (!actError) activities = (actData || []) as any;
+
+        if (!actError) activities = (actData || []) as unknown as ActivityRow[];
       }
 
       const timelineEvents: TimelineEvent[] = [];
 
-      ((interactions as any[]) || []).forEach((int: any) => {
+      type InteractionRow = {
+        id: string;
+        type: string;
+        content?: string | null;
+        created_at: string;
+        metadata?: { outcome?: string };
+      };
+      ((interactions as unknown as InteractionRow[]) || []).forEach(int => {
         timelineEvents.push({
           id: int.id,
           type: int.type,
@@ -129,18 +163,21 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
       const saleMap = new Map(sales?.map(s => [s.id, s]));
 
-      activities.forEach((act) => {
+      activities.forEach(act => {
         const sale = act.sale_id ? saleMap.get(act.sale_id) : null;
         timelineEvents.push({
           id: act.id,
           type: act.activity_type,
-          description: act.notes || activityLabels[act.activity_type] || act.activity_type,
+          description:
+            act.notes || activityLabels[act.activity_type] || act.activity_type,
           date: new Date(act.created_at),
           outcome: act.outcome || undefined,
           contactName: act.contact_name || undefined,
           notes: act.notes || undefined,
           durationMinutes: act.duration_minutes || undefined,
-          relatedDeal: sale ? { id: sale.id, name: sale.product_name, status: sale.status } : undefined,
+          relatedDeal: sale
+            ? { id: sale.id, name: sale.product_name, status: sale.status }
+            : undefined,
         });
       });
 
@@ -150,9 +187,8 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
     staleTime: 1000 * 60 * 5,
   });
 
-  const filteredEvents = filter === 'all'
-    ? events
-    : events?.filter(e => e.type === filter);
+  const filteredEvents =
+    filter === 'all' ? events : events?.filter(e => e.type === filter);
 
   const uniqueTypes = [...new Set(events?.map(e => e.type) || [])];
 
@@ -218,9 +254,16 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
                           {activityLabels[event.type] || event.type}
                         </span>
                         {event.outcome && (
-                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${outcomeColors[event.outcome] || ''}`}>
-                            {event.outcome === 'positive' ? <CheckCircle2 className="h-3 w-3 mr-0.5" /> : null}
-                            {event.outcome === 'negative' ? <XCircle className="h-3 w-3 mr-0.5" /> : null}
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] px-1.5 py-0 ${outcomeColors[event.outcome] || ''}`}
+                          >
+                            {event.outcome === 'positive' ? (
+                              <CheckCircle2 className="h-3 w-3 mr-0.5" />
+                            ) : null}
+                            {event.outcome === 'negative' ? (
+                              <XCircle className="h-3 w-3 mr-0.5" />
+                            ) : null}
                             {outcomeLabels[event.outcome] || event.outcome}
                           </Badge>
                         )}
@@ -252,7 +295,11 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
 
                       <div className="flex items-center justify-between gap-2 mt-1">
                         <p className="text-[10px] text-muted-foreground/60">
-                          {format(event.date, "dd/MM/yyyy HH:mm", { locale: ptBR })} • {formatDistanceToNow(event.date, { addSuffix: true, locale: ptBR })}
+                          {format(event.date, 'dd/MM/yyyy HH:mm', { locale: ptBR })} •{' '}
+                          {formatDistanceToNow(event.date, {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
                         </p>
                         {event.notes && event.notes.length >= 100 && (
                           <BehavioralAnalysisDialog

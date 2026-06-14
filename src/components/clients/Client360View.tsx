@@ -93,13 +93,29 @@ interface Client360ViewProps {
   clientName: string;
 }
 
+interface SelectedOrder {
+  id?: string | number;
+  status?: string;
+  sdr?: { name?: string };
+  salesperson?: { name?: string };
+  closer?: { name?: string };
+  source?: string;
+  is_first_sale?: boolean;
+  created_at?: string;
+  version?: string;
+  product_name?: string;
+  sku?: string;
+  amount?: number | string;
+  [key: string]: unknown;
+}
+
 export function Client360View({ clientName }: Client360ViewProps) {
   const { data, isLoading } = useClient360(clientName);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<SelectedOrder | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'timeline'>('timeline');
   const [isExporting, setIsExporting] = useState(false);
 

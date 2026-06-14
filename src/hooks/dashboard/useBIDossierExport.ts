@@ -21,6 +21,12 @@ export const useBIDossierExport = (
 
     try {
       const doc = new jsPDF();
+      type AutoTableDoc = typeof doc & {
+        autoTable: (opts: unknown) => void;
+        lastAutoTable: { finalY: number };
+        internal: typeof doc.internal & { getNumberOfPages: () => number };
+      };
+      const adoc = doc as AutoTableDoc;
       const timestamp = format(new Date(), 'yyyy-MM-dd');
       const clientSlug = (clientName || 'cliente').toLowerCase().replace(/\s+/g, '-');
       const primaryColor = [76, 29, 149]; // Dark Violet
@@ -90,7 +96,7 @@ export const useBIDossierExport = (
         o.status === 'delivered' ? 'Entregue' : o.status,
       ]);
 
-      (doc as any).autoTable({
+      adoc.autoTable({
         startY: 100,
         head: [['Data', 'Valor', 'Status']],
         body: orders,
@@ -113,7 +119,7 @@ export const useBIDossierExport = (
         ];
       });
 
-      (doc as any).autoTable({
+      adoc.autoTable({
         startY: 40,
         head: [['Métrica', 'Cliente', 'Média Setor', 'Variação (Delta)']],
         body: benchmarkData,
@@ -122,13 +128,13 @@ export const useBIDossierExport = (
       });
 
       doc.setFontSize(12);
-      doc.text('Insights de Performance:', 20, (doc as any).lastAutoTable.finalY + 15);
+      doc.text('Insights de Performance:', 20, adoc.lastAutoTable.finalY + 15);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
       const insightText = biData.benchmarks
         .map(b => `• ${b.metric}: ${b.insight}`)
         .join('\n');
-      doc.text(insightText, 25, (doc as any).lastAutoTable.finalY + 25);
+      doc.text(insightText, 25, adoc.lastAutoTable.finalY + 25);
 
       // Page 4: Recomendações
       doc.addPage();
@@ -147,7 +153,7 @@ export const useBIDossierExport = (
         p.name,
         `${p.confidence}%`,
       ]);
-      (doc as any).autoTable({
+      adoc.autoTable({
         startY: 60,
         head: [['Produto Sugerido', 'Confiança da IA']],
         body: suggestions,
@@ -160,21 +166,24 @@ export const useBIDossierExport = (
       doc.text(
         'Tendências do Setor (Janela 90 dias)',
         20,
-        (doc as any).lastAutoTable.finalY + 15
+        adoc.lastAutoTable.finalY + 15
       );
       const trends = biData.sectorTrends.map(t => [t.name, t.growth, t.sales.toString()]);
-      (doc as any).autoTable({
-        startY: (doc as any).lastAutoTable.finalY + 25,
+      adoc.autoTable({
+        startY: adoc.lastAutoTable.finalY + 25,
         head: [['Produto em Alta', 'Crescimento', 'Volume de Vendas']],
         body: trends,
         theme: 'grid',
       });
 
       doc.setFontSize(14);
-      doc.text('Sugestão do Especialista', 20, (doc as any).lastAutoTable.finalY + 15);
-      const curated = biData.expertCurated.map((e: any) => [e.name, e.reason]);
-      (doc as any).autoTable({
-        startY: (doc as any).lastAutoTable.finalY + 25,
+      doc.text('Sugestão do Especialista', 20, adoc.lastAutoTable.finalY + 15);
+      const curated = biData.expertCurated.map((e: { name: string; reason: string }) => [
+        e.name,
+        e.reason,
+      ]);
+      adoc.autoTable({
+        startY: adoc.lastAutoTable.finalY + 25,
         head: [['Produto Curadoria', 'Justificativa Estratégica']],
         body: curated,
         theme: 'striped',
@@ -208,7 +217,7 @@ export const useBIDossierExport = (
         ];
       });
 
-      (doc as any).autoTable({
+      adoc.autoTable({
         startY: 40,
         head: [['Mês', 'Pedidos (Cliente)', '% do Ano', 'Intensidade Setor']],
         body: seasonalityTable,
@@ -216,7 +225,7 @@ export const useBIDossierExport = (
         headStyles: { fillColor: primaryColor },
       });
 
-      const nextPeakY = (doc as any).lastAutoTable.finalY + 20;
+      const nextPeakY = adoc.lastAutoTable.finalY + 20;
       doc.setFillColor(245, 245, 255);
       doc.roundedRect(20, nextPeakY, 170, 35, 3, 3, 'F');
       doc.setFontSize(12);
@@ -236,7 +245,7 @@ export const useBIDossierExport = (
       doc.text(splitInsight, 30, nextPeakY + 22);
 
       // Rodapé Fixo
-      const pageCount = (doc as any).internal.getNumberOfPages();
+      const pageCount = adoc.internal.getNumberOfPages();
       for (let i = 2; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setFontSize(8);

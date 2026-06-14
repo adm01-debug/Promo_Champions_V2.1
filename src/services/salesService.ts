@@ -29,7 +29,25 @@ export const salesService = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data || []).map((sale: any) => ({
+    type SaleRow = Record<string, unknown> & {
+      id: string;
+      client?: { name?: string } | null;
+      product?: { name?: string; sku?: string } | null;
+      client_name?: string;
+      product_name?: string;
+      amount?: number;
+      status: string;
+      created_at: string;
+      client_id?: string;
+      product_id?: string;
+      salesperson_id?: string;
+      sku?: string;
+      ai_prediction_score?: number;
+      ai_prediction_reasoning?: string;
+      whatsapp_status?: string;
+      whatsapp_last_interaction?: string;
+    };
+    return ((data || []) as SaleRow[]).map(sale => ({
       id: sale.id.substring(0, 8).toUpperCase(),
       fullId: sale.id,
       cliente: sale.client?.name || sale.client_name,
@@ -51,7 +69,11 @@ export const salesService = {
   },
 
   async createSale(input: CreateSaleInput) {
-    const { data, error } = await supabase.from('sales').insert([input]).select().single();
+    const { data, error } = await supabase
+      .from('sales')
+      .insert([input])
+      .select()
+      .single();
 
     if (error) throw error;
     return data;

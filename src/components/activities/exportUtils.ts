@@ -13,12 +13,14 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
     a.contact_name || '',
     outcomeLabels[a.outcome]?.label || a.outcome,
     a.duration_minutes || 0,
-    a.notes || ''
+    a.notes || '',
   ]);
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ...rows.map(row =>
+      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ),
   ].join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -33,12 +35,18 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
 };
 
 export const exportActivitiesToPDF = (activities: ActivityRecord[]) => {
-  const doc = new jsPDF() as jsPDF & { autoTable: (options: any) => void };
-  
+  const doc = new jsPDF() as jsPDF & {
+    autoTable: (options: Record<string, unknown>) => void;
+  };
+
   doc.setFontSize(18);
   doc.text('Relatório de Atividades SDR', 14, 20);
   doc.setFontSize(10);
-  doc.text(`Gerado em: ${format(new Date(), "dd 'de' MMMM 'de' yyyy, HH:mm", { locale: ptBR })}`, 14, 28);
+  doc.text(
+    `Gerado em: ${format(new Date(), "dd 'de' MMMM 'de' yyyy, HH:mm", { locale: ptBR })}`,
+    14,
+    28
+  );
 
   const tableColumn = ['Data', 'Tipo', 'Contato', 'Resultado', 'Duração', 'Notas'];
   const tableRows = activities.map(a => [
@@ -47,7 +55,7 @@ export const exportActivitiesToPDF = (activities: ActivityRecord[]) => {
     a.contact_name || '',
     outcomeLabels[a.outcome]?.label || a.outcome,
     `${a.duration_minutes || 0}m`,
-    (a.notes || '').substring(0, 30) + ((a.notes?.length || 0) > 30 ? '...' : '')
+    (a.notes || '').substring(0, 30) + ((a.notes?.length || 0) > 30 ? '...' : ''),
   ]);
 
   doc.autoTable({
@@ -56,7 +64,7 @@ export const exportActivitiesToPDF = (activities: ActivityRecord[]) => {
     startY: 35,
     theme: 'grid',
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [66, 133, 244] }
+    headStyles: { fillColor: [66, 133, 244] },
   });
 
   doc.save(`relatorio_sdr_${format(new Date(), 'yyyy-MM-dd')}.pdf`);

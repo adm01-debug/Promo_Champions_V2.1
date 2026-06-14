@@ -1,6 +1,9 @@
 import { sanitizeCsvCell } from '@/utils/csvExport';
 
-export async function exportToCSV<T extends Record<string, any>>(data: T[], filename: string) {
+export async function exportToCSV<T extends Record<string, unknown>>(
+  data: T[],
+  filename: string
+) {
   const Papa = (await import('papaparse')).default;
   const safeData = data.map(row => {
     const out: Record<string, unknown> = {};
