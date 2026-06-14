@@ -22,6 +22,7 @@ export function ProtectedRoute({
   const { currentUserRole, isLoadingCurrentRole, isAdminOrManager } = useUserRoles();
   const location = useLocation();
   const hasLoggedRef = useRef(false);
+  const needsRoleCheck = requireAdminOrManager || Boolean(requiredRole);
 
   // Log access denied attempt
   const logAccessDenied = async (requiredRoleLabel: string) => {
@@ -44,8 +45,8 @@ export function ProtectedRoute({
     }
   };
 
-  // Show loading state while checking auth and roles
-  if (isAuthLoading || isLoadingCurrentRole) {
+  // Show loading state while checking auth. Only block on roles for routes that require them.
+  if (isAuthLoading || (needsRoleCheck && isLoadingCurrentRole)) {
     return <SmartSkeleton />;
   }
 
