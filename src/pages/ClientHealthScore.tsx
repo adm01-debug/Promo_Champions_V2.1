@@ -89,7 +89,6 @@ const ClientHealthScore = () => {
       .map(client => {
         const clientSales = (sales || []).filter(s => s.client_name === client.name);
         const wonSales = clientSales.filter(s => isWonSaleStatus(s.status));
-        const lostSales = clientSales.filter(s => s.status === 'lost');
 
         // Factor 1: Revenue (0-30)
         const revenue = wonSales.reduce((s, sale) => s + (sale.amount || 0), 0);
@@ -224,7 +223,6 @@ const ClientHealthScore = () => {
                 <div className="grid gap-3">
                   {healthData.map(client => {
                     const cfg = tierConfig[client.tier];
-                    const Icon = cfg.icon;
                     return (
                       <motion.div key={client.id} variants={itemVariants}>
                         <Card
@@ -396,7 +394,9 @@ function RenewalView() {
               <RefreshCw className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="font-bold text-sm">{(ren.clients as any)?.name}</p>
+              <p className="font-bold text-sm">
+                {(ren.clients as { name: string } | null)?.name}
+              </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                 <Calendar className="h-3.5 w-3.5" />
                 Expira em{' '}
@@ -473,7 +473,9 @@ function UsageAnalyticsView() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-amber-500" />
-              <p className="font-bold text-xs">{(u.clients as any)?.name}</p>
+              <p className="font-bold text-xs">
+                {(u.clients as { name: string } | null)?.name}
+              </p>
             </div>
             <Badge variant="secondary" className="text-[9px]">
               {u.feature_name}
@@ -528,7 +530,7 @@ function SupportTicketsView() {
               <Ticket className="h-5 w-5 text-muted-foreground mt-1" />
               <div>
                 <p className="text-xs font-bold text-primary">
-                  {(t.clients as any)?.name} · {t.source}
+                  {(t.clients as { name: string } | null)?.name} · {t.source}
                 </p>
                 <h4 className="font-bold text-sm mt-0.5">{t.subject}</h4>
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-1">

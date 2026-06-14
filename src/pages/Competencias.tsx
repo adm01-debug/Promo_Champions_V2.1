@@ -1,7 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useCompetencyData } from '@/hooks/useCompetencyData';
-import { CompetencyRadar } from '@/components/analytics/CompetencyRadar';
+import {
+  CompetencyRadar,
+  type CompetencyData,
+} from '@/components/analytics/CompetencyRadar';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import {
@@ -29,7 +32,7 @@ const Competencias = () => {
   const { salesperson } = useAuth();
   const { data: competencyData, isLoading } = useCompetencyData(salesperson?.id);
 
-  const getRecommendations = (data: any[]) => {
+  const getRecommendations = (data: CompetencyData[]) => {
     return data
       .filter(d => d.value / d.maxValue < 0.6)
       .map(d => ({
@@ -112,7 +115,7 @@ const Competencias = () => {
                       ))}
                     </div>
                   ) : (
-                    competencyData?.map((item, idx) => (
+                    competencyData?.map(item => (
                       <div key={item.area} className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
                           <div className="flex items-center gap-2">

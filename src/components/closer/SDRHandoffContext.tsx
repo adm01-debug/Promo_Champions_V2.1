@@ -7,13 +7,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { MessageSquare, Phone, Mail, Calendar, ArrowRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SDRHandoffContextProps {
   saleId: string;
 }
 
-const activityIcons: Record<string, any> = {
+const activityIcons: Record<string, LucideIcon> = {
   call: Phone,
   email: Mail,
   whatsapp: MessageSquare,
@@ -80,7 +81,7 @@ export const SDRHandoffContext: React.FC<SDRHandoffContextProps> = ({ saleId }) 
           {/* Vertical line */}
           <div className="absolute left-[15px] top-2 bottom-2 w-px bg-border/50" />
 
-          {sdrActivities.map((activity, index) => {
+          {sdrActivities.map(activity => {
             const Icon = activityIcons[activity.activity_type as string] || MessageSquare;
             return (
               <div key={activity.id} className="flex gap-4 relative group">

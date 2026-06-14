@@ -25,6 +25,7 @@ import {
   usePipelineStages,
   usePipelineDealsByPipeline,
   useMoveDealMultiPipeline,
+  PipelineDeal,
 } from '@/hooks/useMultiplePipelines';
 import { PipelineColumn } from './PipelineColumn';
 import { PipelineSelector } from './PipelineSelector';
@@ -110,7 +111,7 @@ export const PipelineBoard = () => {
         status: d.status,
         category: d.category,
         salesperson_id: d.salesperson_id,
-        sdr_id: (d as any).sdr_id || null,
+        sdr_id: (d as PipelineDeal & { sdr_id?: string | null }).sdr_id || null,
         source: d.source,
         created_at: d.created_at,
         updated_at: d.updated_at,
@@ -201,7 +202,7 @@ export const PipelineBoard = () => {
         const randomInRange = (min: number, max: number) =>
           Math.random() * (max - min) + min;
 
-        const interval: any = setInterval(function () {
+        const interval: ReturnType<typeof setInterval> = setInterval(function () {
           const timeLeft = animationEnd - Date.now();
           if (timeLeft <= 0) return clearInterval(interval);
           const particleCount = 50 * (timeLeft / duration);
@@ -290,16 +291,6 @@ export const PipelineBoard = () => {
       </div>
     );
   }
-
-  const totalDeals = currentStages.reduce(
-    (sum, stage) => sum + (currentDealsByStage?.[stage.id]?.length || 0),
-    0
-  );
-  const totalValue = currentStages.reduce(
-    (sum, stage) =>
-      sum + (currentDealsByStage?.[stage.id]?.reduce((s, d) => s + d.amount, 0) || 0),
-    0
-  );
 
   // Etapa 2: Pipeline Liquidity & Weighted Forecast + Simulator (Etapa 6)
   const weightedTotalValue = currentStages.reduce((sum, stage) => {

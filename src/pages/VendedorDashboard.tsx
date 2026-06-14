@@ -107,7 +107,6 @@ const useVendedorData = (id: string) => {
 const StatCard = ({
   title,
   value,
-  numericValue,
   change,
   icon: Icon,
   variant = 'default',

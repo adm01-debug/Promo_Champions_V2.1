@@ -178,7 +178,7 @@ const ApprovalWorkflowsPage = () => {
     createWorkflow.mutate(
       {
         name: wfForm.name,
-        workflow_type: wfForm.workflow_type as any,
+        workflow_type: wfForm.workflow_type,
         threshold_amount: parseFloat(wfForm.threshold_amount) || null,
         required_approvers: parseInt(wfForm.required_approvers) || 1,
         description: wfForm.description || null,

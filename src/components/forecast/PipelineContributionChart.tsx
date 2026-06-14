@@ -133,7 +133,10 @@ export const PipelineContributionChart: FC<Props> = ({ perOwner, ownerNames = {}
                   letterSpacing: '0.05em',
                   boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
                 }}
-                formatter={(v: any) => [formatCompactBRL(v), 'Forecast']}
+                formatter={(v: number | string) => [
+                  formatCompactBRL(Number(v)),
+                  'Forecast',
+                ]}
               />
               <Bar
                 dataKey="pessimista"

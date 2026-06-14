@@ -1,7 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
-import { validateWebhookPayload, WebhookContracts } from '../_shared/webhook-validator.ts';
+import {
+  validateWebhookPayload,
+  WebhookContracts,
+} from '../_shared/webhook-validator.ts';
 
 serve(async req => {
   if (req.method === 'OPTIONS') {
@@ -34,11 +37,20 @@ serve(async req => {
     const rawBody = await req.json();
 
     // Contract validation
-    const validation = validateWebhookPayload(WebhookContracts.aiCopilot, rawBody, '1.0.0');
+    const validation = validateWebhookPayload(
+      WebhookContracts.aiCopilot,
+      rawBody,
+      '1.0.0'
+    );
     if (!validation.success) {
-      console.error(`[Contract Violation] AI Copilot failed validation: ${validation.error}`);
+      console.error(
+        `[Contract Violation] AI Copilot failed validation: ${validation.error}`
+      );
       return new Response(
-        JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
+        JSON.stringify({
+          error: validation.error,
+          contract_version: validation.contract_version,
+        }),
         {
           status: validation.statusCode,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -46,7 +58,7 @@ serve(async req => {
       );
     }
 
-    const { context, salespersonId, action, question } = validation.data;
+    const { context, salespersonId, action } = validation.data;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
@@ -69,7 +81,6 @@ serve(async req => {
       }
 
       // Get today's pending tasks
-      const today = new Date().toISOString().split('T')[0];
       const { data: tasks, count: taskCount } = await supabase
         .from('tasks')
         .select('title, priority, due_date', { count: 'exact' })
@@ -163,17 +174,24 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
         );
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: 'Créditos insuficientes.', suggestion: '' }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(
+          JSON.stringify({ error: 'Créditos insuficientes.', suggestion: '' }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
       }
       const t = await response.text();
       console.error('AI gateway error:', response.status, t);
       // Graceful fallback for 403 (AI disabled) and other 5xx — avoid blank screens
       if (response.status === 403 || response.status >= 500) {
         return new Response(
-          JSON.stringify({ suggestion: '', disabled: response.status === 403, fallback: true }),
+          JSON.stringify({
+            suggestion: '',
+            disabled: response.status === 403,
+            fallback: true,
+          }),
           { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }

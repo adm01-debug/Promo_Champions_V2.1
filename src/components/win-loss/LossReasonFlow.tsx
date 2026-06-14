@@ -1,37 +1,53 @@
-import { memo, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, Treemap, Tooltip } from "recharts";
-import { GitBranch } from "lucide-react";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
-import { stageLabel } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { memo, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ResponsiveContainer, Treemap, Tooltip } from 'recharts';
+import type {
+  ValueType,
+  NameType,
+  Payload,
+} from 'recharts/types/component/DefaultTooltipContent';
+import { GitBranch } from 'lucide-react';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
+import { stageLabel } from '@/components/deal-intelligence/winloss/winLossHelpers';
 
 interface Props {
   rows: WLAnalysisRow[];
   onLeafClick?: (stage: string, reason: string) => void;
 }
 
-interface Leaf { name: string; size: number; stage: string; reason: string; fill: string }
-interface Node { name: string; children: Leaf[] }
+interface Leaf {
+  name: string;
+  size: number;
+  stage: string;
+  reason: string;
+  fill: string;
+}
+interface Node {
+  name: string;
+  children: Leaf[];
+}
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--destructive))",
-  "hsl(220 70% 50%)",
-  "hsl(160 70% 45%)",
-  "hsl(280 65% 55%)",
-  "hsl(40 90% 55%)",
+  'hsl(var(--primary))',
+  'hsl(var(--destructive))',
+  'hsl(220 70% 50%)',
+  'hsl(160 70% 45%)',
+  'hsl(280 65% 55%)',
+  'hsl(40 90% 55%)',
 ];
 
 export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }: Props) {
   const data: Node[] = useMemo(() => {
     const grouped = new Map<string, Map<string, number>>();
-    rows.filter(r => r.outcome === "lost").forEach(r => {
-      const stage = r.lost_stage ?? "—";
-      const reason = r.primary_reason ?? "—";
-      const inner = grouped.get(stage) ?? new Map<string, number>();
-      inner.set(reason, (inner.get(reason) ?? 0) + 1);
-      grouped.set(stage, inner);
-    });
+    rows
+      .filter(r => r.outcome === 'lost')
+      .forEach(r => {
+        const stage = r.lost_stage ?? '—';
+        const reason = r.primary_reason ?? '—';
+        const inner = grouped.get(stage) ?? new Map<string, number>();
+        inner.set(reason, (inner.get(reason) ?? 0) + 1);
+        grouped.set(stage, inner);
+      });
     return Array.from(grouped.entries()).map(([stage, reasons], i) => ({
       name: stageLabel(stage),
       children: Array.from(reasons.entries()).map(([reason, count]) => ({
@@ -56,11 +72,13 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
       </CardHeader>
       <CardContent>
         {empty ? (
-          <p className="text-sm text-muted-foreground py-12 text-center">Sem perdas registradas.</p>
+          <p className="text-sm text-muted-foreground py-12 text-center">
+            Sem perdas registradas.
+          </p>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <Treemap
-              data={data as any}
+              data={data}
               dataKey="size"
               stroke="hsl(var(--background))"
               isAnimationActive={false}
@@ -70,15 +88,27 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
               }}
             >
               <Tooltip
-                contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                formatter={(value: any, _name: any, item: any) =>
-                  [`${value} perdas`, item?.payload?.reason ?? ""]
-                }
+                contentStyle={{
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
+                formatter={(
+                  value: ValueType,
+                  _name: NameType,
+                  item: Payload<ValueType, NameType>
+                ) => [
+                  `${value} perdas`,
+                  (item?.payload as Leaf | undefined)?.reason ?? '',
+                ]}
               />
             </Treemap>
           </ResponsiveContainer>
         )}
-        <p className="text-[10px] text-muted-foreground mt-2">Tamanho proporcional ao volume — clique para drill-down.</p>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          Tamanho proporcional ao volume — clique para drill-down.
+        </p>
       </CardContent>
     </Card>
   );

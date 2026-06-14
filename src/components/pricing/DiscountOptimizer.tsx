@@ -9,6 +9,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Calculator, TrendingUp, Percent, CheckCircle2, HelpCircle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +29,6 @@ export const DiscountOptimizer = () => {
   const marginBase = 0.6;
   const currentMargin = marginBase - discount[0] / 100;
 
-  const expectedRevenue = dealValue * currentWinRate;
   const expectedProfit = dealValue * currentMargin * currentWinRate;
 
   return (
@@ -128,12 +128,26 @@ export const DiscountOptimizer = () => {
   );
 };
 
-const MetricBlock = ({ label, value, icon: Icon, subValue, status }: any) => {
+interface MetricBlockProps {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  subValue: string;
+  status: 'success' | 'warning' | 'critical';
+}
+
+const MetricBlock = ({
+  label,
+  value,
+  icon: Icon,
+  subValue,
+  status,
+}: MetricBlockProps) => {
   const statusColors = {
     success: 'text-success',
     warning: 'text-warning',
     critical: 'text-destructive',
-  }[status as 'success' | 'warning' | 'critical'];
+  }[status];
 
   return (
     <div className="p-4 rounded-xl border bg-card/40 space-y-1">

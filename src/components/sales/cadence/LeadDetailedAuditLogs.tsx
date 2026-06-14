@@ -61,6 +61,12 @@ export function LeadDetailedAuditLogs({
               <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-border/50 before:via-border/50 before:to-transparent">
                 {logs.map(log => {
                   const Icon = EVENT_ICONS[log.event_type] || Activity;
+                  const details = (log.details ?? {}) as {
+                    from?: string;
+                    to?: string;
+                    message?: string;
+                    call_result?: string;
+                  };
                   return (
                     <div key={log.id} className="relative pl-10 group">
                       <div
@@ -83,25 +89,26 @@ export function LeadDetailedAuditLogs({
                             })}
                           </span>
                         </div>
-                        {log.event_type === 'transition' && log.details && (
-                          <div className="flex items-center gap-2 text-xs">
-                            <Badge variant="outline" className="text-[10px]">
-                              {log.details.from}
-                            </Badge>
-                            <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                            <Badge variant="secondary" className="text-[10px]">
-                              {log.details.to}
-                            </Badge>
-                          </div>
-                        )}
-                        {log.details?.message && (
+                        {log.event_type === 'transition' &&
+                          (details.from || details.to) && (
+                            <div className="flex items-center gap-2 text-xs">
+                              <Badge variant="outline" className="text-[10px]">
+                                {details.from}
+                              </Badge>
+                              <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                              <Badge variant="secondary" className="text-[10px]">
+                                {details.to}
+                              </Badge>
+                            </div>
+                          )}
+                        {details.message && (
                           <p className="text-xs text-muted-foreground bg-muted/30 p-2 rounded border border-border/20">
-                            {log.details.message}
+                            {details.message}
                           </p>
                         )}
-                        {log.details?.call_result && (
+                        {details.call_result && (
                           <Badge className="w-fit text-[10px]" variant="secondary">
-                            Resultado: {log.details.call_result}
+                            Resultado: {details.call_result}
                           </Badge>
                         )}
                       </div>

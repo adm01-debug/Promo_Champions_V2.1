@@ -8,6 +8,7 @@ import {
   makeCommentaryLine,
 } from '@/components/race/raceTrackHelpers';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { BroadcastEvent } from '@/hooks/race/useRaceDisplayEvents';
 
 interface UseRaceDetectionProps {
   sortedCars: RaceLeaderboardEntry[];
@@ -17,7 +18,7 @@ interface UseRaceDetectionProps {
   playLeaderTakeoverSound: () => void;
   pushCommentary: (text: string) => void;
   pushTickerEvent: (text: string, icon?: string) => void;
-  pushBroadcast: (evt: any) => void;
+  pushBroadcast: (evt: Omit<BroadcastEvent, 'id'>) => void;
 }
 
 export function useRaceDetection({

@@ -17,7 +17,7 @@ import {
 
 export default function DealVelocityPage() {
   const [timeframe, setTimeframe] = useState(90);
-  const { data, isLoading } = useDealVelocity(undefined, timeframe);
+  useDealVelocity(undefined, timeframe);
 
   return (
     <>

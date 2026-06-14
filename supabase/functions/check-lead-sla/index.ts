@@ -1,7 +1,7 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface LeadSLAViolation {
   id: string;
@@ -13,38 +13,37 @@ interface LeadSLAViolation {
   salesperson_email: string | null;
 }
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
+serve(async req => {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.info("Starting SLA check...");
+    console.info('Starting SLA check...');
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Get SLA thresholds from request or use defaults
-    let warningHours = 4;
     let criticalHours = 8;
-    let notifyEmail = "";
+    let notifyEmail = '';
 
     try {
       const body = await req.json();
-      warningHours = body.warningHours || 4;
       criticalHours = body.criticalHours || 8;
-      notifyEmail = body.notifyEmail || "";
+      notifyEmail = body.notifyEmail || '';
     } catch {
       // Use defaults if no body
     }
 
     // Fetch active leads
     const { data: leads, error: leadsError } = await supabase
-      .from("sales")
-      .select(`
+      .from('sales')
+      .select(
+        `
         id,
         client_name,
         product_name,
@@ -57,22 +56,23 @@ serve(async (req) => {
           name,
           email
         )
-      `)
-      .not("status", "in", "(completed,lost)");
+      `
+      )
+      .not('status', 'in', '(completed,lost)');
 
     if (leadsError) {
-      console.error("Error fetching leads:", leadsError);
+      console.error('Error fetching leads:', leadsError);
       throw leadsError;
     }
 
     // Fetch latest activity for each lead
     const { data: activities, error: actError } = await supabase
-      .from("activities")
-      .select("sale_id, created_at")
-      .order("created_at", { ascending: false });
+      .from('activities')
+      .select('sale_id, created_at')
+      .order('created_at', { ascending: false });
 
     if (actError) {
-      console.error("Error fetching activities:", actError);
+      console.error('Error fetching activities:', actError);
       throw actError;
     }
 
@@ -95,14 +95,16 @@ serve(async (req) => {
       );
 
       if (hoursSinceContact >= criticalHours) {
-        const salesperson = Array.isArray(lead.salespeople) ? lead.salespeople[0] : lead.salespeople;
+        const salesperson = Array.isArray(lead.salespeople)
+          ? lead.salespeople[0]
+          : lead.salespeople;
         violations.push({
           id: lead.id,
           client_name: lead.client_name,
           product_name: lead.product_name,
           amount: Number(lead.amount),
           hours_since_contact: hoursSinceContact,
-          salesperson_name: salesperson?.name || "Não atribuído",
+          salesperson_name: salesperson?.name || 'Não atribuído',
           salesperson_email: salesperson?.email || null,
         });
       }
@@ -115,24 +117,24 @@ serve(async (req) => {
       const resend = new Resend(resendApiKey);
 
       const totalValue = violations.reduce((sum, v) => sum + v.amount, 0);
-      const formattedValue = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
+      const formattedValue = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
       }).format(totalValue);
 
       const leadsHtml = violations
         .map(
-          (v) => `
+          v => `
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${v.client_name}</td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${v.product_name}</td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${v.hours_since_contact}h</td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${v.salesperson_name}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;">R$ ${v.amount.toLocaleString("pt-BR")}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">R$ ${v.amount.toLocaleString('pt-BR')}</td>
           </tr>
         `
         )
-        .join("");
+        .join('');
 
       const subject = `⚠️ ${violations.length} leads aguardando contato há +${criticalHours}h`;
       const emailHtml = `
@@ -171,17 +173,18 @@ serve(async (req) => {
 
       try {
         const emailResponse = await resend.emails.send({
-          from: "SLA Alerts <onboarding@resend.dev>",
+          from: 'SLA Alerts <onboarding@resend.dev>',
           to: [notifyEmail],
           subject,
           html: emailHtml,
         });
 
-        console.info("Email sent:", emailResponse);
-      } catch (emailError: any) {
+        console.info('Email sent:', emailResponse);
+      } catch (emailError: unknown) {
         emailStatus = 'failed';
-        errorMessage = emailError?.message || 'Unknown email error';
-        console.error("Error sending email:", emailError);
+        errorMessage =
+          emailError instanceof Error ? emailError.message : 'Unknown email error';
+        console.error('Error sending email:', emailError);
       }
 
       // Log email to email_logs table
@@ -212,18 +215,15 @@ serve(async (req) => {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in SLA check:", error);
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error in SLA check:', error);
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

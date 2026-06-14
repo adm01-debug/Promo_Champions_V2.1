@@ -27,16 +27,6 @@ interface MemberRow {
   car_id: string;
 }
 
-interface CarSalesRow {
-  id: string;
-  salesperson_id: string;
-}
-
-interface SalesRow {
-  salesperson_id: string;
-  total_value: number;
-}
-
 /**
  * Lista equipes/escuderias da temporada com pontuação agregada (soma do total_sales dos membros).
  */

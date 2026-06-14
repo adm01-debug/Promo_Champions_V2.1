@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 import { clientService } from '@/services/clientService';
+import type { TableInsert, TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export type { Client } from '@/types';
 
@@ -25,8 +26,8 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: (input: any) => clientService.createClient(input),
-    onSuccess: (data) => {
+    mutationFn: (input: TableInsert<'clients'>) => clientService.createClient(input),
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       if (data?.id) index('client', data.id);
       toast.success('Cliente criado com sucesso!');
@@ -40,12 +41,13 @@ export const useUpdateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: ({ id, ...updates }: { id: string } & any) => clientService.updateClient(id, updates),
-    onMutate: async (newData) => {
+    mutationFn: ({ id, ...updates }: { id: string } & TableUpdate<'clients'>) =>
+      clientService.updateClient(id, updates),
+    onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);
       queryClient.setQueryData(['clients'], (old: Client[] | undefined) =>
-        old?.map(c => c.id === newData.id ? { ...c, ...newData } : c)
+        old?.map(c => (c.id === newData.id ? { ...c, ...newData } : c))
       );
       return { previous };
     },
@@ -64,13 +66,15 @@ export const useUpdateClient = () => {
 
 export const useDeleteClient = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (clientId: string) => clientService.deleteClient(clientId),
-    onMutate: async (clientId) => {
+    onMutate: async clientId => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);
-      queryClient.setQueryData(['clients'], (old: Client[] | undefined) => old?.filter(c => c.id !== clientId));
+      queryClient.setQueryData(['clients'], (old: Client[] | undefined) =>
+        old?.filter(c => c.id !== clientId)
+      );
       return { previous };
     },
     onSuccess: () => toast.success('Cliente excluído'),

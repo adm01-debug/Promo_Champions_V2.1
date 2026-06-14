@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { EASE_F1_BRAKE } from '@/lib/race/easings';
 
-const EASE = [...EASE_F1_BRAKE] as number[];
+const EASE_BRAKE: [number, number, number, number] = [...EASE_F1_BRAKE];
 
 interface Props {
   visible: boolean;
@@ -21,7 +21,11 @@ function getReadableTextColor(bg: string): string {
   const hexMatch = bg.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
   if (hexMatch) {
     let hex = hexMatch[1];
-    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    if (hex.length === 3)
+      hex = hex
+        .split('')
+        .map(c => c + c)
+        .join('');
     const r = parseInt(hex.slice(0, 2), 16);
     const g = parseInt(hex.slice(2, 4), 16);
     const b = parseInt(hex.slice(4, 6), 16);
@@ -41,21 +45,34 @@ function getReadableTextColor(bg: string): string {
  * Tooltip flutuante "capacete" exibido acima do carro em hover persistente (>600ms).
  * Pílula com fundo na cor primária do livery + texto adaptativo (contraste WCAG).
  */
-export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--primary))', id }: Props) {
+export function CarHelmetTooltip({
+  visible,
+  name,
+  rank,
+  color = 'hsl(var(--primary))',
+  id,
+}: Props) {
   const textColor = getReadableTextColor(color);
-  const badgeBg = textColor === 'hsl(0 0% 98%)' ? 'hsl(0 0% 100% / 0.22)' : 'hsl(0 0% 0% / 0.18)';
+  const badgeBg =
+    textColor === 'hsl(0 0% 98%)' ? 'hsl(0 0% 100% / 0.22)' : 'hsl(0 0% 0% / 0.18)';
 
   return (
     <AnimatePresence>
       {visible && (
-        <foreignObject x={-44} y={-46} width={88} height={36} style={{ overflow: 'visible' }}>
+        <foreignObject
+          x={-44}
+          y={-46}
+          width={88}
+          height={36}
+          style={{ overflow: 'visible' }}
+        >
           <motion.div
             id={id}
             role="tooltip"
             initial={{ opacity: 0, y: 6, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.95 }}
-            transition={{ duration: 0.22, ease: EASE_F1_BRAKE as any }}
+            transition={{ duration: 0.22, ease: EASE_BRAKE }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -77,10 +94,13 @@ export function CarHelmetTooltip({ visible, name, rank, color = 'hsl(var(--prima
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 18, height: 18, borderRadius: 999,
+                width: 18,
+                height: 18,
+                borderRadius: 999,
                 background: badgeBg,
                 color: textColor,
-                fontSize: 10, fontWeight: 900,
+                fontSize: 10,
+                fontWeight: 900,
               }}
             >
               {rank}

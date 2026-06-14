@@ -37,12 +37,24 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipEntry {
+  color?: string;
+  name?: string;
+  value?: number | string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipEntry[];
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-medium text-foreground mb-1">{label}</p>
-      {payload.map((entry: any, i: number) => (
+      {payload.map((entry: TooltipEntry, i: number) => (
         <p key={i} className="text-muted-foreground">
           <span style={{ color: entry.color }}>{entry.name}</span>:{' '}
           <span className="font-semibold text-foreground">
@@ -59,7 +71,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 const PriceEvolution = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const { data: products, isLoading: productsLoading } = useProducts();
+  const { data: products, isLoading: _productsLoading } = useProducts();
   const { data: history, isLoading: historyLoading } = usePriceHistory(
     selectedProduct || undefined
   );

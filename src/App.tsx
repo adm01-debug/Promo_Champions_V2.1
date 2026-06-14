@@ -24,6 +24,12 @@ import { initErrorTracking, captureException } from '@/lib/errorTracking';
 // Initialize error tracking on app load
 initErrorTracking();
 
+interface AppQueryError {
+  status?: number;
+  message?: string;
+  name?: string;
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -31,43 +37,42 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 10, // 10 minutes
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error) => {
+        const err = error as AppQueryError;
         // Don't retry on 401s or 403s
-        if (error?.status === 401 || error?.status === 403) return false;
+        if (err?.status === 401 || err?.status === 403) return false;
         return failureCount < 2;
       },
       refetchInterval: false,
       networkMode: 'offlineFirst',
     },
     mutations: {
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error) => {
+        const err = error as AppQueryError;
         // Only retry idempotent-looking network errors or 5xx
-        const status = error?.status;
-        const message = error?.message?.toLowerCase() || '';
+        const status = err?.status;
+        const message = err?.message?.toLowerCase() || '';
         const isNetworkError =
           message.includes('network') ||
           message.includes('fetch') ||
           message.includes('timeout');
-        const isServerError = status >= 500 && status <= 599;
+        const isServerError = status !== undefined && status >= 500 && status <= 599;
 
         if (failureCount < 2 && (isNetworkError || isServerError)) {
           return true;
         }
         return false;
       },
-      onError: (error: any) => {
+      onError: error => {
         captureException(error, 'GlobalMutationError');
 
+        const err = error as AppQueryError;
         // Don't toast for cancelled or auth errors (handled by auth logic)
-        if (
-          error?.status === 401 ||
-          error?.status === 403 ||
-          error?.name === 'AbortError'
-        ) {
+        if (err?.status === 401 || err?.status === 403 || err?.name === 'AbortError') {
           return;
         }
 
-        const message = error?.message || 'Ocorreu um erro ao processar sua solicitação.';
+        const message = err?.message || 'Ocorreu um erro ao processar sua solicitação.';
         toast.error('Erro na operação', {
           description: message,
           duration: 5000,

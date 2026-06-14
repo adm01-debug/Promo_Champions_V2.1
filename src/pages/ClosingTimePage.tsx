@@ -1,30 +1,33 @@
-import { Helmet } from "react-helmet-async";
-import { ClosingTimeChart } from "@/components/analytics/ClosingTimeChart";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { Timer, AlertTriangle, CheckCircle2, Info } from "lucide-react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useClosingTime } from "@/hooks/useClosingTime";
+import { Helmet } from 'react-helmet-async';
+import { ClosingTimeChart } from '@/components/analytics/ClosingTimeChart';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { Timer, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useClosingTime } from '@/hooks/useClosingTime';
 
 export default function ClosingTimePage() {
-  const { data } = useClosingTime();
-  
+  useClosingTime();
+
   const benchmarks = [
-    { label: "SDR/Lead", benchmark: 2, status: "success" },
-    { label: "Qualificação", benchmark: 5, status: "warning" },
-    { label: "Proposta", benchmark: 7, status: "success" },
-    { label: "Negociação", benchmark: 10, status: "error" },
+    { label: 'SDR/Lead', benchmark: 2, status: 'success' },
+    { label: 'Qualificação', benchmark: 5, status: 'warning' },
+    { label: 'Proposta', benchmark: 7, status: 'success' },
+    { label: 'Negociação', benchmark: 10, status: 'error' },
   ];
 
   return (
     <>
       <Helmet>
         <title>Tempo de Fechamento | Promo Champions</title>
-        <meta name="description" content="Análise detalhada do ciclo de vendas e tempo por estágio" />
+        <meta
+          name="description"
+          content="Análise detalhada do ciclo de vendas e tempo por estágio"
+        />
       </Helmet>
       <PageTransition>
         <div className="space-y-6 p-6 lg:p-8">
-          <motion.div 
+          <motion.div
             className="flex items-center gap-3"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -35,7 +38,9 @@ export default function ClosingTimePage() {
             </div>
             <div>
               <h1 className="text-page-title gradient-text">Ciclo de Vendas</h1>
-              <p className="text-sm text-muted-foreground/80">Monitoramento de gargalos e benchmarks de tempo por estágio</p>
+              <p className="text-sm text-muted-foreground/80">
+                Monitoramento de gargalos e benchmarks de tempo por estágio
+              </p>
             </div>
           </motion.div>
 
@@ -43,7 +48,7 @@ export default function ClosingTimePage() {
             <div className="xl:col-span-3">
               <ClosingTimeChart />
             </div>
-            
+
             <div className="space-y-6">
               <Card className="glass border-border/40">
                 <CardHeader>
@@ -54,13 +59,24 @@ export default function ClosingTimePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {benchmarks.map((b, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-muted/20">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-2 rounded-lg bg-muted/20"
+                    >
                       <span className="text-xs font-medium">{b.label}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{b.benchmark} dias</span>
-                        {b.status === 'success' && <CheckCircle2 className="h-3.5 w-3.5 text-success" />}
-                        {b.status === 'warning' && <AlertTriangle className="h-3.5 w-3.5 text-warning" />}
-                        {b.status === 'error' && <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
+                        <span className="text-xs text-muted-foreground">
+                          {b.benchmark} dias
+                        </span>
+                        {b.status === 'success' && (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+                        )}
+                        {b.status === 'warning' && (
+                          <AlertTriangle className="h-3.5 w-3.5 text-warning" />
+                        )}
+                        {b.status === 'error' && (
+                          <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                        )}
                       </div>
                     </div>
                   ))}
@@ -76,7 +92,10 @@ export default function ClosingTimePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    O estágio de <span className="text-foreground font-semibold">Negociação</span> está levando 40% a mais que a média histórica. Recomendamos revisar o processo de aprovação de descontos.
+                    O estágio de{' '}
+                    <span className="text-foreground font-semibold">Negociação</span> está
+                    levando 40% a mais que a média histórica. Recomendamos revisar o
+                    processo de aprovação de descontos.
                   </p>
                 </CardContent>
               </Card>

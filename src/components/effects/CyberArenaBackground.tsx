@@ -17,7 +17,16 @@ export const CyberArenaBackground = React.memo(() => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const particles: any[] = Array.from({ length: 40 }).map(() => ({
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedY: number;
+      opacity: number;
+      color: string;
+    }
+
+    const particles: Particle[] = Array.from({ length: 40 }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: Math.random() * 2 + 0.5,

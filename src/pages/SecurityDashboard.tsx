@@ -31,7 +31,7 @@ const SecurityDashboard = () => {
   const { data: loginAttempts, isLoading: loginsLoading } = useLoginAttempts({
     limit: 30,
   });
-  const { data: cbStats } = useCircuitBreakerStats();
+  useCircuitBreakerStats();
   const { data: cbHistory } = useCircuitBreakerHistory(undefined, 20);
 
   return (

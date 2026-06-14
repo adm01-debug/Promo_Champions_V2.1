@@ -40,7 +40,7 @@ const TARGET_FIELDS = [
 
 const ImportExport = () => {
   const [step, setStep] = useState<ImportStep>('upload');
-  const [headers, setHeaders] = useState<string[]>([]);
+  const [_headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [mappings, setMappings] = useState<FieldMapping[]>([]);
   const [importedCount, setImportedCount] = useState(0);

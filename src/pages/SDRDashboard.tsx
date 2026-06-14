@@ -107,7 +107,7 @@ export default function SDRDashboard() {
       } else {
         toast.info('Fila vazia. Adicione leads ou reconstrua a fila.');
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error('Erro ao iniciar fila');
     }
   };

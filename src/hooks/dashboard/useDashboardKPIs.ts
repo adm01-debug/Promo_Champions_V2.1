@@ -1,8 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
-import { useEffect, useMemo } from "react";
-import { captureException } from "@/lib/errorTracking";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
+import { useEffect, useMemo } from 'react';
+import { captureException } from '@/lib/errorTracking';
 
 interface KPIData {
   totalRevenue: number;
@@ -27,11 +27,11 @@ interface KPIWithComparison {
 }
 
 const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData> => {
-  const start = format(startDate, "yyyy-MM-dd");
-  const end = format(endDate, "yyyy-MM-dd");
+  const start = format(startDate, 'yyyy-MM-dd');
+  const end = format(endDate, 'yyyy-MM-dd');
 
   try {
-    const { data, error } = await supabase.rpc("get_dashboard_kpis", {
+    const { data, error } = await supabase.rpc('get_dashboard_kpis', {
       start_date: start,
       end_date: end,
     });
@@ -39,7 +39,7 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
     if (error) throw error;
     return data as unknown as KPIData;
   } catch (error) {
-    captureException(error, "fetchPeriodData");
+    captureException(error, 'fetchPeriodData');
     throw error;
   }
 };
@@ -56,18 +56,14 @@ export const useDashboardKPIs = () => {
     // Optimized realtime invalidation: only invalidates if relevant tables change
     const channel = supabase
       .channel('dashboard-kpis-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'sales' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+      })
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'daily_metrics' },
         () => {
-          queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
         }
       )
       .subscribe();
@@ -88,7 +84,7 @@ export const useDashboardKPIs = () => {
   }, []);
 
   return useQuery({
-    queryKey: ["dashboard-kpis", dates],
+    queryKey: ['dashboard-kpis', dates],
     queryFn: async (): Promise<KPIWithComparison> => {
       const [current, previous] = await Promise.all([
         fetchPeriodData(dates.currentMonthStart, dates.currentMonthEnd),
@@ -110,7 +106,7 @@ export const useDashboardKPIs = () => {
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 2,
-    retryDelay: (attempt) => Math.min(attempt * 1000, 5000),
+    retryDelay: attempt => Math.min(attempt * 1000, 5000),
   });
 };
 
@@ -124,10 +120,10 @@ export interface DetailedKPI {
 
 export const useDetailedKPIs = () => {
   return useQuery({
-    queryKey: ["detailed-kpis"],
+    queryKey: ['detailed-kpis'],
     queryFn: async (): Promise<DetailedKPI[]> => {
       try {
-        const { data, error } = await supabase.rpc("get_detailed_kpis");
+        const { data, error } = await supabase.rpc('get_detailed_kpis');
         if (error) throw error;
 
         const {
@@ -137,54 +133,61 @@ export const useDetailedKPIs = () => {
           prev_conversion,
           avg_closing_days,
           return_rate,
-        } = data as any;
+        } = data as unknown as {
+          current_avg_ticket: number;
+          prev_avg_ticket: number;
+          current_conversion: number;
+          prev_conversion: number;
+          avg_closing_days: number;
+          return_rate: number;
+        };
 
         return [
           {
-            title: "Ticket Médio",
-            value: `R$ ${current_avg_ticket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${prev_avg_ticket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+            title: 'Ticket Médio',
+            value: `R$ ${current_avg_ticket.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            previousValue: `R$ ${prev_avg_ticket.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
             change: calculateChange(current_avg_ticket, prev_avg_ticket),
-            icon: "Receipt",
+            icon: 'Receipt',
           },
           {
-            title: "Taxa de Conversão",
+            title: 'Taxa de Conversão',
             value: `${current_conversion.toFixed(1)}%`,
             previousValue: `${prev_conversion.toFixed(1)}%`,
             change: calculateChange(current_conversion, prev_conversion),
-            icon: "Percent",
+            icon: 'Percent',
           },
           {
-            title: "Tempo Médio",
+            title: 'Tempo Médio',
             value: `${Math.round(avg_closing_days)} dias`,
-            previousValue: "N/A",
+            previousValue: 'N/A',
             change: 0,
-            icon: "Clock",
+            icon: 'Clock',
           },
           {
-            title: "Taxa de Retorno",
+            title: 'Taxa de Retorno',
             value: `${return_rate.toFixed(1)}%`,
-            previousValue: "N/A",
+            previousValue: 'N/A',
             change: 0,
-            icon: "RotateCcw",
+            icon: 'RotateCcw',
           },
           {
-            title: "Ticket Recorrente",
-            value: `R$ ${(current_avg_ticket * 0.7).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${(prev_avg_ticket * 0.7).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+            title: 'Ticket Recorrente',
+            value: `R$ ${(current_avg_ticket * 0.7).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            previousValue: `R$ ${(prev_avg_ticket * 0.7).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
             change: calculateChange(current_avg_ticket * 0.7, prev_avg_ticket * 0.7),
-            icon: "CreditCard",
+            icon: 'CreditCard',
           },
           {
-            title: "LTV Médio",
-            value: `R$ ${(current_avg_ticket * 3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${(prev_avg_ticket * 3).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+            title: 'LTV Médio',
+            value: `R$ ${(current_avg_ticket * 3).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            previousValue: `R$ ${(prev_avg_ticket * 3).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
             change: calculateChange(current_avg_ticket * 3, prev_avg_ticket * 3),
-            icon: "Wallet",
+            icon: 'Wallet',
           },
         ];
       } catch (error) {
-        captureException(error, "useDetailedKPIs");
+        captureException(error, 'useDetailedKPIs');
         throw error;
       }
     },

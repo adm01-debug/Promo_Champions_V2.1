@@ -28,7 +28,7 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState('');
   const [newDesc, setNewDesc] = useState('');
 
-  const { flags, isLoading, isEnabled } = useFeatureFlags();
+  const { flags, isLoading } = useFeatureFlags();
   const testFlag = useFeatureFlag('experimental_ui');
 
   const toggleMutation = useMutation({

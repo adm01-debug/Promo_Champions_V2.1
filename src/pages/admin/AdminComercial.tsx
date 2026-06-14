@@ -566,8 +566,12 @@ export default function AdminComercial() {
                             {req.type === 'goal' && (
                               <CommercialDiffViewer
                                 label="Valor da Meta"
-                                oldValue={(req.old_values as any)?.amount}
-                                newValue={(req.new_values as any)?.amount}
+                                oldValue={
+                                  (req.old_values as Record<string, Json>)?.amount
+                                }
+                                newValue={
+                                  (req.new_values as Record<string, Json>)?.amount
+                                }
                                 formatter={val =>
                                   new Intl.NumberFormat('pt-BR', {
                                     style: 'currency',
@@ -579,27 +583,39 @@ export default function AdminComercial() {
                             {req.type === 'commission' && (
                               <CommercialDiffViewer
                                 label="Taxa de Comissão"
-                                oldValue={(req.old_values as any)?.rate}
-                                newValue={(req.new_values as any)?.rate}
+                                oldValue={(req.old_values as Record<string, Json>)?.rate}
+                                newValue={(req.new_values as Record<string, Json>)?.rate}
                                 formatter={val => `${val}%`}
                               />
                             )}
                             {req.type === 'scoring_rule' && (
                               <div className="space-y-1">
-                                {(req.new_values as any)?.weight !==
-                                  (req.old_values as any)?.weight && (
+                                {(req.new_values as Record<string, Json>)?.weight !==
+                                  (req.old_values as Record<string, Json>)?.weight && (
                                   <CommercialDiffViewer
                                     label="Peso"
-                                    oldValue={(req.old_values as any)?.weight}
-                                    newValue={(req.new_values as any)?.weight}
+                                    oldValue={
+                                      (req.old_values as Record<string, Json>)?.weight
+                                    }
+                                    newValue={
+                                      (req.new_values as Record<string, Json>)?.weight
+                                    }
                                   />
                                 )}
-                                {(req.new_values as any)?.points_per_unit !==
-                                  (req.old_values as any)?.points_per_unit && (
+                                {(req.new_values as Record<string, Json>)
+                                  ?.points_per_unit !==
+                                  (req.old_values as Record<string, Json>)
+                                    ?.points_per_unit && (
                                   <CommercialDiffViewer
                                     label="Pontos por Unidade"
-                                    oldValue={(req.old_values as any)?.points_per_unit}
-                                    newValue={(req.new_values as any)?.points_per_unit}
+                                    oldValue={
+                                      (req.old_values as Record<string, Json>)
+                                        ?.points_per_unit
+                                    }
+                                    newValue={
+                                      (req.new_values as Record<string, Json>)
+                                        ?.points_per_unit
+                                    }
                                   />
                                 )}
                               </div>

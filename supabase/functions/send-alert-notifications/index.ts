@@ -1,10 +1,10 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { differenceInDays } from "https://esm.sh/date-fns@3.6.0";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { differenceInDays } from 'https://esm.sh/date-fns@3.6.0';
+import { corsHeaders } from '../_shared/cors.ts';
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 interface Alert {
   type: string;
@@ -30,15 +30,15 @@ interface NotificationPreference {
 const buildEmailHtml = (alerts: Alert[]) => {
   const alertsHtml = alerts
     .map(
-      (alert) => `
+      alert => `
       <div style="background: #1a1a2e; border-left: 4px solid #ef4444; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
         <h3 style="color: #f97316; margin: 0 0 8px 0;">${alert.title}</h3>
         <p style="color: #e2e8f0; margin: 0;">${alert.description}</p>
-        ${alert.amount ? `<p style="color: #94a3b8; margin: 8px 0 0 0;">Valor: R$ ${alert.amount.toLocaleString("pt-BR")}</p>` : ""}
+        ${alert.amount ? `<p style="color: #94a3b8; margin: 8px 0 0 0;">Valor: R$ ${alert.amount.toLocaleString('pt-BR')}</p>` : ''}
       </div>
     `
     )
-    .join("");
+    .join('');
 
   return `
     <!DOCTYPE html>
@@ -56,7 +56,7 @@ const buildEmailHtml = (alerts: Alert[]) => {
           <div style="background: #16162a; padding: 24px; border-radius: 0 0 12px 12px;">
             ${alertsHtml}
             <p style="color: #64748b; font-size: 12px; margin-top: 24px; text-align: center;">
-              Enviado automaticamente pelo Sistema de Vendas • ${new Date().toLocaleDateString("pt-BR")}
+              Enviado automaticamente pelo Sistema de Vendas • ${new Date().toLocaleDateString('pt-BR')}
             </p>
           </div>
         </div>
@@ -65,43 +65,53 @@ const buildEmailHtml = (alerts: Alert[]) => {
   `;
 };
 
-const generateAlerts = async (supabase: any, pref: NotificationPreference): Promise<Alert[]> => {
+const generateAlerts = async (
+  supabase: SupabaseClient,
+  pref: NotificationPreference
+): Promise<Alert[]> => {
   const alerts: Alert[] = [];
   const now = new Date();
 
   // Check for stagnant deals
   if (pref.notify_stagnant_deals) {
     const { data: pendingDeals } = await supabase
-      .from("sales")
-      .select("*")
-      .in("status", ["pending", "in_progress", "negotiation", "proposal"]);
+      .from('sales')
+      .select('*')
+      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
 
-    pendingDeals?.forEach((deal: any) => {
-      const updatedAt = new Date(deal.updated_at);
-      const daysSinceUpdate = differenceInDays(now, updatedAt);
+    pendingDeals?.forEach(
+      (deal: {
+        updated_at: string;
+        client_name: string;
+        product_name: string;
+        amount: number | string;
+      }) => {
+        const updatedAt = new Date(deal.updated_at);
+        const daysSinceUpdate = differenceInDays(now, updatedAt);
 
-      if (daysSinceUpdate >= pref.stagnant_threshold_days) {
-        alerts.push({
-          type: "stagnant_deal",
-          severity: "critical",
-          title: "🚨 Deal Crítico Parado",
-          description: `${deal.client_name} - ${deal.product_name} (${daysSinceUpdate} dias sem atualização)`,
-          amount: Number(deal.amount),
-        });
+        if (daysSinceUpdate >= pref.stagnant_threshold_days) {
+          alerts.push({
+            type: 'stagnant_deal',
+            severity: 'critical',
+            title: '🚨 Deal Crítico Parado',
+            description: `${deal.client_name} - ${deal.product_name} (${daysSinceUpdate} dias sem atualização)`,
+            amount: Number(deal.amount),
+          });
+        }
       }
-    });
+    );
   }
 
   // Check for inactive clients
   if (pref.notify_inactive_clients) {
     const { data: allSales } = await supabase
-      .from("sales")
-      .select("client_name, created_at")
-      .eq("status", "completed")
-      .order("created_at", { ascending: false });
+      .from('sales')
+      .select('client_name, created_at')
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false });
 
     const clientLastSale: Record<string, Date> = {};
-    allSales?.forEach((sale: any) => {
+    allSales?.forEach((sale: { client_name: string; created_at: string }) => {
       if (!clientLastSale[sale.client_name]) {
         clientLastSale[sale.client_name] = new Date(sale.created_at);
       }
@@ -111,9 +121,9 @@ const generateAlerts = async (supabase: any, pref: NotificationPreference): Prom
       const daysSinceLastSale = differenceInDays(now, lastSaleDate);
       if (daysSinceLastSale >= pref.inactive_threshold_days) {
         alerts.push({
-          type: "inactive_client",
-          severity: "critical",
-          title: "⚠️ Cliente Inativo Crítico",
+          type: 'inactive_client',
+          severity: 'critical',
+          title: '⚠️ Cliente Inativo Crítico',
           description: `${clientName} - última compra há ${daysSinceLastSale} dias`,
         });
       }
@@ -123,39 +133,46 @@ const generateAlerts = async (supabase: any, pref: NotificationPreference): Prom
   // Check for at-risk goals
   if (pref.notify_at_risk_goals) {
     const { data: salespeople } = await supabase
-      .from("salespeople")
-      .select("id, name")
-      .eq("is_active", true);
+      .from('salespeople')
+      .select('id, name')
+      .eq('is_active', true);
 
-    const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
+    const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
     const { data: goals } = await supabase
-      .from("sales_goals")
-      .select("*")
-      .eq("month", currentMonth);
+      .from('sales_goals')
+      .select('*')
+      .eq('month', currentMonth);
 
     const dayOfMonth = now.getDate();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const expectedProgress = (dayOfMonth / daysInMonth) * 100;
 
     for (const person of salespeople || []) {
-      const goal = goals?.find((g: any) => g.salesperson_id === person.id);
+      const goal = goals?.find(
+        (g: { salesperson_id: string; goal_amount: number | string }) =>
+          g.salesperson_id === person.id
+      );
       if (!goal) continue;
 
       const { data: sales } = await supabase
-        .from("sales")
-        .select("amount")
-        .eq("salesperson_id", person.id)
-        .eq("status", "completed")
-        .gte("created_at", currentMonth);
+        .from('sales')
+        .select('amount')
+        .eq('salesperson_id', person.id)
+        .eq('status', 'completed')
+        .gte('created_at', currentMonth);
 
-      const totalSales = sales?.reduce((sum: number, s: any) => sum + Number(s.amount), 0) || 0;
+      const totalSales =
+        sales?.reduce(
+          (sum: number, s: { amount: number | string }) => sum + Number(s.amount),
+          0
+        ) || 0;
       const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
 
       if (actualProgress < expectedProgress - 40) {
         alerts.push({
-          type: "at_risk_goal",
-          severity: "critical",
-          title: "📉 Meta em Risco Crítico",
+          type: 'at_risk_goal',
+          severity: 'critical',
+          title: '📉 Meta em Risco Crítico',
           description: `${person.name} - ${actualProgress.toFixed(0)}% vs ${expectedProgress.toFixed(0)}% esperado`,
         });
       }
@@ -166,7 +183,7 @@ const generateAlerts = async (supabase: any, pref: NotificationPreference): Prom
 };
 
 const logEmailToDatabase = async (
-  supabase: any,
+  supabase: SupabaseClient,
   email: string,
   subject: string,
   status: 'sent' | 'failed',
@@ -197,13 +214,13 @@ const logEmailToDatabase = async (
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     let recipientEmail: string | null = null;
@@ -218,24 +235,32 @@ const handler = async (req: Request): Promise<Response> => {
       isCronJob = true;
     }
 
-    const results: { email: string; alertsSent: number; success: boolean; error?: string }[] = [];
+    const results: {
+      email: string;
+      alertsSent: number;
+      success: boolean;
+      error?: string;
+    }[] = [];
 
     if (isCronJob) {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
-        .from("notification_preferences")
-        .select("*")
-        .eq("is_active", true);
+        .from('notification_preferences')
+        .select('*')
+        .eq('is_active', true);
 
       if (prefError) {
         throw new Error(`Failed to fetch preferences: ${prefError.message}`);
       }
 
       if (!preferences || preferences.length === 0) {
-        console.info("No active notification preferences found");
+        console.info('No active notification preferences found');
         return new Response(
-          JSON.stringify({ message: "No active notification preferences", emailsSent: 0 }),
-          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          JSON.stringify({
+            message: 'No active notification preferences',
+            emailsSent: 0,
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       }
 
@@ -255,23 +280,51 @@ const handler = async (req: Request): Promise<Response> => {
 
           try {
             const emailResponse = await resend.emails.send({
-              from: "Alertas <onboarding@resend.dev>",
+              from: 'Alertas <onboarding@resend.dev>',
               to: [pref.email],
               subject,
               html: emailHtml,
             });
 
             console.info(`Email sent to ${pref.email}:`, emailResponse);
-            await logEmailToDatabase(supabase, pref.email, subject, 'sent', alerts.length, alerts);
+            await logEmailToDatabase(
+              supabase,
+              pref.email,
+              subject,
+              'sent',
+              alerts.length,
+              alerts
+            );
             results.push({ email: pref.email, alertsSent: alerts.length, success: true });
-          } catch (emailError: any) {
+          } catch (emailError: unknown) {
             console.error(`Error sending to ${pref.email}:`, emailError);
-            await logEmailToDatabase(supabase, pref.email, subject, 'failed', alerts.length, alerts, emailError.message);
-            results.push({ email: pref.email, alertsSent: 0, success: false, error: emailError.message });
+            const emailErrorMessage =
+              emailError instanceof Error ? emailError.message : String(emailError);
+            await logEmailToDatabase(
+              supabase,
+              pref.email,
+              subject,
+              'failed',
+              alerts.length,
+              alerts,
+              emailErrorMessage
+            );
+            results.push({
+              email: pref.email,
+              alertsSent: 0,
+              success: false,
+              error: emailErrorMessage,
+            });
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error(`Error processing ${pref.email}:`, error);
-          results.push({ email: pref.email, alertsSent: 0, success: false, error: error.message });
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          results.push({
+            email: pref.email,
+            alertsSent: 0,
+            success: false,
+            error: errorMessage,
+          });
         }
       }
 
@@ -281,35 +334,35 @@ const handler = async (req: Request): Promise<Response> => {
           message: `CRON job completed. Sent to ${totalSent}/${preferences.length} recipients`,
           results,
         }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     } else {
       // Manual trigger with specific email
       if (!recipientEmail) {
-        throw new Error("recipientEmail is required for manual trigger");
+        throw new Error('recipientEmail is required for manual trigger');
       }
 
       // Use default thresholds for manual trigger
       const defaultPref: NotificationPreference = {
-        id: "manual",
+        id: 'manual',
         email: recipientEmail,
         is_active: true,
-        frequency: "daily",
+        frequency: 'daily',
         notify_stagnant_deals: true,
         notify_inactive_clients: true,
         notify_at_risk_goals: true,
         stagnant_threshold_days: 14,
         inactive_threshold_days: 60,
-        preferred_time: "08:00",
+        preferred_time: '08:00',
       };
 
       const alerts = await generateAlerts(supabase, defaultPref);
 
       if (alerts.length === 0) {
-        console.info("No critical alerts to send");
+        console.info('No critical alerts to send');
         return new Response(
-          JSON.stringify({ message: "No critical alerts found", alertsSent: 0 }),
-          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          JSON.stringify({ message: 'No critical alerts found', alertsSent: 0 }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       }
 
@@ -318,42 +371,60 @@ const handler = async (req: Request): Promise<Response> => {
 
       try {
         const emailResponse = await resend.emails.send({
-          from: "Alertas <onboarding@resend.dev>",
+          from: 'Alertas <onboarding@resend.dev>',
           to: [recipientEmail],
           subject,
           html: emailHtml,
         });
 
-        console.info("Email sent successfully:", emailResponse);
-        await logEmailToDatabase(supabase, recipientEmail, subject, 'sent', alerts.length, alerts);
+        console.info('Email sent successfully:', emailResponse);
+        await logEmailToDatabase(
+          supabase,
+          recipientEmail,
+          subject,
+          'sent',
+          alerts.length,
+          alerts
+        );
 
         return new Response(
           JSON.stringify({
-            message: "Critical alerts sent successfully",
+            message: 'Critical alerts sent successfully',
             alertsSent: alerts.length,
             emailResponse,
           }),
-          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
-      } catch (emailError: any) {
-        console.error("Error sending email:", emailError);
-        await logEmailToDatabase(supabase, recipientEmail, subject, 'failed', alerts.length, alerts, emailError.message);
+      } catch (emailError: unknown) {
+        console.error('Error sending email:', emailError);
+        const emailErrorMessage =
+          emailError instanceof Error ? emailError.message : String(emailError);
+        await logEmailToDatabase(
+          supabase,
+          recipientEmail,
+          subject,
+          'failed',
+          alerts.length,
+          alerts,
+          emailErrorMessage
+        );
 
         return new Response(
           JSON.stringify({
-            message: "Failed to send email",
-            error: emailError.message,
+            message: 'Failed to send email',
+            error: emailErrorMessage,
           }),
-          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       }
     }
-  } catch (error: any) {
-    console.error("Error in send-alert-notifications:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+  } catch (error: unknown) {
+    console.error('Error in send-alert-notifications:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
   }
 };
 

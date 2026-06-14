@@ -28,11 +28,7 @@ interface Props {
   baseWinRate: number;
 }
 
-export const ForecastScenarioSimulator = ({
-  baseForecast,
-  baseCoverage,
-  baseWinRate,
-}: Props) => {
+export const ForecastScenarioSimulator = ({ baseForecast }: Props) => {
   const [coverageMult, setCoverageMult] = useState(1);
   const [winRateMult, setWinRateMult] = useState(1);
 

@@ -19,6 +19,7 @@ import {
   useAllPlaybookProgress,
 } from '@/hooks/sales/useSalesEnablement';
 import { useSalesData } from '@/hooks/sales/useSalesData';
+import type { Sale } from '@/types/sales';
 import {
   Select,
   SelectContent,
@@ -33,7 +34,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
   const toggleItem = useTogglePlaybookItem();
   const { data: completedItems } = useAllPlaybookProgress(selectedSaleId || undefined);
 
-  const activeSales = (sales || []).filter((s: any) => isOpenSaleStatus(s.status)) || [];
+  const activeSales = (sales || []).filter((s: Sale) => isOpenSaleStatus(s.status)) || [];
 
   return (
     <Dialog>
@@ -77,7 +78,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
                 <SelectValue placeholder="Selecione um Deal ativo..." />
               </SelectTrigger>
               <SelectContent>
-                {activeSales.map((sale: any) => (
+                {activeSales.map((sale: Sale) => (
                   <SelectItem key={sale.fullId} value={sale.fullId}>
                     {sale.cliente} -{' '}
                     {new Intl.NumberFormat('pt-BR', {

@@ -39,8 +39,12 @@ export function ICPPerformanceChart() {
         nonIcp: { wins: 0, total: 0, amount: 0 },
       };
 
-      outcomes?.forEach((o: any) => {
-        const clientId = o.sales?.client_id;
+      outcomes?.forEach(o => {
+        const sale = o.sales as {
+          amount: number | null;
+          client_id: string | null;
+        } | null;
+        const clientId = sale?.client_id ?? undefined;
         const isIcp = icpMap.get(clientId) || false;
         const amount = o.sales?.amount || 0;
 
@@ -103,7 +107,10 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value: any) => [`${Number(value).toFixed(1)}%`, 'Win Rate']}
+                formatter={(value: number | string) => [
+                  `${Number(value).toFixed(1)}%`,
+                  'Win Rate',
+                ]}
               />
               <Bar dataKey="winRate" radius={[4, 4, 0, 0]} barSize={40}>
                 {stats?.map((entry, index) => (
@@ -135,7 +142,7 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value: any) => [
+                formatter={(value: number | string) => [
                   new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',

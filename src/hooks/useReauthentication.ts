@@ -3,7 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
-type ActionType = 'password_change' | 'email_change' | 'mfa_config' | 'admin_action' | 'delete_account';
+type ActionType =
+  | 'password_change'
+  | 'email_change'
+  | 'mfa_config'
+  | 'admin_action'
+  | 'delete_account';
 
 interface ReauthRequest {
   id: string;
@@ -29,77 +34,83 @@ export const useReauthentication = () => {
   }, []);
 
   // Iniciar processo de re-autenticação
-  const requestReauth = useCallback(async (action: ActionType): Promise<string | null> => {
-    if (!user) return null;
+  const requestReauth = useCallback(
+    async (action: ActionType): Promise<string | null> => {
+      if (!user) return null;
 
-    try {
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutos
+      try {
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutos
 
-      const { data, error } = await supabase
-        .from('reauthentication_requests')
-        .insert({
-          user_id: user.id,
-          action_type: action,
-          expires_at: expiresAt.toISOString(),
-          user_agent: navigator.userAgent,
-        })
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('reauthentication_requests')
+          .insert({
+            user_id: user.id,
+            action_type: action,
+            expires_at: expiresAt.toISOString(),
+            user_agent: navigator.userAgent,
+          })
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      setPendingRequest(data as ReauthRequest);
-      return data.id;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error creating reauth request:', error);
+        setPendingRequest(data as ReauthRequest);
+        return data.id;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error creating reauth request:', error);
+        }
+        toast.error('Erro ao solicitar re-autenticação');
+        return null;
       }
-      toast.error('Erro ao solicitar re-autenticação');
-      return null;
-    }
-  }, [user]);
+    },
+    [user]
+  );
 
   // Verificar senha para re-autenticação
-  const verifyPassword = useCallback(async (password: string): Promise<boolean> => {
-    if (!user || !pendingRequest) return false;
+  const verifyPassword = useCallback(
+    async (password: string): Promise<boolean> => {
+      if (!user || !pendingRequest) return false;
 
-    setIsVerifying(true);
+      setIsVerifying(true);
 
-    try {
-      // Usar signInWithPassword para verificar
-      const { error } = await supabase.auth.signInWithPassword({
-        email: user.email || '',
-        password,
-      });
+      try {
+        // Usar signInWithPassword para verificar
+        const { error } = await supabase.auth.signInWithPassword({
+          email: user.email || '',
+          password,
+        });
 
-      if (error) {
-        toast.error('Senha incorreta');
+        if (error) {
+          toast.error('Senha incorreta');
+          return false;
+        }
+
+        // Marcar request como verificada
+        const { error: updateError } = await supabase
+          .from('reauthentication_requests')
+          .update({
+            verified: true,
+            verified_at: new Date().toISOString(),
+          })
+          .eq('id', pendingRequest.id);
+
+        if (updateError) throw updateError;
+
+        toast.success('Re-autenticação bem sucedida');
+        return true;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error verifying password:', error);
+        }
+        toast.error('Erro na verificação');
         return false;
+      } finally {
+        setIsVerifying(false);
       }
-
-      // Marcar request como verificada
-      const { error: updateError } = await supabase
-        .from('reauthentication_requests')
-        .update({
-          verified: true,
-          verified_at: new Date().toISOString(),
-        })
-        .eq('id', pendingRequest.id);
-
-      if (updateError) throw updateError;
-
-      toast.success('Re-autenticação bem sucedida');
-      return true;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error verifying password:', error);
-      }
-      toast.error('Erro na verificação');
-      return false;
-    } finally {
-      setIsVerifying(false);
-    }
-  }, [user, pendingRequest]);
+    },
+    [user, pendingRequest]
+  );
 
   // Verificar se request ainda é válida
   const isRequestValid = useCallback(async (requestId: string): Promise<boolean> => {
@@ -113,7 +124,7 @@ export const useReauthentication = () => {
         .maybeSingle();
 
       return !!data && !error;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }, []);
@@ -137,30 +148,33 @@ export const useReauthentication = () => {
   }, [pendingRequest]);
 
   // Executar ação protegida
-  const executeProtectedAction = useCallback(async <T>(
-    action: ActionType,
-    callback: () => Promise<T>
-  ): Promise<{ success: boolean; result?: T; requiresReauth: boolean }> => {
-    if (!user) return { success: false, requiresReauth: false };
+  const executeProtectedAction = useCallback(
+    async <T>(
+      action: ActionType,
+      callback: () => Promise<T>
+    ): Promise<{ success: boolean; result?: T; requiresReauth: boolean }> => {
+      if (!user) return { success: false, requiresReauth: false };
 
-    // Verificar se há request válida
-    if (pendingRequest && await isRequestValid(pendingRequest.id)) {
-      try {
-        const result = await callback();
-        setPendingRequest(null);
-        return { success: true, result, requiresReauth: false };
-      } catch (error) {
-        if (import.meta.env.DEV) {
-          console.error('Error executing protected action:', error);
+      // Verificar se há request válida
+      if (pendingRequest && (await isRequestValid(pendingRequest.id))) {
+        try {
+          const result = await callback();
+          setPendingRequest(null);
+          return { success: true, result, requiresReauth: false };
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.error('Error executing protected action:', error);
+          }
+          return { success: false, requiresReauth: false };
         }
-        return { success: false, requiresReauth: false };
       }
-    }
 
-    // Requer nova re-autenticação
-    await requestReauth(action);
-    return { success: false, requiresReauth: true };
-  }, [user, pendingRequest, isRequestValid, requestReauth]);
+      // Requer nova re-autenticação
+      await requestReauth(action);
+      return { success: false, requiresReauth: true };
+    },
+    [user, pendingRequest, isRequestValid, requestReauth]
+  );
 
   return {
     isVerifying,

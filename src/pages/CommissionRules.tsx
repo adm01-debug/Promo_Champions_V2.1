@@ -40,7 +40,7 @@ import { PageTransition, itemVariants } from '@/components/transitions/PageTrans
 import { motion } from 'framer-motion';
 
 export default function CommissionRules() {
-  const { data: rules = [], isLoading } = useCommissionRules();
+  const { data: rules = [] } = useCommissionRules();
   const { data: salespeople = [] } = useSalespeople();
   const upsertRule = useUpsertCommissionRule();
   const deleteRule = useDeleteCommissionRule();

@@ -131,7 +131,6 @@ const Index = () => {
     `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const isSDR = salesperson?.role === 'sdr';
-  const isCloser = salesperson?.role === 'closer' || salesperson?.role === 'hybrid';
 
   const hasRevenue = (kpis?.current.totalRevenue ?? 0) > 0;
   const hasSales = (kpis?.current.totalSales ?? 0) > 0;

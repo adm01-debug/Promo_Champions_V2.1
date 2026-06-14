@@ -70,7 +70,7 @@ export const DealCard = ({
 }: DealCardProps) => {
   const [isEnriching, setIsEnriching] = useState(false); // Etapa 3: Data Enrichment
   const [playbookOpen, setPlaybookOpen] = useState(false);
-  const { data: explanation } = useLeadScoreExplanation(leadScore ? deal.id : null);
+  useLeadScoreExplanation(leadScore ? deal.id : null);
   const { data: playbooks } = usePlaybooksByStage(deal.status);
   const { data: progress } = useDealPlaybookProgress(deal.id);
 
@@ -94,21 +94,8 @@ export const DealCard = ({
     }).format(value);
   };
 
-  const getScoreColor = (category?: 'hot' | 'warm' | 'cold') => {
-    switch (category) {
-      case 'hot':
-        return 'bg-status-error/20 text-status-error border-status-error/30';
-      case 'warm':
-        return 'bg-status-warning/20 text-status-warning border-status-warning/30';
-      case 'cold':
-        return 'bg-info/20 text-info border-info/30';
-      default:
-        return 'bg-muted text-muted-foreground border-border';
-    }
-  };
-
   // Etapa 8: Bulk Operations Mode
-  const [isSelected, setIsSelected] = useState(false);
+  const [isSelected] = useState(false);
   // Etapa 3: Inline Fast-Edit
   const [isEditing, setIsEditing] = useState(false);
   const [editedAmount, setEditedAmount] = useState(deal.amount.toString());

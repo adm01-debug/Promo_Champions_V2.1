@@ -1,5 +1,10 @@
 import { assert, assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import { dispatchOne, type Subscription, type DispatchDeps } from './retry.ts';
+import {
+  dispatchOne,
+  type Subscription,
+  type DispatchDeps,
+  type DeliveryRow,
+} from './retry.ts';
 
 const SUB: Subscription = {
   id: 'sub-fuzz',
@@ -9,7 +14,7 @@ const SUB: Subscription = {
 };
 
 function makeHarness() {
-  const deliveries: any[] = [];
+  const deliveries: DeliveryRow[] = [];
   const deps: DispatchDeps = {
     fetchFn: (() => Promise.resolve(new Response('ok', { status: 200 }))) as typeof fetch,
     insertDelivery: row => {

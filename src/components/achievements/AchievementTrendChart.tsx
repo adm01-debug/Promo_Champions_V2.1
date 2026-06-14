@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useAchievementTrends, type AchievementTrendData } from "@/hooks/gamification/useAchievementTrends";
-import { TrendingUp, Trophy } from "lucide-react";
-import { format, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import {
+  useAchievementTrends,
+  type AchievementTrendData,
+} from '@/hooks/gamification/useAchievementTrends';
+import { TrendingUp, Trophy } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   AreaChart,
   Area,
@@ -15,13 +18,13 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 const PERIOD_OPTIONS = [
-  { value: "7", label: "7 dias" },
-  { value: "14", label: "14 dias" },
-  { value: "30", label: "30 dias" },
-  { value: "90", label: "90 dias" },
+  { value: '7', label: '7 dias' },
+  { value: '14', label: '14 dias' },
+  { value: '30', label: '30 dias' },
+  { value: '90', label: '90 dias' },
 ];
 
 export function AchievementTrendChart() {
@@ -65,14 +68,23 @@ export function AchievementTrendChart() {
 
   const chartData = (trends || []).map((t: AchievementTrendData) => ({
     ...t,
-    dateLabel: format(parseISO(t.date), "dd/MM", { locale: ptBR }),
+    dateLabel: format(parseISO(t.date), 'dd/MM', { locale: ptBR }),
   }));
 
-  const totalGoals = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.dailyGoals || 0), 0);
-  const totalMilestones = (trends || []).reduce((sum: number, t: AchievementTrendData) => sum + (t.streakMilestones || 0), 0);
+  const totalGoals = (trends || []).reduce(
+    (sum: number, t: AchievementTrendData) => sum + (t.dailyGoals || 0),
+    0
+  );
+  const totalMilestones = (trends || []).reduce(
+    (sum: number, t: AchievementTrendData) => sum + (t.streakMilestones || 0),
+    0
+  );
 
   return (
-    <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group">
+    <Card
+      variant="glass"
+      className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30 group"
+    >
       <CardHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -98,10 +110,10 @@ export function AchievementTrendChart() {
           <ToggleGroup
             type="single"
             value={String(days)}
-            onValueChange={(value) => value && setDays(Number(value))}
+            onValueChange={value => value && setDays(Number(value))}
             className="justify-start bg-white/5 p-1 rounded-xl w-fit border border-white/5"
           >
-            {PERIOD_OPTIONS.map((option) => (
+            {PERIOD_OPTIONS.map(option => (
               <ToggleGroupItem
                 key={option.value}
                 value={option.value}
@@ -117,50 +129,66 @@ export function AchievementTrendChart() {
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="colorGoals" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--rank-gold))" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="hsl(var(--rank-gold))" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorMilestones" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--status-warning))" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="hsl(var(--status-warning))" stopOpacity={0} />
+                  <stop
+                    offset="5%"
+                    stopColor="hsl(var(--status-warning))"
+                    stopOpacity={0.4}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="hsl(var(--status-warning))"
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(255,255,255,0.05)"
+                vertical={false}
+              />
               <XAxis
                 dataKey="dateLabel"
-                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 900 }}
+                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 900 }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 900 }}
+                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 900 }}
                 tickLine={false}
                 axisLine={false}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "rgba(0,0,0,0.8)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: "16px",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                  fontSize: "10px",
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                  fontSize: '10px',
                   fontWeight: 900,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em"
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
                 }}
-                itemStyle={{ padding: "2px 0" }}
-                cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 2 }}
-                formatter={(value: any, name: any) => {
-                  const label = name === "dailyGoals" ? "Metas Batidas" : "Marcos de Sequência";
+                itemStyle={{ padding: '2px 0' }}
+                cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2 }}
+                formatter={(value: number | string, name: string) => {
+                  const label =
+                    name === 'dailyGoals' ? 'Metas Batidas' : 'Marcos de Sequência';
                   return [value, label];
                 }}
-                labelFormatter={(label: any) => `Ciclo: ${label}`}
+                labelFormatter={(label: string) => `Ciclo: ${label}`}
               />
               <Legend
                 verticalAlign="top"
@@ -168,8 +196,12 @@ export function AchievementTrendChart() {
                 height={36}
                 iconType="circle"
                 formatter={(value: string) => {
-                  const label = value === "dailyGoals" ? "Metas" : "Marcos";
-                  return <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>;
+                  const label = value === 'dailyGoals' ? 'Metas' : 'Marcos';
+                  return (
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      {label}
+                    </span>
+                  );
                 }}
               />
               <Area

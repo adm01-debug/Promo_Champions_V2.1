@@ -1,8 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import type { Json } from '@/integrations/supabase/types';
+import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
-export type CoachingSessionStatus = "scheduled" | "completed" | "canceled";
+export type CoachingSessionStatus = 'scheduled' | 'completed' | 'canceled';
 
 export interface CoachingSession {
   id: string;
@@ -35,12 +37,14 @@ export interface SessionPrep {
 
 export const useCoachingSessions = () => {
   return useQuery<CoachingSession[]>({
-    queryKey: ["coaching-sessions"],
+    queryKey: ['coaching-sessions'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("coaching_sessions")
-        .select("*, salesperson:salespeople!coaching_sessions_salesperson_id_fkey(name, avatar_url)")
-        .order("scheduled_at", { ascending: false })
+        .from('coaching_sessions')
+        .select(
+          '*, salesperson:salespeople!coaching_sessions_salesperson_id_fkey(name, avatar_url)'
+        )
+        .order('scheduled_at', { ascending: false })
         .limit(100);
       if (error) throw error;
       return (data ?? []) as CoachingSession[];
@@ -51,9 +55,9 @@ export const useCoachingSessions = () => {
 
 export const useSessionPrep = (salespersonId: string | null) => {
   return useQuery<SessionPrep>({
-    queryKey: ["coaching-session-prep", salespersonId],
+    queryKey: ['coaching-session-prep', salespersonId],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("coaching-session-prep", {
+      const { data, error } = await supabase.functions.invoke('coaching-session-prep', {
         body: { salesperson_id: salespersonId },
       });
       if (error) throw error;
@@ -76,17 +80,19 @@ export const useCreateCoachingSession = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateSessionInput) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Não autenticado");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error('Não autenticado');
       const { data, error } = await supabase
-        .from("coaching_sessions")
+        .from('coaching_sessions')
         .insert({
           salesperson_id: input.salesperson_id,
           scheduled_at: input.scheduled_at,
           duration_min: input.duration_min,
           focus_skills: input.focus_skills,
-          agenda: (input.agenda ?? {}) as any,
-          coach_id: user.id
+          agenda: (input.agenda ?? {}) as Json,
+          coach_id: user.id,
         })
         .select()
         .single();
@@ -94,8 +100,8 @@ export const useCreateCoachingSession = () => {
       return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["coaching-sessions"] });
-      toast.success("Sessão agendada");
+      qc.invalidateQueries({ queryKey: ['coaching-sessions'] });
+      toast.success('Sessão agendada');
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -115,17 +121,17 @@ export const useUpdateCoachingSession = () => {
   return useMutation({
     mutationFn: async ({ id, ...updates }: UpdateSessionInput) => {
       const { data, error } = await supabase
-        .from("coaching_sessions")
-        .update(updates as any)
-        .eq("id", id)
+        .from('coaching_sessions')
+        .update(updates as TableUpdate<'coaching_sessions'>)
+        .eq('id', id)
         .select()
         .single();
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["coaching-sessions"] });
-      toast.success("Sessão atualizada");
+      qc.invalidateQueries({ queryKey: ['coaching-sessions'] });
+      toast.success('Sessão atualizada');
     },
     onError: (e: Error) => toast.error(e.message),
   });

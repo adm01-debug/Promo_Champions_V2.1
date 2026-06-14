@@ -67,7 +67,8 @@ function emitTelemetry(meta: {
             user_id: meta.userId || null,
           })
           .then(({ error: insertErr }) => {
-            if (insertErr) console.warn('[telemetry-persist] Insert failed:', insertErr.message);
+            if (insertErr)
+              console.warn('[telemetry-persist] Insert failed:', insertErr.message);
           });
       }
     } catch (_e) {
@@ -136,7 +137,9 @@ Deno.serve(async req => {
     // Validate table against allowlist to prevent arbitrary data exfiltration
     if (table && !ALLOWED_TABLES.has(table)) {
       return new Response(
-        JSON.stringify({ error: `Table '${table}' is not accessible through this bridge` }),
+        JSON.stringify({
+          error: `Table '${table}' is not accessible through this bridge`,
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -162,7 +165,10 @@ Deno.serve(async req => {
     if (operation === 'select') {
       const startTime = performance.now();
       let query = externalClient.from(table).select(selectColumns, {
-        count: queryCountMode === 'none' ? undefined : (queryCountMode as any),
+        count:
+          queryCountMode === 'none'
+            ? undefined
+            : (queryCountMode as 'exact' | 'planned' | 'estimated'),
       });
 
       // Apply filters
@@ -215,14 +221,20 @@ Deno.serve(async req => {
         });
       }
 
-      return new Response(JSON.stringify({ data: selectData, count, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ data: selectData, count, duration_ms: durationMs }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     if (operation === 'rpc') {
       const startTime = performance.now();
-      const { data: rpcData, error: rpcError } = await externalClient.rpc(rpcName, bodyData || {});
+      const { data: rpcData, error: rpcError } = await externalClient.rpc(
+        rpcName,
+        bodyData || {}
+      );
       const durationMs = Math.round(performance.now() - startTime);
 
       const status = rpcError
@@ -306,9 +318,12 @@ Deno.serve(async req => {
         });
       }
 
-      return new Response(JSON.stringify({ data: result.data, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ data: result.data, duration_ms: durationMs }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     return new Response(JSON.stringify({ error: `Unknown operation: ${operation}` }), {

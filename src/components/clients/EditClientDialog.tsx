@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useUpdateClient, Client } from "@/hooks/crm/useClients";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useUpdateClient, Client } from '@/hooks/crm/useClients';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -13,32 +13,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const editClientSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Nome é obrigatório")
-    .max(100, "Nome deve ter no máximo 100 caracteres"),
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
   email: z
     .string()
     .trim()
-    .email("E-mail inválido")
-    .max(255, "E-mail deve ter no máximo 255 caracteres")
-    .or(z.literal("")),
-  phone: z
-    .string()
-    .trim()
-    .max(20, "Telefone deve ter no máximo 20 caracteres"),
-  company: z
-    .string()
-    .trim()
-    .max(100, "Empresa deve ter no máximo 100 caracteres"),
+    .email('E-mail inválido')
+    .max(255, 'E-mail deve ter no máximo 255 caracteres')
+    .or(z.literal('')),
+  phone: z.string().trim().max(20, 'Telefone deve ter no máximo 20 caracteres'),
+  company: z.string().trim().max(100, 'Empresa deve ter no máximo 100 caracteres'),
   total_value: z
     .string()
-    .refine((val) => !val || !isNaN(parseFloat(val)), "Valor inválido")
-    .refine((val) => !val || parseFloat(val) >= 0, "Valor deve ser positivo"),
+    .refine(val => !val || !isNaN(parseFloat(val)), 'Valor inválido')
+    .refine(val => !val || parseFloat(val) >= 0, 'Valor deve ser positivo'),
   lead_source: z.string().optional(),
   lat: z.string().optional(),
   lng: z.string().optional(),
@@ -52,34 +46,38 @@ interface EditClientDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialogProps) => {
+export const EditClientDialog = ({
+  client,
+  open,
+  onOpenChange,
+}: EditClientDialogProps) => {
   const updateClient = useUpdateClient();
 
   const form = useForm<EditClientFormData>({
     resolver: zodResolver(editClientSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      total_value: "0",
-      lead_source: "",
-      lat: "",
-      lng: "",
+      name: '',
+      email: '',
+      phone: '',
+      company: '',
+      total_value: '0',
+      lead_source: '',
+      lat: '',
+      lng: '',
     },
   });
 
   useEffect(() => {
     if (client) {
       form.reset({
-        name: client.name || "",
-        email: client.email || "",
-        phone: client.phone || "",
-        company: client.company || "",
-        total_value: client.total_value?.toString() || "0",
-        lead_source: (client as any).lead_source || "",
-        lat: client.lat?.toString() || "",
-        lng: client.lng?.toString() || "",
+        name: client.name || '',
+        email: client.email || '',
+        phone: client.phone || '',
+        company: client.company || '',
+        total_value: client.total_value?.toString() || '0',
+        lead_source: (client as { lead_source?: string }).lead_source || '',
+        lat: client.lat?.toString() || '',
+        lng: client.lng?.toString() || '',
       });
     }
   }, [client, form]);
@@ -265,8 +263,12 @@ export const EditClientDialog = ({ client, open, onOpenChange }: EditClientDialo
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" className="gradient-primary" disabled={updateClient.isPending}>
-                {updateClient.isPending ? "Salvando..." : "Salvar"}
+              <Button
+                type="submit"
+                className="gradient-primary"
+                disabled={updateClient.isPending}
+              >
+                {updateClient.isPending ? 'Salvando...' : 'Salvar'}
               </Button>
             </div>
           </form>

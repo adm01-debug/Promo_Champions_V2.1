@@ -1,15 +1,11 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { corsHeaders } from '../_shared/cors.ts';
 
-
-
-interface SalesData {
+interface InventoryLevel {
   product_id: string;
-  product_name: string;
-  total_sales: number;
-  total_quantity: number;
-  avg_per_month: number;
+  current_stock?: number;
+  reorder_point?: number;
 }
 
 interface ForecastResult {
@@ -25,7 +21,7 @@ interface ForecastResult {
   risk_level: 'low' | 'medium' | 'high' | 'critical';
 }
 
-serve(async (req) => {
+serve(async req => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -39,7 +35,7 @@ serve(async (req) => {
 
     if (action === 'generate-forecasts') {
       console.info('[Demand Forecast] Generating forecasts for all products...');
-      
+
       // Get all products
       const { data: products, error: productsError } = await supabase
         .from('products')
@@ -70,14 +66,21 @@ serve(async (req) => {
       }
 
       const inventoryMap = new Map(
-        (inventory || []).map((inv: any) => [inv.product_id, inv])
+        (inventory || []).map((inv: InventoryLevel) => [inv.product_id, inv])
       );
 
       // Calculate sales by product
-      const salesByProduct = new Map<string, { count: number; revenue: number; dates: Date[] }>();
-      
+      const salesByProduct = new Map<
+        string,
+        { count: number; revenue: number; dates: Date[] }
+      >();
+
       for (const sale of sales || []) {
-        const existing = salesByProduct.get(sale.product_name) || { count: 0, revenue: 0, dates: [] };
+        const existing = salesByProduct.get(sale.product_name) || {
+          count: 0,
+          revenue: 0,
+          dates: [],
+        };
         existing.count += 1;
         existing.revenue += sale.amount;
         existing.dates.push(new Date(sale.created_at));
@@ -87,23 +90,27 @@ serve(async (req) => {
       const forecasts: ForecastResult[] = [];
 
       for (const product of products || []) {
-        const productSales = salesByProduct.get(product.name) || { count: 0, revenue: 0, dates: [] };
+        const productSales = salesByProduct.get(product.name) || {
+          count: 0,
+          revenue: 0,
+          dates: [],
+        };
         const inventoryLevel = inventoryMap.get(product.id);
-        
+
         // Calculate monthly average
         const monthsOfData = Math.max(1, 6); // 6 months
         const avgMonthly = productSales.count / monthsOfData;
-        
+
         // Calculate trend (comparing recent 3 months vs older 3 months)
         const threeMonthsAgo = new Date();
         threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-        
+
         const recentSales = productSales.dates.filter(d => d >= threeMonthsAgo).length;
         const olderSales = productSales.dates.filter(d => d < threeMonthsAgo).length;
-        
+
         let trend: 'increasing' | 'stable' | 'decreasing' = 'stable';
         let trendMultiplier = 1;
-        
+
         if (recentSales > olderSales * 1.2) {
           trend = 'increasing';
           trendMultiplier = 1.15;
@@ -111,19 +118,18 @@ serve(async (req) => {
           trend = 'decreasing';
           trendMultiplier = 0.85;
         }
-        
+
         // Generate predictions
         const predicted30d = Math.round(avgMonthly * trendMultiplier);
         const predicted60d = Math.round(avgMonthly * 2 * trendMultiplier);
         const predicted90d = Math.round(avgMonthly * 3 * trendMultiplier);
-        
+
         // Determine risk level based on inventory
         const currentStock = inventoryLevel?.current_stock || 0;
-        const reorderPoint = inventoryLevel?.reorder_point || 20;
-        
+
         let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
         let reorderRecommendation = 'Estoque adequado';
-        
+
         if (currentStock <= 0) {
           riskLevel = 'critical';
           reorderRecommendation = `Estoque zerado! Reabastecer imediatamente com ${predicted30d * 2} unidades`;
@@ -134,7 +140,7 @@ serve(async (req) => {
           riskLevel = 'medium';
           reorderRecommendation = `Considere reabastecer com ${predicted90d - currentStock} unidades`;
         }
-        
+
         // Calculate confidence based on data availability
         const confidence = Math.min(0.95, 0.5 + (productSales.count / 100) * 0.45);
 
@@ -154,10 +160,9 @@ serve(async (req) => {
         // Save forecast to database
         const forecastDate = new Date();
         forecastDate.setDate(forecastDate.getDate() + 30);
-        
-        await supabase
-          .from('demand_forecasts')
-          .upsert({
+
+        await supabase.from('demand_forecasts').upsert(
+          {
             product_id: product.id,
             forecast_date: forecastDate.toISOString().split('T')[0],
             predicted_quantity: predicted30d,
@@ -170,10 +175,12 @@ serve(async (req) => {
               trend_multiplier: trendMultiplier,
             },
             updated_at: new Date().toISOString(),
-          }, {
+          },
+          {
             onConflict: 'product_id',
             ignoreDuplicates: false,
-          });
+          }
+        );
       }
 
       // Sort by risk level
@@ -183,8 +190,8 @@ serve(async (req) => {
       console.info(`[Demand Forecast] Generated ${forecasts.length} forecasts`);
 
       return new Response(
-        JSON.stringify({ 
-          success: true, 
+        JSON.stringify({
+          success: true,
           forecasts,
           generated_at: new Date().toISOString(),
           total_products: forecasts.length,
@@ -207,22 +214,21 @@ serve(async (req) => {
 
       if (error && error.code !== 'PGRST116') throw error;
 
-      return new Response(
-        JSON.stringify({ success: true, forecast }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ success: true, forecast }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    return new Response(
-      JSON.stringify({ error: 'Invalid action' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Invalid action' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error: unknown) {
     console.error('[Demand Forecast] Error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

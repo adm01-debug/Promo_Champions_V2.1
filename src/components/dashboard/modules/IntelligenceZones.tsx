@@ -294,7 +294,7 @@ export const IntelligenceZones = () => {
               <BIProductCard
                 key={trend.name}
                 name={trend.name}
-                sales={trend.sales}
+                sales={Number(trend.sales)}
                 growth={trend.growth}
               />
             ))}

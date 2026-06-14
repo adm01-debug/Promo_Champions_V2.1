@@ -2,11 +2,11 @@
  * Centralized Error Tracking Service
  * Captures, categorizes, and persists errors for monitoring.
  */
-import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
+import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
-type ErrorSeverity = "low" | "medium" | "high" | "critical";
-type ErrorCategory = "runtime" | "network" | "auth" | "database" | "ui" | "unknown";
+type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
+type ErrorCategory = 'runtime' | 'network' | 'auth' | 'database' | 'ui' | 'unknown';
 
 interface TrackedError {
   message: string;
@@ -20,39 +20,51 @@ interface TrackedError {
 }
 
 const ERROR_BUFFER: TrackedError[] = [];
-const BREADCRUMBS: { message: string; timestamp: number; category?: string; data?: any }[] = [];
+const BREADCRUMBS: {
+  message: string;
+  timestamp: number;
+  category?: string;
+  data?: unknown;
+}[] = [];
 const MAX_BREADCRUMBS = 20;
 const FLUSH_INTERVAL = 30_000; // 30s
 const MAX_BUFFER = 50;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 
-export function addBreadcrumb(message: string, category?: string, data?: any): void {
+export function addBreadcrumb(message: string, category?: string, data?: unknown): void {
   BREADCRUMBS.push({ message, timestamp: Date.now(), category, data });
   if (BREADCRUMBS.length > MAX_BREADCRUMBS) {
     BREADCRUMBS.shift();
   }
 }
 
-function classifyError(error: Error | string): { severity: ErrorSeverity; category: ErrorCategory } {
-  const msg = typeof error === "string" ? error : error.message;
+function classifyError(error: Error | string): {
+  severity: ErrorSeverity;
+  category: ErrorCategory;
+} {
+  const msg = typeof error === 'string' ? error : error.message;
   const lower = msg.toLowerCase();
 
-  if (lower.includes("chunk") || lower.includes("dynamic import")) {
-    return { severity: "medium", category: "network" };
+  if (lower.includes('chunk') || lower.includes('dynamic import')) {
+    return { severity: 'medium', category: 'network' };
   }
-  if (lower.includes("401") || lower.includes("unauthorized") || lower.includes("jwt")) {
-    return { severity: "high", category: "auth" };
+  if (lower.includes('401') || lower.includes('unauthorized') || lower.includes('jwt')) {
+    return { severity: 'high', category: 'auth' };
   }
-  if (lower.includes("network") || lower.includes("fetch") || lower.includes("cors")) {
-    return { severity: "medium", category: "network" };
+  if (lower.includes('network') || lower.includes('fetch') || lower.includes('cors')) {
+    return { severity: 'medium', category: 'network' };
   }
-  if (lower.includes("supabase") || lower.includes("postgres") || lower.includes("rls")) {
-    return { severity: "high", category: "database" };
+  if (lower.includes('supabase') || lower.includes('postgres') || lower.includes('rls')) {
+    return { severity: 'high', category: 'database' };
   }
-  if (lower.includes("render") || lower.includes("hydrat") || lower.includes("component")) {
-    return { severity: "medium", category: "ui" };
+  if (
+    lower.includes('render') ||
+    lower.includes('hydrat') ||
+    lower.includes('component')
+  ) {
+    return { severity: 'medium', category: 'ui' };
   }
-  return { severity: "medium", category: "runtime" };
+  return { severity: 'medium', category: 'runtime' };
 }
 
 async function flushErrors(): Promise<void> {
@@ -61,8 +73,8 @@ async function flushErrors(): Promise<void> {
   const batch = ERROR_BUFFER.splice(0, MAX_BUFFER);
 
   try {
-    const { error } = await supabase.from("error_logs").insert(
-      batch.map((e) => ({
+    const { error } = await supabase.from('error_logs').insert(
+      batch.map(e => ({
         message: e.message.slice(0, 1000),
         stack_trace: e.stack?.slice(0, 5000) ?? null,
         severity: e.severity,
@@ -75,7 +87,7 @@ async function flushErrors(): Promise<void> {
     );
 
     if (error && import.meta.env.DEV) {
-      console.warn("[ErrorTracking] Failed to flush:", error.message);
+      console.warn('[ErrorTracking] Failed to flush:', error.message);
     }
   } catch {
     // Silently fail - don't create error loops
@@ -91,8 +103,8 @@ export function captureError(
     category?: ErrorCategory;
   }
 ): void {
-  const msg = typeof error === "string" ? error : error.message;
-  const stack = typeof error === "string" ? undefined : error.stack;
+  const msg = typeof error === 'string' ? error : error.message;
+  const stack = typeof error === 'string' ? undefined : error.stack;
   const { severity, category } = classifyError(error);
 
   const tracked: TrackedError = {
@@ -112,12 +124,12 @@ export function captureError(
   ERROR_BUFFER.push(tracked);
 
   // Auto-recovery for chunk errors
-  if (category === "network" && msg.toLowerCase().includes("chunk")) {
-    const lastReload = localStorage.getItem("last-error-reload");
+  if (category === 'network' && msg.toLowerCase().includes('chunk')) {
+    const lastReload = localStorage.getItem('last-error-reload');
     const now = Date.now();
     if (!lastReload || now - parseInt(lastReload) > 60000) {
-      localStorage.setItem("last-error-reload", now.toString());
-      console.warn("Chunk error detected. Auto-reloading for recovery...");
+      localStorage.setItem('last-error-reload', now.toString());
+      console.warn('Chunk error detected. Auto-reloading for recovery...');
       window.location.reload();
       return;
     }
@@ -147,18 +159,18 @@ export function initErrorTracking(): void {
   flushTimer = setInterval(() => void flushErrors(), FLUSH_INTERVAL);
 
   // Flush on unload
-  window.addEventListener("beforeunload", () => void flushErrors());
+  window.addEventListener('beforeunload', () => void flushErrors());
 
   // Capture unhandled errors
-  window.addEventListener("error", (event) => {
+  window.addEventListener('error', event => {
     captureError(event.error instanceof Error ? event.error : event.message, {
-      category: "runtime",
+      category: 'runtime',
       metadata: { filename: event.filename, lineno: event.lineno, colno: event.colno },
     });
   });
 
   // Capture unhandled promise rejections
-  window.addEventListener("unhandledrejection", (event) => {
-    captureException(event.reason, "unhandledrejection");
+  window.addEventListener('unhandledrejection', event => {
+    captureException(event.reason, 'unhandledrejection');
   });
 }

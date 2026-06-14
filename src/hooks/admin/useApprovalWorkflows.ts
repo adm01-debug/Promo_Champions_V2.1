@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import type { TableInsert } from '@/lib/supabase/typed-payloads';
 
 export interface ApprovalWorkflow {
   id: string;
@@ -45,12 +46,12 @@ export interface ApprovalDecision {
 
 export function useApprovalWorkflows() {
   return useQuery({
-    queryKey: ["approval-workflows"],
+    queryKey: ['approval-workflows'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("approval_workflows")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('approval_workflows')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data as ApprovalWorkflow[];
     },
@@ -59,14 +60,14 @@ export function useApprovalWorkflows() {
 
 export function useApprovalRequests(statusFilter?: string) {
   return useQuery({
-    queryKey: ["approval-requests", statusFilter],
+    queryKey: ['approval-requests', statusFilter],
     queryFn: async () => {
       let query = supabase
-        .from("approval_requests")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (statusFilter && statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
+        .from('approval_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (statusFilter && statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
       }
       const { data, error } = await query;
       if (error) throw error;
@@ -77,13 +78,13 @@ export function useApprovalRequests(statusFilter?: string) {
 
 export function useApprovalDecisions(requestId: string) {
   return useQuery({
-    queryKey: ["approval-decisions", requestId],
+    queryKey: ['approval-decisions', requestId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("approval_decisions")
-        .select("*")
-        .eq("request_id", requestId)
-        .order("decided_at", { ascending: true });
+        .from('approval_decisions')
+        .select('*')
+        .eq('request_id', requestId)
+        .order('decided_at', { ascending: true });
       if (error) throw error;
       return data as ApprovalDecision[];
     },
@@ -105,9 +106,9 @@ export function useCreateApprovalRequest() {
       discount_percentage?: number;
       justification?: string;
     }) => {
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error('Not authenticated');
       const { data, error } = await supabase
-        .from("approval_requests")
+        .from('approval_requests')
         .insert({
           ...params,
           requester_id: user.id,
@@ -119,10 +120,10 @@ export function useCreateApprovalRequest() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["approval-requests"] });
-      toast.success("Solicitação de aprovação enviada!");
+      queryClient.invalidateQueries({ queryKey: ['approval-requests'] });
+      toast.success('Solicitação de aprovação enviada!');
     },
-    onError: () => toast.error("Erro ao criar solicitação"),
+    onError: () => toast.error('Erro ao criar solicitação'),
   });
 }
 
@@ -133,38 +134,36 @@ export function useDecideApproval() {
   return useMutation({
     mutationFn: async (params: {
       request_id: string;
-      decision: "approved" | "rejected";
+      decision: 'approved' | 'rejected';
       comments?: string;
     }) => {
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error('Not authenticated');
 
       // Create decision
-      const { error: decisionError } = await supabase
-        .from("approval_decisions")
-        .insert({
-          request_id: params.request_id,
-          approver_id: user.id,
-          decision: params.decision,
-          comments: params.comments,
-        });
+      const { error: decisionError } = await supabase.from('approval_decisions').insert({
+        request_id: params.request_id,
+        approver_id: user.id,
+        decision: params.decision,
+        comments: params.comments,
+      });
       if (decisionError) throw decisionError;
 
       // Update request status
       const { error: updateError } = await supabase
-        .from("approval_requests")
+        .from('approval_requests')
         .update({
           status: params.decision,
           resolved_at: new Date().toISOString(),
         })
-        .eq("id", params.request_id);
+        .eq('id', params.request_id);
       if (updateError) throw updateError;
     },
     onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["approval-requests"] });
-      queryClient.invalidateQueries({ queryKey: ["approval-decisions"] });
-      toast.success(vars.decision === "approved" ? "Aprovado! ✅" : "Rejeitado ❌");
+      queryClient.invalidateQueries({ queryKey: ['approval-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['approval-decisions'] });
+      toast.success(vars.decision === 'approved' ? 'Aprovado! ✅' : 'Rejeitado ❌');
     },
-    onError: () => toast.error("Erro ao processar decisão"),
+    onError: () => toast.error('Erro ao processar decisão'),
   });
 }
 
@@ -174,19 +173,19 @@ export function useCreateWorkflow() {
 
   return useMutation({
     mutationFn: async (params: Partial<ApprovalWorkflow>) => {
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error('Not authenticated');
       const { data, error } = await supabase
-        .from("approval_workflows")
-        .insert({ ...params, created_by: user.id } as any)
+        .from('approval_workflows')
+        .insert({ ...params, created_by: user.id } as TableInsert<'approval_workflows'>)
         .select()
         .single();
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["approval-workflows"] });
-      toast.success("Workflow criado!");
+      queryClient.invalidateQueries({ queryKey: ['approval-workflows'] });
+      toast.success('Workflow criado!');
     },
-    onError: () => toast.error("Erro ao criar workflow"),
+    onError: () => toast.error('Erro ao criar workflow'),
   });
 }

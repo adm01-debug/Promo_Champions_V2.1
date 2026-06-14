@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 export interface BulkJob {
   id: string;
@@ -43,16 +43,23 @@ export function useCreateBulkJob() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateBulkJobInput) => {
-      const { data, error } = await supabase.functions.invoke("email-composer-bulk", { body: input });
+      const { data, error } = await supabase.functions.invoke('email-composer-bulk', {
+        body: input,
+      });
       if (error) throw new Error(error.message);
-      if ((data as any)?.error) throw new Error((data as any).error);
-      return data as { job_id: string; generated: number };
+      const result = data as { job_id: string; generated: number; error?: string };
+      if (result?.error) throw new Error(result.error);
+      return result;
     },
-    onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: ["bulk-jobs"] });
-      toast({ title: "Rascunhos gerados", description: `${data.generated} e-mails prontos para revisão.` });
+    onSuccess: data => {
+      qc.invalidateQueries({ queryKey: ['bulk-jobs'] });
+      toast({
+        title: 'Rascunhos gerados',
+        description: `${data.generated} e-mails prontos para revisão.`,
+      });
     },
-    onError: (e: Error) => toast({ title: "Falha ao gerar", description: e.message, variant: "destructive" }),
+    onError: (e: Error) =>
+      toast({ title: 'Falha ao gerar', description: e.message, variant: 'destructive' }),
   });
 }
 
@@ -60,24 +67,28 @@ export function useBulkJob(jobId: string | undefined) {
   const qc = useQueryClient();
 
   const job = useQuery({
-    queryKey: ["bulk-job", jobId],
+    queryKey: ['bulk-job', jobId],
     enabled: !!jobId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("email_bulk_jobs").select("*").eq("id", jobId!).maybeSingle();
+      const { data, error } = await supabase
+        .from('email_bulk_jobs')
+        .select('*')
+        .eq('id', jobId!)
+        .maybeSingle();
       if (error) throw error;
       return data as BulkJob | null;
     },
   });
 
   const drafts = useQuery({
-    queryKey: ["bulk-drafts", jobId],
+    queryKey: ['bulk-drafts', jobId],
     enabled: !!jobId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("email_bulk_drafts")
-        .select("*")
-        .eq("job_id", jobId!)
-        .order("created_at", { ascending: true });
+        .from('email_bulk_drafts')
+        .select('*')
+        .eq('job_id', jobId!)
+        .order('created_at', { ascending: true });
       if (error) throw error;
       return (data ?? []) as BulkDraft[];
     },
@@ -88,17 +99,27 @@ export function useBulkJob(jobId: string | undefined) {
     const channel = supabase
       .channel(`bulk-drafts-${jobId}`)
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "email_bulk_drafts", filter: `job_id=eq.${jobId}` },
-        () => {
-          qc.invalidateQueries({ queryKey: ["bulk-drafts", jobId] });
-          qc.invalidateQueries({ queryKey: ["bulk-job", jobId] });
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'email_bulk_drafts',
+          filter: `job_id=eq.${jobId}`,
         },
+        () => {
+          qc.invalidateQueries({ queryKey: ['bulk-drafts', jobId] });
+          qc.invalidateQueries({ queryKey: ['bulk-job', jobId] });
+        }
       )
       .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "email_bulk_jobs", filter: `id=eq.${jobId}` },
-        () => qc.invalidateQueries({ queryKey: ["bulk-job", jobId] }),
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'email_bulk_jobs',
+          filter: `id=eq.${jobId}`,
+        },
+        () => qc.invalidateQueries({ queryKey: ['bulk-job', jobId] })
       )
       .subscribe();
     return () => {
@@ -106,22 +127,39 @@ export function useBulkJob(jobId: string | undefined) {
     };
   }, [jobId, qc]);
 
-  return { job: job.data ?? null, drafts: drafts.data ?? [], isLoading: job.isLoading || drafts.isLoading };
+  return {
+    job: job.data ?? null,
+    drafts: drafts.data ?? [],
+    isLoading: job.isLoading || drafts.isLoading,
+  };
 }
 
 export function useUpdateDraft() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { id: string; patch: Partial<Pick<BulkDraft, "subject" | "body" | "approved" | "recipient_email">> }) => {
-      const { error } = await supabase.from("email_bulk_drafts").update(input.patch).eq("id", input.id);
+    mutationFn: async (input: {
+      id: string;
+      patch: Partial<
+        Pick<BulkDraft, 'subject' | 'body' | 'approved' | 'recipient_email'>
+      >;
+    }) => {
+      const { error } = await supabase
+        .from('email_bulk_drafts')
+        .update(input.patch)
+        .eq('id', input.id);
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {
-      qc.invalidateQueries({ queryKey: ["bulk-drafts"] });
+      qc.invalidateQueries({ queryKey: ['bulk-drafts'] });
       // optimistic toast omitted to avoid noise on toggle
       void vars;
     },
-    onError: (e: Error) => toast({ title: "Erro ao atualizar rascunho", description: e.message, variant: "destructive" }),
+    onError: (e: Error) =>
+      toast({
+        title: 'Erro ao atualizar rascunho',
+        description: e.message,
+        variant: 'destructive',
+      }),
   });
 }
 
@@ -129,33 +167,41 @@ export function useSendBulkJob() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (jobId: string) => {
-      const { data, error } = await supabase.functions.invoke("email-bulk-send", { body: { job_id: jobId } });
+      const { data, error } = await supabase.functions.invoke('email-bulk-send', {
+        body: { job_id: jobId },
+      });
       if (error) throw new Error(error.message);
-      if ((data as any)?.error) throw new Error((data as any).error);
-      return data as { sent: number; failed: number };
+      const result = data as { sent: number; failed: number; error?: string };
+      if (result?.error) throw new Error(result.error);
+      return result;
     },
-    onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: ["bulk-jobs"] });
-      qc.invalidateQueries({ queryKey: ["bulk-job"] });
-      qc.invalidateQueries({ queryKey: ["bulk-drafts"] });
+    onSuccess: data => {
+      qc.invalidateQueries({ queryKey: ['bulk-jobs'] });
+      qc.invalidateQueries({ queryKey: ['bulk-job'] });
+      qc.invalidateQueries({ queryKey: ['bulk-drafts'] });
       toast({
-        title: "Envio concluído",
+        title: 'Envio concluído',
         description: `${data.sent} enviados • ${data.failed} falhas`,
-        variant: data.failed > 0 ? "destructive" : "default",
+        variant: data.failed > 0 ? 'destructive' : 'default',
       });
     },
-    onError: (e: Error) => toast({ title: "Falha ao enviar lote", description: e.message, variant: "destructive" }),
+    onError: (e: Error) =>
+      toast({
+        title: 'Falha ao enviar lote',
+        description: e.message,
+        variant: 'destructive',
+      }),
   });
 }
 
 export function useBulkJobs() {
   return useQuery({
-    queryKey: ["bulk-jobs"],
+    queryKey: ['bulk-jobs'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("email_bulk_jobs")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('email_bulk_jobs')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
       return (data ?? []) as BulkJob[];

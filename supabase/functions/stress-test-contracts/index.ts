@@ -24,7 +24,11 @@ serve(async req => {
       total: iterations,
       passed: 0,
       failed: 0,
-      vulnerabilities_detected: [] as any[],
+      vulnerabilities_detected: [] as Array<{
+        scenario: string;
+        payload: Record<string, unknown>;
+        reason: string;
+      }>,
     };
 
     const fuzz = () => {

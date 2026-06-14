@@ -17,13 +17,17 @@ export function useCompetencyData(salespersonId?: string) {
     queryFn: async () => {
       if (!spId) return [];
 
-      const [activitiesRes, salesRes, outcomesRes] = await Promise.all([
+      const [activitiesRes, salesRes] = await Promise.all([
         supabase
           .from('activities')
           .select('activity_type, outcome')
           .eq('salesperson_id', spId)
           .limit(500),
-        supabase.from('sales').select('status, amount').eq('salesperson_id', spId).limit(500),
+        supabase
+          .from('sales')
+          .select('status, amount')
+          .eq('salesperson_id', spId)
+          .limit(500),
         supabase
           .from('deal_outcomes')
           .select('outcome, reason')
@@ -33,7 +37,6 @@ export function useCompetencyData(salespersonId?: string) {
 
       const activities = activitiesRes.data || [];
       const sales = salesRes.data || [];
-      const outcomes = outcomesRes.data || [];
 
       const totalActivities = Math.max(activities.length, 1);
       const totalSales = Math.max(sales.length, 1);
@@ -57,7 +60,9 @@ export function useCompetencyData(salespersonId?: string) {
       );
 
       // Negotiation: proposals/negotiations ratio
-      const negotiationSales = sales.filter(s => ['negotiation', 'completed'].includes(s.status));
+      const negotiationSales = sales.filter(s =>
+        ['negotiation', 'completed'].includes(s.status)
+      );
       const negotiationScore = Math.min(
         100,
         Math.round((negotiationSales.length / totalSales) * 130)
@@ -65,7 +70,10 @@ export function useCompetencyData(salespersonId?: string) {
 
       // Closing: completed deals ratio
       const completedSales = sales.filter(s => isWonSaleStatus(s.status));
-      const closingScore = Math.min(100, Math.round((completedSales.length / totalSales) * 140));
+      const closingScore = Math.min(
+        100,
+        Math.round((completedSales.length / totalSales) * 140)
+      );
 
       // Follow-up: meetings ratio
       const followUpActivities = activities.filter(
@@ -81,7 +89,10 @@ export function useCompetencyData(salespersonId?: string) {
 
       // Presentation: successful outcomes (connected, qualified, scheduled)
       const successfulOutcomes = activities.filter(
-        a => a.outcome === 'connected' || a.outcome === 'qualified' || a.outcome === 'scheduled'
+        a =>
+          a.outcome === 'connected' ||
+          a.outcome === 'qualified' ||
+          a.outcome === 'scheduled'
       );
       const presentationScore = Math.min(
         100,

@@ -54,6 +54,13 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
   );
 };
 
+interface BenchmarkRow {
+  month: string;
+  deals: number;
+  won_deals: number;
+  revenue: number;
+}
+
 const HistoricalBenchmark = () => {
   const [period, setPeriod] = useState<Period>('mom');
 
@@ -70,7 +77,7 @@ const HistoricalBenchmark = () => {
 
   const monthlyData = useMemo(() => {
     if (!salesData?.length) return [];
-    return salesData.map((v: any) => ({
+    return (salesData as BenchmarkRow[]).map(v => ({
       ...v,
       label: format(new Date(v.month + '-01T12:00:00Z'), 'MMM yy', { locale: ptBR }),
       winRate: v.deals > 0 ? (v.won_deals / v.deals) * 100 : 0,
