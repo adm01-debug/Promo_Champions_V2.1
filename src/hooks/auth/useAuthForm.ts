@@ -54,7 +54,7 @@ export function useAuthForm() {
       passwordSchema.parse(loginPassword);
     } catch (err) {
       if (err instanceof z.ZodError) {
-        toast.error(err.errors[0].message);
+        toast.error(err.issues[0].message);
         return;
       }
     }
@@ -82,7 +82,7 @@ export function useAuthForm() {
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { emailSchema.parse(resetEmail); } catch (err) { if (err instanceof z.ZodError) { toast.error(err.errors[0].message); return; } }
+    try { emailSchema.parse(resetEmail); } catch (err) { if (err instanceof z.ZodError) { toast.error(err.issues[0].message); return; } }
     setIsResetLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, { redirectTo: `${window.location.origin}/reset-password` });
     setIsResetLoading(false);

@@ -17,7 +17,7 @@ export const CommissionSchema = z.object({
 export const ApprovalRequestSchema = z.object({
   type: z.enum(["goal", "scoring_rule", "commission"]),
   entity_id: z.string().uuid(),
-  new_values: z.record(z.any()),
-  old_values: z.record(z.any()).optional(),
+  new_values: z.record(z.string(), z.any()),
+  old_values: z.record(z.string(), z.any()).optional(),
   justification: z.string().optional(),
 });

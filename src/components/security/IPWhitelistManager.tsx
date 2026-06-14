@@ -69,7 +69,7 @@ export function IPWhitelistManager() {
   const handleAddIP = () => {
     setValidationError(null);
     const result = ipSchema.safeParse({ ip_address: newIP, description: newDescription });
-    if (!result.success) { setValidationError(result.error.errors[0].message); return; }
+    if (!result.success) { setValidationError(result.error.issues[0].message); return; }
     addIPMutation.mutate({ ip_address: result.data.ip_address, description: result.data.description });
   };
 
