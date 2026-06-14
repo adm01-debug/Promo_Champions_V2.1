@@ -4,12 +4,26 @@ import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { LucideIcon } from 'lucide-react';
-import { DollarSign, Target, TrendingUp, ShoppingBag, AlertCircle, Calendar } from 'lucide-react';
+import {
+  DollarSign,
+  Target,
+  TrendingUp,
+  ShoppingBag,
+  AlertCircle,
+  Calendar,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { VendedorDashboardLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
-import { startOfMonth, endOfMonth, format, subMonths, differenceInDays, parseISO } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  format,
+  subMonths,
+  differenceInDays,
+  parseISO,
+} from 'date-fns';
 import { NextBestActionCard } from '@/components/ai/NextBestActionCard';
 import { VendedorHeader } from '@/components/vendedor/VendedorHeader';
 import { VendedorCharts } from '@/components/vendedor/VendedorCharts';
@@ -198,20 +212,6 @@ const VendedorDashboard = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useVendedorData(id || '');
 
-  if (!isLoading && (error || !data)) {
-    return (
-      <div className="min-h-screen bg-background p-6 lg:p-8 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Vendedor não encontrado</h2>
-          <Link to="/vendedores">
-            <Button variant="outline">Voltar para Vendedores</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   const { salesperson, goal, currentSales, previousSales, allSales } = data || {
     salesperson: null as never,
     goal: 0,
@@ -248,9 +248,13 @@ const VendedorDashboard = () => {
 
   const salesByCategory: Record<string, number> = {};
   completedSales.forEach(sale => {
-    salesByCategory[sale.category] = (salesByCategory[sale.category] || 0) + Number(sale.amount);
+    salesByCategory[sale.category] =
+      (salesByCategory[sale.category] || 0) + Number(sale.amount);
   });
-  const categoryData = Object.entries(salesByCategory).map(([name, value]) => ({ name, value }));
+  const categoryData = Object.entries(salesByCategory).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
   const recentDeals = allSales.slice(0, 5);
   const staleTasks = pendingSales.filter(
@@ -258,7 +262,23 @@ const VendedorDashboard = () => {
   );
   const daysRemaining = differenceInDays(endOfMonth(new Date()), new Date());
   const dailyRequired =
-    goal > 0 && daysRemaining > 0 ? Math.max(0, (goal - totalRevenue) / daysRemaining) : 0;
+    goal > 0 && daysRemaining > 0
+      ? Math.max(0, (goal - totalRevenue) / daysRemaining)
+      : 0;
+
+  if (!isLoading && (error || !data)) {
+    return (
+      <div className="min-h-screen bg-background p-6 lg:p-8 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Vendedor não encontrado</h2>
+          <Link to="/vendedores">
+            <Button variant="outline">Voltar para Vendedores</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PageTransition>
@@ -345,10 +365,15 @@ const VendedorDashboard = () => {
                   <div>
                     <p className="font-medium">Para bater a meta</p>
                     <p className="text-sm text-muted-foreground">
-                      Faltam <span className="font-bold text-warning">{daysRemaining} dias</span> •
-                      Você precisa vender{' '}
+                      Faltam{' '}
+                      <span className="font-bold text-warning">{daysRemaining} dias</span>{' '}
+                      • Você precisa vender{' '}
                       <span className="font-bold text-warning">
-                        R$ {dailyRequired.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}/dia
+                        R${' '}
+                        {dailyRequired.toLocaleString('pt-BR', {
+                          maximumFractionDigits: 0,
+                        })}
+                        /dia
                       </span>
                     </p>
                   </div>
@@ -358,7 +383,10 @@ const VendedorDashboard = () => {
 
             <VendedorCharts chartData={chartData} categoryData={categoryData} />
 
-            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '430ms' }}>
+            <div
+              className="opacity-0 animate-fade-in-up"
+              style={{ animationDelay: '430ms' }}
+            >
               <NextBestActionCard salespersonId={id} />
             </div>
 

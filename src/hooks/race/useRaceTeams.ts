@@ -54,7 +54,7 @@ export function useRaceTeams(seasonId?: string) {
       if (tErr) throw tErr;
       if (!teams || teams.length === 0) return [];
 
-      const teamIds = teams.map((t) => t.id);
+      const teamIds = teams.map(t => t.id);
       const { data: members, error: mErr } = await supabase
         .from('race_team_members')
         .select('team_id, car_id')
@@ -62,30 +62,32 @@ export function useRaceTeams(seasonId?: string) {
       if (mErr) throw mErr;
 
       const carIds = (members ?? []).map((m: MemberRow) => m.car_id);
-      let lbMap = new Map<string, number>();
+      const lbMap = new Map<string, number>();
       if (carIds.length > 0) {
         const { data: lb } = await supabase
           .from('race_leaderboard_view')
           .select('car_id, total_sales')
           .eq('season_id', seasonId)
           .in('car_id', carIds);
-        (lb ?? []).forEach((r) => {
+        (lb ?? []).forEach(r => {
           if (r.car_id) lbMap.set(r.car_id, Number(r.total_sales ?? 0));
         });
       }
 
-      return (teams as TeamRow[]).map((t) => {
-        const memberIds = (members ?? [])
-          .filter((m: MemberRow) => m.team_id === t.id)
-          .map((m: MemberRow) => m.car_id);
-        const points = memberIds.reduce((acc, id) => acc + (lbMap.get(id) ?? 0), 0);
-        return {
-          ...t,
-          member_car_ids: memberIds,
-          member_count: memberIds.length,
-          total_points: points,
-        };
-      }).sort((a, b) => b.total_points - a.total_points);
+      return (teams as TeamRow[])
+        .map(t => {
+          const memberIds = (members ?? [])
+            .filter((m: MemberRow) => m.team_id === t.id)
+            .map((m: MemberRow) => m.car_id);
+          const points = memberIds.reduce((acc, id) => acc + (lbMap.get(id) ?? 0), 0);
+          return {
+            ...t,
+            member_car_ids: memberIds,
+            member_count: memberIds.length,
+            total_points: points,
+          };
+        })
+        .sort((a, b) => b.total_points - a.total_points);
     },
     enabled: !!seasonId,
     staleTime: 30_000,

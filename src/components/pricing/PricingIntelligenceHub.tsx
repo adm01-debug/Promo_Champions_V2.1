@@ -1,12 +1,28 @@
-import { useMemo, useState, lazy, Suspense } from "react";
-import { motion } from "framer-motion";
-import { DollarSign, TrendingDown, AlertTriangle, Target, Sparkles, ArrowUpRight, ShieldCheck, Zap } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { useMemo, useState, lazy, Suspense } from 'react';
+import { motion } from 'framer-motion';
+import {
+  DollarSign,
+  TrendingDown,
+  AlertTriangle,
+  Target,
+  Sparkles,
+  ArrowUpRight,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import {
   ResponsiveContainer,
   BarChart,
@@ -15,41 +31,57 @@ import {
   YAxis,
   Tooltip as RTooltip,
   CartesianGrid,
-} from "recharts";
-import { usePricingIntelligence, type PricingHealth } from "@/hooks/usePricingIntelligence";
-import { cn } from "@/lib/utils";
-const DiscountOptimizer = lazy(() => import("./DiscountOptimizer").then(m => ({ default: m.DiscountOptimizer })));
-const PriceElasticityChart = lazy(() => import("./PriceElasticityChart").then(m => ({ default: m.PriceElasticityChart })));
-const RevenueLeakageCard = lazy(() => import("./RevenueLeakageCard").then(m => ({ default: m.RevenueLeakageCard })));
+} from 'recharts';
+import {
+  usePricingIntelligence,
+  type PricingHealth,
+} from '@/hooks/usePricingIntelligence';
+import { cn } from '@/lib/utils';
+const DiscountOptimizer = lazy(() =>
+  import('./DiscountOptimizer').then(m => ({ default: m.DiscountOptimizer }))
+);
+const PriceElasticityChart = lazy(() =>
+  import('./PriceElasticityChart').then(m => ({ default: m.PriceElasticityChart }))
+);
+const RevenueLeakageCard = lazy(() =>
+  import('./RevenueLeakageCard').then(m => ({ default: m.RevenueLeakageCard }))
+);
 
 const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(n);
 const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-const healthMeta: Record<PricingHealth, { label: string; tone: string; ring: string; desc: string }> = {
+const healthMeta: Record<
+  PricingHealth,
+  { label: string; tone: string; ring: string; desc: string }
+> = {
   excellent: {
-    label: "Excelente",
-    tone: "bg-success/15 text-success border-success/30",
-    ring: "ring-success/40",
-    desc: "Margem protegida. Descontos sob controle.",
+    label: 'Excelente',
+    tone: 'bg-success/15 text-success border-success/30',
+    ring: 'ring-success/40',
+    desc: 'Margem protegida. Descontos sob controle.',
   },
   healthy: {
-    label: "Saudável",
-    tone: "bg-info/15 text-info border-info/30",
-    ring: "ring-info/40",
-    desc: "Pricing está em linha. Continue monitorando.",
+    label: 'Saudável',
+    tone: 'bg-info/15 text-info border-info/30',
+    ring: 'ring-info/40',
+    desc: 'Pricing está em linha. Continue monitorando.',
   },
   warning: {
-    label: "Atenção",
-    tone: "bg-warning/15 text-warning border-warning/30",
-    ring: "ring-warning/40",
-    desc: "Descontos elevados em parte da carteira. Revise política.",
+    label: 'Atenção',
+    tone: 'bg-warning/15 text-warning border-warning/30',
+    ring: 'ring-warning/40',
+    desc: 'Descontos elevados em parte da carteira. Revise política.',
   },
   critical: {
-    label: "Crítico",
-    tone: "bg-destructive/15 text-destructive border-destructive/30",
-    ring: "ring-destructive/40",
-    desc: "Erosão de margem significativa. Ação imediata necessária.",
+    label: 'Crítico',
+    tone: 'bg-destructive/15 text-destructive border-destructive/30',
+    ring: 'ring-destructive/40',
+    desc: 'Erosão de margem significativa. Ação imediata necessária.',
   },
 };
 
@@ -58,8 +90,12 @@ export function PricingIntelligenceHub() {
   const { data, isLoading } = usePricingIntelligence(days);
 
   const distribution = useMemo(
-    () => (data?.distribution ?? []).map((d) => ({ ...d, revenueShort: Math.round(d.revenue) })),
-    [data],
+    () =>
+      (data?.distribution ?? []).map(d => ({
+        ...d,
+        revenueShort: Math.round(d.revenue),
+      })),
+    [data]
   );
 
   if (isLoading) {
@@ -94,7 +130,10 @@ export function PricingIntelligenceHub() {
       {/* Background Decor Imersivo de Alta Performance */}
       <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-primary/5 blur-[160px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-info/5 blur-[140px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div
+          className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-info/5 blur-[140px] rounded-full animate-pulse"
+          style={{ animationDelay: '1s' }}
+        />
         <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-success/5 blur-[120px] rounded-full" />
       </div>
 
@@ -121,17 +160,23 @@ export function PricingIntelligenceHub() {
             Pricing Hub <span className="text-primary/80">10/10</span>
           </h1>
           <p className="text-base text-muted-foreground/80 max-w-3xl font-medium leading-relaxed">
-            O cockpit definitivo para proteção de margem de elite. Nossa IA analisa curvas de elasticidade e vazamentos de receita em milissegundos para garantir sua dominância de mercado.
+            O cockpit definitivo para proteção de margem de elite. Nossa IA analisa curvas
+            de elasticidade e vazamentos de receita em milissegundos para garantir sua
+            dominância de mercado.
           </p>
         </div>
 
         <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
-          <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 7 | 30 | 90)} className="bg-transparent border-none">
+          <Tabs
+            value={String(days)}
+            onValueChange={v => setDays(Number(v) as 7 | 30 | 90)}
+            className="bg-transparent border-none"
+          >
             <TabsList className="bg-white/5 border-none p-1">
-              {([7, 30, 90] as const).map((d) => (
-                <TabsTrigger 
+              {([7, 30, 90] as const).map(d => (
+                <TabsTrigger
                   key={d}
-                  value={String(d)} 
+                  value={String(d)}
                   className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg text-xs font-black px-5 py-2 rounded-lg transition-all"
                 >
                   {d}D
@@ -140,7 +185,11 @@ export function PricingIntelligenceHub() {
             </TabsList>
           </Tabs>
           <div className="w-px h-8 bg-white/10 mx-1" />
-          <Button variant="outline" size="icon" className="rounded-xl border-white/10 bg-white/5 hover:bg-white/15 hover:scale-105 transition-all group">
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-xl border-white/10 bg-white/5 hover:bg-white/15 hover:scale-105 transition-all group"
+          >
             <Zap className="h-5 w-5 text-primary group-hover:animate-pulse" />
           </Button>
         </div>
@@ -151,22 +200,34 @@ export function PricingIntelligenceHub() {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          "relative overflow-hidden rounded-2xl border p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl",
+          'relative overflow-hidden rounded-2xl border p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl',
           meta.tone,
-          "border-white/10 backdrop-blur-md"
+          'border-white/10 backdrop-blur-md'
         )}
       >
-        <div className={cn("absolute inset-0 opacity-10 bg-gradient-to-r", 
-          data.health === 'critical' ? "from-destructive via-transparent to-transparent" : "from-primary via-transparent to-transparent"
-        )} />
-        
+        <div
+          className={cn(
+            'absolute inset-0 opacity-10 bg-gradient-to-r',
+            data.health === 'critical'
+              ? 'from-destructive via-transparent to-transparent'
+              : 'from-primary via-transparent to-transparent'
+          )}
+        />
+
         <div className="flex items-center gap-5 relative z-10">
-          <div className={cn("p-4 rounded-2xl bg-white/10 border border-white/20 shadow-inner", meta.ring)}>
+          <div
+            className={cn(
+              'p-4 rounded-2xl bg-white/10 border border-white/20 shadow-inner',
+              meta.ring
+            )}
+          >
             <Sparkles className="h-8 w-8 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black tracking-widest uppercase opacity-70">Status da Operação</span>
+              <span className="text-xs font-black tracking-widest uppercase opacity-70">
+                Status da Operação
+              </span>
               <div className="h-1.5 w-1.5 rounded-full bg-current animate-ping" />
             </div>
             <div className="text-3xl font-black font-sora tracking-tighter">
@@ -178,8 +239,15 @@ export function PricingIntelligenceHub() {
 
         <div className="flex items-center gap-8 relative z-10">
           <div className="text-right hidden sm:block">
-            <div className="text-[10px] font-black uppercase tracking-widest opacity-60">Volume Analisado</div>
-            <div className="text-xl font-bold">{data.kpis.deals_count} <span className="text-xs opacity-60 font-medium tracking-normal">deals</span></div>
+            <div className="text-[10px] font-black uppercase tracking-widest opacity-60">
+              Volume Analisado
+            </div>
+            <div className="text-xl font-bold">
+              {data.kpis.deals_count}{' '}
+              <span className="text-xs opacity-60 font-medium tracking-normal">
+                deals
+              </span>
+            </div>
           </div>
           <Button className="bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full px-8 shadow-xl">
             EXPORTAR AUDITORIA
@@ -189,13 +257,13 @@ export function PricingIntelligenceHub() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard 
-          icon={DollarSign} 
-          label="Ticket médio" 
-          value={fmtCurrency(k.avg_ticket)} 
+        <KpiCard
+          icon={DollarSign}
+          label="Ticket médio"
+          value={fmtCurrency(k.avg_ticket)}
           numericValue={k.avg_ticket}
           isCurrency
-          accent="text-info" 
+          accent="text-info"
         />
         <KpiCard
           icon={TrendingDown}
@@ -203,7 +271,7 @@ export function PricingIntelligenceHub() {
           value={fmtPct(k.avg_discount_pct)}
           numericValue={k.avg_discount_pct * 100}
           isPercent
-          accent={k.avg_discount_pct > 0.15 ? "text-warning" : "text-foreground"}
+          accent={k.avg_discount_pct > 0.15 ? 'text-warning' : 'text-foreground'}
         />
         <KpiCard
           icon={AlertTriangle}
@@ -218,16 +286,16 @@ export function PricingIntelligenceHub() {
           label="Deals em alerta"
           value={`${k.alerted_deals} (${fmtPct(k.alert_ratio)})`}
           numericValue={k.alerted_deals}
-          accent={k.alert_ratio > 0.2 ? "text-destructive" : "text-foreground"}
+          accent={k.alert_ratio > 0.2 ? 'text-destructive' : 'text-foreground'}
         />
       </div>
 
       {/* Revenue Leakage Map */}
       <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
-        <RevenueLeakageCard 
+        <RevenueLeakageCard
           totalLost={k.revenue_lost}
           discountLost={data.leakage_segments?.discount ?? k.revenue_lost * 0.55}
-          competitorLost={data.leakage_segments?.competitor ?? k.revenue_lost * 0.30}
+          competitorLost={data.leakage_segments?.competitor ?? k.revenue_lost * 0.3}
           marginErosion={data.leakage_segments?.erosion ?? k.revenue_lost * 0.15}
         />
       </Suspense>
@@ -248,10 +316,16 @@ export function PricingIntelligenceHub() {
           <CardHeader className="border-b border-white/5 bg-white/5">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="font-sora text-lg font-bold">Distribuição de Descontos</CardTitle>
-                <p className="text-xs text-muted-foreground mt-1">Histograma de agressividade comercial</p>
+                <CardTitle className="font-sora text-lg font-bold">
+                  Distribuição de Descontos
+                </CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Histograma de agressividade comercial
+                </p>
               </div>
-              <Badge variant="outline" className="border-primary/30 text-primary">IA Validated</Badge>
+              <Badge variant="outline" className="border-primary/30 text-primary">
+                IA Validated
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="h-80 pt-8">
@@ -260,40 +334,49 @@ export function PricingIntelligenceHub() {
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                    <stop
+                      offset="100%"
+                      stopColor="hsl(var(--primary))"
+                      stopOpacity={0.2}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="white" strokeOpacity={0.05} vertical={false} />
-                <XAxis 
-                  dataKey="label" 
-                  stroke="hsl(var(--muted-foreground))" 
-                  fontSize={10} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="white"
+                  strokeOpacity={0.05}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="label"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={10}
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))" 
-                  fontSize={10} 
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={10}
                   axisLine={false}
                   tickLine={false}
                 />
                 <RTooltip
                   cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                   contentStyle={{
-                    background: "rgba(15, 23, 42, 0.9)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    background: 'rgba(15, 23, 42, 0.9)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: 12,
-                    backdropFilter: "blur(8px)",
-                    boxShadow: "0 10px 25px -5px rgba(0,0,0,0.3)"
+                    backdropFilter: 'blur(8px)',
+                    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
                   }}
                   formatter={(v: any, name: any) =>
-                    name === "revenue" ? fmtCurrency(Number(v)) : [`${v} deals`, "Volume"]
+                    name === 'revenue' ? fmtCurrency(Number(v)) : [`${v} deals`, 'Volume']
                   }
                 />
-                <Bar 
-                  dataKey="count" 
-                  fill="url(#barGradient)" 
-                  radius={[6, 6, 0, 0]} 
+                <Bar
+                  dataKey="count"
+                  fill="url(#barGradient)"
+                  radius={[6, 6, 0, 0]}
                   animationDuration={1500}
                 />
               </BarChart>
@@ -308,44 +391,93 @@ export function PricingIntelligenceHub() {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive animate-pulse" />
                 <div>
-                  <CardTitle className="font-sora text-lg font-bold text-destructive">Radar de Concorrência</CardTitle>
-                  <p className="text-xs text-muted-foreground mt-1">Produtos sob ataque de preço</p>
+                  <CardTitle className="font-sora text-lg font-bold text-destructive">
+                    Radar de Concorrência
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Produtos sob ataque de preço
+                  </p>
                 </div>
               </div>
-              <Badge className="bg-destructive text-white border-none text-[10px] font-black uppercase">Crítico</Badge>
+              <Badge className="bg-destructive text-white border-none text-[10px] font-black uppercase">
+                Crítico
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-white/5">
-              {(data.competitor_threats && data.competitor_threats.length > 0 ? data.competitor_threats : [
-                { product_name: "Advanced Analytics Suite", our_price: 12500, competitor_price: 9800, threat_level: 'high' },
-                { product_name: "CRM Integration Module", our_price: 4500, competitor_price: 3900, threat_level: 'medium' },
-                { product_name: "Priority Support SLA", our_price: 2200, competitor_price: 1800, threat_level: 'high' },
-                { product_name: "Security Hardening Kit", our_price: 8900, competitor_price: 7500, threat_level: 'medium' }
-              ]).map((threat, i) => (
-                <div key={i} className="flex items-center justify-between p-4 hover:bg-white/5 transition-all group">
+              {(data.competitor_threats && data.competitor_threats.length > 0
+                ? data.competitor_threats
+                : [
+                    {
+                      product_name: 'Advanced Analytics Suite',
+                      our_price: 12500,
+                      competitor_price: 9800,
+                      threat_level: 'high',
+                    },
+                    {
+                      product_name: 'CRM Integration Module',
+                      our_price: 4500,
+                      competitor_price: 3900,
+                      threat_level: 'medium',
+                    },
+                    {
+                      product_name: 'Priority Support SLA',
+                      our_price: 2200,
+                      competitor_price: 1800,
+                      threat_level: 'high',
+                    },
+                    {
+                      product_name: 'Security Hardening Kit',
+                      our_price: 8900,
+                      competitor_price: 7500,
+                      threat_level: 'medium',
+                    },
+                  ]
+              ).map((threat, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 hover:bg-white/5 transition-all group"
+                >
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-1.5 h-10 rounded-full",
-                      threat.threat_level === 'high' ? "bg-destructive shadow-[0_0_10px_rgba(239,68,68,0.5)]" : "bg-warning shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                    )} />
+                    <div
+                      className={cn(
+                        'w-1.5 h-10 rounded-full',
+                        threat.threat_level === 'high'
+                          ? 'bg-destructive shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                          : 'bg-warning shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                      )}
+                    />
                     <div>
-                      <div className="font-bold text-sm group-hover:text-destructive transition-colors">{threat.product_name}</div>
+                      <div className="font-bold text-sm group-hover:text-destructive transition-colors">
+                        {threat.product_name}
+                      </div>
                       <div className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">
-                        Delta: -{Math.round((1 - threat.competitor_price / threat.our_price) * 100)}% vs Concorrência
+                        Delta: -
+                        {Math.round(
+                          (1 - threat.competitor_price / threat.our_price) * 100
+                        )}
+                        % vs Concorrência
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-xs font-mono font-bold text-foreground">
-                      {fmtCurrency(threat.our_price)} 
-                      <span className="text-[10px] text-muted-foreground mx-1">vs</span> 
-                      <span className="text-destructive">{fmtCurrency(threat.competitor_price)}</span>
+                      {fmtCurrency(threat.our_price)}
+                      <span className="text-[10px] text-muted-foreground mx-1">vs</span>
+                      <span className="text-destructive">
+                        {fmtCurrency(threat.competitor_price)}
+                      </span>
                     </div>
-                    <Badge variant="outline" className={cn(
-                      "mt-1 text-[9px] py-0 px-1.5 font-black uppercase",
-                      threat.threat_level === 'high' ? "border-destructive/30 text-destructive bg-destructive/5" : "border-warning/30 text-warning bg-warning/5"
-                    )}>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'mt-1 text-[9px] py-0 px-1.5 font-black uppercase',
+                        threat.threat_level === 'high'
+                          ? 'border-destructive/30 text-destructive bg-destructive/5'
+                          : 'border-warning/30 text-warning bg-warning/5'
+                      )}
+                    >
                       Risco {threat.threat_level === 'high' ? 'Crítico' : 'Médio'}
                     </Badge>
                   </div>
@@ -367,11 +499,20 @@ export function PricingIntelligenceHub() {
                   <TrendingDown className="h-6 w-6" />
                 </div>
                 <div>
-                  <CardTitle className="font-sora text-xl font-black tracking-tight">Top Discounters</CardTitle>
-                  <p className="text-xs text-muted-foreground font-medium mt-1">Vendedores com maior erosão de margem acumulada</p>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">
+                    Top Discounters
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">
+                    Vendedores com maior erosão de margem acumulada
+                  </p>
                 </div>
               </div>
-              <Badge variant="outline" className="border-destructive/30 text-destructive bg-destructive/5 font-black text-[10px]">ALERTA DE MARGEM</Badge>
+              <Badge
+                variant="outline"
+                className="border-destructive/30 text-destructive bg-destructive/5 font-black text-[10px]"
+              >
+                ALERTA DE MARGEM
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
@@ -384,29 +525,40 @@ export function PricingIntelligenceHub() {
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Performance</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Avg Discount</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Total Leakage</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">
+                      Avg Discount
+                    </TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">
+                      Total Leakage
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.top_discounters.slice(0, 5).map((s, idx) => (
-                    <TableRow key={s.salesperson_id} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                    <TableRow
+                      key={s.salesperson_id}
+                      className="border-white/5 hover:bg-white/[0.03] transition-all group/row"
+                    >
                       <TableCell className="pl-8 py-5">
                         <div className="flex items-center gap-4">
                           <div className="h-8 w-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] font-black text-primary">
                             {idx + 1}
                           </div>
-                          <span className="font-black text-sm tracking-tight">{s.salesperson_name}</span>
+                          <span className="font-black text-sm tracking-tight">
+                            {s.salesperson_name}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right py-5">
                         <Badge
                           className={cn(
-                            "font-mono font-black text-[10px] px-3 py-1 border-none",
+                            'font-mono font-black text-[10px] px-3 py-1 border-none',
                             s.avg_discount_pct > 0.2
-                              ? "bg-destructive text-white shadow-[0_0_10px_rgba(239,68,68,0.4)]"
-                              : "bg-warning text-white shadow-[0_0_10px_rgba(245,158,11,0.4)]"
+                              ? 'bg-destructive text-white shadow-[0_0_10px_rgba(239,68,68,0.4)]'
+                              : 'bg-warning text-white shadow-[0_0_10px_rgba(245,158,11,0.4)]'
                           )}
                         >
                           {fmtPct(s.avg_discount_pct)}
@@ -421,7 +573,10 @@ export function PricingIntelligenceHub() {
               </Table>
             )}
             <div className="p-4 bg-white/5 border-t border-white/5">
-              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary hover:bg-transparent">
+              <Button
+                variant="ghost"
+                className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary hover:bg-transparent"
+              >
                 Ver Ranking Completo de Erosão
               </Button>
             </div>
@@ -437,35 +592,54 @@ export function PricingIntelligenceHub() {
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <div>
-                  <CardTitle className="font-sora text-xl font-black tracking-tight">IA Price Recommender</CardTitle>
-                  <p className="text-xs text-muted-foreground font-medium mt-1">Oportunidades neurais de uplift e expansão de margem</p>
+                  <CardTitle className="font-sora text-xl font-black tracking-tight">
+                    IA Price Recommender
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground font-medium mt-1">
+                    Oportunidades neurais de uplift e expansão de margem
+                  </p>
                 </div>
               </div>
-              <Badge className="bg-success text-white border-none font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(34,197,94,0.4)] animate-pulse">UPSELL OPORTUNIDADES</Badge>
+              <Badge className="bg-success text-white border-none font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(34,197,94,0.4)] animate-pulse">
+                UPSELL OPORTUNIDADES
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {data.product_recommendations.length === 0 ? (
               <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
-                <Target className="h-12 w-12 text-primary opacity-20" />
-                A IA está recalibrando modelos de elasticidade.
+                <Target className="h-12 w-12 text-primary opacity-20" />A IA está
+                recalibrando modelos de elasticidade.
               </div>
             ) : (
               <Table>
                 <TableHeader className="bg-white/5">
                   <TableRow className="hover:bg-transparent border-white/5">
-                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">Ativos Estratégicos</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">Target Price</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">Uplift IA</TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-[0.2em] pl-8 h-12">
+                      Ativos Estratégicos
+                    </TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] h-12">
+                      Target Price
+                    </TableHead>
+                    <TableHead className="text-right text-[10px] font-black uppercase tracking-[0.2em] pr-8 h-12">
+                      Uplift IA
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.product_recommendations.slice(0, 5).map((p) => (
-                    <TableRow key={p.product_name} className="border-white/5 hover:bg-white/[0.03] transition-all group/row">
+                  {data.product_recommendations.slice(0, 5).map(p => (
+                    <TableRow
+                      key={p.product_name}
+                      className="border-white/5 hover:bg-white/[0.03] transition-all group/row"
+                    >
                       <TableCell className="pl-8 py-5">
                         <div className="flex flex-col">
-                          <span className="font-black text-sm tracking-tight group-hover/row:text-primary transition-colors">{p.product_name}</span>
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">{p.deals_count} deals analisados</span>
+                          <span className="font-black text-sm tracking-tight group-hover/row:text-primary transition-colors">
+                            {p.product_name}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                            {p.deals_count} deals analisados
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right py-5 font-mono font-black text-sm text-foreground/90">
@@ -476,7 +650,9 @@ export function PricingIntelligenceHub() {
                           <Badge className="bg-success text-white border-none font-black text-[10px] px-2 py-0.5 rounded-sm">
                             +{fmtPct(p.uplift_pct)}
                           </Badge>
-                          <span className="text-[9px] text-success/70 font-bold mt-1 uppercase tracking-tighter">Baixa Elasticidade</span>
+                          <span className="text-[9px] text-success/70 font-bold mt-1 uppercase tracking-tighter">
+                            Baixa Elasticidade
+                          </span>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -485,7 +661,10 @@ export function PricingIntelligenceHub() {
               </Table>
             )}
             <div className="p-4 bg-white/5 border-t border-white/5">
-              <Button variant="ghost" className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-success hover:bg-transparent">
+              <Button
+                variant="ghost"
+                className="w-full text-[10px] font-black tracking-widest uppercase text-muted-foreground hover:text-success hover:bg-transparent"
+              >
                 Exportar Sugestões de Tabela de Preço
               </Button>
             </div>
@@ -506,11 +685,18 @@ export function PricingIntelligenceHub() {
                 <AlertTriangle className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <CardTitle className="text-xl font-black font-sora tracking-tight">Price Guard: Alertas de Margem</CardTitle>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Detecção de erosão de receita em tempo real</p>
+                <CardTitle className="text-xl font-black font-sora tracking-tight">
+                  Price Guard: Alertas de Margem
+                </CardTitle>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                  Detecção de erosão de receita em tempo real
+                </p>
               </div>
             </div>
-            <Badge variant="outline" className="bg-warning/20 text-warning border-warning/40 font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+            <Badge
+              variant="outline"
+              className="bg-warning/20 text-warning border-warning/40 font-black text-[10px] px-3 py-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+            >
               3 INCIDENTES CRÍTICOS
             </Badge>
           </div>
@@ -518,39 +704,85 @@ export function PricingIntelligenceHub() {
         <CardContent className="p-0 relative z-10">
           <div className="divide-y divide-white/5">
             {[
-              { client: "Tech Solutions Inc", deal: "Enterprise License v2.0", margin: 12.5, status: "Critical", trend: "down", impact: "R$ 45.200" },
-              { client: "Global Retail Ltd", deal: "Consulting Premium Package", margin: 14.2, status: "Warning", trend: "down", impact: "R$ 12.800" },
-              { client: "Alpha Systems", deal: "Core Support Tier 3", margin: 11.8, status: "Critical", trend: "stable", impact: "R$ 28.500" },
+              {
+                client: 'Tech Solutions Inc',
+                deal: 'Enterprise License v2.0',
+                margin: 12.5,
+                status: 'Critical',
+                trend: 'down',
+                impact: 'R$ 45.200',
+              },
+              {
+                client: 'Global Retail Ltd',
+                deal: 'Consulting Premium Package',
+                margin: 14.2,
+                status: 'Warning',
+                trend: 'down',
+                impact: 'R$ 12.800',
+              },
+              {
+                client: 'Alpha Systems',
+                deal: 'Core Support Tier 3',
+                margin: 11.8,
+                status: 'Critical',
+                trend: 'stable',
+                impact: 'R$ 28.500',
+              },
             ].map((alert, i) => (
-              <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-white/5 transition-all group gap-4">
+              <div
+                key={i}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-white/5 transition-all group gap-4"
+              >
                 <div className="flex items-center gap-5">
-                  <div className={cn(
-                    "w-1.5 h-12 rounded-full",
-                    alert.status === "Critical" ? "bg-destructive shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse" : "bg-warning shadow-[0_0_15px_rgba(245,158,11,0.6)]"
-                  )} />
+                  <div
+                    className={cn(
+                      'w-1.5 h-12 rounded-full',
+                      alert.status === 'Critical'
+                        ? 'bg-destructive shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse'
+                        : 'bg-warning shadow-[0_0_15px_rgba(245,158,11,0.6)]'
+                    )}
+                  />
                   <div>
                     <div className="text-lg font-black group-hover:text-primary transition-colors flex items-center gap-2">
                       {alert.client}
-                      {alert.status === "Critical" && <Badge className="bg-destructive/20 text-destructive border-none h-4 text-[8px] font-black uppercase">Forte Vazamento</Badge>}
+                      {alert.status === 'Critical' && (
+                        <Badge className="bg-destructive/20 text-destructive border-none h-4 text-[8px] font-black uppercase">
+                          Forte Vazamento
+                        </Badge>
+                      )}
                     </div>
-                    <div className="text-sm text-muted-foreground font-medium">{alert.deal}</div>
+                    <div className="text-sm text-muted-foreground font-medium">
+                      {alert.deal}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-10">
                   <div className="text-right">
-                    <div className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mb-0.5">Impacto Estimado</div>
-                    <div className="text-sm font-black text-destructive/80 font-mono">{alert.impact}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mb-0.5">
+                      Impacto Estimado
+                    </div>
+                    <div className="text-sm font-black text-destructive/80 font-mono">
+                      {alert.impact}
+                    </div>
                   </div>
                   <div className="text-right">
-                    <div className={cn(
-                      "text-2xl font-black font-mono tracking-tighter",
-                      alert.status === "Critical" ? "text-destructive" : "text-warning"
-                    )}>
+                    <div
+                      className={cn(
+                        'text-2xl font-black font-mono tracking-tighter',
+                        alert.status === 'Critical' ? 'text-destructive' : 'text-warning'
+                      )}
+                    >
                       {alert.margin}%
                     </div>
-                    <div className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Margem Real</div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">
+                      Margem Real
+                    </div>
                   </div>
-                  <Button size="sm" variant="outline" className="h-10 px-6 text-[10px] font-black tracking-widest border-white/10 bg-white/5 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-10 px-6 text-[10px] font-black tracking-widest border-white/10 bg-white/5 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
+                  >
                     REVISAR DEAL
                   </Button>
                 </div>
@@ -581,30 +813,48 @@ function KpiCard({
   accent: string;
 }) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }} 
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
       <Card className="glass overflow-hidden border-white/5 relative group">
-        <div className={cn(
-          "absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500",
-          accent.includes("success") ? "bg-success" : accent.includes("destructive") ? "bg-destructive" : "bg-primary"
-        )} />
+        <div
+          className={cn(
+            'absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500',
+            accent.includes('success')
+              ? 'bg-success'
+              : accent.includes('destructive')
+                ? 'bg-destructive'
+                : 'bg-primary'
+          )}
+        />
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{label}</span>
-            <div className={cn("p-2 rounded-lg bg-background/50 border border-white/5", accent)}>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+              {label}
+            </span>
+            <div
+              className={cn(
+                'p-2 rounded-lg bg-background/50 border border-white/5',
+                accent
+              )}
+            >
               <Icon className="h-4 w-4" />
             </div>
           </div>
           <div className="flex flex-col relative">
-            <div className={cn("text-4xl font-black font-display tracking-tight drop-shadow-sm", accent)}>
-              <CountUp 
-                value={numericValue} 
-                prefix={isCurrency ? "R$ " : ""} 
-                suffix={isPercent ? "%" : ""} 
+            <div
+              className={cn(
+                'text-4xl font-black font-display tracking-tight drop-shadow-sm',
+                accent
+              )}
+            >
+              <CountUp
+                value={numericValue}
+                prefix={isCurrency ? 'R$ ' : ''}
+                suffix={isPercent ? '%' : ''}
                 decimals={isPercent ? 1 : 0}
               />
             </div>
@@ -619,7 +869,7 @@ function KpiCard({
                 PROTEÇÃO ATIVA
               </div>
             )}
-            
+
             {/* Neural Sync Spark */}
             <div className="absolute -right-2 top-0 h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
           </div>
@@ -629,11 +879,21 @@ function KpiCard({
   );
 }
 
-const CountUp = ({ value, prefix = "", suffix = "", decimals = 0 }: { value: number, prefix?: string, suffix?: string, decimals?: number }) => {
+const CountUp = ({
+  value,
+  prefix = '',
+  suffix = '',
+  decimals = 0,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+}) => {
   const [displayValue, setDisplayValue] = useState(0);
-  
+
   useMemo(() => {
-    let start = 0;
+    const start = 0;
     const end = value;
     const duration = 1500;
     const startTime = performance.now();
@@ -642,7 +902,7 @@ const CountUp = ({ value, prefix = "", suffix = "", decimals = 0 }: { value: num
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const current = progress * (end - start) + start;
-      
+
       setDisplayValue(current);
 
       if (progress < 1) {
@@ -656,9 +916,9 @@ const CountUp = ({ value, prefix = "", suffix = "", decimals = 0 }: { value: num
   return (
     <span>
       {prefix}
-      {displayValue.toLocaleString("pt-BR", { 
-        minimumFractionDigits: decimals, 
-        maximumFractionDigits: decimals 
+      {displayValue.toLocaleString('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
       })}
       {suffix}
     </span>

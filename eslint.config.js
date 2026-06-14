@@ -1,9 +1,8 @@
-import { defineConfig } from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
-export default defineConfig(
+export default tseslint.config(
   {
     ignores: ['dist', 'node_modules', '.lovable', 'bun.lock', 'package-lock.json'],
   },

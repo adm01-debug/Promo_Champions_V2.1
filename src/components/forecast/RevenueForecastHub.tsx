@@ -54,7 +54,9 @@ export const RevenueForecastHub: FC = () => {
   const { data: salespeople } = useQuery({
     queryKey: ['salespeople-public-names'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('salespeople_public').select('id, name');
+      const { data, error } = await supabase
+        .from('salespeople_public')
+        .select('id, name');
       if (error) throw error;
       return data ?? [];
     },
@@ -86,7 +88,10 @@ export const RevenueForecastHub: FC = () => {
   const conf = confidenceLabel(forecast.confidence);
   const goalProgress =
     forecast.metrics.goal_for_horizon > 0
-      ? Math.min(100, (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100)
+      ? Math.min(
+          100,
+          (forecast.scenarios.realistic / forecast.metrics.goal_for_horizon) * 100
+        )
       : 0;
 
   return (
@@ -119,8 +124,8 @@ export const RevenueForecastHub: FC = () => {
             Revenue Intelligence 10/10
           </h1>
           <p className="text-muted-foreground max-w-lg leading-relaxed font-medium">
-            Projeção neural multivariada combinando telemetria de pipeline, ciclo de vida de deals e
-            metas estratégicas.
+            Projeção neural multivariada combinando telemetria de pipeline, ciclo de vida
+            de deals e metas estratégicas.
           </p>
         </motion.div>
 
@@ -157,7 +162,9 @@ export const RevenueForecastHub: FC = () => {
               className="h-9 px-4 text-[10px] font-black uppercase tracking-widest gap-2 rounded-xl"
               onClick={async () => {
                 const start = getLocalISODate();
-                const end = getLocalISODate(new Date(Date.now() + horizon * 24 * 60 * 60 * 1000));
+                const end = getLocalISODate(
+                  new Date(Date.now() + horizon * 24 * 60 * 60 * 1000)
+                );
                 const { error } = await supabase.from('forecast_snapshots').insert([
                   {
                     period_start: start,
@@ -243,7 +250,8 @@ export const RevenueForecastHub: FC = () => {
             <ForecastScenarioSimulator
               baseForecast={forecast.scenarios.realistic}
               baseCoverage={
-                forecast.metrics.total_open_pipeline / (forecast.metrics.goal_for_horizon || 1)
+                forecast.metrics.total_open_pipeline /
+                (forecast.metrics.goal_for_horizon || 1)
               }
               baseWinRate={
                 forecast.metrics.goal_for_horizon > 0
@@ -251,7 +259,10 @@ export const RevenueForecastHub: FC = () => {
                   : 0.2
               }
             />
-            <PipelineContributionChart perOwner={forecast.per_owner} ownerNames={ownerNames} />
+            <PipelineContributionChart
+              perOwner={forecast.per_owner}
+              ownerNames={ownerNames}
+            />
           </div>
         </div>
 
@@ -296,7 +307,9 @@ export const RevenueForecastHub: FC = () => {
                       strokeDashoffset={283 - (283 * forecast.confidence) / 100}
                       className="text-primary"
                       initial={{ strokeDashoffset: 283 }}
-                      animate={{ strokeDashoffset: 283 - (283 * forecast.confidence) / 100 }}
+                      animate={{
+                        strokeDashoffset: 283 - (283 * forecast.confidence) / 100,
+                      }}
                       transition={{ duration: 1.5, ease: 'easeOut' }}
                     />
                   </svg>
@@ -309,8 +322,8 @@ export const RevenueForecastHub: FC = () => {
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-                O modelo de predição processou {forecast.metrics.open_deals_count} variáveis para
-                este horizonte.
+                O modelo de predição processou {forecast.metrics.open_deals_count}{' '}
+                variáveis para este horizonte.
               </p>
             </div>
           </Card>
@@ -338,8 +351,12 @@ export const RevenueForecastHub: FC = () => {
 
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-muted-foreground font-medium">Progresso Realista</span>
-                    <span className="font-black text-primary">{goalProgress.toFixed(1)}%</span>
+                    <span className="text-muted-foreground font-medium">
+                      Progresso Realista
+                    </span>
+                    <span className="font-black text-primary">
+                      {goalProgress.toFixed(1)}%
+                    </span>
                   </div>
                   <Progress
                     value={goalProgress}
@@ -364,7 +381,9 @@ export const RevenueForecastHub: FC = () => {
                     <div
                       className={cn(
                         'text-xs font-black',
-                        forecast.metrics.gap_to_goal > 0 ? 'text-destructive' : 'text-emerald-500'
+                        forecast.metrics.gap_to_goal > 0
+                          ? 'text-destructive'
+                          : 'text-emerald-500'
                       )}
                     >
                       {forecast.metrics.gap_to_goal > 0
@@ -401,8 +420,8 @@ export const RevenueForecastHub: FC = () => {
                     {100 - forecast.accuracy.avg_deviation}%
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-1 leading-tight font-medium">
-                    Desvio médio de apenas {forecast.accuracy.avg_deviation}% em relação ao
-                    faturamento real.
+                    Desvio médio de apenas {forecast.accuracy.avg_deviation}% em relação
+                    ao faturamento real.
                   </p>
                 </div>
               </div>
@@ -491,7 +510,7 @@ const CountUp = ({
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    let start = 0;
+    const start = 0;
     const end = value;
     const duration = 2000;
     const startTime = performance.now();
