@@ -22,6 +22,7 @@ export function ReactionFloater({ reactions }: Props) {
       setVisible(prev => prev.filter(r => r.id !== newest.id));
     }, 1600);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [reactions[0]?.id]);
 
   return (

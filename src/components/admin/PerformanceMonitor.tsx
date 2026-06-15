@@ -33,7 +33,9 @@ function usePerfMetrics(enabled: boolean) {
       const now = performance.now();
       if (now - lastTime >= 1000) {
         const fps = Math.round((frameCount * 1000) / (now - lastTime));
-        const memInfo = (performance as any).memory;
+        const memInfo = (
+          performance as Performance & { memory?: { usedJSHeapSize: number } }
+        ).memory;
         const memory = memInfo ? Math.round(memInfo.usedJSHeapSize / 1048576) : null;
 
         setMetrics(prev => ({

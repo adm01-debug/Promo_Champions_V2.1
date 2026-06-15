@@ -1,4 +1,8 @@
-export async function exportToExcel<T extends Record<string, any>>(data: T[], filename: string, sheetName: string = 'Dados') {
+export async function exportToExcel<T extends Record<string, unknown>>(
+  data: T[],
+  filename: string,
+  sheetName: string = 'Dados'
+) {
   const ExcelJS = (await import('exceljs')).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
@@ -13,7 +17,9 @@ export async function exportToExcel<T extends Record<string, any>>(data: T[], fi
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

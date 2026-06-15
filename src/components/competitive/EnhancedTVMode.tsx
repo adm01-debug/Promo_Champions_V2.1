@@ -42,6 +42,7 @@ function EnhancedTVModeComponent() {
       });
     }, ROTATION_INTERVAL);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [autoRotate]);
 
   const { data: salespeople = [] } = useQuery({

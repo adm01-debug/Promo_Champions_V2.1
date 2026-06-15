@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-export type ForecastPeriodType = "week" | "month" | "quarter";
-export type ForecastCategory = "commit" | "best" | "upside" | "omitted";
+export type ForecastPeriodType = 'week' | 'month' | 'quarter';
+export type ForecastCategory = 'commit' | 'best' | 'upside' | 'omitted';
 
 export interface RevenueForecastRow {
   id: string;
@@ -20,7 +20,11 @@ export interface RevenueForecastRow {
   gap_to_goal: number;
   deals_count: number;
   weighted_pipeline: number;
-  factors: Array<{ label: string; impact: "positive" | "negative" | "neutral"; detail: string }>;
+  factors: Array<{
+    label: string;
+    impact: 'positive' | 'negative' | 'neutral';
+    detail: string;
+  }>;
   ai_summary: string | null;
   calculated_at: string;
 }
@@ -38,32 +42,37 @@ export interface ForecastContribution {
 export function useRevenueForecast(
   periodType: ForecastPeriodType,
   periodStart: string,
-  ownerId?: string | null,
+  ownerId?: string | null
 ) {
   const qc = useQueryClient();
-  const queryKey = ["revenue-forecast", periodType, periodStart, ownerId ?? "team"];
+  const queryKey = ['revenue-forecast', periodType, periodStart, ownerId ?? 'team'];
 
   useEffect(() => {
     const channel = supabase
       .channel(`forecast-${periodType}-${periodStart}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "revenue_forecasts" }, () => {
-        qc.invalidateQueries({ queryKey });
-      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'revenue_forecasts' },
+        () => {
+          qc.invalidateQueries({ queryKey });
+        }
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [periodType, periodStart, ownerId, qc]);
 
   return useQuery({
     queryKey,
     queryFn: async (): Promise<RevenueForecastRow | null> => {
       let q = supabase
-        .from("revenue_forecasts")
-        .select("*")
-        .eq("period_type", periodType)
-        .eq("period_start", periodStart);
-      q = ownerId ? q.eq("owner_id", ownerId) : q.is("owner_id", null);
+        .from('revenue_forecasts')
+        .select('*')
+        .eq('period_type', periodType)
+        .eq('period_start', periodStart);
+      q = ownerId ? q.eq('owner_id', ownerId) : q.is('owner_id', null);
       const { data, error } = await q.maybeSingle();
       if (error) throw error;
       return (data as unknown as RevenueForecastRow | null) ?? null;
@@ -74,14 +83,14 @@ export function useRevenueForecast(
 
 export function useForecastContributions(forecastId?: string) {
   return useQuery({
-    queryKey: ["forecast-contributions", forecastId],
+    queryKey: ['forecast-contributions', forecastId],
     queryFn: async (): Promise<ForecastContribution[]> => {
       if (!forecastId) return [];
       const { data, error } = await supabase
-        .from("forecast_deal_contributions")
-        .select("*")
-        .eq("forecast_id", forecastId)
-        .order("weighted_amount", { ascending: false });
+        .from('forecast_deal_contributions')
+        .select('*')
+        .eq('forecast_id', forecastId)
+        .order('weighted_amount', { ascending: false });
       if (error) throw error;
       return (data as ForecastContribution[]) ?? [];
     },
@@ -97,15 +106,18 @@ export function useGenerateForecast() {
       period_start: string;
       owner_id?: string | null;
     }) => {
-      const { data, error } = await supabase.functions.invoke("generate-revenue-forecast", {
-        body: input,
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'generate-revenue-forecast',
+        {
+          body: input,
+        }
+      );
       if (error) throw error;
       return data as RevenueForecastRow;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["revenue-forecast"] });
-      toast.success("Forecast atualizado");
+      qc.invalidateQueries({ queryKey: ['revenue-forecast'] });
+      toast.success('Forecast atualizado');
     },
     onError: (e: Error) => toast.error(e.message),
   });

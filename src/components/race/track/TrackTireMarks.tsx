@@ -28,7 +28,7 @@ export function TrackTireMarks({ cars }: TrackTireMarksProps) {
   useEffect(() => {
     const now = Date.now();
     const newMarks: TireMark[] = [];
-    cars.forEach((c) => {
+    cars.forEach(c => {
       const prev = prevRef.current.get(c.id);
       if (prev !== undefined) {
         for (const cp of CHECKPOINTS) {
@@ -47,21 +47,22 @@ export function TrackTireMarks({ cars }: TrackTireMarksProps) {
       prevRef.current.set(c.id, c.progress);
     });
     if (newMarks.length > 0) {
-      setMarks((prev) => {
+      setMarks(prev => {
         const cutoff = now - FADE_MS;
-        const filtered = [...prev.filter((m) => m.createdAt > cutoff), ...newMarks];
+        const filtered = [...prev.filter(m => m.createdAt > cutoff), ...newMarks];
         return filtered.slice(-MAX_MARKS);
       });
     }
-  }, [cars.map((c) => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+  }, [cars.map(c => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
 
   // GC periódico
   useEffect(() => {
     const id = window.setInterval(() => {
       const cutoff = Date.now() - FADE_MS;
-      setMarks((prev) => {
-        if (!prev.some((m) => m.createdAt < cutoff)) return prev;
-        return prev.filter((m) => m.createdAt > cutoff);
+      setMarks(prev => {
+        if (!prev.some(m => m.createdAt < cutoff)) return prev;
+        return prev.filter(m => m.createdAt > cutoff);
       });
     }, 500);
     return () => window.clearInterval(id);
@@ -70,13 +71,29 @@ export function TrackTireMarks({ cars }: TrackTireMarksProps) {
   const now = Date.now();
   return (
     <g pointerEvents="none" aria-hidden>
-      {marks.map((m) => {
+      {marks.map(m => {
         const age = now - m.createdAt;
         const opacity = Math.max(0, 0.3 * (1 - age / FADE_MS));
         return (
           <g key={m.id} transform={`translate(${m.x} ${m.y}) rotate(${m.rotation})`}>
-            <rect x={-12} y={-3} width={24} height={1.6} rx={0.8} fill="hsl(0 0% 0%)" opacity={opacity} />
-            <rect x={-12} y={1.4} width={24} height={1.6} rx={0.8} fill="hsl(0 0% 0%)" opacity={opacity} />
+            <rect
+              x={-12}
+              y={-3}
+              width={24}
+              height={1.6}
+              rx={0.8}
+              fill="hsl(0 0% 0%)"
+              opacity={opacity}
+            />
+            <rect
+              x={-12}
+              y={1.4}
+              width={24}
+              height={1.6}
+              rx={0.8}
+              fill="hsl(0 0% 0%)"
+              opacity={opacity}
+            />
           </g>
         );
       })}

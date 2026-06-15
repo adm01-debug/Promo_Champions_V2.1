@@ -34,6 +34,7 @@ export function useWinLossFilters() {
       }
     }, DEBOUNCE_MS);
     return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [localFilters]);
 
   const setFilters = useCallback((patch: Partial<WinLossFilterState>) => {

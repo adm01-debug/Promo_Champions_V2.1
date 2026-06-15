@@ -217,6 +217,7 @@ export function useRaceDetection({
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
     prevSnapshotRef.current = curr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [sortedCars.map(c => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
 
   return {

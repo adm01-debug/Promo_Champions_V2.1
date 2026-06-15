@@ -24,10 +24,10 @@
  *                   (e.g. ONLY=lead-scoring,dispatch-webhook)
  */
 
-const FUNCTIONS_DIR = Deno.env.get("FUNCTIONS_DIR") ?? "supabase/functions";
-const ONLY = (Deno.env.get("ONLY") ?? "")
-  .split(",")
-  .map((s) => s.trim())
+const FUNCTIONS_DIR = Deno.env.get('FUNCTIONS_DIR') ?? 'supabase/functions';
+const ONLY = (Deno.env.get('ONLY') ?? '')
+  .split(',')
+  .map(s => s.trim())
   .filter(Boolean);
 
 interface CheckResult {
@@ -36,7 +36,7 @@ interface CheckResult {
   /** "import" → module resolution failed (CI must fail).
    *  "typecheck" → all imports resolved but TS errors exist (warn only).
    *  null → ok. */
-  failureKind: "import" | "typecheck" | null;
+  failureKind: 'import' | 'typecheck' | null;
   failingImport: string | null;
   stderrHead: string;
 }
@@ -71,46 +71,45 @@ function extractFailingImport(stderr: string): string | null {
 /** Strip ANSI escape sequences (color codes) from `deno check` output so
  *  pattern matching isn't broken by `^[[0m` between `TS2440` and `[ERROR]`. */
 function stripAnsi(s: string): string {
-  // eslint-disable-next-line no-control-regex
-  return s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, "");
+  return s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, '');
 }
 
 /** Distinguish module-resolution failures (the thing CI must block on) from
  *  pure TypeScript-checking errors (TS#### codes). The bundler check exists to
  *  catch broken imports — TS errors are a separate concern owned by other
  *  tooling and would otherwise produce huge amounts of noise. */
-function classifyFailure(stderr: string): "import" | "typecheck" {
+function classifyFailure(stderr: string): 'import' | 'typecheck' {
   const clean = stripAnsi(stderr);
   // Definitive signal emitted by `deno check` when only TS errors were found
   // (vs. "Module not found" / "error sending request" for resolution issues).
-  if (/^error:\s*Type checking failed\./m.test(clean)) return "typecheck";
-  if (extractFailingImport(clean)) return "import";
+  if (/^error:\s*Type checking failed\./m.test(clean)) return 'typecheck';
+  if (extractFailingImport(clean)) return 'import';
   // TS error code present but no explicit "Type checking failed" marker
   // (older Deno versions) → still treat as typecheck.
-  if (/TS\d{3,5}\s*\[ERROR\]/.test(clean)) return "typecheck";
+  if (/TS\d{3,5}\s*\[ERROR\]/.test(clean)) return 'typecheck';
   // Anything else (network down, deno panic, permission error) → treat as
   // import-class so it blocks CI rather than passing silently.
-  return "import";
+  return 'import';
 }
 
 async function checkFunction(fn: string, indexPath: string): Promise<CheckResult> {
-  const cmd = new Deno.Command("deno", {
-    args: ["check", "--quiet", indexPath],
-    stdout: "piped",
-    stderr: "piped",
+  const cmd = new Deno.Command('deno', {
+    args: ['check', '--quiet', indexPath],
+    stdout: 'piped',
+    stderr: 'piped',
   });
   const { code, stderr } = await cmd.output();
   const stderrText = stripAnsi(new TextDecoder().decode(stderr));
   if (code === 0) {
-    return { fn, ok: true, failureKind: null, failingImport: null, stderrHead: "" };
+    return { fn, ok: true, failureKind: null, failingImport: null, stderrHead: '' };
   }
   const kind = classifyFailure(stderrText);
   return {
     fn,
     ok: false,
     failureKind: kind,
-    failingImport: kind === "import" ? extractFailingImport(stderrText) : null,
-    stderrHead: stderrText.split("\n").slice(0, 3).join("\n").trim(),
+    failingImport: kind === 'import' ? extractFailingImport(stderrText) : null,
+    stderrHead: stderrText.split('\n').slice(0, 3).join('\n').trim(),
   };
 }
 
@@ -118,7 +117,7 @@ async function listFunctions(): Promise<Array<{ fn: string; indexPath: string }>
   const out: Array<{ fn: string; indexPath: string }> = [];
   for await (const entry of Deno.readDir(FUNCTIONS_DIR)) {
     if (!entry.isDirectory) continue;
-    if (entry.name.startsWith("_")) continue; // skip _shared/
+    if (entry.name.startsWith('_')) continue; // skip _shared/
     if (ONLY.length > 0 && !ONLY.includes(entry.name)) continue;
     const indexPath = `${FUNCTIONS_DIR}/${entry.name}/index.ts`;
     try {
@@ -146,82 +145,91 @@ async function worker() {
     const { fn, indexPath } = targets[i];
     const r = await checkFunction(fn, indexPath);
     results.push(r);
-    const mark = r.ok ? "." : r.failureKind === "import" ? "F" : "t";
+    const mark = r.ok ? '.' : r.failureKind === 'import' ? 'F' : 't';
     Deno.stdout.writeSync(encoder.encode(mark));
   }
 }
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 console.info(`\n\n⏱  Completed in ${((Date.now() - start) / 1000).toFixed(1)}s`);
 
-const importFailed = results.filter((r) => !r.ok && r.failureKind === "import")
+const importFailed = results
+  .filter(r => !r.ok && r.failureKind === 'import')
   .sort((a, b) => a.fn.localeCompare(b.fn));
-const typecheckFailed = results.filter((r) => !r.ok && r.failureKind === "typecheck")
+const typecheckFailed = results
+  .filter(r => !r.ok && r.failureKind === 'typecheck')
   .sort((a, b) => a.fn.localeCompare(b.fn));
-const passed = results.filter((r) => r.ok).length;
+const passed = results.filter(r => r.ok).length;
 
 console.info(
   `\n✅ ${passed} passed   ❌ ${importFailed.length} import failure(s)   ` +
     `⚠️  ${typecheckFailed.length} typecheck-only failure(s)   ` +
-    `(total ${results.length})`,
+    `(total ${results.length})`
 );
-console.info("Legend: '.' = ok   'F' = import failure (fails CI)   't' = typecheck-only (warning)");
+console.info(
+  "Legend: '.' = ok   'F' = import failure (fails CI)   't' = typecheck-only (warning)"
+);
 
 if (importFailed.length > 0) {
-  console.info("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.info("Import failures (block CI):");
-  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.info('Import failures (block CI):');
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   for (const f of importFailed) {
     console.info(`  ✗ ${f.fn}`);
-    console.info(`     import : ${f.failingImport ?? "(unable to extract — see stderr below)"}`);
+    console.info(
+      `     import : ${f.failingImport ?? '(unable to extract — see stderr below)'}`
+    );
     if (f.stderrHead) {
-      const indented = f.stderrHead.split("\n").map((l) => `         ${l}`).join("\n");
+      const indented = f.stderrHead
+        .split('\n')
+        .map(l => `         ${l}`)
+        .join('\n');
       console.info(`     stderr :\n${indented}`);
     }
-    console.info("");
+    console.info('');
   }
 
   // Group by failing import to spot systemic outages (e.g. "esm.sh is down"
   // → all functions sharing that URL fail in lockstep, easy to triage).
   const byImport = new Map<string, string[]>();
   for (const f of importFailed) {
-    const key = f.failingImport ?? "(unknown)";
+    const key = f.failingImport ?? '(unknown)';
     if (!byImport.has(key)) byImport.set(key, []);
     byImport.get(key)!.push(f.fn);
   }
   if (byImport.size > 0) {
-    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.info("Grouped by failing import (systemic vs. one-off):");
-    console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.info('Grouped by failing import (systemic vs. one-off):');
+    console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     const sorted = [...byImport.entries()].sort((a, b) => b[1].length - a[1].length);
     for (const [imp, fns] of sorted) {
       console.info(`  ${fns.length}× ${imp}`);
       for (const fn of fns.slice(0, 5)) console.info(`       - ${fn}`);
       if (fns.length > 5) console.info(`       … and ${fns.length - 5} more`);
-      console.info("");
+      console.info('');
     }
   }
 }
 
 if (typecheckFailed.length > 0) {
-  console.info("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.info(`Typecheck-only failures (do NOT block this CI step):`);
-  console.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-  console.info("These functions resolve all imports cleanly but have TypeScript");
-  console.info("errors. They are reported here for visibility but are owned by");
-  console.info("the regular tsc/lint pipeline, not the bundler check.\n");
+  console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+  console.info('These functions resolve all imports cleanly but have TypeScript');
+  console.info('errors. They are reported here for visibility but are owned by');
+  console.info('the regular tsc/lint pipeline, not the bundler check.\n');
   for (const f of typecheckFailed) {
     console.info(`  ⚠ ${f.fn}`);
     if (f.stderrHead) {
-      const firstLine = f.stderrHead.split("\n")[0];
+      const firstLine = f.stderrHead.split('\n')[0];
       console.info(`     ${firstLine}`);
     }
   }
-  console.info("");
+  console.info('');
 }
 
 if (importFailed.length > 0) {
   Deno.exit(1);
 }
 
-console.info("\n🎉 All edge function imports resolve cleanly.");
+console.info('\n🎉 All edge function imports resolve cleanly.');
 Deno.exit(0);

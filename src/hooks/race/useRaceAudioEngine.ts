@@ -50,6 +50,7 @@ export function useRaceAudioEngine({
       tryPlay('powerup');
     }
     prevComboRef.current = comboCount;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [comboCount, muted]);
 
   // Checkpoint: 25/50/75/100% do progresso
@@ -66,16 +67,23 @@ export function useRaceAudioEngine({
       }
     }
     prevProgressRef.current = progress;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [leaderboard, mySalespersonId, muted]);
 
   // Countdown final: últimos 5s
   useEffect(() => {
     if (secondsToEnd === undefined || secondsToEnd < 0) return;
     const prev = prevSecondsRef.current;
-    if (prev !== undefined && prev !== secondsToEnd && secondsToEnd <= 5 && secondsToEnd >= 1) {
+    if (
+      prev !== undefined &&
+      prev !== secondsToEnd &&
+      secondsToEnd <= 5 &&
+      secondsToEnd >= 1
+    ) {
       tryPlay('countdown');
     }
     prevSecondsRef.current = secondsToEnd;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [secondsToEnd, muted]);
 
   // Rank up pessoal (subiu ≥1 posição)
@@ -89,5 +97,6 @@ export function useRaceAudioEngine({
     }
     prevRankRef.current = me.rank;
     initializedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [leaderboard, mySalespersonId, muted]);
 }

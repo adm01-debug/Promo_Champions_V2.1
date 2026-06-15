@@ -10,7 +10,10 @@ import { WinLossReasonMatrix } from '@/components/win-loss/WinLossReasonMatrix';
 import { SalespersonWinLossTable } from '@/components/win-loss/SalespersonWinLossTable';
 import { CompetitorBattleCard } from '@/components/win-loss/CompetitorBattleCard';
 import { ActionableInsightsPanel } from '@/components/win-loss/ActionableInsightsPanel';
-import { WinLossDealsDrawer, type DrawerFilter } from '@/components/win-loss/WinLossDealsDrawer';
+import {
+  WinLossDealsDrawer,
+  type DrawerFilter,
+} from '@/components/win-loss/WinLossDealsDrawer';
 import { WinLossEmptyState } from '@/components/win-loss/WinLossEmptyState';
 import { WinLossLastRunCard } from '@/components/win-loss/WinLossLastRunCard';
 import { WinLossPrintLayout } from '@/components/win-loss/WinLossPrintLayout';
@@ -36,7 +39,10 @@ import { WebhookDeadLetterPanel } from '@/components/win-loss/WebhookDeadLetterP
 import { ExportPdfButton } from '@/components/win-loss/ExportPdfButton';
 
 import { useWinLossFilters } from '@/hooks/win-loss/useWinLossFilters';
-import { useWinLossViewPrefs, VIEW_PREFS_DEFAULTS } from '@/hooks/win-loss/useWinLossViewPrefs';
+import {
+  useWinLossViewPrefs,
+  VIEW_PREFS_DEFAULTS,
+} from '@/hooks/win-loss/useWinLossViewPrefs';
 import { toast } from 'sonner';
 import { useFilteredWinLossAnalyses } from '@/hooks/win-loss/useWinLossData';
 import {
@@ -50,7 +56,10 @@ import { useWinLossRealtime } from '@/hooks/win-loss/useWinLossRealtime';
 import { useRunWinLossAnalysis } from '@/hooks/win-loss/useRunWinLossAnalysis';
 import { useWinLossExport } from '@/hooks/win-loss/useWinLossExport';
 import { useWinLossShortcuts } from '@/hooks/win-loss/useWinLossShortcuts';
-import { usePreviousKpisComputed, computeKpiDelta } from '@/hooks/win-loss/usePreviousPeriodKpis';
+import {
+  usePreviousKpisComputed,
+  computeKpiDelta,
+} from '@/hooks/win-loss/usePreviousPeriodKpis';
 import { useWinLossForecast } from '@/hooks/win-loss/useWinLossForecast';
 import { useWinLossTelemetry } from '@/hooks/win-loss/useWinLossTelemetry';
 import { useWinLossAnomalies } from '@/hooks/win-loss/useWinLossAnomalies';
@@ -153,7 +162,8 @@ export default function WinLossIntelligence() {
     setFilters({ salespersonIds: [id] });
     openDrawer(`Deals de ${name}`);
   };
-  const onCohort = (created: string, closed: string) => openDrawer(`Cohort ${created} → ${closed}`);
+  const onCohort = (created: string, closed: string) =>
+    openDrawer(`Cohort ${created} → ${closed}`);
   const onCycleBin = (bin: string, outcome: 'won' | 'lost') =>
     openDrawer(`Ciclo ${bin} · ${outcome === 'won' ? 'Won' : 'Lost'}`, { outcome });
   const onLossLeaf = (stage: string, reason: string) =>
@@ -212,6 +222,7 @@ export default function WinLossIntelligence() {
       hasSegment: filters.segments.length > 0,
       minAmount: filters.minAmount,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [filters]);
 
   useWinLossShortcuts({
@@ -290,7 +301,9 @@ export default function WinLossIntelligence() {
             />
           )}
 
-          {anomaly.isAnomaly && <WinLossAnomalyBanner anomaly={anomaly} onInvestigate={onPeriod} />}
+          {anomaly.isAnomaly && (
+            <WinLossAnomalyBanner anomaly={anomaly} onInvestigate={onPeriod} />
+          )}
 
           <WinLossPrintLayout kpis={kpis} />
 
@@ -369,7 +382,9 @@ export default function WinLossIntelligence() {
               </WinLossErrorBoundary>
 
               <WinLossErrorBoundary section="Heatmap horário">
-                <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+                <WinByHourHeatmap
+                  onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)}
+                />
               </WinLossErrorBoundary>
 
               <WinLossErrorBoundary section="Vendedores">
@@ -381,7 +396,10 @@ export default function WinLossIntelligence() {
               </WinLossErrorBoundary>
 
               <WinLossErrorBoundary section="Concorrentes">
-                <CompetitorBattleCard competitors={competitors} onCompetitorClick={onCompetitor} />
+                <CompetitorBattleCard
+                  competitors={competitors}
+                  onCompetitorClick={onCompetitor}
+                />
               </WinLossErrorBoundary>
 
               <WinLossErrorBoundary section="Script A/B">

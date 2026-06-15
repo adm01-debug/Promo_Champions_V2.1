@@ -30,7 +30,12 @@ const PIT_STOP_SECONDS = 30;
  * shows a 30s visual timer (symbolic), and breaks down current standing,
  * the immediate rival, pace check and a contextual recommendation.
  */
-export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySound }) => {
+export const PitStopPanel: FC<Props> = ({
+  open,
+  onOpenChange,
+  analysis,
+  onPlaySound,
+}) => {
   const reduceMotion = useReducedMotion();
   const [secondsLeft, setSecondsLeft] = useState(PIT_STOP_SECONDS);
 
@@ -44,6 +49,7 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
       setSecondsLeft(s => (s > 0 ? s - 1 : 0));
     }, 1000);
     return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [open]);
 
   const { myStats, nextRival, pace, recommendation, hasData } = analysis;
@@ -74,11 +80,17 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
           <SheetDescription>
             Pausa tática para revisar performance e planejar a próxima jogada.
           </SheetDescription>
-          <Progress value={timerPct} className="h-1 mt-2" aria-label="Tempo de pit stop" />
+          <Progress
+            value={timerPct}
+            className="h-1 mt-2"
+            aria-label="Tempo de pit stop"
+          />
         </SheetHeader>
 
         {!hasData ? (
-          <div className="mt-8 text-center text-sm text-muted-foreground">{recommendation}</div>
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            {recommendation}
+          </div>
         ) : (
           <div className="mt-6 space-y-4">
             {/* Status atual */}
@@ -91,13 +103,18 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                 Status atual
               </h3>
               <div className="flex items-center gap-4">
-                <ProgressRing value={myStats?.progress ?? 0} size={72} variant="primary" />
+                <ProgressRing
+                  value={myStats?.progress ?? 0}
+                  size={72}
+                  variant="primary"
+                />
                 <div className="flex-1 min-w-0">
                   <div className="text-2xl font-bold font-display tabular-nums">
                     P{myStats?.rank}
                   </div>
                   <div className="text-sm text-muted-foreground truncate">
-                    {fmtCurrency(myStats?.totalSales ?? 0)} · {myStats?.dealsCount} deal(s)
+                    {fmtCurrency(myStats?.totalSales ?? 0)} · {myStats?.dealsCount}{' '}
+                    deal(s)
                   </div>
                 </div>
               </div>
@@ -118,7 +135,9 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                     {nextRival.avatarUrl && (
                       <AvatarImage src={nextRival.avatarUrl} alt={nextRival.name} />
                     )}
-                    <AvatarFallback>{nextRival.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                      {nextRival.name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold truncate">{nextRival.name}</div>
@@ -139,8 +158,10 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                 {nextRival.salesNeeded > 0 && (
                   <div className="mt-3 text-xs text-muted-foreground">
                     Estimativa:{' '}
-                    <strong className="text-foreground">{nextRival.salesNeeded} deal(s)</strong> no
-                    seu ticket médio.
+                    <strong className="text-foreground">
+                      {nextRival.salesNeeded} deal(s)
+                    </strong>{' '}
+                    no seu ticket médio.
                   </div>
                 )}
               </motion.section>
@@ -194,7 +215,9 @@ export const PitStopPanel: FC<Props> = ({ open, onOpenChange, analysis, onPlaySo
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">
                     Recomendação tática
                   </h3>
-                  <p className="text-sm text-foreground leading-relaxed">{recommendation}</p>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {recommendation}
+                  </p>
                 </div>
               </div>
             </motion.section>

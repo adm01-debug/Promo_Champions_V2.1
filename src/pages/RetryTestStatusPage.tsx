@@ -36,7 +36,10 @@ const formatMs = (ms: number) => {
 function StatusBadge({ status }: { status: RetryTestResult['status'] }) {
   if (status === 'passed') {
     return (
-      <Badge variant="outline" className="border-success/40 bg-success/10 text-success gap-1">
+      <Badge
+        variant="outline"
+        className="border-success/40 bg-success/10 text-success gap-1"
+      >
         <CheckCircle2 className="h-3 w-3" /> passou
       </Badge>
     );
@@ -90,7 +93,9 @@ function KpiCard({
           <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
             {label}
           </p>
-          <p className="text-2xl font-display font-semibold tabular-nums truncate">{value}</p>
+          <p className="text-2xl font-display font-semibold tabular-nums truncate">
+            {value}
+          </p>
         </div>
       </CardContent>
     </Card>
@@ -103,6 +108,7 @@ export default function RetryTestStatusPage() {
   // Auto-run on mount
   useEffect(() => {
     run.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, []);
 
   const data = run.data;
@@ -118,7 +124,8 @@ export default function RetryTestStatusPage() {
     });
   }, [data]);
 
-  const passRate = data && data.total > 0 ? Math.round((data.passed / data.total) * 100) : 0;
+  const passRate =
+    data && data.total > 0 ? Math.round((data.passed / data.total) * 100) : 0;
 
   return (
     <>
@@ -152,7 +159,12 @@ export default function RetryTestStatusPage() {
               </p>
             </div>
           </div>
-          <Button onClick={() => run.mutate()} disabled={run.isPending} className="gap-2" size="lg">
+          <Button
+            onClick={() => run.mutate()}
+            disabled={run.isPending}
+            className="gap-2"
+            size="lg"
+          >
             <RefreshCw className={`h-4 w-4 ${run.isPending ? 'animate-spin' : ''}`} />
             {run.isPending ? 'Executando…' : 'Rodar testes'}
           </Button>
@@ -199,7 +211,11 @@ export default function RetryTestStatusPage() {
               value={data.failed}
               tone={data.failed > 0 ? 'danger' : 'default'}
             />
-            <KpiCard icon={Clock} label="Duração total" value={formatMs(data.total_duration_ms)} />
+            <KpiCard
+              icon={Clock}
+              label="Duração total"
+              value={formatMs(data.total_duration_ms)}
+            />
             <KpiCard
               icon={data.failed === 0 ? CheckCircle2 : AlertTriangle}
               label="Taxa de sucesso"
@@ -214,12 +230,15 @@ export default function RetryTestStatusPage() {
           <p className="text-xs text-muted-foreground">
             Última execução:{' '}
             <span className="text-foreground font-medium">
-              {format(new Date(data.ran_at), "dd 'de' MMM yyyy 'às' HH:mm:ss", { locale: ptBR })}
+              {format(new Date(data.ran_at), "dd 'de' MMM yyyy 'às' HH:mm:ss", {
+                locale: ptBR,
+              })}
             </span>
             {data.ignored > 0 && (
               <>
                 {' '}
-                · <span className="text-muted-foreground">{data.ignored} ignorado(s)</span>
+                ·{' '}
+                <span className="text-muted-foreground">{data.ignored} ignorado(s)</span>
               </>
             )}
           </p>

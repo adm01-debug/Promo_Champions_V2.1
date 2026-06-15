@@ -19,7 +19,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const getAudioContext = useCallback((): AudioContext | null => {
     if (!audioCtxRef.current) {
       try {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioCtxRef.current = new (
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext })
+            .webkitAudioContext
+        )();
       } catch {
         return null;
       }

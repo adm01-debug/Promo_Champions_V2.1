@@ -1,38 +1,46 @@
-import { useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
-import { ArrowLeft, RefreshCw, AlertTriangle, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, RefreshCw, AlertTriangle, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { WebhookDeadLetterPanel } from "@/components/win-loss/WebhookDeadLetterPanel";
-import { ReplayStatusByIdPanel } from "@/components/win-loss/ReplayStatusByIdPanel";
-import { ReplayInvocationsPanel } from "@/components/win-loss/ReplayInvocationsPanel";
-import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
-import { useDeadLettersCounts } from "@/hooks/win-loss/useDeadLettersCounts";
-import { useDeadLetterErrorGroups } from "@/hooks/win-loss/useDeadLetterErrorGroups";
-import { useQueryClient } from "@tanstack/react-query";
+} from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { WebhookDeadLetterPanel } from '@/components/win-loss/WebhookDeadLetterPanel';
+import { ReplayStatusByIdPanel } from '@/components/win-loss/ReplayStatusByIdPanel';
+import { ReplayInvocationsPanel } from '@/components/win-loss/ReplayInvocationsPanel';
+import { useWebhookSubscriptions } from '@/hooks/win-loss/useWebhookSubscriptions';
+import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
+import { useDeadLetterErrorGroups } from '@/hooks/win-loss/useDeadLetterErrorGroups';
+import { useQueryClient } from '@tanstack/react-query';
 
-type DateRange = "all" | "24h" | "7d" | "30d";
+type DateRange = 'all' | '24h' | '7d' | '30d';
 
-function StatusStat({ label, value, tone }: { label: string; value: number; tone: "warn" | "muted" | "ok" }) {
+function StatusStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: 'warn' | 'muted' | 'ok';
+}) {
   const toneClass =
-    tone === "warn"
-      ? "text-destructive"
-      : tone === "ok"
-      ? "text-success"
-      : "text-muted-foreground";
+    tone === 'warn'
+      ? 'text-destructive'
+      : tone === 'ok'
+        ? 'text-success'
+        : 'text-muted-foreground';
   return (
     <div className="rounded-lg border bg-card px-4 py-3">
       <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -46,23 +54,24 @@ function WebhooksDeadLettersAdminContent() {
   const { list: subsList } = useWebhookSubscriptions();
   const { data: counts } = useDeadLettersCounts();
 
-  const [filterText, setFilterText] = useState("");
-  const [filterSubscriptionId, setFilterSubscriptionId] = useState<string>("all");
-  const [filterEvent, setFilterEvent] = useState<string>("all");
-  const [filterErrorGroup, setFilterErrorGroup] = useState<string>("all");
-  const [dateRange, setDateRange] = useState<DateRange>("all");
+  const [filterText, setFilterText] = useState('');
+  const [filterSubscriptionId, setFilterSubscriptionId] = useState<string>('all');
+  const [filterEvent, setFilterEvent] = useState<string>('all');
+  const [filterErrorGroup, setFilterErrorGroup] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<DateRange>('all');
   const { data: errorGroups } = useDeadLetterErrorGroups();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   const subscriptions = subsList.data ?? [];
   const eventOptions = useMemo(() => {
     const set = new Set<string>();
-    subscriptions.forEach((s) => s.events?.forEach((e) => set.add(e)));
+    subscriptions.forEach(s => s.events?.forEach(e => set.add(e)));
     return Array.from(set).sort();
   }, [subscriptions]);
 
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ["winloss-dead-letters"] });
-    qc.invalidateQueries({ queryKey: ["winloss-dead-letter-error-groups"] });
+    qc.invalidateQueries({ queryKey: ['winloss-dead-letters'] });
+    qc.invalidateQueries({ queryKey: ['winloss-dead-letter-error-groups'] });
   };
 
   return (
@@ -91,7 +100,8 @@ function WebhooksDeadLettersAdminContent() {
               Dead-Letters de Webhooks
             </h1>
             <p className="text-muted-foreground text-sm">
-              Webhooks que esgotaram retries. Filtre, inspecione o payload e reprocesse em lote.
+              Webhooks que esgotaram retries. Filtre, inspecione o payload e reprocesse em
+              lote.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={refresh} className="gap-2">
@@ -120,8 +130,14 @@ function WebhooksDeadLettersAdminContent() {
                 <CardTitle className="text-base flex items-center gap-2">
                   <Search className="h-4 w-4" />
                   Filtros
-                  {(filterText || filterSubscriptionId !== "all" || filterEvent !== "all" || filterErrorGroup !== "all" || dateRange !== "all") && (
-                    <Badge variant="secondary" className="text-[10px]">Ativos</Badge>
+                  {(filterText ||
+                    filterSubscriptionId !== 'all' ||
+                    filterEvent !== 'all' ||
+                    filterErrorGroup !== 'all' ||
+                    dateRange !== 'all') && (
+                    <Badge variant="secondary" className="text-[10px]">
+                      Ativos
+                    </Badge>
                   )}
                 </CardTitle>
               </CardHeader>
@@ -130,17 +146,20 @@ function WebhooksDeadLettersAdminContent() {
                   <Input
                     placeholder="Buscar evento, URL, request_id ou erro…"
                     value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
+                    onChange={e => setFilterText(e.target.value)}
                     aria-label="Buscar dead-letters"
                   />
                 </div>
-                <Select value={filterSubscriptionId} onValueChange={setFilterSubscriptionId}>
+                <Select
+                  value={filterSubscriptionId}
+                  onValueChange={setFilterSubscriptionId}
+                >
                   <SelectTrigger aria-label="Filtrar por assinatura">
                     <SelectValue placeholder="Assinatura" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as assinaturas</SelectItem>
-                    {subscriptions.map((s) => (
+                    {subscriptions.map(s => (
                       <SelectItem key={s.id} value={s.id}>
                         {s.url.length > 50 ? `${s.url.slice(0, 50)}…` : s.url}
                       </SelectItem>
@@ -153,7 +172,7 @@ function WebhooksDeadLettersAdminContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os erros</SelectItem>
-                    {(errorGroups ?? []).map((g) => (
+                    {(errorGroups ?? []).map(g => (
                       <SelectItem key={g.key} value={g.key}>
                         {g.label} · {g.count}
                       </SelectItem>
@@ -167,12 +186,17 @@ function WebhooksDeadLettersAdminContent() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos eventos</SelectItem>
-                      {eventOptions.map((e) => (
-                        <SelectItem key={e} value={e}>{e}</SelectItem>
+                      {eventOptions.map(e => (
+                        <SelectItem key={e} value={e}>
+                          {e}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+                  <Select
+                    value={dateRange}
+                    onValueChange={v => setDateRange(v as DateRange)}
+                  >
                     <SelectTrigger aria-label="Filtrar por período">
                       <SelectValue placeholder="Período" />
                     </SelectTrigger>
@@ -190,9 +214,11 @@ function WebhooksDeadLettersAdminContent() {
             <WebhookDeadLetterPanel
               fullWidth
               filterText={filterText}
-              filterSubscriptionId={filterSubscriptionId === "all" ? undefined : filterSubscriptionId}
-              filterEvent={filterEvent === "all" ? undefined : filterEvent}
-              filterErrorGroup={filterErrorGroup === "all" ? undefined : filterErrorGroup}
+              filterSubscriptionId={
+                filterSubscriptionId === 'all' ? undefined : filterSubscriptionId
+              }
+              filterEvent={filterEvent === 'all' ? undefined : filterEvent}
+              filterErrorGroup={filterErrorGroup === 'all' ? undefined : filterErrorGroup}
               dateRange={dateRange}
             />
           </TabsContent>

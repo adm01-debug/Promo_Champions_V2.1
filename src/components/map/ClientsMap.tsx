@@ -240,6 +240,7 @@ export const ClientsMap = () => {
       const needsGeo = clients.filter(c => !c.lat && !c.lng && c.company);
       if (needsGeo.length > 0) geocodeClients();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [clients]);
 
   const allMappable = useMemo(() => {

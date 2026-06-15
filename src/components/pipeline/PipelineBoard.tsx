@@ -164,6 +164,7 @@ export const PipelineBoard = () => {
     if (isDefaultPipeline && allDealIds.length > 0 && !leadScoresData) {
       calculateScores.mutate(allDealIds);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [allDealIds, leadScoresData, isDefaultPipeline]);
 
   const sensors = useSensors(

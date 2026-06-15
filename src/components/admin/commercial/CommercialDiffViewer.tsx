@@ -3,9 +3,9 @@ import { Badge } from '@/components/ui/badge';
 
 interface DiffValueProps {
   label: string;
-  oldValue: any;
-  newValue: any;
-  formatter?: (val: any) => string;
+  oldValue: unknown;
+  newValue: unknown;
+  formatter?: (val: unknown) => string;
 }
 
 export function CommercialDiffViewer({
@@ -28,7 +28,10 @@ export function CommercialDiffViewer({
   }
 
   const isNumeric = typeof oldValue === 'number' && typeof newValue === 'number';
-  const diff = isNumeric ? newValue - oldValue : null;
+  const diff =
+    typeof oldValue === 'number' && typeof newValue === 'number'
+      ? newValue - oldValue
+      : null;
 
   return (
     <div className="flex flex-col gap-1 py-2 border-b border-border/10 last:border-0">
