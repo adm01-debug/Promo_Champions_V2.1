@@ -262,15 +262,19 @@ const SDRDashboardInner = () => {
         {/* Intelligence Sidepanel */}
         <div className="lg:col-span-4 space-y-6">
           <motion.div variants={itemVariants}>
-            <RecentProspects
-              onSelectLead={(id, name, score) => {
-                setSelectedLeadId(id === selectedLeadId ? null : id);
-                setSelectedLeadData(id === selectedLeadId ? null : { name, score });
-              }}
-              selectedLeadId={selectedLeadId}
-              searchTerm={searchTerm}
-              filters={filters}
-            />
+            <LazyVisible minHeight={420} fallback={<ChartFallback height={420} />} rootMargin="600px">
+              <Suspense fallback={<ChartFallback height={420} />}>
+                <RecentProspects
+                  onSelectLead={(id, name, score) => {
+                    setSelectedLeadId(id === selectedLeadId ? null : id);
+                    setSelectedLeadData(id === selectedLeadId ? null : { name, score });
+                  }}
+                  selectedLeadId={selectedLeadId}
+                  searchTerm={searchTerm}
+                  filters={filters}
+                />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
 
           <AnimatePresence>
