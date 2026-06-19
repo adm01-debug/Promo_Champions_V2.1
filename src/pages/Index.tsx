@@ -77,10 +77,26 @@ const EngagementModule = lazy(() =>
   }))
 );
 
-// Preload the next modules after initial render
-const preloadModules = () => {
-  import('@/components/dashboard/modules/PerformanceModule');
-  import('@/components/dashboard/modules/AnalyticsModule');
+// On-demand module loaders (per tab) — avoids pulling recharts/framer-motion
+// into the initial chunk when the user never opens those tabs.
+const MODULE_LOADERS: Record<string, () => Promise<unknown>> = {
+  overview: () => import('@/components/dashboard/modules/OverviewModule'),
+  performance: () => import('@/components/dashboard/modules/PerformanceModule'),
+  analytics: () => import('@/components/dashboard/modules/AnalyticsModule'),
+  competition: () => import('@/components/dashboard/modules/CompetitionModule'),
+  intelligence: () => import('@/components/dashboard/modules/IntelligenceModule'),
+  engagement: () => import('@/components/dashboard/modules/EngagementModule'),
+};
+
+const idle = (cb: () => void) => {
+  const w = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  };
+  if (typeof w.requestIdleCallback === 'function') {
+    w.requestIdleCallback(cb, { timeout: 2500 });
+  } else {
+    setTimeout(cb, 1500);
+  }
 };
 
 const SECTION_MAP: Record<string, string> = {
