@@ -192,14 +192,26 @@ const SDRDashboardInner = () => {
         </div>
       </div>
 
-      <SDRAdvancedFilters onSearch={setSearchTerm} onFilterChange={setFilters} />
+      <LazyVisible minHeight={72} fallback={<ChartFallback height={72} />} rootMargin="600px">
+        <Suspense fallback={<ChartFallback height={72} />}>
+          <SDRAdvancedFilters onSearch={setSearchTerm} onFilterChange={setFilters} />
+        </Suspense>
+      </LazyVisible>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-8">
-          <SDRCommandBar />
+          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+            <Suspense fallback={<ChartFallback height={180} />}>
+              <SDRCommandBar />
+            </Suspense>
+          </LazyVisible>
         </div>
         <div className="lg:col-span-4">
-          <SDRIntelligenceHighlights />
+          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+            <Suspense fallback={<ChartFallback height={180} />}>
+              <SDRIntelligenceHighlights />
+            </Suspense>
+          </LazyVisible>
         </div>
       </div>
 
