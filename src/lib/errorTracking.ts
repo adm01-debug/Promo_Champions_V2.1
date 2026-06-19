@@ -173,4 +173,54 @@ export function initErrorTracking(): void {
   window.addEventListener('unhandledrejection', event => {
     captureException(event.reason, 'unhandledrejection');
   });
+
+  // Intercept console.error / console.warn so existing call sites flow into errorTracking
+  // without requiring file-by-file refactors. Original console behavior is preserved.
+  const originalError = console.error.bind(console);
+  const originalWarn = console.warn.bind(console);
+
+  console.error = (...args: unknown[]) => {
+    try {
+      const first = args[0];
+      const message =
+        first instanceof Error
+          ? first
+          : args.map(a => (typeof a === 'string' ? a : safeStringify(a))).join(' ');
+      // Skip self-originated tracking logs to avoid loops.
+      if (typeof message === 'string' && message.startsWith('[ErrorTracking]')) {
+        originalError(...args);
+        return;
+      }
+      captureError(message, { severity: 'high', metadata: { source: 'console.error' } });
+    } catch {
+      /* never break console */
+    }
+    originalError(...args);
+  };
+
+  console.warn = (...args: unknown[]) => {
+    try {
+      const first = args[0];
+      const message =
+        first instanceof Error
+          ? first
+          : args.map(a => (typeof a === 'string' ? a : safeStringify(a))).join(' ');
+      if (typeof message === 'string' && message.startsWith('[ErrorTracking]')) {
+        originalWarn(...args);
+        return;
+      }
+      captureError(message, { severity: 'low', metadata: { source: 'console.warn' } });
+    } catch {
+      /* never break console */
+    }
+    originalWarn(...args);
+  };
+}
+
+function safeStringify(value: unknown): string {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
 }

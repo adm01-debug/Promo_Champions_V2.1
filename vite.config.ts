@@ -47,6 +47,11 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js'],
   },
+  esbuild: {
+    // Strip console.log/debug in production; keep error/warn (forwarded to errorTracking).
+    drop: process.env.NODE_ENV === 'production' ? ['debugger'] : [],
+    pure: process.env.NODE_ENV === 'production' ? ['console.log', 'console.debug', 'console.info'] : [],
+  },
   build: {
     target: 'es2020',
     cssCodeSplit: true,
