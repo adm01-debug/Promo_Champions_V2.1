@@ -91,6 +91,7 @@ import { Client360KpiCards } from './Client360KpiCards';
 import { LtvChart } from './LtvChart';
 import { CategoryPie } from './CategoryPie';
 import { OrdersTable } from './OrdersTable';
+import { OrdersTimeline } from './OrdersTimeline';
 import { InsightBanner } from './InsightBanner';
 
 interface Client360ViewProps {
