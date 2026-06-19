@@ -159,6 +159,5 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// `withErrorBoundary` was moved to ./withErrorBoundary to keep this module
-// Fast-Refresh compatible (component-only exports).
-export { withErrorBoundary } from "./withErrorBoundary";
+// `withErrorBoundary` lives in ./withErrorBoundary to keep this module
+// Fast-Refresh compatible (only component exports here).
