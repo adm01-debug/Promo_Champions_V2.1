@@ -253,7 +253,11 @@ export const useDashboardKPIsPeriod = (period: KPIPeriod, salespersonId?: string
   useEffect(() => {
     if (!salespersonId && salespersonId !== null) return;
 
-    const channelName = `dashboard-kpis-${salespersonId ?? 'all'}`;
+    const channelId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const channelName = `dashboard-kpis-${salespersonId ?? 'all'}-${channelId}`;
     const channel = supabase
       .channel(channelName)
       .on(
