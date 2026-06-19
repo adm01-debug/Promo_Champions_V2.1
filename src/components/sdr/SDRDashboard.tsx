@@ -310,45 +310,61 @@ const SDRDashboardInner = () => {
           </TabsList>
 
           <TabsContent value="coaching" className="mt-0 outline-none">
-            <PerformanceCoaching />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <PerformanceCoaching />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="orchestrator" className="mt-0 outline-none">
-            <SDRSequenceOrchestrator />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRSequenceOrchestrator />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="activity" className="mt-0 outline-none">
-            <ActivityAuditTrail />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <ActivityAuditTrail />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="conversations" className="mt-0 outline-none">
-            <SDRConversationInsights />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRConversationInsights />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="qualification" className="mt-0 outline-none">
-            <MQLQualificationForm
-              saleId={selectedLeadId}
-              clientName={selectedLeadData?.name}
-            />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <MQLQualificationForm
+                saleId={selectedLeadId}
+                clientName={selectedLeadData?.name}
+              />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="performance" className="mt-0 outline-none space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <SDRConversionRanking period={period} />
-              <TopSDRsRanking />
-            </div>
-            <SDRConversionEvolution period={period} />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SDRConversionRanking period={period} />
+                <TopSDRsRanking />
+              </div>
+              <SDRConversionEvolution period={period} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="strategy" className="mt-0 outline-none space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <TargetSimulator />
-              <SDRActivityTrend period={period} />
-            </div>
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TargetSimulator />
+                <SDRActivityTrend period={period} />
+              </div>
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="alerts" className="mt-0 outline-none">
-            <SDRAlertHistory />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRAlertHistory />
+            </Suspense>
           </TabsContent>
         </Tabs>
       </motion.div>
