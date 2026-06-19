@@ -1,74 +1,104 @@
-import React, { FC, useCallback } from 'react';
+import React, { forwardRef, memo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import type { HTMLMotionProps } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
 
-interface PreloadLinkProps {
+type PrefetchableRouteComponent = {
+  prefetch?: () => Promise<unknown> | unknown;
+};
+
+const prefetchedTargets = new Set<string>();
+
+interface PreloadLinkProps extends Omit<HTMLMotionProps<'a'>, 'href'> {
   to: string;
   children: React.ReactNode;
-  className?: string;
   replace?: boolean;
-  onClick?: () => void;
-  component?: any; // For lazy prefetching
-  'aria-label'?: string;
-  'aria-current'?: "date" | "false" | "location" | "page" | "step" | "time" | "true" | boolean;
-  id?: string;
+  component?: PrefetchableRouteComponent;
 }
 
 /**
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink: FC<PreloadLinkProps> = ({ to, children, className, replace, component, id, ...props }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
+  ({
+    to,
+    children,
+    className,
+    replace,
+    component,
+    onClick,
+    onMouseEnter,
+    onTouchStart,
+    id,
+    ...props
+  }, ref) => {
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  const preloadRoute = useCallback(() => {
-    // 1. Browser prefetch hint (using modulepreload for JS chunks for better performance)
-    const link = document.createElement('link');
-    const isJs = to.endsWith('.js') || !to.includes('.');
-    link.rel = isJs ? 'modulepreload' : 'prefetch';
-    link.href = to;
-    document.head.appendChild(link);
+    const preloadRoute = useCallback(() => {
+      if (!to || to.startsWith('#') || prefetchedTargets.has(to)) return;
+      prefetchedTargets.add(to);
 
-    // 2. Component prefetch (React Lazy)
-    if (component?.prefetch) {
-      component.prefetch();
-    }
-  }, [to, component]);
+      const isInternalRoute = to.startsWith('/') && !to.startsWith('//');
+      if (!isInternalRoute) {
+        const link = document.createElement('link');
+        link.rel = to.endsWith('.js') ? 'modulepreload' : 'prefetch';
+        link.href = to;
+        document.head.appendChild(link);
+      }
 
-  const handleClick = (e: React.MouseEvent) => {
-    // If it's an external link or a hash, let the browser handle it
-    if (to.startsWith('http') || to.startsWith('#')) {
-      if (props.onClick) props.onClick();
-      return;
-    }
+      if (component?.prefetch) {
+        void component.prefetch();
+      }
+    }, [to, component]);
 
-    if (location.pathname === to) {
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.(e);
+      if (e.defaultPrevented) return;
+
+      // If it's an external link or a hash, let the browser handle it
+      if (to.startsWith('http') || to.startsWith('#')) {
+        return;
+      }
+
+      if (location.pathname === to) {
+        e.preventDefault();
+        return;
+      }
+      
       e.preventDefault();
-      return;
-    }
-    
-    e.preventDefault();
-    triggerHaptic('light');
-    if (props.onClick) props.onClick();
-    navigate(to, { replace });
-  };
+      triggerHaptic('light');
+      navigate(to, { replace });
+    };
 
-  const { onClick: _onClick, ...rest } = props;
+    const handleMouseEnter: PreloadLinkProps['onMouseEnter'] = event => {
+      onMouseEnter?.(event);
+      preloadRoute();
+    };
 
-  return (
-    <motion.a
-      id={id}
-      href={to}
-      onClick={handleClick}
-      onMouseEnter={preloadRoute}
-      onTouchStart={preloadRoute}
-      className={className}
-      whileTap={{ scale: 0.98 }}
-      {...rest}
-    >
-      {children}
-    </motion.a>
-  );
-};
+    const handleTouchStart: PreloadLinkProps['onTouchStart'] = event => {
+      onTouchStart?.(event);
+      preloadRoute();
+    };
+
+    return (
+      <motion.a
+        {...props}
+        ref={ref}
+        id={id}
+        href={to}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onTouchStart={handleTouchStart}
+        className={className}
+        whileTap={{ scale: 0.98 }}
+      >
+        {children}
+      </motion.a>
+    );
+  }
+));
+
+PreloadLink.displayName = 'PreloadLink';

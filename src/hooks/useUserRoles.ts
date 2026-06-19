@@ -14,6 +14,26 @@ export interface UserRole {
   updated_at: string;
 }
 
+const ROLE_QUERY_TIMEOUT_MS = 8_000;
+
+function withRoleTimeout<T>(request: PromiseLike<T>, label: string): Promise<T | null> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  return Promise.race([
+    Promise.resolve(request).finally(() => {
+      if (timeoutId) clearTimeout(timeoutId);
+    }),
+    new Promise<null>((resolve) => {
+      timeoutId = setTimeout(() => {
+        if (import.meta.env.DEV) {
+          console.warn(`${label} timed out after ${ROLE_QUERY_TIMEOUT_MS}ms`);
+        }
+        resolve(null);
+      }, ROLE_QUERY_TIMEOUT_MS);
+    }),
+  ]);
+}
+
 export function useUserRoles() {
   const { user, salesperson } = useAuth();
   const queryClient = useQueryClient();
@@ -24,21 +44,31 @@ export function useUserRoles() {
     queryFn: async () => {
       if (!user?.id) return null;
       
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("role")
-        .limit(1)
-        .maybeSingle();
+      const roleResult = await withRoleTimeout(
+        supabase
+          .from("user_roles")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("role")
+          .limit(1)
+          .maybeSingle(),
+        "user_roles lookup"
+      );
+
+      const data = roleResult?.data;
+      const error = roleResult?.error;
 
       // Fallback: If no role found in user_roles but exists as salesperson
       if (!data && !error && user?.id) {
-        const { data: spData } = await supabase
-          .from("salespeople")
-          .select("role")
-          .eq("auth_user_id", user.id)
-          .maybeSingle();
+        const salespersonResult = await withRoleTimeout(
+          supabase
+            .from("salespeople")
+            .select("role")
+            .eq("auth_user_id", user.id)
+            .maybeSingle(),
+          "salespeople role fallback"
+        );
+        const spData = salespersonResult?.data;
         
         if (spData) {
           return {

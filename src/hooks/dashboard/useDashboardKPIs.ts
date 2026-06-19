@@ -54,8 +54,12 @@ export const useDashboardKPIs = () => {
 
   useEffect(() => {
     // Optimized realtime invalidation: only invalidates if relevant tables change
+    const channelId =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel('dashboard-kpis-realtime')
+      .channel(`dashboard-kpis-realtime-${channelId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
       })

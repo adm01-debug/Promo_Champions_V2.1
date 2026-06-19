@@ -25,8 +25,12 @@ export function useVictoryFeed(limit = 20) {
 
   // Realtime subscription
   useEffect(() => {
+    const channelId =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel('victory-feed-realtime')
+      .channel(`victory-feed-realtime-${channelId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'victory_feed' }, () => {
         queryClient.invalidateQueries({ queryKey: ['victory-feed'] });
       })

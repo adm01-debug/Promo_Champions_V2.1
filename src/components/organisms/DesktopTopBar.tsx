@@ -223,44 +223,38 @@ export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
           )}
 
           {/* Notifications */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <NotificationPopover>
-                <button
-                  type="button"
-                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
-                  aria-label="Notificações"
-                >
-                  <Bell
-                    className={cn(
-                      'h-4 w-4 transition-colors',
-                      unreadCount > 5
-                        ? 'text-destructive'
-                        : unreadCount > 0
-                          ? 'text-warning'
-                          : 'text-muted-foreground'
-                    )}
-                  />
-                  <NotificationBadge
-                    count={unreadCount}
-                    size="sm"
-                    pulse={unreadCount > 5}
-                    variant={
-                      unreadCount > 5
-                        ? 'destructive'
-                        : unreadCount > 0
-                          ? 'warning'
-                          : 'default'
-                    }
-                    className="absolute -top-1 -right-1"
-                  />
-                </button>
-              </NotificationPopover>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p>Notificações{unreadCount > 0 ? ` (${unreadCount} novas)` : ''}</p>
-            </TooltipContent>
-          </Tooltip>
+          <NotificationPopover>
+            <button
+              type="button"
+              className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
+              aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} novas)` : ''}`}
+              title={`Notificações${unreadCount > 0 ? ` (${unreadCount} novas)` : ''}`}
+            >
+              <Bell
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  unreadCount > 5
+                    ? 'text-destructive'
+                    : unreadCount > 0
+                      ? 'text-warning'
+                      : 'text-muted-foreground'
+                )}
+              />
+              <NotificationBadge
+                count={unreadCount}
+                size="sm"
+                pulse={unreadCount > 5}
+                variant={
+                  unreadCount > 5
+                    ? 'destructive'
+                    : unreadCount > 0
+                      ? 'warning'
+                      : 'default'
+                }
+                className="absolute -top-1 -right-1"
+              />
+            </button>
+          </NotificationPopover>
 
           {/* Focus Mode */}
           <FocusModeToggle />

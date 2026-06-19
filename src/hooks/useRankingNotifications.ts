@@ -23,8 +23,12 @@ export function useMyRankingNotification() {
 
   useEffect(() => {
     if (!user?.id) return;
+    const channelId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const ch = supabase
-      .channel(`ranking-notif:${user.id}`)
+      .channel(`ranking-notif:${user.id}:${channelId}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "ranking_notifications" }, () => {
         queryClient.invalidateQueries({ queryKey: ["my-ranking-notification"] });
       })

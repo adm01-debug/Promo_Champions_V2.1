@@ -49,7 +49,7 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, loadingText, disabled, children, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
 
     const handleClick = React.useCallback(
@@ -67,29 +67,34 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       [onClick]
     );
 
-    // When asChild, Slot passes onClick to the child automatically.
-    // However, the child receives the original onClick from props, not handleClick.
-    // We need to merge: render a wrapper that intercepts the click.
     if (asChild) {
       return (
-        <span
-          onClick={handleClick as any}
+        <Comp
           className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref as any}
-          {...(props as any)}
+          ref={ref}
+          onClick={handleClick}
+          aria-busy={loading || undefined}
+          {...props}
         >
-          <Slot>{props.children}</Slot>
-        </span>
+          {children}
+        </Comp>
       );
     }
 
     return (
-      <button
+      <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         onClick={handleClick}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
         {...props}
-      />
+      >
+        {loading && (
+          <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        )}
+        {loading && loadingText ? loadingText : children}
+      </Comp>
     );
   }
 );
