@@ -90,6 +90,7 @@ import { Client360Skeleton } from './Client360Skeleton';
 import { Client360KpiCards } from './Client360KpiCards';
 import { LtvChart } from './LtvChart';
 import { CategoryPie } from './CategoryPie';
+import { OrdersTable } from './OrdersTable';
 import { InsightBanner } from './InsightBanner';
 
 interface Client360ViewProps {
@@ -664,89 +665,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
         </CardHeader>
         <CardContent className="p-0">
           {viewMode === 'table' ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-accent/10">
-                  <TableRow className="border-border/10 hover:bg-transparent">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
-                      Data
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
-                      Produto / SKU
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-right">
-                      Valor
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">
-                      Status
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
-                      Ações
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredOrders.length > 0 ? (
-                    filteredOrders.map(order => (
-                      <TableRow
-                        key={order.id}
-                        className="border-border/10 group transition-colors hover:bg-white/5"
-                      >
-                        <TableCell className="text-xs font-medium py-4">
-                          {new Date(order.created_at).toLocaleDateString('pt-BR')}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-black uppercase group-hover:text-primary transition-colors">
-                              {order.product_name}
-                            </span>
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">
-                              SKU: {order.sku || 'N/A'}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <span className="text-sm font-black text-primary">
-                            {formatCurrency(Number(order.amount))}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              'text-[9px] font-black border-none h-5',
-                              order.status === 'completed'
-                                ? 'bg-emerald-500/10 text-emerald-500'
-                                : order.status === 'pending'
-                                  ? 'bg-amber-500/10 text-amber-500'
-                                  : 'bg-rose-500/10 text-rose-500'
-                            )}
-                          >
-                            {order.status?.toUpperCase()}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="p-2 rounded-lg bg-accent/20 border border-white/5 hover:bg-primary/20 hover:border-primary/50 transition-all"
-                          >
-                            <Eye className="h-3.5 w-3.5 text-primary" />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-12">
-                        <p className="text-xs font-bold text-muted-foreground uppercase">
-                          Nenhum pedido encontrado com estes filtros
-                        </p>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <OrdersTable orders={filteredOrders} onSelectOrder={setSelectedOrder} />
           ) : (
             <div className="p-8 relative">
               <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary/50 via-border to-transparent" />
