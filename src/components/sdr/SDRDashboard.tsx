@@ -15,17 +15,29 @@ import {
 } from 'lucide-react';
 import { useSDRMetrics } from '@/hooks/useSDRMetrics';
 import { SDRStatCard } from './SDRStatCard';
-import { SchedulingRateGauge } from './SchedulingRateGauge';
-import { RecentProspects } from './RecentProspects';
-import { SDRAdvancedFilters } from './SDRAdvancedFilters';
-import { SDRIntelligenceHighlights } from './SDRIntelligenceHighlights';
 import { motion, AnimatePresence } from 'framer-motion';
 import { containerVariants, itemVariants } from '@/components/transitions/PageTransition';
 import { LeadScoreBreakdown } from './LeadScoreBreakdown';
-import { SDRCommandBar } from './SDRCommandBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LazyVisible } from '@/components/common/LazyVisible';
 import { Skeleton } from '@/components/ui/skeleton';
+
+// Above-the-fold heavy modules (split into own chunks, load eagerly when visible)
+const SchedulingRateGauge = lazy(() =>
+  import('./SchedulingRateGauge').then(m => ({ default: m.SchedulingRateGauge })),
+);
+const RecentProspects = lazy(() =>
+  import('./RecentProspects').then(m => ({ default: m.RecentProspects })),
+);
+const SDRAdvancedFilters = lazy(() =>
+  import('./SDRAdvancedFilters').then(m => ({ default: m.SDRAdvancedFilters })),
+);
+const SDRIntelligenceHighlights = lazy(() =>
+  import('./SDRIntelligenceHighlights').then(m => ({ default: m.SDRIntelligenceHighlights })),
+);
+const SDRCommandBar = lazy(() =>
+  import('./SDRCommandBar').then(m => ({ default: m.SDRCommandBar })),
+);
 
 // Heavy / chart-bearing modules — only load when needed
 const ProspectingFunnel = lazy(() =>
@@ -180,14 +192,26 @@ const SDRDashboardInner = () => {
         </div>
       </div>
 
-      <SDRAdvancedFilters onSearch={setSearchTerm} onFilterChange={setFilters} />
+      <LazyVisible minHeight={72} fallback={<ChartFallback height={72} />} rootMargin="600px">
+        <Suspense fallback={<ChartFallback height={72} />}>
+          <SDRAdvancedFilters onSearch={setSearchTerm} onFilterChange={setFilters} />
+        </Suspense>
+      </LazyVisible>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-8">
-          <SDRCommandBar />
+          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+            <Suspense fallback={<ChartFallback height={180} />}>
+              <SDRCommandBar />
+            </Suspense>
+          </LazyVisible>
         </div>
         <div className="lg:col-span-4">
-          <SDRIntelligenceHighlights />
+          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+            <Suspense fallback={<ChartFallback height={180} />}>
+              <SDRIntelligenceHighlights />
+            </Suspense>
+          </LazyVisible>
         </div>
       </div>
 
@@ -204,13 +228,17 @@ const SDRDashboardInner = () => {
         {/* Core Conversion & Funnel */}
         <div className="lg:col-span-8 space-y-6">
           <motion.div variants={itemVariants}>
-            <SchedulingRateGauge
-              rate={metrics?.current.schedulingRate || 0}
-              change={metrics?.changes.schedulingRate}
-              meetings={metrics?.current.meetingsScheduled || 0}
-              leads={metrics?.current.totalLeads || 0}
-              title="Conversão para Reunião"
-            />
+            <LazyVisible minHeight={260} fallback={<ChartFallback height={260} />} rootMargin="600px">
+              <Suspense fallback={<ChartFallback height={260} />}>
+                <SchedulingRateGauge
+                  rate={metrics?.current.schedulingRate || 0}
+                  change={metrics?.changes.schedulingRate}
+                  meetings={metrics?.current.meetingsScheduled || 0}
+                  leads={metrics?.current.totalLeads || 0}
+                  title="Conversão para Reunião"
+                />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -234,15 +262,19 @@ const SDRDashboardInner = () => {
         {/* Intelligence Sidepanel */}
         <div className="lg:col-span-4 space-y-6">
           <motion.div variants={itemVariants}>
-            <RecentProspects
-              onSelectLead={(id, name, score) => {
-                setSelectedLeadId(id === selectedLeadId ? null : id);
-                setSelectedLeadData(id === selectedLeadId ? null : { name, score });
-              }}
-              selectedLeadId={selectedLeadId}
-              searchTerm={searchTerm}
-              filters={filters}
-            />
+            <LazyVisible minHeight={420} fallback={<ChartFallback height={420} />} rootMargin="600px">
+              <Suspense fallback={<ChartFallback height={420} />}>
+                <RecentProspects
+                  onSelectLead={(id, name, score) => {
+                    setSelectedLeadId(id === selectedLeadId ? null : id);
+                    setSelectedLeadData(id === selectedLeadId ? null : { name, score });
+                  }}
+                  selectedLeadId={selectedLeadId}
+                  searchTerm={searchTerm}
+                  filters={filters}
+                />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
 
           <AnimatePresence>
