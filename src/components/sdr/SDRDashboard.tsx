@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState, lazy, Suspense } from 'react';
 import {
   Users,
   Target,
@@ -17,27 +17,63 @@ import { useSDRMetrics } from '@/hooks/useSDRMetrics';
 import { SDRStatCard } from './SDRStatCard';
 import { SchedulingRateGauge } from './SchedulingRateGauge';
 import { RecentProspects } from './RecentProspects';
-import { ActivityAuditTrail } from './ActivityAuditTrail';
-import { SDRConversationInsights } from './SDRConversationInsights';
-import { MQLQualificationForm } from './MQLQualificationForm';
 import { SDRAdvancedFilters } from './SDRAdvancedFilters';
-import { SDRAlertHistory } from './SDRAlertHistory';
-import { SDRConversionEvolution } from './SDRConversionEvolution';
-import { SDRConversionRanking } from './SDRConversionRanking';
-import { TopSDRsRanking } from './TopSDRsRanking';
-import { ProspectingFunnel } from './ProspectingFunnel';
-import { PredictiveSuccessMap } from './PredictiveSuccessMap';
-import { SDRSequenceOrchestrator } from './SDRSequenceOrchestrator';
-import { PerformanceCoaching } from './PerformanceCoaching';
-import { SDRAchievementTracker } from './SDRAchievementTracker';
 import { SDRIntelligenceHighlights } from './SDRIntelligenceHighlights';
-import { TargetSimulator } from './TargetSimulator';
-import { SDRActivityTrend } from './SDRActivityTrend';
 import { motion, AnimatePresence } from 'framer-motion';
 import { containerVariants, itemVariants } from '@/components/transitions/PageTransition';
 import { LeadScoreBreakdown } from './LeadScoreBreakdown';
 import { SDRCommandBar } from './SDRCommandBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LazyVisible } from '@/components/common/LazyVisible';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Heavy / chart-bearing modules — only load when needed
+const ProspectingFunnel = lazy(() =>
+  import('./ProspectingFunnel').then(m => ({ default: m.ProspectingFunnel })),
+);
+const PredictiveSuccessMap = lazy(() =>
+  import('./PredictiveSuccessMap').then(m => ({ default: m.PredictiveSuccessMap })),
+);
+const SDRAchievementTracker = lazy(() =>
+  import('./SDRAchievementTracker').then(m => ({ default: m.SDRAchievementTracker })),
+);
+const SDRActivityTrend = lazy(() =>
+  import('./SDRActivityTrend').then(m => ({ default: m.SDRActivityTrend })),
+);
+const SDRConversionEvolution = lazy(() =>
+  import('./SDRConversionEvolution').then(m => ({ default: m.SDRConversionEvolution })),
+);
+const SDRConversionRanking = lazy(() =>
+  import('./SDRConversionRanking').then(m => ({ default: m.SDRConversionRanking })),
+);
+const TopSDRsRanking = lazy(() =>
+  import('./TopSDRsRanking').then(m => ({ default: m.TopSDRsRanking })),
+);
+const ActivityAuditTrail = lazy(() =>
+  import('./ActivityAuditTrail').then(m => ({ default: m.ActivityAuditTrail })),
+);
+const SDRConversationInsights = lazy(() =>
+  import('./SDRConversationInsights').then(m => ({ default: m.SDRConversationInsights })),
+);
+const MQLQualificationForm = lazy(() =>
+  import('./MQLQualificationForm').then(m => ({ default: m.MQLQualificationForm })),
+);
+const SDRAlertHistory = lazy(() =>
+  import('./SDRAlertHistory').then(m => ({ default: m.SDRAlertHistory })),
+);
+const SDRSequenceOrchestrator = lazy(() =>
+  import('./SDRSequenceOrchestrator').then(m => ({ default: m.SDRSequenceOrchestrator })),
+);
+const PerformanceCoaching = lazy(() =>
+  import('./PerformanceCoaching').then(m => ({ default: m.PerformanceCoaching })),
+);
+const TargetSimulator = lazy(() =>
+  import('./TargetSimulator').then(m => ({ default: m.TargetSimulator })),
+);
+
+const ChartFallback = ({ height = 280 }: { height?: number }) => (
+  <Skeleton className="w-full rounded-xl" style={{ height }} />
+);
 
 const SDRDashboardInner = () => {
   const [period, setPeriod] = useState<'week' | 'month' | 'quarter'>('month');
@@ -179,10 +215,18 @@ const SDRDashboardInner = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div variants={itemVariants}>
-              <ProspectingFunnel />
+              <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+                <Suspense fallback={<ChartFallback height={320} />}>
+                  <ProspectingFunnel />
+                </Suspense>
+              </LazyVisible>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <SDRAchievementTracker />
+              <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+                <Suspense fallback={<ChartFallback height={320} />}>
+                  <SDRAchievementTracker />
+                </Suspense>
+              </LazyVisible>
             </motion.div>
           </div>
         </div>
@@ -218,7 +262,11 @@ const SDRDashboardInner = () => {
           </AnimatePresence>
 
           <motion.div variants={itemVariants}>
-            <PredictiveSuccessMap />
+            <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+              <Suspense fallback={<ChartFallback height={320} />}>
+                <PredictiveSuccessMap />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
         </div>
       </div>
@@ -262,45 +310,61 @@ const SDRDashboardInner = () => {
           </TabsList>
 
           <TabsContent value="coaching" className="mt-0 outline-none">
-            <PerformanceCoaching />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <PerformanceCoaching />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="orchestrator" className="mt-0 outline-none">
-            <SDRSequenceOrchestrator />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRSequenceOrchestrator />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="activity" className="mt-0 outline-none">
-            <ActivityAuditTrail />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <ActivityAuditTrail />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="conversations" className="mt-0 outline-none">
-            <SDRConversationInsights />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRConversationInsights />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="qualification" className="mt-0 outline-none">
-            <MQLQualificationForm
-              saleId={selectedLeadId}
-              clientName={selectedLeadData?.name}
-            />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <MQLQualificationForm
+                saleId={selectedLeadId}
+                clientName={selectedLeadData?.name}
+              />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="performance" className="mt-0 outline-none space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <SDRConversionRanking period={period} />
-              <TopSDRsRanking />
-            </div>
-            <SDRConversionEvolution period={period} />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SDRConversionRanking period={period} />
+                <TopSDRsRanking />
+              </div>
+              <SDRConversionEvolution period={period} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="strategy" className="mt-0 outline-none space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <TargetSimulator />
-              <SDRActivityTrend period={period} />
-            </div>
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TargetSimulator />
+                <SDRActivityTrend period={period} />
+              </div>
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="alerts" className="mt-0 outline-none">
-            <SDRAlertHistory />
+            <Suspense fallback={<ChartFallback height={400} />}>
+              <SDRAlertHistory />
+            </Suspense>
           </TabsContent>
         </Tabs>
       </motion.div>
