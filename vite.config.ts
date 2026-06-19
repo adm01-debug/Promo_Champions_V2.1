@@ -48,17 +48,39 @@ export default defineConfig({
     include: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js'],
   },
   build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
-          'vendor-data': ['@tanstack/react-query', '@supabase/supabase-js'],
-          'vendor': ['framer-motion', 'recharts', 'date-fns'],
+        manualChunks: (id) => {
+          if (!id.includes('node_modules')) return;
+          // Core framework
+          if (id.match(/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/)) {
+            return 'vendor-core';
+          }
+          // Data layer
+          if (id.includes('@tanstack/react-query') || id.includes('@supabase/supabase-js')) {
+            return 'vendor-data';
+          }
+          // Radix UI primitives (split to keep small)
+          if (id.includes('@radix-ui/')) return 'vendor-radix';
+          // Heavy & lazy-only libs — isolated so they only load on routes that import them
+          if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
+          if (id.includes('framer-motion')) return 'vendor-motion';
+          if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf';
+          if (id.includes('xlsx') || id.includes('exceljs')) return 'vendor-excel';
+          if (id.includes('leaflet')) return 'vendor-maps';
+          if (id.includes('@dnd-kit')) return 'vendor-dnd';
+          if (id.includes('date-fns')) return 'vendor-date';
+          if (id.includes('lucide-react')) return 'vendor-icons';
+          if (id.includes('zod') || id.includes('react-hook-form')) return 'vendor-forms';
+          return 'vendor';
         },
       },
     },
   },
+
   server: {
     port: 5173,
     strictPort: true,
