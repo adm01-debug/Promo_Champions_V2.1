@@ -262,7 +262,11 @@ const SDRDashboardInner = () => {
           </AnimatePresence>
 
           <motion.div variants={itemVariants}>
-            <PredictiveSuccessMap />
+            <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+              <Suspense fallback={<ChartFallback height={320} />}>
+                <PredictiveSuccessMap />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
         </div>
       </div>
