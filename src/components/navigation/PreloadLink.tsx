@@ -1,52 +1,53 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef, memo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
 
-interface PreloadLinkProps {
+type PrefetchableRouteComponent = {
+  prefetch?: () => Promise<unknown> | unknown;
+};
+
+const prefetchedTargets = new Set<string>();
+
+interface PreloadLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
   to: string;
   children: React.ReactNode;
-  className?: string;
   replace?: boolean;
-  onClick?: () => void;
-  component?: any; // For lazy prefetching
-  'aria-label'?: string;
-  'aria-current'?: "date" | "false" | "location" | "page" | "step" | "time" | "true" | boolean;
-  id?: string;
+  component?: PrefetchableRouteComponent;
 }
 
 /**
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink = forwardRef<HTMLAnchorElement, PreloadLinkProps>(
-  ({ to, children, className, replace, component, id, ...props }, ref) => {
+export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
+  ({ to, children, className, replace, component, onClick, id, ...props }, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const preloadRoute = useCallback(() => {
-      if (!to || to.startsWith('http') || to.startsWith('#')) return;
+      if (!to || to.startsWith('#') || prefetchedTargets.has(to)) return;
+      prefetchedTargets.add(to);
 
-      // 1. Browser prefetch hint (avoid duplicates)
-      const existingLink = document.querySelector(`link[href="${to}"]`);
-      if (!existingLink) {
+      const isInternalRoute = to.startsWith('/') && !to.startsWith('//');
+      if (!isInternalRoute) {
         const link = document.createElement('link');
-        const isJs = to.endsWith('.js') || !to.includes('.');
-        link.rel = isJs ? 'modulepreload' : 'prefetch';
+        link.rel = to.endsWith('.js') ? 'modulepreload' : 'prefetch';
         link.href = to;
         document.head.appendChild(link);
       }
 
-      // 2. Component prefetch (React Lazy)
       if (component?.prefetch) {
-        component.prefetch();
+        void component.prefetch();
       }
     }, [to, component]);
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      onClick?.(e);
+      if (e.defaultPrevented) return;
+
       // If it's an external link or a hash, let the browser handle it
       if (to.startsWith('http') || to.startsWith('#')) {
-        if (props.onClick) props.onClick();
         return;
       }
 
@@ -57,11 +58,8 @@ export const PreloadLink = forwardRef<HTMLAnchorElement, PreloadLinkProps>(
       
       e.preventDefault();
       triggerHaptic('light');
-      if (props.onClick) props.onClick();
       navigate(to, { replace });
     };
-
-    const { onClick: _onClick, ...rest } = props;
 
     return (
       <motion.a
@@ -73,12 +71,12 @@ export const PreloadLink = forwardRef<HTMLAnchorElement, PreloadLinkProps>(
         onTouchStart={preloadRoute}
         className={className}
         whileTap={{ scale: 0.98 }}
-        {...rest}
+        {...props}
       >
         {children}
       </motion.a>
     );
   }
-);
+));
 
 PreloadLink.displayName = 'PreloadLink';
