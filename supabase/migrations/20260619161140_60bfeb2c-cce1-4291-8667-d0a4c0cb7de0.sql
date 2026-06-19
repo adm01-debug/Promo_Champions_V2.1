@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_error_logs_severity_created_at ON public.error_logs (severity, created_at DESC);
