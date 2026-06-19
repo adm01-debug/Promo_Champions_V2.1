@@ -228,13 +228,17 @@ const SDRDashboardInner = () => {
         {/* Core Conversion & Funnel */}
         <div className="lg:col-span-8 space-y-6">
           <motion.div variants={itemVariants}>
-            <SchedulingRateGauge
-              rate={metrics?.current.schedulingRate || 0}
-              change={metrics?.changes.schedulingRate}
-              meetings={metrics?.current.meetingsScheduled || 0}
-              leads={metrics?.current.totalLeads || 0}
-              title="Conversão para Reunião"
-            />
+            <LazyVisible minHeight={260} fallback={<ChartFallback height={260} />} rootMargin="600px">
+              <Suspense fallback={<ChartFallback height={260} />}>
+                <SchedulingRateGauge
+                  rate={metrics?.current.schedulingRate || 0}
+                  change={metrics?.changes.schedulingRate}
+                  meetings={metrics?.current.meetingsScheduled || 0}
+                  leads={metrics?.current.totalLeads || 0}
+                  title="Conversão para Reunião"
+                />
+              </Suspense>
+            </LazyVisible>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
