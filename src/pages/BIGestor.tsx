@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { useBIGestor } from '@/hooks/bi/useBIGestor';
 import { Helmet } from 'react-helmet-async';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
@@ -5,6 +6,7 @@ import { AnalyticsLoadingSkeleton as BIGestorLoadingSkeleton } from '@/component
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
   DollarSign,
@@ -19,36 +21,27 @@ import {
   Briefcase,
   Sparkles,
 } from 'lucide-react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-} from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { PageTransition } from '@/components/transitions/PageTransition';
+import { LazyVisible } from '@/components/common/LazyVisible';
 import { BITopClientsSection } from '@/components/bi/BITopClientsSection';
 import { BISalesInsights } from '@/components/bi/BISalesInsights';
 import { BIVendasMacro } from '@/components/bi/BIVendasMacro';
 import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
+import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
 
-const ABC_COLORS = {
-  A: 'hsl(var(--success))',
-  B: 'hsl(var(--warning))',
-  C: 'hsl(var(--destructive))',
-};
+const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaChart'));
+const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
+const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
+
+const ChartFallback = ({ height = 250 }: { height?: number }) => (
+  <Skeleton className="w-full" style={{ height }} />
+);
+
 const STAGE_LABELS: Record<string, string> = {
   pending: 'Lead',
   qualified: 'Qualificado',
@@ -257,59 +250,17 @@ const BIGestor = () => {
                   </CardHeader>
                   <CardContent>
                     {data?.revenueByMonth && data.revenueByMonth.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={250}>
-                        <AreaChart data={data.revenueByMonth}>
-                          <defs>
-                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                              <stop
-                                offset="5%"
-                                stopColor="hsl(var(--primary))"
-                                stopOpacity={0.4}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="hsl(var(--primary))"
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="hsl(var(--border))"
-                            strokeOpacity={0.5}
+                      <LazyVisible
+                        minHeight={250}
+                        fallback={<ChartFallback height={250} />}
+                      >
+                        <Suspense fallback={<ChartFallback height={250} />}>
+                          <RevenueAreaChart
+                            data={data.revenueByMonth}
+                            formatCurrency={formatCurrency}
                           />
-                          <XAxis
-                            dataKey="month"
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                          />
-                          <YAxis
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                            tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '12px',
-                              boxShadow: 'var(--shadow-lg)',
-                            }}
-                            formatter={(value: number | string) => [
-                              formatCurrency(value),
-                              'Receita',
-                            ]}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="value"
-                            stroke="hsl(var(--primary))"
-                            strokeWidth={3}
-                            fillOpacity={1}
-                            fill="url(#colorRevenue)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                        </Suspense>
+                      </LazyVisible>
                     ) : (
                       <div className="h-[250px] flex items-center justify-center text-muted-foreground">
                         <div className="text-center">
@@ -336,40 +287,17 @@ const BIGestor = () => {
                   <CardContent>
                     {data?.abcClients && data.abcClients.length > 0 ? (
                       <>
-                        <ResponsiveContainer width="100%" height={160}>
-                          <PieChart>
-                            <Pie
+                        <LazyVisible
+                          minHeight={160}
+                          fallback={<ChartFallback height={160} />}
+                        >
+                          <Suspense fallback={<ChartFallback height={160} />}>
+                            <AbcPieChart
                               data={data.abcClients}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={35}
-                              outerRadius={60}
-                              paddingAngle={3}
-                              dataKey="revenue"
-                            >
-                              {data.abcClients.map(entry => (
-                                <Cell
-                                  key={entry.classification}
-                                  fill={
-                                    ABC_COLORS[
-                                      entry.classification as keyof typeof ABC_COLORS
-                                    ]
-                                  }
-                                />
-                              ))}
-                            </Pie>
-                            <Tooltip
-                              formatter={(value: number | string) => [
-                                formatCurrency(value),
-                              ]}
-                              contentStyle={{
-                                backgroundColor: 'hsl(var(--card))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: '12px',
-                              }}
+                              formatCurrency={formatCurrency}
                             />
-                          </PieChart>
-                        </ResponsiveContainer>
+                          </Suspense>
+                        </LazyVisible>
                         <div className="space-y-2">
                           {data.abcClients.map(abc => (
                             <div
@@ -490,44 +418,17 @@ const BIGestor = () => {
                   </CardHeader>
                   <CardContent>
                     {data?.dealsBySource && data.dealsBySource.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={220}>
-                        <BarChart data={data.dealsBySource} layout="vertical">
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="hsl(var(--border))"
-                            strokeOpacity={0.5}
+                      <LazyVisible
+                        minHeight={220}
+                        fallback={<ChartFallback height={220} />}
+                      >
+                        <Suspense fallback={<ChartFallback height={220} />}>
+                          <SourceBarChart
+                            data={data.dealsBySource}
+                            formatCurrency={formatCurrency}
                           />
-                          <XAxis
-                            type="number"
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                            tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                          />
-                          <YAxis
-                            type="category"
-                            dataKey="source"
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                            width={80}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '12px',
-                            }}
-                            formatter={(value: number | string) => [
-                              formatCurrency(value),
-                              'Valor',
-                            ]}
-                          />
-                          <Bar
-                            dataKey="value"
-                            fill="hsl(var(--primary))"
-                            radius={[0, 8, 8, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
+                        </Suspense>
+                      </LazyVisible>
                     ) : (
                       <div className="h-[220px] flex items-center justify-center text-muted-foreground">
                         Sem dados
