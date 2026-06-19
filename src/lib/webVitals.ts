@@ -1,7 +1,9 @@
 import type { Metric } from 'web-vitals';
-import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from '@/integrations/supabase/client-constants';
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 const ENDPOINT = `${SUPABASE_URL}/functions/v1/log-web-vitals`;
+
 
 // Persistent per-session id (survives SPA navigation; resets on tab close)
 function getSessionId(): string {
