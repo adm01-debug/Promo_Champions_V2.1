@@ -217,8 +217,8 @@ export function useOrderTracking() {
 
         const { data: quotes } = await supabase
           .from("quotes")
-          .select("id, quote_number, client_name, total, created_at, status")
-          .eq("salesperson_id", uid)
+          .select("id, quote_number, client_name, total_value, created_at, status")
+          .eq("created_by", uid)
           .in("status", ["approved", "won", "sent"])
           .order("created_at", { ascending: false })
           .limit(20);
@@ -228,7 +228,7 @@ export function useOrderTracking() {
             id: q.id,
             number: q.quote_number ?? String(q.id).slice(0, 6),
             client: q.client_name ?? "Cliente",
-            total: Number(q.total ?? 0) || 1000,
+            total: Number(q.total_value ?? 0) || 1000,
             createdAt: q.created_at ?? daysAgo(5),
           }),
         );
