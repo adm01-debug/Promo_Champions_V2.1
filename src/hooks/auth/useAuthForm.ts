@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLoginRateLimiter } from "@/hooks/useLoginRateLimiter";
 import { toast } from "sonner";
@@ -21,10 +21,12 @@ export function useAuthForm() {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || "/";
   const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
 
-  useEffect(() => { if (user) navigate("/"); }, [user, navigate]);
+  useEffect(() => { if (user) navigate(redirectTo, { replace: true }); }, [user, navigate, redirectTo]);
 
   useEffect(() => {
     if (loginEmail && emailSchema.safeParse(loginEmail).success) checkLoginAttempts(loginEmail);
@@ -76,7 +78,7 @@ export function useAuthForm() {
     } else {
       await recordLoginAttempt(loginEmail, true);
       toast.success("Bem-vindo de volta, campeão! 🏆");
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 

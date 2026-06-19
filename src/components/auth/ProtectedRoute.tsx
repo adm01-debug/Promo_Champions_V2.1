@@ -50,9 +50,9 @@ export function ProtectedRoute({
     return <SmartSkeleton />;
   }
 
-  // Redirect to auth if not logged in
+  // Redirect to auth if not logged in (preserve original destination for deep links)
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" replace state={{ from: location }} />;
   }
 
   // Check for admin or manager requirement
