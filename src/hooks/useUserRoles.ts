@@ -16,11 +16,13 @@ export interface UserRole {
 
 const ROLE_QUERY_TIMEOUT_MS = 8_000;
 
-function withRoleTimeout<T>(promise: Promise<T>, label: string): Promise<T | null> {
-  let timeoutId: ReturnType<typeof setTimeout>;
+function withRoleTimeout<T>(request: PromiseLike<T>, label: string): Promise<T | null> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   return Promise.race([
-    promise.finally(() => clearTimeout(timeoutId)),
+    Promise.resolve(request).finally(() => {
+      if (timeoutId) clearTimeout(timeoutId);
+    }),
     new Promise<null>((resolve) => {
       timeoutId = setTimeout(() => {
         if (import.meta.env.DEV) {
