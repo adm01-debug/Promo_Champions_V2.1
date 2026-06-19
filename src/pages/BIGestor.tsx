@@ -418,44 +418,17 @@ const BIGestor = () => {
                   </CardHeader>
                   <CardContent>
                     {data?.dealsBySource && data.dealsBySource.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={220}>
-                        <BarChart data={data.dealsBySource} layout="vertical">
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="hsl(var(--border))"
-                            strokeOpacity={0.5}
+                      <LazyVisible
+                        minHeight={220}
+                        fallback={<ChartFallback height={220} />}
+                      >
+                        <Suspense fallback={<ChartFallback height={220} />}>
+                          <SourceBarChart
+                            data={data.dealsBySource}
+                            formatCurrency={formatCurrency}
                           />
-                          <XAxis
-                            type="number"
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                            tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                          />
-                          <YAxis
-                            type="category"
-                            dataKey="source"
-                            stroke="hsl(var(--muted-foreground))"
-                            fontSize={12}
-                            width={80}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '12px',
-                            }}
-                            formatter={(value: number | string) => [
-                              formatCurrency(value),
-                              'Valor',
-                            ]}
-                          />
-                          <Bar
-                            dataKey="value"
-                            fill="hsl(var(--primary))"
-                            radius={[0, 8, 8, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
+                        </Suspense>
+                      </LazyVisible>
                     ) : (
                       <div className="h-[220px] flex items-center justify-center text-muted-foreground">
                         Sem dados
