@@ -1,6 +1,7 @@
 import React, { forwardRef, memo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import type { HTMLMotionProps } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
 
 type PrefetchableRouteComponent = {
@@ -9,7 +10,7 @@ type PrefetchableRouteComponent = {
 
 const prefetchedTargets = new Set<string>();
 
-interface PreloadLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface PreloadLinkProps extends Omit<HTMLMotionProps<'a'>, 'href'> {
   to: string;
   children: React.ReactNode;
   replace?: boolean;
