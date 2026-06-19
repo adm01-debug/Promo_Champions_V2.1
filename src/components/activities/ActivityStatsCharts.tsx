@@ -64,7 +64,7 @@ export function ActivityStatsCharts({
 
       <div
         className={cn(
-          'grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]',
+          'grid transition-all duration-500 ease-in-out',
           showStats ? 'grid-rows-[1fr] opacity-100 mt-4' : 'grid-rows-[0fr] opacity-0'
         )}
       >
