@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.record_engagement_signal(uuid, text, text, timestamp with time zone) FROM PUBLIC, anon, authenticated;
