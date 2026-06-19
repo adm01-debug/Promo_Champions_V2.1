@@ -39,6 +39,7 @@ export const closerMainItems: MenuItem[] = [
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Cadências de Orçamento", url: "/cadencias-orcamentos", icon: FileText },
   { title: "Vendas", url: "/vendas", icon: ShoppingCart },
+  { title: "Acompanhamento", url: "/acompanhamento-pedidos", icon: Package },
   { title: "Comissões", url: "/comissoes", icon: Wallet },
   { title: "Agenda", url: "/agenda", icon: CalendarClock },
   { title: "Clientes", url: "/clientes", icon: Users },

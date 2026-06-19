@@ -305,3 +305,5 @@ export const RetryTestStatusPage = lazyWithPrefetch(
 );
 export const OrderDetailPage = lazyWithPrefetch(() => import('@/pages/OrderDetailPage'));
 export const SalesReportPage = lazyWithPrefetch(() => import('@/pages/SalesReportPage'));
+export const AcompanhamentoPedidos = lazyWithPrefetch(() => import('@/pages/AcompanhamentoPedidos'));
+export const AcompanhamentoPedidoDetalhe = lazyWithPrefetch(() => import('@/pages/AcompanhamentoPedidoDetalhe'));
