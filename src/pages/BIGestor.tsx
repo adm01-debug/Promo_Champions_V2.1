@@ -287,40 +287,17 @@ const BIGestor = () => {
                   <CardContent>
                     {data?.abcClients && data.abcClients.length > 0 ? (
                       <>
-                        <ResponsiveContainer width="100%" height={160}>
-                          <PieChart>
-                            <Pie
+                        <LazyVisible
+                          minHeight={160}
+                          fallback={<ChartFallback height={160} />}
+                        >
+                          <Suspense fallback={<ChartFallback height={160} />}>
+                            <AbcPieChart
                               data={data.abcClients}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={35}
-                              outerRadius={60}
-                              paddingAngle={3}
-                              dataKey="revenue"
-                            >
-                              {data.abcClients.map(entry => (
-                                <Cell
-                                  key={entry.classification}
-                                  fill={
-                                    ABC_COLORS[
-                                      entry.classification as keyof typeof ABC_COLORS
-                                    ]
-                                  }
-                                />
-                              ))}
-                            </Pie>
-                            <Tooltip
-                              formatter={(value: number | string) => [
-                                formatCurrency(value),
-                              ]}
-                              contentStyle={{
-                                backgroundColor: 'hsl(var(--card))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: '12px',
-                              }}
+                              formatCurrency={formatCurrency}
                             />
-                          </PieChart>
-                        </ResponsiveContainer>
+                          </Suspense>
+                        </LazyVisible>
                         <div className="space-y-2">
                           {data.abcClients.map(abc => (
                             <div
