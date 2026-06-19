@@ -18226,14 +18226,6 @@ export type Database = {
       }
     }
     Functions: {
-      add_salesperson_xp: {
-        Args: {
-          p_salesperson_id: string
-          p_source?: string
-          p_xp_amount: number
-        }
-        Returns: boolean
-      }
       append_agent_step: {
         Args: {
           _executed_by?: string
@@ -18262,10 +18254,6 @@ export type Database = {
           rule_id: string
           strategy: string
         }[]
-      }
-      award_achievement_if_not_exists: {
-        Args: { p_salesperson_id: string; p_type: string }
-        Returns: undefined
       }
       award_salesperson_xp: {
         Args: {
@@ -18327,10 +18315,6 @@ export type Database = {
           total_leads: number
           total_revenue: number
         }[]
-      }
-      check_is_first_activation: {
-        Args: { p_client_id: string; p_sale_id: string }
-        Returns: boolean
       }
       check_performance_bets_completion: {
         Args: { p_salesperson_id: string }
@@ -18858,11 +18842,6 @@ export type Database = {
         }
         Returns: string
       }
-      refresh_competitive_ranking: { Args: never; Returns: undefined }
-      refresh_monthly_sales_summary: {
-        Args: { p_month: string }
-        Returns: undefined
-      }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
       register_race_daily_checkin: {
@@ -18925,7 +18904,6 @@ export type Database = {
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
-      snapshot_race_daily: { Args: { _season_id: string }; Returns: number }
       start_of_week: {
         Args: { date_val: string; start_day?: number }
         Returns: string
@@ -18986,8 +18964,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      update_performance_bet_progress: { Args: never; Returns: undefined }
-      update_territory_conquests: { Args: never; Returns: undefined }
       update_user_mfa_settings: {
         Args: {
           p_backup_codes?: string[]
