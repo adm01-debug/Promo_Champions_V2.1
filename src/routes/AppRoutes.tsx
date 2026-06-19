@@ -38,7 +38,7 @@ import {
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
   // Entry Point & Special Pages
-  Index, RaceSpectator, RetryTestStatusPage, OrderDetailPage, SalesReportPage,
+  Index, RaceSpectator, RetryTestStatusPage, OrderDetailPage, SalesReportPage, AcompanhamentoPedidos, AcompanhamentoPedidoDetalhe,
 } from "./lazyPages";
 
 const PageLoadingFallback = () => (
@@ -275,6 +275,10 @@ export function AppRoutes() {
 
                       {/* ─── Meus Pedidos ──────────────────────────── */}
                       <Route path="/meus-pedidos/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+
+                      {/* ─── Acompanhamento de Pedidos (full lifecycle) ─ */}
+                      <Route path="/acompanhamento-pedidos" element={<ProtectedRoute><AcompanhamentoPedidos /></ProtectedRoute>} />
+                      <Route path="/acompanhamento-pedidos/:id" element={<ProtectedRoute><AcompanhamentoPedidoDetalhe /></ProtectedRoute>} />
 
                       {/* ─── System ────────────────────────────────── */}
                       <Route path="/acesso-negado" element={<AccessDenied />} />
