@@ -17185,6 +17185,51 @@ export type Database = {
           },
         ]
       }
+      web_vitals_samples: {
+        Row: {
+          connection_type: string | null
+          created_at: string
+          id: string
+          metric: string
+          navigation_type: string | null
+          rating: string
+          route: string
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+          value: number
+          viewport_width: number | null
+        }
+        Insert: {
+          connection_type?: string | null
+          created_at?: string
+          id?: string
+          metric: string
+          navigation_type?: string | null
+          rating: string
+          route: string
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          value: number
+          viewport_width?: number | null
+        }
+        Update: {
+          connection_type?: string | null
+          created_at?: string
+          id?: string
+          metric?: string
+          navigation_type?: string | null
+          rating?: string
+          route?: string
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          value?: number
+          viewport_width?: number | null
+        }
+        Relationships: []
+      }
       webauthn_challenges: {
         Row: {
           challenge: string
@@ -18990,6 +19035,18 @@ export type Database = {
           period_start: string | null
           total_quota: number | null
           total_weighted: number | null
+        }
+        Relationships: []
+      }
+      web_vitals_p75_last7d: {
+        Row: {
+          avg_value: number | null
+          metric: string | null
+          p75: number | null
+          p95: number | null
+          poor_ratio: number | null
+          route: string | null
+          samples: number | null
         }
         Relationships: []
       }
