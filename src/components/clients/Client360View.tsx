@@ -258,55 +258,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-[220px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={data.categoryDistribution}
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={8}
-                    dataKey="value"
-                  >
-                    {data.categoryDistribution.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#06b6d4'][
-                            index % 5
-                          ]
-                        }
-                      />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-2 gap-2 w-full mt-4">
-              {data.categoryDistribution.map((cat, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 p-1.5 rounded-lg bg-white/5 border border-white/5"
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{
-                      backgroundColor: [
-                        '#10b981',
-                        '#6366f1',
-                        '#f59e0b',
-                        '#ec4899',
-                        '#06b6d4',
-                      ][i % 5],
-                    }}
-                  />
-                  <span className="text-[8px] font-bold uppercase truncate opacity-80">
-                    {cat.name}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <CategoryPie data={data.categoryDistribution} />
 
             <div className="w-full mt-6 pt-6 border-t border-white/10">
               <span className="text-[9px] font-black text-primary uppercase tracking-widest block mb-3 flex items-center gap-1.5">
