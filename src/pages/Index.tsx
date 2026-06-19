@@ -128,16 +128,6 @@ const Index = () => {
     salesperson?.role as 'sdr' | 'closer' | 'hybrid' | undefined
   );
 
-  React.useEffect(() => {
-    // Preload only the active tab's module on idle. Sibling tabs are
-    // prefetched lazily on hover via the Tabs onValueChange path below.
-    const cancel = idle(() => MODULE_LOADERS[activeTab]?.());
-    return () => {
-      if (typeof cancel === 'number') cancelAnimationFrame(cancel);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
-
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
 
@@ -146,6 +136,14 @@ const Index = () => {
   }
 
   const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
+
+  React.useEffect(() => {
+    // Preload only the active tab's module on idle. Sibling tabs are
+    // prefetched lazily on hover via the Tabs onValueChange path below.
+    idle(() => {
+      MODULE_LOADERS[activeTab]?.();
+    });
+  }, [activeTab]);
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
