@@ -18268,17 +18268,6 @@ export type Database = {
           strategy: string
         }[]
       }
-      auto_pause_enrollment: {
-        Args: { _enrollment_id: string; _reason?: string }
-        Returns: undefined
-      }
-      auto_promote_sequence_winners: {
-        Args: { _sequence_id: string }
-        Returns: {
-          promoted_label: string
-          step_id: string
-        }[]
-      }
       award_achievement_if_not_exists: {
         Args: { p_salesperson_id: string; p_type: string }
         Returns: undefined
