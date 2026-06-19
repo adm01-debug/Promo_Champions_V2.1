@@ -18226,10 +18226,6 @@ export type Database = {
       }
     }
     Functions: {
-      add_league_weekly_xp: {
-        Args: { p_salesperson_id: string; p_xp: number }
-        Returns: boolean
-      }
       add_salesperson_xp: {
         Args: {
           p_salesperson_id: string
@@ -18250,7 +18246,6 @@ export type Database = {
         Returns: undefined
       }
       approve_agent_run: { Args: { _run_id: string }; Returns: undefined }
-      assign_cadence_variant: { Args: { _ab_test_id: string }; Returns: string }
       assign_task_to_squad: {
         Args: {
           _catalog_id: string
@@ -18316,7 +18311,6 @@ export type Database = {
           positive_factors: Json
         }[]
       }
-      calculate_deal_risk_score: { Args: { p_sale_id: string }; Returns: Json }
       calculate_lead_distribution: { Args: never; Returns: Json }
       calculate_performance_pace: {
         Args: { _salesperson_id: string }
@@ -18338,12 +18332,10 @@ export type Database = {
         Args: { p_client_id: string; p_sale_id: string }
         Returns: boolean
       }
-      check_is_first_sale: { Args: { p_client_id: string }; Returns: boolean }
       check_performance_bets_completion: {
         Args: { p_salesperson_id: string }
         Returns: undefined
       }
-      check_quote_expirations: { Args: never; Returns: undefined }
       check_rate_limit: {
         Args: { p_action: string; p_identifier: string }
         Returns: {
@@ -18377,28 +18369,6 @@ export type Database = {
           _status?: string
         }
         Returns: undefined
-      }
-      compute_cohort_retention: {
-        Args: { _cohort_id: string; _periods?: number }
-        Returns: {
-          cohort_period: string
-          customers: number
-          period_offset: number
-          retention_pct: number
-        }[]
-      }
-      compute_customer_health_v2: {
-        Args: { _account_id: string }
-        Returns: {
-          account_id: string
-          csat_factor: number
-          health_score: number
-          nps_factor: number
-          recommended_action: string
-          renewal_factor: number
-          ticket_factor: number
-          usage_factor: number
-        }[]
       }
       compute_forecast_rollup: {
         Args: { _horizon_days?: number }
@@ -18443,10 +18413,6 @@ export type Database = {
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
-      enrich_lead_data: {
-        Args: { lead_id: string; new_data: Json }
-        Returns: undefined
-      }
       enroll_quote_in_cadence: {
         Args: { _cadence_id: string; _quote_id: string }
         Returns: string
@@ -18744,11 +18710,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_combo: { Args: { p_salesperson_id: string }; Returns: boolean }
-      increment_goal_progress: {
-        Args: { p_goal_id: string; p_increment?: number }
-        Returns: boolean
-      }
       increment_race_car_overtakes: {
         Args: { _salesperson_id: string }
         Returns: undefined
@@ -18829,7 +18790,6 @@ export type Database = {
           similarity: number
         }[]
       }
-      match_weekly_players: { Args: never; Returns: undefined }
       merge_clients: {
         Args: {
           duplicate_ids: string[]
@@ -18964,7 +18924,6 @@ export type Database = {
         Returns: string
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
-      settle_performance_bets: { Args: never; Returns: undefined }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
       snapshot_race_daily: { Args: { _season_id: string }; Returns: number }
       start_of_week: {
