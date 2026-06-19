@@ -84,7 +84,6 @@ import {
   formatCurrency,
   extractCategories,
   filterOrders,
-  computeSegmentDiff,
   type SelectedOrder,
 } from './Client360ViewHelpers';
 import { Client360Skeleton } from './Client360Skeleton';
