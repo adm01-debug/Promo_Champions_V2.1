@@ -129,10 +129,14 @@ const Index = () => {
   );
 
   React.useEffect(() => {
-    // Small delay to allow main thread to breathe after mounting
-    const timer = setTimeout(preloadModules, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Preload only the active tab's module on idle. Sibling tabs are
+    // prefetched lazily on hover via the Tabs onValueChange path below.
+    const cancel = idle(() => MODULE_LOADERS[activeTab]?.());
+    return () => {
+      if (typeof cancel === 'number') cancelAnimationFrame(cancel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
