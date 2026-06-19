@@ -130,11 +130,6 @@ const Index = () => {
 
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
-
-  if (section && !isValidSection) {
-    return <Navigate to="/404" replace />;
-  }
-
   const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
 
   React.useEffect(() => {
@@ -144,6 +139,10 @@ const Index = () => {
       MODULE_LOADERS[activeTab]?.();
     });
   }, [activeTab]);
+
+  if (section && !isValidSection) {
+    return <Navigate to="/404" replace />;
+  }
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
