@@ -1,1 +1,4 @@
 project_id = "rapjswienfhkobhlamxb"
+
+[functions.log-web-vitals]
+verify_jwt = false
