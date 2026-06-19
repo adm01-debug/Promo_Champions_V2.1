@@ -77,10 +77,26 @@ const EngagementModule = lazy(() =>
   }))
 );
 
-// Preload the next modules after initial render
-const preloadModules = () => {
-  import('@/components/dashboard/modules/PerformanceModule');
-  import('@/components/dashboard/modules/AnalyticsModule');
+// On-demand module loaders (per tab) — avoids pulling recharts/framer-motion
+// into the initial chunk when the user never opens those tabs.
+const MODULE_LOADERS: Record<string, () => Promise<unknown>> = {
+  overview: () => import('@/components/dashboard/modules/OverviewModule'),
+  performance: () => import('@/components/dashboard/modules/PerformanceModule'),
+  analytics: () => import('@/components/dashboard/modules/AnalyticsModule'),
+  competition: () => import('@/components/dashboard/modules/CompetitionModule'),
+  intelligence: () => import('@/components/dashboard/modules/IntelligenceModule'),
+  engagement: () => import('@/components/dashboard/modules/EngagementModule'),
+};
+
+const idle = (cb: () => void) => {
+  const w = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  };
+  if (typeof w.requestIdleCallback === 'function') {
+    w.requestIdleCallback(cb, { timeout: 2500 });
+  } else {
+    setTimeout(cb, 1500);
+  }
 };
 
 const SECTION_MAP: Record<string, string> = {
@@ -112,20 +128,21 @@ const Index = () => {
     salesperson?.role as 'sdr' | 'closer' | 'hybrid' | undefined
   );
 
-  React.useEffect(() => {
-    // Small delay to allow main thread to breathe after mounting
-    const timer = setTimeout(preloadModules, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Validate section
   const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
+  const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
+
+  React.useEffect(() => {
+    // Preload only the active tab's module on idle. Sibling tabs are
+    // prefetched lazily on hover via the Tabs onValueChange path below.
+    idle(() => {
+      MODULE_LOADERS[activeTab]?.();
+    });
+  }, [activeTab]);
 
   if (section && !isValidSection) {
     return <Navigate to="/404" replace />;
   }
-
-  const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
 
   const formatCurrency = (value: number) =>
     `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
