@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { useBIGestor } from '@/hooks/bi/useBIGestor';
 import { Helmet } from 'react-helmet-async';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
@@ -5,6 +6,7 @@ import { AnalyticsLoadingSkeleton as BIGestorLoadingSkeleton } from '@/component
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
   DollarSign,
@@ -19,36 +21,27 @@ import {
   Briefcase,
   Sparkles,
 } from 'lucide-react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-} from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { PageTransition } from '@/components/transitions/PageTransition';
+import { LazyVisible } from '@/components/common/LazyVisible';
 import { BITopClientsSection } from '@/components/bi/BITopClientsSection';
 import { BISalesInsights } from '@/components/bi/BISalesInsights';
 import { BIVendasMacro } from '@/components/bi/BIVendasMacro';
 import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
+import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
 
-const ABC_COLORS = {
-  A: 'hsl(var(--success))',
-  B: 'hsl(var(--warning))',
-  C: 'hsl(var(--destructive))',
-};
+const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaChart'));
+const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
+const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
+
+const ChartFallback = ({ height = 250 }: { height?: number }) => (
+  <Skeleton className="w-full" style={{ height }} />
+);
+
 const STAGE_LABELS: Record<string, string> = {
   pending: 'Lead',
   qualified: 'Qualificado',
