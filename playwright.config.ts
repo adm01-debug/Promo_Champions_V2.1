@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -13,6 +13,11 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+  projects: [
+    { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'mobile-ios-safari', use: { ...devices['iPhone 14'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
+    { name: 'mobile-android-chrome', use: { ...devices['Pixel 7'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
+  ],
   webServer: process.env.CI
     ? {
         command: 'npm run build && npm run preview -- --port 5173',
@@ -22,3 +27,4 @@ export default defineConfig({
       }
     : undefined,
 });
+
