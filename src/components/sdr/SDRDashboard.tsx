@@ -15,17 +15,29 @@ import {
 } from 'lucide-react';
 import { useSDRMetrics } from '@/hooks/useSDRMetrics';
 import { SDRStatCard } from './SDRStatCard';
-import { SchedulingRateGauge } from './SchedulingRateGauge';
-import { RecentProspects } from './RecentProspects';
-import { SDRAdvancedFilters } from './SDRAdvancedFilters';
-import { SDRIntelligenceHighlights } from './SDRIntelligenceHighlights';
 import { motion, AnimatePresence } from 'framer-motion';
 import { containerVariants, itemVariants } from '@/components/transitions/PageTransition';
 import { LeadScoreBreakdown } from './LeadScoreBreakdown';
-import { SDRCommandBar } from './SDRCommandBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LazyVisible } from '@/components/common/LazyVisible';
 import { Skeleton } from '@/components/ui/skeleton';
+
+// Above-the-fold heavy modules (split into own chunks, load eagerly when visible)
+const SchedulingRateGauge = lazy(() =>
+  import('./SchedulingRateGauge').then(m => ({ default: m.SchedulingRateGauge })),
+);
+const RecentProspects = lazy(() =>
+  import('./RecentProspects').then(m => ({ default: m.RecentProspects })),
+);
+const SDRAdvancedFilters = lazy(() =>
+  import('./SDRAdvancedFilters').then(m => ({ default: m.SDRAdvancedFilters })),
+);
+const SDRIntelligenceHighlights = lazy(() =>
+  import('./SDRIntelligenceHighlights').then(m => ({ default: m.SDRIntelligenceHighlights })),
+);
+const SDRCommandBar = lazy(() =>
+  import('./SDRCommandBar').then(m => ({ default: m.SDRCommandBar })),
+);
 
 // Heavy / chart-bearing modules — only load when needed
 const ProspectingFunnel = lazy(() =>
