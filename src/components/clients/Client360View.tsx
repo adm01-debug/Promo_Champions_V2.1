@@ -82,31 +82,18 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value);
-};
+import {
+  formatCurrency,
+  extractCategories,
+  filterOrders,
+  computeSegmentDiff,
+  type SelectedOrder,
+} from './Client360ViewHelpers';
+import { Client360Skeleton } from './Client360Skeleton';
+import { Client360KpiCards } from './Client360KpiCards';
 
 interface Client360ViewProps {
   clientName: string;
-}
-
-interface SelectedOrder {
-  id?: string | number;
-  status?: string;
-  sdr?: { name?: string };
-  salesperson?: { name?: string };
-  closer?: { name?: string };
-  source?: string;
-  is_first_sale?: boolean;
-  created_at?: string;
-  version?: string;
-  product_name?: string;
-  sku?: string;
-  amount?: number | string;
-  [key: string]: unknown;
 }
 
 export function Client360View({ clientName }: Client360ViewProps) {
@@ -129,57 +116,14 @@ export function Client360View({ clientName }: Client360ViewProps) {
     });
   };
 
-  const categories = useMemo(() => {
-    if (!data?.orders) return [];
-    const cats = new Set<string>();
-    data.orders.forEach(o => {
-      if (o.product_name) {
-        const cat = o.product_name.split(' ')[0];
-        cats.add(cat);
-      }
-    });
-    return Array.from(cats);
-  }, [data?.orders]);
+  const categories = useMemo(() => extractCategories(data?.orders), [data?.orders]);
 
-  const filteredOrders = useMemo(() => {
-    if (!data?.orders) return [];
-    return data.orders.filter(order => {
-      const productName = (order.product_name || '').toLowerCase();
-      const sku = (order.sku || '').toLowerCase();
-      const status = (order.status || '').toLowerCase();
+  const filteredOrders = useMemo(
+    () => filterOrders(data?.orders, { searchTerm, statusFilter, categoryFilter, valueRange }),
+    [data?.orders, searchTerm, statusFilter, categoryFilter, valueRange]
+  );
 
-      // Smart search logic: search in name, sku, and status
-      const searchTerms = searchTerm.toLowerCase().split(' ');
-      const matchesSearch = searchTerms.every(
-        term => productName.includes(term) || sku.includes(term) || status.includes(term)
-      );
-
-      const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-      const matchesCategory =
-        categoryFilter === 'all' || productName.startsWith(categoryFilter.toLowerCase());
-      const amount = Number(order.amount || 0);
-      const matchesValue = amount >= valueRange[0] && amount <= valueRange[1];
-
-      return matchesSearch && matchesStatus && matchesCategory && matchesValue;
-    });
-  }, [data?.orders, searchTerm, statusFilter, categoryFilter, valueRange]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6 p-6">
-        <Skeleton className="h-12 w-full mb-6" />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-28 w-full" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="lg:col-span-2 h-[300px]" />
-          <Skeleton className="h-[300px]" />
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <Client360Skeleton />;
 
   if (!data)
     return (
@@ -188,9 +132,9 @@ export function Client360View({ clientName }: Client360ViewProps) {
       </div>
     );
 
-  const ltvDiff = ((data.ltv - data.segmentAverageLtv) / data.segmentAverageLtv) * 100;
-  const ticketDiff =
-    ((data.averageTicket - data.segmentAverageTicket) / data.segmentAverageTicket) * 100;
+  const ltvDiff = computeSegmentDiff(data.ltv, data.segmentAverageLtv);
+  const ticketDiff = computeSegmentDiff(data.averageTicket, data.segmentAverageTicket);
+
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 p-6 selection:bg-primary selection:text-primary-foreground">
