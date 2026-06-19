@@ -22,7 +22,18 @@ interface PreloadLinkProps extends Omit<HTMLMotionProps<'a'>, 'href'> {
  * on hover or touch to achieve near-instant navigation.
  */
 export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
-  ({ to, children, className, replace, component, onClick, id, ...props }, ref) => {
+  ({
+    to,
+    children,
+    className,
+    replace,
+    component,
+    onClick,
+    onMouseEnter,
+    onTouchStart,
+    id,
+    ...props
+  }, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -62,17 +73,27 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
       navigate(to, { replace });
     };
 
+    const handleMouseEnter: PreloadLinkProps['onMouseEnter'] = event => {
+      onMouseEnter?.(event);
+      preloadRoute();
+    };
+
+    const handleTouchStart: PreloadLinkProps['onTouchStart'] = event => {
+      onTouchStart?.(event);
+      preloadRoute();
+    };
+
     return (
       <motion.a
+        {...props}
         ref={ref}
         id={id}
         href={to}
         onClick={handleClick}
-        onMouseEnter={preloadRoute}
-        onTouchStart={preloadRoute}
+        onMouseEnter={handleMouseEnter}
+        onTouchStart={handleTouchStart}
         className={className}
         whileTap={{ scale: 0.98 }}
-        {...props}
       >
         {children}
       </motion.a>
