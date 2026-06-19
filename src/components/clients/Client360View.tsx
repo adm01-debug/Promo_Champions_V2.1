@@ -44,8 +44,6 @@ import {
   Filter,
   Eye,
   User,
-  ArrowUpRight,
-  ArrowDownRight,
   History as HistoryIcon,
   Info,
   ShieldCheck,
@@ -132,8 +130,6 @@ export function Client360View({ clientName }: Client360ViewProps) {
       </div>
     );
 
-  const ltvDiff = computeSegmentDiff(data.ltv, data.segmentAverageLtv);
-  const ticketDiff = computeSegmentDiff(data.averageTicket, data.segmentAverageTicket);
 
 
   return (
