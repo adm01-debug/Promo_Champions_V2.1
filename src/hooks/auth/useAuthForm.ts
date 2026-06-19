@@ -78,7 +78,7 @@ export function useAuthForm() {
     } else {
       await recordLoginAttempt(loginEmail, true);
       toast.success("Bem-vindo de volta, campeão! 🏆");
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 
