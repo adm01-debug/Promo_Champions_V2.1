@@ -215,10 +215,18 @@ const SDRDashboardInner = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div variants={itemVariants}>
-              <ProspectingFunnel />
+              <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+                <Suspense fallback={<ChartFallback height={320} />}>
+                  <ProspectingFunnel />
+                </Suspense>
+              </LazyVisible>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <SDRAchievementTracker />
+              <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+                <Suspense fallback={<ChartFallback height={320} />}>
+                  <SDRAchievementTracker />
+                </Suspense>
+              </LazyVisible>
             </motion.div>
           </div>
         </div>
