@@ -89,6 +89,7 @@ import {
 import { Client360Skeleton } from './Client360Skeleton';
 import { Client360KpiCards } from './Client360KpiCards';
 import { LtvChart } from './LtvChart';
+import { CategoryPie } from './CategoryPie';
 
 interface Client360ViewProps {
   clientName: string;
