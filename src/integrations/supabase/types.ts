@@ -18260,25 +18260,6 @@ export type Database = {
         }
         Returns: number
       }
-      auto_assign_lead: {
-        Args: { _sale_id: string }
-        Returns: {
-          assigned_to: string
-          rule_id: string
-          strategy: string
-        }[]
-      }
-      auto_pause_enrollment: {
-        Args: { _enrollment_id: string; _reason?: string }
-        Returns: undefined
-      }
-      auto_promote_sequence_winners: {
-        Args: { _sequence_id: string }
-        Returns: {
-          promoted_label: string
-          step_id: string
-        }[]
-      }
       award_achievement_if_not_exists: {
         Args: { p_salesperson_id: string; p_type: string }
         Returns: undefined
@@ -18793,25 +18774,6 @@ export type Database = {
         Returns: boolean
       }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
-      log_audit_event: {
-        Args: {
-          _action: string
-          _changes?: Json
-          _entity_id?: string
-          _entity_type: string
-          _metadata?: Json
-        }
-        Returns: string
-      }
-      log_rate_limit: {
-        Args: {
-          p_action: string
-          p_blocked?: boolean
-          p_identifier: string
-          p_identifier_type: string
-        }
-        Returns: undefined
-      }
       manual_xp_adjustment: {
         Args: { _amount: number; _reason: string; _user_id: string }
         Returns: string
