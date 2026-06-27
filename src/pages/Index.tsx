@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { DevKpiDebugPanel } from '@/components/dashboard/DevKpiDebugPanel';
 
 // Lazy-loaded modules for better performance
 const OverviewModule = lazy(() =>
@@ -156,6 +157,7 @@ const Index = () => {
 
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
+      <DevKpiDebugPanel />
       <Helmet>
         <title>Dashboard | Circuito de Vencedores</title>
         <meta
