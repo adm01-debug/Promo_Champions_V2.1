@@ -124,7 +124,7 @@ export function DevKpiDebugPanel() {
 
         <dt>role (user_roles)</dt>
         <dd>
-          <code>{currentUserRole ?? "—"}</code>
+          <code>{String(currentUserRole ?? "—")}</code>
         </dd>
 
         <dt>salespeople.role</dt>
