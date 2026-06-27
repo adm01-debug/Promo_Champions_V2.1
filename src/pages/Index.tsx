@@ -157,6 +157,7 @@ const Index = () => {
 
   return (
     <PageTransition className="pb-10 overflow-x-hidden">
+      <DevKpiDebugPanel />
       <Helmet>
         <title>Dashboard | Circuito de Vencedores</title>
         <meta
