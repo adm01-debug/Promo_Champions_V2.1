@@ -2,71 +2,64 @@
 # dev-kpis-as-role.sh
 #
 # Run `public.get_dashboard_kpis` against the live database while
-# simulating a specific role + user_id, *without* needing a real browser
+# simulating a specific JWT identity, without needing a real browser
 # session. Useful for validating the SECURITY INVOKER refactor.
 #
 # How it works:
-#   PostgREST and our RLS policies read identity from
-#   `auth.uid()` (which itself reads `request.jwt.claims->>'sub'`)
-#   and from the current Postgres role. We set both inside a single
-#   transaction with `SET LOCAL`, then call the function.
+#   Our RLS policies read identity from `auth.uid()`, which itself reads
+#   `request.jwt.claims->>'sub'`. We set that claim inside a transaction
+#   with `SET LOCAL`, then call the function and ROLLBACK.
 #
 # Requirements:
 #   - psql in $PATH
-#   - PG* env vars exported (PGHOST, PGUSER, PGPASSWORD, PGDATABASE)
-#     OR a connection string passed via $DATABASE_URL.
+#   - PG* env vars exported, OR a connection string in $DATABASE_URL
+#   - Connecting role must be allowed to `SET LOCAL request.jwt.claims`
+#     (managed Supabase: use the service role connection)
 #
 # Usage:
-#   ./scripts/dev-kpis-as-role.sh <pg_role> <auth_user_uuid> [start] [end]
-#
-# Examples:
-#   ./scripts/dev-kpis-as-role.sh authenticated 11111111-1111-1111-1111-111111111111
-#   ./scripts/dev-kpis-as-role.sh authenticated $UUID 2026-06-01 2026-06-30
+#   ./scripts/dev-kpis-as-role.sh <auth_user_uuid> [start] [end]
 #
 # Tip: find candidate UUIDs with
 #   psql -c "select user_id, role from public.user_roles order by role"
 
 set -euo pipefail
 
-ROLE="${1:-}"
-UID_ARG="${2:-}"
-START="${3:-$(date -u +%Y-%m-01)}"
-END="${4:-$(date -u -d "$(date -u +%Y-%m-01) +1 month -1 day" +%Y-%m-%d 2>/dev/null \
+UID_ARG="${1:-}"
+START="${2:-$(date -u +%Y-%m-01)}"
+END="${3:-$(date -u -d "$(date -u +%Y-%m-01) +1 month -1 day" +%Y-%m-%d 2>/dev/null \
             || date -u -v1d -v+1m -v-1d +%Y-%m-%d)}"
 
-if [[ -z "$ROLE" || -z "$UID_ARG" ]]; then
-  echo "usage: $0 <pg_role> <auth_user_uuid> [start YYYY-MM-DD] [end YYYY-MM-DD]" >&2
+if [[ -z "$UID_ARG" ]]; then
+  echo "usage: $0 <auth_user_uuid> [start YYYY-MM-DD] [end YYYY-MM-DD]" >&2
   exit 64
 fi
 
-PSQL=(psql -X -v ON_ERROR_STOP=1)
+PSQL=(psql -X -v ON_ERROR_STOP=1
+            -v "uid=$UID_ARG"
+            -v "start=$START"
+            -v "end=$END")
 [[ -n "${DATABASE_URL:-}" ]] && PSQL+=("$DATABASE_URL")
 
-"${PSQL[@]}" <<SQL
-\set ON_ERROR_STOP on
+"${PSQL[@]}" <<'SQL'
 BEGIN;
 
--- Simulate the PostgREST request context.
--- `SET LOCAL role` may be denied on managed Supabase; we attempt it but
--- swallow the error so the JWT-based identity below still applies.
-DO \$\$ BEGIN
-  EXECUTE 'SET LOCAL role = ' || quote_literal('${ROLE}');
-EXCEPTION WHEN insufficient_privilege THEN
-  RAISE NOTICE 'SET LOCAL role denied — relying on JWT claims for auth.uid()';
-END \$\$;
-SET LOCAL request.jwt.claims = '{"sub":"${UID_ARG}","role":"${ROLE}"}';
+-- Simulate the PostgREST request context. `auth.uid()` reads this claim.
+SELECT set_config(
+  'request.jwt.claims',
+  json_build_object('sub', :'uid', 'role', 'authenticated')::text,
+  true
+);
 
--- Sanity check: what does the function see?
+-- What does the function actually see?
 SELECT
-  current_user                    AS pg_role,
-  auth.uid()                      AS auth_uid,
-  public.has_role(auth.uid(), 'admin'::app_role)       AS is_admin,
-  public.has_role(auth.uid(), 'manager'::app_role)     AS is_manager,
-  public.has_role(auth.uid(), 'salesperson'::app_role) AS is_salesperson;
+  current_user                                                AS pg_role,
+  (current_setting('request.jwt.claims', true)::jsonb->>'sub') AS jwt_sub,
+  :'start'::date                                              AS period_start,
+  :'end'::date                                                AS period_end;
 
--- The actual KPI payload.
+-- KPI payload under this identity.
 SELECT jsonb_pretty(
-  public.get_dashboard_kpis('${START}'::date, '${END}'::date)
+  public.get_dashboard_kpis(:'start'::date, :'end'::date)
 ) AS kpis;
 
 ROLLBACK;
