@@ -47,7 +47,13 @@ PSQL=(psql -X -v ON_ERROR_STOP=1)
 BEGIN;
 
 -- Simulate the PostgREST request context.
-SET LOCAL role = '${ROLE}';
+-- `SET LOCAL role` may be denied on managed Supabase; we attempt it but
+-- swallow the error so the JWT-based identity below still applies.
+DO \$\$ BEGIN
+  EXECUTE 'SET LOCAL role = ' || quote_literal('${ROLE}');
+EXCEPTION WHEN insufficient_privilege THEN
+  RAISE NOTICE 'SET LOCAL role denied — relying on JWT claims for auth.uid()';
+END \$\$;
 SET LOCAL request.jwt.claims = '{"sub":"${UID_ARG}","role":"${ROLE}"}';
 
 -- Sanity check: what does the function see?
