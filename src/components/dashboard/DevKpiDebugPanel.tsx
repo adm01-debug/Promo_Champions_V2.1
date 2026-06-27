@@ -44,7 +44,7 @@ export function DevKpiDebugPanel() {
   if (!import.meta.env.DEV) return null;
 
   const { user, session, salesperson } = useAuth();
-  const { currentRole } = useUserRoles();
+  const { currentUserRole } = useUserRoles();
   const [open, setOpen] = useState(true);
   const [rpc, setRpc] = useState<RpcState>({ status: "idle" });
   const previewRole = getPreviewRole();
