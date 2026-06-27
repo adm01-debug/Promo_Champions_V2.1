@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { DevKpiDebugPanel } from '@/components/dashboard/DevKpiDebugPanel';
 
 // Lazy-loaded modules for better performance
 const OverviewModule = lazy(() =>
