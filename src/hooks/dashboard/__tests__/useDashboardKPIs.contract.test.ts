@@ -110,4 +110,70 @@ describe('get_dashboard_kpis RPC contract', () => {
       avgTicket: 0,
     });
   });
+
+  /**
+   * Role-scoped scenarios.
+   *
+   * Under SECURITY INVOKER the RPC reads `sales` and `daily_metrics`
+   * through the caller's RLS. We don't simulate Postgres here — we lock in
+   * the **shape contract** the frontend depends on for each role.
+   */
+  describe('role scoping', () => {
+    it('vendedor: totalRevenue reflects own sales; newClients/conversionRate are 0', async () => {
+      // RLS on `sales` filters to salesperson_id = auth.uid(); `daily_metrics`
+      // is admin/manager-only, so derived clients/conversion fall back to 0.
+      rpcMock.mockResolvedValueOnce({
+        data: {
+          totalRevenue: 4200, // own sales only
+          totalSales: 3,
+          firstSaleRevenue: 1200,
+          recurringRevenue: 3000,
+          newClients: 0,
+          conversionRate: 0,
+          avgTicket: 1400,
+        },
+        error: null,
+      });
+
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.rpc('get_dashboard_kpis', {
+        start_date: '2026-06-01',
+        end_date: '2026-06-30',
+      });
+
+      expect(error).toBeNull();
+      const kpis = data as Record<string, number>;
+      expect(kpis.totalRevenue).toBeGreaterThan(0);
+      expect(kpis.newClients).toBe(0);
+      expect(kpis.conversionRate).toBe(0);
+    });
+
+    it('manager: totalRevenue is the global aggregate; clients/conversion are populated', async () => {
+      // Managers/admins satisfy daily_metrics RLS, so the aggregate columns
+      // are filled and totalRevenue spans every salesperson in scope.
+      rpcMock.mockResolvedValueOnce({
+        data: {
+          totalRevenue: 250000,
+          totalSales: 180,
+          firstSaleRevenue: 90000,
+          recurringRevenue: 160000,
+          newClients: 42,
+          conversionRate: 27.5,
+          avgTicket: 1388,
+        },
+        error: null,
+      });
+
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data } = await supabase.rpc('get_dashboard_kpis', {
+        start_date: '2026-06-01',
+        end_date: '2026-06-30',
+      });
+
+      const kpis = data as Record<string, number>;
+      expect(kpis.totalRevenue).toBeGreaterThan(10000);
+      expect(kpis.newClients).toBeGreaterThan(0);
+      expect(kpis.conversionRate).toBeGreaterThan(0);
+    });
+  });
 });
