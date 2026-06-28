@@ -149,7 +149,7 @@ export function PurchaseIntelligenceHub() {
                   <ClientPurchaseHistory clientId={clientId} />
                   <Card className="glass border-border/50 p-6">
                     <CardHeader className="p-0 pb-4">
-                      <CardTitle className="text-lg flex items-center gap-2">
+                      <CardTitle className="text-section-title flex items-center gap-2">
                         <TrendingUp className="h-5 w-5 text-primary" />
                         Resumo Financeiro Mensal
                       </CardTitle>

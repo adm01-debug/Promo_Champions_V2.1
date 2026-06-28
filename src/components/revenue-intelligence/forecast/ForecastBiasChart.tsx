@@ -41,7 +41,7 @@ export const ForecastBiasChart: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Viés por Source</CardTitle>
+        <CardTitle className="text-section-title">Viés por Source</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (

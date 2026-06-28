@@ -14,7 +14,7 @@ export function WinLossSummaryCard() {
     <Card className="border-border/50">
       <CardHeader className="flex flex-row items-center justify-between gap-2">
         <div>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
             Win/Loss Overview
           </CardTitle>

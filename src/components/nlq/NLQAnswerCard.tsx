@@ -20,7 +20,7 @@ export function NLQAnswerCard({ response }: Props) {
     >
       <Card className="overflow-hidden">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" /> Resposta da IA
           </CardTitle>
           <div className="flex flex-wrap gap-2 pt-1">

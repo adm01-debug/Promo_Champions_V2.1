@@ -15,7 +15,7 @@ export function UpsellSuggestionCard({ saleId }: Props) {
   return (
     <Card className="border-primary/30 bg-primary/5">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
+        <CardTitle className="text-section-title flex items-center gap-2 text-sm">
           <TrendingUp className="h-4 w-4 text-primary" aria-hidden />
           Sugestões de upsell
           <span className="text-xs text-muted-foreground font-normal ml-auto">com base em {data[0]?.basedOn} wins similares</span>

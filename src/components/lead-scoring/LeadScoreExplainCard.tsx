@@ -120,7 +120,7 @@ export const LeadScoreExplainCard = React.memo(
               <ShieldAlert className="h-16 w-16 text-status-error" />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black uppercase tracking-widest text-status-error flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest text-status-error flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4" />
                 Alerta Crítico de Churn
               </CardTitle>

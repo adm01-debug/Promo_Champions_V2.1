@@ -32,7 +32,7 @@ export const EmailLogsTab = React.memo(function EmailLogsTab({ recentLogs }: Ema
   return (
     <Card variant="elevated" className="glass border-border/40 dark:border-glow">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
             <Clock className="h-4 w-4 text-primary-foreground" />
           </div>

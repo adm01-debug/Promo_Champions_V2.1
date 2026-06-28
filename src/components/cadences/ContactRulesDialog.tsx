@@ -85,7 +85,7 @@ export function ContactRulesDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-md glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
             Regras e Janelas de Contato
           </DialogTitle>

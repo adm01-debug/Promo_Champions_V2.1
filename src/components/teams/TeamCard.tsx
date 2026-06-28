@@ -44,7 +44,7 @@ function _TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
               )} />
             </div>
             <div>
-              <CardTitle className="text-lg font-display">{team.name}</CardTitle>
+              <CardTitle className="text-section-title">{team.name}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
                 <Badge 
                   variant={team.is_active ? "default" : "secondary"}

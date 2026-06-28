@@ -28,7 +28,7 @@ export const CoachingActionsPanel: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           Ações recomendadas pela IA
         </CardTitle>

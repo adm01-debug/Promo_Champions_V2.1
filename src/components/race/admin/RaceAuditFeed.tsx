@@ -44,7 +44,7 @@ export function RaceAuditFeed() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><ScrollText className="w-5 h-5" /> Auditoria de eventos da corrida</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2"><ScrollText className="w-5 h-5" /> Auditoria de eventos da corrida</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

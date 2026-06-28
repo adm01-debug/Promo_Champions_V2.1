@@ -137,7 +137,7 @@ export const ScenarioFormulaExplainerDialog = memo(function ScenarioFormulaExpla
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary" aria-hidden />
             Como as bandas são calculadas?
           </DialogTitle>

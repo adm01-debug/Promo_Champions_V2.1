@@ -197,7 +197,7 @@ export function TerritoryOptimizationHub() {
       {data.recommendations.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-sora text-lg flex items-center gap-2">
+            <CardTitle className="text-section-title font-sora flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
               Recomendações da IA
             </CardTitle>
@@ -234,7 +234,7 @@ export function TerritoryOptimizationHub() {
       {loadChart.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-sora text-lg">Distribuição de carga por vendedor</CardTitle>
+            <CardTitle className="text-section-title font-sora">Distribuição de carga por vendedor</CardTitle>
           </CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -260,7 +260,7 @@ export function TerritoryOptimizationHub() {
       {/* Territory table */}
       <Card>
         <CardHeader>
-          <CardTitle className="font-sora text-lg">Territórios analisados</CardTitle>
+          <CardTitle className="text-section-title font-sora">Territórios analisados</CardTitle>
         </CardHeader>
         <CardContent>
           {data.territories.length === 0 ? (

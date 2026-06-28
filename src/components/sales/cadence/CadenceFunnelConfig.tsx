@@ -139,7 +139,7 @@ export function CadenceFunnelConfig() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <Settings2 className="h-4 w-4 text-primary" />
               Regras e Transições do Funil
             </CardTitle>

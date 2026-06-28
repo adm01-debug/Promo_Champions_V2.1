@@ -46,7 +46,7 @@ export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-2">
+          <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             Hyper-Personalização AI
           </DialogTitle>

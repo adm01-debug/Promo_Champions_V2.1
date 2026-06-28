@@ -34,7 +34,7 @@ export const ActivitiesTodayWidget = React.memo(function ActivitiesTodayWidget()
   return (
     <Card className="h-full">
       <CardHeader className="pb-1">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <Activity className="h-3.5 w-3.5 text-rank-gold" />
           Atividades Hoje
         </CardTitle>

@@ -37,7 +37,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
     return (
       <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
         <CardHeader>
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
               <Clock className="h-5 w-5 text-primary-foreground" />
             </div>
@@ -65,7 +65,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
     <Card variant="elevated" className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display flex items-center gap-2 group/title">
+          <CardTitle className="text-section-title flex items-center gap-2 group/title">
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40 group-hover/title:rotate-3">
               <Activity className="h-5 w-5 text-primary-foreground" />
             </div>

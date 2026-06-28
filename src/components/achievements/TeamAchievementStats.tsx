@@ -13,7 +13,7 @@ export function TeamAchievementStats() {
     return (
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             Estatísticas da Equipe
           </CardTitle>
@@ -101,7 +101,7 @@ export function TeamAchievementStats() {
     <div className="space-y-6">
       <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             Estatísticas de Conquistas da Equipe
           </CardTitle>

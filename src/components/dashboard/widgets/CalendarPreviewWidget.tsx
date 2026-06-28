@@ -35,7 +35,7 @@ export const CalendarPreviewWidget = React.memo(function CalendarPreviewWidget()
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5 text-info" />
           Próximas Atividades
         </CardTitle>

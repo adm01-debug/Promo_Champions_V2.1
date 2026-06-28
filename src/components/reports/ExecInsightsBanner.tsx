@@ -24,7 +24,7 @@ export const ExecInsightsBanner = React.memo(function ExecInsightsBanner({ insig
   return (
     <Card className="border-primary/30 bg-primary/5">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           Insights Automáticos — {periodLabel}
         </CardTitle>

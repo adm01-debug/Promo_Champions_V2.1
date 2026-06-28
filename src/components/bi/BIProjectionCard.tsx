@@ -60,7 +60,7 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
         )} />
 
         <CardHeader className="pb-2 relative">
-          <CardTitle className="text-lg font-display flex items-center justify-between">
+          <CardTitle className="text-section-title flex items-center justify-between">
             <span>{title}</span>
             <Badge 
               variant="secondary" 
@@ -191,7 +191,7 @@ export const BIComparisonCard: FC<BIComparisonCardProps> = ({
   return (
     <Card className={cn("glass-card", className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-2xl font-bold gradient-text">{formatVal(currentValue)}</p>

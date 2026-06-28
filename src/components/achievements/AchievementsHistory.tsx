@@ -84,7 +84,7 @@ export function AchievementsHistory() {
     return (
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-rank-gold" />
             Histórico de Conquistas
           </CardTitle>
@@ -111,7 +111,7 @@ export function AchievementsHistory() {
     return (
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-rank-gold" />
             Histórico de Conquistas
           </CardTitle>
@@ -134,7 +134,7 @@ export function AchievementsHistory() {
   return (
     <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Trophy className="h-5 w-5 text-rank-gold" />
           Histórico de Conquistas
           <Badge variant="secondary" className="ml-2">

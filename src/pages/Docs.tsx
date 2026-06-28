@@ -22,7 +22,7 @@ const DocsPage = () => {
             <BookOpen className="h-4 w-4" />
             System Documentation
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-foreground">
+          <h1 className="text-page-title text-foreground">
             Guidelines de Componentes
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
@@ -41,7 +41,7 @@ const DocsPage = () => {
           <TabsContent value="navitem" className="mt-6 space-y-6">
             <Card className="border-primary/10 bg-background/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <Layers className="h-5 w-5 text-primary" />
                   NavItem (Navegação de Elite)
                 </CardTitle>
@@ -95,7 +95,7 @@ const DocsPage = () => {
           <TabsContent value="statcard" className="mt-6 space-y-6">
             <Card className="border-primary/10 bg-background/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-primary" />
                   StatCard (Métricas Futuristas)
                 </CardTitle>
@@ -161,7 +161,7 @@ const DocsPage = () => {
           <TabsContent value="transitions" className="mt-6 space-y-6">
             <Card className="border-primary/10 bg-background/40 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" />
                   PageTransition & Loading (Performance 10/10)
                 </CardTitle>

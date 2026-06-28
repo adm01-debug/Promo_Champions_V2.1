@@ -24,7 +24,7 @@ export const ICPCorrelationMatrix = memo(function ICPCorrelationMatrix({ rows }:
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Target className="h-4 w-4 text-primary" aria-hidden />
           Correlação ICP × Win Rate
           {bestCell && (

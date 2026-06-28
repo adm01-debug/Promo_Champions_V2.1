@@ -19,7 +19,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
     <div className="grid gap-4 md:grid-cols-2">
       <Card className="glass border-border/50">
         <CardHeader>
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary" />
             Evolução do LTV (Receita Acumulada)
           </CardTitle>
@@ -42,7 +42,7 @@ export function CS360Trends({ evolutionData }: CS360TrendsProps) {
 
       <Card className="glass border-border/50">
         <CardHeader>
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-success" />
             Ticket Médio por Período
           </CardTitle>

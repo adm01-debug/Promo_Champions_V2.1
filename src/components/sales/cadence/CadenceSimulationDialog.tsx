@@ -142,7 +142,7 @@ export function CadenceSimulationDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px] glass dark:border-glow">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Play className="h-5 w-5 text-primary" />
             Simulador de Gatilhos e Transições do Funil
           </DialogTitle>

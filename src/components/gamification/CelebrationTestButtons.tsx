@@ -73,7 +73,7 @@ export function CelebrationTestButtons() {
     <>
       <Card className="glass-card border-border/40">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Testar Celebrações
           </CardTitle>

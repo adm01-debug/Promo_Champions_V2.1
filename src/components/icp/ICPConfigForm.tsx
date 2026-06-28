@@ -64,7 +64,7 @@ export function ICPConfigForm() {
   return (
     <Card className="glass border-border/40 overflow-hidden">
       <CardHeader className="bg-muted/30 pb-4">
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Settings2 className="h-5 w-5 text-primary" />
           Configuração de Perfil Ideal (ICP)
         </CardTitle>

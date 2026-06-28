@@ -57,7 +57,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
       {/* Ticket Médio por Cliente */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
               <Receipt className="h-4 w-4 text-primary-foreground" />
             </div>
@@ -138,7 +138,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
       {/* Taxa de Recompra */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-success to-success/80">
               <RefreshCw className="h-4 w-4 text-success-foreground" />
             </div>

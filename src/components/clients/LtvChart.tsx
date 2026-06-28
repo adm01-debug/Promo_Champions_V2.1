@@ -30,7 +30,7 @@ export function LtvChart({ data, className }: LtvChartProps) {
       }
     >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base uppercase font-black tracking-tighter">
+        <CardTitle className="text-section-title flex items-center gap-2 uppercase font-black tracking-tighter">
           <TrendingUp className="h-5 w-5 text-primary" />
           Evolução Financeira (LTV)
         </CardTitle>

@@ -30,7 +30,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-lg font-display flex items-center gap-2"><div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow"><TrendingUp className="h-4 w-4 text-primary-foreground" /></div>Leads por Dia</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow"><TrendingUp className="h-4 w-4 text-primary-foreground" /></div>Leads por Dia</CardTitle></CardHeader>
           <CardContent>
             {leadsByDay && leadsByDay.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
@@ -54,7 +54,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-lg font-display flex items-center gap-2"><div className="p-2 rounded-lg bg-gradient-to-br from-chart-2 to-success"><Activity className="h-4 w-4 text-success-foreground" /></div>Atividades por Dia</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><div className="p-2 rounded-lg bg-gradient-to-br from-chart-2 to-success"><Activity className="h-4 w-4 text-success-foreground" /></div>Atividades por Dia</CardTitle></CardHeader>
           <CardContent>
             {activitiesByDay && activitiesByDay.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
@@ -75,7 +75,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-lg font-display">Funil de Conversão</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Funil de Conversão</CardTitle></CardHeader>
           <CardContent>
             {conversionFunnel && (
               <div className="space-y-3">
@@ -91,7 +91,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-lg font-display">Leads por Fonte</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Leads por Fonte</CardTitle></CardHeader>
           <CardContent>
             {leadsBySource && leadsBySource.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
@@ -119,7 +119,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({ leadsByDay, activit
 
       <Card className="glass-card">
         <CardHeader>
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-primary">
               <Zap className="h-4 w-4 text-white" />
             </div>

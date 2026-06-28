@@ -26,7 +26,7 @@ export const QuestionQualityCard = ({ recordingId }: Props) => {
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <HelpCircle className="h-4 w-4 text-primary" />
             Qualidade das perguntas
           </CardTitle>

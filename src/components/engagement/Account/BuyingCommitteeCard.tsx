@@ -27,7 +27,7 @@ export function BuyingCommitteeCard({ accountId }: Props) {
   return (
     <Card variant="modern">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" />
           Buying Committee
           <Badge variant="outline" size="sm" className="ml-auto">{contacts.length}</Badge>

@@ -98,7 +98,7 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
         aria-describedby="quote-cadence-drawer-desc"
       >
         <DrawerHeader className="border-b border-border/40">
-          <DrawerTitle className="font-display">
+          <DrawerTitle className="text-section-title">
             {q?.client_name ?? 'Cliente'}
           </DrawerTitle>
           <DrawerDescription id="quote-cadence-drawer-desc">

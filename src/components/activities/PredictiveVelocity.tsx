@@ -34,7 +34,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
       className="overflow-hidden border-primary/20 bg-primary/5 group/velocity hover:shadow-glow-primary/10 transition-all duration-500"
     >
       <CardHeader className="pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+        <CardTitle className="text-section-title text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
           <Timer className="h-4 w-4 text-primary animate-spin-slow" />
           Projeção de Performance
         </CardTitle>

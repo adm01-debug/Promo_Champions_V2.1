@@ -96,7 +96,7 @@ const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, classNa
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
           <CardHeader className="pb-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <CardTitle className="text-2xl flex items-center gap-4 italic uppercase font-black tracking-tighter">
+              <CardTitle className="text-section-title flex items-center gap-4 italic uppercase font-black tracking-tighter">
                 <div
                   className={cn(
                     'h-12 w-12 rounded-xl flex items-center justify-center shadow-xl transition-all duration-500 group-hover:rotate-6',

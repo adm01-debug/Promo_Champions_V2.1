@@ -124,7 +124,7 @@ export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDial
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Editar Meta - {salesperson.name}</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Editar Meta - {salesperson.name}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">

@@ -19,7 +19,7 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass border-border/50">
-          <CardHeader><CardTitle className="text-lg">Evolução de Vendas</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Evolução de Vendas</CardTitle></CardHeader>
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -39,7 +39,7 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
         </Card>
 
         <Card className="glass border-border/50">
-          <CardHeader><CardTitle className="text-lg">Quantidade de Vendas</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Quantidade de Vendas</CardTitle></CardHeader>
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -61,7 +61,7 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
       </div>
 
       <Card className="glass border-border/50">
-        <CardHeader><CardTitle className="text-lg">Resumo Mensal</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Resumo Mensal</CardTitle></CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">

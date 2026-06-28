@@ -70,7 +70,7 @@ function _MoodTrackerWidget({ className }: { className?: string }) {
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           <Heart className="h-4 w-4 text-primary" />
           Como você está hoje?
         </CardTitle>

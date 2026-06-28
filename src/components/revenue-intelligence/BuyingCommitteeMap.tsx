@@ -49,7 +49,7 @@ export const BuyingCommitteeMap: FC<Props> = ({ saleId }) => {
     <Card className="glass border-border/40">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="font-display">Comitê de Compra</CardTitle>
+          <CardTitle className="text-section-title">Comitê de Compra</CardTitle>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button size="sm"><Plus className="h-4 w-4 mr-2" />Adicionar</Button>

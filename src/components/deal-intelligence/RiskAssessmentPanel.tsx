@@ -46,7 +46,7 @@ export function RiskAssessmentPanel() {
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="text-sm font-semibold truncate max-w-[150px]">
+                <CardTitle className="text-section-title text-sm truncate max-w-[150px]">
                   {deal.sales?.client_name || 'Cliente Desconhecido'}
                 </CardTitle>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-tighter">

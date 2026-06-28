@@ -65,7 +65,7 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <GitBranch className="h-4 w-4 text-primary" />
           Funil de motivos de perda
         </CardTitle>

@@ -31,7 +31,7 @@ export const QualityReportView = () => {
               <Award className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-black uppercase tracking-tighter italic">Certificado de Excelência 10/10</CardTitle>
+              <CardTitle className="text-section-title font-black uppercase tracking-tighter italic">Certificado de Excelência 10/10</CardTitle>
               <CardDescription className="text-primary/70 font-medium">Enterprise Quality & Test Coverage Report</CardDescription>
             </div>
           </div>

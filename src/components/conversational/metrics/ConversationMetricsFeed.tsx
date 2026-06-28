@@ -65,7 +65,7 @@ export function ConversationMetricsFeed() {
 
       <Card variant="modern">
         <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="text-base">Feed de métricas conversacionais</CardTitle>
+          <CardTitle className="text-section-title">Feed de métricas conversacionais</CardTitle>
           <div className="flex gap-2">
             <Select value={health} onValueChange={setHealth}>
               <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>

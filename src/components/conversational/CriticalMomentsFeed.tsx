@@ -19,7 +19,7 @@ export const CriticalMomentsFeed = ({ onOpenRecording, limit = 20 }: Props) => {
   return (
     <Card className="glass">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
+        <CardTitle className="text-section-title flex items-center gap-2 text-sm">
           <AlertTriangle className="h-4 w-4 text-destructive" />
           Feed ao vivo · Momentos críticos
         </CardTitle>

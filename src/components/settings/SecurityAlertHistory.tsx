@@ -75,7 +75,7 @@ export function SecurityAlertHistory() {
     return (
       <Card className="card-elevated border-border/40 dark:border-glow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-primary">
               <History className="h-4 w-4 text-primary-foreground" />
             </div>
@@ -101,7 +101,7 @@ export function SecurityAlertHistory() {
     <Card className="card-elevated border-border/40 dark:border-glow">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-primary">
               <History className="h-4 w-4 text-primary-foreground" />
             </div>

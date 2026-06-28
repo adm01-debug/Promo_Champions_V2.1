@@ -50,7 +50,7 @@ export function RateLimitDashboard() {
       <RateLimitStatsCards hourlyTotal={stats?.hourly.total ?? 0} hourlyBlocked={stats?.hourly.blocked ?? 0} dailyTotal={stats?.daily.total ?? 0} dailyBlocked={stats?.daily.blocked ?? 0} />
 
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5" />Configurações de Rate Limit</CardTitle><CardDescription>Configure limites por tipo de ação</CardDescription></CardHeader>
+        <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><Settings className="h-5 w-5" />Configurações de Rate Limit</CardTitle><CardDescription>Configure limites por tipo de ação</CardDescription></CardHeader>
         <CardContent>
           <Table>
             <TableHeader><TableRow><TableHead>Ação</TableHead><TableHead>Limite</TableHead><TableHead>Janela</TableHead><TableHead>Bloqueio</TableHead><TableHead>Status</TableHead><TableHead>Ações</TableHead></TableRow></TableHeader>
@@ -86,7 +86,7 @@ export function RateLimitDashboard() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div><CardTitle className="flex items-center gap-2"><Clock className="h-5 w-5" />Logs de Rate Limit</CardTitle><CardDescription>Últimas requisições registradas</CardDescription></div>
+            <div><CardTitle className="text-section-title flex items-center gap-2"><Clock className="h-5 w-5" />Logs de Rate Limit</CardTitle><CardDescription>Últimas requisições registradas</CardDescription></div>
             <Select value={selectedAction ?? "all"} onValueChange={(v) => setSelectedAction(v === "all" ? undefined : v)}>
               <SelectTrigger className="w-40"><SelectValue placeholder="Filtrar ação" /></SelectTrigger>
               <SelectContent><SelectItem value="all">Todas</SelectItem>{Object.entries(ACTION_LABELS).map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent>

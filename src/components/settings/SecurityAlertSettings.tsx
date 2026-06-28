@@ -123,7 +123,7 @@ export function SecurityAlertSettings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Settings2 className="h-5 w-5 text-primary" />
           Configurações de Alerta de Segurança
         </CardTitle>

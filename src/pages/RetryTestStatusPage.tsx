@@ -247,7 +247,7 @@ export default function RetryTestStatusPage() {
         {/* Tests table */}
         <Card className="border-border/60">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-display">
+            <CardTitle className="text-section-title">
               Testes ({data ? data.total : '—'})
             </CardTitle>
           </CardHeader>

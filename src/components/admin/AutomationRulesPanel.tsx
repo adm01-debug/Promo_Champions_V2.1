@@ -31,7 +31,7 @@ export function AutomationRulesPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Zap className="h-5 w-5 text-primary" />
           Regras de Automação
         </CardTitle>

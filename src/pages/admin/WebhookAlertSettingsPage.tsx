@@ -198,7 +198,7 @@ export default function WebhookAlertSettingsPage() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Limites do monitor</CardTitle>
+            <CardTitle className="text-section-title">Limites do monitor</CardTitle>
             <CardDescription>
               Estes valores controlam quando os alertas{" "}
               <code className="text-xs">consecutive_failures</code>,{" "}

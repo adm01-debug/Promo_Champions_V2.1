@@ -212,7 +212,7 @@ export default function RaceArenaHub() {
       <div className="container mx-auto p-4 space-y-4">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-4xl font-black flex items-center gap-3 font-display">
+            <h1 className="text-page-title flex items-center gap-3">
               <Flag className="w-9 h-9 text-primary" /> Race Arena
             </h1>
             <p className="text-muted-foreground mt-1">

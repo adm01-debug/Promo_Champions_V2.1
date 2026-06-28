@@ -440,7 +440,7 @@ const Clientes = () => {
               <DialogHeader className="p-6 pb-2">
                 <div className="flex items-center gap-3">
                   <History className="h-5 w-5 text-primary" />
-                  <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">
+                  <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Timeline — {timelineClient?.name}
                   </DialogTitle>
                 </div>

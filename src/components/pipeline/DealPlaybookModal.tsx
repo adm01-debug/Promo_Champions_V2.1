@@ -69,7 +69,7 @@ export const DealPlaybookModal = ({
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-display">
+              <DialogTitle className="text-section-title">
                 Playbook de Execução
               </DialogTitle>
               <DialogDescription>

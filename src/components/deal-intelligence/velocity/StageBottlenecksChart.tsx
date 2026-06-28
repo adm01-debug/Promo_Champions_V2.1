@@ -34,7 +34,7 @@ export function StageBottlenecksChart() {
     <Card variant="elevated" className="glass border-border/40">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-primary" />
             <span>Gargalos por Estágio</span>
           </CardTitle>

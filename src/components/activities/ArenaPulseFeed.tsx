@@ -118,7 +118,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
 
       <CardHeader className="pb-3 border-b border-white/10 bg-gradient-to-r from-primary/10 via-transparent to-transparent relative">
         <div className="flex flex-col gap-1.5">
-          <CardTitle className="text-xs font-black uppercase tracking-[0.3em] flex items-center justify-between">
+          <CardTitle className="text-section-title text-xs font-black uppercase tracking-[0.3em] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Activity className="h-4 w-4 text-primary animate-pulse" />

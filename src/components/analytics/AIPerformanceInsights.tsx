@@ -51,7 +51,7 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
     <Card className="border-none bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-md shadow-xl overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Brain className="h-4 w-4 text-primary animate-pulse" />
             Insights de IA da Elite
           </CardTitle>

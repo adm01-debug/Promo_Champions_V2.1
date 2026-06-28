@@ -56,7 +56,7 @@ export function RaceHighlightsTimeline({ events, cars, limit = 5 }: Props) {
   return (
     <Card>
       <CardHeader className="py-2.5 px-3">
-        <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden />
           Highlights da temporada
         </CardTitle>

@@ -53,7 +53,7 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   return (
     <Card className="h-full border-primary/10 bg-gradient-to-br from-primary/5 via-transparent to-transparent hover:border-primary/20 transition-all duration-300">
       <CardHeader className="pb-0 pt-3 px-4">
-        <CardTitle className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
           <TrendingUp className="h-3 w-3 text-primary/70" />
           Taxa de Conversão
         </CardTitle>

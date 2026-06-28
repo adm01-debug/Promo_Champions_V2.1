@@ -17,7 +17,7 @@ export function AISalesCoachWidget() {
 
       <CardHeader className="p-4 pb-2 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-tighter italic flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-black uppercase tracking-tighter italic flex items-center gap-2">
             <BrainCircuit className="h-4 w-4 text-primary animate-pulse" />
             AI Sales Coach
           </CardTitle>

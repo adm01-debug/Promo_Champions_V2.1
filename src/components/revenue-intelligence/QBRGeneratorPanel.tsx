@@ -15,7 +15,7 @@ export const QBRGeneratorPanel: FC = () => {
     <Card className="glass border-border/40">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />Quarterly Business Review
           </CardTitle>
           <Button onClick={() => generate.mutate({})} disabled={generate.isPending}>

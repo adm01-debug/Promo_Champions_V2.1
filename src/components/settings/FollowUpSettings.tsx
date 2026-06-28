@@ -132,7 +132,7 @@ export function FollowUpSettings() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <MessageCircle className="h-5 w-5 text-green-500" />
                 Template do WhatsApp
               </CardTitle>
@@ -189,7 +189,7 @@ export function FollowUpSettings() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <Clock className="h-5 w-5 text-blue-500" />
                 Cadências de Follow-up
               </CardTitle>
@@ -236,7 +236,7 @@ export function FollowUpSettings() {
 
         <Card className="h-full">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <History className="h-5 w-5 text-muted-foreground" />
               Histórico de Versões
             </CardTitle>
@@ -297,7 +297,7 @@ export function FollowUpSettings() {
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-green-500" />
               Preview do Template
             </DialogTitle>

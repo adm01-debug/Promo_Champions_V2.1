@@ -124,7 +124,7 @@ export function AtRiskDealsFromPatterns() {
     <TooltipProvider delayDuration={150}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Deals em risco — padrões de loss
             {settings.debug && (

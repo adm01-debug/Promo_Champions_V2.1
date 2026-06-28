@@ -58,7 +58,7 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
   return (
     <Card className="h-full overflow-hidden">
       <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-sm font-display flex items-center gap-2 truncate">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2 truncate">
           <FileBarChart className="h-4 w-4 text-primary shrink-0" />
           <span className="truncate">{report.name}</span>
         </CardTitle>

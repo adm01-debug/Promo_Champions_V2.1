@@ -107,7 +107,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
         <div className="flex items-center gap-3">
           <div className={cn("w-1.5 h-full min-h-[2rem] rounded-full shadow-sm", stageColor)} />
           <div className="flex-1">
-            <CardTitle className="text-lg font-display">{playbook.title}</CardTitle>
+            <CardTitle className="text-section-title">{playbook.title}</CardTitle>
             {playbook.description && (
               <p className="text-sm text-muted-foreground mt-1">{playbook.description}</p>
             )}

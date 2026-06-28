@@ -62,7 +62,7 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
       >
         <Card className="shadow-xl border-primary/20">
           <CardHeader className="py-2 px-3 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-xs font-semibold flex items-center gap-2">
+            <CardTitle className="text-section-title text-xs flex items-center gap-2">
               <span>🏁 Entre na corrida</span>
               <span className="text-[10px] font-normal text-muted-foreground">
                 {completed}/{total}

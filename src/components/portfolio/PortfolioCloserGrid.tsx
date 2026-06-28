@@ -33,7 +33,7 @@ export const PortfolioCloserGrid = React.memo(function PortfolioCloserGrid({ clo
                   <span className="text-sm font-bold text-primary">{closer.name.charAt(0)}</span>
                 </div>
                 <div>
-                  <CardTitle className="text-base">{closer.name}</CardTitle>
+                  <CardTitle className="text-section-title">{closer.name}</CardTitle>
                   <p className="text-xs text-muted-foreground capitalize">{closer.role}</p>
                 </div>
               </div>

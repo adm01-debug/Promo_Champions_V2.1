@@ -96,7 +96,7 @@ export function ConversationHistory({
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <div>
-            <CardTitle className="text-lg">Histórico de Conversas</CardTitle>
+            <CardTitle className="text-section-title">Histórico de Conversas</CardTitle>
             <p className="text-xs text-muted-foreground">{selectedPersonName || 'Selecione um vendedor'}</p>
           </div>
         </div>

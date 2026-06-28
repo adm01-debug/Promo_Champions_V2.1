@@ -57,7 +57,7 @@ export function SalesChart({ salespeople }: SalesChartProps) {
   return (
     <Card className="glass dark:border-glow card-elevated overflow-hidden">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-display font-semibold flex items-center gap-2.5">
+        <CardTitle className="text-section-title flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-sm">
             <BarChart3 className="h-5 w-5 text-primary" />
           </div>

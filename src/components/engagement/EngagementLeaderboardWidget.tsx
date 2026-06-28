@@ -14,7 +14,7 @@ export function EngagementLeaderboardWidget({ limit = 10 }: Props) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Flame className="h-4 w-4 text-destructive" />
           Top Contatos Quentes
         </CardTitle>

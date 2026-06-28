@@ -43,7 +43,7 @@ export const RevenueForecastCard: FC<Props> = ({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <CardTitle className="font-display">AI Forecast Engine</CardTitle>
+            <CardTitle className="text-section-title">AI Forecast Engine</CardTitle>
           </div>
           <div className="flex items-center gap-3">
             <PeriodSelector

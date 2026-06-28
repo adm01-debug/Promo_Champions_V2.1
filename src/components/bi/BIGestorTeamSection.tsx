@@ -39,7 +39,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({ top
         {/* Top Performers */}
         <Card className="glass-card animate-slide-up" style={{ animationDelay: "600ms" }}>
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg rank-gold"><Trophy className="h-4 w-4 text-rank-gold-foreground" /></div>
               Top Performers
             </CardTitle>
@@ -74,7 +74,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({ top
         {/* Underperformers */}
         <Card className="glass-card animate-slide-up" style={{ animationDelay: "650ms" }}>
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-warning to-warning/80"><AlertTriangle className="h-4 w-4 text-warning-foreground" /></div>
               Requerem Atenção
             </CardTitle>
@@ -103,7 +103,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({ top
       {/* Performance Table */}
       <Card className="glass-card animate-slide-up" style={{ animationDelay: "700ms" }}>
         <CardHeader>
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow"><Users className="h-4 w-4 text-primary-foreground" /></div>
             Performance Detalhada do Time
           </CardTitle>

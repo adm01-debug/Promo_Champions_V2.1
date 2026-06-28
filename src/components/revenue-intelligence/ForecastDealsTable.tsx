@@ -23,7 +23,7 @@ export const ForecastDealsTable: FC<Props> = ({ forecastId, onSelectSale }) => {
   return (
     <Card className="glass border-border/40">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="font-display text-lg">Deals do Forecast</CardTitle>
+        <CardTitle className="text-section-title">Deals do Forecast</CardTitle>
         <ToggleGroup type="single" size="sm" value={filter} onValueChange={(v) => v && setFilter(v as ForecastCategory | "all")}>
           <ToggleGroupItem value="all">Todos</ToggleGroupItem>
           <ToggleGroupItem value="commit">Commit</ToggleGroupItem>

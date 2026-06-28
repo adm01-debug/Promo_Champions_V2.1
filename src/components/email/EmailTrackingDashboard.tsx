@@ -144,7 +144,7 @@ export function EmailTrackingDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
               Performance
             </CardTitle>
@@ -187,7 +187,7 @@ export function EmailTrackingDashboard() {
         <Card className="lg:col-span-2 relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
           <CardHeader className="p-6 border-b border-border/10">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3 text-lg font-black uppercase tracking-tighter italic">
+              <CardTitle className="text-section-title flex items-center gap-3 font-black uppercase tracking-tighter italic">
                 <Clock className="h-5 w-5 text-primary" />
                 Strategic Signal History
               </CardTitle>

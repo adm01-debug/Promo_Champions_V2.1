@@ -30,7 +30,7 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId,
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-destructive to-streak flex items-center justify-center">
                 <Bell className="h-4 w-4 text-primary-foreground" />
               </div>

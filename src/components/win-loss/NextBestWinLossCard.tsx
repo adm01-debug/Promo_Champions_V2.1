@@ -21,7 +21,7 @@ export function NextBestWinLossCard() {
   return (
     <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           Próximo melhor movimento
         </CardTitle>

@@ -65,7 +65,7 @@ export function CommissionCalculator({
 
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display font-black flex items-center gap-2">
+          <CardTitle className="text-section-title font-black flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-status-success to-status-success/70 shadow-lg group-hover:rotate-12 transition-transform duration-500">
               <DollarSign className="h-5 w-5 text-white" />
             </div>

@@ -69,7 +69,7 @@ export function CadenceReportPanel() {
 
       <Card className="glass border-border/40">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <CardTitle className="text-section-title text-xs text-muted-foreground uppercase tracking-wider">
             Eficácia por Canal (Benchmarking SINGU)
           </CardTitle>
         </CardHeader>

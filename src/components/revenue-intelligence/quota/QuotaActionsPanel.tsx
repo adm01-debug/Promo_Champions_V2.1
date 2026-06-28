@@ -25,7 +25,7 @@ export const QuotaActionsPanel: FC = () => {
   return (
     <Card variant="elevated">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           Recomendações IA por vendedor
           <Badge variant="secondary" className="ml-auto">{actions.length}</Badge>

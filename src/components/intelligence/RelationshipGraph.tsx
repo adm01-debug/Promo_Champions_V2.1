@@ -24,7 +24,7 @@ export const RelationshipGraph = () => {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest flex items-center gap-2">
               <Share2 className="size-4 text-primary" />
               Insight <span className="text-primary">Relationship Graph</span>
             </CardTitle>

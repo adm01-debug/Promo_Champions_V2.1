@@ -17,7 +17,7 @@ export function SecurityAlertSoundSettings() {
             <ShieldAlert className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <CardTitle className="font-display">Som de Alerta de Segurança</CardTitle>
+            <CardTitle className="text-section-title">Som de Alerta de Segurança</CardTitle>
             <CardDescription>
               Escolha o som e volume para notificações de alertas de segurança
             </CardDescription>

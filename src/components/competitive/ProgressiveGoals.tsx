@@ -52,7 +52,7 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
       <Card className="border-none shadow-lg overflow-hidden">
         <div className="bg-gradient-to-r from-accent/10 to-primary/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-primary flex items-center justify-center">
                 <Target className="h-4 w-4 text-primary-foreground" />
               </div>

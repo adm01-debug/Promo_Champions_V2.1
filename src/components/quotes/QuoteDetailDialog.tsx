@@ -40,7 +40,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
         <DialogHeader>
           <div className="flex items-center justify-between gap-4">
             <div>
-              <DialogTitle className="text-xl flex items-center gap-2">
+              <DialogTitle className="text-section-title flex items-center gap-2">
                 {quote.quote_number ? `Orçamento ${quote.quote_number}` : quote.title}
                 <Badge className={cn("text-xs", statusConfig.color)} variant="outline">
                   {statusConfig.label}

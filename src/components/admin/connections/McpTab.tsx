@@ -27,7 +27,7 @@ export function McpTab() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="font-display text-lg">MCP (Claude / agentes)</CardTitle>
+        <CardTitle className="text-section-title">MCP (Claude / agentes)</CardTitle>
         <CardDescription>
           Servidores MCP externos via Streamable HTTP. O teste usa o método <code>initialize</code>.
         </CardDescription>

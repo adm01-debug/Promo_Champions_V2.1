@@ -192,7 +192,7 @@ export const ConversationalIntelligenceHub = () => {
                 <Brain className="size-24" />
               </div>
               <CardHeader className="pb-6 border-b border-white/5 bg-white/5">
-                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                <CardTitle className="text-section-title font-black uppercase tracking-widest flex items-center gap-2">
                   <Sparkles className="size-4 text-primary animate-pulse" />
                   Distribuição de Sentimento
                 </CardTitle>
@@ -243,7 +243,7 @@ export const ConversationalIntelligenceHub = () => {
 
             <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
               <CardHeader className="pb-6 border-b border-white/5 bg-warning/5">
-                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                <CardTitle className="text-section-title font-black uppercase tracking-widest flex items-center gap-2">
                   <AlertTriangle className="size-4 text-warning" />
                   Barreiras de Fechamento
                 </CardTitle>
@@ -273,7 +273,7 @@ export const ConversationalIntelligenceHub = () => {
 
             <Card className="glass border-white/5 shadow-2xl overflow-hidden group">
               <CardHeader className="pb-6 border-b border-white/5 bg-primary/5">
-                <CardTitle className="text-base font-black uppercase tracking-widest flex items-center gap-2">
+                <CardTitle className="text-section-title font-black uppercase tracking-widest flex items-center gap-2">
                   <Brain className="size-4 text-primary" />
                   Clusters de Interesse
                 </CardTitle>

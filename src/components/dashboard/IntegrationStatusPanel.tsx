@@ -195,7 +195,7 @@ export const IntegrationStatusPanel = () => {
           <Settings2 className="h-12 w-12 text-primary" />
         </div>
         <CardHeader>
-          <CardTitle className="text-sm font-mono font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-mono uppercase tracking-widest text-primary flex items-center gap-2">
             <ShieldCheck className="h-4 w-4" />
             Status da Infraestrutura
           </CardTitle>
@@ -289,7 +289,7 @@ export const IntegrationStatusPanel = () => {
       <Card className="lg:col-span-2 bg-black/40 border-white/10 backdrop-blur-xl flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="space-y-1">
-            <CardTitle className="text-sm font-mono font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-mono uppercase tracking-widest text-primary flex items-center gap-2">
               <Terminal className="h-4 w-4" />
               Logs de Protocolo e Cadastro
             </CardTitle>

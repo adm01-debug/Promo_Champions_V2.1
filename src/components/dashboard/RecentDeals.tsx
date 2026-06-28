@@ -25,7 +25,7 @@ export const RecentDeals = React.memo(() => {
     return (
       <Card className="h-full bg-black/40 border-white/5 backdrop-blur-md">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary/60">
+          <CardTitle className="text-section-title text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 text-primary/60">
             <Clock className="h-4 w-4" />
             Initializing Feed
           </CardTitle>
@@ -72,7 +72,7 @@ export const RecentDeals = React.memo(() => {
 
       <CardHeader className="pb-3 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+          <CardTitle className="text-section-title text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
             <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
               <Clock className="h-3.5 w-3.5" />
             </div>

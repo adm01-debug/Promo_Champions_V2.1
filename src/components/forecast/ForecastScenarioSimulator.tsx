@@ -51,7 +51,7 @@ export const ForecastScenarioSimulator = ({ baseForecast }: Props) => {
               <div className="p-2 rounded-xl bg-primary/20 text-primary border border-primary/30 shadow-lg">
                 <Cpu className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl font-black tracking-tight">
+              <CardTitle className="text-section-title font-black">
                 Laboratório What-If Neural
               </CardTitle>
             </div>

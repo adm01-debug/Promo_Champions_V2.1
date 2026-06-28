@@ -21,7 +21,7 @@ export function ConversationMetricsCard({ recordingId }: Props) {
   return (
     <Card className="glass border-primary/20 bg-primary/5 shadow-lg shadow-primary/5">
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
           Métricas conversacionais
           {data && (

@@ -23,7 +23,7 @@ export function WinFactorsChart() {
   return (
     <Card className="border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Trophy className="h-4 w-4 text-emerald-500" />
           Top Fatores de Vitória
         </CardTitle>

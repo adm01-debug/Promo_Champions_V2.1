@@ -180,7 +180,7 @@ export default function Notificacoes() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px] glass">
                       <DialogHeader>
-                        <DialogTitle className="font-display uppercase italic tracking-tighter">
+                        <DialogTitle className="text-section-title uppercase italic tracking-tighter">
                           Nova Configuração
                         </DialogTitle>
                         <DialogDescription>
@@ -339,7 +339,7 @@ export default function Notificacoes() {
                   <Card className="glass">
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2">
+                        <CardTitle className="text-section-title flex items-center gap-2">
                           <AlertTriangle className="h-5 w-5 text-warning" />
                           Canais de Notificação
                         </CardTitle>
@@ -384,7 +384,7 @@ export default function Notificacoes() {
                 <Card className="glass border-primary/20">
                   <CardHeader className="border-b border-white/5">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2 font-display uppercase italic tracking-tighter">
+                      <CardTitle className="text-section-title flex items-center gap-2 uppercase italic tracking-tighter">
                         <History className="h-5 w-5 text-primary" />
                         Auditoria de Notificações de Vendas
                       </CardTitle>

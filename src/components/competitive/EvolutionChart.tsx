@@ -48,7 +48,7 @@ const EvolutionChartComponent: FC = () => {
     <Card className="border-none shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="gradient-text">Evolução Comparativa</span>
           </CardTitle>

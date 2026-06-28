@@ -57,7 +57,7 @@ export const ForecastVsActualChart: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Forecast vs Realizado</CardTitle>
+        <CardTitle className="text-section-title">Forecast vs Realizado</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (

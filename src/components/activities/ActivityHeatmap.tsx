@@ -76,7 +76,7 @@ export const ActivityHeatmap: React.FC = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 pointer-events-none" />
       <CardHeader className="pb-3 border-b border-border/10 relative z-10">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center justify-between">
+        <CardTitle className="text-section-title text-xs font-black uppercase tracking-[0.2em] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
               <Calendar className="h-4 w-4 text-primary" />

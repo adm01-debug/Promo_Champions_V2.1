@@ -73,7 +73,7 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 font-display">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <Flag className="w-5 h-5 text-primary" /> Iniciar nova temporada
             </DialogTitle>
             <DialogDescription>

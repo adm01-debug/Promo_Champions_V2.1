@@ -52,7 +52,7 @@ export function SemanticSearchDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden">
         <DialogHeader className="px-5 pt-5 pb-3 border-b">
-          <DialogTitle className="flex items-center gap-2 text-base">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Busca Semântica Universal
           </DialogTitle>

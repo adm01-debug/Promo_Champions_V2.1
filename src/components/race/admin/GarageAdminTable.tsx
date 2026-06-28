@@ -32,7 +32,7 @@ export function GarageAdminTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Car className="w-5 h-5" /> Garagem ({data.length})</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2"><Car className="w-5 h-5" /> Garagem ({data.length})</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

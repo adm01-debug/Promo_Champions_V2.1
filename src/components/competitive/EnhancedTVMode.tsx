@@ -133,7 +133,7 @@ function EnhancedTVModeComponent() {
                     </Badge>
                     <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   </div>
-                  <CardTitle className="text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">
+                  <CardTitle className="text-section-title text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">
                     Modo TV Pro
                   </CardTitle>
                 </div>

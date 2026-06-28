@@ -42,7 +42,7 @@ export function ConversionFunnelChart({ metrics }: Props) {
   return (
     <Card variant="elevated" className="glass border-border/40">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-primary" />
           Funil de conversão por estágio
         </CardTitle>

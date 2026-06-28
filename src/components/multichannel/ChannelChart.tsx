@@ -38,7 +38,7 @@ export function ChannelChart({ data }: Props) {
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-primary" />
           Interações por Canal (últimos 30 dias)
         </CardTitle>

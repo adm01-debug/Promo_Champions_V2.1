@@ -99,7 +99,7 @@ export default function AcompanhamentoPedidoDetalhe() {
           <div className="grid gap-6 lg:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Operacional</CardTitle>
+                <CardTitle className="text-section-title">Operacional</CardTitle>
               </CardHeader>
               <CardContent>
                 <TrackTimeline title="" stages={OPERATIONAL_STAGES} progress={order.stages} accent="primary" />
@@ -109,7 +109,7 @@ export default function AcompanhamentoPedidoDetalhe() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Financeiro</CardTitle>
+                  <CardTitle className="text-section-title">Financeiro</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <TrackTimeline title="" stages={FINANCIAL_STAGES} progress={order.stages} accent="success" />
@@ -118,7 +118,7 @@ export default function AcompanhamentoPedidoDetalhe() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Parcelas</CardTitle>
+                  <CardTitle className="text-section-title">Parcelas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="divide-y">
@@ -147,7 +147,7 @@ export default function AcompanhamentoPedidoDetalhe() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Pós-Venda</CardTitle>
+                <CardTitle className="text-section-title">Pós-Venda</CardTitle>
               </CardHeader>
               <CardContent>
                 <TrackTimeline title="" stages={POST_SALE_STAGES} progress={order.stages} accent="warning" />
@@ -157,7 +157,7 @@ export default function AcompanhamentoPedidoDetalhe() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Histórico recente</CardTitle>
+              <CardTitle className="text-section-title">Histórico recente</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm">

@@ -26,7 +26,7 @@ export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-emerald-500/20 rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-2">
+          <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-emerald-500" />
             WhatsApp Tactical Dispatch
           </DialogTitle>

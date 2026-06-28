@@ -282,7 +282,7 @@ export const ClientsMap = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-section-title text-foreground flex items-center gap-2">
             <MapPin className="h-6 w-6 text-primary" />
             Mapa de Clientes
           </h2>

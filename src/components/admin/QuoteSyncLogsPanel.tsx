@@ -42,7 +42,7 @@ export function QuoteSyncLogsPanel() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <RefreshCw className="h-4 w-4 text-primary" />
           Logs de Sincronização de Orçamentos
         </CardTitle>

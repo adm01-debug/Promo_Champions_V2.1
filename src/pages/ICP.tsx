@@ -174,7 +174,7 @@ export default function ICP() {
               {/* Table */}
               <Card className="glass border-border/40 overflow-hidden">
                 <CardHeader className="bg-muted/30">
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="text-section-title flex items-center gap-2">
                     <Users className="h-5 w-5 text-primary" />
                     Base de Clientes e Fit ICP
                   </CardTitle>

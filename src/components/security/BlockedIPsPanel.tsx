@@ -70,7 +70,7 @@ export function BlockedIPsPanel() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Ban className="h-5 w-5 text-destructive" />
               IPs Bloqueados
             </CardTitle>

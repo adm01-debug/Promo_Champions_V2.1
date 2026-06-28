@@ -75,7 +75,7 @@ const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-rank-gold/10 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-rank-gold/20 transition-colors" />
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
           <CardHeader className="pb-4 border-b border-white/5">
-            <CardTitle className="text-2xl flex items-center gap-4 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-4 italic uppercase font-black tracking-tighter">
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center shadow-xl shadow-rank-gold/20 group-hover:rotate-6 transition-transform">
                 <Crown className="h-6 w-6 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" />
               </div>

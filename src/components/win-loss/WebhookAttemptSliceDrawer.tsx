@@ -98,7 +98,7 @@ export function WebhookAttemptSliceDrawer({ attempt, windowKey, open, onOpenChan
         className="w-full sm:max-w-lg flex flex-col p-0 gap-0"
       >
         <SheetHeader className="border-b px-4 py-3 space-y-1">
-          <SheetTitle className="text-base">Falhas por tentativa</SheetTitle>
+          <SheetTitle className="text-section-title">Falhas por tentativa</SheetTitle>
           <SheetDescription className="text-xs">{description}</SheetDescription>
           {!isLoading && !isError && totalFailures > 0 && (
             <p className="text-[11px] text-muted-foreground">

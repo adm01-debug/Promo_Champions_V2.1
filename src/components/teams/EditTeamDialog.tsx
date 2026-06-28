@@ -68,7 +68,7 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader><DialogTitle className="font-display text-xl">Editar Atribuição SDR</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="text-section-title">Editar Atribuição SDR</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="flex gap-4">
@@ -80,7 +80,7 @@ export function EditTeamDialog({ team, open, onOpenChange }: EditTeamDialogProps
 
             <FormField control={form.control} name="sdr_id" render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4" />SDR do Time *</FormLabel>
+                <FormLabel className="text-label flex items-center gap-2"><Phone className="h-4 w-4" />SDR do Time *</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl><SelectTrigger><SelectValue placeholder="Selecione um SDR" /></SelectTrigger></FormControl>
                   <SelectContent>

@@ -47,7 +47,7 @@ export function DailyCheckinModal({ open, onOpenChange, data }: Props) {
             >
               <Trophy className="w-8 h-8 text-primary-foreground" />
             </motion.div>
-            <DialogTitle className="text-2xl font-display font-black uppercase tracking-tight">
+            <DialogTitle className="text-section-title font-black uppercase">
               Bom dia, piloto!
             </DialogTitle>
             <DialogDescription className="text-base">

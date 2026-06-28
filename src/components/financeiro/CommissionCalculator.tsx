@@ -21,7 +21,7 @@ export function CommissionCalculator() {
   return (
     <Card className="glass border-primary/20 bg-primary/5">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-primary">
+        <CardTitle className="text-section-title text-xs font-black uppercase tracking-widest flex items-center gap-2 text-primary">
           <Calculator className="h-4 w-4" />
           Simulador de Ganhos
         </CardTitle>

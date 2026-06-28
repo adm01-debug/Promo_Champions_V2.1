@@ -39,7 +39,7 @@ export const MapeBySegmentChart: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">MAPE por Segmento</CardTitle>
+        <CardTitle className="text-section-title">MAPE por Segmento</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (

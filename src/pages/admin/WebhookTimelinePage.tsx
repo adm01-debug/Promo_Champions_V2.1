@@ -88,7 +88,7 @@ export default function WebhookTimelinePage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Correlação por requestId / subscription</CardTitle>
+            <CardTitle className="text-section-title">Correlação por requestId / subscription</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={apply} className="grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
@@ -167,7 +167,7 @@ export default function WebhookTimelinePage() {
               return (
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Tentativas</CardTitle>
+                    <CardTitle className="text-section-title">Tentativas</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-wrap gap-2">
                     {attempts.map((n) => (
@@ -189,7 +189,7 @@ export default function WebhookTimelinePage() {
 
             <Card>
               <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-base">
+                <CardTitle className="text-section-title">
                   {items.length} evento{items.length === 1 ? "" : "s"}
                 </CardTitle>
                 {isFetching && <span className="text-xs text-muted-foreground">Atualizando…</span>}

@@ -55,7 +55,7 @@ export function SeasonalityHeatmap() {
       <CardHeader className="border-b border-border/50 pb-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1.5">
-            <CardTitle className="flex items-center gap-2.5 text-lg font-bold">
+            <CardTitle className="text-section-title flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <CalendarDays className="h-5 w-5 text-primary" />
               </div>

@@ -134,7 +134,7 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
           transition={{ delay: 0.2, duration: 0.4 }}
           className="space-y-2"
         >
-          <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">
+          <h2 className="text-section-title sm:text-3xl">
             A pista está silenciosa
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">

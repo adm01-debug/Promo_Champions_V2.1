@@ -16,7 +16,7 @@ export function RoutingRulesPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Settings2 className="h-4 w-4 text-primary" />
           Regras de Roteamento
         </CardTitle>

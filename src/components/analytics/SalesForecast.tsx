@@ -103,7 +103,7 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-primary/10">
               <BarChart3 className="h-4 w-4 text-primary" />
             </div>

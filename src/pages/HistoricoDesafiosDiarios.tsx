@@ -272,7 +272,7 @@ export default function HistoricoDesafiosDiarios() {
                   <Card className={isToday ? 'ring-2 ring-primary/50' : ''}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-3 text-lg">
+                        <CardTitle className="text-section-title flex items-center gap-3">
                           <Calendar className="h-5 w-5 text-muted-foreground" />
                           {format(new Date(date), "EEEE, d 'de' MMMM", { locale: ptBR })}
                           {isToday && (

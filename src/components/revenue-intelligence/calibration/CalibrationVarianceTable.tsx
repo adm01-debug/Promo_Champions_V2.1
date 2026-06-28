@@ -22,7 +22,7 @@ export const CalibrationVarianceTable: FC<Props> = ({ data }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Maiores Divergências Baseline → Calibrado</CardTitle>
+        <CardTitle className="text-section-title">Maiores Divergências Baseline → Calibrado</CardTitle>
       </CardHeader>
       <CardContent>
         {top.length === 0 ? (

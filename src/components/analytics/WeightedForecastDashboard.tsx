@@ -68,7 +68,7 @@ export function WeightedForecastDashboard() {
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-display flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" />Pipeline por Stage (Ponderado vs Total)</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-section-title text-sm flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" />Pipeline por Stage (Ponderado vs Total)</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={funnelData} layout="vertical">
@@ -84,7 +84,7 @@ export function WeightedForecastDashboard() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-display flex items-center gap-2"><Zap className="h-4 w-4 text-primary" />Distribuição do Pipeline</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-section-title text-sm flex items-center gap-2"><Zap className="h-4 w-4 text-primary" />Distribuição do Pipeline</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-3">
               {data.stages.map((stage, i) => {
@@ -109,7 +109,7 @@ export function WeightedForecastDashboard() {
       {impactFactors.length > 0 && (
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <Brain className="h-4 w-4 text-primary" />
               IA Insight: Fatores de Impacto na Performance
             </CardTitle>

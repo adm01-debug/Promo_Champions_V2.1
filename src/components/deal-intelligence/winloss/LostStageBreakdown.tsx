@@ -21,7 +21,7 @@ export function LostStageBreakdown() {
   return (
     <Card className="border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <PieIcon className="h-4 w-4 text-rose-500" />
           Onde Mais se Perde
         </CardTitle>

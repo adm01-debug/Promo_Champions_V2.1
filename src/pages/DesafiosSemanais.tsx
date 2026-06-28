@@ -170,7 +170,7 @@ export default function DesafiosSemanais() {
           <TabsContent value="leaderboard">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <Crown className="h-5 w-5 text-warning" />
                   Ranking de Desafios da Semana
                 </CardTitle>

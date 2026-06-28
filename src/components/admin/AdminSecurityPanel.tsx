@@ -42,7 +42,7 @@ export function AdminSecurityPanel({ recentAccessDenied, recentSecurityAlerts, r
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-destructive/20 to-destructive/5">
               <Shield className="h-4 w-4 text-destructive" />
             </div>

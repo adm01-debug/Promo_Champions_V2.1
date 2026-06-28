@@ -21,7 +21,7 @@ export function LeadSourceMetrics() {
     return (
       <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
         <CardHeader>
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg">
               <Target className="h-4 w-4 text-primary animate-pulse" />
             </div>
@@ -43,7 +43,7 @@ export function LeadSourceMetrics() {
     <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
               <Target className="h-4 w-4 text-primary" />
             </div>

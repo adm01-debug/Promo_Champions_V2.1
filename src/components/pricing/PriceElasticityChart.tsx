@@ -70,7 +70,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <CardTitle className="text-xl font-black font-sora tracking-tight">
+                <CardTitle className="text-section-title font-black font-sora">
                   Price Elasticity Curve
                 </CardTitle>
                 <Badge

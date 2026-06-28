@@ -39,7 +39,7 @@ export function ScoreBreakdownCard({ entry, rules }: Props) {
   return (
     <Card className="border-border/60">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           Composição do score
           <TooltipProvider>
             <Tooltip>

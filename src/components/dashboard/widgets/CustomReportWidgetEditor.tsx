@@ -30,7 +30,7 @@ export function CustomReportWidgetEditor({ open, onOpenChange, initialReportId, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <FileBarChart className="h-5 w-5 text-primary" />
             Configurar Relatório Customizado
           </DialogTitle>

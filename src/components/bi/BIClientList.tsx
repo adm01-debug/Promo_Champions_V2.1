@@ -50,7 +50,7 @@ export const BIClientList: FC<BIClientListProps> = ({
   return (
     <Card className={cn("glass-card", className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-display flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/10">
             <Icon className="h-4 w-4 text-primary" />
           </div>
@@ -153,7 +153,7 @@ export const BIPurchaseHistory: FC<{
   return (
     <Card className={cn("glass-card", className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-display flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/10">
             <ShoppingBag className="h-4 w-4 text-primary" />
           </div>

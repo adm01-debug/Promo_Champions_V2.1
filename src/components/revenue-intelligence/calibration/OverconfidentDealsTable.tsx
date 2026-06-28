@@ -19,7 +19,7 @@ export const OverconfidentDealsTable: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-destructive" />
           Top Deals Super-Otimistas
         </CardTitle>

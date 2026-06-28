@@ -56,7 +56,7 @@ export function ICPRadarChart({ clientIcp }: ICPRadarChartProps) {
   return (
     <Card className="glass border-border/40 hover-lift-sm transition-all duration-300 overflow-hidden h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           <Target className="h-4 w-4 text-primary" />
           Análise de Fit ICP
         </CardTitle>

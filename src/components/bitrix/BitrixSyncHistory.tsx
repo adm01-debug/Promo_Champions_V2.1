@@ -40,7 +40,7 @@ export const BitrixSyncHistory = React.memo(function BitrixSyncHistory({ syncLog
       <CardHeader>
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center"><History className="h-5 w-5 text-accent" /></div>
-          <div><CardTitle className="text-lg">Histórico de Sincronizações</CardTitle><CardDescription>Últimas 20 sincronizações realizadas</CardDescription></div>
+          <div><CardTitle className="text-section-title">Histórico de Sincronizações</CardTitle><CardDescription>Últimas 20 sincronizações realizadas</CardDescription></div>
         </div>
       </CardHeader>
       <CardContent>

@@ -256,7 +256,7 @@ export function NotificationCenter() {
     <Card className="border-0 shadow-none bg-transparent">
       <CardHeader className="pb-3 px-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+          <CardTitle className="text-section-title flex items-center gap-2 text-sm font-black uppercase tracking-widest">
             <Bell className="h-4 w-4 text-primary" />
             Alertas de Performance
             {unreadCount > 0 && (
@@ -295,7 +295,7 @@ export function NotificationCenter() {
               </DialogTrigger>
               <DialogContent className="glass border-primary/20">
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
+                  <DialogTitle className="text-section-title flex items-center gap-2">
                     <Settings className="h-4 w-4 text-primary" />
                     Configurações de Alerta Elite
                   </DialogTitle>

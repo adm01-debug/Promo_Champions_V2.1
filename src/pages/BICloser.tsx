@@ -89,7 +89,7 @@ const BICloser = () => {
                 daysRemaining={data?.daysRemaining || 0} dailyRequired={data?.dailyRevenueNeeded || 0} format="currency" />
               <Card className="glass-card">
                 <CardHeader>
-                  <CardTitle className="text-lg font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title flex items-center gap-2">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
                       <Briefcase className="h-4 w-4 text-primary-foreground" />
                     </div>

@@ -83,7 +83,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
 
       <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2.5 text-lg font-bold text-foreground/90">
+          <CardTitle className="text-section-title flex items-center gap-2.5 text-foreground/90">
             <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
               <Brain className="h-5 w-5 text-primary animate-pulse" />
             </div>
@@ -409,7 +409,7 @@ function Stat({
       {details && (
         <DialogContent className="bg-black/95 border-white/10 backdrop-blur-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-primary uppercase font-mono tracking-widest">
+            <DialogTitle className="text-section-title flex items-center gap-2 text-primary uppercase font-mono tracking-widest">
               {icon} {label}: {value}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground pt-4 leading-relaxed">

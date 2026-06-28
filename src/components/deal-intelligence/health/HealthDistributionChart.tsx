@@ -32,7 +32,7 @@ export const HealthDistributionChart: FC<Props> = ({ rows }) => {
   return (
     <Card variant="elevated" className="glass border-border/40">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
           Distribuição de Saúde
         </CardTitle>

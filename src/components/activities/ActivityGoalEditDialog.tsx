@@ -127,7 +127,7 @@ export function ActivityGoalEditDialog({
       <DialogContent className="sm:max-w-md glass border-white/10 p-0 overflow-hidden shadow-2xl">
         <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-transparent p-8 pb-4">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-4 text-2xl font-display font-black uppercase tracking-tighter italic gradient-text">
+            <DialogTitle className="text-section-title flex items-center gap-4 font-black uppercase tracking-tighter italic gradient-text">
               <div className="p-2 rounded-xl bg-primary shadow-lg">
                 <Target className="h-5 w-5 text-primary-foreground" />
               </div>
@@ -156,7 +156,7 @@ export function ActivityGoalEditDialog({
                         <div className={`p-2 rounded-lg bg-background border border-border/10 shadow-sm transition-transform group-hover:scale-110`}>
                           <field.icon className={`h-4 w-4 ${field.color}`} />
                         </div>
-                        <FormLabel className="text-xs font-black uppercase tracking-tight mb-0 cursor-pointer">{field.label.split(' ')[0]}</FormLabel>
+                        <FormLabel className="text-label text-xs font-black uppercase tracking-tight mb-0 cursor-pointer">{field.label.split(' ')[0]}</FormLabel>
                       </div>
                       <div className="flex items-center gap-2">
                         <FormControl>

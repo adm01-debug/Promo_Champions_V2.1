@@ -248,7 +248,7 @@ export const RevenueForecast: FC = () => {
       {/* Forecast chart */}
       <Card className="border-none shadow-lg">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-display flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-primary" />
             Tendência de Receita (6 meses)
           </CardTitle>
@@ -310,7 +310,7 @@ export const RevenueForecast: FC = () => {
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-display">Pipeline Ponderado</CardTitle>
+              <CardTitle className="text-section-title text-sm">Pipeline Ponderado</CardTitle>
               <Badge variant="outline" className="text-xs">
                 {forecast.pipelineCount} deals • {fmt(forecast.pipelineTotal)}
               </Badge>
@@ -347,7 +347,7 @@ export const RevenueForecast: FC = () => {
         {/* Velocity & projections */}
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display">Velocidade & Projeções</CardTitle>
+            <CardTitle className="text-section-title text-sm">Velocidade & Projeções</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">

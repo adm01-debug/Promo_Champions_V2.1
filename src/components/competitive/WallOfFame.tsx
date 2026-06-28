@@ -56,7 +56,7 @@ const WallOfFameComponent: FC<WallOfFameProps> = ({ salespersonId }) => {
         <div className="bg-gradient-to-r from-rank-gold/10 via-yellow-500/5 to-rank-gold/10">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center">
                   <Star className="h-4 w-4 text-primary-foreground" />
                 </div>

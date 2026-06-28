@@ -33,7 +33,7 @@ export const PredictiveScenarioPlanner = () => {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Calculator className="size-5 text-primary" />
-          <CardTitle className="text-xl">Simulador de Cenários AI</CardTitle>
+          <CardTitle className="text-section-title">Simulador de Cenários AI</CardTitle>
         </div>
         <CardDescription>
           Preveja o impacto de mudanças táticas no seu faturamento trimestral

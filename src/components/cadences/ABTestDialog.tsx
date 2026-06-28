@@ -116,7 +116,7 @@ export function ABTestDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-primary" />
             Testes A/B de Cadências
           </DialogTitle>

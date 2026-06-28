@@ -267,7 +267,7 @@ export function CadenceTemplateManager() {
         <div className="space-y-4">
           <Card className="border-amber-500/30 bg-amber-500/5">
             <CardHeader className="py-4">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-amber-700">
+              <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 text-amber-700">
                 <Eye className="h-4 w-4" />
                 Ações Aguardando Validação Humana
               </CardTitle>

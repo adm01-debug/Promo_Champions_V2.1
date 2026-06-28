@@ -272,7 +272,7 @@ export default function Cadencias() {
                       <Card className="glass border-border/40 hover-lift-sm h-full">
                         <CardHeader className="pb-2">
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-sm font-medium flex items-center gap-2">
+                            <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                               <GitBranch className="h-4 w-4 text-primary" />
                               Suas Cadências
                             </CardTitle>
@@ -358,7 +358,7 @@ export default function Cadencias() {
                     <div className="space-y-6">
                       <Card className="glass border-border/40">
                         <CardHeader>
-                          <CardTitle className="text-sm flex items-center gap-2">
+                          <CardTitle className="text-section-title text-sm flex items-center gap-2">
                             <Zap className="h-4 w-4 text-primary" />
                             Configurações de Automação
                           </CardTitle>
@@ -379,7 +379,7 @@ export default function Cadencias() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <Card className="glass border-border/40 lg:col-span-1">
                       <CardHeader>
-                        <CardTitle className="text-sm">Selecionar Lead</CardTitle>
+                        <CardTitle className="text-section-title text-sm">Selecionar Lead</CardTitle>
                       </CardHeader>
                       <CardContent className="p-0">
                         <ScrollArea className="h-[500px]">

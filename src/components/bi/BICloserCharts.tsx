@@ -23,7 +23,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
                 <TrendingUp className="h-4 w-4 text-primary-foreground" />
               </div>
@@ -59,7 +59,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-lg font-display">Por Categoria</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Por Categoria</CardTitle></CardHeader>
           <CardContent>
             {dealsByCategory.length > 0 ? (
               <>
@@ -91,7 +91,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
       </div>
 
       <Card className="glass-card">
-        <CardHeader><CardTitle className="text-lg font-display">Evolução Mensal (Histórico)</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Evolução Mensal (Histórico)</CardTitle></CardHeader>
         <CardContent>
           {revenueByMonth.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>

@@ -98,7 +98,7 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
 
   if (!chartData.length || !sdrs.length) {
     return (
-      <Card className="glass border-border/40"><CardHeader><CardTitle className="flex items-center gap-2 font-display"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center"><TrendingUp className="w-4 h-4 text-primary" /></div>Evolução de Conversão SDR</CardTitle></CardHeader><CardContent><div className="h-[300px] flex items-center justify-center text-muted-foreground">Nenhum dado disponível para o período selecionado</div></CardContent></Card>
+      <Card className="glass border-border/40"><CardHeader><CardTitle className="text-section-title flex items-center gap-2"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center"><TrendingUp className="w-4 h-4 text-primary" /></div>Evolução de Conversão SDR</CardTitle></CardHeader><CardContent><div className="h-[300px] flex items-center justify-center text-muted-foreground">Nenhum dado disponível para o período selecionado</div></CardContent></Card>
     );
   }
 
@@ -106,7 +106,7 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
     <Card className="glass border-border/40 hover-lift">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div className="flex items-center gap-4">
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center"><TrendingUp className="w-4 h-4 text-primary" /></div>
             Evolução de Conversão SDR
           </CardTitle>

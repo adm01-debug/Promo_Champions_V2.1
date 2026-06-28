@@ -22,7 +22,7 @@ export const SentimentDistributionCard = ({ data }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Distribuição de sentimento</CardTitle>
+        <CardTitle className="text-section-title">Distribuição de sentimento</CardTitle>
       </CardHeader>
       <CardContent>
         {total === 0 ? (

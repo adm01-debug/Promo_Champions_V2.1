@@ -105,7 +105,7 @@ export function ReplayInvocationsPanel() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center justify-between gap-2 flex-wrap">
+        <CardTitle className="text-section-title flex items-center justify-between gap-2 flex-wrap">
           <span className="flex items-center gap-2">
             <ListChecks className="h-4 w-4" />
             Auditoria de invocações

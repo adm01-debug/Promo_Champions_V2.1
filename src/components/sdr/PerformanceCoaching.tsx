@@ -54,7 +54,7 @@ export function PerformanceCoaching() {
     <Card className="glass border-primary/20 overflow-hidden h-full">
       <CardHeader className="pb-3 border-b border-border/50 bg-primary/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Award className="h-4 w-4 text-yellow-500" />
             Coaching de Performance
           </CardTitle>

@@ -35,7 +35,7 @@ export const WinRateBreakdownChart: FC<Props> = ({
     <Card className="glass border-border/40">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="font-display">Win Rate Breakdown</CardTitle>
+          <CardTitle className="text-section-title">Win Rate Breakdown</CardTitle>
           <Select
             value={dimension}
             onValueChange={v => onChangeDimension(v as 'category' | 'source' | 'product')}

@@ -30,7 +30,7 @@ export const PriceHistoryTable = React.memo(function PriceHistoryTable({
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <History className="h-5 w-5" />
           Histórico Recente de Preços
         </CardTitle>

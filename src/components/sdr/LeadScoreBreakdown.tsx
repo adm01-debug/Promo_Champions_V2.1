@@ -15,7 +15,7 @@ export function LeadScoreBreakdown({ leadName = "Acme Corp", score = 85 }) {
     <Card className="glass border-primary/20 overflow-hidden">
       <CardHeader className="pb-3 border-b border-border/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Info className="h-4 w-4 text-primary" />
             Análise de Score: {leadName}
           </CardTitle>

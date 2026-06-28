@@ -236,7 +236,7 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
       <Dialog open={shortcutsDialogOpen} onOpenChange={setShortcutsDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <Keyboard className="h-5 w-5" />
               Atalhos de Teclado
             </DialogTitle>

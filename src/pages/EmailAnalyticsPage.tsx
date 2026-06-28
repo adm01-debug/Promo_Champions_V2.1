@@ -45,7 +45,7 @@ export default function EmailAnalyticsPage() {
             <div className="space-y-6">
               <Card className="glass border-border/40">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <BarChart3 className="h-4 w-4 text-primary" />
                     Funnel de Engajamento
                   </CardTitle>
@@ -92,7 +92,7 @@ export default function EmailAnalyticsPage() {
 
               <Card className="glass border-primary/20 bg-primary/5">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2 text-primary">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2 text-primary">
                     <Zap className="h-4 w-4" />
                     Insight de Otimização
                   </CardTitle>

@@ -22,7 +22,7 @@ export const ConfidenceScoresTable: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Confiabilidade por Origem</CardTitle>
+        <CardTitle className="text-section-title">Confiabilidade por Origem</CardTitle>
       </CardHeader>
       <CardContent>
         {!data || data.length === 0 ? (

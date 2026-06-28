@@ -39,7 +39,7 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
                 }`}>
                   <Brain className="h-4 w-4" />
                 </div>
-                <CardTitle className="text-sm font-display font-semibold uppercase tracking-wider">
+                <CardTitle className="text-section-title text-sm uppercase tracking-wider">
                   {insight.title}
                 </CardTitle>
               </div>

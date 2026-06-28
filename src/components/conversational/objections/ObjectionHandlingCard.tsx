@@ -28,7 +28,7 @@ export function ObjectionHandlingCard({ recordingId }: Props) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            <CardTitle className="text-base">Tratamento de objeções</CardTitle>
+            <CardTitle className="text-section-title">Tratamento de objeções</CardTitle>
           </div>
           <Button
             size="sm"

@@ -35,7 +35,7 @@ export function AchievementTrendChart() {
     return (
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             Evolução de Conquistas
           </CardTitle>
@@ -51,7 +51,7 @@ export function AchievementTrendChart() {
     return (
       <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             Evolução de Conquistas
           </CardTitle>
@@ -88,7 +88,7 @@ export function AchievementTrendChart() {
       <CardHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+            <CardTitle className="text-section-title flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
               <TrendingUp className="h-4 w-4 animate-pulse" />
               Evolução de Conquistas
             </CardTitle>

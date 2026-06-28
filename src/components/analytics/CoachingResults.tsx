@@ -87,7 +87,7 @@ export const CoachingResults = React.memo(function CoachingResults({ coaching }:
       {coaching.coaching.strengths.length > 0 && (
         <Card className="glass border-status-success/30 bg-gradient-to-br from-status-success/10 to-transparent animate-fade-in" style={{ animationDelay: '100ms' }}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2 text-status-success font-display">
+            <CardTitle className="text-section-title flex items-center gap-2 text-status-success">
               <div className="p-1.5 rounded-lg bg-status-success/20"><CheckCircle2 className="h-5 w-5" /></div>
               Pontos Fortes
               <Badge variant="secondary" className="bg-status-success/20 text-status-success ml-auto">{coaching.coaching.strengths.length}</Badge>
@@ -112,7 +112,7 @@ export const CoachingResults = React.memo(function CoachingResults({ coaching }:
       {coaching.coaching.improvements.length > 0 && (
         <Card className="glass border-status-warning/30 bg-gradient-to-br from-status-warning/10 to-transparent animate-fade-in" style={{ animationDelay: '150ms' }}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2 text-status-warning font-display">
+            <CardTitle className="text-section-title flex items-center gap-2 text-status-warning">
               <div className="p-1.5 rounded-lg bg-status-warning/20"><Target className="h-5 w-5" /></div>
               Áreas de Melhoria
               <Badge variant="secondary" className="bg-status-warning/20 text-status-warning ml-auto">{coaching.coaching.improvements.length}</Badge>
@@ -140,7 +140,7 @@ export const CoachingResults = React.memo(function CoachingResults({ coaching }:
       {coaching.coaching.actions.length > 0 && (
         <Card className="glass border-status-purple/30 bg-gradient-to-br from-status-purple/10 to-transparent animate-fade-in" style={{ animationDelay: '200ms' }}>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2 text-status-purple font-display">
+            <CardTitle className="text-section-title flex items-center gap-2 text-status-purple">
               <div className="p-1.5 rounded-lg bg-status-purple/20"><Lightbulb className="h-5 w-5" /></div>
               Ações Recomendadas
               <Badge variant="secondary" className="bg-status-purple/20 text-status-purple ml-auto">{coaching.coaching.actions.length}</Badge>

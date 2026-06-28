@@ -193,7 +193,7 @@ function TournamentBracketsComponent() {
                           <Trophy className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
                         </div>
                         <div>
-                          <CardTitle className="text-xl font-display font-black tracking-tighter italic gradient-text uppercase">{t.name}</CardTitle>
+                          <CardTitle className="text-section-title font-black tracking-tighter italic gradient-text uppercase">{t.name}</CardTitle>
                           <div className="flex flex-wrap items-center gap-2.5 mt-1.5">
                             <Badge className={cn("text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 border-none shadow-sm", status.color)}>
                               {status.label}

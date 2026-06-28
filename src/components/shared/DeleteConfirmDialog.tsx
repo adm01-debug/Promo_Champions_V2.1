@@ -31,7 +31,7 @@ export const DeleteConfirmDialog = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="glass border-border/50">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-destructive">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="text-section-title text-destructive">{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

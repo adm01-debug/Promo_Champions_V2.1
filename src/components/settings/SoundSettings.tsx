@@ -50,7 +50,7 @@ export function SoundSettings() {
             <PartyPopper className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="font-display">Som de Celebração</CardTitle>
+            <CardTitle className="text-section-title">Som de Celebração</CardTitle>
             <CardDescription>Escolha o som e volume que toca quando um vendedor atinge 100% da meta</CardDescription>
           </div>
         </div>

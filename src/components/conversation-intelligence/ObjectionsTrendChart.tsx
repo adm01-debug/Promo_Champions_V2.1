@@ -21,7 +21,7 @@ export const ObjectionsTrendChart = ({ data }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Top objeções recorrentes</CardTitle>
+        <CardTitle className="text-section-title">Top objeções recorrentes</CardTitle>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (

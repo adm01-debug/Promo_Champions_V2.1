@@ -31,7 +31,7 @@ export function CapacityDashboard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Gauge className="h-4 w-4 text-primary" />
           Capacidade do Time
         </CardTitle>

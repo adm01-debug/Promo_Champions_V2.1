@@ -91,7 +91,7 @@ const ActivityHeatmapComponent: FC = () => {
   ) => (
     <Card className="border-none shadow-md">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           {emoji} {title}
           <span className="text-xs text-muted-foreground font-normal ml-auto">
             {data?.total || 0} nos últimos 90 dias
@@ -152,7 +152,7 @@ const ActivityHeatmapComponent: FC = () => {
       <Card className="border-none shadow-lg overflow-hidden">
         <div className="bg-gradient-to-r from-success/10 to-secondary/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-secondary flex items-center justify-center">
                 <Clock className="h-4 w-4 text-primary-foreground" />
               </div>

@@ -82,7 +82,7 @@ export const CreateClientDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Novo Cliente</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Novo Cliente</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

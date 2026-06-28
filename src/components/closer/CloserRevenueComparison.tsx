@@ -140,7 +140,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
       <CardHeader className="pb-6 border-b border-white/5 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+            <CardTitle className="text-section-title text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
               <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
                 <Swords className="h-3.5 w-3.5" />
               </div>

@@ -34,7 +34,7 @@ export function RoutingPerformanceCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base font-display">Performance de Roteamento</CardTitle>
+        <CardTitle className="text-section-title">Performance de Roteamento</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

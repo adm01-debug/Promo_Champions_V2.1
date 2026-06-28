@@ -133,7 +133,7 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
       <CardHeader className="pb-4 border-b border-border/10">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-display font-black uppercase tracking-widest flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
                 <Trophy className="h-4 w-4 text-primary-foreground" />
               </div>

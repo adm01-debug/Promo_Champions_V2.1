@@ -240,7 +240,7 @@ export const FeatureComparison = () => {
         <Card className="glass border-emerald-500/20 bg-emerald-500/5 overflow-hidden group/strength relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover/strength:scale-150 transition-transform duration-700" />
           <CardHeader className="pb-3 relative z-10">
-            <CardTitle className="text-lg flex items-center gap-3 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-3 italic uppercase font-black tracking-tighter">
               <Shield className="h-5 w-5 text-emerald-400" /> Our{' '}
               <span className="text-emerald-400">Strengths</span>
             </CardTitle>
@@ -268,7 +268,7 @@ export const FeatureComparison = () => {
         <Card className="glass border-rose-500/20 bg-rose-500/5 overflow-hidden group/gap relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover/gap:scale-150 transition-transform duration-700" />
           <CardHeader className="pb-3 relative z-10">
-            <CardTitle className="text-lg flex items-center gap-3 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-3 italic uppercase font-black tracking-tighter">
               <Search className="h-5 w-5 text-rose-400" /> Critical{' '}
               <span className="text-rose-400">Gaps</span>
             </CardTitle>
@@ -296,7 +296,7 @@ export const FeatureComparison = () => {
         <Card className="glass border-primary/20 bg-primary/5 overflow-hidden group/opp relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover/opp:scale-150 transition-transform duration-700" />
           <CardHeader className="pb-3 relative z-10">
-            <CardTitle className="text-lg flex items-center gap-3 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-3 italic uppercase font-black tracking-tighter">
               <Sparkles className="h-5 w-5 text-primary" /> Opp{' '}
               <span className="text-primary">Roadmap</span>
             </CardTitle>
@@ -325,7 +325,7 @@ export const FeatureComparison = () => {
           <CardHeader className="border-b border-white/5 bg-white/5">
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle className="flex items-center gap-2 italic uppercase font-black tracking-tighter">
+                <CardTitle className="text-section-title flex items-center gap-2 italic uppercase font-black tracking-tighter">
                   <FileText className="h-5 w-5 text-primary" /> Feature Matrix
                 </CardTitle>
                 <CardDescription className="text-xs font-medium">
@@ -399,7 +399,7 @@ export const FeatureComparison = () => {
                           </DialogTrigger>
                           <DialogContent className="max-w-4xl glass border-white/10 p-0 overflow-hidden">
                             <DialogHeader className="p-6 border-b border-white/10 bg-white/5">
-                              <DialogTitle className="flex items-center gap-2 italic uppercase font-black tracking-tighter">
+                              <DialogTitle className="text-section-title flex items-center gap-2 italic uppercase font-black tracking-tighter">
                                 <Search className="size-5 text-primary" /> Evidência:{' '}
                                 <span className="text-primary">{item.feature}</span>
                               </DialogTitle>
@@ -438,7 +438,7 @@ export const FeatureComparison = () => {
 
         <Card className="glass border-white/5 overflow-hidden flex flex-col">
           <CardHeader className="border-b border-white/5 bg-white/5">
-            <CardTitle className="flex items-center gap-2 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-2 italic uppercase font-black tracking-tighter">
               <Target className="h-5 w-5 text-primary" /> Prioritized Roadmap
             </CardTitle>
             <CardDescription className="text-xs font-medium">

@@ -78,7 +78,7 @@ export function CloserHandoffs() {
     <Card className="glass border-primary/20 overflow-hidden">
       <CardHeader className="pb-3 bg-primary/5 border-b border-white/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary animate-pulse" />
             Novos Handoffs (SDR)
           </CardTitle>

@@ -22,7 +22,7 @@ export function TrackTimeline({ title, stages, progress, accent = "primary" }: P
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display text-base font-semibold text-foreground">{title}</h3>
+      <h3 className="text-section-title text-foreground">{title}</h3>
       <ol className="relative space-y-5 pl-1">
         {stages.map((step, idx) => {
           const Icon = step.icon;

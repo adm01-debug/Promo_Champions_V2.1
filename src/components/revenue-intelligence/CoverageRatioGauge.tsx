@@ -29,7 +29,7 @@ export const CoverageRatioGauge: FC<Props> = ({ ratio, target, weightedPipeline,
     <Card className={`glass border ${cfg.border}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-display text-base">Pipeline Coverage Ratio</CardTitle>
+          <CardTitle className="text-section-title">Pipeline Coverage Ratio</CardTitle>
           <Badge className={`${cfg.bg} ${cfg.color} border-0`}>
             <Icon className="h-3 w-3 mr-1" />{cfg.label}
           </Badge>

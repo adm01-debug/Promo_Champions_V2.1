@@ -85,7 +85,7 @@ export default function SmartSearch() {
         <TabsContent value="semantic" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Busca por descrição</CardTitle>
+              <CardTitle className="text-section-title">Busca por descrição</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="flex gap-2">
@@ -153,7 +153,7 @@ export default function SmartSearch() {
         <TabsContent value="visual" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Busca por imagem</CardTitle>
+              <CardTitle className="text-section-title">Busca por imagem</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
@@ -168,7 +168,7 @@ export default function SmartSearch() {
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Análise da imagem</CardTitle>
+                  <CardTitle className="text-section-title">Análise da imagem</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   {visual.analysis.product_name && (

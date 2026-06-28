@@ -147,7 +147,7 @@ export function DealTimeline({ deal }: DealTimelineProps) {
       </DialogTrigger>
       <DialogContent className="max-w-lg glass border-border/50 dark:border-glow" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10"><History className="h-4 w-4 gradient-primary" /></div>
             Timeline: <span className="gradient-text">{deal.client_name}</span>
           </DialogTitle>

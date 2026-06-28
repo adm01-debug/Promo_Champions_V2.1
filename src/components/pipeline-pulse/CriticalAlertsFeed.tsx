@@ -27,7 +27,7 @@ export const CriticalAlertsFeed: FC<Props> = ({ alerts }) => {
   return (
     <Card variant="elevated" className="h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-status-warning" />
           Alertas Críticos
         </CardTitle>

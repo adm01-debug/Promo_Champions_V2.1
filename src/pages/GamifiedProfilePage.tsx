@@ -50,7 +50,7 @@ export default function GamifiedProfilePage() {
 
               <div className="flex-1 text-center md:text-left space-y-2">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                  <h1 className="text-4xl font-display font-bold gradient-text">
+                  <h1 className="text-page-title gradient-text">
                     {profile?.name}
                   </h1>
                   <Badge
@@ -106,7 +106,7 @@ export default function GamifiedProfilePage() {
             <div className="space-y-6">
               <Card className="glass border-border/40 overflow-hidden group">
                 <CardHeader className="pb-2 border-b border-border/30 bg-muted/20">
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <Target className="h-4 w-4 text-primary" />
                     Atributos de Combate
                   </CardTitle>
@@ -158,7 +158,7 @@ export default function GamifiedProfilePage() {
 
               <Card className="glass border-border/40 bg-gradient-to-br from-coins/10 to-transparent">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <Award className="h-4 w-4 text-coins" />
                     Elite Showcase
                   </CardTitle>
@@ -181,7 +181,7 @@ export default function GamifiedProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Award className="h-6 w-6 text-primary" />
-                  <h2 className="text-2xl font-display font-bold gradient-text">
+                  <h2 className="text-section-title gradient-text">
                     Galeria de Conquistas
                   </h2>
                 </div>

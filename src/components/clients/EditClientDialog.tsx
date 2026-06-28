@@ -109,7 +109,7 @@ export const EditClientDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Editar Cliente</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Editar Cliente</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

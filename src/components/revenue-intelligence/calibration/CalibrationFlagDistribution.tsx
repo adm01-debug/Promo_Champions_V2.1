@@ -18,7 +18,7 @@ export const CalibrationFlagDistribution: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Distribuição de Calibração</CardTitle>
+        <CardTitle className="text-section-title">Distribuição de Calibração</CardTitle>
       </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (

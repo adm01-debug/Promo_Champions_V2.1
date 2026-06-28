@@ -27,7 +27,7 @@ export function N8nTab() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="font-display text-lg">n8n</CardTitle>
+        <CardTitle className="text-section-title">n8n</CardTitle>
         <CardDescription>
           Conecte instâncias n8n para validar healthcheck e disparar workflows via Webhook.
         </CardDescription>

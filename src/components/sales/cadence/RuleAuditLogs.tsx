@@ -60,7 +60,7 @@ export function RuleAuditLogs() {
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <Zap className="h-4 w-4 text-status-warning" />
               Auditoria de Transições e Regras
             </CardTitle>

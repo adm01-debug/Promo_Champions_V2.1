@@ -91,7 +91,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="mx-auto p-3 rounded-full bg-destructive/20 w-fit mb-3">
                 <AlertTriangle className="h-8 w-8 text-destructive" />
               </div>
-              <CardTitle className="text-xl">Algo deu errado</CardTitle>
+              <CardTitle className="text-section-title">Algo deu errado</CardTitle>
               <CardDescription>
                 Ocorreu um erro inesperado nesta seção da aplicação
               </CardDescription>

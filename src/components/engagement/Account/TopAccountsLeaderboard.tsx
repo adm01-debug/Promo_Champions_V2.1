@@ -17,7 +17,7 @@ export function TopAccountsLeaderboard({ limit = 20 }: Props) {
   return (
     <Card variant="modern">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Trophy className="h-4 w-4 text-primary" />
           Top Contas por Engajamento
         </CardTitle>

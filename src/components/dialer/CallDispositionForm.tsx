@@ -39,7 +39,7 @@ export const CallDispositionForm = ({ saleId, queueItemId, onComplete }: Props) 
 
   return (
     <Card>
-      <CardHeader><CardTitle className="text-base">Registrar resultado</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-section-title">Registrar resultado</CardTitle></CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>

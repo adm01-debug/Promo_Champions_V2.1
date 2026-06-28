@@ -141,7 +141,7 @@ export default function Comissoes() {
       <main className="container max-w-7xl py-6 space-y-8 animate-in fade-in duration-500">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-display font-black italic uppercase tracking-tighter gradient-text">
+            <h1 className="text-page-title italic uppercase gradient-text">
               Minhas Comissões
             </h1>
             <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">
@@ -202,7 +202,7 @@ export default function Comissoes() {
                 )}
               />
               <CardHeader className="pb-1 px-4 pt-4 flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <CardTitle className="text-section-title text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   {item.label}
                 </CardTitle>
                 <item.icon className={cn('h-4 w-4', item.color)} />

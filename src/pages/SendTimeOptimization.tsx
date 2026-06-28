@@ -51,7 +51,7 @@ export default function SendTimeOptimizationPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2 text-muted-foreground">
                 <TrendingUp className="h-4 w-4" /> Melhor janela global
               </CardTitle>
             </CardHeader>
@@ -66,7 +66,7 @@ export default function SendTimeOptimizationPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2 text-muted-foreground">
                 <Sparkles className="h-4 w-4" /> Perfis de alta confiança
               </CardTitle>
             </CardHeader>
@@ -79,7 +79,7 @@ export default function SendTimeOptimizationPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2 text-muted-foreground">
                 <Clock className="h-4 w-4" /> Perfis calculados
               </CardTitle>
             </CardHeader>

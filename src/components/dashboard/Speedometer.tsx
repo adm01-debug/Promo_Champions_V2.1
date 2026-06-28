@@ -579,7 +579,7 @@ export const Speedometer = memo(
             <DialogHeader className="p-6 pb-2">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <DialogTitle className="text-xl font-black font-mono uppercase tracking-tighter flex items-center gap-3">
+                  <DialogTitle className="text-section-title font-black font-mono uppercase tracking-tighter flex items-center gap-3">
                     <div
                       className={cn(
                         'p-2 rounded-xl bg-background border border-border/40',

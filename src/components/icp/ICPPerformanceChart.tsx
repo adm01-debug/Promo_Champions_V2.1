@@ -89,7 +89,7 @@ export function ICPPerformanceChart() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card className="glass border-border/40 overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Percent className="h-4 w-4 text-primary" />
             Taxa de Conversão: ICP vs Non-ICP
           </CardTitle>
@@ -124,7 +124,7 @@ export function ICPPerformanceChart() {
 
       <Card className="glass border-border/40 overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <DollarSign className="h-4 w-4 text-emerald-500" />
             Ticket Médio por Perfil
           </CardTitle>

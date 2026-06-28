@@ -24,7 +24,7 @@ export function BriefingActionsList({ actions }: Props) {
     <Card className="p-6">
       <div className="flex items-center gap-2 mb-4">
         <Target className="h-4 w-4 text-primary" />
-        <h3 className="text-base font-semibold text-foreground font-sora">Ações para Hoje</h3>
+        <h3 className="text-section-title text-foreground font-sora">Ações para Hoje</h3>
       </div>
       {actions.length === 0 && (
         <p className="text-sm text-muted-foreground">Nenhuma ação recomendada.</p>

@@ -361,7 +361,7 @@ export default function AdminComercial() {
           <TabsContent value="metas" className="space-y-4">
             <Card className="glass border-border/40">
               <CardHeader>
-                <CardTitle className="text-lg font-display uppercase tracking-tight">
+                <CardTitle className="text-section-title uppercase">
                   Metas por Vendedor
                 </CardTitle>
               </CardHeader>
@@ -414,7 +414,7 @@ export default function AdminComercial() {
                   className="bg-muted/20 border-border/20 group hover:border-primary/40 transition-all"
                 >
                   <CardHeader>
-                    <CardTitle className="text-sm font-display">{rule.label}</CardTitle>
+                    <CardTitle className="text-section-title text-sm">{rule.label}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -520,7 +520,7 @@ export default function AdminComercial() {
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <Check className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-lg font-display uppercase italic">
+                    <CardTitle className="text-section-title uppercase italic">
                       Tudo em dia!
                     </CardTitle>
                     <CardDescription>
@@ -713,7 +713,7 @@ export default function AdminComercial() {
             <Card className="glass border-border/40 overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between border-b border-border/10">
                 <div>
-                  <CardTitle className="text-lg font-display uppercase italic">
+                  <CardTitle className="text-section-title uppercase italic">
                     Histórico de Auditoria
                   </CardTitle>
                   <CardDescription className="text-[10px] uppercase">

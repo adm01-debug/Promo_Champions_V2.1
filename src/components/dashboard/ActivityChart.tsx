@@ -91,7 +91,7 @@ export const ActivityChart: FC<ActivityChartProps> = React.memo(({
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
           Atividades por Tipo
         </CardTitle>

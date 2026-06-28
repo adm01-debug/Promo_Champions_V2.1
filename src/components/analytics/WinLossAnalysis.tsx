@@ -122,7 +122,7 @@ export const WinLossAnalysis: FC = () => {
         {/* Monthly Trend */}
         <Card className="glass border-border/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
               Histórico de Conversão
             </CardTitle>
@@ -180,7 +180,7 @@ export const WinLossAnalysis: FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="glass border-border/40">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-display text-success flex items-center gap-2 uppercase tracking-widest">
+              <CardTitle className="text-section-title text-xs text-success flex items-center gap-2 uppercase tracking-widest">
                 <Trophy className="h-3.5 w-3.5" />
                 Por que Ganhamos
               </CardTitle>
@@ -205,7 +205,7 @@ export const WinLossAnalysis: FC = () => {
 
           <Card className="glass border-border/40">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-display text-destructive flex items-center gap-2 uppercase tracking-widest">
+              <CardTitle className="text-section-title text-xs text-destructive flex items-center gap-2 uppercase tracking-widest">
                 <XCircle className="h-3.5 w-3.5" />
                 Por que Perdemos
               </CardTitle>
@@ -235,7 +235,7 @@ export const WinLossAnalysis: FC = () => {
           {/* Salesperson Drill-down */}
           <Card className="glass border-border/40 lg:col-span-1">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" />
                 Ranking por Vendedor
               </CardTitle>
@@ -277,7 +277,7 @@ export const WinLossAnalysis: FC = () => {
           {/* Product Drill-down */}
           <Card className="glass border-border/40 lg:col-span-1">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2">
                 <Package className="h-4 w-4 text-primary" />
                 Performance por Produto
               </CardTitle>
@@ -312,7 +312,7 @@ export const WinLossAnalysis: FC = () => {
           {/* Timeline of Outcomes */}
           <Card className="glass border-border/40 lg:col-span-1">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
                 Histórico Recente
               </CardTitle>

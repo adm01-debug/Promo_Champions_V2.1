@@ -70,7 +70,7 @@ export const SDRSequenceOrchestrator = () => {
           </Badge>
         </div>
         <CardHeader>
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <ArrowRight className="h-5 w-5 text-primary" />
             Sequências Ativas
           </CardTitle>
@@ -133,7 +133,7 @@ export const SDRSequenceOrchestrator = () => {
 
       <Card className="glass border-primary/10 bg-gradient-to-br from-primary/5 to-transparent">
         <CardHeader>
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             Melhores Próximas Ações
           </CardTitle>

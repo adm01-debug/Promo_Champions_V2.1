@@ -52,7 +52,7 @@ export function IPWhitelistPanel() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-success" />
               Whitelist de IPs
             </CardTitle>

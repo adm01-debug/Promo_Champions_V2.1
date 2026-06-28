@@ -54,7 +54,7 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             🏎️ Personalize seu Carro
             <span className="text-xs font-normal text-muted-foreground">
               · {RACE_CAR_PRESETS.length} modelos

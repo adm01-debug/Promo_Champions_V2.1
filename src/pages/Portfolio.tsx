@@ -118,7 +118,7 @@ export default function Portfolio() {
         </div>
 
         <Card className="glass">
-          <CardHeader className="pb-3"><CardTitle className="text-lg flex items-center gap-2"><Filter className="h-4 w-4" />Filtros</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-section-title flex items-center gap-2"><Filter className="h-4 w-4" />Filtros</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col gap-4 md:flex-row">
               <div className="flex-1">
@@ -170,7 +170,7 @@ export default function Portfolio() {
           </TabsContent>
           <TabsContent value="routing">
             <Card className="glass">
-              <CardHeader className="pb-3"><CardTitle className="text-lg flex items-center gap-2"><History className="h-5 w-5 text-primary" />Histórico de Roteamentos</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-section-title flex items-center gap-2"><History className="h-5 w-5 text-primary" />Histórico de Roteamentos</CardTitle></CardHeader>
               <CardContent><RoutingHistoryTable data={routingHistory} isLoading={loadingHistory} /></CardContent>
             </Card>
           </TabsContent>

@@ -32,7 +32,7 @@ export function SalespersonCoaching() {
                 <Brain className="h-6 w-6 text-status-purple" />
               </div>
               <div>
-                <CardTitle className="text-xl font-display gradient-text flex items-center gap-2">
+                <CardTitle className="text-section-title gradient-text flex items-center gap-2">
                   Coaching IA Personalizado
                   <Sparkles className="h-4 w-4 text-status-warning animate-pulse" />
                 </CardTitle>

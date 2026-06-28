@@ -323,7 +323,7 @@ export default function AdminComissoes() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="glass border-white/10 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="font-display italic uppercase tracking-tighter">
+            <DialogTitle className="text-section-title italic uppercase tracking-tighter">
               {selectedCommission?.targetStatus
                 ? `Atualizar para ${statusBadge[selectedCommission.targetStatus as CommissionStatus].label}`
                 : 'Detalhes da Comissão'}

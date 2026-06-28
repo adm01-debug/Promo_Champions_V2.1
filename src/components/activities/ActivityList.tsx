@@ -90,7 +90,7 @@ const ActivityListComponent = ({ limit = 100, showHeader = true, showPagination 
       <Card className="glass border-border/40 dark:border-glow card-elevated">
         {showHeader && (
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
               <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10"><ClipboardList className="h-4 w-4 gradient-primary" /></div>
               Log de Atividades
             </CardTitle>
@@ -107,7 +107,7 @@ const ActivityListComponent = ({ limit = 100, showHeader = true, showPagination 
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                 <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10"><ClipboardList className="h-4 w-4 gradient-primary" /></div>
                 Log de Atividades
               </CardTitle>

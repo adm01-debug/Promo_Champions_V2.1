@@ -137,7 +137,7 @@ export default function WebhookAlertHistoryPage() {
         {/* Filters */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Filter className="h-4 w-4 text-primary" />
               Filtros
             </CardTitle>
@@ -242,7 +242,7 @@ export default function WebhookAlertHistoryPage() {
         {/* List */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Linha do tempo</CardTitle>
+            <CardTitle className="text-section-title">Linha do tempo</CardTitle>
             <CardDescription>
               Mais recentes primeiro. Clique em "Timeline" para correlacionar com as entregas.
             </CardDescription>

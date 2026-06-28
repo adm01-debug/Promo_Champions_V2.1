@@ -65,7 +65,7 @@ export default function EvolutionCurvesPage() {
               <div className="space-y-6">
                 <Card className="glass border-border/40">
                   <CardHeader>
-                    <CardTitle className="text-sm font-display flex items-center gap-2">
+                    <CardTitle className="text-section-title text-sm flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
                       Líderes de Crescimento
                     </CardTitle>
@@ -90,7 +90,7 @@ export default function EvolutionCurvesPage() {
 
                 <Card className="glass border-primary/20 bg-primary/5">
                   <CardHeader>
-                    <CardTitle className="text-sm font-display flex items-center gap-2 text-primary">
+                    <CardTitle className="text-section-title text-sm flex items-center gap-2 text-primary">
                       <TrendingUp className="h-4 w-4" />
                       Projeção de Fechamento
                     </CardTitle>

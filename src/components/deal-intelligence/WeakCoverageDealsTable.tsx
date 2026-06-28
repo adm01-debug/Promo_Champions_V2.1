@@ -12,7 +12,7 @@ export function WeakCoverageDealsTable({ onSelectDeal }: { onSelectDeal?: (saleI
   return (
     <Card variant="elevated" className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" />
           <span className="gradient-text">Deals com cobertura fraca de comitê</span>
         </CardTitle>

@@ -56,7 +56,7 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Rewind className="w-5 h-5 text-primary" /> Replay da Temporada
           </DialogTitle>
         </DialogHeader>

@@ -219,7 +219,7 @@ export default function WorkflowsPage() {
               <Card key={wf.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => openExisting(wf)}>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base">{wf.name}</CardTitle>
+                    <CardTitle className="text-section-title">{wf.name}</CardTitle>
                     <Badge variant={wf.is_active ? "default" : "secondary"} className="shrink-0">
                       {wf.is_active ? "Ativo" : "Inativo"}
                     </Badge>

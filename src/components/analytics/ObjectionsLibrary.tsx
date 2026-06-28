@@ -203,7 +203,7 @@ export function ObjectionsLibrary() {
     <Card className="glass dark:border-glow card-elevated hover-lift animate-fade-in h-full">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
@@ -249,7 +249,7 @@ export function ObjectionsLibrary() {
               </DialogTrigger>
               <DialogContent className="glass border-border/50 max-w-lg">
                 <DialogHeader>
-                  <DialogTitle className="font-display flex items-center gap-2">
+                  <DialogTitle className="text-section-title flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-primary" />
                     {editingObjection ? 'Editar Objeção' : 'Nova Objeção'}
                   </DialogTitle>

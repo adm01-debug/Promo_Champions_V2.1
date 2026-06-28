@@ -86,7 +86,7 @@ export default function ConversationalIntelligence() {
 
             <Card className="glass border-border/40 h-fit">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                 <Mic className="h-4 w-4 text-primary" /> Análise por transcrição
               </CardTitle>
             </CardHeader>
@@ -121,7 +121,7 @@ export default function ConversationalIntelligence() {
           {/* Coluna 2: Lista */}
           <Card className="glass border-border/40 lg:col-span-1 h-fit">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                 <FileText className="h-4 w-4 text-primary" /> Histórico ({recordings?.length ?? 0})
               </CardTitle>
             </CardHeader>
@@ -161,7 +161,7 @@ export default function ConversationalIntelligence() {
           {/* Coluna 3: Insights */}
           <Card className="glass border-border/40 lg:col-span-1">
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-primary" /> Insights
               </CardTitle>
               {selected && (

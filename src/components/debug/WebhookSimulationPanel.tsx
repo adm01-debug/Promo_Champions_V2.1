@@ -46,7 +46,7 @@ export const WebhookSimulationPanel = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-accent" />
-            <CardTitle className="text-lg">Modo de Simulação 10/10</CardTitle>
+            <CardTitle className="text-section-title">Modo de Simulação 10/10</CardTitle>
           </div>
           <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">
             QA Rigoroso

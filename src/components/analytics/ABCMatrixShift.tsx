@@ -25,7 +25,7 @@ export function ABCMatrixShift({ shifts }: ABCMatrixShiftProps) {
   return (
     <Card className="glass border-border/40 overflow-hidden">
       <CardHeader className="border-b border-border/10 bg-muted/5">
-        <CardTitle className="text-base font-display flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <MoveRight className="h-4 w-4 text-primary" />
           Matrix Shift Analytics
           <Badge variant="outline" className="ml-auto text-[10px] border-primary/30 text-primary">

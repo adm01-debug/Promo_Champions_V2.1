@@ -66,7 +66,7 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
     return (
       <Card className="glass border border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2 border-b border-border/30">
-          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md">
               <Trophy className="h-4 w-4 text-primary" />
             </div>
@@ -96,7 +96,7 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
       <CardHeader className="pb-4 border-b border-border/30 relative z-10">
         <div className="space-y-5">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-display font-black flex items-center gap-3 uppercase italic tracking-tight">
+            <CardTitle className="text-section-title text-sm font-black flex items-center gap-3 uppercase italic">
               <div className="p-2.5 rounded-2xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/5 shadow-lg shadow-rank-gold/10 group-hover:rotate-12 transition-transform duration-500">
                 <Trophy className="h-5 w-5 text-rank-gold" />
               </div>

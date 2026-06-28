@@ -175,7 +175,7 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
 
       <CardHeader className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-white/5 relative z-10">
         <div className="flex items-center gap-4">
-          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+          <CardTitle className="text-section-title text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
             <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
               <TrendingUp className="h-3.5 w-3.5" />
             </div>

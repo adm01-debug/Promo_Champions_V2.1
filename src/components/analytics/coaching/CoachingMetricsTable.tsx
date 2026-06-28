@@ -36,7 +36,7 @@ export const CoachingMetricsTable = React.memo(function CoachingMetricsTable({ r
   return (
     <Card className="glass dark:border-glow card-elevated animate-fade-in">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2 font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-gradient-to-br from-secondary/30 to-secondary/10">
             <BarChart3 className="h-5 w-5 text-secondary" />
           </div>

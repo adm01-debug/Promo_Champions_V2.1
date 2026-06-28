@@ -44,7 +44,7 @@ export const DiscountOptimizer = () => {
               <Calculator className="size-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-black font-sora tracking-tighter">
+              <CardTitle className="text-section-title font-black font-sora tracking-tighter">
                 Price Elasticity Simulator
               </CardTitle>
               <CardDescription className="text-xs font-medium uppercase tracking-widest text-primary/70">

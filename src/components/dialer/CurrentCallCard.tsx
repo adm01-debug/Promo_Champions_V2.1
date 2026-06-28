@@ -63,7 +63,7 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Phone className="h-5 w-5 text-primary animate-pulse" />
-            <CardTitle className="text-lg">Em ligação</CardTitle>
+            <CardTitle className="text-section-title">Em ligação</CardTitle>
           </div>
           <Badge variant="outline" className="font-mono">{mm}:{ss}</Badge>
         </div>
@@ -72,7 +72,7 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Building2 className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold">{sale?.client_name ?? '—'}</h2>
+            <h2 className="text-section-title">{sale?.client_name ?? '—'}</h2>
           </div>
           <div className="flex gap-2 mt-2">
             <Badge variant="secondary">Score: {score.toFixed(0)}</Badge>

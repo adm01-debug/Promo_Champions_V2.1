@@ -39,7 +39,7 @@ const BAR_COLORS = [
 const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ clients, maxValue }) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
-      <CardTitle className="text-lg font-display flex items-center gap-2">
+      <CardTitle className="text-section-title flex items-center gap-2">
         <div className="p-2 rounded-lg bg-primary/10">
           <Trophy className="h-4 w-4 text-primary" />
         </div>
@@ -93,7 +93,7 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ cl
 const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }> = ({ suppliers, maxValue }) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
-      <CardTitle className="text-lg font-display flex items-center gap-2">
+      <CardTitle className="text-section-title flex items-center gap-2">
         <div className="p-2 rounded-lg bg-warning/10">
           <Package className="h-4 w-4 text-warning" />
         </div>
@@ -144,7 +144,7 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
 const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = ({ companies, maxValue }) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
-      <CardTitle className="text-lg font-display flex items-center gap-2">
+      <CardTitle className="text-section-title flex items-center gap-2">
         <div className="p-2 rounded-lg bg-success/10">
           <Building className="h-4 w-4 text-success" />
         </div>

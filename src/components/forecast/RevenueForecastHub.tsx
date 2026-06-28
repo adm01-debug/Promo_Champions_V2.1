@@ -116,7 +116,7 @@ export const RevenueForecastHub: FC = () => {
               <Sparkles className="h-3 w-3" /> Neural Forecast Hub
             </Badge>
           </div>
-          <h1 className="font-display text-4xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">
+          <h1 className="text-page-title bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">
             Revenue Intelligence 10/10
           </h1>
           <p className="text-muted-foreground max-w-lg leading-relaxed font-medium">

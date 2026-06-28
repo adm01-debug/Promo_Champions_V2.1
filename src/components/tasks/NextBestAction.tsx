@@ -115,7 +115,7 @@ export function NextBestAction() {
   return (
     <Card className="glass dark:border-glow card-elevated">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           IA: Próxima Melhor Ação
         </CardTitle>

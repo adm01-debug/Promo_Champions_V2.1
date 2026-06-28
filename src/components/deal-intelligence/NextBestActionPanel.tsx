@@ -29,7 +29,7 @@ export function NextBestActionPanel({ saleId }: Props) {
     return (
       <Card className="glass border-border/40">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold">
+          <CardTitle className="text-section-title text-sm">
             Carregando Recomendações...
           </CardTitle>
         </CardHeader>
@@ -51,7 +51,7 @@ export function NextBestActionPanel({ saleId }: Props) {
     <Card className="glass border-border/40 overflow-hidden card-elevated">
       <CardHeader className="pb-2 bg-primary/5 border-b border-border/20">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary fill-primary" />
             Next Best Action (NBA)
           </CardTitle>

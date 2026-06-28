@@ -28,7 +28,7 @@ export function TranscriptViewer({ transcript, language, transcribedAt }: Props)
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" /> Transcrição
           <Badge variant="secondary" className="ml-1 text-[10px]">
             {wordCount} palavras

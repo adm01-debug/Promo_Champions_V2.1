@@ -68,7 +68,7 @@ export const PitStopPanel: FC<Props> = ({
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
           <div className="flex items-center justify-between gap-3">
-            <SheetTitle className="flex items-center gap-2 font-display">
+            <SheetTitle className="text-section-title flex items-center gap-2">
               <Wrench className="w-5 h-5 text-primary" />
               Pit Stop Estratégico
             </SheetTitle>

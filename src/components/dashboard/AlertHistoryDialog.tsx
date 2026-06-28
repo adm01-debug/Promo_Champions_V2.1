@@ -51,7 +51,7 @@ export const AlertHistoryDialog = ({
               <HistoryIcon className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <DialogTitle className="text-sm font-bold font-mono uppercase tracking-widest text-primary">Histórico de Alertas</DialogTitle>
+              <DialogTitle className="text-section-title text-sm font-mono uppercase tracking-widest text-primary">Histórico de Alertas</DialogTitle>
               <DialogDescription className="text-[10px] font-mono uppercase text-muted-foreground">Logs de Telemetria & Thresholds</DialogDescription>
             </div>
           </div>

@@ -14,7 +14,7 @@ export function EmailScoreCard({ saleId }: Props) {
   if (isLoading) {
     return (
       <Card>
-        <CardHeader><CardTitle className="text-base">Engajamento por e-mail</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Engajamento por e-mail</CardTitle></CardHeader>
         <CardContent><Skeleton className="h-32 w-full" /></CardContent>
       </Card>
     );
@@ -23,7 +23,7 @@ export function EmailScoreCard({ saleId }: Props) {
   if (!score) {
     return (
       <Card>
-        <CardHeader><CardTitle className="text-base">Engajamento por e-mail</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Engajamento por e-mail</CardTitle></CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">Sem histórico de e-mail para este contato.</p>
         </CardContent>
@@ -37,7 +37,7 @@ export function EmailScoreCard({ saleId }: Props) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center justify-between">
+        <CardTitle className="text-section-title flex items-center justify-between">
           <span>Engajamento por e-mail</span>
           <span className={cn("flex items-center gap-1 text-xs", meta.textClass)}>
             <Icon className="h-3.5 w-3.5" /> {meta.label}

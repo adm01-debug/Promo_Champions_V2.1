@@ -39,7 +39,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
   return (
     <Card className="h-full">
       <CardHeader className="pb-1">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <TrendingUp className="h-3.5 w-3.5 text-success" />
           Forecast
         </CardTitle>

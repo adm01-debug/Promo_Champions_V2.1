@@ -72,7 +72,7 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
               <Swords className="h-7 w-7 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
             </div>
             <div>
-              <CardTitle className="text-xl font-black italic uppercase tracking-tighter gradient-text leading-none mb-2">
+              <CardTitle className="text-section-title font-black italic uppercase tracking-tighter gradient-text leading-none mb-2">
                 {battle.title}
               </CardTitle>
               <div className="flex items-center gap-2">

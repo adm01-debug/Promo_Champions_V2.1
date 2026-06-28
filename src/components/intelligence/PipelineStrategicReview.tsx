@@ -20,7 +20,7 @@ export const PipelineStrategicReview = () => {
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <CardTitle className="text-xl font-bold flex items-center gap-2">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <FileText className="size-5 text-primary" />
                 Relatório Estratégico AI
               </CardTitle>
