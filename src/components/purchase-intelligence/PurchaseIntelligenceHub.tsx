@@ -47,7 +47,7 @@ export function PurchaseIntelligenceHub() {
               <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
                 <Brain className="h-8 w-8 text-primary animate-pulse" />
               </div>
-              <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
+              <h1 className="text-page-title bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
                 Inteligência de Compras 360°
               </h1>
             </div>

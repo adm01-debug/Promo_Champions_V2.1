@@ -27,7 +27,7 @@ export function SecurityAlertSoundSettings() {
       <CardContent className="space-y-6">
         {/* Volume Control */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Volume</Label>
+          <Label className="text-label">Volume</Label>
           <div className="flex items-center gap-4">
             <VolumeX className="h-4 w-4 text-muted-foreground" />
             <Slider
@@ -46,7 +46,7 @@ export function SecurityAlertSoundSettings() {
 
         {/* Sound Selection */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Tipo de Som</Label>
+          <Label className="text-label">Tipo de Som</Label>
           <RadioGroup
             value={selectedSound}
             onValueChange={(value) => setSelectedSound(value as SecurityAlertSoundType)}

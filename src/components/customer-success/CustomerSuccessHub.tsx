@@ -253,7 +253,7 @@ export function CustomerSuccessHub() {
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="flex-1 min-w-0 space-y-3">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <h3 className="text-lg font-bold truncate group-hover:text-primary transition-colors">
+                        <h3 className="text-section-title truncate group-hover:text-primary transition-colors">
                           {acc.account_name}
                         </h3>
                         <Badge

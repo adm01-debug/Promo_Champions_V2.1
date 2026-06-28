@@ -45,7 +45,7 @@ const SystemSoundRowInner = function SystemSoundRow({
           <Icon className={`h-4 w-4 ${iconColor}`} />
         </div>
         <div className="space-y-0.5">
-          <Label className="text-sm font-medium">{label}</Label>
+          <Label className="text-label">{label}</Label>
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>

@@ -44,7 +44,7 @@ function _LeagueCard() {
             <Shield className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Sistema de Ligas</h2>
+            <h2 className="text-section-title">Sistema de Ligas</h2>
             <p className="text-xs text-muted-foreground">
               Suba de liga para ganhar bônus de XP! 🏆
             </p>

@@ -170,7 +170,7 @@ export const FuturisticRanking = () => {
             </div>
           </div>
           <div>
-            <h2 className="font-display text-lg font-bold tracking-tight">Leaderboard HUD</h2>
+            <h2 className="text-section-title">Leaderboard HUD</h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider">
               Ranking · Faturamento do mês · vs mês anterior
             </p>

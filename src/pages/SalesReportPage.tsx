@@ -76,7 +76,7 @@ export default function SalesReportPage() {
         ) : data.isEmpty ? (
           <Card className="p-10 text-center">
             <Inbox className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-            <h2 className="text-lg font-semibold mb-1">Sem vendas no período</h2>
+            <h2 className="text-section-title mb-1">Sem vendas no período</h2>
             <p className="text-sm text-muted-foreground mb-4">
               Não encontramos vendas em {periodLabel.toLowerCase()}.
             </p>

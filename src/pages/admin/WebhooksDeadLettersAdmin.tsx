@@ -95,7 +95,7 @@ function WebhooksDeadLettersAdminContent() {
                 </Link>
               </Button>
             </div>
-            <h1 className="text-3xl font-display font-bold gradient-text flex items-center gap-2">
+            <h1 className="text-page-title gradient-text flex items-center gap-2">
               <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden />
               Dead-Letters de Webhooks
             </h1>

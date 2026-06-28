@@ -57,7 +57,7 @@ export function SoundSettings() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Volume</Label>
+          <Label className="text-label">Volume</Label>
           <div className="flex items-center gap-4">
             <VolumeX className="h-4 w-4 text-muted-foreground" />
             <Slider value={[volume * 100]} onValueChange={([value]) => setVolume(value / 100)} max={100} step={5} className="flex-1" />
@@ -68,14 +68,14 @@ export function SoundSettings() {
 
         <div className="flex items-center justify-between p-3 rounded-lg border border-border/40">
           <div className="space-y-0.5">
-            <Label className="text-sm font-medium">Som de "Pronto"</Label>
+            <Label className="text-label">Som de "Pronto"</Label>
             <p className="text-xs text-muted-foreground">Toca um som sutil quando o confetti estiver carregado</p>
           </div>
           <Switch checked={readySoundEnabled} onCheckedChange={setReadySoundEnabled} />
         </div>
 
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Tipo de Som</Label>
+          <Label className="text-label">Tipo de Som</Label>
           <RadioGroup value={selectedSound} onValueChange={(value) => setSelectedSound(value as SoundType)} className="space-y-3">
             {soundOptions.map((option) => (
               <div key={option.id} className="flex items-center justify-between p-3 rounded-lg border border-border/40 hover:bg-accent/50 transition-colors">

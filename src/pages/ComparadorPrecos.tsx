@@ -90,7 +90,7 @@ export default function ComparadorPrecos() {
                     <div key={product.id} className="border border-border/30 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h3 className="font-semibold text-lg">{product.name}</h3>
+                          <h3 className="text-section-title">{product.name}</h3>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>{comparison.length} fornecedores</span>
                             {priceRange && (<><span>•</span><span>{formatCurrency(priceRange.min)} - {formatCurrency(priceRange.max)}</span></>)}

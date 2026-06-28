@@ -55,7 +55,7 @@ export function WeightedForecastDashboard() {
     <div className="space-y-6 p-4 lg:p-8">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10"><TrendingUp className="h-6 w-6 text-primary" /></div>
-        <div><h1 className="text-2xl font-display font-bold">Forecast Ponderado</h1><p className="text-sm text-muted-foreground">Previsão de receita baseada em probabilidade × valor</p></div>
+        <div><h1 className="text-page-title">Forecast Ponderado</h1><p className="text-sm text-muted-foreground">Previsão de receita baseada em probabilidade × valor</p></div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">

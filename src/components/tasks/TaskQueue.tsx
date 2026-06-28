@@ -91,7 +91,7 @@ export function TaskQueue() {
       {totalTasks === 0 ? (
         <Card className="p-12 text-center glass border border-border/40 dark:border-glow card-elevated animate-fade-in">
           <div className="p-4 rounded-full bg-gradient-to-br from-status-success/30 to-status-success/10 w-fit mx-auto mb-4 shadow-lg shadow-status-success/20"><CheckCircle className="h-12 w-12 text-status-success animate-pulse" /></div>
-          <h3 className="text-lg font-display font-semibold gradient-text">Nenhuma tarefa para hoje!</h3>
+          <h3 className="text-section-title gradient-text">Nenhuma tarefa para hoje!</h3>
           <p className="text-muted-foreground mt-2">Todas as tarefas foram concluídas ou não há pendências.</p>
         </Card>
       ) : (

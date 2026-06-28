@@ -21,7 +21,7 @@ export function SendTimeOptimizationToggle({ sequenceId, enabled }: Props) {
           </div>
           <div className="space-y-0.5">
             <div className="flex items-center gap-1.5">
-              <Label htmlFor="sto-switch" className="text-sm font-medium cursor-pointer">
+              <Label htmlFor="sto-switch" className="text-label cursor-pointer">
                 Otimização de horário de envio
               </Label>
               <Tooltip>

@@ -128,7 +128,7 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
     <div className={cn("relative", className)} ref={containerRef}>
       {/* Label */}
       {label && (
-        <label className="block text-sm font-medium text-foreground mb-1.5">
+        <label className="text-label block text-foreground mb-1.5">
           {label}
         </label>
       )}

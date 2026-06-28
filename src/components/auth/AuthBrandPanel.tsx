@@ -19,7 +19,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
           <Crown className="h-7 w-7 text-white" />
         </motion.div>
         <div>
-          <h1 className="text-2xl font-black tracking-wider" style={{ textShadow: "0 0 12px rgba(34,211,238,0.6)" }}>
+          <h1 className="text-page-title tracking-wider" style={{ textShadow: "0 0 12px rgba(34,211,238,0.6)" }}>
             PROMO CHAMPIONS
           </h1>
           <p className="text-[10px] tracking-[0.3em] text-cyan-300/70 font-semibold">CIRCUITO DE VENCEDORES</p>

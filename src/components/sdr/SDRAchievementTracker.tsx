@@ -34,7 +34,7 @@ export const SDRAchievementTracker = () => {
           <div className="flex-1 w-full space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold flex items-center gap-2">
+                <h3 className="text-section-title flex items-center gap-2">
                   Elite Prospector
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
                 </h3>

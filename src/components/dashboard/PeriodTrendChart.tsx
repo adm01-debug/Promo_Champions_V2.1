@@ -143,7 +143,7 @@ export const PeriodTrendChart = () => {
               </div>
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tighter font-mono uppercase text-primary">
+              <h2 className="text-section-title tracking-tighter font-mono uppercase text-primary">
                 Period Trend Analysis
               </h2>
               <div className="flex items-center gap-2">

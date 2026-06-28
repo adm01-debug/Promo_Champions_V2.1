@@ -182,7 +182,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
           <div className="p-2 rounded-lg bg-primary/10">
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
-          <h3 className="text-xl font-bold font-display">Conversational Intelligence</h3>
+          <h3 className="text-section-title">Conversational Intelligence</h3>
         </div>
 
         <div className="grid gap-3 md:grid-cols-4">

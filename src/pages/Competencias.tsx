@@ -67,7 +67,7 @@ const Competencias = () => {
             className="flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div>
-              <h1 className="text-3xl font-display font-bold tracking-tight">
+              <h1 className="text-page-title">
                 Mapa de Competências
               </h1>
               <p className="text-muted-foreground">

@@ -133,7 +133,7 @@ export default function Estoque() {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
               </div>
               <div>
-                <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">
+                <h1 className="text-page-title uppercase italic">
                   Logistics Command
                 </h1>
                 <div className="flex items-center gap-3 mt-1">

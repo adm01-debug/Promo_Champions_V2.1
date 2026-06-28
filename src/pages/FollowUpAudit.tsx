@@ -159,7 +159,7 @@ const FollowUpAudit = () => {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Auditoria de Follow-up</h1>
+            <h1 className="text-page-title">Auditoria de Follow-up</h1>
             <p className="text-muted-foreground text-sm">
               Rastreie cada interação e ação realizada nos seus leads.
             </p>

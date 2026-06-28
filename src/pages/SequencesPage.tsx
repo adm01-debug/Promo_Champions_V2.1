@@ -50,7 +50,7 @@ export default function SequencesPage() {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-2xl font-bold truncate">{selected.name}</h1>
+                <h1 className="text-page-title truncate">{selected.name}</h1>
                 {selected.description && (
                   <p className="text-sm text-muted-foreground truncate">{selected.description}</p>
                 )}
@@ -99,7 +99,7 @@ export default function SequencesPage() {
       <div className="container mx-auto p-4 md:p-6 max-w-6xl space-y-6">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+            <h1 className="text-page-title md: flex items-center gap-2">
               <Workflow className="h-7 w-7 text-primary" />Sequências <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase">10/10</Badge>
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -142,7 +142,7 @@ export default function SequencesPage() {
         ) : (sequences?.length ?? 0) === 0 ? (
           <Card className="p-12 text-center">
             <Workflow className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-lg font-semibold mb-2">Nenhuma sequência ainda</h3>
+            <h3 className="text-section-title mb-2">Nenhuma sequência ainda</h3>
             <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
               Crie sua primeira cadência multistep para automatizar follow-ups multicanal.
             </p>

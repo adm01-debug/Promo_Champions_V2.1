@@ -109,7 +109,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
                   <Trophy className="h-6 w-6 text-rank-gold" />
-                  <h2 className="text-xl font-bold text-foreground">Ranking do Mês</h2>
+                  <h2 className="text-section-title text-foreground">Ranking do Mês</h2>
                 </div>
                 <div className="space-y-3">
                   {(ranking || []).slice(0, 8).map((sp, i) => (
@@ -150,7 +150,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
                   <Flame className="h-6 w-6 text-streak" />
-                  <h2 className="text-xl font-bold text-foreground">Streaks Ativos</h2>
+                  <h2 className="text-section-title text-foreground">Streaks Ativos</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   {(streaks || []).filter((s: StreakEntry) => s.current_streak > 0).slice(0, 6).map((streak: StreakEntry, i: number) => (
@@ -183,7 +183,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
                   <Swords className="h-6 w-6 text-primary" />
-                  <h2 className="text-xl font-bold text-foreground">Duelos da Semana</h2>
+                  <h2 className="text-section-title text-foreground">Duelos da Semana</h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {(matchups || []).filter((m: MatchupEntry) => m.status === 'active').slice(0, 4).map((matchup: MatchupEntry, i: number) => (
@@ -219,7 +219,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-6">
                   <TrendingUp className="h-6 w-6 text-success" />
-                  <h2 className="text-xl font-bold text-foreground">Destaques do Dia</h2>
+                  <h2 className="text-section-title text-foreground">Destaques do Dia</h2>
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[

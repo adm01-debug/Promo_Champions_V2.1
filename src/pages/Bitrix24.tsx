@@ -29,7 +29,7 @@ export default function Bitrix24() {
       </Helmet>
     <div className="space-y-6 p-6 animate-fade-in">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-display font-bold gradient-text">Integração Bitrix24</h1>
+        <h1 className="text-page-title gradient-text">Integração Bitrix24</h1>
         <p className="text-muted-foreground">Configure a sincronização bidirecional com seu CRM Bitrix24</p>
       </div>
 

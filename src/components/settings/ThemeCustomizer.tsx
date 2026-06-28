@@ -62,7 +62,7 @@ export function ThemeCustomizer() {
       <div className="p-6 space-y-6">
         {/* Theme Mode */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Modo do Tema</Label>
+          <Label className="text-label">Modo do Tema</Label>
           <div className="flex gap-2">
             {MODE_OPTIONS.map(option => (
               <Button
@@ -81,7 +81,7 @@ export function ThemeCustomizer() {
 
         {/* Accent Color */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Cor de Destaque</Label>
+          <Label className="text-label">Cor de Destaque</Label>
           <div className="grid grid-cols-4 gap-3">
             {accentColors.map(color => (
               <motion.button
@@ -116,7 +116,7 @@ export function ThemeCustomizer() {
 
         {/* Accessibility Options */}
         <div className="space-y-4 pt-4 border-t border-border">
-          <Label className="text-sm font-medium">Acessibilidade</Label>
+          <Label className="text-label">Acessibilidade</Label>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -153,7 +153,7 @@ export function ThemeCustomizer() {
 
         {/* Language Selection */}
         <div className="space-y-4 pt-4 border-t border-border">
-          <Label className="text-sm font-medium flex items-center gap-2">
+          <Label className="text-label flex items-center gap-2">
             <Languages className="h-4 w-4" /> Language / Idioma
           </Label>
           <div className="flex gap-2">

@@ -65,7 +65,7 @@ export default function Metas() {
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                 </div>
                 <div>
-                  <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Strategic Command</h1>
+                  <h1 className="text-page-title uppercase italic">Strategic Command</h1>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{currentMonth}</span>
                     <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />

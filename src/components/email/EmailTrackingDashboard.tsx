@@ -59,7 +59,7 @@ export function EmailTrackingDashboard() {
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
           </div>
           <div>
-            <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">Comms Intel</h1>
+            <h1 className="text-page-title uppercase italic">Comms Intel</h1>
             <div className="flex items-center gap-3 mt-1">
               <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Tracking System v1.2</span>
               <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
@@ -233,7 +233,7 @@ export function EmailTrackingDashboard() {
                 ) : (
                   <div className="text-center py-12">
                     <Mail className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                    <h3 className="font-display font-semibold text-lg mb-1">Nenhum evento rastreado</h3>
+                    <h3 className="text-section-title mb-1">Nenhum evento rastreado</h3>
                     <p className="text-sm text-muted-foreground">
                       Eventos de abertura e clique aparecerão aqui quando emails forem rastreados
                     </p>

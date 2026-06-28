@@ -68,7 +68,7 @@ export const SlideOverPanel: FC<SlideOverPanelProps> = ({
                   </div>
                 )}
                 <div>
-                  <h2 className="text-lg font-semibold">{title}</h2>
+                  <h2 className="text-section-title">{title}</h2>
                   {subtitle && (
                     <p className="text-sm text-muted-foreground">{subtitle}</p>
                   )}

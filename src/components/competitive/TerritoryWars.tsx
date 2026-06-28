@@ -96,7 +96,7 @@ function TerritoryWarsComponent() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-bold flex items-center gap-2">
+        <h2 className="text-section-title flex items-center gap-2">
           <Swords className="h-5 w-5 text-destructive" /> Guerra de Territórios
         </h2>
         <p className="text-sm text-muted-foreground">Conquiste segmentos vendendo mais que seus rivais</p>
@@ -199,7 +199,7 @@ function TerritoryWarsComponent() {
         <Card>
           <CardContent className="p-12 text-center">
             <MapPin className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="font-semibold text-lg">Nenhum território ainda</h3>
+            <h3 className="text-section-title">Nenhum território ainda</h3>
             <p className="text-sm text-muted-foreground">Territórios são gerados automaticamente baseados nas vendas por produto/segmento.</p>
           </CardContent>
         </Card>

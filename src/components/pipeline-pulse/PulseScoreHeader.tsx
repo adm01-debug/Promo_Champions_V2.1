@@ -45,7 +45,7 @@ export const PulseScoreHeader: FC<Props> = ({ pulseScore, status, generatedAt })
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <Activity className={cn("h-4 w-4", tokens.color)} />
-            <h2 className="font-display text-xl font-semibold">Pulso do Pipeline</h2>
+            <h2 className="text-section-title">Pulso do Pipeline</h2>
             <Badge variant="outline" className={cn(tokens.color, tokens.border)}>
               {tokens.label}
             </Badge>

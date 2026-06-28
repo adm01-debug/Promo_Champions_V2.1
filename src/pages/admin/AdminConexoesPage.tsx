@@ -39,7 +39,7 @@ function AdminConexoesContent() {
               <Plug className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-display font-bold gradient-text">Conexões</h1>
+              <h1 className="text-page-title gradient-text">Conexões</h1>
               <p className="text-muted-foreground mt-1">
                 Hub central de integrações externas e credenciais do sistema.
               </p>

@@ -81,7 +81,7 @@ export default function ResetPassword() {
               <div className="mx-auto w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
                 <CheckCircle className="h-8 w-8 text-success" />
               </div>
-              <h2 className="text-xl font-semibold">Senha Atualizada!</h2>
+              <h2 className="text-section-title">Senha Atualizada!</h2>
               <p className="text-muted-foreground">
                 Você será redirecionado para o dashboard em instantes...
               </p>

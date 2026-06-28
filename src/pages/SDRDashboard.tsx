@@ -498,7 +498,7 @@ export default function SDRDashboard() {
                   >
                     <div className="flex items-center gap-2">
                       <Zap className="h-5 w-5 text-primary animate-pulse" />
-                      <h2 className="text-lg font-bold gradient-text">Power Dialer</h2>
+                      <h2 className="text-section-title gradient-text">Power Dialer</h2>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

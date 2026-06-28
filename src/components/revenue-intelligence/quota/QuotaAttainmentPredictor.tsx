@@ -23,7 +23,7 @@ export const QuotaAttainmentPredictor: FC = () => {
       <Card variant="elevated">
         <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
-            <h3 className="font-display text-lg font-semibold">Quota Attainment Predictor</h3>
+            <h3 className="text-section-title">Quota Attainment Predictor</h3>
             <p className="text-xs text-muted-foreground">
               Predição probabilística de atingimento via Monte Carlo (1000 simulações).
             </p>

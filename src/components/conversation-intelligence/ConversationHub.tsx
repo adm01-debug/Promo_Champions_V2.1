@@ -15,7 +15,7 @@ export const ConversationHub = () => {
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold flex items-center gap-2">
+          <h2 className="text-section-title flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             Conversation Intelligence
           </h2>

@@ -34,7 +34,7 @@ export class MapErrorBoundary extends Component<Props, State> {
         <div className="glass rounded-lg flex flex-col items-center justify-center gap-4 p-8" style={{ height: "500px" }}>
           <MapPin className="h-12 w-12 text-muted-foreground/50" />
           <div className="text-center space-y-2">
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="text-section-title text-foreground">
               Erro ao carregar o mapa
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">

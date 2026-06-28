@@ -35,7 +35,7 @@ export function BriefingHub() {
         className="flex items-start justify-between gap-4 flex-wrap"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold font-sora text-foreground flex items-center gap-2">
+          <h1 className="text-page-title md: font-sora text-foreground flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
             Briefing Executivo
           </h1>
@@ -61,7 +61,7 @@ export function BriefingHub() {
           {!latestLoading && !briefing && (
             <Card className="p-12 text-center space-y-3">
               <Sparkles className="h-10 w-10 text-muted-foreground mx-auto" />
-              <h3 className="text-lg font-semibold text-foreground">Nenhum briefing ainda</h3>
+              <h3 className="text-section-title text-foreground">Nenhum briefing ainda</h3>
               <p className="text-sm text-muted-foreground">
                 {canGenerate ? "Clique em \"Gerar agora\" para criar o primeiro briefing." : "Aguarde o gestor gerar o primeiro briefing."}
               </p>

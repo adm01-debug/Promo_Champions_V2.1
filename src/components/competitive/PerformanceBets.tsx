@@ -106,7 +106,7 @@ function PerformanceBetsComponent() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-display font-bold flex items-center gap-2">
+          <h2 className="text-section-title flex items-center gap-2">
             <Flame className="h-5 w-5 text-coins" /> Apostas de Performance
           </h2>
           <p className="text-sm text-muted-foreground">Aposte XP nas suas próprias metas. Ganhe o dobro ou perca tudo!</p>
@@ -265,7 +265,7 @@ function PerformanceBetsComponent() {
         <Card>
           <CardContent className="p-12 text-center">
             <Coins className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="font-semibold text-lg">Nenhuma aposta ainda</h3>
+            <h3 className="text-section-title">Nenhuma aposta ainda</h3>
             <p className="text-sm text-muted-foreground">Seja o primeiro a apostar em si mesmo! 💪</p>
           </CardContent>
         </Card>

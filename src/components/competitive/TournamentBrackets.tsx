@@ -123,7 +123,7 @@ function TournamentBracketsComponent() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-display font-bold flex items-center gap-2">
+          <h2 className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-rank-gold" /> Torneios Eliminatórios
           </h2>
           <p className="text-sm text-muted-foreground">Brackets de eliminação com rounds semanais</p>
@@ -171,7 +171,7 @@ function TournamentBracketsComponent() {
         <Card>
           <CardContent className="p-12 text-center">
             <Swords className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="font-semibold text-lg">Nenhum torneio ainda</h3>
+            <h3 className="text-section-title">Nenhum torneio ainda</h3>
             <p className="text-sm text-muted-foreground">Crie o primeiro torneio eliminatório para o time!</p>
           </CardContent>
         </Card>

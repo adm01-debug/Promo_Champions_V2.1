@@ -22,7 +22,7 @@ export const QuotaPredictorAdvancedPanel: FC = () => {
       <Card variant="elevated">
         <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
-            <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+            <h3 className="text-section-title flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
               Quota Predictor Avançado
             </h3>

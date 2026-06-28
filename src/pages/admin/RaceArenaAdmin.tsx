@@ -27,7 +27,7 @@ export default function RaceArenaAdmin() {
               <Link to="/race-arena" aria-label="Voltar"><ArrowLeft className="w-5 h-5" /></Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-black flex items-center gap-2 font-display">
+              <h1 className="text-page-title flex items-center gap-2">
                 <Settings className="w-7 h-7 text-primary" /> Admin Race Arena
               </h1>
               <p className="text-sm text-muted-foreground">

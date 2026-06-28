@@ -55,7 +55,7 @@ export function MultichannelDashboard() {
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <MessageSquare className="h-6 w-6 text-primary" />
-          <h1 className="font-display text-2xl font-bold">Multichannel</h1>
+          <h1 className="text-page-title">Multichannel</h1>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -76,7 +76,7 @@ export function MultichannelDashboard() {
             <MessageSquare className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold">Multichannel Engagement</h1>
+            <h1 className="text-page-title">Multichannel Engagement</h1>
             <p className="text-sm text-muted-foreground">
               {stats?.total || 0} interações nos últimos 30 dias
             </p>

@@ -141,7 +141,7 @@ const IntelligenceCockpit = () => {
               <ArrowUpRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
 
-            <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">
+            <h3 className="text-section-title mb-1 group-hover:text-primary transition-colors">
               {hub.title}
             </h3>
             <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
@@ -177,7 +177,7 @@ const IntelligenceCockpit = () => {
           <Card className="p-6 border-border/40 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             <div className="flex items-center justify-between mb-8 relative z-10">
-              <h3 className="font-bold flex items-center gap-2 text-lg uppercase italic tracking-tighter">
+              <h3 className="text-section-title flex items-center gap-2 uppercase italic tracking-tighter">
                 <Zap className="w-5 h-5 text-primary" />
                 Strategic <span className="text-primary">Pulse</span>
               </h3>

@@ -147,7 +147,7 @@ const Clientes = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   </div>
                   <div>
-                    <h1 className="font-display font-black text-3xl uppercase tracking-tighter italic">
+                    <h1 className="text-page-title uppercase italic">
                       Clientes
                     </h1>
                     <div className="flex items-center gap-3 mt-1">
@@ -411,7 +411,7 @@ const Clientes = () => {
               ) : (
                 <div className="glass rounded-xl p-12 text-center">
                   <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                  <h3 className="text-lg font-semibold mb-2">Nenhum cliente</h3>
+                  <h3 className="text-section-title mb-2">Nenhum cliente</h3>
                   <Button variant="outline" onClick={() => setSearchTerm('')}>
                     Limpar Busca
                   </Button>

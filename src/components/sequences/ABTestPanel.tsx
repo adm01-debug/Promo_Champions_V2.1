@@ -43,7 +43,7 @@ export function ABTestPanel({ sequenceId }: Props) {
     return (
       <Card className="p-12 text-center">
         <FlaskConical className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-        <h3 className="text-lg font-semibold mb-1">Nenhum teste A/B em execução</h3>
+        <h3 className="text-section-title mb-1">Nenhum teste A/B em execução</h3>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           Edite um passo da sequência e adicione variantes na aba "Teste A/B" para começar a comparar conteúdos.
         </p>

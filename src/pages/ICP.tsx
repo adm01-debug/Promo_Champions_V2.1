@@ -72,7 +72,7 @@ export default function ICP() {
         <div className="space-y-6 animate-fade-in">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-display font-bold gradient-text">Ideal Customer Profile</h1>
+              <h1 className="text-page-title gradient-text">Ideal Customer Profile</h1>
               <p className="text-muted-foreground mt-1">Inteligência e qualificação de perfil ideal de clientes</p>
             </div>
           </div>
