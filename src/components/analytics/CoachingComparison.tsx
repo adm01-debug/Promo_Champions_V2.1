@@ -46,7 +46,7 @@ export function CoachingComparison() {
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 shadow-lg shadow-secondary/10"><Users className="h-6 w-6 text-secondary" /></div>
             <div>
-              <CardTitle className="text-xl font-display gradient-text flex items-center gap-2">Comparativo de Coaching<Sparkles className="h-4 w-4 text-status-warning animate-pulse" /></CardTitle>
+              <CardTitle className="text-section-title gradient-text flex items-center gap-2">Comparativo de Coaching<Sparkles className="h-4 w-4 text-status-warning animate-pulse" /></CardTitle>
               <p className="text-sm text-muted-foreground mt-1">Compare performance e coaching entre vendedores da equipe (máx. 4)</p>
             </div>
           </div>
@@ -97,7 +97,7 @@ export function CoachingComparison() {
           {/* Insights Summary */}
           <Card className="glass dark:border-glow card-elevated animate-fade-in bg-gradient-to-br from-status-purple/10 via-transparent to-accent/5" style={{ animationDelay: '200ms' }}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2 text-status-purple font-display"><div className="p-1.5 rounded-lg bg-status-purple/20"><Sparkles className="h-5 w-5" /></div>Insights do Comparativo</CardTitle>
+              <CardTitle className="text-section-title flex items-center gap-2 text-status-purple"><div className="p-1.5 rounded-lg bg-status-purple/20"><Sparkles className="h-5 w-5" /></div>Insights do Comparativo</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

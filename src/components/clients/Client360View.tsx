@@ -201,7 +201,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
         {/* Mix de Categorias */}
         <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between text-base uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center justify-between uppercase font-black tracking-tighter">
               <div className="flex items-center gap-2">
                 <PieChart className="h-5 w-5 text-indigo-500" />
                 Afinidade & Cross-sell
@@ -285,7 +285,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden group">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-2 text-sm uppercase font-black tracking-tighter">
               <ShieldCheck className="h-4 w-4 text-emerald-500" />
               Customer Health Score
             </CardTitle>
@@ -363,7 +363,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
         <Card className="lg:col-span-2 border-primary/20 bg-gradient-to-br from-primary/10 to-transparent backdrop-blur-md shadow-xl rounded-2xl overflow-hidden border-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm uppercase font-black tracking-tighter text-primary">
+            <CardTitle className="text-section-title flex items-center gap-2 text-sm uppercase font-black tracking-tighter text-primary">
               <Zap className="h-4 w-4 fill-primary" />
               IA Next Best Action (NBA)
             </CardTitle>
@@ -443,7 +443,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1 border-primary/30 bg-primary/5 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden group hover:bg-primary/10 transition-all border-dashed border-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs uppercase font-black tracking-widest text-primary">
+            <CardTitle className="text-section-title flex items-center gap-2 text-xs uppercase font-black tracking-widest text-primary">
               <Brain className="h-4 w-4" /> Next Best Purchase
             </CardTitle>
           </CardHeader>
@@ -478,7 +478,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
         <Card className="md:col-span-1 border-indigo-500/30 bg-indigo-500/5 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden group hover:bg-indigo-500/10 transition-all border-dashed border-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs uppercase font-black tracking-widest text-indigo-400">
+            <CardTitle className="text-section-title flex items-center gap-2 text-xs uppercase font-black tracking-widest text-indigo-400">
               <CalendarPlus className="h-4 w-4" /> Smart Follow-up
             </CardTitle>
           </CardHeader>
@@ -512,7 +512,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
         <Card className="md:col-span-1 border-emerald-500/30 bg-emerald-500/5 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden group hover:bg-emerald-500/10 transition-all border-dashed border-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-xs uppercase font-black tracking-widest text-emerald-400">
+            <CardTitle className="text-section-title flex items-center gap-2 text-xs uppercase font-black tracking-widest text-emerald-400">
               <ShieldCheck className="h-4 w-4" /> 10/10 Quality Assurance
             </CardTitle>
           </CardHeader>
@@ -546,7 +546,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
         <CardHeader className="border-b border-border/10 pb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <CardTitle className="flex items-center gap-2 text-lg uppercase font-black tracking-tighter">
+              <CardTitle className="text-section-title flex items-center gap-2 uppercase font-black tracking-tighter">
                 <HistoryIcon className="h-5 w-5 text-primary" />
                 Livro de Transações Detalhado
               </CardTitle>
@@ -687,7 +687,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
           <DialogHeader className="p-8 pb-4">
             <div className="flex justify-between items-start">
               <div>
-                <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
+                <DialogTitle className="text-section-title font-black uppercase tracking-tighter">
                   Detalhes da Transação
                 </DialogTitle>
                 <DialogDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">

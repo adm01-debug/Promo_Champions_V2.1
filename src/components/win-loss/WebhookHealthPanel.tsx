@@ -146,7 +146,7 @@ export function WebhookHealthPanel() {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary" aria-hidden />
             Saúde de entregas{" "}
             <span className="text-xs font-normal text-muted-foreground">

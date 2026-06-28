@@ -71,7 +71,7 @@ function AdminDashboardContent() {
             <div className="p-2 rounded-lg bg-primary/10">
               <Shield className="h-6 w-6 text-primary" />
             </div>
-            <h1 className="text-4xl font-display font-black gradient-text uppercase tracking-tighter italic">
+            <h1 className="text-page-title gradient-text uppercase italic">
               Central de Controle
             </h1>
           </div>

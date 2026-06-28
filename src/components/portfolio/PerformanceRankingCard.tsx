@@ -66,7 +66,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
   return (
     <Card className="glass">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
           Ranking de Performance
           <Badge variant="outline" className="ml-auto text-xs">

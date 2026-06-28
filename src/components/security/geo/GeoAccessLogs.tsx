@@ -31,7 +31,7 @@ export const GeoAccessLogs = React.memo(function GeoAccessLogs({ accessLogs, isL
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Activity className="h-5 w-5" />
           Logs de Acesso Geográfico Recentes
         </CardTitle>

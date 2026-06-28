@@ -31,7 +31,7 @@ export function DashboardNLQWidget() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" /> Pergunte qualquer coisa sobre seus dados
             </DialogTitle>
           </DialogHeader>

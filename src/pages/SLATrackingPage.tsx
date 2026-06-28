@@ -135,7 +135,7 @@ const SLATrackingPage = () => {
                     return (
                       <Card key={p.id} className="glass border-border/40">
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-base flex items-center justify-between">
+                          <CardTitle className="text-section-title flex items-center justify-between">
                             <span className="flex items-center gap-2">
                               {STAGE_LABELS[p.stage] ?? p.stage}
                               <Badge variant="outline" className="text-[10px]">{p.stage}</Badge>

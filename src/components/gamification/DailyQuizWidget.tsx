@@ -105,7 +105,7 @@ function _DailyQuizWidget({ className }: { className?: string }) {
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Brain className="h-4 w-4 text-primary" />
             Quiz Diário
           </CardTitle>

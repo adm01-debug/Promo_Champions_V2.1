@@ -23,7 +23,7 @@ interface CloserSelectorProps {
 export const CloserSelector = React.memo(function CloserSelector({ allClosers, selectedClosers, onToggle, validationMessage }: CloserSelectorProps) {
   return (
     <div className="space-y-2">
-      <FormLabel className="flex items-center justify-between">
+      <FormLabel className="text-label flex items-center justify-between">
         <span className="flex items-center gap-2"><Handshake className="h-4 w-4" />Closers Atendidos *</span>
         <Badge variant="outline" className="text-xs">{selectedClosers.length}/2</Badge>
       </FormLabel>

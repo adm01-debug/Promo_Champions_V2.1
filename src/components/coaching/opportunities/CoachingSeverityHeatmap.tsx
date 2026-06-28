@@ -36,7 +36,7 @@ export const CoachingSeverityHeatmap: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Heatmap de severidade</CardTitle>
+        <CardTitle className="text-section-title">Heatmap de severidade</CardTitle>
       </CardHeader>
       <CardContent>
         {grid.length === 0 ? (

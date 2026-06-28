@@ -55,7 +55,7 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
     <Sheet open={!!recordingId} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader className="mb-4">
-          <SheetTitle className="pr-6">{rec?.title ?? "Carregando..."}</SheetTitle>
+          <SheetTitle className="text-section-title pr-6">{rec?.title ?? "Carregando..."}</SheetTitle>
           <SheetDescription>Resumo executivo gerado por IA</SheetDescription>
         </SheetHeader>
 

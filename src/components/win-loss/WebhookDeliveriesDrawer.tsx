@@ -212,7 +212,7 @@ export function WebhookDeliveriesDrawer({
         <DrawerHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <DrawerTitle className="text-xl font-bold">Entregas de Webhook</DrawerTitle>
+              <DrawerTitle className="text-section-title">Entregas de Webhook</DrawerTitle>
               <DrawerDescription className="text-xs">
                 Acompanhe e reenvie falhas de entrega para esta assinatura.
               </DrawerDescription>

@@ -24,7 +24,7 @@ export function PerformanceComparison() {
   if (isLoading) {
     return (
       <Card className="glass dark:border-glow card-elevated">
-        <CardHeader><CardTitle className="flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Comparativo de Performance</span></CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Comparativo de Performance</span></CardTitle></CardHeader>
         <CardContent><Skeleton className="h-[400px] w-full rounded-xl animate-pulse" /></CardContent>
       </Card>
     );
@@ -33,7 +33,7 @@ export function PerformanceComparison() {
   if (!benchmarks || benchmarks.length === 0) {
     return (
       <Card className="glass dark:border-glow card-elevated">
-        <CardHeader><CardTitle className="flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Comparativo de Performance</span></CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Comparativo de Performance</span></CardTitle></CardHeader>
         <CardContent><div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground glass rounded-xl"><div className="p-4 rounded-full bg-muted/20 mb-3"><Users className="h-10 w-10 opacity-50" /></div><p className="text-sm">Nenhum dado disponível para comparação</p></div></CardContent>
       </Card>
     );
@@ -82,7 +82,7 @@ export function PerformanceComparison() {
       <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle className="flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Detalhamento por Vendedor</span></CardTitle>
+            <CardTitle className="text-section-title flex items-center gap-2"><div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5"><Users className="h-5 w-5 text-primary" /></div><span className="gradient-text font-display">Detalhamento por Vendedor</span></CardTitle>
             <Tabs value={selectedRole} onValueChange={setSelectedRole}>
               <TabsList className="glass">
                 <TabsTrigger value="all">Todos</TabsTrigger>

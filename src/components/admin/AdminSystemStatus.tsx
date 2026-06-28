@@ -29,7 +29,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-1.5 rounded-md bg-gradient-to-br from-chart-3/20 to-chart-3/5">
             <Server className="h-4 w-4 text-chart-3" />
           </div>

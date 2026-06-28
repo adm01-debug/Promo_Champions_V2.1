@@ -67,7 +67,7 @@ export function PredictiveSuccessMap() {
     <Card className="glass border-primary/20 overflow-hidden">
       <CardHeader className="pb-2 border-b border-border/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Brain className="h-4 w-4 text-primary" />
             Mapa Preditivo de Sucesso
           </CardTitle>

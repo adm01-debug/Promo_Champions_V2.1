@@ -169,7 +169,7 @@ export const ImprovementPlan = () => {
                       <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] leading-none mb-1 block">
                         Passo {item.step}
                       </span>
-                      <CardTitle className="text-lg font-bold leading-tight group-hover:text-primary transition-colors italic uppercase tracking-tighter">
+                      <CardTitle className="text-section-title group-hover:text-primary transition-colors italic uppercase tracking-tighter">
                         {item.title}
                       </CardTitle>
                     </div>

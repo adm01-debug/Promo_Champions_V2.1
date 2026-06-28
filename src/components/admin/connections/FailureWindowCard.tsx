@@ -42,7 +42,7 @@ export function FailureWindowCard() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-display text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-warning" /> Janela de falha
         </CardTitle>
         <CardDescription>Tempo (min) tolerado antes de marcar como degradado.</CardDescription>

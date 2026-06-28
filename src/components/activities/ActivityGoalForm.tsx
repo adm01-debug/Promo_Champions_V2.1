@@ -51,7 +51,7 @@ export function ActivityGoalForm() {
   return (
     <Card className="glass border-border/40 dark:border-glow">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <Target className="h-4 w-4 text-primary" />
           Minhas Metas Diárias
         </CardTitle>

@@ -70,7 +70,7 @@ export const ScheduledReportFormDialog = ({ open, onOpenChange }: Props) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-display">Novo Agendamento</DialogTitle>
+          <DialogTitle className="text-section-title">Novo Agendamento</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">

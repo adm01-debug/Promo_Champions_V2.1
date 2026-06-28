@@ -113,7 +113,7 @@ export function ClientPurchaseHistory({ clientId }: Props) {
       <CardHeader className="border-b border-border/40 pb-4 bg-muted/20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2.5 text-lg font-bold">
+            <CardTitle className="text-section-title flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <Clock className="h-5 w-5 text-primary" />
               </div>

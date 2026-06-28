@@ -167,7 +167,7 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
         {/* Distribution chart */}
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-display">Distribuição de Risco</CardTitle>
+            <CardTitle className="text-section-title text-sm">Distribuição de Risco</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={180}>
@@ -215,7 +215,7 @@ export const ChurnPrediction: FC<ChurnPredictionProps> = ({
         <Card className="border-none shadow-lg lg:col-span-2">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-destructive" />
                 Clientes em Risco
               </CardTitle>

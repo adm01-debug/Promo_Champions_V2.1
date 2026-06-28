@@ -37,7 +37,7 @@ export const QBRStoryGenerator = ({
       <CardHeader className="bg-gradient-to-r from-primary/10 via-background to-transparent pb-6">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-          <CardTitle className="text-xl font-display font-bold">
+          <CardTitle className="text-section-title">
             A História do Período ({periodLabel})
           </CardTitle>
         </div>

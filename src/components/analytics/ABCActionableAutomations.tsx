@@ -63,7 +63,7 @@ export function ABCActionableAutomations({ automations }: ABCActionableAutomatio
                   <Calendar className="h-3 w-3" />
                 </div>
               </div>
-              <CardTitle className="text-sm font-display font-bold group-hover:text-primary transition-colors">
+              <CardTitle className="text-section-title text-sm group-hover:text-primary transition-colors">
                 {auto.title}
               </CardTitle>
             </CardHeader>

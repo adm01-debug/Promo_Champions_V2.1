@@ -67,7 +67,7 @@ export const PlaybooksManager = () => {
             <BookOpen className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-2xl font-display font-bold gradient-text">Playbooks de Vendas</h2>
+            <h2 className="text-section-title gradient-text">Playbooks de Vendas</h2>
             <p className="text-muted-foreground text-sm">Guias e checklists para cada etapa do funil</p>
           </div>
         </div>

@@ -126,7 +126,7 @@ export function SmokeTestChecklist() {
       <CardHeader className="space-y-3">
         <div className="flex flex-row items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap">
-            <CardTitle className="font-display text-lg">Smoke test</CardTitle>
+            <CardTitle className="text-section-title">Smoke test</CardTitle>
             {hasRun && (
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-success/10 text-success border-success/30">

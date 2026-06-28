@@ -36,7 +36,7 @@ export const SkillTrackCards: FC = () => {
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <CardTitle className="text-base truncate">{t.salesperson_name ?? "—"}</CardTitle>
+                <CardTitle className="text-section-title truncate">{t.salesperson_name ?? "—"}</CardTitle>
                 <p className="text-xs text-muted-foreground mt-0.5">{SKILL_LABELS[t.skill as SkillKey] ?? t.skill}</p>
               </div>
               <Badge variant={LEVEL_BADGE[t.current_level]}>P{t.priority}</Badge>

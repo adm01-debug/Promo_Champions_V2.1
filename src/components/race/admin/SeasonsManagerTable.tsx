@@ -72,7 +72,7 @@ export function SeasonsManagerTable() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2"><Flag className="w-5 h-5" /> Temporadas</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2"><Flag className="w-5 h-5" /> Temporadas</CardTitle>
         <Button onClick={() => setOpenDialog(true)} size="sm">
           <Plus className="w-4 h-4 mr-1" /> Nova temporada
         </Button>

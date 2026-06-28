@@ -38,7 +38,7 @@ export const TranscriptAnalyzerDialog = ({ saleId, trigger }: Props) => {
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             Análise de Conversa com IA
           </DialogTitle>

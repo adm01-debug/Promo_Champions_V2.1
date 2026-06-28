@@ -31,7 +31,7 @@ export const IntentTracker = ({ intents = [] }: Props) => {
     return (
       <Card className="glass">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Target className="size-4 text-primary" />
             Mapeamento de Intenções
           </CardTitle>
@@ -46,7 +46,7 @@ export const IntentTracker = ({ intents = [] }: Props) => {
   return (
     <Card className="glass">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           <Target className="size-4 text-primary" />
           Mapeamento de Intenções
         </CardTitle>

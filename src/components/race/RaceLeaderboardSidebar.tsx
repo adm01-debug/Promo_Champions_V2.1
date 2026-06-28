@@ -63,7 +63,7 @@ export function RaceLeaderboardSidebar({
           onHoverRival={setHoveredRivalId}
         />
         <TeamLeaderboard seasonId={seasonId} />
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Flag className="w-5 h-5 text-primary" />
           Ranking Champions
         </CardTitle>

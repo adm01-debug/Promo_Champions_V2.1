@@ -85,7 +85,7 @@ export function EliteCadenceAnalytics() {
                 Pareto Neural Insight
               </Badge>
             </div>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Zap className="h-6 w-6 text-yellow-500 fill-yellow-500" />
               Otimização Estratégica
             </CardTitle>
@@ -116,7 +116,7 @@ export function EliteCadenceAnalytics() {
 
         <Card className="glass border-border/40">
           <CardHeader>
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
               Elite Efficiency Score
             </CardTitle>
@@ -164,7 +164,7 @@ export function EliteCadenceAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass border-border/40">
           <CardHeader>
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <Layers className="h-4 w-4 text-purple-500" />
               Matrix Shift Analytics (Fluxo de Etapas)
             </CardTitle>
@@ -218,7 +218,7 @@ export function EliteCadenceAnalytics() {
         {/* Channel Health Matrix */}
         <Card className="glass border-border/40">
           <CardHeader>
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <Target className="h-4 w-4 text-blue-500" />
               Health Matrix por Canal
             </CardTitle>

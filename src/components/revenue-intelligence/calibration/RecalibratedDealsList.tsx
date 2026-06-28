@@ -28,7 +28,7 @@ export const RecalibratedDealsList: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Top 15 Deals com Maior Shift</CardTitle>
+        <CardTitle className="text-section-title">Top 15 Deals com Maior Shift</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

@@ -37,7 +37,7 @@ export function CS360Cohorts({ cohortData, ordersByStatus, onStatusClick }: CS36
     <div className="grid gap-4 md:grid-cols-3">
       <Card className="md:col-span-2 glass border-border/50">
         <CardHeader>
-          <CardTitle className="text-sm font-bold">Análise de Coortes (Retenção por Mês de Renovação)</CardTitle>
+          <CardTitle className="text-section-title text-sm">Análise de Coortes (Retenção por Mês de Renovação)</CardTitle>
           <CardDescription className="text-[10px]">Visualização da retenção baseada na primeira compra</CardDescription>
         </CardHeader>
         <CardContent className="h-[400px]">
@@ -59,7 +59,7 @@ export function CS360Cohorts({ cohortData, ordersByStatus, onStatusClick }: CS36
 
       <Card className="glass border-border/50">
         <CardHeader>
-          <CardTitle className="text-sm font-bold">Status de Pedidos</CardTitle>
+          <CardTitle className="text-section-title text-sm">Status de Pedidos</CardTitle>
           <CardDescription className="text-[10px]">Distribuição de faturamento por status</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col h-[400px]">

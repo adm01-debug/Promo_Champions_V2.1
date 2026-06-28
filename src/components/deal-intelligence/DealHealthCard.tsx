@@ -34,7 +34,7 @@ export function DealHealthCard({ saleId }: Props) {
     return (
       <Card variant="elevated" className="glass border-border/40">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Saúde do Deal
           </CardTitle>
@@ -63,7 +63,7 @@ export function DealHealthCard({ saleId }: Props) {
     <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="gradient-text">Saúde do Deal</span>
           </CardTitle>

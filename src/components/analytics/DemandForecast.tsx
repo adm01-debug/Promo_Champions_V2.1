@@ -34,7 +34,7 @@ export const DemandForecast: FC = () => {
     <Card className="glass border-border/40 hover:shadow-lg transition-shadow">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             Previsão de Demanda
           </CardTitle>

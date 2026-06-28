@@ -34,7 +34,7 @@ export function ObjectionLibraryPanel({ onSelect }: Props) {
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <BookOpen className="h-4 w-4 text-primary" />
-          <CardTitle className="text-base">Biblioteca de objeções</CardTitle>
+          <CardTitle className="text-section-title">Biblioteca de objeções</CardTitle>
         </div>
         <p className="text-xs text-muted-foreground">
           Padrões mais frequentes detectados nas calls — clique para ver a melhor resposta.

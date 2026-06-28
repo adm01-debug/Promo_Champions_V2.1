@@ -130,7 +130,7 @@ export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
           {newLevelInfo.emoji}
         </motion.div>
         
-        <h2 className="text-2xl font-bold mb-2">Level Up!</h2>
+        <h2 className="text-section-title mb-2">Level Up!</h2>
         
         <div className="flex items-center justify-center gap-4 mb-4">
           <span className="text-2xl text-muted-foreground">{previousLevel}</span>

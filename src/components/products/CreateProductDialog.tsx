@@ -80,7 +80,7 @@ export const CreateProductDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Novo Produto</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Novo Produto</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

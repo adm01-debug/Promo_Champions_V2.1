@@ -55,7 +55,7 @@ export function CallFeedbackForm({ recordingId, clientId, onSuccess }: Props) {
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <MessageSquare className="h-4 w-4 text-primary" />
           Feedback do Gestor
         </CardTitle>

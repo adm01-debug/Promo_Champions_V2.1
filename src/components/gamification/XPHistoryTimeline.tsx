@@ -36,7 +36,7 @@ export function XPHistoryTimeline({ salespersonId, salespersonName, compact = fa
   if (isLoading) {
     return (
       <Card className="glass-card border-border/40">
-        <CardHeader className="pb-3"><CardTitle className="text-base font-display flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-section-title flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP</CardTitle></CardHeader>
         <CardContent><div className="space-y-3">{[1, 2, 3, 4, 5].map((i) => (<div key={i} className="flex items-center gap-3"><Skeleton className="h-8 w-8 rounded-full" /><div className="flex-1 space-y-1"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-3 w-1/2" /></div><Skeleton className="h-6 w-16" /></div>))}</div></CardContent>
       </Card>
     );
@@ -49,7 +49,7 @@ export function XPHistoryTimeline({ salespersonId, salespersonName, compact = fa
   if (displayHistory.length === 0) {
     return (
       <Card className="glass-card border-border/40">
-        <CardHeader className="pb-3"><CardTitle className="text-base font-display flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP{salespersonName && <span className="text-muted-foreground font-normal text-sm">• {salespersonName}</span>}</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-section-title flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP{salespersonName && <span className="text-muted-foreground font-normal text-sm">• {salespersonName}</span>}</CardTitle></CardHeader>
         <CardContent className="py-8 text-center"><Zap className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" /><p className="text-muted-foreground text-sm">Nenhum XP registrado ainda</p><p className="text-xs text-muted-foreground/70 mt-1">Bata metas e ganhe XP!</p></CardContent>
       </Card>
     );
@@ -68,7 +68,7 @@ export function XPHistoryTimeline({ salespersonId, salespersonName, compact = fa
     <Card className="glass-card border-border/40">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-display flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP{salespersonName && <span className="text-muted-foreground font-normal text-sm">• {salespersonName}</span>}</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><Clock className="h-4 w-4 text-xp" />Histórico de XP{salespersonName && <span className="text-muted-foreground font-normal text-sm">• {salespersonName}</span>}</CardTitle>
           {totalXPToday > 0 && <Badge variant="secondary" className="bg-xp/10 text-xp border-xp/20"><Zap className="h-3 w-3 mr-1" />+{totalXPToday} hoje</Badge>}
         </div>
       </CardHeader>

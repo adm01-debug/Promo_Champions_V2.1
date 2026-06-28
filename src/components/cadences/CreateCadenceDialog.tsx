@@ -255,7 +255,7 @@ export function CreateCadenceDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass border-border/50 dark:border-glow">
         <DialogHeader>
-          <DialogTitle className="font-display text-lg flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
               <Plus className="h-4 w-4 gradient-primary" />
             </div>
@@ -356,7 +356,7 @@ export function CreateCadenceDialog() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <FormLabel className="text-xs font-medium text-muted-foreground">
+                      <FormLabel className="text-label text-xs text-muted-foreground">
                         Dia *
                       </FormLabel>
                       <Input
@@ -370,7 +370,7 @@ export function CreateCadenceDialog() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <FormLabel className="text-xs font-medium text-muted-foreground">
+                      <FormLabel className="text-label text-xs text-muted-foreground">
                         Tipo
                       </FormLabel>
                       <Select
@@ -401,7 +401,7 @@ export function CreateCadenceDialog() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-[10px] font-medium">
+                        <FormLabel className="text-label text-[10px]">
                           Aprovação
                         </FormLabel>
                       </div>
@@ -416,7 +416,7 @@ export function CreateCadenceDialog() {
                     </div>
                     <div className="flex items-center justify-between p-2 rounded bg-background/40 border border-border/40">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-[10px] font-medium">
+                        <FormLabel className="text-label text-[10px]">
                           Automática
                         </FormLabel>
                       </div>
@@ -435,7 +435,7 @@ export function CreateCadenceDialog() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">
+                    <FormLabel className="text-label text-xs text-muted-foreground">
                       Título *
                     </FormLabel>
                     <Input
@@ -447,7 +447,7 @@ export function CreateCadenceDialog() {
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <FormLabel className="text-xs font-medium text-muted-foreground">
+                      <FormLabel className="text-label text-xs text-muted-foreground">
                         Template
                       </FormLabel>
                       <MergeTagPicker

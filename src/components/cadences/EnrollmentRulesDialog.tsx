@@ -92,7 +92,7 @@ export function EnrollmentRulesDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
             Regras de Auto-Enrollment
           </DialogTitle>

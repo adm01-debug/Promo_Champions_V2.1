@@ -27,7 +27,7 @@ export const ForecastTopDeals = React.memo(function ForecastTopDeals({ deals }: 
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm flex items-center gap-2">
           <DollarSign className="h-4 w-4 text-primary" />
           Top 10 Deals por Valor Ponderado
         </CardTitle>

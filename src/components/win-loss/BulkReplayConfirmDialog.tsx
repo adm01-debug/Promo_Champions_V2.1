@@ -57,7 +57,7 @@ export function BulkReplayConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-xl">
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2">
+          <AlertDialogTitle className="text-section-title flex items-center gap-2">
             <RotateCcw className="h-5 w-5 text-primary" />
             Confirmar reprocessamento em lote
           </AlertDialogTitle>

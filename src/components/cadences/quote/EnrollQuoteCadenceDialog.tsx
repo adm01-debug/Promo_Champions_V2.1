@@ -46,7 +46,7 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
       </DialogTrigger>
       <DialogContent className="max-w-xl glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="font-display text-lg flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Send className="h-4 w-4 text-primary" />
             Follow-up de Orçamento
           </DialogTitle>

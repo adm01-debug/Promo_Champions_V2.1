@@ -51,7 +51,7 @@ export default function KanbanClientes() {
       <Dialog open={taskModal.open} onOpenChange={(open) => setTaskModal(prev => ({ ...prev, open }))}>
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Create Task for {taskModal.clientName}</DialogTitle>
+            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">Create Task for {taskModal.clientName}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <CreateTaskDialog 

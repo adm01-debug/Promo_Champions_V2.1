@@ -49,7 +49,7 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
     return (
       <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
@@ -71,7 +71,7 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
     <Card variant="elevated" className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden">
       <CardHeader className="pb-2 border-b border-border/30">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <div className="p-2 rounded-xl gradient-primary shadow-md">
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>

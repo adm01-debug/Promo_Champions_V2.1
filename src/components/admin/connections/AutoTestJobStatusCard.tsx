@@ -30,7 +30,7 @@ export function AutoTestJobStatusCard() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-display text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" /> Última execução
         </CardTitle>
         <CardDescription>Resultado do job de auto-teste mais recente.</CardDescription>

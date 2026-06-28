@@ -67,7 +67,7 @@ export function InsightCreateTaskModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <ListChecks className="h-4 w-4 text-primary" />
             Nova tarefa do insight
           </DialogTitle>

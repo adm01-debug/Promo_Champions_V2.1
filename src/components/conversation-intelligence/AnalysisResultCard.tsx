@@ -38,7 +38,7 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
                   <span>{s.emoji}</span> {s.label}
                 </Badge>
               </div>
-              <CardTitle className="text-sm font-medium leading-snug">
+              <CardTitle className="text-section-title text-sm font-medium">
                 {analysis.summary || "Sem resumo gerado."}
               </CardTitle>
             </div>

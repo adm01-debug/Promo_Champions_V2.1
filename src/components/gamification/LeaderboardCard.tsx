@@ -69,7 +69,7 @@ export const LeaderboardCard: FC<LeaderboardCardProps> = ({
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Trophy size={20} className="text-rank-gold" />
           {title}
         </CardTitle>

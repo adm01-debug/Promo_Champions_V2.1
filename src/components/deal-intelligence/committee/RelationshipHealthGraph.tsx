@@ -53,7 +53,7 @@ export function RelationshipHealthGraph({ saleId }: Props) {
     return (
       <Card className="glass border-border/40">
         <CardHeader>
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             Grafo de Relacionamento
           </CardTitle>
@@ -80,7 +80,7 @@ export function RelationshipHealthGraph({ saleId }: Props) {
     <Card className="glass border-border/40 overflow-hidden card-elevated">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
             Mapa de Influência & Saúde
           </CardTitle>

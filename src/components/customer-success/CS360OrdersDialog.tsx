@@ -77,7 +77,7 @@ export function CS360OrdersDialog({
             <div
               className={`h-3 w-3 rounded-full ${currentStatusInfo?.color.replace('text-', 'bg-')}`}
             />
-            <DialogTitle className="text-xl font-black font-display uppercase tracking-tight">
+            <DialogTitle className="text-section-title font-black uppercase">
               Pedidos: {statusName}
             </DialogTitle>
           </div>

@@ -96,7 +96,7 @@ const Competencias = () => {
             <motion.div variants={itemVariants} className="lg:col-span-7 space-y-6">
               <Card className="glass border-border/40 shadow-md">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="text-section-title flex items-center gap-2">
                     <Target className="h-5 w-5 text-primary" />
                     Matriz de Skills
                   </CardTitle>
@@ -139,7 +139,7 @@ const Competencias = () => {
               {/* Development Plan */}
               <Card className="glass border-border/40 shadow-md border-l-4 border-l-primary">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="text-section-title flex items-center gap-2">
                     <GraduationCap className="h-5 w-5 text-primary" />
                     Plano de Desenvolvimento Individual (PDI)
                   </CardTitle>

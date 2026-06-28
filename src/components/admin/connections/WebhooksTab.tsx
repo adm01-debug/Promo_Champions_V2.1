@@ -14,7 +14,7 @@ export function WebhooksTab() {
     <Card className="glass border-border/40">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="font-display text-lg">Webhooks</CardTitle>
+          <CardTitle className="text-section-title">Webhooks</CardTitle>
           <CardDescription>
             {WEBHOOK_EVENTS.length} eventos disponíveis para distribuição em tempo real.
           </CardDescription>

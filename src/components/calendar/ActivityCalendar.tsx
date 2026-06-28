@@ -168,7 +168,7 @@ export function ActivityCalendar() {
       <Card>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-display flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <CalendarIcon className="h-4 w-4 text-primary" />
               Calendário de Atividades
             </CardTitle>

@@ -32,7 +32,7 @@ export function SupabaseConnectionsTab() {
 
       <Card className="glass border-border/40">
         <CardHeader>
-          <CardTitle className="font-display text-lg">Adicionar banco externo</CardTitle>
+          <CardTitle className="text-section-title">Adicionar banco externo</CardTitle>
           <CardDescription>
             Cadastre um banco Supabase adicional para monitorar a saúde via auto-testes.
           </CardDescription>

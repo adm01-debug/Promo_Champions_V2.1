@@ -37,7 +37,7 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
     return (
       <Card variant="elevated" className="glass border-border/40">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Gauge className="h-4 w-4 text-primary" /> Velocidade & Forecast
           </CardTitle>
         </CardHeader>
@@ -68,7 +68,7 @@ export function DealVelocityCard({ saleId }: { saleId: string }) {
     >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Gauge className="h-4 w-4 text-primary" />
             <span className="gradient-text">Velocidade & Forecast</span>
           </CardTitle>

@@ -195,7 +195,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   </DialogTrigger>
                   <DialogContent className="bg-[#0a0b1a] border-white/10 text-white">
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-black italic">
+                      <DialogTitle className="text-section-title font-black italic">
                         RECUPERAR ACESSO
                       </DialogTitle>
                     </DialogHeader>

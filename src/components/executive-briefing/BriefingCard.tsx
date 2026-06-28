@@ -23,7 +23,7 @@ export function BriefingCard({ briefing }: Props) {
               {briefing.generated_by === "auto" ? "Automático" : "Manual"}
             </Badge>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold font-sora text-foreground leading-tight">
+          <h2 className="text-section-title md:text-3xl font-sora text-foreground">
             {briefing.headline}
           </h2>
           <div className="flex items-center gap-4 pt-2">

@@ -40,7 +40,7 @@ export default function Bitrix24() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center"><Link2 className="h-5 w-5 text-primary-foreground" /></div>
-                <div><CardTitle className="text-lg">Status da Conexão</CardTitle><CardDescription>{domain ? `Domínio: ${domain}` : "Nenhum domínio configurado"}</CardDescription></div>
+                <div><CardTitle className="text-section-title">Status da Conexão</CardTitle><CardDescription>{domain ? `Domínio: ${domain}` : "Nenhum domínio configurado"}</CardDescription></div>
               </div>
               <Badge variant={status.variant} className="flex items-center gap-1.5"><StatusIcon className={`h-3.5 w-3.5 ${isLoadingStatus ? 'animate-spin' : ''}`} />{status.label}</Badge>
             </div>
@@ -88,7 +88,7 @@ export default function Bitrix24() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-secondary/20 flex items-center justify-center"><RefreshCw className="h-5 w-5 text-secondary" /></div>
-              <div><CardTitle className="text-lg">Sincronização Manual</CardTitle><CardDescription>Execute a sincronização sob demanda</CardDescription></div>
+              <div><CardTitle className="text-section-title">Sincronização Manual</CardTitle><CardDescription>Execute a sincronização sob demanda</CardDescription></div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -131,7 +131,7 @@ export default function Bitrix24() {
 
       {/* Stage Mapping */}
       <Card className="glass border-border/40 hover-lift-sm">
-        <CardHeader><CardTitle className="text-lg">Mapeamento de Estágios</CardTitle><CardDescription>Correspondência entre estágios do Bitrix24 e do Pipeline</CardDescription></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Mapeamento de Estágios</CardTitle><CardDescription>Correspondência entre estágios do Bitrix24 e do Pipeline</CardDescription></CardHeader>
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
             {[{ bitrix: "NEW", crm: "Lead" }, { bitrix: "PREPARATION", crm: "Qualificado" }, { bitrix: "PREPAYMENT_INVOICE", crm: "Proposta" }, { bitrix: "EXECUTING", crm: "Negociação" }, { bitrix: "WON", crm: "Fechado" }, { bitrix: "LOSE", crm: "Perdido" }].map((stage) => (

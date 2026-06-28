@@ -116,7 +116,7 @@ export function RevOpsHub() {
             <KPICard icon={Activity} label="Eficiência Atividades" value={`${data.kpis.activity_efficiency}%`} color="text-success" />
           </div>
           <Card>
-            <CardHeader><CardTitle className="text-base">Resumo de Deals</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-section-title">Resumo de Deals</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-3 gap-4 text-center">
               <div><div className="text-2xl font-bold text-primary">{data.deal_counts.open}</div><div className="text-xs text-muted-foreground">Abertos</div></div>
               <div><div className="text-2xl font-bold text-success">{data.deal_counts.won}</div><div className="text-xs text-muted-foreground">Ganhos</div></div>
@@ -128,7 +128,7 @@ export function RevOpsHub() {
         <TabsContent value="pipeline" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2"><Layers className="h-4 w-4" />Distribuição por Estágio</CardTitle>
+              <CardTitle className="text-section-title flex items-center gap-2"><Layers className="h-4 w-4" />Distribuição por Estágio</CardTitle>
               <CardDescription>Volume e valor por etapa do funil</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

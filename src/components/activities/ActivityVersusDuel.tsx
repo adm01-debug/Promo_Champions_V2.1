@@ -27,7 +27,7 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
     >
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary animate-shimmer" />
       <CardHeader className="pb-2 text-center">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3">
+        <CardTitle className="text-section-title text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3">
           <div className="p-2 rounded-xl bg-accent/20 border border-accent/30 shadow-glow-accent/20 animate-pulse">
             <Swords className="h-4 w-4 text-accent" />
           </div>

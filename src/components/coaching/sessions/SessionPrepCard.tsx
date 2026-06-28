@@ -29,7 +29,7 @@ export function SessionPrepCard({ salespersonId }: Props) {
   return (
     <Card variant="primary">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           Preparação inteligente
         </CardTitle>

@@ -34,7 +34,7 @@ export const IntelligenceSettings = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-black/90 border-white/10 backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-primary">
+          <DialogTitle className="text-section-title flex items-center gap-2 text-primary">
             <BrainCircuit className="h-5 w-5" /> Parâmetros de Inteligência
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">

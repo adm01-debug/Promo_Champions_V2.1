@@ -66,7 +66,7 @@ export const CohortHeatmap = memo(
         {!embedded && (
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <CardTitle className="text-lg flex items-center gap-2 font-display">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <Grid3x3 className="h-5 w-5 text-primary" />
                 Cohort Heatmap — Retenção
               </CardTitle>

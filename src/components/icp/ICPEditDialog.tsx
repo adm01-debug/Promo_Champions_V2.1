@@ -28,7 +28,7 @@ export const ICPEditDialog = React.memo(function ICPEditDialog({ open, onClose, 
     <Dialog open={open} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
             Editar Dados ICP
           </DialogTitle>

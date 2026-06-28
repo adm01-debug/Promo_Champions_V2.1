@@ -53,7 +53,7 @@ const SeasonAndPowerUpsComponent: FC = () => {
                       </Badge>
                       <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     </div>
-                    <CardTitle className="text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">
+                    <CardTitle className="text-section-title text-3xl font-black italic uppercase tracking-tighter gradient-text leading-none">
                       {currentSeason.name}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">

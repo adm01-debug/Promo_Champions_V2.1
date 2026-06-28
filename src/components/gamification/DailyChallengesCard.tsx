@@ -96,7 +96,7 @@ export function DailyChallengesCard({
     return (
       <Card className={compact ? 'h-full' : ''}>
         <CardHeader className={compact ? 'pb-2' : ''}>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Zap className="h-5 w-5 text-rank-gold" />
             Desafios do Dia
           </CardTitle>
@@ -132,7 +132,7 @@ export function DailyChallengesCard({
     <Card className={compact ? 'h-full' : ''}>
       <CardHeader className={compact ? 'pb-2' : ''}>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Zap className="h-5 w-5 text-rank-gold" />
             Desafios do Dia
           </CardTitle>

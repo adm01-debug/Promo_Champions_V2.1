@@ -131,7 +131,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
       {/* 1. Stacked Severity Timeline */}
       <Card className="md:col-span-2">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Alertas ao Longo do Tempo
           </CardTitle>
@@ -155,7 +155,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
       {/* 2. Severity Pie */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <PieChartIcon className="h-4 w-4" />
             Por Severidade
           </CardTitle>
@@ -185,7 +185,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
       {/* 3. Duration Avg/Max Timeline */}
       <Card className="md:col-span-2">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <Clock className="h-4 w-4" />
             Duração Média / Máxima (ms)
           </CardTitle>
@@ -209,7 +209,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
       {topTablesData.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Top Tabelas por Alertas
             </CardTitle>

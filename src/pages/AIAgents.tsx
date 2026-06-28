@@ -67,7 +67,7 @@ export default function AIAgents() {
       <Sheet open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
         <SheetContent className="sm:max-w-xl overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
+            <SheetTitle className="text-section-title flex items-center gap-2">
               {selected && (
                 <>
                   {(() => {
@@ -98,7 +98,7 @@ export default function AIAgents() {
               {details.run.result && (
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Resultado</CardTitle>
+                    <CardTitle className="text-section-title text-sm">Resultado</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <pre className="text-xs whitespace-pre-wrap">

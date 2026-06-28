@@ -102,7 +102,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Nova Atribuição SDR</DialogTitle>
+          <DialogTitle className="text-section-title">Nova Atribuição SDR</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -158,7 +158,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
               name="sdr_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2">
+                  <FormLabel className="text-label flex items-center gap-2">
                     <Phone className="h-4 w-4" />
                     SDR do Time *
                   </FormLabel>
@@ -188,7 +188,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
 
             {/* Selecionar Closers */}
             <div className="space-y-2">
-              <FormLabel className="flex items-center justify-between">
+              <FormLabel className="text-label flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Handshake className="h-4 w-4" />
                   Closers Atendidos *

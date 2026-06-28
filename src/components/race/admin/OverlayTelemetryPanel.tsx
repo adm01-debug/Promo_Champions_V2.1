@@ -56,7 +56,7 @@ export function OverlayTelemetryPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-primary" />
           Overlays usados nos últimos 30 dias
         </CardTitle>

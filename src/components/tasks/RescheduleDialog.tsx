@@ -77,7 +77,7 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
     <Dialog open={!!task} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
             Reagendar Tarefas
           </DialogTitle>

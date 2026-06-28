@@ -35,7 +35,7 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" />
           Comparativo por Vendedor
         </CardTitle>

@@ -36,7 +36,7 @@ export function ChurnRiskDetailDialog({ account, open, onOpenChange }: Props) {
               <ShieldAlert className="size-6" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold">
+              <DialogTitle className="text-section-title">
                 {account.account_name}
               </DialogTitle>
               <DialogDescription className="text-destructive font-semibold">

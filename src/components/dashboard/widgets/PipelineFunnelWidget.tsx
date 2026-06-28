@@ -47,7 +47,7 @@ export const PipelineFunnelWidget = React.memo(function PipelineFunnelWidget() {
   return (
     <Card className="h-full border-none shadow-sm bg-gradient-to-br from-card to-card/50 overflow-hidden group">
       <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
-        <CardTitle className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-section-title text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-info/10">
             <BarChart3 className="h-3.5 w-3.5 text-info" />
           </div>

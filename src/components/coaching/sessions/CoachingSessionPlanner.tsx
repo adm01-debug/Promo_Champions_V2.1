@@ -35,7 +35,7 @@ export function CoachingSessionPlanner() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-display font-semibold">Sessões 1:1</h2>
+          <h2 className="text-section-title">Sessões 1:1</h2>
           <p className="text-muted-foreground text-sm">Planeje e acompanhe coaching individual com dados reais</p>
         </div>
         {salespeople && salespeople.length > 0 && (

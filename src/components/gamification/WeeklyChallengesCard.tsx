@@ -185,7 +185,7 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
             Desafios da Semana
           </CardTitle>
@@ -203,7 +203,7 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
     return (
       <Card className="h-full">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
             Desafios da Semana
           </CardTitle>
@@ -233,7 +233,7 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
             Desafios da Semana
           </CardTitle>

@@ -48,7 +48,7 @@ export function StageVelocityCard({ saleId }: Props) {
     <Card variant="elevated" className="glass border-border/40 animate-fade-in">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary" />
             <span className="gradient-text">Velocidade do Estágio</span>
           </CardTitle>

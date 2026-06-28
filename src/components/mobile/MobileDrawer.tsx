@@ -120,7 +120,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
             <Crown className="h-6 w-6 text-primary animate-pulse" />
           </div>
           <div className="text-left">
-            <SheetTitle className="text-lg font-black tracking-tighter uppercase italic leading-none">Promo Champions</SheetTitle>
+            <SheetTitle className="text-section-title font-black tracking-tighter uppercase italic leading-none">Promo Champions</SheetTitle>
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold mt-1">Realize seus sonhos!</p>
           </div>
         </SheetHeader>

@@ -74,7 +74,7 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
     <Card variant="elevated" className="glass border-border/40">
       <CardHeader className="pb-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-destructive" />
             Deals que Precisam de Atenção
           </CardTitle>

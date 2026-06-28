@@ -119,7 +119,7 @@ export const CohortAnalysis: FC = () => {
     <Card className="glass border-border/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
             Análise de Cohort — Retenção de Clientes
           </CardTitle>

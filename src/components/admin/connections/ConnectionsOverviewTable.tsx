@@ -60,7 +60,7 @@ export function ConnectionsOverviewTable() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="font-display text-lg">Conexões</CardTitle>
+        <CardTitle className="text-section-title">Conexões</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

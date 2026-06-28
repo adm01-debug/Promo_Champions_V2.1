@@ -33,7 +33,7 @@ const BenchmarkingComponent: FC = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
           <CardHeader className="pb-4 border-b border-white/5">
-            <CardTitle className="text-xl flex items-center gap-3 italic uppercase font-black tracking-tighter">
+            <CardTitle className="text-section-title flex items-center gap-3 italic uppercase font-black tracking-tighter">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
                 <BarChart3 className="h-5 w-5 text-primary-foreground" />
               </div>

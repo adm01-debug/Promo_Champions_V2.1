@@ -50,7 +50,7 @@ export default function AskAnything() {
           <aside className="space-y-3">
             <Card>
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-section-title text-sm flex items-center gap-2">
                   <History className="h-4 w-4" /> Histórico
                 </CardTitle>
                 {history.length > 0 && (

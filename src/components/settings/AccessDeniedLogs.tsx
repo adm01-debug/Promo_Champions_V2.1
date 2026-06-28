@@ -142,7 +142,7 @@ export function AccessDeniedLogs() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <FileWarning className="h-5 w-5 text-warning" />
             Logs de Acesso Negado
           </CardTitle>
@@ -172,7 +172,7 @@ export function AccessDeniedLogs() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <FileWarning className="h-5 w-5 text-warning" />
               Logs de Acesso Negado
             </CardTitle>
@@ -271,7 +271,7 @@ export function AccessDeniedLogs() {
         {chartData.length > 0 && (
           <Card className="border-border/40">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-warning" />
                 Tentativas por Dia
               </CardTitle>

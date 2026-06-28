@@ -26,7 +26,7 @@ export const ScheduledReportRunsDrawer = ({ scheduleId, scheduleName, onClose }:
     <Sheet open={!!scheduleId} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="font-display">Histórico — {scheduleName ?? "Agendamento"}</SheetTitle>
+          <SheetTitle className="text-section-title">Histórico — {scheduleName ?? "Agendamento"}</SheetTitle>
         </SheetHeader>
 
         <div className="mt-6 space-y-2">

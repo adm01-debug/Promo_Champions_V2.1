@@ -98,7 +98,7 @@ export const LeadSLAMonitor: FC = () => {
   return (
     <Card className="glass border-border/40 hover:shadow-lg transition-shadow">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <Timer className="h-4 w-4 text-primary" />
           Monitor de SLA de Leads
         </CardTitle>

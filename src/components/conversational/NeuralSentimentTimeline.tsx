@@ -65,7 +65,7 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
       <CardHeader className="pb-6 border-b border-white/5 bg-gradient-to-r from-primary/10 via-transparent to-transparent">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+            <CardTitle className="text-section-title font-black uppercase tracking-widest flex items-center gap-2">
               <Zap className="size-5 text-primary animate-pulse" />
               Neural Sentiment Timeline
             </CardTitle>

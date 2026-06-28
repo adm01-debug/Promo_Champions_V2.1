@@ -94,7 +94,7 @@ export const ScenarioSimulator = () => {
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-xl font-black italic tracking-tighter uppercase flex items-center gap-2">
+            <CardTitle className="text-section-title font-black italic tracking-tighter uppercase flex items-center gap-2">
               <Dices className="size-5 text-primary animate-bounce-subtle" />
               Strategic <span className="text-primary">Scenario Simulator</span>
             </CardTitle>

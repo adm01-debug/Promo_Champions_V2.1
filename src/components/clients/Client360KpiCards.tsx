@@ -38,7 +38,7 @@ export function Client360KpiCards({ data }: Client360KpiCardsProps) {
       <Card className="bg-primary/5 border-primary/10 shadow-sm overflow-hidden relative group backdrop-blur-sm">
         <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-primary/20 transition-all" />
         <CardHeader className="pb-2">
-          <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="text-section-title text-[10px] font-black text-muted-foreground uppercase tracking-widest">
             LTV Absoluto
           </CardTitle>
         </CardHeader>
@@ -53,7 +53,7 @@ export function Client360KpiCards({ data }: Client360KpiCardsProps) {
       <Card className="bg-indigo-500/5 border-indigo-500/10 shadow-sm overflow-hidden relative group backdrop-blur-sm">
         <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-indigo-500/20 transition-all" />
         <CardHeader className="pb-2">
-          <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="text-section-title text-[10px] font-black text-muted-foreground uppercase tracking-widest">
             Ticket Médio
           </CardTitle>
         </CardHeader>
@@ -68,7 +68,7 @@ export function Client360KpiCards({ data }: Client360KpiCardsProps) {
       <Card className="bg-emerald-600/10 border-emerald-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
         <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-emerald-500/20 transition-all" />
         <CardHeader className="pb-2">
-          <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="text-section-title text-[10px] font-black text-muted-foreground uppercase tracking-widest">
             Esforço de Venda
           </CardTitle>
         </CardHeader>
@@ -85,7 +85,7 @@ export function Client360KpiCards({ data }: Client360KpiCardsProps) {
       <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
         <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-purple-500/20 transition-all" />
         <CardHeader className="pb-2">
-          <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="text-section-title text-[10px] font-black text-muted-foreground uppercase tracking-widest">
             Posição na Base
           </CardTitle>
         </CardHeader>

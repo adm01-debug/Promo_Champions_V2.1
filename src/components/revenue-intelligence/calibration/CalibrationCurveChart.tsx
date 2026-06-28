@@ -74,7 +74,7 @@ export const CalibrationCurveChart: FC<Props> = ({ data }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Curva de Calibração</CardTitle>
+          <CardTitle className="text-section-title">Curva de Calibração</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground py-8 text-center">
           Sem dados. Execute uma recalibração.
@@ -86,7 +86,7 @@ export const CalibrationCurveChart: FC<Props> = ({ data }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
+        <CardTitle className="text-section-title">
           Curva de Calibração — Baseline vs Real
         </CardTitle>
       </CardHeader>

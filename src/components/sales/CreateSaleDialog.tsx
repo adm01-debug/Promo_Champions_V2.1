@@ -161,7 +161,7 @@ export const CreateSaleDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Nova Venda</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Nova Venda</DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             Registre uma nova transação comercial no ecossistema.
           </DialogDescription>
@@ -361,7 +361,7 @@ export const CreateSaleDialog = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/50 p-3 bg-muted/30">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm">Primeira Ativação?</FormLabel>
+                    <FormLabel className="text-label">Primeira Ativação?</FormLabel>
                     <p className="text-[10px] text-muted-foreground italic">
                       Se ativado, ambos (SDR e Closer) recebem comissão.
                     </p>

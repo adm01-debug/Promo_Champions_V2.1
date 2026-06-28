@@ -26,7 +26,7 @@ export function ActivityChannelEffectiveness() {
   return (
     <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-accent" />
           Efetividade por Canal
         </CardTitle>

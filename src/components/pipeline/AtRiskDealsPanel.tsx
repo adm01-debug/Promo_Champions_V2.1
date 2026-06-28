@@ -58,7 +58,7 @@ export function AtRiskDealsPanel() {
         className="glass border-border/40 dark:border-glow card-elevated animate-fade-in"
       >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg font-display group">
+          <CardTitle className="text-section-title flex items-center gap-2 group">
             <div className="p-2 rounded-lg bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-success" />
             </div>
@@ -87,7 +87,7 @@ export function AtRiskDealsPanel() {
     >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg font-display group">
+          <CardTitle className="text-section-title flex items-center gap-2 group">
             <div className="p-2 rounded-lg bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-warning" />
             </div>

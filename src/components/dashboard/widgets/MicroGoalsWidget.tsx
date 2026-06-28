@@ -18,7 +18,7 @@ export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
     return (
       <Card className="h-full">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+          <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <Target className="h-3.5 w-3.5 text-primary" />
             Micro-Metas
           </CardTitle>
@@ -35,7 +35,7 @@ export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <Target className="h-3.5 w-3.5 text-primary" />
           Micro-Metas
         </CardTitle>

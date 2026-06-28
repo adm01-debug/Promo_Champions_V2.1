@@ -36,7 +36,7 @@ export const RecentActivitiesWidget = React.memo(function RecentActivitiesWidget
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5" />
           Atividades Recentes
         </CardTitle>

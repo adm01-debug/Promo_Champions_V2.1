@@ -101,7 +101,7 @@ export function CS360Tabs({
       <TabsContent value="overview" className="space-y-4 mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Top contas em risco</CardTitle>
+            <CardTitle className="text-section-title text-sm">Top contas em risco</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {accounts
@@ -151,7 +151,7 @@ export function CS360Tabs({
       <TabsContent value="health" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">
+            <CardTitle className="text-section-title text-sm">
               Health Score v2 — todas as contas
             </CardTitle>
           </CardHeader>
@@ -184,7 +184,7 @@ export function CS360Tabs({
       <TabsContent value="renewals" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Pipeline de renovação</CardTitle>
+            <CardTitle className="text-section-title text-sm">Pipeline de renovação</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {renewals.length === 0 ? (
@@ -223,7 +223,7 @@ export function CS360Tabs({
       <TabsContent value="tickets" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Tickets abertos</CardTitle>
+            <CardTitle className="text-section-title text-sm">Tickets abertos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {tickets.length === 0 ? (
@@ -264,7 +264,7 @@ export function CS360Tabs({
       <TabsContent value="usage" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Adoção de produto</CardTitle>
+            <CardTitle className="text-section-title text-sm">Adoção de produto</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {usage.length === 0 ? (
@@ -305,7 +305,7 @@ export function CS360Tabs({
       <TabsContent value="onboarding" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Jornadas de onboarding</CardTitle>
+            <CardTitle className="text-section-title text-sm">Jornadas de onboarding</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {onboarding.length === 0 ? (
@@ -352,7 +352,7 @@ export function CS360Tabs({
       <TabsContent value="expansion" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm font-bold">
+            <CardTitle className="text-section-title flex items-center gap-2 text-sm">
               <Sparkles className="h-4 w-4 text-primary" />
               Oportunidades de expansão
             </CardTitle>
@@ -397,7 +397,7 @@ export function CS360Tabs({
       <TabsContent value="surveys" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-bold">Respostas CSAT / CES</CardTitle>
+            <CardTitle className="text-section-title text-sm">Respostas CSAT / CES</CardTitle>
             {accounts[0] && (
               <SurveyTriggerDialog
                 accountId={accounts[0].id}
@@ -450,7 +450,7 @@ export function CS360Tabs({
       <TabsContent value="qbr" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-sm font-bold">Agenda de QBR</CardTitle>
+            <CardTitle className="text-section-title text-sm">Agenda de QBR</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {qbrs.length === 0 ? (

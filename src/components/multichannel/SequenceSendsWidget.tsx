@@ -10,7 +10,7 @@ export function SequenceSendsWidget() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Send className="h-4 w-4 text-primary" />
           Envios via Sequências (últimos 7d)
         </CardTitle>

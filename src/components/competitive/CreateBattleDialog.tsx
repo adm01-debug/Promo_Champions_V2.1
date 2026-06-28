@@ -94,7 +94,7 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg glass border-border/40 card-elevated">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl font-display font-black tracking-tighter italic gradient-text uppercase">
+          <DialogTitle className="text-section-title flex items-center gap-2 font-black tracking-tighter italic gradient-text uppercase">
             <div className="p-2 rounded-xl bg-primary/10 shadow-lg">
               <Swords className="h-6 w-6 text-primary animate-pulse-subtle" />
             </div>

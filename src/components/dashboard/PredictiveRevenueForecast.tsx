@@ -63,7 +63,7 @@ export const PredictiveRevenueForecast = () => {
             <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-500">
               <Brain className="h-5 w-5" />
             </div>
-            <CardTitle className="text-sm font-mono uppercase tracking-widest">
+            <CardTitle className="text-section-title text-sm font-mono uppercase tracking-widest">
               Forecast Preditivo AI
             </CardTitle>
           </div>

@@ -40,7 +40,7 @@ export function SDRIntelligenceHighlights() {
       
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
             Insights de Inteligência
           </CardTitle>

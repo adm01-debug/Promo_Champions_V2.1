@@ -76,7 +76,7 @@ export function AsyncReplayQueueDialog({
     <Dialog open={open} onOpenChange={(v) => !state.isRunning && onOpenChange(v)}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <RotateCcw className="h-5 w-5 text-primary" />
             Fila assíncrona de reprocessamento
           </DialogTitle>

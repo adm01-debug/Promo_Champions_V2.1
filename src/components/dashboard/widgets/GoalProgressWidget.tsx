@@ -24,7 +24,7 @@ export const GoalProgressWidget = React.memo(function GoalProgressWidget() {
         <Target className="h-12 w-12 text-primary rotate-12" />
       </div>
       <CardHeader className="pb-2 relative z-10">
-        <CardTitle className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-section-title text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-primary/10">
             <Target className="h-3.5 w-3.5 text-primary" />
           </div>

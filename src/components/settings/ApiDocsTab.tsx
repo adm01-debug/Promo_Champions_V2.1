@@ -8,7 +8,7 @@ export const ApiDocsTab = React.memo(function ApiDocsTab() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Code className="h-5 w-5 text-primary" />
           Documentação da API REST V2
         </CardTitle>

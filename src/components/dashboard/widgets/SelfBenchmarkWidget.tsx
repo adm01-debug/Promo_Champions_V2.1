@@ -22,7 +22,7 @@ export const SelfBenchmarkWidget = React.memo(function SelfBenchmarkWidget() {
     return (
       <Card className="h-full">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+          <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
              <BarChart3 className="h-3.5 w-3.5 text-info" />
             Seu Benchmark
           </CardTitle>
@@ -42,7 +42,7 @@ export const SelfBenchmarkWidget = React.memo(function SelfBenchmarkWidget() {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <CardTitle className="text-section-title text-xs font-medium text-muted-foreground flex items-center gap-1.5">
           <BarChart3 className="h-3.5 w-3.5 text-info" />
           Seu Benchmark
         </CardTitle>

@@ -27,7 +27,7 @@ export const PermissionComparisonTable = React.memo(function PermissionCompariso
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Shield className="h-5 w-5" />
           Visão Comparativa
         </CardTitle>

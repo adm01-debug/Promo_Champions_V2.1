@@ -72,7 +72,7 @@ export function AutomationIntelligenceHub() {
               <CardDescription className="flex items-center gap-2">
                 <Zap className="h-4 w-4" /> Workflows ativos
               </CardDescription>
-              <CardTitle className="text-3xl">
+              <CardTitle className="text-section-title text-3xl">
                 {data?.active_workflows ?? 0}
                 <span className="text-sm text-muted-foreground font-normal"> / {data?.total_workflows ?? 0}</span>
               </CardTitle>
@@ -83,7 +83,7 @@ export function AutomationIntelligenceHub() {
               <CardDescription className="flex items-center gap-2">
                 <Activity className="h-4 w-4" /> Execuções (30d)
               </CardDescription>
-              <CardTitle className="text-3xl">{roi?.total_runs_30d ?? 0}</CardTitle>
+              <CardTitle className="text-section-title text-3xl">{roi?.total_runs_30d ?? 0}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
@@ -105,7 +105,7 @@ export function AutomationIntelligenceHub() {
               <CardDescription className="flex items-center gap-2">
                 <Clock className="h-4 w-4" /> Tempo economizado
               </CardDescription>
-              <CardTitle className="text-3xl text-success">
+              <CardTitle className="text-section-title text-3xl text-success">
                 {roi?.estimated_time_saved_hours ?? 0}h
               </CardTitle>
             </CardHeader>
@@ -115,7 +115,7 @@ export function AutomationIntelligenceHub() {
         {/* AI Suggestions */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
               Sugestões inteligentes ({suggestions.length})
             </CardTitle>
@@ -175,7 +175,7 @@ export function AutomationIntelligenceHub() {
         <div className="grid gap-4 md:grid-cols-3">
           <Card className="hover:shadow-elegant transition-shadow">
             <CardHeader>
-              <CardTitle className="text-base">Workflows existentes</CardTitle>
+              <CardTitle className="text-section-title">Workflows existentes</CardTitle>
               <CardDescription>Gerencie e monitore automações ativas</CardDescription>
             </CardHeader>
             <CardContent>
@@ -186,7 +186,7 @@ export function AutomationIntelligenceHub() {
           </Card>
           <Card className="hover:shadow-elegant transition-shadow">
             <CardHeader>
-              <CardTitle className="text-base">Builder visual</CardTitle>
+              <CardTitle className="text-section-title">Builder visual</CardTitle>
               <CardDescription>Crie workflows complexos com editor drag-and-drop</CardDescription>
             </CardHeader>
             <CardContent>
@@ -197,7 +197,7 @@ export function AutomationIntelligenceHub() {
           </Card>
           <Card className="hover:shadow-elegant transition-shadow">
             <CardHeader>
-              <CardTitle className="text-base">Aprovações</CardTitle>
+              <CardTitle className="text-section-title">Aprovações</CardTitle>
               <CardDescription>Workflows de aprovação para descontos e negociações</CardDescription>
             </CardHeader>
             <CardContent>

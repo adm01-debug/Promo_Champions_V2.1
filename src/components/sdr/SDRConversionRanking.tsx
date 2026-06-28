@@ -154,7 +154,7 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
     return (
       <Card className="card-elevated">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg gradient-primary">
               <ArrowRightLeft className="h-4 w-4 text-primary-foreground" />
             </div>
@@ -175,7 +175,7 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
     <Card className="card-elevated">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 font-display">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-lg gradient-primary">
               <ArrowRightLeft className="h-4 w-4 text-primary-foreground" />
             </div>

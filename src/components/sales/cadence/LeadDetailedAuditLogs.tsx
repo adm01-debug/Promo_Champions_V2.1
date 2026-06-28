@@ -44,7 +44,7 @@ export function LeadDetailedAuditLogs({
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
           Auditoria de Interações: {clientName || 'Lead'}
         </CardTitle>

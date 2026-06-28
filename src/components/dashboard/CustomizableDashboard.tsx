@@ -107,7 +107,7 @@ function WidgetManagerDialog({
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <LayoutGrid className="h-5 w-5 text-primary" />
             Widgets Disponíveis
           </DialogTitle>

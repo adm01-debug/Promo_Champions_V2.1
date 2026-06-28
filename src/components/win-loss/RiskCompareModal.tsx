@@ -168,7 +168,7 @@ export function RiskCompareModal({ open, onOpenChange, dealA, dealB }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <GitCompare className="h-4 w-4 text-primary" aria-hidden />
             Comparar deals em risco
           </DialogTitle>

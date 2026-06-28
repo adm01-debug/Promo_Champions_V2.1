@@ -40,7 +40,7 @@ export const PushNotificationSettings: React.FC = () => {
     return (
       <Card className="border-destructive/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
+          <CardTitle className="text-section-title flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
             Notificações Push Não Suportadas
           </CardTitle>

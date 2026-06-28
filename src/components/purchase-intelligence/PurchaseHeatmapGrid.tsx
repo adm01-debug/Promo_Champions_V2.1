@@ -168,7 +168,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
       <CardHeader className="border-b border-border/50 pb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2.5 text-lg font-bold">
+            <CardTitle className="text-section-title flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-orange-500/10">
                 <Flame className="h-5 w-5 text-orange-500 animate-pulse" />
               </div>

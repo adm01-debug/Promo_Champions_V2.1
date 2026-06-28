@@ -131,7 +131,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
       </DialogTrigger>
       <DialogContent className="glass dark:border-glow border-border/50 animate-fade-in">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-display">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
               <UserPlus className="h-5 w-5 text-primary" />
             </div>
@@ -146,7 +146,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1.5 text-sm">
+                  <FormLabel className="text-label flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-muted-foreground" />
                     Nome *
                   </FormLabel>
@@ -167,7 +167,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1.5 text-sm">
+                  <FormLabel className="text-label flex items-center gap-1.5">
                     <Mail className="h-3.5 w-3.5 text-muted-foreground" />
                     Email
                   </FormLabel>
@@ -189,7 +189,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1.5 text-sm">
+                  <FormLabel className="text-label flex items-center gap-1.5">
                     <Target className="h-3.5 w-3.5 text-muted-foreground" />
                     Função
                   </FormLabel>
@@ -232,7 +232,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                 name="commission_rate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
+                    <FormLabel className="text-label flex items-center gap-1.5">
                       <Percent className="h-3.5 w-3.5 text-muted-foreground" />
                       Comissão
                     </FormLabel>
@@ -256,7 +256,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                 name="goal_amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
+                    <FormLabel className="text-label flex items-center gap-1.5">
                       <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
                       Meta Mensal
                     </FormLabel>

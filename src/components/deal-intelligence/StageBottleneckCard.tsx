@@ -22,7 +22,7 @@ export function StageBottleneckCard({ insight }: Props) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <CardTitle className="text-base capitalize flex items-center gap-2">
+            <CardTitle className="text-section-title capitalize flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-muted-foreground" />
               {stageLabel(insight.stage)}
             </CardTitle>

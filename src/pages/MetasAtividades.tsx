@@ -543,7 +543,7 @@ export default function MetasAtividades() {
                             className="rounded-[2.5rem] border-white/10 overflow-hidden shadow-2xl transition-all duration-500 hover:bg-background/30 group/grid"
                           >
                             <CardHeader className="pb-6 bg-primary/5 border-b border-white/5">
-                              <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-3">
+                              <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest flex items-center gap-3">
                                 <div className="icon-container-primary p-2 rounded-xl bg-primary/10 border border-primary/20">
                                   <Target className="h-4 w-4 text-primary" />
                                 </div>

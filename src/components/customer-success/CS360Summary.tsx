@@ -15,7 +15,7 @@ function KPI({ title, value, sub, icon, accent }: KPIProps) {
   return (
     <Card className={`glass border-border/50 hover-scale-sm transition-all ${accent === 'destructive' ? 'border-destructive/30 bg-destructive/5' : accent === 'warning' ? 'border-warning/30 bg-warning/5' : ''}`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">{title}</CardTitle>
         <div className="p-2 rounded-lg bg-background/50 border border-border/40">
           {icon}
         </div>

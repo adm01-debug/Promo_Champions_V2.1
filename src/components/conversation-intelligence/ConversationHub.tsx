@@ -46,7 +46,7 @@ export const ConversationHub = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Análises recentes</CardTitle>
+          <CardTitle className="text-section-title">Análises recentes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {isLoading ? (

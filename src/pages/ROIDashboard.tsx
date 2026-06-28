@@ -254,7 +254,7 @@ const ROIDashboard = () => {
           <TabsContent value="charts" className="space-y-4">
             <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-primary" />
                   ROI por Vendedor
                 </CardTitle>
@@ -320,7 +320,7 @@ const ROIDashboard = () => {
           <TabsContent value="efficiency" className="space-y-4">
             <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <Award className="h-4 w-4 text-accent" />
                   Eficiência: Atividades × Receita
                 </CardTitle>
@@ -366,7 +366,7 @@ const ROIDashboard = () => {
             </Card>
             <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader>
-                <CardTitle className="text-base">Receita por Atividade</CardTitle>
+                <CardTitle className="text-section-title">Receita por Atividade</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {[...roiData]

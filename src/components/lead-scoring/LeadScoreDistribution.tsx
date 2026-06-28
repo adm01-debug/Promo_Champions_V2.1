@@ -15,7 +15,7 @@ export function LeadScoreDistribution() {
     <Card variant="modern" className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
-          <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-primary" />
             Distribuição de Elite
           </CardTitle>

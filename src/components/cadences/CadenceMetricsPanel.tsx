@@ -15,7 +15,7 @@ export function CadenceMetricsPanel() {
   return (
     <Card className="glass border-border/40 hover-lift-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
           Métricas por Cadência (últimos 30 dias)
         </CardTitle>

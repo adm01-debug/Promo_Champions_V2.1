@@ -54,7 +54,7 @@ export const PerformanceCharts = React.memo(function PerformanceCharts({ benchma
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
@@ -82,7 +82,7 @@ export const PerformanceCharts = React.memo(function PerformanceCharts({ benchma
 
       <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
               <Target className="h-4 w-4 text-primary" />
             </div>

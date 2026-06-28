@@ -244,7 +244,7 @@ export default function CommissionRules() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="glass border-white/10 shadow-2xl max-w-xl">
           <DialogHeader>
-            <DialogTitle className="font-display italic uppercase tracking-tighter">
+            <DialogTitle className="text-section-title italic uppercase tracking-tighter">
               {editingRule?.id ? 'Editar Regra de Comissão' : 'Nova Regra de Comissão'}
             </DialogTitle>
           </DialogHeader>

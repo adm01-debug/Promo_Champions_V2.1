@@ -90,7 +90,7 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="gradient-text">Editar Produto</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">Editar Produto</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

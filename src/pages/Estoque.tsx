@@ -158,7 +158,7 @@ export default function Estoque() {
 
               <DialogContent className="glass border-border/50">
                 <DialogHeader className="pb-4 border-b border-border/10">
-                  <DialogTitle className="font-display font-black text-xl uppercase tracking-tighter italic">
+                  <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Logistics Deployment
                   </DialogTitle>
                 </DialogHeader>
@@ -373,7 +373,7 @@ export default function Estoque() {
             <TabsContent value="inventory" className="mt-4">
               <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
                 <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
-                  <CardTitle className="text-lg font-black uppercase tracking-tighter italic">
+                  <CardTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Strategic Inventory
                   </CardTitle>
                   <div className="px-3 py-1 rounded-lg bg-primary/5 border border-primary/10 text-[10px] font-black text-primary uppercase tracking-widest">
@@ -596,7 +596,7 @@ export default function Estoque() {
                                 <ShieldAlert className="h-4 w-4 text-rose-500 animate-pulse" />
                               )}
                             </div>
-                            <CardTitle className="font-display font-black text-lg uppercase tracking-tighter italic mt-2">
+                            <CardTitle className="text-section-title font-black uppercase tracking-tighter italic mt-2">
                               {item.productName}
                             </CardTitle>
                           </CardHeader>
@@ -677,7 +677,7 @@ export default function Estoque() {
             <TabsContent value="movements" className="mt-4">
               <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
                 <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
-                  <CardTitle className="text-lg font-black uppercase tracking-tighter italic">
+                  <CardTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Tactical Movements
                   </CardTitle>
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-accent/30 border border-white/5">

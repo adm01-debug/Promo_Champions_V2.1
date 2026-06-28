@@ -38,7 +38,7 @@ export function SemanticReindexPanel() {
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
               Busca Semântica — Cobertura do Índice
             </CardTitle>

@@ -22,7 +22,7 @@ export function DeleteCadenceDialog({ cadenceName, open, onOpenChange, onConfirm
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="glass border-border/50 dark:border-glow">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-display">Excluir Cadência</AlertDialogTitle>
+          <AlertDialogTitle className="text-section-title">Excluir Cadência</AlertDialogTitle>
           <AlertDialogDescription>
             Tem certeza que deseja excluir a cadência <span className="font-medium text-foreground">"{cadenceName}"</span>?
             <br />

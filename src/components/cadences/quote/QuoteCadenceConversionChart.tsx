@@ -40,7 +40,7 @@ export function QuoteCadenceConversionChart() {
   return (
     <Card className="glass border-border/50">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="flex items-center gap-2 text-base font-display">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
           Conversão pós-cadência
         </CardTitle>

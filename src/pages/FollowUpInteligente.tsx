@@ -415,7 +415,7 @@ const FollowUpInteligente = memo(() => {
       <Dialog open={isReactivateModalOpen} onOpenChange={setIsReactivateModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <Zap className="h-5 w-5 text-amber-500" />
               Reativar Lead Classe A
             </DialogTitle>
@@ -462,7 +462,7 @@ const FollowUpInteligente = memo(() => {
       <Dialog open={isAuditModalOpen} onOpenChange={setIsAuditModalOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <History className="h-5 w-5" />
               Histórico de Follow-up: {selectedLeadForAudit?.client_name}
             </DialogTitle>
@@ -522,7 +522,7 @@ const FollowUpInteligente = memo(() => {
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-section-title flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-green-500" />
               Revisar Mensagem
             </DialogTitle>

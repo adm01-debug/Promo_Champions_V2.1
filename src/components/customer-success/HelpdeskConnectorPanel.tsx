@@ -98,7 +98,7 @@ export function HelpdeskConnectorPanel() {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><Plug className="h-4 w-4" />Conectores de Helpdesk</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><Plug className="h-4 w-4" />Conectores de Helpdesk</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {PROVIDERS.map((p) => (
@@ -121,7 +121,7 @@ export function HelpdeskConnectorPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><Calendar className="h-4 w-4" />Automação de Renovações</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><Calendar className="h-4 w-4" />Automação de Renovações</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">
@@ -139,7 +139,7 @@ export function HelpdeskConnectorPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><Sparkles className="h-4 w-4" />Expansion Detector</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><Sparkles className="h-4 w-4" />Expansion Detector</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">
@@ -157,7 +157,7 @@ export function HelpdeskConnectorPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><Rocket className="h-4 w-4" />Onboarding Automático</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><Rocket className="h-4 w-4" />Onboarding Automático</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">
@@ -175,7 +175,7 @@ export function HelpdeskConnectorPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><CalendarCheck className="h-4 w-4" />QBR Scheduler</CardTitle>
+          <CardTitle className="text-section-title flex items-center gap-2"><CalendarCheck className="h-4 w-4" />QBR Scheduler</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">

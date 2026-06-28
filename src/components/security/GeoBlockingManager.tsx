@@ -132,7 +132,7 @@ export function GeoBlockingManager() {
 
       {/* Add country */}
       <Card>
-        <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Plus className="h-5 w-5" />Adicionar País à Whitelist</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title flex items-center gap-2"><Plus className="h-5 w-5" />Adicionar País à Whitelist</CardTitle></CardHeader>
         <CardContent>
           <div className="flex gap-3">
             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
@@ -154,7 +154,7 @@ export function GeoBlockingManager() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2"><MapPin className="h-5 w-5" />Países na Whitelist ({filteredCountries.length})</CardTitle>
+            <CardTitle className="text-section-title flex items-center gap-2"><MapPin className="h-5 w-5" />Países na Whitelist ({filteredCountries.length})</CardTitle>
             <div className="relative w-64"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar país..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9" /></div>
           </div>
         </CardHeader>

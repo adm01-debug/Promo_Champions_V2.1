@@ -32,7 +32,7 @@ export const ForecastCategoriesPanel: FC<Props> = ({ rollup, variance }) => {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="font-display">Forecast Roll-Up por Categoria</CardTitle>
+        <CardTitle className="text-section-title">Forecast Roll-Up por Categoria</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-5">
         {rollup.map((r) => {

@@ -125,7 +125,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
       <Dialog open={showLog} onOpenChange={setShowLog}>
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic">Registrar Atividade Tática</DialogTitle>
+            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">Registrar Atividade Tática</DialogTitle>
             <DialogDescription className="sr-only">Formulário para registrar atividades de vendas.</DialogDescription>
           </DialogHeader>
           <ActivityLogForm 
@@ -139,7 +139,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
       <Dialog open={showAIInsights} onOpenChange={setShowAIInsights}>
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-purple-500/20 rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-2">
+            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic flex items-center gap-2">
               <BrainCircuit className="h-5 w-5 text-purple-500" />
               Inteligência Preditiva (IA)
             </DialogTitle>

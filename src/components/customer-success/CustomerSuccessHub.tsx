@@ -84,7 +84,7 @@ const KPICard = ({
           >
             <Icon className="size-4" />
           </div>
-          <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <CardTitle className="text-section-title text-xs uppercase tracking-widest text-muted-foreground">
             {label}
           </CardTitle>
         </div>
@@ -154,7 +154,7 @@ export function CustomerSuccessHub() {
               <Sparkles className="size-3" /> IA-Powered Retention
             </Badge>
           </div>
-          <h1 className="text-4xl font-black font-display gradient-text tracking-tighter">
+          <h1 className="text-page-title gradient-text">
             Customer Success Hub
           </h1>
           <p className="text-muted-foreground mt-1 font-medium">
@@ -221,7 +221,7 @@ export function CustomerSuccessHub() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Heart className="size-5 text-primary" />
-              <CardTitle className="text-lg">Radar de Saúde por Conta</CardTitle>
+              <CardTitle className="text-section-title">Radar de Saúde por Conta</CardTitle>
             </div>
             <Badge
               variant="secondary"

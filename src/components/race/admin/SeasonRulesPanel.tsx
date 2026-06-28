@@ -78,7 +78,7 @@ export function SeasonRulesPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Target className="w-5 h-5" /> Regras de pontuação por temporada</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2"><Target className="w-5 h-5" /> Regras de pontuação por temporada</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

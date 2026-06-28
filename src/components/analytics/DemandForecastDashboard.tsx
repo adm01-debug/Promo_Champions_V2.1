@@ -64,7 +64,7 @@ export function DemandForecastDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-section-title flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-primary" />
             Previsão de Demanda
           </h2>
@@ -86,7 +86,7 @@ export function DemandForecastDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="glass border-border/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">
               Total de Produtos
             </CardTitle>
           </CardHeader>
@@ -99,7 +99,7 @@ export function DemandForecastDashboard() {
 
         <Card className="glass border-status-error/30 bg-status-error/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-status-error flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-medium text-status-error flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               Itens Críticos
             </CardTitle>
@@ -113,7 +113,7 @@ export function DemandForecastDashboard() {
 
         <Card className="glass border-status-warning/30 bg-status-warning/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-status-warning flex items-center gap-2">
+            <CardTitle className="text-section-title text-sm font-medium text-status-warning flex items-center gap-2">
               <Package className="h-4 w-4" />
               Alto Risco
             </CardTitle>
@@ -127,7 +127,7 @@ export function DemandForecastDashboard() {
 
         <Card className="glass border-border/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">
               Última Atualização
             </CardTitle>
           </CardHeader>
@@ -222,7 +222,7 @@ export function DemandForecastDashboard() {
       {/* Inventory Levels */}
       <Card className="glass border-border/40">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Package className="h-5 w-5 text-primary" />
             Níveis de Estoque
           </CardTitle>

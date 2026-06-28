@@ -24,7 +24,7 @@ export const CoachingSkillFocusChart: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Distribuição por skill</CardTitle>
+        <CardTitle className="text-section-title">Distribuição por skill</CardTitle>
       </CardHeader>
       <CardContent>
         {chart.length === 0 ? (

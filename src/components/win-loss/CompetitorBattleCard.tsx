@@ -19,7 +19,7 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Swords className="h-4 w-4 text-primary" />
           Análise Competitiva
         </CardTitle>

@@ -59,7 +59,7 @@ export function AutoTestIntervalCard() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-display text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Clock className="h-4 w-4 text-primary" /> Intervalo de auto-teste
         </CardTitle>
         <CardDescription>De 5 a 1440 minutos.</CardDescription>

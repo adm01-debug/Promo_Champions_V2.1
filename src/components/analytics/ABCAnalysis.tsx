@@ -120,7 +120,7 @@ export function ABCAnalysis() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <Brain className="h-5 w-5 text-primary" />
-          <h3 className="text-base font-display font-bold text-foreground">
+          <h3 className="text-section-title text-foreground">
             Pareto Neural Insights
           </h3>
         </div>

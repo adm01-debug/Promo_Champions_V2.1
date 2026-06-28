@@ -32,7 +32,7 @@ export const SeasonComparisonPanel = memo(function SeasonComparisonPanel({ rows 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Calendar className="h-4 w-4 text-primary" aria-hidden />
           Safra atual vs. anterior
           <span className="text-xs text-muted-foreground font-normal ml-auto">{previous.label} → {current.label}</span>

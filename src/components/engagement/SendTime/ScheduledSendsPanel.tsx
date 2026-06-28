@@ -51,7 +51,7 @@ export function ScheduledSendsPanel({ status = "pending", showHeader = true }: P
     <Card>
       {showHeader && (
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" /> Envios agendados
             <Badge variant="outline" className="ml-1">{sends.length}</Badge>
           </CardTitle>

@@ -120,7 +120,7 @@ export function SalesAssistantChat() {
               <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <CardTitle className="text-lg">{aiAssistantName}</CardTitle>
+              <CardTitle className="text-section-title">{aiAssistantName}</CardTitle>
               <p className="text-xs text-muted-foreground">Seu coach de vendas pessoal</p>
             </div>
           </div>

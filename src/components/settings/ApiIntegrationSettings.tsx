@@ -57,7 +57,7 @@ export function ApiIntegrationSettings() {
         <TabsContent value="tokens" className="mt-4 space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Plus className="h-5 w-5 text-primary" />Gerar Novo Token</CardTitle>
+              <CardTitle className="text-section-title flex items-center gap-2"><Plus className="h-5 w-5 text-primary" />Gerar Novo Token</CardTitle>
               <CardDescription>Crie tokens para integração com sistemas externos</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -118,7 +118,7 @@ export function ApiIntegrationSettings() {
         <TabsContent value="logs" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />Histórico de Alterações de Score</CardTitle>
+              <CardTitle className="text-section-title flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />Histórico de Alterações de Score</CardTitle>
               <CardDescription>Todas as alterações de pontuação via API e sistema</CardDescription>
             </CardHeader>
             <CardContent>

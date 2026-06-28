@@ -34,7 +34,7 @@ function _MiniLeaderboard() {
     return (
       <Card className="bg-black/40 border-white/5 backdrop-blur-md">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-mono font-bold uppercase tracking-[0.3em] text-primary/60 flex items-center gap-2">
+          <CardTitle className="text-section-title text-xs font-mono uppercase tracking-[0.3em] text-primary/60 flex items-center gap-2">
             <Crown className="h-4 w-4" />
             Scanning Pilot Ranks
           </CardTitle>
@@ -61,7 +61,7 @@ function _MiniLeaderboard() {
 
       <CardHeader className="pb-2 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] flex items-center gap-1.5 text-primary">
+          <CardTitle className="text-section-title text-[10px] font-mono uppercase tracking-[0.25em] flex items-center gap-1.5 text-primary">
             <div className="p-1 rounded-lg bg-primary/10 border border-primary/20">
               <Crown className="h-3 w-3" />
             </div>

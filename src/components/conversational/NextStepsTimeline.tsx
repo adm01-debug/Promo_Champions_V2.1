@@ -13,7 +13,7 @@ export const NextStepsTimeline = ({ steps }: Props) => {
     <Card className="glass overflow-hidden border-l-4 border-l-primary/40">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base flex items-center gap-2 font-bold">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="size-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
               <ArrowRight className="size-4" />
             </div>

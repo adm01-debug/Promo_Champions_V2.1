@@ -44,7 +44,7 @@ export default function AccountDetail() {
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="space-y-2">
-                <CardTitle className="font-display text-2xl flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <Building2 className="h-6 w-6 text-primary" />
                   {account.name}
                 </CardTitle>

@@ -24,7 +24,7 @@ export const QuickActionsPanel: FC = () => {
   return (
     <Card variant="elevated" className="h-full">
       <CardHeader>
-        <CardTitle className="text-base">Ações Rápidas</CardTitle>
+        <CardTitle className="text-section-title">Ações Rápidas</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {ACTIONS.map((a) => {

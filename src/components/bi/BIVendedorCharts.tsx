@@ -49,7 +49,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 glass-card animate-slide-up" style={{ animationDelay: "400ms" }}>
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow"><TrendingUp className="h-4 w-4 text-primary-foreground" /></div>
               Vendas do Mês
             </CardTitle>
@@ -75,7 +75,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
         </Card>
 
         <Card className="glass-card animate-slide-up" style={{ animationDelay: "450ms" }}>
-          <CardHeader><CardTitle className="text-lg font-display">Por Categoria</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-section-title">Por Categoria</CardTitle></CardHeader>
           <CardContent>
             {salesByCategory && salesByCategory.length > 0 ? (
               <>
@@ -107,7 +107,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-card animate-slide-up" style={{ animationDelay: "500ms" }}>
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow"><ShoppingBag className="h-4 w-4 text-primary-foreground" /></div>
               Pipeline por Estágio
             </CardTitle>
@@ -133,7 +133,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
 
         <Card className="glass-card animate-slide-up" style={{ animationDelay: "550ms" }}>
           <CardHeader>
-            <CardTitle className="text-lg font-display flex items-center gap-2">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <div className="p-2 rounded-lg bg-gradient-to-br from-xp to-primary"><Activity className="h-4 w-4 text-xp-foreground" /></div>
               Atividades & Conquistas
             </CardTitle>

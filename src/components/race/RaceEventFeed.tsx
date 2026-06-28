@@ -26,7 +26,7 @@ export function RaceEventFeed({ events, cars }: Props) {
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Radio className="w-5 h-5 text-primary animate-pulse" />
           Narração ao Vivo
         </CardTitle>

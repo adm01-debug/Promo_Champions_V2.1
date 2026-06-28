@@ -54,7 +54,7 @@ export function TeamGoalProgress({
       
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display font-black flex items-center gap-2">
+          <CardTitle className="text-section-title font-black flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
               <Target className="h-5 w-5 text-primary" />
             </div>

@@ -35,7 +35,7 @@ export const PriceAlertsPanel = React.memo(function PriceAlertsPanel({
     <Card className="glass border-status-warning/30 bg-status-warning/5">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-status-warning" />
             Alertas de Preço
           </CardTitle>

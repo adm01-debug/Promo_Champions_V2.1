@@ -47,7 +47,7 @@ export function CadenceFunnel() {
   return (
     <Card className="glass border-border/40 overflow-hidden">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" />
           Funil da Cadência em Tempo Real
         </CardTitle>

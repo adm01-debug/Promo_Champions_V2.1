@@ -73,7 +73,7 @@ export function BrowserPushSettings() {
               <AlertTriangle className="h-5 w-5 text-warning" />
             </div>
             <div>
-              <CardTitle className="text-base">Push Notifications</CardTitle>
+              <CardTitle className="text-section-title">Push Notifications</CardTitle>
               <CardDescription>Navegador não suportado</CardDescription>
             </div>
           </div>
@@ -98,7 +98,7 @@ export function BrowserPushSettings() {
               {getStatusIcon()}
             </div>
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-section-title flex items-center gap-2">
                 Push Notifications
                 {getStatusBadge()}
               </CardTitle>

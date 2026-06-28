@@ -30,7 +30,7 @@ export function CommitteeInsightsPanel() {
   if (isLoading) {
     return (
       <Card variant="modern">
-        <CardHeader><CardTitle className="text-base">Insights do Comitê</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Insights do Comitê</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)}
@@ -43,7 +43,7 @@ export function CommitteeInsightsPanel() {
   if (!data || data.total === 0) {
     return (
       <Card variant="modern">
-        <CardHeader><CardTitle className="text-base">Insights do Comitê</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-section-title">Insights do Comitê</CardTitle></CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground py-4 text-center">
             Sem dados de cobertura ainda. Execute "Mapear comitê" em uma call ou recalcule cobertura num deal.
@@ -61,7 +61,7 @@ export function CommitteeInsightsPanel() {
   return (
     <Card variant="modern">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Gauge className="h-4 w-4 text-primary" />
           Insights do Comitê
           <span className="ml-auto text-xs font-normal text-muted-foreground">{data.total} deals analisados</span>

@@ -48,7 +48,7 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
     <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <span className="gradient-text">Comitê de Compra (DMU)</span>
           </CardTitle>

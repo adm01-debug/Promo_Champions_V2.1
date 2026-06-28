@@ -51,7 +51,7 @@ export const MergeConflictsResolver = ({ open, onOpenChange, clients, onMerge, i
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl glass border-white/10 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-display italic uppercase tracking-tighter">
+          <DialogTitle className="text-section-title flex items-center gap-2 italic uppercase tracking-tighter">
             <Merge className="h-5 w-5 text-primary" />
             Resolver Conflitos de Mesclagem
           </DialogTitle>

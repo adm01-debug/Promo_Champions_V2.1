@@ -53,7 +53,7 @@ export const PortfolioDistributionChart: FC<PortfolioDistributionChartProps> = (
   return (
     <Card className="glass">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <PieIcon className="h-4 w-4 text-primary" />
           Distribuição por Closer
         </CardTitle>

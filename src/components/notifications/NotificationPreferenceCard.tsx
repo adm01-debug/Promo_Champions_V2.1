@@ -105,7 +105,7 @@ export const NotificationPreferenceCard = React.memo(function NotificationPrefer
               <Mail className={`h-5 w-5 ${pref.is_active ? "text-primary" : "text-muted-foreground"}`} />
             </div>
             <div>
-              <CardTitle className="text-base">{pref.email}</CardTitle>
+              <CardTitle className="text-section-title">{pref.email}</CardTitle>
               <CardDescription className="flex items-center gap-2 mt-1">
                 <Clock className="h-3 w-3" />
                 {frequencyLabels[pref.frequency] || pref.frequency} às {pref.preferred_time.slice(0, 5)}

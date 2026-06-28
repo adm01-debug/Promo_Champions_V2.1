@@ -281,7 +281,7 @@ export function ActivityLogForm({
     <Card className="glass border-border/40 dark:border-glow card-elevated transition-all duration-300">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
               <Plus className="h-4 w-4 gradient-primary" />
             </div>
@@ -334,7 +334,7 @@ export function ActivityLogForm({
               name="activity_type"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel className="text-xs font-medium text-muted-foreground">
+                  <FormLabel className="text-label text-xs text-muted-foreground">
                     Tipo de Atividade
                   </FormLabel>
                   <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-7 gap-2">
@@ -384,7 +384,7 @@ export function ActivityLogForm({
                     name="pain_points"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-[10px] text-muted-foreground">
+                        <FormLabel className="text-label text-[10px] text-muted-foreground">
                           Dores / Desafios
                         </FormLabel>
                         <FormControl>
@@ -402,7 +402,7 @@ export function ActivityLogForm({
                     name="budget_range"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-[10px] text-muted-foreground">
+                        <FormLabel className="text-label text-[10px] text-muted-foreground">
                           Budget Estimado
                         </FormLabel>
                         <FormControl>
@@ -420,7 +420,7 @@ export function ActivityLogForm({
                     name="timeline"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-[10px] text-muted-foreground">
+                        <FormLabel className="text-label text-[10px] text-muted-foreground">
                           Timeline
                         </FormLabel>
                         <FormControl>
@@ -438,7 +438,7 @@ export function ActivityLogForm({
                     name="decision_criteria"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-[10px] text-muted-foreground">
+                        <FormLabel className="text-label text-[10px] text-muted-foreground">
                           Critérios de Decisão
                         </FormLabel>
                         <FormControl>
@@ -462,7 +462,7 @@ export function ActivityLogForm({
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">
+                    <FormLabel className="text-label text-xs text-muted-foreground">
                       Resultado / Desfecho
                     </FormLabel>
                     <div className="flex gap-1">
@@ -505,7 +505,7 @@ export function ActivityLogForm({
               name="salesperson_id"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-xs font-medium text-muted-foreground mb-1">
+                  <FormLabel className="text-label text-xs text-muted-foreground mb-1">
                     Vendedor
                   </FormLabel>
                   <Popover open={salespersonOpen} onOpenChange={setSalespersonOpen}>
@@ -576,7 +576,7 @@ export function ActivityLogForm({
                 name="client_id"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel className="text-xs font-medium text-muted-foreground mb-1">
+                    <FormLabel className="text-label text-xs text-muted-foreground mb-1">
                       Cliente
                     </FormLabel>
                     <Popover open={clientOpen} onOpenChange={setClientOpen}>
@@ -648,7 +648,7 @@ export function ActivityLogForm({
                 name="contact_name"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">
+                    <FormLabel className="text-label text-xs text-muted-foreground">
                       Contato
                     </FormLabel>
                     <FormControl>
@@ -667,7 +667,7 @@ export function ActivityLogForm({
                 name="duration_minutes"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-xs font-medium text-muted-foreground">
+                    <FormLabel className="text-label text-xs text-muted-foreground">
                       Duração (min)
                     </FormLabel>
                     <FormControl>
@@ -711,7 +711,7 @@ export function ActivityLogForm({
                 name="notes"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+                    <FormLabel className="text-label text-xs text-muted-foreground flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <BookOpen className="h-3 w-3 text-primary" />
                         Observações

@@ -10,7 +10,7 @@ export function Bitrix24Tab() {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
-        <CardTitle className="font-display text-lg">Bitrix24</CardTitle>
+        <CardTitle className="text-section-title">Bitrix24</CardTitle>
         <CardDescription>Status da integração OAuth com o Bitrix24.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -81,7 +81,7 @@ export default function DealVelocityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="glass border-border/40 overflow-hidden group">
                 <CardHeader className="pb-2 border-b border-border/30 bg-muted/20">
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <ArrowLeftRight className="h-4 w-4 text-primary" />
                     Comparativo entre Vendedores
                   </CardTitle>
@@ -131,7 +131,7 @@ export default function DealVelocityPage() {
 
               <Card className="glass border-border/40">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-primary" />
                     Insights de Aceleração
                   </CardTitle>

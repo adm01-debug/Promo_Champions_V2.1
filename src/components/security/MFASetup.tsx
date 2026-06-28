@@ -65,13 +65,13 @@ export const MFASetup = () => {
           {isMFAEnabled ? (
             <Alert className="bg-status-success/10 border-status-success/20">
               <CheckCircle2 className="h-4 w-4 text-status-success" />
-              <AlertTitle className="text-status-success">MFA Ativo</AlertTitle>
+              <AlertTitle className="text-section-title text-status-success">MFA Ativo</AlertTitle>
               <AlertDescription>Sua conta está protegida com autenticação de dois fatores.{settings?.totp_enabled && " (TOTP)"}{settings?.sms_enabled && " (SMS)"}</AlertDescription>
             </Alert>
           ) : (
             <Alert className="bg-status-warning/10 border-status-warning/20">
               <AlertTriangle className="h-4 w-4 text-status-warning" />
-              <AlertTitle className="text-status-warning">MFA Inativo</AlertTitle>
+              <AlertTitle className="text-section-title text-status-warning">MFA Inativo</AlertTitle>
               <AlertDescription>Recomendamos ativar o MFA para maior segurança.</AlertDescription>
             </Alert>
           )}

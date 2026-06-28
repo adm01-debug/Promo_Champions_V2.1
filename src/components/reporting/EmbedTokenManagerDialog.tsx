@@ -49,7 +49,7 @@ export function EmbedTokenManagerDialog({ open, onOpenChange, reportId }: Props)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl glass">
         <DialogHeader>
-          <DialogTitle className="font-display">Compartilhar / Embutir relatório</DialogTitle>
+          <DialogTitle className="text-section-title">Compartilhar / Embutir relatório</DialogTitle>
           <DialogDescription>
             Gere tokens públicos para embutir este relatório em sites externos via iframe ou link direto.
           </DialogDescription>

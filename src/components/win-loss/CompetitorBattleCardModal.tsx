@@ -33,7 +33,7 @@ export function CompetitorBattleCardModal({ open, onOpenChange, competitor }: Pr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Swords className="h-4 w-4 text-primary" />
             Battle Card · {competitor.name}
           </DialogTitle>

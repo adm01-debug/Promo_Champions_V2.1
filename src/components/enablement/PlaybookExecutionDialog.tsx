@@ -60,7 +60,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
               <Zap className="size-3 mr-1" /> Guia Ativo
             </Badge>
           </div>
-          <DialogTitle className="text-2xl font-display font-black uppercase italic tracking-tighter">
+          <DialogTitle className="text-section-title font-black uppercase italic tracking-tighter">
             {playbook.title}
           </DialogTitle>
           <DialogDescription>

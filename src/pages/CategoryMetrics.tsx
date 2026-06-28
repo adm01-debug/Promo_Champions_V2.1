@@ -122,7 +122,7 @@ const CategoryMetrics = () => {
                 {/* Pie Chart */}
                 <Card className="glass border-border/40">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                    <CardTitle className="text-section-title text-sm flex items-center gap-2">
                       <BarChart3 className="h-4 w-4 text-primary" /> Distribuição de
                       Receita
                     </CardTitle>
@@ -153,7 +153,7 @@ const CategoryMetrics = () => {
                 {/* Bar Chart */}
                 <Card className="glass border-border/40">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                    <CardTitle className="text-section-title text-sm flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-accent" /> Vendas por Categoria
                     </CardTitle>
                   </CardHeader>

@@ -25,7 +25,7 @@ export function RecentClosedDeals() {
     <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-medium flex items-center gap-2 group">
+          <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-status-success/20 to-status-success/5 shadow-lg group-hover:scale-110 transition-transform">
               <CheckCircle className="h-4 w-4 text-status-success" />
             </div>
@@ -114,7 +114,7 @@ export function RecentClosedDeals() {
                   </SheetTrigger>
                   <SheetContent className="glass sm:max-w-md border-l border-white/5">
                     <SheetHeader className="pb-6">
-                      <SheetTitle className="text-xl gradient-text">Detalhes do Deal</SheetTitle>
+                      <SheetTitle className="text-section-title gradient-text">Detalhes do Deal</SheetTitle>
                     </SheetHeader>
                     <div className="space-y-6 overflow-y-auto max-h-[calc(100vh-120px)] pr-2">
                       <div className="p-4 rounded-xl bg-muted/20 border border-white/5 space-y-3">

@@ -339,7 +339,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" aria-hidden />
             Forecast com cenários
           </CardTitle>
@@ -357,7 +357,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" aria-hidden />
             Forecast com cenários
             <span className="text-xs text-muted-foreground font-normal ml-auto">
@@ -378,7 +378,7 @@ export const ScenarioForecastChart = memo(function ScenarioForecastChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base flex-wrap">
+        <CardTitle className="text-section-title flex items-center gap-2 flex-wrap">
           <Sparkles className="h-4 w-4 text-primary" aria-hidden />
           Forecast com cenários
           <TooltipProvider delayDuration={150}>

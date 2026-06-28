@@ -64,7 +64,7 @@ export function PredictiveIntelligenceDashboard() {
       {data?.ai_insights && (
         <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="text-section-title flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
               Análise da IA
             </CardTitle>
@@ -150,7 +150,7 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="forecast">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Cenários de Receita</CardTitle>
+              <CardTitle className="text-section-title">Cenários de Receita</CardTitle>
               <CardDescription>Projeção ponderada por estágio, lead score e tempo no estágio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -168,7 +168,7 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="health">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Distribuição da Saúde do Pipeline</CardTitle>
+              <CardTitle className="text-section-title">Distribuição da Saúde do Pipeline</CardTitle>
               <CardDescription>Probabilidade média: {data?.pipeline_health.avg_probability ?? 0}%</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -182,7 +182,7 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="churn">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Clientes em Risco de Churn</CardTitle>
+              <CardTitle className="text-section-title">Clientes em Risco de Churn</CardTitle>
               <CardDescription>Top 5 clientes com maior risco e maior valor</CardDescription>
             </CardHeader>
             <CardContent>
@@ -212,7 +212,7 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="opportunities">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Top Oportunidades de Fechamento</CardTitle>
+              <CardTitle className="text-section-title">Top Oportunidades de Fechamento</CardTitle>
               <CardDescription>Maior valor esperado (amount × probabilidade)</CardDescription>
             </CardHeader>
             <CardContent>

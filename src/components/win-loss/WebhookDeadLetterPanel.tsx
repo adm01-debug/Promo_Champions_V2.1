@@ -181,7 +181,7 @@ export function WebhookDeadLetterPanel({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between text-base">
+        <CardTitle className="text-section-title flex items-center justify-between">
           <span className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden />
             Webhooks em dead-letter
@@ -469,7 +469,7 @@ export function WebhookDeadLetterPanel({
       <Drawer open={!!previewOf} onOpenChange={v => !v && setPreviewOf(null)}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="border-b">
-            <DrawerTitle className="text-base">Payload do dead-letter</DrawerTitle>
+            <DrawerTitle className="text-section-title">Payload do dead-letter</DrawerTitle>
             <DrawerDescription className="text-xs">
               {previewOf?.event} ·{' '}
               {previewOf?.subscription_url ?? previewOf?.subscription_id}

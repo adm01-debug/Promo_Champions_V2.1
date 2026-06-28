@@ -92,7 +92,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                 </div>
                 <div>
-                  <DialogTitle className="font-display font-black text-2xl uppercase tracking-tighter italic flex items-center gap-3">
+                  <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic flex items-center gap-3">
                     {lead.name}
                     <Badge
                       variant="outline"

@@ -12,7 +12,7 @@ export const QuotaAttainmentAlertsPanel: FC = () => {
   return (
     <Card variant="elevated">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-warning" />
           Alertas ativos
           <Badge variant="secondary" className="ml-auto">{alerts.length}</Badge>

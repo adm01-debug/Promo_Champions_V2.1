@@ -28,7 +28,7 @@ export const PlaybookCard = ({ playbook }: { playbook: Playbook }) => {
             <Zap className="size-3 mr-1" /> IA Ativa
           </Badge>
         </div>
-        <CardTitle className="text-lg font-display font-bold mt-2 group-hover:gradient-text transition-all">
+        <CardTitle className="text-section-title mt-2 group-hover:gradient-text transition-all">
           {playbook.title}
         </CardTitle>
         <CardDescription className="line-clamp-2 text-xs">

@@ -91,7 +91,7 @@ export function EmailReportConfig() {
           <div className="flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
             <div>
-              <CardTitle className="text-lg">Relatórios por Email</CardTitle>
+              <CardTitle className="text-section-title">Relatórios por Email</CardTitle>
               <CardDescription>Configure o envio automático de relatórios de performance</CardDescription>
             </div>
           </div>
@@ -218,7 +218,7 @@ export function EmailReportConfig() {
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
             <div>
-              <CardTitle className="text-lg">Preview do Relatório</CardTitle>
+              <CardTitle className="text-section-title">Preview do Relatório</CardTitle>
               <CardDescription>Exemplo do que será enviado</CardDescription>
             </div>
           </div>

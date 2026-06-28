@@ -32,7 +32,7 @@ export const PipelineInspectionTable: FC<Props> = ({ data, flagCounts, onRunInsp
     <Card className="glass border-border/40">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="font-display">Inspeção de Pipeline</CardTitle>
+          <CardTitle className="text-section-title">Inspeção de Pipeline</CardTitle>
           <Button onClick={onRunInspection} disabled={isRunning} size="sm" variant="outline">
             <Search className="h-4 w-4 mr-2" />{isRunning ? "Inspecionando..." : "Rodar inspeção"}
           </Button>

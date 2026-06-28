@@ -15,7 +15,7 @@ export const DecisionsAndObjectionsPanel = ({ decisions, objections }: Props) =>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card variant="success">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <CheckCircle2 className="size-4 text-status-success" />
             Decisões ({decisions?.length ?? 0})
           </CardTitle>
@@ -38,7 +38,7 @@ export const DecisionsAndObjectionsPanel = ({ decisions, objections }: Props) =>
 
       <Card variant="warning">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <ShieldAlert className="size-4 text-status-warning" />
             Objeções ({objections?.length ?? 0})
           </CardTitle>

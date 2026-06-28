@@ -25,7 +25,7 @@ export const MeetingSummaryCard = ({ summary, sentiment, keyTopics, summarizedAt
     <Card variant="primary" className="overflow-hidden border-primary/20 bg-gradient-to-br from-card to-primary/5">
       <CardHeader className="pb-3 bg-primary/5 border-b border-primary/10">
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-1.5 rounded-md bg-primary/20 text-primary">
               <Brain className="size-4" />
             </div>

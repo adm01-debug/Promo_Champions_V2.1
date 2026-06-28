@@ -315,7 +315,7 @@ export function PricingIntelligenceHub() {
           <CardHeader className="border-b border-white/5 bg-white/5">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="font-sora text-lg font-bold">
+                <CardTitle className="text-section-title font-sora">
                   Distribuição de Descontos
                 </CardTitle>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -390,7 +390,7 @@ export function PricingIntelligenceHub() {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive animate-pulse" />
                 <div>
-                  <CardTitle className="font-sora text-lg font-bold text-destructive">
+                  <CardTitle className="text-section-title font-sora text-destructive">
                     Radar de Concorrência
                   </CardTitle>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -498,7 +498,7 @@ export function PricingIntelligenceHub() {
                   <TrendingDown className="h-6 w-6" />
                 </div>
                 <div>
-                  <CardTitle className="font-sora text-xl font-black tracking-tight">
+                  <CardTitle className="text-section-title font-sora font-black">
                     Top Discounters
                   </CardTitle>
                   <p className="text-xs text-muted-foreground font-medium mt-1">
@@ -591,7 +591,7 @@ export function PricingIntelligenceHub() {
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <div>
-                  <CardTitle className="font-sora text-xl font-black tracking-tight">
+                  <CardTitle className="text-section-title font-sora font-black">
                     IA Price Recommender
                   </CardTitle>
                   <p className="text-xs text-muted-foreground font-medium mt-1">
@@ -684,7 +684,7 @@ export function PricingIntelligenceHub() {
                 <AlertTriangle className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <CardTitle className="text-xl font-black font-sora tracking-tight">
+                <CardTitle className="text-section-title font-black font-sora">
                   Price Guard: Alertas de Margem
                 </CardTitle>
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">

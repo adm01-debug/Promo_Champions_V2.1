@@ -9,7 +9,7 @@ export function InsightsImpactPanel() {
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           Impacto dos Insights aplicados
         </CardTitle>

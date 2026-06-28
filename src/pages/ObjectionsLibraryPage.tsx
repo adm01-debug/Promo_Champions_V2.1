@@ -44,7 +44,7 @@ export default function ObjectionsLibraryPage() {
             <div className="space-y-6">
               <Card className="glass border-border/40">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <Target className="h-4 w-4 text-primary" />
                     Objeções Críticas
                   </CardTitle>
@@ -73,7 +73,7 @@ export default function ObjectionsLibraryPage() {
 
               <Card className="glass border-primary/20 bg-primary/5">
                 <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2 text-primary">
+                  <CardTitle className="text-section-title text-sm flex items-center gap-2 text-primary">
                     <TrendingUp className="h-4 w-4" />
                     Impacto em Conversão
                   </CardTitle>

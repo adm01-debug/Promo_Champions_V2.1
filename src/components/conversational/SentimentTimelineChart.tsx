@@ -82,7 +82,7 @@ export const SentimentTimelineChart = ({
     <Card className={cn("glass overflow-hidden", hideTitle && "border-none bg-transparent shadow-none")}>
       {!hideTitle && (
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             Curva de sentimento
           </CardTitle>

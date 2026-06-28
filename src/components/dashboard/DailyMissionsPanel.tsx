@@ -47,7 +47,7 @@ export function DailyMissionsPanel() {
         <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent border-b border-border/30">
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
+              <CardTitle className="text-section-title text-sm flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-primary/20 text-primary shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
                   <Target className="h-3.5 w-3.5" />
                 </div>

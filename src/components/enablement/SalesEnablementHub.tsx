@@ -84,7 +84,7 @@ const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
             {asset.view_count}
           </Badge>
         </div>
-        <CardTitle className="text-base mt-3 line-clamp-2 group-hover:text-primary transition-colors">
+        <CardTitle className="text-section-title mt-3 line-clamp-2 group-hover:text-primary transition-colors">
           {asset.title}
         </CardTitle>
         {asset.description && (
@@ -411,7 +411,7 @@ export const SalesEnablementHub = () => {
           <Card className="glass border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-section-title flex items-center gap-2">
                   <BarChart3 className="size-5 text-primary" />
                   Asset Efficiency Index (AEI)
                 </CardTitle>

@@ -55,7 +55,7 @@ export const CalibratorBucketCurve: FC = () => {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle className="text-base">Curva por Bucket de Probabilidade</CardTitle>
+        <CardTitle className="text-section-title">Curva por Bucket de Probabilidade</CardTitle>
         <Select value={stage} onValueChange={setStage}>
           <SelectTrigger className="w-40 h-8 text-xs">
             <SelectValue />

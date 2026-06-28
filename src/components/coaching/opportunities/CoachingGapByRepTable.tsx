@@ -38,7 +38,7 @@ export const CoachingGapByRepTable: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Top 3 gaps por vendedor</CardTitle>
+        <CardTitle className="text-section-title">Top 3 gaps por vendedor</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-auto">

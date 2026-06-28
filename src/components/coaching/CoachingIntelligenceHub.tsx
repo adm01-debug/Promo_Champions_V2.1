@@ -71,7 +71,7 @@ export function CoachingIntelligenceHub() {
                       <CardDescription className="flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-destructive" /> Críticos
                       </CardDescription>
-                      <CardTitle className="text-3xl text-destructive">{summary?.critical ?? 0}</CardTitle>
+                      <CardTitle className="text-section-title text-3xl text-destructive">{summary?.critical ?? 0}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card>
@@ -79,7 +79,7 @@ export function CoachingIntelligenceHub() {
                       <CardDescription className="flex items-center gap-2">
                         <TrendingUp className="h-4 w-4 text-warning" /> Em atenção
                       </CardDescription>
-                      <CardTitle className="text-3xl text-warning">{summary?.warning ?? 0}</CardTitle>
+                      <CardTitle className="text-section-title text-3xl text-warning">{summary?.warning ?? 0}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card>
@@ -87,7 +87,7 @@ export function CoachingIntelligenceHub() {
                       <CardDescription className="flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4 text-success" /> Saudáveis
                       </CardDescription>
-                      <CardTitle className="text-3xl text-success">{summary?.healthy ?? 0}</CardTitle>
+                      <CardTitle className="text-section-title text-3xl text-success">{summary?.healthy ?? 0}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card>
@@ -108,7 +108,7 @@ export function CoachingIntelligenceHub() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="text-section-title flex items-center gap-2">
                       <Target className="h-5 w-5 text-primary" />
                       Vendedores priorizados ({targets.length})
                     </CardTitle>

@@ -40,7 +40,7 @@ export const ConversionFunnel: FC<ConversionFunnelProps> = ({ timeframe = 30 }) 
     return (
       <Card className="p-6">
         <CardHeader className="px-0 pt-0">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Filter className="h-5 w-5 text-primary" />
             Funil de Conversão
           </CardTitle>
@@ -59,7 +59,7 @@ export const ConversionFunnel: FC<ConversionFunnelProps> = ({ timeframe = 30 }) 
     <Card className="border-none shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
             <Filter className="h-5 w-5 text-primary" />
             Funil de Conversão
           </CardTitle>

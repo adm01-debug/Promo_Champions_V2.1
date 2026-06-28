@@ -62,7 +62,7 @@ export const PipelineContributionChart: FC<Props> = ({ perOwner, ownerNames = {}
 
       <CardHeader className="pb-6 border-b border-white/5 relative z-10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2.5">
+          <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-primary/20 text-primary border border-primary/30">
               <BarChart3 className="h-4 w-4" />
             </div>

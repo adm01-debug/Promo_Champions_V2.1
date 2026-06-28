@@ -117,7 +117,7 @@ export function AIEmailComposerDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="text-section-title flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             Escrever e-mail com IA
           </DialogTitle>

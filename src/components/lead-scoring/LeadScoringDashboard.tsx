@@ -496,7 +496,7 @@ export function LeadScoringDashboard() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 text-status-error" />
-                  <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground/80">
+                  <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest text-muted-foreground/80">
                     Alertas de Churn
                   </CardTitle>
                   {alerts.length > 0 && (
@@ -680,7 +680,7 @@ export function LeadScoringDashboard() {
         <CardHeader className="p-6 border-b border-border/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <CardTitle className="flex items-center gap-3 text-xl font-black uppercase tracking-tighter italic">
+              <CardTitle className="text-section-title flex items-center gap-3 font-black uppercase tracking-tighter italic">
                 <BarChart3 className="h-5 w-5 text-primary" />
                 Strategic Lead Ranking
               </CardTitle>

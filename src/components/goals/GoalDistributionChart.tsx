@@ -99,7 +99,7 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
     <Card className="glass border-border/40 card-elevated overflow-hidden group">
       <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
       <CardHeader className="pb-2 border-b border-border/10 relative z-10">
-        <CardTitle className="text-[10px] font-display font-black uppercase tracking-[0.2em] flex items-center gap-2 italic">
+        <CardTitle className="text-section-title text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 italic">
           <div className="p-2 rounded-xl bg-primary/10 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
             <PieIcon className="h-4 w-4 text-primary" />
           </div>
