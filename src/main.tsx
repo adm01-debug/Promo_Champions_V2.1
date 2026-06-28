@@ -1,8 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
 import "./index.css";
-import { reportWebVitals } from "@/lib/webVitals";
+import { installStaleAssetRecovery, recoverFromStaleAssetError } from "@/lib/staleAssetRecovery";
+
+installStaleAssetRecovery();
 
 const rootElement = document.getElementById("root");
 
@@ -10,11 +11,22 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
-createRoot(rootElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const bootstrapApp = async (): Promise<void> => {
+  const [{ default: App }, { reportWebVitals }] = await Promise.all([
+    import("./App"),
+    import("@/lib/webVitals"),
+  ]);
 
-// Report Core Web Vitals (CLS, INP, LCP, FCP, TTFB)
-reportWebVitals();
+  createRoot(rootElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+
+  // Report Core Web Vitals (CLS, INP, LCP, FCP, TTFB)
+  reportWebVitals();
+};
+
+void bootstrapApp().catch(error => {
+  void recoverFromStaleAssetError(error);
+});
