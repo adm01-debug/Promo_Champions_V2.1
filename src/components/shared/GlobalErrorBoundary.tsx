@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { captureError } from "@/lib/errorTracking";
+import { recoverFromStaleAssetError } from "@/lib/staleAssetRecovery";
 
 interface Props {
   children: ReactNode;
@@ -23,6 +24,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    void recoverFromStaleAssetError(error);
+
     captureError(error, {
       severity: "critical",
       category: "ui",
