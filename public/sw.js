@@ -1,6 +1,6 @@
 // Service Worker for Offline Support
 // Version incremented to force cache invalidation
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 4;
 const CACHE_NAME = `salespro-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = `salespro-runtime-v${CACHE_VERSION}`;
 
@@ -55,9 +55,8 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          // Delete ALL old caches to ensure clean state
+          // Delete ALL old caches to ensure clean state, including stale generated PWA caches.
           if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-            console.info('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -151,12 +150,12 @@ async function syncData() {
           });
           await cache.delete(request);
         }
-      } catch (error) {
-        console.error('Failed to sync item:', error);
+      } catch {
+        // Keep background sync best-effort; failed items remain queued for the next attempt.
       }
     }
-  } catch (error) {
-    console.error('Sync failed:', error);
+  } catch {
+    // Cache APIs can be unavailable in restricted contexts.
   }
 }
 
