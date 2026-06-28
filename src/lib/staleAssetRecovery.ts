@@ -7,6 +7,7 @@ const RECOVERABLE_ERROR_PATTERNS = [
   'importing a module script failed',
   'loading chunk',
   'chunkloaderror',
+  "cannot access 'react' before initialization",
   "cannot read properties of undefined (reading 'forwardref')",
   'vendor-radix-',
 ];

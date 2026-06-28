@@ -5,9 +5,7 @@ const CACHE_NAME = `salespro-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = `salespro-runtime-v${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
-  '/',
   '/offline.html',
-  '/manifest.json',
 ];
 
 // URLs/patterns that should NEVER be cached (to avoid React version conflicts)
@@ -44,7 +42,7 @@ function shouldCache(url) {
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) => Promise.allSettled(PRECACHE_URLS.map((url) => cache.add(url))))
       .then(() => self.skipWaiting())
   );
 });
