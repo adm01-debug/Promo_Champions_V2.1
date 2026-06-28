@@ -60,16 +60,17 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (!id.includes('node_modules')) return;
-          // Core framework
-          if (id.match(/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/)) {
+          // Core framework — match react/react-dom/scheduler/router anywhere in the dep tree
+          // so nested copies don't end up in another chunk and break React.forwardRef resolution.
+          if (/[\\/]node_modules[\\/](?:\.pnpm[\\/][^\\/]+[\\/]node_modules[\\/])?(react|react-dom|scheduler|react-router|react-router-dom|use-sync-external-store)[\\/]/.test(id)) {
             return 'vendor-core';
           }
+          // Radix depends tightly on React — keep in the same chunk to guarantee load order.
+          if (id.includes('@radix-ui/')) return 'vendor-core';
           // Data layer
           if (id.includes('@tanstack/react-query') || id.includes('@supabase/supabase-js')) {
             return 'vendor-data';
           }
-          // Radix UI primitives (split to keep small)
-          if (id.includes('@radix-ui/')) return 'vendor-radix';
           // Heavy & lazy-only libs — isolated so they only load on routes that import them
           if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
           if (id.includes('framer-motion')) return 'vendor-motion';
