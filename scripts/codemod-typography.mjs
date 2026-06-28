@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 /**
  * Codemod: aplica tokens tipográficos semânticos
- *  - text-page-title    → <h1> com text-2xl/3xl font-bold/extrabold
- *  - text-section-title → <h2>/<h3> com text-lg/xl font-semibold/bold
- *  - text-label         → <Label>/<label> com text-sm font-medium
+ *  - text-page-title    → <h1>, PageTitle
+ *  - text-section-title → <h2>/<h3>/<h4>, CardTitle, DialogTitle, SheetTitle,
+ *                         AlertDialogTitle, DrawerTitle, PopoverTitle, AlertTitle,
+ *                         SectionTitle, TypographyH2/H3/H4
+ *  - text-label         → <Label>/<label>, FormLabel
  *
- * Conservador: só atua dentro de className="..." de tags-alvo,
- * preservando classes utilitárias não-tipográficas.
+ * Estratégia:
+ *  - Tags HTML básicas (h1-h4, label): exigem assinatura (size+weight) para evitar
+ *    falsos positivos em textos comuns.
+ *  - Componentes nomeados (CardTitle, DialogTitle, FormLabel, …): aplicam o token
+ *    sempre que possuem className, pois já são semanticamente o alvo.
  *
  * Uso: node scripts/codemod-typography.mjs [--write]
  */
@@ -15,54 +20,71 @@ import { execSync } from "node:child_process";
 
 const WRITE = process.argv.includes("--write");
 
+const TAGS = [
+  "h1", "h2", "h3", "h4", "label", "Label",
+  "CardTitle", "DialogTitle", "SheetTitle", "AlertDialogTitle",
+  "DrawerTitle", "PopoverTitle", "AlertTitle", "SectionTitle", "PageTitle",
+  "TypographyH1", "TypographyH2", "TypographyH3", "TypographyH4",
+  "FormLabel",
+];
+
 const files = execSync(
-  `grep -rEl --include='*.tsx' '<(h1|h2|h3|label|Label)[^>]*className=' src/`
+  `grep -rEl --include='*.tsx' '<(${TAGS.join("|")})[^>]*className=' src/`,
+  { maxBuffer: 32 * 1024 * 1024 }
 )
   .toString()
   .trim()
   .split("\n")
   .filter(Boolean);
 
-// Classes que compõem cada "assinatura" tipográfica
-const SIG = {
-  pageTitle: {
-    size: /\btext-(2xl|3xl)\b/,
-    weight: /\bfont-(bold|extrabold|black)\b/,
-    token: "text-page-title",
-    strip: [
-      /\btext-(2xl|3xl)\b/g,
-      /\bfont-(bold|extrabold|black)\b/g,
-      /\btracking-(tight|tighter)\b/g,
-      /\bleading-(none|tight)\b/g,
-      /\bfont-display\b/g,
-    ],
-  },
-  sectionTitle: {
-    size: /\btext-(lg|xl)\b/,
-    weight: /\bfont-(semibold|bold)\b/,
-    token: "text-section-title",
-    strip: [
-      /\btext-(lg|xl)\b/g,
-      /\bfont-(semibold|bold)\b/g,
-      /\btracking-tight\b/g,
-      /\bleading-(snug|tight)\b/g,
-      /\bfont-display\b/g,
-    ],
-  },
-  label: {
-    size: /\btext-sm\b/,
-    weight: /\bfont-medium\b/,
-    token: "text-label",
-    strip: [/\btext-sm\b/g, /\bfont-medium\b/g, /\bleading-none\b/g],
-  },
-};
+const stripPage = [
+  /\btext-(2xl|3xl|4xl)\b/g,
+  /\bfont-(bold|extrabold|black)\b/g,
+  /\btracking-(tight|tighter)\b/g,
+  /\bleading-(none|tight)\b/g,
+  /\bfont-display\b/g,
+];
+const stripSection = [
+  /\btext-(base|lg|xl|2xl)\b/g,
+  /\bfont-(semibold|bold)\b/g,
+  /\btracking-tight\b/g,
+  /\bleading-(snug|tight)\b/g,
+  /\bfont-display\b/g,
+];
+const stripLabel = [/\btext-sm\b/g, /\bfont-medium\b/g, /\bleading-none\b/g];
 
+// Regras por tag.
+//  - force: aplica token sem exigir size+weight (componentes já-semânticos)
 const tagRules = {
-  h1: SIG.pageTitle,
-  h2: SIG.sectionTitle,
-  h3: SIG.sectionTitle,
-  label: SIG.label,
-  Label: SIG.label,
+  // HTML básicos — exigem assinatura
+  h1: { token: "text-page-title", strip: stripPage,
+        size: /\btext-(2xl|3xl|4xl)\b/, weight: /\bfont-(bold|extrabold|black)\b/ },
+  h2: { token: "text-section-title", strip: stripSection,
+        size: /\btext-(base|lg|xl|2xl)\b/, weight: /\bfont-(semibold|bold)\b/ },
+  h3: { token: "text-section-title", strip: stripSection,
+        size: /\btext-(base|lg|xl|2xl)\b/, weight: /\bfont-(semibold|bold)\b/ },
+  h4: { token: "text-section-title", strip: stripSection,
+        size: /\btext-(base|lg|xl)\b/, weight: /\bfont-(semibold|bold|medium)\b/ },
+  label: { token: "text-label", strip: stripLabel,
+           size: /\btext-sm\b/, weight: /\bfont-medium\b/ },
+  Label: { token: "text-label", strip: stripLabel,
+           size: /\btext-sm\b/, weight: /\bfont-medium\b/ },
+
+  // Componentes semânticos — token aplicado sempre
+  PageTitle:        { token: "text-page-title",    strip: stripPage,    force: true },
+  TypographyH1:     { token: "text-page-title",    strip: stripPage,    force: true },
+  CardTitle:        { token: "text-section-title", strip: stripSection, force: true },
+  DialogTitle:      { token: "text-section-title", strip: stripSection, force: true },
+  SheetTitle:       { token: "text-section-title", strip: stripSection, force: true },
+  AlertDialogTitle: { token: "text-section-title", strip: stripSection, force: true },
+  DrawerTitle:      { token: "text-section-title", strip: stripSection, force: true },
+  PopoverTitle:     { token: "text-section-title", strip: stripSection, force: true },
+  AlertTitle:       { token: "text-section-title", strip: stripSection, force: true },
+  SectionTitle:     { token: "text-section-title", strip: stripSection, force: true },
+  TypographyH2:     { token: "text-section-title", strip: stripSection, force: true },
+  TypographyH3:     { token: "text-section-title", strip: stripSection, force: true },
+  TypographyH4:     { token: "text-section-title", strip: stripSection, force: true },
+  FormLabel:        { token: "text-label",         strip: stripLabel,   force: true },
 };
 
 const cleanup = (s) =>
@@ -82,7 +104,9 @@ for (const file of files) {
     );
     out = out.replace(re, (m, open, classes, close) => {
       if (classes.includes(rule.token)) return m;
-      if (!rule.size.test(classes) || !rule.weight.test(classes)) return m;
+      if (!rule.force) {
+        if (!rule.size.test(classes) || !rule.weight.test(classes)) return m;
+      }
       let next = classes;
       for (const p of rule.strip) next = next.replace(p, "");
       next = cleanup(`${rule.token} ${next}`);
@@ -91,9 +115,8 @@ for (const file of files) {
   }
 
   if (out !== original) {
-    const diffLines = out.split("\n").length - original.split("\n").length;
-    const changes = (out.match(/text-(page-title|section-title|label)/g) || [])
-      .length -
+    const changes =
+      (out.match(/text-(page-title|section-title|label)/g) || []).length -
       (original.match(/text-(page-title|section-title|label)/g) || []).length;
     totalChanges += changes;
     touched.push({ file, changes });
