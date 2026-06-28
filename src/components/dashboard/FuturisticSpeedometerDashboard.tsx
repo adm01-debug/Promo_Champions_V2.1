@@ -303,7 +303,7 @@ export const FuturisticSpeedometerDashboard = () => {
             <Gauge className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h2 className="font-display text-lg font-bold tracking-tight text-primary">
+            <h2 className="text-section-title text-primary">
               Performance HUD
             </h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider flex items-center gap-2">

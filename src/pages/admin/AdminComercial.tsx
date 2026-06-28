@@ -305,7 +305,7 @@ export default function AdminComercial() {
       <div className="p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/10 pb-6">
           <div>
-            <h1 className="text-3xl font-display font-black gradient-text uppercase tracking-tighter italic">
+            <h1 className="text-page-title gradient-text uppercase italic">
               Gestão Comercial
             </h1>
             <p className="text-muted-foreground mt-1 uppercase text-[10px] font-bold tracking-widest">

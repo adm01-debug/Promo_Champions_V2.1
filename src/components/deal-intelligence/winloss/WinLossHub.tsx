@@ -15,7 +15,7 @@ export function WinLossHub() {
       className="space-y-4"
     >
       <div>
-        <h2 className="text-xl font-display font-semibold">Win/Loss Intelligence</h2>
+        <h2 className="text-section-title">Win/Loss Intelligence</h2>
         <p className="text-sm text-muted-foreground mt-0.5">
           Análise de padrões de vitória e derrota com IA — descubra o que está funcionando e onde você perde deals.
         </p>

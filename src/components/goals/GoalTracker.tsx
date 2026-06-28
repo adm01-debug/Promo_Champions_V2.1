@@ -189,7 +189,7 @@ export const GoalsDashboard: FC<GoalsDashboardProps> = ({ goals, onCreateGoal })
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Minhas Metas</h3>
+          <h3 className="text-section-title">Minhas Metas</h3>
           <p className="text-sm text-muted-foreground">
             {completedCount} concluídas, {onTrackCount} no caminho, {atRiskCount} em risco
           </p>

@@ -22,7 +22,7 @@ export function FollowUpEmptyState({ isFiltered }: FollowUpEmptyStateProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h3 className="text-lg font-semibold mb-1">
+          <h3 className="text-section-title mb-1">
             {isFiltered ? 'Nenhum lead nesta categoria' : 'Tudo em dia! 🎉'}
           </h3>
           <p className="text-muted-foreground text-sm">

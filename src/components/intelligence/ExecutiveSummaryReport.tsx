@@ -40,7 +40,7 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
               <FileText className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-bold">
+              <h2 className="text-section-title">
                 Relatório Executivo (CEO-Ready)
               </h2>
               <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">

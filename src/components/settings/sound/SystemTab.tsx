@@ -29,7 +29,7 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
     <div className="space-y-6">
       <VolumeControl label="Volume Geral" volume={volume} onVolumeChange={setVolume} />
       <div className="space-y-4">
-        <Label className="text-sm font-medium">Notificações</Label>
+        <Label className="text-label">Notificações</Label>
         <SystemSoundRow
           icon={ListTodo} iconColor="text-info" iconBg="bg-info/10"
           label="Nova Tarefa" description="Toca quando uma nova tarefa é criada"
@@ -63,7 +63,7 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
               <Check className="h-4 w-4 text-primary" />
             </div>
             <div className="space-y-0.5">
-              <Label className="text-sm font-medium">Som de "Pronto"</Label>
+              <Label className="text-label">Som de "Pronto"</Label>
               <p className="text-xs text-muted-foreground">Toca quando o confetti estiver carregado</p>
             </div>
           </div>

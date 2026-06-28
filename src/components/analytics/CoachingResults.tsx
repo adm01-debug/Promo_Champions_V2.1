@@ -54,7 +54,7 @@ export const CoachingResults = React.memo(function CoachingResults({ coaching }:
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold font-display gradient-text">{coaching.salesperson.name}</h3>
+              <h3 className="text-section-title gradient-text">{coaching.salesperson.name}</h3>
               <p className="text-muted-foreground mt-1 leading-relaxed">{coaching.coaching.summary}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                 <div className="glass rounded-xl p-3 border border-border/40 hover-lift transition-all">

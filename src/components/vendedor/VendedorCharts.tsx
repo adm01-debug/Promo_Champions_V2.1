@@ -15,7 +15,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 opacity-0 animate-fade-in-up glass rounded-xl p-6" style={{ animationDelay: "350ms" }}>
-        <h3 className="text-lg font-semibold mb-4">Vendas do Mês</h3>
+        <h3 className="text-section-title mb-4">Vendas do Mês</h3>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={chartData}>
@@ -41,7 +41,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
       </div>
 
       <div className="opacity-0 animate-fade-in-up glass rounded-xl p-6" style={{ animationDelay: "400ms" }}>
-        <h3 className="text-lg font-semibold mb-4">Por Categoria</h3>
+        <h3 className="text-section-title mb-4">Por Categoria</h3>
         {categoryData.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>

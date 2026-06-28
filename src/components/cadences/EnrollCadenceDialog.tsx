@@ -70,7 +70,7 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Responsável</Label>
+            <Label className="text-label">Responsável</Label>
             <Select value={salespersonId} onValueChange={setSalespersonId}>
               <SelectTrigger className="bg-muted/30 border-border/50 focus:border-primary transition-colors">
                 <SelectValue placeholder="Selecione o vendedor responsável" />
@@ -86,7 +86,7 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Selecione uma Cadência</Label>
+            <Label className="text-label">Selecione uma Cadência</Label>
             {activeCadences.length === 0 ? (
               <div className="text-sm text-muted-foreground p-6 text-center bg-muted/20 rounded-lg border border-dashed border-border/50">
                 <Play className="h-8 w-8 mx-auto mb-2 opacity-50" />

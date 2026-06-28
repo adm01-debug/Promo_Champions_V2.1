@@ -36,7 +36,7 @@ export default function AccountBasedEngagement() {
       <div className="container mx-auto px-4 py-6 space-y-6">
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-page-title flex items-center gap-2">
               <Users className="h-6 w-6 text-primary" />
               Account-Based Engagement
             </h1>

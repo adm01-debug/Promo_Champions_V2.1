@@ -26,7 +26,7 @@ export default function RaceArenaCareer() {
                 <ArrowLeft className="w-4 h-4 mr-1" /> Voltar ao Hub
               </Link>
             </Button>
-            <h1 className="text-3xl font-black flex items-center gap-3 font-display">
+            <h1 className="text-page-title flex items-center gap-3">
               <Trophy className="w-8 h-8 text-warning" /> Sua Carreira
             </h1>
             <p className="text-muted-foreground mt-1 text-sm">

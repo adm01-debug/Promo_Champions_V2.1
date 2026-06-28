@@ -354,7 +354,7 @@ const FollowUpInteligente = memo(() => {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">
+                <h2 className="text-section-title">
                   Leads que precisam de atenção
                   <span className="text-sm font-normal text-muted-foreground ml-2">
                     ({filteredLeads.length} de {coldLeads.length})

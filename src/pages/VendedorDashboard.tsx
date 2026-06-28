@@ -270,7 +270,7 @@ const VendedorDashboard = () => {
       <div className="min-h-screen bg-background p-6 lg:p-8 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Vendedor não encontrado</h2>
+          <h2 className="text-section-title mb-2">Vendedor não encontrado</h2>
           <Link to="/vendedores">
             <Button variant="outline">Voltar para Vendedores</Button>
           </Link>

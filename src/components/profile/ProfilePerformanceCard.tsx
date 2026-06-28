@@ -78,7 +78,7 @@ const ProfilePerformanceCard = React.memo(function ProfilePerformanceCard() {
             </div>
             
             <div className="flex-1">
-              <h3 className="text-lg font-bold tracking-tight">{salesperson?.name || "Usuário Elite"}</h3>
+              <h3 className="text-section-title">{salesperson?.name || "Usuário Elite"}</h3>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
                   {salesperson?.role || "Vendedor"}

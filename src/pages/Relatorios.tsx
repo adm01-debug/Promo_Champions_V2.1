@@ -111,7 +111,7 @@ const Relatorios = () => {
           {/* Reports List */}
           <div className="opacity-0 animate-fade-in-up glass rounded-xl" style={{ animationDelay: "450ms" }}>
             <div className="p-5 border-b border-border/50">
-              <h2 className="text-lg font-semibold">Relatórios Disponíveis</h2>
+              <h2 className="text-section-title">Relatórios Disponíveis</h2>
               <p className="text-sm text-muted-foreground">Baixe relatórios detalhados</p>
             </div>
             <div className="divide-y divide-border/30">

@@ -12,7 +12,7 @@ const PipelineOverviewBase: FC<PipelineOverviewProps> = ({
 }) => {
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Visão Geral do Pipeline</h3>
+      <h3 className="text-section-title mb-4">Visão Geral do Pipeline</h3>
       {pipelineId && <p className="text-sm">Pipeline: {pipelineId}</p>}
       {showValue && <p className="text-xs mt-2">Exibindo valores</p>}
     </Card>

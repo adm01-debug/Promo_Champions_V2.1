@@ -89,7 +89,7 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-display font-semibold text-lg">
+        <h3 className="text-section-title">
           Templates de Mensagem ({templates.length})
         </h3>
         <Dialog open={open} onOpenChange={setOpen}>

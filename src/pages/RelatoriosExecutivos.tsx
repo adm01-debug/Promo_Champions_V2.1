@@ -119,7 +119,7 @@ const RelatoriosExecutivos = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-display font-bold gradient-text">📊 Relatórios Executivos</h1>
+            <h1 className="text-page-title gradient-text">📊 Relatórios Executivos</h1>
             <p className="text-muted-foreground mt-1">Visão executiva com insights automáticos por IA</p>
           </div>
           <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>

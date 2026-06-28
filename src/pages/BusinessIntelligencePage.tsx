@@ -88,7 +88,7 @@ export default function BusinessIntelligencePage() {
                 <Sparkles className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl font-black uppercase italic tracking-tighter">
+                <h1 className="text-page-title uppercase italic">
                   Business <span className="text-primary">Intelligence</span>
                 </h1>
                 <p className="text-sm text-muted-foreground/80 font-medium">

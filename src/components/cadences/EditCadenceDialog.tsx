@@ -248,7 +248,7 @@ export function EditCadenceDialog({
             />
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30">
               <div>
-                <Label className="text-sm font-medium">Cadência Ativa</Label>
+                <Label className="text-label">Cadência Ativa</Label>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {cadence.is_active
                     ? 'Prospects podem ser inscritos'

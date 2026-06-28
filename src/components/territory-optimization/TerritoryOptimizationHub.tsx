@@ -134,7 +134,7 @@ export function TerritoryOptimizationHub() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-sora tracking-tight">Territory Optimization</h1>
+          <h1 className="text-page-title font-sora">Territory Optimization</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Análise de cobertura, balanceamento de carteiras e recomendações de IA.
           </p>

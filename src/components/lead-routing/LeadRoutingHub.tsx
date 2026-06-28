@@ -14,7 +14,7 @@ export function LeadRoutingHub() {
       className="space-y-4"
     >
       <div>
-        <h2 className="text-xl font-display font-semibold">Smart Lead Routing</h2>
+        <h2 className="text-section-title">Smart Lead Routing</h2>
         <p className="text-sm text-muted-foreground mt-0.5">
           Distribuição inteligente de leads para o vendedor certo — baseado em capacidade,
           performance histórica e regras configuráveis.

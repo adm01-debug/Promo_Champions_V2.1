@@ -49,7 +49,7 @@ export function AutomationIntelligenceHub() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold gradient-text flex items-center gap-2">
+            <h1 className="text-page-title gradient-text flex items-center gap-2">
               <Sparkles className="h-8 w-8 text-primary" />
               Automação Inteligente
             </h1>

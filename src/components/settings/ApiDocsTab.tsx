@@ -18,7 +18,7 @@ export const ApiDocsTab = React.memo(function ApiDocsTab() {
         <ScrollArea className="h-[600px]">
           <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
             <div>
-              <h3 className="text-lg font-semibold">🔐 Autenticação</h3>
+              <h3 className="text-section-title">🔐 Autenticação</h3>
               <p className="text-muted-foreground">Todas as requisições devem incluir o token no header:</p>
               <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
 {`Header: authorization
@@ -27,7 +27,7 @@ Value: <seu_token_aqui>`}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">👥 Usuários</h3>
+              <h3 className="text-section-title">👥 Usuários</h3>
               <div className="space-y-3">
                 <ApiEndpoint method="GET" path="/v2/users" desc="Listar todos os usuários ativos" />
                 <ApiEndpoint method="GET" path="/v2/user/:id" desc="Obter usuário específico" />
@@ -36,7 +36,7 @@ Value: <seu_token_aqui>`}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">👥 Times</h3>
+              <h3 className="text-section-title">👥 Times</h3>
               <div className="space-y-3">
                 <ApiEndpoint method="GET" path="/v2/team" desc="Informações do time vinculado ao token" />
                 <ApiEndpoint method="GET" path="/v2/team/users" desc="Usuários do time" />
@@ -46,7 +46,7 @@ Value: <seu_token_aqui>`}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">📊 Edição de Pontuação</h3>
+              <h3 className="text-section-title">📊 Edição de Pontuação</h3>
               <div className="space-y-3">
                 <ApiEndpoint method="PUT" path="/v2/team/user/edit/total" desc="Editar score total do usuário" body={`{
   "email": "user@email.com",
@@ -63,7 +63,7 @@ Value: <seu_token_aqui>`}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">🏢 Companhia</h3>
+              <h3 className="text-section-title">🏢 Companhia</h3>
               <div className="space-y-3">
                 <ApiEndpoint method="GET" path="/v2/company" desc="Informações da companhia" />
                 <ApiEndpoint method="GET" path="/v2/company/users" desc="Todos os usuários da companhia" />
@@ -71,7 +71,7 @@ Value: <seu_token_aqui>`}
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">📋 Códigos HTTP</h3>
+              <h3 className="text-section-title">📋 Códigos HTTP</h3>
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 bg-muted rounded text-xs"><Badge className="bg-primary">200</Badge> Sucesso</div>
                 <div className="p-2 bg-muted rounded text-xs"><Badge variant="destructive">400</Badge> Operação mal sucedida</div>

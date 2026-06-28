@@ -100,7 +100,7 @@ const ROIDashboard = () => {
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-black tracking-tight gradient-text">
+            <h1 className="text-page-title lg: gradient-text">
               ROI por Vendedor
             </h1>
             <p className="text-muted-foreground text-sm mt-1">

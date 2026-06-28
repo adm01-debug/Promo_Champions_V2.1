@@ -36,7 +36,7 @@ export const AccessDeniedLogsTable = React.memo(function AccessDeniedLogsTable({
         <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-4">
           <ShieldX className="h-8 w-8 text-success" />
         </div>
-        <h3 className="font-semibold text-lg mb-2">Nenhuma tentativa registrada</h3>
+        <h3 className="text-section-title mb-2">Nenhuma tentativa registrada</h3>
         <p className="text-muted-foreground">Não há registros de tentativas de acesso negado.</p>
       </div>
     );

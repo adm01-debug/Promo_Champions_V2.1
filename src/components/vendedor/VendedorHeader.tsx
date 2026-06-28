@@ -34,7 +34,7 @@ export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalPr
             )}
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-black">{salesperson.name}</h1>
+            <h1 className="text-page-title md:">{salesperson.name}</h1>
             <p className="text-muted-foreground">{salesperson.email}</p>
             <div className="flex items-center justify-center md:justify-start gap-3 mt-2">
               <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">

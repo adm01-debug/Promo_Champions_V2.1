@@ -21,7 +21,7 @@ export function ConversionOptimizerPanel() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div>
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <h2 className="text-section-title flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Otimizador de Conversão
           </h2>

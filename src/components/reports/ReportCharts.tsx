@@ -33,7 +33,7 @@ export const ReportCharts = React.memo(function ReportCharts({ revenueData, cate
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Revenue Chart */}
       <div className="opacity-0 animate-fade-in-up glass rounded-xl p-6" style={{ animationDelay: "300ms" }}>
-        <h3 className="text-lg font-semibold mb-1">Evolução de Receita</h3>
+        <h3 className="text-section-title mb-1">Evolução de Receita</h3>
         <p className="text-sm text-muted-foreground mb-6">Receita vs Meta mensal</p>
         <div className="h-[280px]">
           {revenueData.length > 0 ? (
@@ -69,7 +69,7 @@ export const ReportCharts = React.memo(function ReportCharts({ revenueData, cate
 
       {/* Category Pie Chart */}
       <div className="opacity-0 animate-fade-in-up glass rounded-xl p-6" style={{ animationDelay: "350ms" }}>
-        <h3 className="text-lg font-semibold mb-1">Vendas por Categoria</h3>
+        <h3 className="text-section-title mb-1">Vendas por Categoria</h3>
         <p className="text-sm text-muted-foreground mb-6">Distribuição de receita</p>
         <div className="h-[280px] flex items-center">
           {categoryData.length > 0 ? (
@@ -103,7 +103,7 @@ export const ReportCharts = React.memo(function ReportCharts({ revenueData, cate
 
       {/* Bar Chart */}
       <div className="opacity-0 animate-fade-in-up glass rounded-xl p-6" style={{ animationDelay: "400ms" }}>
-        <h3 className="text-lg font-semibold mb-1">Vendas por Período</h3>
+        <h3 className="text-section-title mb-1">Vendas por Período</h3>
         <p className="text-sm text-muted-foreground mb-6">
           {selectedPeriod === "7d" ? "Últimos 7 dias" : selectedPeriod === "30d" ? "Últimas 4 semanas" : selectedPeriod === "90d" ? "Últimos 3 meses" : "Período selecionado"}
         </p>

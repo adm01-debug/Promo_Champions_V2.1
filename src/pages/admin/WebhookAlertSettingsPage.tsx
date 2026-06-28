@@ -186,7 +186,7 @@ export default function WebhookAlertSettingsPage() {
           </Button>
           <div className="flex items-center gap-2">
             <Settings2 className="h-6 w-6 text-primary" />
-            <h1 className="text-3xl font-display font-bold gradient-text">
+            <h1 className="text-page-title gradient-text">
               Alertas de Webhooks — Configurações
             </h1>
           </div>

@@ -26,7 +26,7 @@ const AccessDenied = () => {
           <ShieldX className="h-10 w-10 text-destructive" />
         </div>
         
-        <h1 className="text-3xl font-display font-bold mb-3">
+        <h1 className="text-page-title mb-3">
           Acesso Negado
         </h1>
         

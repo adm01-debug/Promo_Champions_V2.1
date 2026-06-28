@@ -21,7 +21,7 @@ export default function SemanticSearch() {
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
             <Sparkles className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Busca Semântica Universal</h1>
+          <h1 className="text-page-title">Busca Semântica Universal</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             Pergunte em linguagem natural. A IA entende a intenção e encontra resultados relevantes em clientes, leads, deals, atividades e gravações.
           </p>

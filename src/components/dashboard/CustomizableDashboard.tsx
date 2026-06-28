@@ -256,7 +256,7 @@ export function CustomizableDashboard() {
             <LayoutGrid className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold">Meu Dashboard</h1>
+            <h1 className="text-page-title">Meu Dashboard</h1>
             <p className="text-sm text-muted-foreground">
               Personalize seus widgets e métricas favoritas
             </p>

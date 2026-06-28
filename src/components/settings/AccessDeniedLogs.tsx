@@ -130,7 +130,7 @@ export function AccessDeniedLogs() {
           <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
             <ShieldX className="h-8 w-8 text-destructive" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">Acesso Restrito</h3>
+          <h3 className="text-section-title mb-2">Acesso Restrito</h3>
           <p className="text-muted-foreground max-w-md">
             Apenas administradores podem visualizar os logs de auditoria de segurança.
           </p>

@@ -40,7 +40,7 @@ export default function EmbedReportPage() {
         {data && (
           <>
             <header>
-              <h1 className="font-display text-2xl font-bold tracking-tight">{data.name}</h1>
+              <h1 className="text-page-title">{data.name}</h1>
               <p className="text-xs text-muted-foreground mt-1">
                 Gerado em {format(new Date(data.generated_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} · {data.rows.length} registros
               </p>

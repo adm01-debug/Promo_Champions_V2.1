@@ -35,7 +35,7 @@ export default function KanbanClientes() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Kanban de Clientes</h1>
+            <h1 className="text-page-title text-xl sm:">Kanban de Clientes</h1>
             <p className="text-sm text-muted-foreground">Gerencie o relacionamento arrastando clientes entre estágios</p>
           </motion.div>
           <motion.div

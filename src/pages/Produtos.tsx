@@ -227,7 +227,7 @@ const Produtos = () => {
                           {product.status}
                         </Badge>
                       </div>
-                      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                      <h3 className="text-section-title group-hover:text-primary transition-colors">
                         {product.name}
                       </h3>
                       <p className="text-[10px] font-mono text-muted-foreground/60">SKU: {product.sku || 'N/A'}</p>
@@ -266,7 +266,7 @@ const Produtos = () => {
           ) : searchTerm || categoryFilter || statusFilter ? (
             <div className="glass rounded-xl p-12 text-center">
               <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
+              <h3 className="text-section-title mb-2">Nenhum produto encontrado</h3>
               <p className="text-muted-foreground mb-4">Tente ajustar os filtros</p>
               <Button variant="outline" onClick={() => { setSearchTerm(''); setCategoryFilter(''); setStatusFilter(''); }}>
                 Limpar Filtros

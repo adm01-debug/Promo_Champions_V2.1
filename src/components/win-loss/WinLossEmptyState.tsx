@@ -18,7 +18,7 @@ export function WinLossEmptyState({ onAdjustFilters, onRunAnalysis, isAnalyzing 
             <Inbox className="h-7 w-7 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="font-display text-lg font-semibold">Nenhuma análise no período</h3>
+            <h3 className="text-section-title">Nenhuma análise no período</h3>
             <p className="text-sm text-muted-foreground max-w-sm mt-1">
               Ajuste os filtros para ampliar o intervalo, ou rode a IA para analisar deals fechados recentemente.
             </p>

@@ -170,7 +170,7 @@ export default function Notificacoes() {
 
               <TabsContent value="configuracoes" className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Destinatários de Alertas</h2>
+                  <h2 className="text-section-title">Destinatários de Alertas</h2>
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="gradient-primary">
@@ -309,7 +309,7 @@ export default function Notificacoes() {
                   <Card className="glass">
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <Bell className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">Nenhuma configuração</h3>
+                      <h3 className="text-section-title mb-2">Nenhuma configuração</h3>
                       <p className="text-muted-foreground text-center mb-4">
                         Configure destinatários para receber alertas críticos do sistema
                       </p>

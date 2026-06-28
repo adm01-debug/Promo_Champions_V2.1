@@ -21,7 +21,7 @@ interface SoundRadioGroupProps {
 export function SoundRadioGroup({ value, onValueChange, options, onPreview, disabled, idPrefix = "" }: SoundRadioGroupProps) {
   return (
     <div className="space-y-3">
-      <Label className="text-sm font-medium">Tipo de Som</Label>
+      <Label className="text-label">Tipo de Som</Label>
       <RadioGroup value={value} onValueChange={onValueChange} className="space-y-3">
         {options.map((option) => (
           <div

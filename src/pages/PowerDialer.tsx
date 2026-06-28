@@ -77,7 +77,7 @@ const PowerDialer = () => {
             {!currentItem && (
               <Card><CardContent className="p-12 text-center space-y-3">
                 <Phone className="h-16 w-16 mx-auto text-muted-foreground" />
-                <h3 className="text-lg font-semibold">Pronto para discar?</h3>
+                <h3 className="text-section-title">Pronto para discar?</h3>
                 <p className="text-sm text-muted-foreground">
                   Selecione uma fila e clique em <strong>Iniciar</strong> para começar.
                 </p>

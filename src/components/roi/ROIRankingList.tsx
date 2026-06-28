@@ -42,7 +42,7 @@ export const ROIRankingList = React.memo(function ROIRankingList({
       <Card className="border-dashed">
         <CardContent className="p-12 text-center">
           <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-          <h3 className="text-lg font-semibold text-foreground">Sem dados de ROI</h3>
+          <h3 className="text-section-title text-foreground">Sem dados de ROI</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Cadastre vendedores e registre vendas para ver o ROI.
           </p>

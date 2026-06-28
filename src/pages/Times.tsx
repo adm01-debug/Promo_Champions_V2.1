@@ -147,7 +147,7 @@ export default function Times() {
         <Card className="card-elevated">
           <CardContent className="p-12 text-center">
             <GitBranch className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhuma atribuição cadastrada</h3>
+            <h3 className="text-section-title mb-2">Nenhuma atribuição cadastrada</h3>
             <p className="text-muted-foreground mb-4">
               Configure qual SDR atende quais Closers (estrutura 1:2)
             </p>

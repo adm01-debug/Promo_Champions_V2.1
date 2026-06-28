@@ -59,7 +59,7 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
             </p>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Selecione uma cadência</Label>
+            <Label className="text-label">Selecione uma cadência</Label>
             {list.length === 0 ? (
               <div className="text-sm text-muted-foreground p-6 text-center bg-muted/20 rounded-lg border border-dashed border-border/50">
                 <p className="font-medium">Nenhuma cadência de follow-up disponível</p>

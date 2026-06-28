@@ -115,7 +115,7 @@ export default function WebhookAlertHistoryPage() {
                 </Link>
               </Button>
             </div>
-            <h1 className="text-3xl font-display font-bold gradient-text">
+            <h1 className="text-page-title gradient-text">
               Histórico de Alertas de Webhooks
             </h1>
             <p className="text-muted-foreground">

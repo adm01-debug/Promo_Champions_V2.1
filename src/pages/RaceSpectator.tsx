@@ -59,7 +59,7 @@ export default function RaceSpectator() {
       </Helmet>
 
       <header className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-display font-black flex items-center gap-3">
+        <h1 className="text-page-title flex items-center gap-3">
           <Flag className="w-8 h-8 text-primary" /> Race Arena · Ao Vivo
         </h1>
         <Badge variant="default" className="animate-pulse">

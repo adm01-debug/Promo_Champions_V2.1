@@ -274,7 +274,7 @@ export function WorkflowBuilder() {
             <GitBranch className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold">Automações</h1>
+            <h1 className="text-page-title">Automações</h1>
             <p className="text-sm text-muted-foreground">
               Crie regras "se X, então Y" para automatizar seu pipeline
             </p>
@@ -323,7 +323,7 @@ export function WorkflowBuilder() {
             <Card>
               <CardContent className="p-8 text-center">
                 <Zap className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                <h3 className="font-display font-semibold text-lg mb-1">
+                <h3 className="text-section-title mb-1">
                   Nenhuma automação criada
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">

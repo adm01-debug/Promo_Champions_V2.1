@@ -293,7 +293,7 @@ export default function QuoteCadencesPage() {
             >
               <div className="lg:col-span-2 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Configurações de Estratégia</h2>
+                  <h2 className="text-section-title">Configurações de Estratégia</h2>
                   <CadenceSimulationDialog />
                 </div>
                 <Tabs defaultValue="outcomes" className="w-full">

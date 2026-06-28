@@ -159,7 +159,7 @@ const ClientHealthScore = () => {
             className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
           >
             <div>
-              <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
+              <h1 className="text-page-title flex items-center gap-2">
                 <HeartPulse className="h-8 w-8 text-primary" />
                 Customer Success 360
               </h1>

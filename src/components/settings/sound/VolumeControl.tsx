@@ -11,7 +11,7 @@ interface VolumeControlProps {
 export function VolumeControl({ label = "Volume", volume, onVolumeChange }: VolumeControlProps) {
   return (
     <div className="space-y-3">
-      <Label className="text-sm font-medium">{label}</Label>
+      <Label className="text-label">{label}</Label>
       <div className="flex items-center gap-4">
         <VolumeX className="h-4 w-4 text-muted-foreground" />
         <Slider

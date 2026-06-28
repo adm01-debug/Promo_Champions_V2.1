@@ -28,7 +28,7 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
         className="opacity-0 animate-fade-in-up glass rounded-xl p-6"
         style={{ animationDelay: '450ms' }}
       >
-        <h3 className="text-lg font-semibold mb-4">Vendas Recentes</h3>
+        <h3 className="text-section-title mb-4">Vendas Recentes</h3>
         {recentDeals.length > 0 ? (
           <div className="space-y-3">
             {recentDeals.map(deal => (
@@ -69,7 +69,7 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
         className="opacity-0 animate-fade-in-up glass rounded-xl p-6"
         style={{ animationDelay: '500ms' }}
       >
-        <h3 className="text-lg font-semibold mb-4">Tarefas Pendentes</h3>
+        <h3 className="text-section-title mb-4">Tarefas Pendentes</h3>
         {staleTasks.length > 0 ? (
           <div className="space-y-3">
             {staleTasks.map(task => {
