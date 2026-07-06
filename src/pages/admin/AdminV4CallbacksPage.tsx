@@ -212,6 +212,110 @@ function AdminV4CallbacksContent() {
   );
 }
 
+const KIND_LABEL: Record<string, string> = {
+  high_failure_rate: "Taxa de falha alta",
+  exhausted_spike: "Pico de esgotados",
+  pending_backlog: "Backlog pendente",
+};
+
+function AlertsPanel({ alerts, onAck }: { alerts: ReturnType<typeof useV4Alerts>["data"] extends infer T ? Exclude<T, undefined> : never; onAck: (id: string) => void }) {
+  const active = alerts.filter((a) => !a.acknowledged_at);
+  if (active.length === 0) return null;
+  return (
+    <Card className="border-destructive/40 bg-destructive/5">
+      <CardHeader className="pb-2 flex flex-row items-center gap-2">
+        <Bell className="h-4 w-4 text-destructive" />
+        <CardTitle className="text-sm">Alertas ativos ({active.length})</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {active.map((a) => (
+          <div key={a.id} className="flex items-center justify-between gap-3 rounded-md border bg-background/60 p-2 text-sm">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <Badge variant="destructive">{KIND_LABEL[a.kind] ?? a.kind}</Badge>
+                <span className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(a.fired_at), { addSuffix: true, locale: ptBR })}
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1 font-mono truncate">
+                {JSON.stringify(a.details)}
+              </div>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => onAck(a.id)}>Reconhecer</Button>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AlertSettingsDialog({ settings }: { settings: ReturnType<typeof useV4AlertSettings> }) {
+  const [open, setOpen] = useState(false);
+  const s = settings.query.data;
+  const [form, setForm] = useState({
+    is_active: true,
+    failure_rate_threshold: 20,
+    exhausted_threshold_24h: 5,
+    pending_threshold: 50,
+    window_minutes: 60,
+    min_events: 10,
+    suppress_minutes: 30,
+  });
+  const openWithData = (v: boolean) => {
+    if (v && s) setForm({
+      is_active: s.is_active,
+      failure_rate_threshold: Number(s.failure_rate_threshold),
+      exhausted_threshold_24h: s.exhausted_threshold_24h,
+      pending_threshold: s.pending_threshold,
+      window_minutes: s.window_minutes,
+      min_events: s.min_events,
+      suppress_minutes: s.suppress_minutes,
+    });
+    setOpen(v);
+  };
+  return (
+    <Dialog open={open} onOpenChange={openWithData}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline"><Settings className="h-4 w-4 mr-2" />Alertas</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>Configurar alertas do dispatcher V4</DialogTitle></DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="v4-alerts-active">Alertas ativos</Label>
+            <Switch id="v4-alerts-active" checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <NumField label="Taxa falha ≥ (%)" value={form.failure_rate_threshold} onChange={(v) => setForm({ ...form, failure_rate_threshold: v })} />
+            <NumField label="Janela (min)" value={form.window_minutes} onChange={(v) => setForm({ ...form, window_minutes: v })} />
+            <NumField label="Mín. eventos" value={form.min_events} onChange={(v) => setForm({ ...form, min_events: v })} />
+            <NumField label="Esgotados 24h ≥" value={form.exhausted_threshold_24h} onChange={(v) => setForm({ ...form, exhausted_threshold_24h: v })} />
+            <NumField label="Backlog pendente ≥" value={form.pending_threshold} onChange={(v) => setForm({ ...form, pending_threshold: v })} />
+            <NumField label="Anti-flood (min)" value={form.suppress_minutes} onChange={(v) => setForm({ ...form, suppress_minutes: v })} />
+          </div>
+          <p className="text-xs text-muted-foreground">O cron avalia a cada 5 min e insere um alerta por tipo/janela quando os limiares são cruzados.</p>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button
+            onClick={() => settings.mutation.mutate(form, { onSuccess: () => setOpen(false) })}
+            disabled={settings.mutation.isPending || !s}
+          >Salvar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function NumField({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="space-y-1">
+      <Label className="text-xs">{label}</Label>
+      <Input type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} className="h-8" />
+    </div>
+  );
+}
+
 export default function AdminV4CallbacksPage() {
   return (
     <ProtectedRoute requiredRole="admin">
