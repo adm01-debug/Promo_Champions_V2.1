@@ -33,7 +33,7 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage,
+  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage,
   AdminComercial, Competencias,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
@@ -262,6 +262,7 @@ export function AppRoutes() {
                       <Route path="/admin" element={<Admin><AdminDashboard /></Admin>} />
                       <Route path="/admin/conexoes" element={<Admin><AdminConexoesPage /></Admin>} />
                       <Route path="/admin/v4-callbacks" element={<Admin><AdminV4CallbacksPage /></Admin>} />
+                      <Route path="/admin/quote-sync-inbound" element={<Admin><AdminQuoteSyncInboundPage /></Admin>} />
                       <Route path="/admin/telemetria" element={<Manager><AdminTelemetria /></Manager>} />
                       <Route path="/admin/comercial" element={<Manager><AdminComercial /></Manager>} />
                       <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />

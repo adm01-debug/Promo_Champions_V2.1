@@ -11726,6 +11726,51 @@ export type Database = {
           },
         ]
       }
+      quote_sync_inbound_log: {
+        Row: {
+          correlation_key: string | null
+          created_at: string
+          error_message: string | null
+          event: string | null
+          external_quote_id: string | null
+          http_status: number
+          id: string
+          payload: Json
+          quote_id: string | null
+          received_at: string
+          source: string
+          status: string
+        }
+        Insert: {
+          correlation_key?: string | null
+          created_at?: string
+          error_message?: string | null
+          event?: string | null
+          external_quote_id?: string | null
+          http_status: number
+          id?: string
+          payload?: Json
+          quote_id?: string | null
+          received_at?: string
+          source?: string
+          status: string
+        }
+        Update: {
+          correlation_key?: string | null
+          created_at?: string
+          error_message?: string | null
+          event?: string | null
+          external_quote_id?: string | null
+          http_status?: number
+          id?: string
+          payload?: Json
+          quote_id?: string | null
+          received_at?: string
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
       quote_sync_logs: {
         Row: {
           action: string
