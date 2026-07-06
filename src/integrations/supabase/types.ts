@@ -17323,6 +17323,36 @@ export type Database = {
           },
         ]
       }
+      v4_callback_metrics: {
+        Row: {
+          created_at: string
+          day: string
+          exhausted: number
+          failed: number
+          id: string
+          sent_ok: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          exhausted?: number
+          failed?: number
+          id?: string
+          sent_ok?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          exhausted?: number
+          failed?: number
+          id?: string
+          sent_ok?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       victory_feed: {
         Row: {
           created_at: string
@@ -19731,6 +19761,10 @@ export type Database = {
       increment_sales_streak: {
         Args: { p_salesperson_id: string }
         Returns: boolean
+      }
+      increment_v4_callback_metric: {
+        Args: { _column: string; _delta?: number }
+        Returns: undefined
       }
       initialize_totp: {
         Args: { p_email: string }
