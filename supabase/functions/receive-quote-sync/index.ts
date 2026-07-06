@@ -179,16 +179,43 @@ Deno.serve(async (req) => {
   if (!quoteRow.client_name) quoteRow.client_name = "Cliente V4";
   if (quoteRow.total_value === undefined) quoteRow.total_value = 0;
 
-  // 3. Upsert idempotente por external_quote_id
-  const { data: upserted, error: upsertErr } = await supabase
+  // 3. Upsert idempotente por external_quote_id (índice único é parcial,
+  //    então fazemos SELECT → UPDATE/INSERT manualmente).
+  const { data: existing, error: selErr } = await supabase
     .from("quotes")
-    .upsert(quoteRow, { onConflict: "external_quote_id" })
-    .select("id, external_quote_id, status")
-    .single();
+    .select("id")
+    .eq("external_quote_id", externalQuoteId)
+    .maybeSingle();
 
-  if (upsertErr) {
-    console.error("[receive-quote-sync] upsert failed", upsertErr);
-    return json({ error: "upsert_failed", details: upsertErr.message }, 500);
+  if (selErr) {
+    console.error("[receive-quote-sync] select failed", selErr);
+    return json({ error: "lookup_failed", details: selErr.message }, 500);
+  }
+
+  let upserted: unknown;
+  if (existing?.id) {
+    const { data: updated, error: updErr } = await supabase
+      .from("quotes")
+      .update(quoteRow)
+      .eq("id", existing.id)
+      .select("id, external_quote_id, status")
+      .single();
+    if (updErr) {
+      console.error("[receive-quote-sync] update failed", updErr);
+      return json({ error: "upsert_failed", details: updErr.message }, 500);
+    }
+    upserted = updated;
+  } else {
+    const { data: inserted, error: insErr } = await supabase
+      .from("quotes")
+      .insert(quoteRow)
+      .select("id, external_quote_id, status")
+      .single();
+    if (insErr) {
+      console.error("[receive-quote-sync] insert failed", insErr);
+      return json({ error: "upsert_failed", details: insErr.message }, 500);
+    }
+    upserted = inserted;
   }
 
   return json(
