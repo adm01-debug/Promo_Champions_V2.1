@@ -159,15 +159,46 @@ export const WebhookContracts = {
   }),
 
   quoteSync: z.object({
-    action: z.string().min(1, { message: "Ação é obrigatória" }),
-    quote: z.object({
-      id: z.string().min(1, { message: "ID do orçamento é obrigatório" }),
-      quote_number: z.string().min(1, { message: "Número do orçamento é obrigatório" }),
-      status: z.string().min(1, { message: "Status é obrigatório" }),
-      total: z.number().nonnegative({ message: "O total não pode ser negativo" }),
-      items: z.array(z.any()).min(1, { message: "O orçamento deve conter pelo menos um item" }),
+    action: z.literal("create_or_update_quote", {
+      errorMap: () => ({ message: "action deve ser 'create_or_update_quote'" }),
     }),
+    quote: z.object({
+      id: z.string().min(1, { message: "quote.id é obrigatório" }),
+      quote_number: z.string().min(1, { message: "quote.quote_number é obrigatório" }),
+      status: z.string().min(1, { message: "quote.status é obrigatório" }),
+      subtotal: z.number().nonnegative().optional(),
+      discount_percent: z.number().min(0).max(100).optional(),
+      discount_amount: z.number().nonnegative().optional(),
+      total: z.number().nonnegative({ message: "quote.total não pode ser negativo" }),
+      client_id: z.string().optional().nullable(),
+      client_name: z.string().min(1, { message: "quote.client_name é obrigatório" }),
+      client_email: z.string().email({ message: "quote.client_email inválido" }).optional().nullable(),
+      client_phone: z.string().optional().nullable(),
+      seller_id: z.string().optional().nullable(),
+      seller_name: z.string().optional().nullable(),
+      notes: z.string().optional().nullable(),
+      valid_until: z.string().optional().nullable(),
+      items: z.array(
+        z.object({
+          product_id: z.string().optional(),
+          product_name: z.string().min(1, { message: "item.product_name é obrigatório" }),
+          product_sku: z.string().optional(),
+          quantity: z.number().positive({ message: "item.quantity deve ser > 0" }),
+          unit_price: z.number().nonnegative({ message: "item.unit_price não pode ser negativo" }),
+          subtotal: z.number().nonnegative().optional(),
+          color_name: z.string().optional(),
+          personalizations: z.array(z.record(z.unknown())).optional(),
+        }).passthrough()
+      ).min(1, { message: "O orçamento deve conter pelo menos um item" }),
+      created_at: z.string().optional(),
+    }).refine(
+      (q) => (q.client_email && q.client_email.length > 0) || (q.client_phone && q.client_phone.length > 0),
+      { message: "É obrigatório fornecer client_email ou client_phone" }
+    ),
+    pdf_base64: z.string().optional(),
+    timestamp: z.string().optional(),
   }),
+
 
   workflowExecution: z.object({
     workflow_id: z.string().uuid({ message: "ID do workflow deve ser um UUID válido" }),

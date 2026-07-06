@@ -6825,6 +6825,68 @@ export type Database = {
         }
         Relationships: []
       }
+      external_seller_map: {
+        Row: {
+          created_at: string
+          external_email: string | null
+          external_id: string
+          external_name: string | null
+          external_source: string
+          id: string
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          external_email?: string | null
+          external_id: string
+          external_name?: string | null
+          external_source?: string
+          id?: string
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          external_email?: string | null
+          external_id?: string
+          external_name?: string | null
+          external_source?: string
+          id?: string
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_seller_map_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_seller_map_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_seller_map_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_seller_map_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           allowed_roles: string[] | null
@@ -9535,41 +9597,106 @@ export type Database = {
       orders: {
         Row: {
           cancellation_reason: string | null
+          client_id: string | null
           created_at: string
           id: string
+          metadata: Json | null
+          notes: string | null
           order_number: string
+          quote_id: string | null
+          salesperson_id: string | null
           shipping: number
           status: string
           subtotal: number
           total: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           cancellation_reason?: string | null
+          client_id?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
+          notes?: string | null
           order_number: string
+          quote_id?: string | null
+          salesperson_id?: string | null
           shipping?: number
           status?: string
           subtotal?: number
           total?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           cancellation_reason?: string | null
+          client_id?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
+          notes?: string | null
           order_number?: string
+          quote_id?: string | null
+          salesperson_id?: string | null
           shipping?: number
           status?: string
           subtotal?: number
           total?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       outbound_messages: {
         Row: {
@@ -11608,6 +11735,7 @@ export type Database = {
           external_quote_id: string | null
           id: string
           quote_number: string | null
+          source: string | null
           status: string
         }
         Insert: {
@@ -11618,6 +11746,7 @@ export type Database = {
           external_quote_id?: string | null
           id?: string
           quote_number?: string | null
+          source?: string | null
           status?: string
         }
         Update: {
@@ -11628,6 +11757,7 @@ export type Database = {
           external_quote_id?: string | null
           id?: string
           quote_number?: string | null
+          source?: string | null
           status?: string
         }
         Relationships: []
@@ -11637,6 +11767,7 @@ export type Database = {
           approved_at: string | null
           billing_status: string | null
           client_email: string | null
+          client_id: string | null
           client_name: string
           client_phone: string | null
           contract_end_date: string | null
@@ -11650,6 +11781,7 @@ export type Database = {
           exchange_rate: number | null
           external_quote_id: string | null
           external_reference: string | null
+          external_seller_id: string | null
           id: string
           items: Json | null
           last_synced_at: string | null
@@ -11676,6 +11808,7 @@ export type Database = {
           approved_at?: string | null
           billing_status?: string | null
           client_email?: string | null
+          client_id?: string | null
           client_name: string
           client_phone?: string | null
           contract_end_date?: string | null
@@ -11689,6 +11822,7 @@ export type Database = {
           exchange_rate?: number | null
           external_quote_id?: string | null
           external_reference?: string | null
+          external_seller_id?: string | null
           id?: string
           items?: Json | null
           last_synced_at?: string | null
@@ -11715,6 +11849,7 @@ export type Database = {
           approved_at?: string | null
           billing_status?: string | null
           client_email?: string | null
+          client_id?: string | null
           client_name?: string
           client_phone?: string | null
           contract_end_date?: string | null
@@ -11728,6 +11863,7 @@ export type Database = {
           exchange_rate?: number | null
           external_quote_id?: string | null
           external_reference?: string | null
+          external_seller_id?: string | null
           id?: string
           items?: Json | null
           last_synced_at?: string | null
@@ -11751,6 +11887,20 @@ export type Database = {
           valid_until?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "quotes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "quotes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quotes_created_by_fkey"
             columns: ["created_by"]
@@ -17123,6 +17273,56 @@ export type Database = {
         }
         Relationships: []
       }
+      v4_callback_dead_letters: {
+        Row: {
+          attempts: number
+          created_at: string
+          event_type: string
+          external_quote_id: string
+          id: string
+          last_error: string | null
+          next_retry_at: string | null
+          payload: Json
+          quote_id: string | null
+          resolved_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          event_type: string
+          external_quote_id: string
+          id?: string
+          last_error?: string | null
+          next_retry_at?: string | null
+          payload: Json
+          quote_id?: string | null
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          event_type?: string
+          external_quote_id?: string
+          id?: string
+          last_error?: string | null
+          next_retry_at?: string | null
+          payload?: Json
+          quote_id?: string | null
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "v4_callback_dead_letters_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       victory_feed: {
         Row: {
           created_at: string
@@ -19799,6 +19999,15 @@ export type Database = {
           p_totp_secret?: string
         }
         Returns: boolean
+      }
+      upsert_client_from_quote: {
+        Args: {
+          p_company?: string
+          p_email: string
+          p_name: string
+          p_phone: string
+        }
+        Returns: string
       }
       upsert_semantic_entry: {
         Args: {
