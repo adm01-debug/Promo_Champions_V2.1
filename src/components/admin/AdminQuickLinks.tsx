@@ -34,6 +34,7 @@ const QUICK_LINKS = [
   { to: '/admin/comissoes', icon: Wallet, label: 'Comissões', color: 'text-primary' },
   { to: '/admin/telemetria', icon: Activity, label: 'Telemetria', color: 'text-chart-1' },
   { to: '/admin/conexoes', icon: Plug, label: 'Conexões', color: 'text-chart-2' },
+  { to: '/admin/v4-callbacks', icon: Plug, label: 'Callbacks V4', color: 'text-warning' },
   { to: '/times', icon: Activity, label: 'Atribuições SDR', color: 'text-chart-3' },
   { to: '/metas', icon: Target, label: 'Metas Atuais', color: 'text-chart-4' },
   { to: '/notificacoes', icon: Bell, label: 'Notificações', color: 'text-warning' },
