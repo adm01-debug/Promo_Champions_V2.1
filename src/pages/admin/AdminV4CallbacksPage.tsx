@@ -41,9 +41,9 @@ function AdminV4CallbacksContent() {
 
   const kpisQ = useV4CallbackKpis();
   const listQ = useV4DeadLetters(tab, search);
-  const { retry, reset, archive, runDispatcher } = useV4CallbackActions();
-
-  const items = listQ.data ?? [];
+  const { retry, reset, archive, retryFiltered, runDispatcher } = useV4CallbackActions();
+  const alertsQ = useV4Alerts();
+  const alertSettings = useV4AlertSettings();
   const allSelected = items.length > 0 && items.every((i) => selected.has(i.id));
   const toggleAll = () => setSelected(allSelected ? new Set() : new Set(items.map((i) => i.id)));
   const toggle = (id: string) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
