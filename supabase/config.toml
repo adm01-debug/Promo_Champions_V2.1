@@ -2,3 +2,6 @@ project_id = "rapjswienfhkobhlamxb"
 
 [functions.log-web-vitals]
 verify_jwt = false
+
+[functions.receive-quote-sync]
+verify_jwt = false
