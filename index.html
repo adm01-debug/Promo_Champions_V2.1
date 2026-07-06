@@ -42,13 +42,9 @@
     <link rel="dns-prefetch" href="https://saejqkojleeaxzrslzfg.supabase.co" />
     <link rel="preconnect" href="https://saejqkojleeaxzrslzfg.supabase.co" crossorigin />
     
-    <!-- Security Headers -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="DENY" />
-    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+    <!-- Security: apenas diretivas válidas via <meta>. Headers reais (X-Frame-Options, HSTS, Permissions-Policy, frame-ancestors) são aplicados pelo hosting via HTTP. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com; base-uri 'self'; form-action 'self';" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(self), geolocation=(self), payment=()" />
     
     <!-- Fonts - use display=swap and preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
