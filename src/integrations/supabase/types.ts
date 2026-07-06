@@ -17273,6 +17273,75 @@ export type Database = {
         }
         Relationships: []
       }
+      v4_callback_alert_settings: {
+        Row: {
+          exhausted_threshold_24h: number
+          failure_rate_threshold: number
+          id: string
+          is_active: boolean
+          min_events: number
+          pending_threshold: number
+          singleton: boolean
+          suppress_minutes: number
+          updated_at: string
+          updated_by: string | null
+          window_minutes: number
+        }
+        Insert: {
+          exhausted_threshold_24h?: number
+          failure_rate_threshold?: number
+          id?: string
+          is_active?: boolean
+          min_events?: number
+          pending_threshold?: number
+          singleton?: boolean
+          suppress_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_minutes?: number
+        }
+        Update: {
+          exhausted_threshold_24h?: number
+          failure_rate_threshold?: number
+          id?: string
+          is_active?: boolean
+          min_events?: number
+          pending_threshold?: number
+          singleton?: boolean
+          suppress_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_minutes?: number
+        }
+        Relationships: []
+      }
+      v4_callback_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          details: Json
+          fired_at: string
+          id: string
+          kind: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          details?: Json
+          fired_at?: string
+          id?: string
+          kind: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          details?: Json
+          fired_at?: string
+          id?: string
+          kind?: string
+        }
+        Relationships: []
+      }
       v4_callback_dead_letters: {
         Row: {
           attempts: number
