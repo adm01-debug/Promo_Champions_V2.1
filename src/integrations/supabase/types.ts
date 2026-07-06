@@ -17651,6 +17651,36 @@ export type Database = {
           },
         ]
       }
+      webhook_inbound_dedupe: {
+        Row: {
+          correlation_key: string
+          created_at: string
+          event: string
+          id: string
+          payload: Json
+          received_at: string
+          source: string
+        }
+        Insert: {
+          correlation_key: string
+          created_at?: string
+          event: string
+          id?: string
+          payload?: Json
+          received_at?: string
+          source?: string
+        }
+        Update: {
+          correlation_key?: string
+          created_at?: string
+          event?: string
+          id?: string
+          payload?: Json
+          received_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
       webhooks: {
         Row: {
           created_at: string
