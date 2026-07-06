@@ -17758,6 +17758,8 @@ export type Database = {
           correlation_key: string
           created_at: string
           event: string
+          first_seen_at: string
+          hit_count: number
           id: string
           payload: Json
           received_at: string
@@ -17767,6 +17769,8 @@ export type Database = {
           correlation_key: string
           created_at?: string
           event: string
+          first_seen_at?: string
+          hit_count?: number
           id?: string
           payload?: Json
           received_at?: string
@@ -17776,9 +17780,50 @@ export type Database = {
           correlation_key?: string
           created_at?: string
           event?: string
+          first_seen_at?: string
+          hit_count?: number
           id?: string
           payload?: Json
           received_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      webhook_inbound_log: {
+        Row: {
+          correlation_key: string | null
+          error_message: string | null
+          event: string | null
+          http_status: number
+          id: string
+          outcome: string
+          payload_size: number | null
+          received_at: string
+          request_id: string | null
+          source: string
+        }
+        Insert: {
+          correlation_key?: string | null
+          error_message?: string | null
+          event?: string | null
+          http_status: number
+          id?: string
+          outcome: string
+          payload_size?: number | null
+          received_at?: string
+          request_id?: string | null
+          source?: string
+        }
+        Update: {
+          correlation_key?: string | null
+          error_message?: string | null
+          event?: string | null
+          http_status?: number
+          id?: string
+          outcome?: string
+          payload_size?: number | null
+          received_at?: string
+          request_id?: string | null
           source?: string
         }
         Relationships: []
