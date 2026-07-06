@@ -65,14 +65,17 @@ function AdminV4CallbacksContent() {
             <p className="text-muted-foreground mt-1">Fila de notificações do CRM para o Promo Gifts V4.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => { listQ.refetch(); kpisQ.refetch(); }}>
+            <Button variant="outline" size="sm" onClick={() => { listQ.refetch(); kpisQ.refetch(); alertsQ.refetch(); }}>
               <RefreshCw className="h-4 w-4 mr-2" />Atualizar
             </Button>
+            <AlertSettingsDialog settings={alertSettings} />
             <Button size="sm" onClick={() => runDispatcher.mutate()} disabled={runDispatcher.isPending}>
               <PlayCircle className="h-4 w-4 mr-2" />Executar dispatcher
             </Button>
           </div>
         </div>
+
+        <AlertsPanel alerts={alertsQ.data ?? []} onAck={(id) => alertSettings.ackMutation.mutate(id)} />
 
         {disabled && (
           <Card className="border-warning/40 bg-warning/5">
