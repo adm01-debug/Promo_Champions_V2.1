@@ -11983,6 +11983,63 @@ export type Database = {
           },
         ]
       }
+      quotes_inbound: {
+        Row: {
+          client_id: string | null
+          client_name: string | null
+          created_at: string
+          id: string
+          last_correlation_key: string | null
+          last_event: string | null
+          quote_id: string
+          quote_number: string | null
+          raw_payload: Json
+          received_at: string
+          seller_email: string | null
+          source: string
+          source_updated_at: string | null
+          status: string | null
+          total: number | null
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          client_name?: string | null
+          created_at?: string
+          id?: string
+          last_correlation_key?: string | null
+          last_event?: string | null
+          quote_id: string
+          quote_number?: string | null
+          raw_payload?: Json
+          received_at?: string
+          seller_email?: string | null
+          source?: string
+          source_updated_at?: string | null
+          status?: string | null
+          total?: number | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          client_name?: string | null
+          created_at?: string
+          id?: string
+          last_correlation_key?: string | null
+          last_event?: string | null
+          quote_id?: string
+          quote_number?: string | null
+          raw_payload?: Json
+          received_at?: string
+          seller_email?: string | null
+          source?: string
+          source_updated_at?: string | null
+          status?: string | null
+          total?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       race_badges: {
         Row: {
           badge_code: string
