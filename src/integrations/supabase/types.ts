@@ -8836,6 +8836,39 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_log: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          job_name: string
+          metadata: Json | null
+          rows_affected: number | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          job_name: string
+          metadata?: Json | null
+          rows_affected?: number | null
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          job_name?: string
+          metadata?: Json | null
+          rows_affected?: number | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       message_templates: {
         Row: {
           body: string
@@ -19710,6 +19743,13 @@ export type Database = {
           cadence_id: string
           rule_id: string
           rule_name: string
+        }[]
+      }
+      fn_cleanup_webhook_dedupe: {
+        Args: never
+        Returns: {
+          deleted_count: number
+          oldest_kept: string
         }[]
       }
       generate_api_token: { Args: never; Returns: string }
