@@ -108,6 +108,18 @@ function AdminV4CallbacksContent() {
                   <TabsTrigger value="resolved">Resolvidos</TabsTrigger>
                 </TabsList>
               </Tabs>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  if (!confirm(`Reprocessar TODOS os registros da aba "${tab}"${search.trim() ? ` filtrados por "${search.trim()}"` : ""}?`)) return;
+                  retryFiltered.mutate({ status: tab, search });
+                }}
+                disabled={retryFiltered.isPending}
+                title="Reprocessa todos os registros que casam com o filtro atual"
+              >
+                <Send className="h-4 w-4 mr-1" />Reprocessar filtro
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
