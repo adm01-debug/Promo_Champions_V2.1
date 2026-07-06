@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { AlertTriangle, CheckCircle2, Clock, PlayCircle, RefreshCw, RotateCcw, Archive, Send, Radio } from "lucide-react";
+import { AlertTriangle, Bell, CheckCircle2, Clock, PlayCircle, RefreshCw, RotateCcw, Archive, Send, Radio, Settings } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -8,13 +8,16 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useV4CallbackActions, useV4CallbackKpis, useV4DeadLetters, type V4DeadLetter, type V4DeadLetterStatus } from "@/hooks/admin/useV4Callbacks";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useV4CallbackActions, useV4CallbackKpis, useV4DeadLetters, useV4Alerts, useV4AlertSettings, type V4DeadLetter, type V4DeadLetterStatus } from "@/hooks/admin/useV4Callbacks";
 
 function Kpi({ icon: Icon, label, value, tone }: { icon: typeof Clock; label: string; value: string | number; tone: string }) {
   return (
