@@ -102,3 +102,25 @@ npm run test        # Testes quebrados
 | Lead Dev | Configurar no README |
 | DevOps | Lovable Cloud (automático) |
 | Suporte DB | Lovable Cloud Dashboard |
+
+## Callback V4 (Promo Gifts V4)
+
+Fila de notificações do CRM para o V4 (mudanças de status de quotes, criação de pedidos).
+
+### Como ligar
+1. Publique o endpoint receptor no V4 (POST + header `x-api-key`).
+2. Configure os secrets no CRM: `V4_CALLBACK_URL` e `V4_CALLBACK_API_KEY`.
+3. O cron do dispatcher `notify-v4-quote-status` drena a fila automaticamente.
+
+### Como verificar
+- Painel: `/admin/v4-callbacks` (admin) — KPIs, banner de status e tabela de dead letters.
+- Logs estruturados JSON no console da edge function:
+  - `v4_callback_disabled` — secrets ausentes; contém `pending` (backlog).
+  - `v4_callback_misconfigured` — URL inválida.
+  - `v4_callback_sent` — envio OK.
+  - `v4_callback_failed` — falha isolada, com `next_retry_at`.
+  - `v4_callback_exhausted` — atingiu 5 tentativas; **alerta operacional**.
+
+### Como reprocessar
+- Painel `/admin/v4-callbacks`: selecione itens e use **Reprocessar** (agenda retry para agora) ou **Resetar tentativas** (zera contador). Também é possível **Arquivar** manualmente.
+- Botão **Executar dispatcher** força uma rodada imediata.
