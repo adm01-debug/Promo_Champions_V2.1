@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { evaluateAlerts } from "./index.ts";
+import { evaluateAlerts } from "./alerts.ts";
 
 const base = {
   windowMinutes: 60,
