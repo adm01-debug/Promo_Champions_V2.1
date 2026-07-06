@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { AlertTriangle, CheckCircle2, Clock, PlayCircle, RefreshCw, RotateCcw, Archive, Send, Radio } from "lucide-react";
+import { AlertTriangle, Bell, CheckCircle2, Clock, PlayCircle, RefreshCw, RotateCcw, Archive, Send, Radio, Settings } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -8,13 +8,16 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useV4CallbackActions, useV4CallbackKpis, useV4DeadLetters, type V4DeadLetter, type V4DeadLetterStatus } from "@/hooks/admin/useV4Callbacks";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useV4CallbackActions, useV4CallbackKpis, useV4DeadLetters, useV4Alerts, useV4AlertSettings, type V4DeadLetter, type V4DeadLetterStatus } from "@/hooks/admin/useV4Callbacks";
 
 function Kpi({ icon: Icon, label, value, tone }: { icon: typeof Clock; label: string; value: string | number; tone: string }) {
   return (
@@ -38,7 +41,9 @@ function AdminV4CallbacksContent() {
 
   const kpisQ = useV4CallbackKpis();
   const listQ = useV4DeadLetters(tab, search);
-  const { retry, reset, archive, runDispatcher } = useV4CallbackActions();
+  const { retry, reset, archive, retryFiltered, runDispatcher } = useV4CallbackActions();
+  const alertsQ = useV4Alerts();
+  const alertSettings = useV4AlertSettings();
 
   const items = listQ.data ?? [];
   const allSelected = items.length > 0 && items.every((i) => selected.has(i.id));
@@ -60,14 +65,17 @@ function AdminV4CallbacksContent() {
             <p className="text-muted-foreground mt-1">Fila de notificações do CRM para o Promo Gifts V4.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => { listQ.refetch(); kpisQ.refetch(); }}>
+            <Button variant="outline" size="sm" onClick={() => { listQ.refetch(); kpisQ.refetch(); alertsQ.refetch(); }}>
               <RefreshCw className="h-4 w-4 mr-2" />Atualizar
             </Button>
+            <AlertSettingsDialog settings={alertSettings} />
             <Button size="sm" onClick={() => runDispatcher.mutate()} disabled={runDispatcher.isPending}>
               <PlayCircle className="h-4 w-4 mr-2" />Executar dispatcher
             </Button>
           </div>
         </div>
+
+        <AlertsPanel alerts={alertsQ.data ?? []} onAck={(id) => alertSettings.ackMutation.mutate(id)} />
 
         {disabled && (
           <Card className="border-warning/40 bg-warning/5">
@@ -100,6 +108,18 @@ function AdminV4CallbacksContent() {
                   <TabsTrigger value="resolved">Resolvidos</TabsTrigger>
                 </TabsList>
               </Tabs>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  if (!confirm(`Reprocessar TODOS os registros da aba "${tab}"${search.trim() ? ` filtrados por "${search.trim()}"` : ""}?`)) return;
+                  retryFiltered.mutate({ status: tab, search });
+                }}
+                disabled={retryFiltered.isPending}
+                title="Reprocessa todos os registros que casam com o filtro atual"
+              >
+                <Send className="h-4 w-4 mr-1" />Reprocessar filtro
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -189,6 +209,110 @@ function AdminV4CallbacksContent() {
         </SheetContent>
       </Sheet>
     </>
+  );
+}
+
+const KIND_LABEL: Record<string, string> = {
+  high_failure_rate: "Taxa de falha alta",
+  exhausted_spike: "Pico de esgotados",
+  pending_backlog: "Backlog pendente",
+};
+
+function AlertsPanel({ alerts, onAck }: { alerts: ReturnType<typeof useV4Alerts>["data"] extends infer T ? Exclude<T, undefined> : never; onAck: (id: string) => void }) {
+  const active = alerts.filter((a) => !a.acknowledged_at);
+  if (active.length === 0) return null;
+  return (
+    <Card className="border-destructive/40 bg-destructive/5">
+      <CardHeader className="pb-2 flex flex-row items-center gap-2">
+        <Bell className="h-4 w-4 text-destructive" />
+        <CardTitle className="text-sm">Alertas ativos ({active.length})</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {active.map((a) => (
+          <div key={a.id} className="flex items-center justify-between gap-3 rounded-md border bg-background/60 p-2 text-sm">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <Badge variant="destructive">{KIND_LABEL[a.kind] ?? a.kind}</Badge>
+                <span className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(a.fired_at), { addSuffix: true, locale: ptBR })}
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1 font-mono truncate">
+                {JSON.stringify(a.details)}
+              </div>
+            </div>
+            <Button size="sm" variant="ghost" onClick={() => onAck(a.id)}>Reconhecer</Button>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AlertSettingsDialog({ settings }: { settings: ReturnType<typeof useV4AlertSettings> }) {
+  const [open, setOpen] = useState(false);
+  const s = settings.query.data;
+  const [form, setForm] = useState({
+    is_active: true,
+    failure_rate_threshold: 20,
+    exhausted_threshold_24h: 5,
+    pending_threshold: 50,
+    window_minutes: 60,
+    min_events: 10,
+    suppress_minutes: 30,
+  });
+  const openWithData = (v: boolean) => {
+    if (v && s) setForm({
+      is_active: s.is_active,
+      failure_rate_threshold: Number(s.failure_rate_threshold),
+      exhausted_threshold_24h: s.exhausted_threshold_24h,
+      pending_threshold: s.pending_threshold,
+      window_minutes: s.window_minutes,
+      min_events: s.min_events,
+      suppress_minutes: s.suppress_minutes,
+    });
+    setOpen(v);
+  };
+  return (
+    <Dialog open={open} onOpenChange={openWithData}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline"><Settings className="h-4 w-4 mr-2" />Alertas</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>Configurar alertas do dispatcher V4</DialogTitle></DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="v4-alerts-active">Alertas ativos</Label>
+            <Switch id="v4-alerts-active" checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <NumField label="Taxa falha ≥ (%)" value={form.failure_rate_threshold} onChange={(v) => setForm({ ...form, failure_rate_threshold: v })} />
+            <NumField label="Janela (min)" value={form.window_minutes} onChange={(v) => setForm({ ...form, window_minutes: v })} />
+            <NumField label="Mín. eventos" value={form.min_events} onChange={(v) => setForm({ ...form, min_events: v })} />
+            <NumField label="Esgotados 24h ≥" value={form.exhausted_threshold_24h} onChange={(v) => setForm({ ...form, exhausted_threshold_24h: v })} />
+            <NumField label="Backlog pendente ≥" value={form.pending_threshold} onChange={(v) => setForm({ ...form, pending_threshold: v })} />
+            <NumField label="Anti-flood (min)" value={form.suppress_minutes} onChange={(v) => setForm({ ...form, suppress_minutes: v })} />
+          </div>
+          <p className="text-xs text-muted-foreground">O cron avalia a cada 5 min e insere um alerta por tipo/janela quando os limiares são cruzados.</p>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button
+            onClick={() => settings.mutation.mutate(form, { onSuccess: () => setOpen(false) })}
+            disabled={settings.mutation.isPending || !s}
+          >Salvar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function NumField({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="space-y-1">
+      <Label className="text-xs">{label}</Label>
+      <Input type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} className="h-8" />
+    </div>
   );
 }
 
