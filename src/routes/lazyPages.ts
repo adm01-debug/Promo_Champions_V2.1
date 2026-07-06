@@ -293,6 +293,9 @@ export const CustomerSuccess360Page = lazyWithPrefetch(
 export const AdminConexoesPage = lazyWithPrefetch(
   () => import('@/pages/admin/AdminConexoesPage')
 );
+export const AdminV4CallbacksPage = lazyWithPrefetch(
+  () => import('@/pages/admin/AdminV4CallbacksPage')
+);
 export const AdminComercial = lazyWithPrefetch(
   () => import('@/pages/admin/AdminComercial')
 );
