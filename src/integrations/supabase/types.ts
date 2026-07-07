@@ -19547,6 +19547,39 @@ export type Database = {
         }
         Relationships: []
       }
+      v_rate_limit_blocked_sellers: {
+        Row: {
+          blocked_until: string | null
+          created_at: string | null
+          endpoint: string | null
+          identifier: string | null
+          identifier_type: string | null
+          request_count: number | null
+          seconds_until_unblock: number | null
+          window_start: string | null
+        }
+        Insert: {
+          blocked_until?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          identifier?: string | null
+          identifier_type?: string | null
+          request_count?: number | null
+          seconds_until_unblock?: never
+          window_start?: string | null
+        }
+        Update: {
+          blocked_until?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          identifier?: string | null
+          identifier_type?: string | null
+          request_count?: number | null
+          seconds_until_unblock?: never
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       web_vitals_p75_last7d: {
         Row: {
           avg_value: number | null
