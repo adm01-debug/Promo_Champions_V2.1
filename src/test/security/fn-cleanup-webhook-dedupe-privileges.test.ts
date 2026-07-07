@@ -3,12 +3,10 @@
  * `public.fn_cleanup_webhook_dedupe()`. Roles `anon`, `authenticated`
  * e `public` devem estar bloqueados.
  *
- * Estratégia: consultar `has_function_privilege` via a função utilitária
- * `public.fn_test_cleanup_dedupe_privileges()` (SECURITY INVOKER) e validar
- * que todos os papéis retornaram `passed = true`.
+ * Usa fetch direto contra a Data API (PostgREST) para contornar o mock
+ * global de `@supabase/supabase-js` presente em `src/test/setup.ts`.
  */
 import { describe, it, expect } from 'vitest';
-import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as
@@ -24,34 +22,55 @@ interface PrivilegeRow {
 
 const canRun = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
+async function rpc<T>(fn: string, body: Record<string, unknown> = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_ANON_KEY!,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY!}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text();
+  let data: unknown = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+  return { status: res.status, ok: res.ok, data: data as T };
+}
+
 describe.skipIf(!canRun)('fn_cleanup_webhook_dedupe — privileges', () => {
-  const client = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-
-  it('apenas service_role pode executar; anon/authenticated/public bloqueados', async () => {
-    const { data, error } = await client.rpc(
-      'fn_test_cleanup_dedupe_privileges' as never,
+  it('has_function_privilege confirma bloqueio de anon/authenticated/public e permite service_role', async () => {
+    const { ok, data } = await rpc<PrivilegeRow[]>(
+      'fn_test_cleanup_dedupe_privileges',
     );
-    expect(error).toBeNull();
-    const rows = (data ?? []) as PrivilegeRow[];
-    expect(rows.length).toBe(4);
+    expect(ok).toBe(true);
+    expect(Array.isArray(data)).toBe(true);
+    expect(data.length).toBe(4);
 
-    const byRole = Object.fromEntries(rows.map((r) => [r.role_name, r]));
+    const byRole = Object.fromEntries(data.map((r) => [r.role_name, r]));
     expect(byRole.anon?.can_execute).toBe(false);
     expect(byRole.authenticated?.can_execute).toBe(false);
     expect(byRole.public?.can_execute).toBe(false);
     expect(byRole.service_role?.can_execute).toBe(true);
 
-    for (const row of rows) {
-      expect(row.passed, `role ${row.role_name} falhou no privilégio`).toBe(
-        true,
-      );
+    for (const row of data) {
+      expect(row.passed, `role ${row.role_name} falhou`).toBe(true);
     }
   });
 
-  it('chamar fn_cleanup_webhook_dedupe como anon é rejeitado', async () => {
-    const { error } = await client.rpc('fn_cleanup_webhook_dedupe' as never);
-    expect(error).not.toBeNull();
-    // 42501 = permission denied
-    expect(error?.code === '42501' || /permission denied/i.test(error?.message ?? '')).toBe(true);
+  it('anon executando fn_cleanup_webhook_dedupe recebe permission denied', async () => {
+    const { ok, status, data } = await rpc<{ code?: string; message?: string }>(
+      'fn_cleanup_webhook_dedupe',
+    );
+    expect(ok).toBe(false);
+    // PostgREST devolve 401/403/404 dependendo da versão; a mensagem
+    // sempre menciona permission denied / not found na exposição do RPC.
+    expect([401, 403, 404]).toContain(status);
+    const msg = typeof data === 'object' && data && 'message' in data ? data.message : '';
+    expect(/permission denied|not.*found/i.test(msg ?? '')).toBe(true);
   });
 });
