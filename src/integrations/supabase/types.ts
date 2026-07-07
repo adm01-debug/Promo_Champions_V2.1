@@ -19785,6 +19785,16 @@ export type Database = {
           oldest_kept: string
         }[]
       }
+      fn_list_cron_jobs: {
+        Args: never
+        Returns: {
+          active: boolean
+          command: string
+          jobid: number
+          jobname: string
+          schedule: string
+        }[]
+      }
       fn_test_cleanup_dedupe_privileges: {
         Args: never
         Returns: {
