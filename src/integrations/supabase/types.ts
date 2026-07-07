@@ -19752,6 +19752,15 @@ export type Database = {
           oldest_kept: string
         }[]
       }
+      fn_test_cleanup_dedupe_privileges: {
+        Args: never
+        Returns: {
+          can_execute: boolean
+          expected: boolean
+          passed: boolean
+          role_name: string
+        }[]
+      }
       generate_api_token: { Args: never; Returns: string }
       generate_device_fingerprint: {
         Args: { p_ip_address: string; p_user_agent: string }
