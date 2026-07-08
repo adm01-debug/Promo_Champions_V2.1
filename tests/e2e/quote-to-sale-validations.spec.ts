@@ -12,12 +12,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   • Concorrência     — order_number continua único mesmo em rajadas paralelas.
  */
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? '';
-const SUPABASE_ANON = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? '';
-const SESSION_JSON = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON ?? '';
-const STORAGE_KEY = process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ?? '';
-
-const HAS_AUTH = Boolean(SUPABASE_URL && SUPABASE_ANON && SESSION_JSON && STORAGE_KEY);
+import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
 
 type RpcResult = {
   sale_id: string;
