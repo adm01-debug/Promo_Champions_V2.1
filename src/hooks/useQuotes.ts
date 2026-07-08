@@ -241,15 +241,17 @@ export type ConvertQuoteErrorCode =
   | 'FORBIDDEN'
   | 'INVALID_STATUS'
   | 'INVALID_TOTAL'
+  | 'EMPTY_ITEMS'
   | 'TOTAL_MISMATCH'
   | 'UNKNOWN';
 
-const ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
+export const CONVERT_QUOTE_ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
   NOT_AUTHENTICATED: 'Sessão expirada. Faça login novamente.',
   QUOTE_NOT_FOUND: 'Orçamento não encontrado.',
   FORBIDDEN: 'Você não tem permissão para converter este orçamento.',
   INVALID_STATUS: 'Orçamento precisa estar aprovado/aceito para virar venda.',
   INVALID_TOTAL: 'Valor total do orçamento inválido.',
+  EMPTY_ITEMS: 'Orçamento sem itens não pode ser convertido em venda.',
   TOTAL_MISMATCH: 'Valor total não bate com a soma dos itens do orçamento.',
   UNKNOWN: 'Erro ao converter orçamento em venda.',
 };
@@ -258,7 +260,7 @@ const ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
 export function parseConvertQuoteError(message: string): ConvertQuoteErrorCode {
   const match = /^\[([A-Z_]+)\]/.exec(message.trim());
   const code = match?.[1] as ConvertQuoteErrorCode | undefined;
-  if (code && code in ERROR_MESSAGES) return code;
+  if (code && code in CONVERT_QUOTE_ERROR_MESSAGES) return code;
   return 'UNKNOWN';
 }
 
@@ -300,7 +302,7 @@ export function useConvertQuoteToSale() {
     },
     onError: (err: Error) => {
       const code = parseConvertQuoteError(err.message);
-      toast.error(ERROR_MESSAGES[code]);
+      toast.error(CONVERT_QUOTE_ERROR_MESSAGES[code]);
     },
   });
 }

@@ -130,7 +130,7 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
       .select('id, order_number')
       .eq('quote_id', quoteId);
     expect(orders?.length).toBe(1);
-    expect(orders?.[0].order_number).toMatch(/^ORC-\d{8}-[A-F0-9]{6}$/);
+    expect(orders?.[0].order_number).toMatch(/^ORC-\d{8}-\d{8}$/);
 
     // Idempotência: nova chamada direta na RPC não duplica
     const first = orders![0].id;
