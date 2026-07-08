@@ -15,7 +15,25 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
-    { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
+    // Projeto dedicado à suíte de conversão quote→sale.
+    // Retries automáticas + trace/vídeo/screenshot SEMPRE que houver falha
+    // ou retry, para facilitar diagnóstico de flakiness no preview.
+    {
+      name: 'quote-to-sale',
+      testMatch: /quote-to-sale.*\.spec\.ts/,
+      retries: 2,
+      use: {
+        ...devices['Desktop Chrome'],
+        trace: 'retain-on-failure',
+        video: 'retain-on-failure',
+        screenshot: 'only-on-failure',
+      },
+    },
+    {
+      name: 'chromium-desktop',
+      use: { ...devices['Desktop Chrome'] },
+      testIgnore: /quote-to-sale.*\.spec\.ts/,
+    },
     { name: 'mobile-ios-safari', use: { ...devices['iPhone 14'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
     { name: 'mobile-android-chrome', use: { ...devices['Pixel 7'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
   ],
