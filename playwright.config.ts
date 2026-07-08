@@ -1,5 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Identificador único por execução — todos os artefatos (trace/vídeo/screenshot,
+// HAR, console.log, network-errors.log) dos testes quote-to-sale são
+// agrupados sob esta pasta para facilitar correlação entre retries.
+const RUN_ID =
+  process.env.PW_RUN_ID ??
+  `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(36).slice(2, 8)}`;
+process.env.PW_RUN_ID = RUN_ID;
+
 export default defineConfig({
   testDir: './tests/e2e',
   globalSetup: './tests/e2e/global-setup.ts',
@@ -15,16 +23,24 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
-    // Projeto dedicado à suíte de conversão quote→sale.
-    // Retries automáticas + trace/vídeo/screenshot SEMPRE que houver falha
-    // ou retry, para facilitar diagnóstico de flakiness no preview.
+    // Projeto dedicado à conversão quote→sale.
+    //   - retries: 2
+    //   - trace: 'on-first-retry' captura trace na 1ª retentativa e o mantém
+    //     apenas quando o teste falha definitivamente (Playwright já descarta
+    //     traces de retries que acabam passando).
+    //   - vídeo e screenshot retidos só em falha.
+    //   - outputDir carimbado com RUN_ID para agrupar todos os artefatos
+    //     (trace/vídeo/screenshot/HAR/console/network) da mesma execução.
+    //   - HAR + console + network errors são capturados via fixtures
+    //     em tests/e2e/helpers/quote-to-sale-fixtures.ts.
     {
       name: 'quote-to-sale',
       testMatch: /quote-to-sale.*\.spec\.ts/,
       retries: 2,
+      outputDir: `./test-results/quote-to-sale/${RUN_ID}`,
       use: {
         ...devices['Desktop Chrome'],
-        trace: 'retain-on-failure',
+        trace: 'on-first-retry',
         video: 'retain-on-failure',
         screenshot: 'only-on-failure',
       },
@@ -46,4 +62,5 @@ export default defineConfig({
       }
     : undefined,
 });
+
 
