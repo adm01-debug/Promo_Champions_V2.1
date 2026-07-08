@@ -36,3 +36,6 @@ npm-debug.log*
 
 # Runtime
 bun.lockb
+
+# E2E session cache
+tests/e2e/.auth/
