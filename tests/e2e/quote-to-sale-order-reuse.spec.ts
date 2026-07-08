@@ -17,15 +17,10 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   4. Segunda chamada da RPC continua idempotente.
  */
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? '';
-const SUPABASE_ANON = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? '';
-const SESSION_JSON = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON ?? '';
-const STORAGE_KEY = process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ?? '';
-
-const HAS_AUTH = Boolean(SUPABASE_URL && SUPABASE_ANON && SESSION_JSON && STORAGE_KEY);
+import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
 
 test.describe('Conversão: reuso de order existente (trigger legado)', () => {
-  test.skip(!HAS_AUTH, 'Sessão Supabase gerenciada não injetada; pulando E2E autenticado.');
+  test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
 
   let client: SupabaseClient;
   let quoteId: string;

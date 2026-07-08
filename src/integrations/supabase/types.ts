@@ -19786,6 +19786,7 @@ export type Database = {
           rule_name: string
         }[]
       }
+      fn_backfill_orders_conversion_seq: { Args: never; Returns: Json }
       fn_cleanup_webhook_dedupe: {
         Args: never
         Returns: {
@@ -19794,6 +19795,7 @@ export type Database = {
         }[]
       }
       fn_convert_quote_to_sale: { Args: { _quote_id: string }; Returns: Json }
+      fn_get_orders_conversion_seq_last: { Args: never; Returns: number }
       fn_list_cron_jobs: {
         Args: never
         Returns: {
