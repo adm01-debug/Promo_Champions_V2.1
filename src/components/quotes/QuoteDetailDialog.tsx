@@ -18,10 +18,14 @@ interface QuoteDetailDialogProps {
 }
 
 export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDialogProps) {
+  const convertToSale = useConvertQuoteToSale();
   if (!quote) return null;
 
   const items = parseQuoteItems(quote.items);
   const statusConfig = QUOTE_STATUSES.find(s => s.value === quote.status) || QUOTE_STATUSES[0];
+  const canConvert = ['approved', 'accepted', 'won'].includes(quote.status) && !quote.sale_id;
+  const alreadyConverted = Boolean(quote.sale_id);
+
 
   const personalizationTotal = items.reduce(
     (sum, item) => sum + item.personalizations.reduce((ps, p) => ps + p.total_cost, 0),
