@@ -260,7 +260,7 @@ export const CONVERT_QUOTE_ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string>
 export function parseConvertQuoteError(message: string): ConvertQuoteErrorCode {
   const match = /^\[([A-Z_]+)\]/.exec(message.trim());
   const code = match?.[1] as ConvertQuoteErrorCode | undefined;
-  if (code && code in ERROR_MESSAGES) return code;
+  if (code && code in CONVERT_QUOTE_ERROR_MESSAGES) return code;
   return 'UNKNOWN';
 }
 
@@ -302,7 +302,7 @@ export function useConvertQuoteToSale() {
     },
     onError: (err: Error) => {
       const code = parseConvertQuoteError(err.message);
-      toast.error(ERROR_MESSAGES[code]);
+      toast.error(CONVERT_QUOTE_ERROR_MESSAGES[code]);
     },
   });
 }
