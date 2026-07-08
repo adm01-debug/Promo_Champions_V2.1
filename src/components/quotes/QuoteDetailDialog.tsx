@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Quote, parseQuoteItems, QUOTE_STATUSES } from "@/hooks/useQuotes";
-import { FileDown, Building2, User, Clock, Link2, Package } from "lucide-react";
+import { Quote, parseQuoteItems, QUOTE_STATUSES, useConvertQuoteToSale } from "@/hooks/useQuotes";
+import { FileDown, Building2, User, Clock, Link2, Package, ShoppingCart, Loader2, CheckCircle2 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { generateQuotePDF } from "@/lib/quotePdfExporter";
+
 
 interface QuoteDetailDialogProps {
   quote: Quote | null;
