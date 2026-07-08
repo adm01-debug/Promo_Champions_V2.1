@@ -241,6 +241,7 @@ export type ConvertQuoteErrorCode =
   | 'FORBIDDEN'
   | 'INVALID_STATUS'
   | 'INVALID_TOTAL'
+  | 'EMPTY_ITEMS'
   | 'TOTAL_MISMATCH'
   | 'UNKNOWN';
 
@@ -250,6 +251,7 @@ const ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
   FORBIDDEN: 'Você não tem permissão para converter este orçamento.',
   INVALID_STATUS: 'Orçamento precisa estar aprovado/aceito para virar venda.',
   INVALID_TOTAL: 'Valor total do orçamento inválido.',
+  EMPTY_ITEMS: 'Orçamento sem itens não pode ser convertido em venda.',
   TOTAL_MISMATCH: 'Valor total não bate com a soma dos itens do orçamento.',
   UNKNOWN: 'Erro ao converter orçamento em venda.',
 };
