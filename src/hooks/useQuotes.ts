@@ -227,46 +227,82 @@ export function useDealsForQuotes() {
   });
 }
 
+export interface ConvertQuoteResult {
+  sale_id: string;
+  order_id: string | null;
+  order_number?: string;
+  items_count?: number;
+  idempotent: boolean;
+}
+
+export type ConvertQuoteErrorCode =
+  | 'NOT_AUTHENTICATED'
+  | 'QUOTE_NOT_FOUND'
+  | 'FORBIDDEN'
+  | 'INVALID_STATUS'
+  | 'INVALID_TOTAL'
+  | 'TOTAL_MISMATCH'
+  | 'UNKNOWN';
+
+const ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
+  NOT_AUTHENTICATED: 'Sessão expirada. Faça login novamente.',
+  QUOTE_NOT_FOUND: 'Orçamento não encontrado.',
+  FORBIDDEN: 'Você não tem permissão para converter este orçamento.',
+  INVALID_STATUS: 'Orçamento precisa estar aprovado/aceito para virar venda.',
+  INVALID_TOTAL: 'Valor total do orçamento inválido.',
+  TOTAL_MISMATCH: 'Valor total não bate com a soma dos itens do orçamento.',
+  UNKNOWN: 'Erro ao converter orçamento em venda.',
+};
+
+/** Extrai o código padronizado da mensagem `[CODE] ...` retornada pela RPC. */
+export function parseConvertQuoteError(message: string): ConvertQuoteErrorCode {
+  const match = /^\[([A-Z_]+)\]/.exec(message.trim());
+  const code = match?.[1] as ConvertQuoteErrorCode | undefined;
+  if (code && code in ERROR_MESSAGES) return code;
+  return 'UNKNOWN';
+}
+
 /**
- * Converte um orçamento em venda via RPC transacional (SECURITY DEFINER).
+ * Converte um orçamento em venda + pedido via RPC transacional.
  * A função no banco cuida de: lock, idempotência, autorização, validação
- * de status/valor e auditoria. Retorna o id da venda gerada.
+ * de status/valor/consistência, criação de orders/order_items e auditoria.
  */
 export function useConvertQuoteToSale() {
   const qc = useQueryClient();
-  return useMutation({
+  return useMutation<ConvertQuoteResult, Error, string>({
     mutationFn: async (quoteId: string) => {
       const { data, error } = await (supabase.rpc as unknown as (
         fn: string,
         args: Record<string, unknown>,
-      ) => Promise<{ data: string | null; error: { message: string } | null }>)(
+      ) => Promise<{ data: ConvertQuoteResult | null; error: { message: string } | null }>)(
         'fn_convert_quote_to_sale',
         { _quote_id: quoteId },
       );
       if (error) throw new Error(error.message);
-      return data as string;
+      if (!data) throw new Error('[UNKNOWN] Resposta vazia da conversão');
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ['quotes'] });
       qc.invalidateQueries({ queryKey: ['quotes-summary'] });
       qc.invalidateQueries({ queryKey: ['sales'] });
       qc.invalidateQueries({ queryKey: ['pipeline-deals'] });
-      toast.success('Orçamento convertido em venda com sucesso');
+      qc.invalidateQueries({ queryKey: ['orders'] });
+      if (result.idempotent) {
+        toast.info('Orçamento já havia sido convertido');
+      } else {
+        toast.success(
+          result.order_number
+            ? `Convertido em venda • Pedido ${result.order_number}`
+            : 'Orçamento convertido em venda',
+        );
+      }
     },
     onError: (err: Error) => {
-      const msg = err.message || '';
-      if (msg.includes('invalid_status_for_conversion')) {
-        toast.error('Orçamento precisa estar aprovado/aceito para virar venda');
-      } else if (msg.includes('forbidden_not_quote_owner')) {
-        toast.error('Você não tem permissão para converter este orçamento');
-      } else if (msg.includes('quote_not_found')) {
-        toast.error('Orçamento não encontrado');
-      } else if (msg.includes('invalid_total_value')) {
-        toast.error('Valor do orçamento inválido');
-      } else {
-        toast.error('Erro ao converter orçamento em venda');
-      }
+      const code = parseConvertQuoteError(err.message);
+      toast.error(ERROR_MESSAGES[code]);
     },
   });
 }
+
 
