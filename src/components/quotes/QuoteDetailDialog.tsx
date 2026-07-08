@@ -80,9 +80,31 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   Gerar PDF
                 </Button>
               )}
+              {alreadyConverted && (
+                <Badge variant="outline" className="gap-1 text-status-success border-status-success/30">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Convertido em venda
+                </Badge>
+              )}
+              {canConvert && (
+                <Button
+                  size="sm"
+                  className="gap-1"
+                  disabled={convertToSale.isPending}
+                  onClick={() => convertToSale.mutate(quote.id, { onSuccess: () => onOpenChange(false) })}
+                >
+                  {convertToSale.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <ShoppingCart className="h-4 w-4" />
+                  )}
+                  Converter em venda
+                </Button>
+              )}
             </div>
           </div>
         </DialogHeader>
+
 
         {/* Company & Contact */}
         <div className="grid grid-cols-2 gap-4 mt-2">
