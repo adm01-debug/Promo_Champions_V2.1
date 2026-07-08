@@ -19633,6 +19633,14 @@ export type Database = {
         }
         Returns: Json
       }
+      backfill_orders_conversion_seq: {
+        Args: never
+        Returns: {
+          legacy_max: number
+          new_value: number
+          previous_value: number
+        }[]
+      }
       bulk_approve_assignments: {
         Args: { _ids: string[]; _xp_overrides?: Json }
         Returns: number
