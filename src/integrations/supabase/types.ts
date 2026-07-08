@@ -19785,7 +19785,7 @@ export type Database = {
           oldest_kept: string
         }[]
       }
-      fn_convert_quote_to_sale: { Args: { _quote_id: string }; Returns: string }
+      fn_convert_quote_to_sale: { Args: { _quote_id: string }; Returns: Json }
       fn_list_cron_jobs: {
         Args: never
         Returns: {
