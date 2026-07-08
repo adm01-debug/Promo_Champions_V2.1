@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Quote, parseQuoteItems, QUOTE_STATUSES } from "@/hooks/useQuotes";
-import { FileDown, Building2, User, Clock, Link2, Package } from "lucide-react";
+import { Quote, parseQuoteItems, QUOTE_STATUSES, useConvertQuoteToSale } from "@/hooks/useQuotes";
+import { FileDown, Building2, User, Clock, Link2, Package, ShoppingCart, Loader2, CheckCircle2 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { generateQuotePDF } from "@/lib/quotePdfExporter";
+
 
 interface QuoteDetailDialogProps {
   quote: Quote | null;
@@ -17,10 +18,14 @@ interface QuoteDetailDialogProps {
 }
 
 export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDialogProps) {
+  const convertToSale = useConvertQuoteToSale();
   if (!quote) return null;
 
   const items = parseQuoteItems(quote.items);
   const statusConfig = QUOTE_STATUSES.find(s => s.value === quote.status) || QUOTE_STATUSES[0];
+  const canConvert = ['approved', 'accepted', 'won'].includes(quote.status) && !quote.sale_id;
+  const alreadyConverted = Boolean(quote.sale_id);
+
 
   const personalizationTotal = items.reduce(
     (sum, item) => sum + item.personalizations.reduce((ps, p) => ps + p.total_cost, 0),
@@ -75,9 +80,31 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   Gerar PDF
                 </Button>
               )}
+              {alreadyConverted && (
+                <Badge variant="outline" className="gap-1 text-status-success border-status-success/30">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Convertido em venda
+                </Badge>
+              )}
+              {canConvert && (
+                <Button
+                  size="sm"
+                  className="gap-1"
+                  disabled={convertToSale.isPending}
+                  onClick={() => convertToSale.mutate(quote.id, { onSuccess: () => onOpenChange(false) })}
+                >
+                  {convertToSale.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <ShoppingCart className="h-4 w-4" />
+                  )}
+                  Converter em venda
+                </Button>
+              )}
             </div>
           </div>
         </DialogHeader>
+
 
         {/* Company & Contact */}
         <div className="grid grid-cols-2 gap-4 mt-2">

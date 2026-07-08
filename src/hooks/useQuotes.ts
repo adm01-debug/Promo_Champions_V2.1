@@ -226,3 +226,47 @@ export function useDealsForQuotes() {
     },
   });
 }
+
+/**
+ * Converte um orçamento em venda via RPC transacional (SECURITY DEFINER).
+ * A função no banco cuida de: lock, idempotência, autorização, validação
+ * de status/valor e auditoria. Retorna o id da venda gerada.
+ */
+export function useConvertQuoteToSale() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (quoteId: string) => {
+      const { data, error } = await (supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: string | null; error: { message: string } | null }>)(
+        'fn_convert_quote_to_sale',
+        { _quote_id: quoteId },
+      );
+      if (error) throw new Error(error.message);
+      return data as string;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['quotes'] });
+      qc.invalidateQueries({ queryKey: ['quotes-summary'] });
+      qc.invalidateQueries({ queryKey: ['sales'] });
+      qc.invalidateQueries({ queryKey: ['pipeline-deals'] });
+      toast.success('Orçamento convertido em venda com sucesso');
+    },
+    onError: (err: Error) => {
+      const msg = err.message || '';
+      if (msg.includes('invalid_status_for_conversion')) {
+        toast.error('Orçamento precisa estar aprovado/aceito para virar venda');
+      } else if (msg.includes('forbidden_not_quote_owner')) {
+        toast.error('Você não tem permissão para converter este orçamento');
+      } else if (msg.includes('quote_not_found')) {
+        toast.error('Orçamento não encontrado');
+      } else if (msg.includes('invalid_total_value')) {
+        toast.error('Valor do orçamento inválido');
+      } else {
+        toast.error('Erro ao converter orçamento em venda');
+      }
+    },
+  });
+}
+
