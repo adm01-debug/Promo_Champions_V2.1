@@ -72,10 +72,23 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
     const call = () =>
       client.rpc('fn_convert_quote_to_sale' as never, { _quote_id: quoteId } as never);
 
+    // Snapshot da sequence ANTES da concorrência
+    const seqBefore = await client.rpc('fn_get_orders_conversion_seq_last' as never);
+    expect(seqBefore.error).toBeNull();
+    const before = Number(seqBefore.data);
+    expect(Number.isFinite(before)).toBe(true);
+
     const results = await Promise.all(Array.from({ length: N }, call));
 
     // Todas com sucesso
     for (const r of results) expect(r.error).toBeNull();
+
+    // Snapshot DEPOIS: sequence deve avançar EXATAMENTE 1 vez (monotonicidade
+    // sem saltos, apesar das 5 chamadas simultâneas — só uma cria order).
+    const seqAfter = await client.rpc('fn_get_orders_conversion_seq_last' as never);
+    expect(seqAfter.error).toBeNull();
+    const after = Number(seqAfter.data);
+    expect(after).toBe(before + 1);
 
     const payloads = results.map(
       (r) => r.data as { order_id: string; order_number: string; idempotent?: boolean },
