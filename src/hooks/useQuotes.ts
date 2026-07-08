@@ -245,7 +245,7 @@ export type ConvertQuoteErrorCode =
   | 'TOTAL_MISMATCH'
   | 'UNKNOWN';
 
-const ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
+export const CONVERT_QUOTE_ERROR_MESSAGES: Record<ConvertQuoteErrorCode, string> = {
   NOT_AUTHENTICATED: 'Sessão expirada. Faça login novamente.',
   QUOTE_NOT_FOUND: 'Orçamento não encontrado.',
   FORBIDDEN: 'Você não tem permissão para converter este orçamento.',
