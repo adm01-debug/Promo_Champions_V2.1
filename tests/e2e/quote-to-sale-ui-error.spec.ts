@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   HAS_AUTH,
@@ -65,6 +65,8 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
   test('exibe toast PT-BR mapeado para TOTAL_MISMATCH e não cria sale', async ({
     page,
     context,
+    checkpoint,
+    waitForNetworkIdle,
   }) => {
     await context.addInitScript(
       ([key, json]) => window.localStorage.setItem(key, json),
@@ -72,6 +74,7 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
     );
 
     await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await waitForNetworkIdle();
 
     const quoteCard = page.getByText('E2E UI Total Mismatch').first();
     await quoteCard.waitFor({ state: 'visible', timeout: 15_000 });
@@ -79,12 +82,16 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
 
     const convertBtn = page.getByRole('button', { name: /Converter em venda/i });
     await expect(convertBtn).toBeVisible();
+    await checkpoint('antes-conversao');
+
     await convertBtn.click();
 
     // Toast do sonner com a mensagem exata mapeada por CONVERT_QUOTE_ERROR_MESSAGES.TOTAL_MISMATCH
     await expect(page.getByText(EXPECTED_MESSAGE, { exact: true }).first()).toBeVisible({
       timeout: 10_000,
     });
+    await waitForNetworkIdle();
+    await checkpoint('depois-conversao');
 
     // Confirma DB intacto
     const { data: quoteAfter } = await client
