@@ -62,7 +62,10 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
     await client.from('quotes').delete().eq('id', quoteId);
   });
 
-  test('2 RPCs sequenciais devolvem mesmo order_id/order_number sem duplicar', async () => {
+  test('2 RPCs sequenciais devolvem mesmo order_id/order_number sem duplicar', async ({
+    checkpoint,
+  }) => {
+    await checkpoint('antes-conversao');
     const { data: r1, error: e1 } = await client.rpc('fn_convert_quote_to_sale' as never, {
       _quote_id: quoteId,
     } as never);
@@ -98,5 +101,6 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
       .select('*', { count: 'exact', head: true })
       .eq('quote_id', quoteId);
     expect(salesCount).toBe(1);
+    await checkpoint('depois-conversao');
   });
 });
