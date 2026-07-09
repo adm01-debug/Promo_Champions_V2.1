@@ -5,12 +5,17 @@ import path from 'node:path';
 /**
  * Fixtures dedicadas ao projeto `quote-to-sale` para diagnóstico de flakiness.
  *
- * Cada spec que importar `test` daqui recebe automaticamente:
- *   - HAR completo (`network.har`) por teste, em `<outputDir>/<runId>/<testId>/`
- *   - Captura contínua de `console` logs em `console.log`
- *   - Captura de `pageerror` (uncaught) e responses HTTP >=400 em `network-errors.log`
- *   - Helper `checkpoint(name)` para screenshots em pontos-chave
- *     (nomeados `checkpoint-01-<name>.png`, `checkpoint-02-<name>.png`, ...)
+ * Organização dos artefatos por execução:
+ *
+ *   test-results/quote-to-sale/<RUN_ID>/<testId>/
+ *     ├── har/network.har
+ *     ├── console/console.log
+ *     ├── network/network-all.log
+ *     ├── network/network-errors.log
+ *     └── screenshots/checkpoint-01-<name>.png
+ *
+ * Trace, vídeo e screenshots de falha do próprio Playwright continuam sob
+ * `test-results/quote-to-sale/<RUN_ID>/<testDir>/` (config `outputDir`).
  *
  * O `runId` global vem de `process.env.PW_RUN_ID` (definido em
  * `playwright.config.ts`) para agrupar todos os artefatos de uma execução.
@@ -19,52 +24,58 @@ export const RUN_ID =
   process.env.PW_RUN_ID ??
   `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(36).slice(2, 8)}`;
 
+const SUBDIRS = {
+  har: 'har',
+  console: 'console',
+  network: 'network',
+  screenshots: 'screenshots',
+} as const;
+
 type Checkpoint = (name: string) => Promise<void>;
 
 interface QuoteToSaleFixtures {
   runArtifactsDir: string;
   checkpoint: Checkpoint;
+  waitForNetworkIdle: (timeoutMs?: number) => Promise<void>;
 }
 
 export const test = base.extend<QuoteToSaleFixtures>({
   runArtifactsDir: [
     async ({}, use, testInfo) => {
-      // Agrupa por run id + testId para correlacionar retries do mesmo teste.
-      const dir = path.join(testInfo.project.outputDir, RUN_ID, testInfo.testId);
-      fs.mkdirSync(dir, { recursive: true });
-      await use(dir);
+      const base = path.join(testInfo.project.outputDir, RUN_ID, testInfo.testId);
+      for (const sub of Object.values(SUBDIRS)) {
+        fs.mkdirSync(path.join(base, sub), { recursive: true });
+      }
+      await use(base);
     },
     { scope: 'test' },
   ],
 
   context: async ({ context, runArtifactsDir }, use, testInfo) => {
-    // 1. HAR por teste
-    const harPath = path.join(runArtifactsDir, 'network.har');
-    await context.routeFromHAR(harPath, { update: true, notFound: 'fallback' }).catch(() => {
-      /* fallback silencioso: nem toda versão suporta routeFromHAR com update */
-    });
+    const harPath = path.join(runArtifactsDir, SUBDIRS.har, 'network.har');
+    await context
+      .routeFromHAR(harPath, { update: true, notFound: 'fallback' })
+      .catch(() => {
+        /* fallback silencioso se a versão do Playwright não suportar update */
+      });
 
-    // Fallback robusto: sempre gravar HAR via recordHar-like via CDP-agnostic
-    // (Playwright já oferece via new_context; aqui só garantimos o arquivo).
-    // Se routeFromHAR não gravar em algumas versões, o HAR estará vazio;
-    // usamos captura manual de requests/responses abaixo como plano B.
-
-    const consoleLog = fs.createWriteStream(path.join(runArtifactsDir, 'console.log'), {
-      flags: 'a',
-    });
-    const netErrLog = fs.createWriteStream(path.join(runArtifactsDir, 'network-errors.log'), {
-      flags: 'a',
-    });
-    const netAllLog = fs.createWriteStream(path.join(runArtifactsDir, 'network-all.log'), {
-      flags: 'a',
-    });
+    const consoleLog = fs.createWriteStream(
+      path.join(runArtifactsDir, SUBDIRS.console, 'console.log'),
+      { flags: 'a' },
+    );
+    const netErrLog = fs.createWriteStream(
+      path.join(runArtifactsDir, SUBDIRS.network, 'network-errors.log'),
+      { flags: 'a' },
+    );
+    const netAllLog = fs.createWriteStream(
+      path.join(runArtifactsDir, SUBDIRS.network, 'network-all.log'),
+      { flags: 'a' },
+    );
 
     const attachPage = (page: import('@playwright/test').Page): void => {
       page.on('console', (msg) => {
         try {
-          consoleLog.write(
-            `[${new Date().toISOString()}] [${msg.type()}] ${msg.text()}\n`,
-          );
+          consoleLog.write(`[${new Date().toISOString()}] [${msg.type()}] ${msg.text()}\n`);
         } catch {
           /* ignore */
         }
@@ -103,19 +114,19 @@ export const test = base.extend<QuoteToSaleFixtures>({
 
     await use(context);
 
-    // flush + anexa no relatório HTML
     consoleLog.end();
     netErrLog.end();
     netAllLog.end();
 
-    for (const rel of ['console.log', 'network-errors.log', 'network-all.log', 'network.har']) {
-      const full = path.join(runArtifactsDir, rel);
+    const attachments: Array<[string, string, string]> = [
+      ['har/network.har', path.join(runArtifactsDir, SUBDIRS.har, 'network.har'), 'application/json'],
+      ['console/console.log', path.join(runArtifactsDir, SUBDIRS.console, 'console.log'), 'text/plain'],
+      ['network/network-all.log', path.join(runArtifactsDir, SUBDIRS.network, 'network-all.log'), 'text/plain'],
+      ['network/network-errors.log', path.join(runArtifactsDir, SUBDIRS.network, 'network-errors.log'), 'text/plain'],
+    ];
+    for (const [name, full, contentType] of attachments) {
       if (fs.existsSync(full) && fs.statSync(full).size > 0) {
-        await testInfo
-          .attach(rel, { path: full, contentType: rel.endsWith('.har') ? 'application/json' : 'text/plain' })
-          .catch(() => {
-            /* ignore */
-          });
+        await testInfo.attach(name, { path: full, contentType }).catch(() => {});
       }
     }
   },
@@ -126,13 +137,27 @@ export const test = base.extend<QuoteToSaleFixtures>({
       seq += 1;
       const slug = name.replace(/[^a-z0-9-_]+/gi, '_').slice(0, 60);
       const filename = `checkpoint-${String(seq).padStart(2, '0')}-${slug}.png`;
-      const file = path.join(runArtifactsDir, filename);
+      const file = path.join(runArtifactsDir, SUBDIRS.screenshots, filename);
       try {
         await page.screenshot({ path: file, fullPage: false });
-        await testInfo.attach(filename, { path: file, contentType: 'image/png' });
+        await testInfo.attach(`screenshots/${filename}`, { path: file, contentType: 'image/png' });
       } catch {
         /* pode falhar se page fechada — ignorar */
       }
+    };
+    await use(fn);
+  },
+
+  /**
+   * Espera determinística: aguarda `networkidle` + um pequeno settle para
+   * mudanças de estado do React Query após mutações.
+   */
+  waitForNetworkIdle: async ({ page }, use) => {
+    const fn = async (timeoutMs = 10_000): Promise<void> => {
+      await page.waitForLoadState('networkidle', { timeout: timeoutMs }).catch(() => {
+        /* algumas páginas mantêm conexões abertas (realtime); ignorar timeout */
+      });
+      await page.waitForTimeout(150);
     };
     await use(fn);
   },
