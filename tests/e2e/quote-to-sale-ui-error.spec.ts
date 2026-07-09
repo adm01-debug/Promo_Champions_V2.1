@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   HAS_AUTH,
