@@ -19547,6 +19547,19 @@ export type Database = {
         }
         Relationships: []
       }
+      v_quote_to_sale_invariants: {
+        Row: {
+          all_ok: boolean | null
+          checked_at: string | null
+          duplicate_order_numbers: number | null
+          max_orc_suffix: number | null
+          orders_conversion_seq_last: number | null
+          orphan_sales: number | null
+          quotes_with_multiple_orders: number | null
+          sequence_gap: number | null
+        }
+        Relationships: []
+      }
       v_rate_limit_blocked_sellers: {
         Row: {
           blocked_until: string | null

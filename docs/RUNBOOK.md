@@ -228,3 +228,56 @@ Concorrência específica:
 Necessário porque `quotes.sale_id` tem FK para `sales`, o que bloqueia
 deleção direta na ordem inversa.
 
+
+---
+
+## Quote-to-Sale — Diagnóstico de Invariantes
+
+Suíte de invariantes que DEVEM sempre ser verdadeiras em produção. Se qualquer uma falhar, seguir o playbook correspondente.
+
+### Execução rápida
+```bash
+# Verificação automatizada (exit 0 = tudo OK)
+bun run scripts/verify-quote-to-sale-invariants.ts
+
+# Stress test em transação (ROLLBACK ao final — NÃO suja produção)
+psql "$PGURL" -f supabase/tests/quote-to-sale-stress.sql
+```
+
+### Invariante 1 — Zero `order_number` duplicados
+```sql
+SELECT order_number, COUNT(*) FROM public.orders
+GROUP BY order_number HAVING COUNT(*) > 1;
+```
+**Se falhar:** identificar a duplicata mais nova, mover itens para a mais antiga (`UPDATE order_items SET order_id = <antiga>`), depois `DELETE FROM orders WHERE id = <nova>`. Investigar log do dispatcher para descobrir se `fn_convert_quote_to_sale` foi chamada em paralelo com bypass do lock advisory.
+
+### Invariante 2 — Zero `sales` órfãos
+```sql
+SELECT s.id FROM public.sales s
+LEFT JOIN public.quotes q ON q.sale_id = s.id
+WHERE q.id IS NULL;
+```
+**Se falhar:** provável falha de cleanup manual. Antes de deletar, confirmar que o `sale.id` não é referenciado por `commissions`, `sale_notifications_audit`, `follow_up_notifications`. Rodar `cleanupQuote`-equivalente manual antes do `DELETE FROM sales`.
+
+### Invariante 3 — Zero quotes com múltiplas orders
+```sql
+SELECT quote_id, COUNT(*) FROM public.orders
+WHERE quote_id IS NOT NULL
+GROUP BY quote_id HAVING COUNT(*) > 1;
+```
+**Se falhar:** race trigger×RPC vazou. Escolher a order que tem `sale_id` associado (via `quotes.sale_id → sales.id → orders`), mesclar itens da outra e deletar a órfã.
+
+### Invariante 4 — `orders_conversion_seq` monotônica
+```sql
+SELECT last_value FROM public.orders_conversion_seq;
+SELECT MAX(SPLIT_PART(order_number,'-',3)::BIGINT)
+FROM public.orders WHERE order_number LIKE 'ORC-%';
+```
+Sequence DEVE ser ≥ max sufixo. **Se atrás:** `SELECT setval('public.orders_conversion_seq', <max>, true)`.
+
+### Cenários de teste cobertos (E2E)
+- Reuso approved (PED-*), criação won (ORC-*)
+- Concorrência x5 em ambos os paths
+- Race trigger×RPC no mesmo quote
+- Backfill, reenvio, audit_logs, error paths
+- Contract test: cleanup FK-safe sem órfãos
