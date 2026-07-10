@@ -99,21 +99,50 @@ export async function seedQuote(
   };
 }
 
+/**
+ * Cleanup determinístico. Ordem crítica para evitar bloqueios de FK:
+ *   1. Ler `quotes.sale_id` (referência opcional para sales)
+ *   2. Nullificar `quotes.sale_id` para liberar a FK
+ *   3. Deletar `sales` (não há FK reversa quote_id em sales)
+ *   4. Deletar `orders` (FK quote_id -> quotes)
+ *   5. Deletar `quote_items`
+ *   6. Deletar `quotes`
+ * Se `strict=true`, verifica ao final que não sobraram linhas.
+ */
 export async function cleanupQuote(
   client: SupabaseClient,
   quoteId: string | null | undefined,
+  opts: { strict?: boolean } = {},
 ): Promise<void> {
   if (!quoteId) return;
-  const { data: orders } = await client.from('orders').select('id').eq('quote_id', quoteId);
-  for (const o of orders ?? []) await client.from('orders').delete().eq('id', o.id);
+
   const { data: q } = await client
     .from('quotes')
     .select('sale_id')
     .eq('id', quoteId)
     .maybeSingle();
-  if (q?.sale_id) await client.from('sales').delete().eq('id', q.sale_id);
+
+  if (q?.sale_id) {
+    await client.from('quotes').update({ sale_id: null }).eq('id', quoteId);
+    await client.from('sales').delete().eq('id', q.sale_id);
+  }
+
+  await client.from('orders').delete().eq('quote_id', quoteId);
   await client.from('quote_items').delete().eq('quote_id', quoteId);
   await client.from('quotes').delete().eq('id', quoteId);
+
+  if (opts.strict) {
+    const { count: remQuotes } = await client
+      .from('quotes')
+      .select('*', { count: 'exact', head: true })
+      .eq('id', quoteId);
+    if ((remQuotes ?? 0) > 0) throw new Error(`cleanupQuote: quote ${quoteId} não removido`);
+    const { count: remOrders } = await client
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('quote_id', quoteId);
+    if ((remOrders ?? 0) > 0) throw new Error(`cleanupQuote: orders órfãs para ${quoteId}`);
+  }
 }
 
 export async function getSeqLast(client: SupabaseClient): Promise<number> {
