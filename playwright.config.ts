@@ -15,7 +15,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: [['html', { open: 'never' }], ['list']],
+  reporter: [
+    ['html', { open: 'never' }],
+    ['list'],
+    // Empacota automaticamente os artefatos do RUN_ID quando qualquer spec
+    // do projeto quote-to-sale falha definitivamente (após retries).
+    ['./tests/e2e/helpers/quote-to-sale-failure-reporter.ts'],
+  ],
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
