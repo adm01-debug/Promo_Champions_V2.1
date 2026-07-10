@@ -124,3 +124,79 @@ Fila de notificações do CRM para o V4 (mudanças de status de quotes, criaçã
 ### Como reprocessar
 - Painel `/admin/v4-callbacks`: selecione itens e use **Reprocessar** (agenda retry para agora) ou **Resetar tentativas** (zera contador). Também é possível **Arquivar** manualmente.
 - Botão **Executar dispatcher** força uma rodada imediata.
+
+---
+
+## Quote → Sale (`fn_convert_quote_to_sale`)
+
+### Realidade dupla das orders
+
+Existem dois geradores de `orders` associados a um quote — quem cria depende
+do status em que o quote entra:
+
+| Status semeado | Trigger dispara? | Cria order | Prefixo | `orders_conversion_seq` |
+|---|---|---|---|---|
+| `draft`             | não | — | — | não avança |
+| `approved`          | **sim** (`trg_convert_quote_to_order`) | order `PED-…` | `PED-` | não avança |
+| `accepted` / `won`  | não | RPC cria via `nextval()` | `ORC-YYYYMMDD-NNNNNNNN` | **avança +1** |
+
+Consequência prática:
+
+- Toda RPC `fn_convert_quote_to_sale` sobre um quote **approved** cai no
+  branch de **reuso** — devolve `reused_order: true` e o `order_number`
+  original criado pelo trigger. A sequence não avança.
+- A RPC só executa o path novo (ORC-) quando o quote nunca esteve
+  approved ou quando o trigger falhou. Em uso normal isso é raro.
+
+### Idempotência
+
+Chamadas repetidas para o mesmo quote:
+
+1. **1ª chamada** — cria/reusa a order, cria `sales`, marca quote como
+   `converted`, grava `audit_logs`.
+2. **2ª+ chamadas** — retornam imediatamente com `idempotent: true`,
+   `order_id` e `order_number` da 1ª chamada. Zero writes adicionais.
+   Nenhuma nova entrada em `audit_logs`.
+
+### Auditoria
+
+Cada conversão bem-sucedida grava exatamente 1 linha em `audit_logs` com:
+
+```json
+{
+  "action": "convert_quote_to_sale",
+  "entity_type": "quote",
+  "entity_id": "<quote_id>",
+  "actor_id": "<auth.uid()>",
+  "metadata": {
+    "quote_id":     "...",
+    "sale_id":      "...",
+    "order_id":     "...",
+    "order_number": "PED-… | ORC-…",
+    "total_value":  0,
+    "item_count":   0,
+    "reused_order": true|false
+  }
+}
+```
+
+O INSERT em `audit_logs` está envolto em `EXCEPTION WHEN OTHERS THEN NULL`
+para nunca abortar a conversão — se o log falhar (por exemplo, migração
+alterou o schema), a venda ainda é criada. Contudo, o spec
+`tests/e2e/quote-to-sale-audit-log.spec.ts` garante que o log é gravado
+corretamente nos 3 caminhos (reuso, criação, idempotente).
+
+### Códigos de erro padronizados
+
+Todos formato `[CODIGO] mensagem`, para o front parsear com regex:
+
+- `[NOT_AUTHENTICATED]` — sem sessão válida.
+- `[QUOTE_NOT_FOUND]` — id inexistente.
+- `[FORBIDDEN]` — quote não pertence ao caller (não-admin).
+- `[INVALID_STATUS]` — status ≠ approved/accepted/won.
+- `[INVALID_TOTAL]` — total nulo ou negativo.
+- `[EMPTY_ITEMS]` — quote sem itens.
+- `[TOTAL_MISMATCH]` — soma dos itens diverge de `total_value` em mais de 0.02.
+
+Em qualquer erro, **nada** é persistido: nem sale, nem order, nem avanço
+de sequence.
