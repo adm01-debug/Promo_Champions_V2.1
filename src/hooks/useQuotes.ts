@@ -235,12 +235,13 @@ export interface ConvertQuoteResult {
   idempotent: boolean;
 }
 
-export {
+import {
   CONVERT_QUOTE_ERROR_MESSAGES,
   parseConvertQuoteError,
   type ConvertQuoteErrorCode,
 } from './quoteErrorMessages';
-import { parseConvertQuoteError as _parseConvertQuoteError } from './quoteErrorMessages';
+export { CONVERT_QUOTE_ERROR_MESSAGES, parseConvertQuoteError };
+export type { ConvertQuoteErrorCode };
 
 /**
  * Converte um orçamento em venda + pedido via RPC transacional.
