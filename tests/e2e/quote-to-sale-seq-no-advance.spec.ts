@@ -1,13 +1,17 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import { cleanupQuote, convert, getSeqLast, seedQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Falhas de conversão (TOTAL_MISMATCH e FORBIDDEN) NÃO devem avançar
- * `fn_get_orders_conversion_seq_last` nem criar registros em `orders`/`sales`.
+ * `orders_conversion_seq` nem criar registros em `orders`/`sales`.
  *
- * Cobre defesa em profundidade: mesmo em caminhos de erro, a sequence
- * permanece monotônica sem saltos.
+ * IMPORTANTE: usamos status='won' porque approved dispararia o trigger
+ * legado que criaria a order PED-* antes da RPC — o guarda-corpo da
+ * sequence ficaria coberto por coincidência. Com won, a RPC realmente
+ * tenta materializar a ordem via nextval() no path novo, e o teste
+ * valida que a exceção aborta ANTES de qualquer avanço da sequence.
  */
 test.describe('Sequence: falha de conversão não avança sequence', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
@@ -25,118 +29,85 @@ test.describe('Sequence: falha de conversão não avança sequence', () => {
   });
 
   test.afterAll(async () => {
-    if (!client) return;
-    for (const id of createdQuoteIds) {
-      await client.from('quote_items').delete().eq('quote_id', id);
-      await client.from('quotes').delete().eq('id', id);
-    }
+    for (const id of createdQuoteIds) await cleanupQuote(client, id);
   });
 
-  async function seedQuote(opts: {
-    totalValue: number;
-    itemTotal: number;
-    createdBy?: string;
-  }): Promise<string | null> {
-    const { data: q, error } = await client
-      .from('quotes')
-      .insert({
-        client_name: 'E2E Seq No-Advance',
-        title: 'E2E Seq No-Advance',
-        total_value: opts.totalValue,
-        subtotal: opts.totalValue,
-        status: 'approved',
-        source: 'manual',
-        ...(opts.createdBy ? { created_by: opts.createdBy } : {}),
-      })
-      .select('id')
-      .single();
-    if (error || !q) return null;
-    createdQuoteIds.push(q.id);
-    await client.from('quote_items').insert({
-      quote_id: q.id,
-      product_name: 'Item Seq No-Advance',
-      quantity: 1,
-      unit_price: opts.itemTotal,
-      total_price: opts.itemTotal,
-    });
-    return q.id;
-  }
-
-  async function seqLast(): Promise<number> {
-    const { data, error } = await client.rpc('fn_get_orders_conversion_seq_last' as never);
-    expect(error).toBeNull();
-    const n = Number(data);
-    expect(Number.isFinite(n)).toBe(true);
-    return n;
-  }
-
   test('TOTAL_MISMATCH: sequence estável e zero orders/sales', async () => {
-    const quoteId = await seedQuote({ totalValue: 100, itemTotal: 250 });
-    if (!quoteId) {
-      test.skip(true, 'Falha ao semear quote');
-      return;
-    }
+    const seed = await seedQuote(client, {
+      status: 'won',
+      total: 100,
+      itemTotal: 250, // mismatch intencional (>0.02)
+      label: 'E2E Seq NoAdv MISMATCH',
+    });
+    createdQuoteIds.push(seed.quoteId);
 
-    const before = await seqLast();
+    // won NÃO dispara trigger — não deve haver order pré-existente
+    expect(seed.preExistingOrderId).toBeNull();
 
-    const { data, error } = await client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: quoteId,
-    } as never);
+    const before = await getSeqLast(client);
+
+    const { payload, error } = await convert(client, seed.quoteId);
     expect(error).not.toBeNull();
-    expect(error!.message).toMatch(/\[TOTAL_MISMATCH\]/);
-    expect(data).toBeNull();
+    const msg = (error as { message?: string } | null)?.message ?? '';
+    expect(msg).toMatch(/\[TOTAL_MISMATCH\]/);
+    expect(payload).toBeNull();
 
-    const after = await seqLast();
+    const after = await getSeqLast(client);
     expect(after).toBe(before);
 
     const { count: ordersCount } = await client
       .from('orders')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('quote_id', seed.quoteId);
     expect(ordersCount).toBe(0);
 
     const { data: qFinal } = await client
       .from('quotes')
       .select('sale_id, status')
-      .eq('id', quoteId)
+      .eq('id', seed.quoteId)
       .single();
     expect(qFinal?.sale_id).toBeNull();
     expect(qFinal?.status).not.toBe('converted');
   });
 
   test('FORBIDDEN: sequence estável e zero orders/sales', async () => {
-    const FOREIGN_USER = '00000000-0000-0000-0000-0000000000fd';
-    const quoteId = await seedQuote({
-      totalValue: 320,
-      itemTotal: 320,
-      createdBy: FOREIGN_USER,
-    });
-    if (!quoteId) {
-      test.skip(true, 'RLS bloqueou seed com created_by alheio');
+    const FOREIGN_OWNER = '00000000-0000-0000-0000-0000000000fd';
+
+    let seed: Awaited<ReturnType<typeof seedQuote>>;
+    try {
+      seed = await seedQuote(client, {
+        status: 'won',
+        total: 320,
+        itemTotal: 320,
+        ownerSpId: FOREIGN_OWNER,
+        label: 'E2E Seq NoAdv FORBIDDEN',
+      });
+    } catch {
+      test.skip(true, 'RLS bloqueou seed com created_by alheio — cenário não reproduzível.');
       return;
     }
+    createdQuoteIds.push(seed.quoteId);
 
-    const before = await seqLast();
+    const before = await getSeqLast(client);
 
-    const { data, error } = await client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: quoteId,
-    } as never);
+    const { payload, error } = await convert(client, seed.quoteId);
 
     if (!error) {
       test.skip(true, 'Sessão E2E tem bypass de ownership; FORBIDDEN não aplicável.');
       return;
     }
 
-    expect(error.message).toMatch(/\[FORBIDDEN\]/);
-    expect(data).toBeNull();
+    const msg = (error as { message?: string }).message ?? '';
+    expect(msg).toMatch(/\[FORBIDDEN\]/);
+    expect(payload).toBeNull();
 
-    const after = await seqLast();
+    const after = await getSeqLast(client);
     expect(after).toBe(before);
 
     const { count: ordersCount } = await client
       .from('orders')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('quote_id', seed.quoteId);
     expect(ordersCount).toBe(0);
   });
 });
