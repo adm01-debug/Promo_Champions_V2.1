@@ -101,12 +101,16 @@ export async function seedQuote(
 
 /**
  * Cleanup determinístico. Ordem crítica para evitar bloqueios de FK:
- *   1. Ler `quotes.sale_id` (referência opcional para sales)
+ *   1. Ler `quotes.sale_id`
  *   2. Nullificar `quotes.sale_id` para liberar a FK
- *   3. Deletar `sales` (não há FK reversa quote_id em sales)
- *   4. Deletar `orders` (FK quote_id -> quotes)
- *   5. Deletar `quote_items`
- *   6. Deletar `quotes`
+ *   3. Limpar filhos de `sales` que NÃO possuem ON DELETE CASCADE/SET NULL:
+ *        - `sale_notifications_audit` (populada por tr_notify_sale_victory)
+ *        - `follow_up_notifications`  (populada por tr_auto_followup_on_sale)
+ *        - `follow_up_audit_logs`     (populada por triggers de follow-up)
+ *      Sem isso, o DELETE em `sales` falha com foreign_key_violation.
+ *   4. Deletar `sales` (demais filhos caem via CASCADE)
+ *   5. Deletar `orders` (FK quote_id -> quotes é SET NULL, precisa delete explícito)
+ *   6. Deletar `quotes` (CASCADE remove `quote_items`; delete explícito é defensivo)
  * Se `strict=true`, verifica ao final que não sobraram linhas.
  */
 export async function cleanupQuote(
@@ -124,12 +128,17 @@ export async function cleanupQuote(
 
   if (q?.sale_id) {
     await client.from('quotes').update({ sale_id: null }).eq('id', quoteId);
+    // Filhos de sales sem CASCADE — precisam ser removidos antes do DELETE em sales.
+    await client.from('sale_notifications_audit').delete().eq('sale_id', q.sale_id);
+    await client.from('follow_up_notifications').delete().eq('sale_id', q.sale_id);
+    await client.from('follow_up_audit_logs').delete().eq('sale_id', q.sale_id);
     await client.from('sales').delete().eq('id', q.sale_id);
   }
 
   await client.from('orders').delete().eq('quote_id', quoteId);
   await client.from('quote_items').delete().eq('quote_id', quoteId);
   await client.from('quotes').delete().eq('id', quoteId);
+
 
   if (opts.strict) {
     const { count: remQuotes } = await client
