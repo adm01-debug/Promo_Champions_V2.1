@@ -8,7 +8,7 @@ import {
   SUPABASE_URL,
   skipReason,
 } from './helpers/auth';
-import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/useQuotes';
+import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
 
 /**
  * E2E: Frontend deve renderizar EXATAMENTE a mensagem PT-BR mapeada para

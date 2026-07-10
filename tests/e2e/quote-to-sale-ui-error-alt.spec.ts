@@ -8,7 +8,7 @@ import {
   SUPABASE_URL,
   skipReason,
 } from './helpers/auth';
-import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/useQuotes';
+import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
 
 /**
  * E2E: Fluxo alternativo do frontend (menu de ações em vez do botão
