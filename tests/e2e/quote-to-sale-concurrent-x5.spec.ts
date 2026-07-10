@@ -1,15 +1,25 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  ORDER_NUMBER_REGEX,
+  cleanupQuote,
+  getSeqLast,
+  seedQuote,
+  type ConversionPayload,
+} from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: 5 chamadas simultâneas de `fn_convert_quote_to_sale` sobre o mesmo
  * orçamento. Verifica que:
  *   1. Nenhuma chamada falha (erro nulo em todas).
  *   2. Todas retornam o MESMO order_id e MESMO order_number.
- *   3. Pelo menos 4 chamadas retornam `idempotent: true` (só 1 cria).
+ *   3. Pelo menos 4 chamadas retornam `idempotent: true` (só 1 cria/consolida).
  *   4. Existe exatamente 1 `orders` e 1 `sales` no banco.
- *   5. `order_number` é único no formato `ORC-YYYYMMDD-NNNNNNNN`.
+ *   5. `order_number` casa com `ORDER_NUMBER_REGEX` (aceita PED-* do trigger
+ *      legado E ORC- do path novo).
+ *   6. Se o trigger criou order pré-existente (status='approved'), a
+ *      sequence NÃO avança. Caso contrário (path novo), avança exatamente +1.
  */
 test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
@@ -26,88 +36,53 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
     });
     await client.auth.setSession(session);
 
-    const total = 750;
-    const { data: quote, error } = await client
-      .from('quotes')
-      .insert({
-        client_name: 'E2E Concorrência x5',
-        title: 'E2E Convert x5',
-        total_value: total,
-        subtotal: total,
-        status: 'approved',
-        source: 'manual',
-      })
-      .select('id')
-      .single();
-    if (error || !quote) throw new Error(`Falha ao criar quote: ${error?.message}`);
-    quoteId = quote.id;
-
-    const { error: iErr } = await client.from('quote_items').insert({
-      quote_id: quoteId,
-      product_name: 'Item x5',
-      quantity: 5,
-      unit_price: 150,
-      total_price: total,
+    const seed = await seedQuote(client, {
+      status: 'approved',
+      total: 750,
+      label: 'E2E Concorrência x5',
     });
-    if (iErr) throw new Error(`Falha ao inserir item: ${iErr.message}`);
+    quoteId = seed.quoteId;
   });
 
   test.afterAll(async () => {
-    if (!client || !quoteId) return;
-    const { data: orders } = await client.from('orders').select('id').eq('quote_id', quoteId);
-    for (const o of orders ?? []) await client.from('orders').delete().eq('id', o.id);
-
-    const { data: q } = await client
-      .from('quotes')
-      .select('sale_id')
-      .eq('id', quoteId)
-      .maybeSingle();
-    if (q?.sale_id) await client.from('sales').delete().eq('id', q.sale_id);
-
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId);
   });
 
   test('5 RPCs em paralelo produzem 1 order + 1 sale sem colisão', async () => {
     const call = () =>
       client.rpc('fn_convert_quote_to_sale' as never, { _quote_id: quoteId } as never);
 
-    // Snapshot da sequence ANTES da concorrência
-    const seqBefore = await client.rpc('fn_get_orders_conversion_seq_last' as never);
-    expect(seqBefore.error).toBeNull();
-    const before = Number(seqBefore.data);
-    expect(Number.isFinite(before)).toBe(true);
+    const seqBefore = await getSeqLast(client);
 
     const results = await Promise.all(Array.from({ length: N }, call));
 
-    // Todas com sucesso
     for (const r of results) expect(r.error).toBeNull();
 
-    // Snapshot DEPOIS: sequence deve avançar EXATAMENTE 1 vez (monotonicidade
-    // sem saltos, apesar das 5 chamadas simultâneas — só uma cria order).
-    const seqAfter = await client.rpc('fn_get_orders_conversion_seq_last' as never);
-    expect(seqAfter.error).toBeNull();
-    const after = Number(seqAfter.data);
-    expect(after).toBe(before + 1);
+    const payloads = results.map((r) => r.data as ConversionPayload);
 
-    const payloads = results.map(
-      (r) => r.data as { order_id: string; order_number: string; idempotent?: boolean },
-    );
-
-    // Todos convergem para o mesmo order
+    // Convergência total
     const firstOrderId = payloads[0].order_id;
     const firstOrderNumber = payloads[0].order_number;
     for (const p of payloads) {
       expect(p.order_id).toBe(firstOrderId);
       expect(p.order_number).toBe(firstOrderNumber);
     }
-    expect(firstOrderNumber).toMatch(/^ORC-\d{8}-\d{8}$/);
+    expect(firstOrderNumber).toMatch(ORDER_NUMBER_REGEX);
 
-    // Só 1 conversão real; N-1 idempotentes
+    // Somente 1 conversão real; N-1 idempotentes
     const idempotentCount = payloads.filter((p) => p.idempotent).length;
     expect(idempotentCount).toBeGreaterThanOrEqual(N - 1);
 
-    // Verificação no banco: 1 order, 1 sale, order_number único
+    // Sequence: só avança quando o path novo (ORC-*) foi exercitado
+    const seqAfter = await getSeqLast(client);
+    const wasReused = payloads.some((p) => p.reused_order === true);
+    if (wasReused || firstOrderNumber.startsWith('PED-')) {
+      expect(seqAfter).toBe(seqBefore);
+    } else {
+      expect(seqAfter).toBe(seqBefore + 1);
+    }
+
+    // Banco: 1 order, 1 sale, order_number único
     const { count: ordersCount } = await client
       .from('orders')
       .select('*', { count: 'exact', head: true })
