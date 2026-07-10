@@ -200,3 +200,31 @@ Todos formato `[CODIGO] mensagem`, para o front parsear com regex:
 
 Em qualquer erro, **nada** é persistido: nem sale, nem order, nem avanço
 de sequence.
+
+### Cenários de concorrência trigger × RPC
+
+Coberto por `tests/e2e/quote-to-sale-race-trigger-vs-rpc.spec.ts` e pela
+simulação psql em `/tmp/ex5.sql` (100 conversões concorrentes: 50 `won` +
+50 `approved`). Invariantes verificadas:
+
+- `count(sales) == count(quotes WHERE status='converted')`
+- `count(distinct orders.quote_id) == count(orders)` (zero duplicatas)
+- `orders_conversion_seq` avança exatamente `+N_won` (nunca por reuso)
+- `count(audit_logs WHERE action='convert_quote_to_sale') == count(sales criadas)`
+- Sob erro (`TOTAL_MISMATCH` etc.), zero orders/sales órfãs e sequence
+  intacta.
+
+Concorrência específica:
+
+- `quote-to-sale-concurrent.spec.ts` — 2× paralelas (baseline)
+- `quote-to-sale-concurrent-x5.spec.ts` — 5× paralelas no path `approved`
+- `quote-to-sale-concurrent-won.spec.ts` — 5× paralelas no path `won`
+
+### Cleanup determinístico em testes
+
+`cleanupQuote(client, quoteId, { strict: true })` executa em ordem:
+`quotes.sale_id → NULL` → `DELETE sales` → `DELETE orders` →
+`DELETE quote_items` → `DELETE quotes`, com verificação pós-delete.
+Necessário porque `quotes.sale_id` tem FK para `sales`, o que bloqueia
+deleção direta na ordem inversa.
+

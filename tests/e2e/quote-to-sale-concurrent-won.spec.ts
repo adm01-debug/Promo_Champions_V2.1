@@ -2,19 +2,21 @@ import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
 import {
-  ORDER_NUMBER_REGEX,
+  ORC_PATTERN,
   cleanupQuote,
-  convert,
+  getSeqLast,
   seedQuote,
+  type ConversionPayload,
 } from './helpers/quote-to-sale-helpers';
 
 /**
- * E2E: Reenvio sequencial — 3 chamadas em série. Regressão BUG#1: todas
- * as chamadas idempotentes devem devolver `order_number` populado.
+ * E2E: 5 chamadas simultâneas no path 'won' (ORC-*).
+ * Valida: sequence +1 exato, 1 ORC-*, 4 idempotentes, 1 sale.
  */
-test.describe('Idempotência: reenviar conversão 3x', () => {
+test.describe('Concorrência x5 (path won → ORC-*)', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
 
+  const N = 5;
   let client: SupabaseClient;
   let quoteId: string;
 
@@ -27,33 +29,37 @@ test.describe('Idempotência: reenviar conversão 3x', () => {
     await client.auth.setSession(session);
 
     const seed = await seedQuote(client, {
-      status: 'approved',
-      total: 340,
-      label: 'E2E Reenvio',
+      status: 'won',
+      total: 999,
+      label: 'E2E Concurrent Won x5',
     });
     quoteId = seed.quoteId;
+    expect(seed.preExistingOrderId).toBeNull(); // won não dispara trigger
   });
 
   test.afterAll(async () => {
     await cleanupQuote(client, quoteId, { strict: true });
   });
 
-  test('3 chamadas sequenciais: 1 real + 2 idempotentes, todas com order_number', async () => {
-    const { payload: p1, error: e1 } = await convert(client, quoteId);
-    expect(e1).toBeNull();
-    expect(p1!.order_number).toMatch(ORDER_NUMBER_REGEX);
+  test('5 RPCs paralelas em won → 1 ORC-*, sequence +1, 4 idempotentes', async () => {
+    const call = () =>
+      client.rpc('fn_convert_quote_to_sale' as never, { _quote_id: quoteId } as never);
 
-    const { payload: p2, error: e2 } = await convert(client, quoteId);
-    expect(e2).toBeNull();
-    expect(p2!.order_id).toBe(p1!.order_id);
-    expect(p2!.order_number).toBe(p1!.order_number);
-    expect(p2!.idempotent).toBe(true);
+    const seqBefore = await getSeqLast(client);
+    const results = await Promise.all(Array.from({ length: N }, call));
+    for (const r of results) expect(r.error).toBeNull();
 
-    const { payload: p3, error: e3 } = await convert(client, quoteId);
-    expect(e3).toBeNull();
-    expect(p3!.order_id).toBe(p1!.order_id);
-    expect(p3!.order_number).toBe(p1!.order_number);
-    expect(p3!.idempotent).toBe(true);
+    const payloads = results.map((r) => r.data as ConversionPayload);
+    const first = payloads[0];
+    for (const p of payloads) {
+      expect(p.order_id).toBe(first.order_id);
+      expect(p.order_number).toBe(first.order_number);
+    }
+    expect(first.order_number).toMatch(ORC_PATTERN);
+    expect(payloads.filter((p) => p.idempotent).length).toBeGreaterThanOrEqual(N - 1);
+
+    const seqAfter = await getSeqLast(client);
+    expect(seqAfter).toBe(seqBefore + 1);
 
     const { count: ordersCount } = await client
       .from('orders')
@@ -72,5 +78,11 @@ test.describe('Idempotência: reenviar conversão 3x', () => {
       .select('*', { count: 'exact', head: true })
       .eq('id', qFinal!.sale_id!);
     expect(salesCount).toBe(1);
+
+    const { count: dup } = await client
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('order_number', first.order_number);
+    expect(dup).toBe(1);
   });
 });
