@@ -11702,6 +11702,63 @@ export type Database = {
           },
         ]
       }
+      quote_conversion_audit: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          idempotent: boolean
+          latency_ms: number | null
+          new_status: string | null
+          order_id: string | null
+          order_number: string | null
+          previous_status: string | null
+          quote_id: string
+          request_id: string | null
+          reused_order: boolean
+          sale_id: string | null
+          success: boolean
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          idempotent?: boolean
+          latency_ms?: number | null
+          new_status?: string | null
+          order_id?: string | null
+          order_number?: string | null
+          previous_status?: string | null
+          quote_id: string
+          request_id?: string | null
+          reused_order?: boolean
+          sale_id?: string | null
+          success: boolean
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          idempotent?: boolean
+          latency_ms?: number | null
+          new_status?: string | null
+          order_id?: string | null
+          order_number?: string | null
+          previous_status?: string | null
+          quote_id?: string
+          request_id?: string | null
+          reused_order?: boolean
+          sale_id?: string | null
+          success?: boolean
+        }
+        Relationships: []
+      }
       quote_items: {
         Row: {
           billing_period: string | null
@@ -19584,6 +19641,44 @@ export type Database = {
         }
         Relationships: []
       }
+      v_quote_conversion_history: {
+        Row: {
+          actor_user_id: string | null
+          audit_id: string | null
+          error_code: string | null
+          error_message: string | null
+          idempotent: boolean | null
+          latency_ms: number | null
+          new_status: string | null
+          occurred_at: string | null
+          order_id: string | null
+          order_number: string | null
+          previous_status: string | null
+          quote_client: string | null
+          quote_id: string | null
+          quote_title: string | null
+          request_id: string | null
+          reused_order: boolean | null
+          sale_id: string | null
+          success: boolean | null
+        }
+        Relationships: []
+      }
+      v_quote_conversion_metrics_daily: {
+        Row: {
+          attempts: number | null
+          day: string | null
+          failures: number | null
+          idempotent_hits: number | null
+          latency_max_ms: number | null
+          latency_p50_ms: number | null
+          latency_p95_ms: number | null
+          reused_orders: number | null
+          success_rate_pct: number | null
+          successes: number | null
+        }
+        Relationships: []
+      }
       v_quote_to_sale_invariants: {
         Row: {
           all_ok: boolean | null
@@ -19848,6 +19943,10 @@ export type Database = {
           rule_name: string
         }[]
       }
+      fn_admin_conversion_trail: {
+        Args: { _quote_id?: string; _sale_id?: string }
+        Returns: Json
+      }
       fn_admin_platform_slo: {
         Args: never
         Returns: {
@@ -19931,6 +20030,24 @@ export type Database = {
           jobname: string
           schedule: string
         }[]
+      }
+      fn_record_conversion_attempt: {
+        Args: {
+          _error_code: string
+          _error_message: string
+          _idempotent: boolean
+          _latency_ms: number
+          _new_status: string
+          _order_id: string
+          _order_number: string
+          _previous_status: string
+          _quote_id: string
+          _request_id: string
+          _reused_order: boolean
+          _sale_id: string
+          _success: boolean
+        }
+        Returns: string
       }
       fn_test_cleanup_dedupe_privileges: {
         Args: never
