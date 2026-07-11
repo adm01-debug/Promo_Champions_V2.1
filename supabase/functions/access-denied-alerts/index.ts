@@ -132,7 +132,7 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
   }
 }
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
