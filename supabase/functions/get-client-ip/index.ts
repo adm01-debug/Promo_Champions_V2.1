@@ -1,13 +1,12 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
-serve(async req => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+Deno.serve(
+  withRequestId('get-client-ip', async (req, _ctx) => {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
 
-  try {
-    // Extract IP from standard headers
     const ip =
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       req.headers.get('x-real-ip') ||
@@ -18,10 +17,5 @@ serve(async req => {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (_error) {
-    return new Response(JSON.stringify({ error: 'Failed to get IP', ip: 'unknown' }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-});
+  }),
+);
