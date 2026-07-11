@@ -4,21 +4,46 @@
 -- Executa toda a suíte dentro de BEGIN/ROLLBACK para NÃO sujar produção.
 -- Idempotente: pode ser rodado várias vezes sem efeitos colaterais.
 --
--- Uso:
---   psql "$PGURL" -f supabase/tests/quote-to-sale-stress.sql
+-- Uso (auto-descobre admin + salesperson):
+--   ADMIN=$(psql -tAc "SELECT user_id FROM public.user_roles WHERE role='admin' LIMIT 1")
+--   SP=$(psql -tAc "SELECT id FROM public.salespeople LIMIT 1")
+--   psql -v admin_uuid="'$ADMIN'" -v salesperson_uuid="'$SP'" \
+--        -f supabase/tests/quote-to-sale-stress.sql
 --
 -- Ao final imprime as invariantes esperadas:
 --   - 50 ORC-* + 50 PED-* (ou distribuição condizente)
 --   - orders_conversion_seq avançou exatamente +50
---   - audit_logs: 100 entradas fn_convert
 --   - 0 duplicatas de order_number
---   - 0 quotes órfãos após ROLLBACK
+--   - 0 quotes órfãos após ROLLBACK (produção intacta)
 -- ============================================================================
+
 
 \set ON_ERROR_STOP on
 \timing on
 
+\if :{?admin_uuid}
+\else
+  \echo '❌ Faltou -v admin_uuid=<uuid-admin>. Abortando.'
+  \quit
+\endif
+\if :{?salesperson_uuid}
+\else
+  \echo '❌ Faltou -v salesperson_uuid=<uuid-salesperson>. Abortando.'
+  \quit
+\endif
+
+
 BEGIN;
+
+-- Injeta auth.uid() para a RPC fn_convert_quote_to_sale.
+-- Nota: não usamos SET ROLE authenticated porque exec-user não tem grant;
+-- a RPC é SECURITY DEFINER e só depende de auth.uid() via jwt.claims.sub.
+SELECT set_config(
+  'request.jwt.claims',
+  json_build_object('sub', :admin_uuid, 'role', 'authenticated')::text,
+  true
+);
+SELECT set_config('app.stress_sp_id', :salesperson_uuid, true);
 
 DO $$
 DECLARE
@@ -28,15 +53,22 @@ DECLARE
   v_ped_count  INT;
   v_dup_count  INT;
   v_quote_id   UUID;
+  v_uid        UUID := (current_setting('request.jwt.claims', true)::jsonb ->> 'sub')::uuid;
+  v_sp         UUID := current_setting('app.stress_sp_id', true)::uuid;
   i INT;
+
 BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() ausente — set_config request.jwt.claims falhou';
+  END IF;
+
   SELECT last_value INTO v_seq_before FROM public.orders_conversion_seq;
-  RAISE NOTICE 'seq_before=%', v_seq_before;
+  RAISE NOTICE 'seq_before=% uid=% sp=%', v_seq_before, v_uid, v_sp;
 
   -- 50 conversões won → ORC-*
   FOR i IN 1..50 LOOP
-    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source)
-    VALUES ('stress-won-' || i, 'stress-won-' || i, 100, 100, 'won', 'manual')
+    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source, created_by)
+    VALUES ('stress-won-' || i, 'stress-won-' || i, 100, 100, 'won', 'manual', v_sp)
     RETURNING id INTO v_quote_id;
     INSERT INTO public.quote_items (quote_id, product_name, quantity, unit_price, total_price)
     VALUES (v_quote_id, 'item', 1, 100, 100);
@@ -45,13 +77,15 @@ BEGIN
 
   -- 50 conversões approved → PED-* (trigger cria order; RPC reusa)
   FOR i IN 1..50 LOOP
-    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source)
-    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'approved', 'manual')
+    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source, created_by)
+    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'approved', 'manual', v_sp)
     RETURNING id INTO v_quote_id;
     INSERT INTO public.quote_items (quote_id, product_name, quantity, unit_price, total_price)
     VALUES (v_quote_id, 'item', 1, 200, 200);
     PERFORM public.fn_convert_quote_to_sale(v_quote_id);
   END LOOP;
+
+
 
   SELECT last_value INTO v_seq_after FROM public.orders_conversion_seq;
 
