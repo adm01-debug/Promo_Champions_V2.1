@@ -47,7 +47,7 @@ export const useClientBI = (clientId?: string, ramoAtividade?: string) => {
         affinity: {
           topCategories: ['Eletrônicos', 'Periféricos', 'Office'],
           suggestedProducts: clientProducts.length
-            ? clientProducts.map((p: any) => ({ name: p.product_name, confidence: 90 }))
+            ? clientProducts.map((p) => ({ name: p.product_name, confidence: 90 }))
             : [
                 { name: 'Monitor 4K UltraWide', confidence: 94 },
                 { name: 'Teclado Mecânico RGB', confidence: 88 },
