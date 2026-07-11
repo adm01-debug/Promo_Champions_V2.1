@@ -171,4 +171,4 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       }
     );
   }
-});
+}));
