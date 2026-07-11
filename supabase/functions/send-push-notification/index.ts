@@ -113,4 +113,4 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-});
+}));
