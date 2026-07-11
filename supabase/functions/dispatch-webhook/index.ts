@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 
 interface DispatchRequest {
   webhook_id?: string;
@@ -92,17 +93,30 @@ Deno.serve(async req => {
         errMsg: string | null = null,
         success = false;
       try {
-        const r = await fetch(wh.url, {
-          method: 'POST',
-          headers,
-          body,
-          signal: AbortSignal.timeout(10000),
-        });
-        status = r.status;
-        respBody = (await r.text()).slice(0, 1000);
-        success = r.ok;
+        await withEdgeCircuitBreaker(
+          `webhook:${wh.id}`,
+          async () => {
+            const r = await fetch(wh.url, {
+              method: 'POST',
+              headers,
+              body,
+              signal: AbortSignal.timeout(10000),
+            });
+            status = r.status;
+            respBody = (await r.text()).slice(0, 1000);
+            success = r.ok;
+            if (!r.ok) throw new Error(`webhook_http_${r.status}`);
+          },
+          { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 10_000 },
+        );
       } catch (e) {
-        errMsg = e instanceof Error ? e.message : String(e);
+        if (e instanceof CircuitBreakerOpenError) {
+          errMsg = 'circuit_open';
+          status = 0;
+          success = false;
+        } else if (!errMsg) {
+          errMsg = e instanceof Error ? e.message : String(e);
+        }
       }
 
       const duration = Date.now() - start;

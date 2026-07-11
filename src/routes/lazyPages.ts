@@ -302,6 +302,9 @@ export const AdminQuoteSyncInboundPage = lazyWithPrefetch(
 export const AdminQuoteConversionsPage = lazyWithPrefetch(
   () => import('@/pages/admin/AdminQuoteConversionsPage')
 );
+export const AdminPlatformSLOPage = lazyWithPrefetch(
+  () => import('@/pages/admin/AdminPlatformSLOPage')
+);
 export const AdminComercial = lazyWithPrefetch(
   () => import('@/pages/admin/AdminComercial')
 );

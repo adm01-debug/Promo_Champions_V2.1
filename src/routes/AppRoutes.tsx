@@ -33,7 +33,7 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage, AdminQuoteConversionsPage,
+  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage, AdminQuoteConversionsPage, AdminPlatformSLOPage,
   AdminComercial, Competencias,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
@@ -264,6 +264,7 @@ export function AppRoutes() {
                       <Route path="/admin/v4-callbacks" element={<Admin><AdminV4CallbacksPage /></Admin>} />
                       <Route path="/admin/quote-sync-inbound" element={<Admin><AdminQuoteSyncInboundPage /></Admin>} />
                       <Route path="/admin/quote-conversions" element={<Admin><AdminQuoteConversionsPage /></Admin>} />
+                      <Route path="/admin/platform-slo" element={<Admin><AdminPlatformSLOPage /></Admin>} />
                       <Route path="/admin/telemetria" element={<Manager><AdminTelemetria /></Manager>} />
                       <Route path="/admin/comercial" element={<Manager><AdminComercial /></Manager>} />
                       <Route path="/usage-analytics" element={<Admin><UsageAnalytics /></Admin>} />
