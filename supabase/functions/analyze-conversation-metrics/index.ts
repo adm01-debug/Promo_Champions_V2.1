@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface Turn {
   speaker: "seller" | "client" | "unknown";
@@ -16,7 +17,7 @@ function classifyHealth(score: number): "poor" | "fair" | "good" | "excellent" {
   return "poor";
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const authHeader = req.headers.get("Authorization");
@@ -157,4 +158,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

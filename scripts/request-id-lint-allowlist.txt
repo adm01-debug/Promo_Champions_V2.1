@@ -8,9 +8,6 @@
 
 account-engagement-aggregator
 aggregate-coaching-scorecard
-analyze-conversation-metrics
-analyze-objection-handling
-analyze-pipeline-coverage
 analyze-question-quality
 analyze-skill-gaps
 analyze-stage-conversion
