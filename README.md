@@ -90,6 +90,34 @@ tests/
 - **Nunca** commite o arquivo `.env`
 - Rotacione as chaves do Supabase periodicamente
 
+### Interpretando warns do linter Supabase
+
+O linter reporta ~124 warnings do padrão `0028_anon_security_definer_function_executable` (SECURITY DEFINER exposto). **Isso é esperado** — cada RPC afetada tem guard interno via `has_role()` ou `auth.uid()`. A hardening SEC-01 aplicou o padrão de least-privilege:
+
+- `REVOKE ALL FROM PUBLIC, anon` em toda função sensível.
+- `GRANT EXECUTE TO authenticated` (ou `service_role`) somente onde necessário.
+- Todas com `SET search_path = public` para bloquear search_path injection.
+
+Detalhes em [`docs/SECURITY_HARDENING.md`](./docs/SECURITY_HARDENING.md) e nas ADRs:
+
+- [ADR-003 — Supabase RLS Security](./docs/decisions/ADR-003-supabase-rls-security.md)
+- [ADR-004 — Circuit Breaker Edge](./docs/decisions/ADR-004-circuit-breaker-edge.md)
+- [ADR-005 — Quote→Sale Idempotency](./docs/decisions/ADR-005-quote-to-sale-idempotency.md)
+- [ADR-006 — X-Request-Id Strategy](./docs/decisions/ADR-006-request-id-strategy.md)
+- [ADR-007 — Log Retention](./docs/decisions/ADR-007-log-retention.md)
+
+### Dashboards admin de observabilidade
+
+| Rota | Descrição |
+|------|-----------|
+| `/admin/platform-slo` | SLOs consolidados (webhook, V4, circuit stability, error-free) 30d |
+| `/admin/web-vitals` | Web Vitals P75 por rota/device com budget check |
+| `/admin/quote-conversions` | Auditoria de conversões orçamento→venda |
+| `/admin/v4-callbacks` | Callbacks V4 e replays |
+| `/admin/webhooks-timeline` | Timeline de entregas de webhook |
+
+
+
 ## 🤝 Contribuindo
 
 Veja [CONTRIBUTING.md](./CONTRIBUTING.md) e [docs/style-guide.md](./docs/style-guide.md).

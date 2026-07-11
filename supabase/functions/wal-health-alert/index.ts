@@ -18,6 +18,8 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
@@ -34,18 +36,24 @@ function bytes(n: number): string {
 }
 
 async function postSlack(webhook: string, text: string, blocks?: unknown) {
-  const res = await fetch(webhook, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(blocks ? { text, blocks } : { text }),
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
-  }
+  await withEdgeCircuitBreaker(
+    "slack:wal-health-alert",
+    async () => {
+      const res = await fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(blocks ? { text, blocks } : { text }),
+      });
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
+      }
+    },
+    { failureThreshold: 3, resetTimeout: 60_000, timeoutMs: 5_000 },
+  );
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -135,7 +143,14 @@ Deno.serve(async (req) => {
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error("[wal-health-alert] failed:", msg);
+    if (e instanceof CircuitBreakerOpenError) {
+      ctx.log("warn", "slack_circuit_open", { circuit: "slack:wal-health-alert" });
+      return new Response(
+        JSON.stringify({ ok: false, degraded: true, reason: "slack_circuit_open" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    ctx.log("error", "wal_health_alert_failed", { error: msg });
     return new Response(
       JSON.stringify({ error: msg }),
       {
@@ -144,4 +159,4 @@ Deno.serve(async (req) => {
       },
     );
   }
-});
+}));
