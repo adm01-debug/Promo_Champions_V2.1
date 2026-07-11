@@ -95,30 +95,56 @@ async function postSlack(webhookUrl: string, p: Payload, requestId: string) {
     ],
   };
 
-  const res = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    log("error", requestId, "slack_post_failed", { status: res.status, body: text.slice(0, 500) });
+  try {
+    await withEdgeCircuitBreaker(
+      "slack:quote-conversion",
+      async () => {
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          log("error", requestId, "slack_post_failed", { status: res.status, body: text.slice(0, 500) });
+          throw new Error(`slack_http_${res.status}`);
+        }
+      },
+      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 8_000 },
+    );
+  } catch (err) {
+    if (err instanceof CircuitBreakerOpenError) {
+      log("warn", requestId, "slack_circuit_open", { circuit: "slack:quote-conversion" });
+    }
   }
 }
 
 async function postGenericWebhook(url: string, p: Payload, requestId: string) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Request-Id": requestId,
-      "X-Event": "quote_conversion",
-    },
-    body: JSON.stringify({ event: "quote_conversion", request_id: requestId, ...p }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    log("error", requestId, "webhook_post_failed", { status: res.status, body: text.slice(0, 500) });
+  try {
+    await withEdgeCircuitBreaker(
+      "webhook:quote-conversion",
+      async () => {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Request-Id": requestId,
+            "X-Event": "quote_conversion",
+          },
+          body: JSON.stringify({ event: "quote_conversion", request_id: requestId, ...p }),
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          log("error", requestId, "webhook_post_failed", { status: res.status, body: text.slice(0, 500) });
+          throw new Error(`webhook_http_${res.status}`);
+        }
+      },
+      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 8_000 },
+    );
+  } catch (err) {
+    if (err instanceof CircuitBreakerOpenError) {
+      log("warn", requestId, "webhook_circuit_open", { circuit: "webhook:quote-conversion" });
+    }
   }
 }
 
