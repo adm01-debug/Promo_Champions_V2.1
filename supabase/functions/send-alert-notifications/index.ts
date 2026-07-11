@@ -428,4 +428,4 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId('send-alert-notifications', handler));
