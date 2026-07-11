@@ -29,14 +29,14 @@ function randomSafeId(): string {
   return out;
 }
 
-const MALICIOUS_IDS = [
+// IDs inválidos que o runtime PERMITE no header — nosso middleware precisa
+// rejeitá-los e mintar um UUID fresh.
+const INVALID_TRANSPORTABLE_IDS = [
   "",
   " ",
   "abc", // too short
   "a".repeat(65), // too long
   "invalid id with spaces",
-  "id\r\nX-Injected: 1", // CRLF injection
-  "id\x00null",
   "<script>alert(1)</script>",
   "'; DROP TABLE users;--",
   "../../etc/passwd",
@@ -44,6 +44,17 @@ const MALICIOUS_IDS = [
   "id;cookie=x",
   "id\"quoted\"",
   "id\\backslash",
+  "id.with.dots",
+  "id/with/slashes",
+];
+
+// IDs que o próprio runtime Deno/Fetch rejeita ANTES de chegar à edge
+// function (CRLF injection, null byte). Documentam a camada extra de defesa
+// da plataforma — a construção do Request precisa lançar TypeError.
+const RUNTIME_BLOCKED_IDS = [
+  "id\r\nX-Injected: 1",
+  "id\x00null",
+  "id\nnewline",
 ];
 
 const okHandler = () => Promise.resolve(new Response(JSON.stringify({ ok: true }), { status: 200 }));
