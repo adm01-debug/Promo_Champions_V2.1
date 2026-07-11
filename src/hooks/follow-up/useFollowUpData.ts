@@ -67,9 +67,10 @@ export function useFollowUpLeads(minDaysInactive: number) {
           const temp = getTemperature(daysInactive);
           const suggestion = getSuggestedAction(temp);
           const lastActivity = activitiesMap[deal.id];
-          const score = (deal as any).lead_scores?.[0]?.score || 0;
-          const probability =
-            (deal as any).deal_probability_scores?.[0]?.calibrated_probability || undefined;
+          type DealJoins = { lead_scores?: Array<{ score: number }> | null; deal_probability_scores?: Array<{ calibrated_probability: number }> | null };
+          const joins = deal as unknown as DealJoins;
+          const score = joins.lead_scores?.[0]?.score || 0;
+          const probability = joins.deal_probability_scores?.[0]?.calibrated_probability || undefined;
           const healthScore = Math.max(0, Math.min(100, 100 - daysInactive * 5 + score / 10));
           const velocity =
             daysInactive < 5 ? 'increasing' : daysInactive > 10 ? 'decreasing' : 'stable';
