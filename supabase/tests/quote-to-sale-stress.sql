@@ -21,15 +21,17 @@
 \set ON_ERROR_STOP on
 \timing on
 
--- Requer :admin_uuid — id de um admin real (public.user_roles.role='admin').
--- Uso:
---   ADMIN=$(psql -tAc "SELECT user_id FROM public.user_roles WHERE role='admin' LIMIT 1")
---   psql -v admin_uuid="'$ADMIN'" -f supabase/tests/quote-to-sale-stress.sql
 \if :{?admin_uuid}
 \else
   \echo '❌ Faltou -v admin_uuid=<uuid-admin>. Abortando.'
   \quit
 \endif
+\if :{?salesperson_uuid}
+\else
+  \echo '❌ Faltou -v salesperson_uuid=<uuid-salesperson>. Abortando.'
+  \quit
+\endif
+
 
 BEGIN;
 
