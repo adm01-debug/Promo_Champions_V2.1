@@ -227,4 +227,4 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       }
     );
   }
-});
+}));
