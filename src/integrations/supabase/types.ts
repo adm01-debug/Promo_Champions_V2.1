@@ -19550,6 +19550,18 @@ export type Database = {
         }
         Relationships: []
       }
+      v_platform_wal_health: {
+        Row: {
+          active_slots: number | null
+          db_size: string | null
+          inactive_slots: number | null
+          long_running_tx_count: number | null
+          max_slot_lag_bytes: string | null
+          oldest_tx_age_seconds: number | null
+          wal_dir_size: string | null
+        }
+        Relationships: []
+      }
       v_quote_to_sale_invariants: {
         Row: {
           all_ok: boolean | null
@@ -19593,6 +19605,18 @@ export type Database = {
           request_count?: number | null
           seconds_until_unblock?: never
           window_start?: string | null
+        }
+        Relationships: []
+      }
+      v_security_definer_exposure: {
+        Row: {
+          anon_can_execute: boolean | null
+          args: string | null
+          authenticated_can_execute: boolean | null
+          function_name: unknown
+          has_search_path: boolean | null
+          schema_name: unknown
+          service_role_can_execute: boolean | null
         }
         Relationships: []
       }
@@ -19801,6 +19825,42 @@ export type Database = {
           rule_id: string
           rule_name: string
         }[]
+      }
+      fn_admin_security_definer_exposure: {
+        Args: never
+        Returns: {
+          anon_can_execute: boolean | null
+          args: string | null
+          authenticated_can_execute: boolean | null
+          function_name: unknown
+          has_search_path: boolean | null
+          schema_name: unknown
+          service_role_can_execute: boolean | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "v_security_definer_exposure"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      fn_admin_wal_health: {
+        Args: never
+        Returns: {
+          active_slots: number | null
+          db_size: string | null
+          inactive_slots: number | null
+          long_running_tx_count: number | null
+          max_slot_lag_bytes: string | null
+          oldest_tx_age_seconds: number | null
+          wal_dir_size: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "v_platform_wal_health"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       fn_backfill_orders_conversion_seq: { Args: never; Returns: Json }
       fn_cleanup_webhook_dedupe: {
