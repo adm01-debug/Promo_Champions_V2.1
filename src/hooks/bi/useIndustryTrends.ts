@@ -27,7 +27,8 @@ export const useIndustryTrends = (clientId?: string, ramoAtividade?: string) => 
 
       if (!industryProducts || industryProducts.length === 0) return getMockIndustryTrends();
 
-      return industryProducts.map((p: any) => ({
+      type IndustryProduct = { product_name: string; growth_rate: number | string; total_sales: number | string };
+      return (industryProducts as IndustryProduct[]).map((p) => ({
         name: p.product_name,
         growth: `+${p.growth_rate}%`,
         sales: p.total_sales
