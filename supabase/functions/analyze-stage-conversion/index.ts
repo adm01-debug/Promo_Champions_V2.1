@@ -114,7 +114,7 @@ async function callAi(
   }
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
@@ -272,4 +272,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

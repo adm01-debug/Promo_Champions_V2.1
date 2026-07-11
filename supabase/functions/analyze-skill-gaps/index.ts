@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -79,7 +80,7 @@ async function aiPlan(apiKey: string, sellerName: string, skill: string, score: 
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('analyze-skill-gaps', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -181,4 +182,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
