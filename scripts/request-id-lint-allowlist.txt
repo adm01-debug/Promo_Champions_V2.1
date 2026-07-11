@@ -8,9 +8,6 @@
 
 account-engagement-aggregator
 aggregate-coaching-scorecard
-ai-agent-orchestrator
-ai-copilot
-ai-email-composer
 analyze-call
 analyze-conversation
 analyze-conversation-metrics
