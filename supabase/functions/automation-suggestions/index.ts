@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface Suggestion {
   id: string;
@@ -19,7 +19,7 @@ interface Suggestion {
   };
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId('automation-suggestions', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -135,4 +135,4 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
