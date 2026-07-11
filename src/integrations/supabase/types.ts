@@ -19550,6 +19550,28 @@ export type Database = {
         }
         Relationships: []
       }
+      v_platform_slo: {
+        Row: {
+          circuit_events_total: number | null
+          circuit_stability_ratio: number | null
+          circuit_stability_target: number | null
+          circuits_opened: number | null
+          critical_error_count: number | null
+          day: string | null
+          error_free_ratio: number | null
+          error_free_target: number | null
+          total_log_count: number | null
+          v4_callback_failed: number | null
+          v4_callback_ok: number | null
+          v4_callback_success_ratio: number | null
+          v4_callback_success_target: number | null
+          webhook_failed: number | null
+          webhook_sent_ok: number | null
+          webhook_success_ratio: number | null
+          webhook_success_target: number | null
+        }
+        Relationships: []
+      }
       v_platform_wal_health: {
         Row: {
           active_slots: number | null
@@ -19825,6 +19847,34 @@ export type Database = {
           rule_id: string
           rule_name: string
         }[]
+      }
+      fn_admin_platform_slo: {
+        Args: never
+        Returns: {
+          circuit_events_total: number | null
+          circuit_stability_ratio: number | null
+          circuit_stability_target: number | null
+          circuits_opened: number | null
+          critical_error_count: number | null
+          day: string | null
+          error_free_ratio: number | null
+          error_free_target: number | null
+          total_log_count: number | null
+          v4_callback_failed: number | null
+          v4_callback_ok: number | null
+          v4_callback_success_ratio: number | null
+          v4_callback_success_target: number | null
+          webhook_failed: number | null
+          webhook_sent_ok: number | null
+          webhook_success_ratio: number | null
+          webhook_success_target: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "v_platform_slo"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       fn_admin_security_definer_exposure: {
         Args: never
