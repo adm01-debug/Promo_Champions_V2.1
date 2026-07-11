@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { insertPayload } from "@/lib/supabase/typed-payloads";
 
@@ -54,7 +55,7 @@ export interface AccountPlan {
   swot_opportunities: string[] | null;
   swot_threats: string[] | null;
   account_strategy: string | null;
-  action_plan: any;
+  action_plan: Json | null;
   created_at: string;
   updated_at: string;
 }

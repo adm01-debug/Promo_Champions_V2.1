@@ -134,7 +134,11 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
 
       // chained eq filters — apply only those provided
 
-      let chain: any = q;
+      type ChainStep = {
+        eq: (c: string, v: string | boolean) => ChainStep;
+        order: (c: string, o: { ascending: boolean }) => { limit: (n: number) => Promise<{ data: RawRow[] | null; error: Error | null }> };
+      };
+      let chain = q as unknown as ChainStep;
       if (filters.subscriptionId)
         chain = chain.eq('subscription_id', filters.subscriptionId);
       if (filters.kind) chain = chain.eq('kind', filters.kind);

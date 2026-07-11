@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { TableUpdate } from '@/lib/supabase/typed-payloads';
+import { insertPayload, type TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export interface Quote {
   id: string;
@@ -143,7 +143,11 @@ export function useCreateQuote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateQuoteInput) => {
-      const { data, error } = await supabase.from('quotes').insert([input as any]).select().single();
+      const payload = insertPayload('quotes', {
+        ...input,
+        items: input.items as unknown as import('@/integrations/supabase/types').Json,
+      });
+      const { data, error } = await supabase.from('quotes').insert([payload]).select().single();
       if (error) throw error;
       return data;
     },

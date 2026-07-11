@@ -97,7 +97,7 @@ export function useAtRiskDeals() {
         }
 
         // 4. Value Anomaly
-        const productPrice = (sale as any).products?.price || 0;
+        const productPrice = (sale as { products?: { price?: number } | null }).products?.price || 0;
         if (productPrice > 0 && sale.amount > productPrice * 2.5) {
           riskFactors.push('Valor do deal atípico (muito superior ao preço de lista)');
           riskScore += 15;
@@ -125,7 +125,7 @@ export function useAtRiskDeals() {
             productName: sale.product_name,
             amount: sale.amount,
             stage: sale.status,
-            salespersonName: (sale as any).salespeople?.name || 'Não atribuído',
+            salespersonName: (sale as { salespeople?: { name?: string } | null }).salespeople?.name || 'Não atribuído',
             hoursSinceLastActivity,
             daysSinceLastUpdate,
             activityCount: dealActivities.length,
