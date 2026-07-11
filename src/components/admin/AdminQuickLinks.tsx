@@ -59,6 +59,24 @@ const QUICK_LINKS = [
     color: 'text-chart-4',
   },
   {
+    to: '/admin/platform-slo',
+    icon: Gauge,
+    label: 'Platform SLO',
+    color: 'text-emerald-500',
+  },
+  {
+    to: '/admin/quote-conversions',
+    icon: Repeat,
+    label: 'Conversões Quote→Sale',
+    color: 'text-chart-1',
+  },
+  {
+    to: '/admin/web-vitals',
+    icon: Zap,
+    label: 'Web Vitals',
+    color: 'text-chart-2',
+  },
+  {
     to: '/usage-analytics',
     icon: BarChart3,
     label: 'Uso / Acessos',
