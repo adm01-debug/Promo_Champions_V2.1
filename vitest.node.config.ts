@@ -9,7 +9,7 @@ import { resolve } from 'path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
+    environment: 'jsdom',
     setupFiles: [],
     include: [
       'src/test/quote-error-messages.test.ts',
