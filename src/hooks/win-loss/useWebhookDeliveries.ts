@@ -44,7 +44,7 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
   const replay = useMutation({
     mutationFn: async (deliveryIds: string[]) => {
       const validation = validateReplayIds(deliveryIds);
-      if (!validation.ok) throw new Error(validation.message);
+      if (validation.ok !== true) throw new Error(validation.message);
       const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
         body: { delivery_ids: validation.ids },
       });
