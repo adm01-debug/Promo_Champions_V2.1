@@ -31,7 +31,7 @@ export const useIndustryTrends = (clientId?: string, ramoAtividade?: string) => 
       return (industryProducts as IndustryProduct[]).map((p) => ({
         name: p.product_name,
         growth: `+${p.growth_rate}%`,
-        sales: p.total_sales
+        sales: Number(p.total_sales),
       }));
     }
   });
