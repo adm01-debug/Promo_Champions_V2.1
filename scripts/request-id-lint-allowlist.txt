@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-calculate-committee-coverage
-calculate-deal-health
-calibrate-win-probabilities
 calibrate-win-probability
 check-v4-callback-alerts
 coaching-impact-summary
