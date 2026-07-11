@@ -18,7 +18,27 @@
 \set ON_ERROR_STOP on
 \timing on
 
+-- Requer :admin_uuid — id de um admin real (public.user_roles.role='admin').
+-- Uso:
+--   ADMIN=$(psql -tAc "SELECT user_id FROM public.user_roles WHERE role='admin' LIMIT 1")
+--   psql -v admin_uuid="'$ADMIN'" -f supabase/tests/quote-to-sale-stress.sql
+\if :{?admin_uuid}
+\else
+  \echo '❌ Faltou -v admin_uuid=<uuid-admin>. Abortando.'
+  \quit
+\endif
+
 BEGIN;
+
+-- Simula sessão autenticada para RLS + auth.uid() dentro da RPC.
+SET LOCAL role TO authenticated;
+SELECT set_config(
+  'request.jwt.claims',
+  json_build_object('sub', :admin_uuid, 'role', 'authenticated')::text,
+  true
+);
+
+
 
 DO $$
 DECLARE
