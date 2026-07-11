@@ -143,7 +143,14 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error("[wal-health-alert] failed:", msg);
+    if (e instanceof CircuitBreakerOpenError) {
+      ctx.log("warn", "slack_circuit_open", { circuit: "slack:wal-health-alert" });
+      return new Response(
+        JSON.stringify({ ok: false, degraded: true, reason: "slack_circuit_open" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    ctx.log("error", "wal_health_alert_failed", { error: msg });
     return new Response(
       JSON.stringify({ error: msg }),
       {
@@ -152,4 +159,4 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
       },
     );
   }
-});
+}));
