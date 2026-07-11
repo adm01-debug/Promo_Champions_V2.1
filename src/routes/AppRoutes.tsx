@@ -33,7 +33,7 @@ import {
   // Ferramentas & IA
   Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
-  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage, AdminQuoteConversionsPage,
+  AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage, AdminQuoteConversionsPage, AdminPlatformSLOPage,
   AdminComercial, Competencias,
   CustomerSuccessHubPage, SalesEnablementHubPage, PricingIntelligenceHubPage, TerritoryOptimizationHubPage,
   CustomerSuccess360Page,
