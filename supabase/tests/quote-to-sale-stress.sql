@@ -50,15 +50,20 @@ DECLARE
   v_ped_count  INT;
   v_dup_count  INT;
   v_quote_id   UUID;
+  v_uid        UUID := (current_setting('request.jwt.claims', true)::jsonb ->> 'sub')::uuid;
   i INT;
 BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() ausente — set_config request.jwt.claims falhou';
+  END IF;
+
   SELECT last_value INTO v_seq_before FROM public.orders_conversion_seq;
-  RAISE NOTICE 'seq_before=%', v_seq_before;
+  RAISE NOTICE 'seq_before=% uid=%', v_seq_before, v_uid;
 
   -- 50 conversões won → ORC-*
   FOR i IN 1..50 LOOP
-    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source)
-    VALUES ('stress-won-' || i, 'stress-won-' || i, 100, 100, 'won', 'manual')
+    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source, created_by)
+    VALUES ('stress-won-' || i, 'stress-won-' || i, 100, 100, 'won', 'manual', v_uid)
     RETURNING id INTO v_quote_id;
     INSERT INTO public.quote_items (quote_id, product_name, quantity, unit_price, total_price)
     VALUES (v_quote_id, 'item', 1, 100, 100);
@@ -67,13 +72,14 @@ BEGIN
 
   -- 50 conversões approved → PED-* (trigger cria order; RPC reusa)
   FOR i IN 1..50 LOOP
-    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source)
-    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'approved', 'manual')
+    INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source, created_by)
+    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'approved', 'manual', v_uid)
     RETURNING id INTO v_quote_id;
     INSERT INTO public.quote_items (quote_id, product_name, quantity, unit_price, total_price)
     VALUES (v_quote_id, 'item', 1, 200, 200);
     PERFORM public.fn_convert_quote_to_sale(v_quote_id);
   END LOOP;
+
 
   SELECT last_value INTO v_seq_after FROM public.orders_conversion_seq;
 
