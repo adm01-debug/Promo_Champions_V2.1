@@ -18,6 +18,8 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
