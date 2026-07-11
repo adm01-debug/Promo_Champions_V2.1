@@ -464,7 +464,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
   }
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -565,7 +565,7 @@ Deno.serve(async req => {
         error_message: errorMessage,
         duration_ms: durationMs,
         triggered_by: body.triggered_by || 'manual',
-      });
+      }));
     } catch (logError) {
       console.error('Error logging sync failure:', logError);
     }
