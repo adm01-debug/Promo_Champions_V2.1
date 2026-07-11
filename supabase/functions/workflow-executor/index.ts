@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface WorkflowNode {
   id: string;
@@ -44,7 +45,7 @@ const evalCondition = (op: string, left: unknown, right: string): boolean => {
   }
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -178,4 +179,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
