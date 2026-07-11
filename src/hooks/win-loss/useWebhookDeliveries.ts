@@ -26,8 +26,7 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
     queryFn: async (): Promise<WebhookDelivery[]> => {
       if (!subscriptionId) return [];
       
-      // Fallback for missing type definitions while maintaining safety
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("winloss_webhook_deliveries")
         .select("id, subscription_id, event, attempt, status, error_message, duration_ms, succeeded, created_at, payload")
         .eq("subscription_id", subscriptionId)
@@ -38,14 +37,14 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
         console.error("Error fetching deliveries:", error);
         throw error;
       }
-      return (data || []) as WebhookDelivery[];
+      return ((data ?? []) as unknown as WebhookDelivery[]);
     },
   });
 
   const replay = useMutation({
     mutationFn: async (deliveryIds: string[]) => {
       const validation = validateReplayIds(deliveryIds);
-      if (!validation.ok) throw new Error((validation as any).message);
+      if (validation.ok !== true) throw new Error(validation.message);
       const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
         body: { delivery_ids: validation.ids },
       });
