@@ -4,16 +4,19 @@
 -- Executa toda a suíte dentro de BEGIN/ROLLBACK para NÃO sujar produção.
 -- Idempotente: pode ser rodado várias vezes sem efeitos colaterais.
 --
--- Uso:
---   psql "$PGURL" -f supabase/tests/quote-to-sale-stress.sql
+-- Uso (auto-descobre admin + salesperson):
+--   ADMIN=$(psql -tAc "SELECT user_id FROM public.user_roles WHERE role='admin' LIMIT 1")
+--   SP=$(psql -tAc "SELECT id FROM public.salespeople LIMIT 1")
+--   psql -v admin_uuid="'$ADMIN'" -v salesperson_uuid="'$SP'" \
+--        -f supabase/tests/quote-to-sale-stress.sql
 --
 -- Ao final imprime as invariantes esperadas:
 --   - 50 ORC-* + 50 PED-* (ou distribuição condizente)
 --   - orders_conversion_seq avançou exatamente +50
---   - audit_logs: 100 entradas fn_convert
 --   - 0 duplicatas de order_number
---   - 0 quotes órfãos após ROLLBACK
+--   - 0 quotes órfãos após ROLLBACK (produção intacta)
 -- ============================================================================
+
 
 \set ON_ERROR_STOP on
 \timing on
