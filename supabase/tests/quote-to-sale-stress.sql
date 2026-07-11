@@ -43,11 +43,8 @@ SELECT set_config(
   json_build_object('sub', :admin_uuid, 'role', 'authenticated')::text,
   true
 );
+SELECT set_config('app.stress_sp_id', :salesperson_uuid, true);
 
-
-
-
--- psql substitui :salesperson_uuid literalmente antes de enviar ao servidor.
 DO $$
 DECLARE
   v_seq_before BIGINT;
@@ -57,8 +54,9 @@ DECLARE
   v_dup_count  INT;
   v_quote_id   UUID;
   v_uid        UUID := (current_setting('request.jwt.claims', true)::jsonb ->> 'sub')::uuid;
-  v_sp         UUID := :salesperson_uuid;
+  v_sp         UUID := current_setting('app.stress_sp_id', true)::uuid;
   i INT;
+
 BEGIN
   IF v_uid IS NULL THEN
     RAISE EXCEPTION 'auth.uid() ausente — set_config request.jwt.claims falhou';
