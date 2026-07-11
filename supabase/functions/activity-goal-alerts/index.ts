@@ -12,7 +12,7 @@ interface SalespersonAlert {
   goals: { calls: number; emails: number; meetings: number };
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
