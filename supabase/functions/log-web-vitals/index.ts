@@ -40,52 +40,54 @@ function sanitize(raw: unknown, ua: string | null): Sample | null {
   };
 }
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405, headers: corsHeaders });
-  }
+Deno.serve(
+  withRequestId("log-web-vitals", async (req, ctx) => {
+    if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (req.method !== "POST") {
+      return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+    }
 
-  try {
-    const ua = req.headers.get("user-agent");
-    const body = await req.json();
-    const samples: unknown[] = Array.isArray(body) ? body : Array.isArray(body?.samples) ? body.samples : [body];
-    const clean = samples
-      .slice(0, 20)
-      .map((s) => sanitize(s, ua))
-      .filter((s): s is Sample => s !== null)
-      .map((s) => ({ ...s, user_agent: ua?.slice(0, 300) ?? null }));
+    try {
+      const ua = req.headers.get("user-agent");
+      const body = await req.json();
+      const samples: unknown[] = Array.isArray(body) ? body : Array.isArray(body?.samples) ? body.samples : [body];
+      const clean = samples
+        .slice(0, 20)
+        .map((s) => sanitize(s, ua))
+        .filter((s): s is Sample => s !== null)
+        .map((s) => ({ ...s, user_agent: ua?.slice(0, 300) ?? null }));
 
-    if (clean.length === 0) {
-      return new Response(JSON.stringify({ inserted: 0 }), {
+      if (clean.length === 0) {
+        return new Response(JSON.stringify({ inserted: 0, request_id: ctx.requestId }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+
+      const { error } = await supabase.from("web_vitals_samples").insert(clean);
+      if (error) {
+        ctx.log("error", "insert_failed", { error: error.message });
+        return new Response(JSON.stringify({ error: error.message, request_id: ctx.requestId }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify({ inserted: clean.length, request_id: ctx.requestId }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-    }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    const { error } = await supabase.from("web_vitals_samples").insert(clean);
-    if (error) {
-      console.error("[log-web-vitals] insert error", error);
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
+    } catch (e) {
+      ctx.log("error", "bad_request", { error: e instanceof Error ? e.message : String(e) });
+      return new Response(JSON.stringify({ error: "bad_request", request_id: ctx.requestId }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    return new Response(JSON.stringify({ inserted: clean.length }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (e) {
-    console.error("[log-web-vitals] fatal", e);
-    return new Response(JSON.stringify({ error: "bad_request" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-});
+  }),
+);
