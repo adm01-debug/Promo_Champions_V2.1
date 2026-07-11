@@ -30,13 +30,15 @@
 
 BEGIN;
 
--- Simula sessão autenticada para RLS + auth.uid() dentro da RPC.
-SET LOCAL role TO authenticated;
+-- Injeta auth.uid() para a RPC fn_convert_quote_to_sale.
+-- Nota: não usamos SET ROLE authenticated porque exec-user não tem grant;
+-- a RPC é SECURITY DEFINER e só depende de auth.uid() via jwt.claims.sub.
 SELECT set_config(
   'request.jwt.claims',
   json_build_object('sub', :admin_uuid, 'role', 'authenticated')::text,
   true
 );
+
 
 
 
