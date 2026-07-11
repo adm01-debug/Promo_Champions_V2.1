@@ -233,6 +233,7 @@ export interface ConvertQuoteResult {
   order_number?: string;
   items_count?: number;
   idempotent: boolean;
+  reused_order?: boolean;
 }
 
 import {
@@ -244,6 +245,38 @@ export { CONVERT_QUOTE_ERROR_MESSAGES, parseConvertQuoteError };
 export type { ConvertQuoteErrorCode };
 
 /**
+ * Dispara notify-quote-conversion em background (fire-and-forget).
+ * - Grava auditoria via RPC fn_record_conversion_attempt
+ * - Envia Slack + webhook genérico se configurados
+ * - Propaga X-Request-Id para correlação em logs
+ * Falhas são logadas mas não impactam o UX da conversão.
+ */
+async function dispatchConversionNotification(payload: {
+  quote_id: string;
+  sale_id?: string | null;
+  order_id?: string | null;
+  order_number?: string | null;
+  previous_status?: string | null;
+  new_status?: string | null;
+  reused_order?: boolean;
+  idempotent?: boolean;
+  success: boolean;
+  error_code?: string | null;
+  error_message?: string | null;
+  latency_ms?: number;
+  request_id: string;
+}) {
+  try {
+    await supabase.functions.invoke('notify-quote-conversion', {
+      body: payload,
+      headers: { 'X-Request-Id': payload.request_id },
+    });
+  } catch (err) {
+    console.warn('[notify-quote-conversion] falha ao notificar:', err);
+  }
+}
+
+/**
  * Converte um orçamento em venda + pedido via RPC transacional.
  * A função no banco cuida de: lock, idempotência, autorização, validação
  * de status/valor/consistência, criação de orders/order_items e auditoria.
@@ -252,6 +285,24 @@ export function useConvertQuoteToSale() {
   const qc = useQueryClient();
   return useMutation<ConvertQuoteResult, Error, string>({
     mutationFn: async (quoteId: string) => {
+      const requestId =
+        (globalThis.crypto as Crypto | undefined)?.randomUUID?.() ??
+        `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+      // Snapshot do status anterior (best-effort — não bloqueia se falhar)
+      let previousStatus: string | null = null;
+      try {
+        const { data: prev } = await supabase
+          .from('quotes')
+          .select('status')
+          .eq('id', quoteId)
+          .maybeSingle();
+        previousStatus = (prev?.status as string | null) ?? null;
+      } catch {
+        /* ignore */
+      }
+
+      const t0 = performance.now();
       const { data, error } = await (supabase.rpc as unknown as (
         fn: string,
         args: Record<string, unknown>,
@@ -259,8 +310,38 @@ export function useConvertQuoteToSale() {
         'fn_convert_quote_to_sale',
         { _quote_id: quoteId },
       );
-      if (error) throw new Error(error.message);
-      if (!data) throw new Error('[UNKNOWN] Resposta vazia da conversão');
+      const latencyMs = Math.round(performance.now() - t0);
+
+      if (error || !data) {
+        const message = error?.message ?? '[UNKNOWN] Resposta vazia da conversão';
+        const code = parseConvertQuoteError(message);
+        void dispatchConversionNotification({
+          quote_id: quoteId,
+          previous_status: previousStatus,
+          new_status: previousStatus,
+          success: false,
+          error_code: code,
+          error_message: message,
+          latency_ms: latencyMs,
+          request_id: requestId,
+        });
+        throw new Error(message);
+      }
+
+      void dispatchConversionNotification({
+        quote_id: quoteId,
+        sale_id: data.sale_id,
+        order_id: data.order_id,
+        order_number: data.order_number ?? null,
+        previous_status: previousStatus,
+        new_status: 'converted',
+        reused_order: data.reused_order ?? false,
+        idempotent: data.idempotent,
+        success: true,
+        latency_ms: latencyMs,
+        request_id: requestId,
+      });
+
       return data;
     },
     onSuccess: (result) => {
@@ -285,5 +366,6 @@ export function useConvertQuoteToSale() {
     },
   });
 }
+
 
 
