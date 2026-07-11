@@ -299,6 +299,10 @@ export const AdminV4CallbacksPage = lazyWithPrefetch(
 export const AdminQuoteSyncInboundPage = lazyWithPrefetch(
   () => import('@/pages/admin/AdminQuoteSyncInboundPage')
 );
+export const AdminQuoteConversionsPage = lazyWithPrefetch(
+  () => import('@/pages/admin/AdminQuoteConversionsPage')
+);
+);
 export const AdminComercial = lazyWithPrefetch(
   () => import('@/pages/admin/AdminComercial')
 );
