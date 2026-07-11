@@ -1,11 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export interface Client360Order {
+  id: string;
+  created_at: string;
+  total_amount?: number | null;
+  status?: string | null;
+  [key: string]: unknown;
+}
+
 export interface Client360Data {
   ltv: number;
   averageTicket: number;
   ordersCount: number;
-  orders: any[];
+  orders: Client360Order[];
   topProducts: { name: string; count: number; total: number }[];
   spendingHistory: { date: string; amount: number; cumulativeLtv: number }[];
   categoryDistribution: { name: string; value: number }[];
