@@ -134,7 +134,7 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
 
       // chained eq filters — apply only those provided
 
-      let chain: any = q;
+      let chain: typeof q = q;
       if (filters.subscriptionId)
         chain = chain.eq('subscription_id', filters.subscriptionId);
       if (filters.kind) chain = chain.eq('kind', filters.kind);
