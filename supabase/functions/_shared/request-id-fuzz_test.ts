@@ -72,15 +72,28 @@ Deno.test("INV-1/2 — valid ids are echoed on 200", async () => {
   }
 });
 
-Deno.test("INV-3/6 — invalid/malicious ids are replaced by fresh UUIDs", async () => {
-  const wrapped = withRequestId("fuzz-mal", okHandler);
-  for (const bad of MALICIOUS_IDS) {
-    const res = await wrapped(new Request("http://x/", { headers: bad ? { "X-Request-Id": bad } : {} }));
+Deno.test("INV-3 — invalid ids (transportable) are replaced by fresh UUIDs", async () => {
+  const wrapped = withRequestId("fuzz-invalid", okHandler);
+  for (const bad of INVALID_TRANSPORTABLE_IDS) {
+    const headers = bad ? { "X-Request-Id": bad } : undefined;
+    const res = await wrapped(new Request("http://x/", headers ? { headers } : {}));
     const minted = res.headers.get("X-Request-Id");
     assert(minted, "header always present");
     assertMatch(minted!, UUID_V4, `expected fresh UUID for input ${JSON.stringify(bad)}, got ${minted}`);
     assertNotEquals(minted, bad);
     await res.text();
+  }
+});
+
+Deno.test("INV-6 — CRLF/null-byte header injection is blocked by Deno runtime", () => {
+  for (const evil of RUNTIME_BLOCKED_IDS) {
+    let threw = false;
+    try {
+      new Request("http://x/", { headers: { "X-Request-Id": evil } });
+    } catch (err) {
+      threw = err instanceof TypeError;
+    }
+    assert(threw, `runtime must reject header value ${JSON.stringify(evil)}`);
   }
 });
 
