@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 
 interface DispatchRequest {
@@ -22,7 +23,7 @@ async function hmacSign(secret: string, body: string): Promise<string> {
     .join('');
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   // Require authentication — this function triggers outbound HTTP requests and writes delivery records
@@ -157,4 +158,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

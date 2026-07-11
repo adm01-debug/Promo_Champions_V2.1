@@ -51,7 +51,6 @@ detect-stuck-deals
 detect-winloss-at-risk
 dialer-queue-builder
 diarize-call-recording
-dispatch-webhook
 elevenlabs-stt
 elevenlabs-tts
 elevenlabs-voice
@@ -60,7 +59,6 @@ email-composer-bulk
 email-engagement-scorer
 engagement-score-recompute
 enrich-lead
-execute-workflow
 expansion-detector
 export-winloss-pdf
 external-db-bridge
@@ -141,4 +139,3 @@ winloss-webhook-health-monitor
 winloss-webhook-replay
 winloss-webhook-replay-batch
 winloss-webhook-timeline
-workflow-executor
