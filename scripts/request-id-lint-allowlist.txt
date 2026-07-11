@@ -6,9 +6,7 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-access-denied-alerts
 account-engagement-aggregator
-activity-goal-alerts
 aggregate-coaching-scorecard
 ai-agent-orchestrator
 ai-copilot
@@ -77,7 +75,6 @@ inbound-email-webhook
 lead-scoring
 mine-win-loss-patterns
 multichannel-status-webhook
-new-device-alert
 next-best-action
 nlq-query
 notify-critical-pattern
