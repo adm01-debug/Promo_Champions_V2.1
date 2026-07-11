@@ -13,7 +13,7 @@ interface Payload {
   amount: number;
 }
 
-serve(async req => {
+Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
