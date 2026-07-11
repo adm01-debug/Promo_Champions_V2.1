@@ -137,6 +137,6 @@ Deno.test("INV-5 — concurrent requests never share requestId", async () => {
 });
 
 Deno.test("simulation summary — hundreds of scenarios OK", () => {
-  const total = 200 + MALICIOUS_IDS.length + 100 + 100 + 500;
+  const total = 200 + INVALID_TRANSPORTABLE_IDS.length + RUNTIME_BLOCKED_IDS.length + 100 + 100 + 500;
   console.info(`✓ ${total} cenários de propagação X-Request-Id passaram`);
 });
