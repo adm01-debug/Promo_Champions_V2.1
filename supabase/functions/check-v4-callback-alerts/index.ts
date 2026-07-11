@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { evaluateAlerts, type AlertContext } from "./alerts.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -14,7 +15,7 @@ function log(level: "info" | "warn" | "error", event: string, data: Record<strin
   else console.log(line);
 }
 
-Deno.serve(async (req) => {
+Deno.Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -80,4 +81,4 @@ Deno.serve(async (req) => {
   return new Response(JSON.stringify({ success: true, evaluated: ctx, fired }), {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
-});
+}));
