@@ -119,10 +119,7 @@ semantic-index-entity
 semantic-reindex-batch
 semantic-search
 semantic-search-universal
-send-alert-notifications
 send-multichannel-message
-send-password-reset
-send-push-notification
 send-quote-to-client
 send-time-optimizer
 sequence-ab-promote
