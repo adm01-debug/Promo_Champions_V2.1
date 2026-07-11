@@ -1,7 +1,7 @@
-import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
@@ -132,7 +132,7 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
   }
 }
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -348,6 +348,6 @@ const handler = async (req: Request): Promise<Response> => {
       { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
-};
+});
 
-serve(handler);
+Deno.serve(handler);
