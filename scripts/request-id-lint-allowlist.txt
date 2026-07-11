@@ -123,9 +123,6 @@ send-multichannel-message
 send-quote-to-client
 send-time-optimizer
 sequence-ab-promote
-sequence-enroll
-sequence-record-reply
-sequence-runner
 simulate-load
 snapshot-forecast
 start-race-season

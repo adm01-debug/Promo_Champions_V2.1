@@ -1,12 +1,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface EnrollPayload {
   sequence_id: string;
   contacts: Array<{ contact_id: string; contact_type: "lead" | "client" | "contact" }>;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -105,4 +106,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
