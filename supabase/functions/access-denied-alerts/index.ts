@@ -348,6 +348,6 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
-};
+});
 
-serve(handler);
+Deno.serve(handler);
