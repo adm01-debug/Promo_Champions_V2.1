@@ -1,17 +1,19 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-Deno.serve(async _req => {
+Deno.serve(withRequestId('check-quote-expiration', async (_req, ctx) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   const now = new Date();
   const threeDaysFromNow = new Date();
   threeDaysFromNow.setDate(now.getDate() + 3);
 
-  console.info(
-    `Checking for quotes expiring between ${now.toISOString()} and ${threeDaysFromNow.toISOString()}`
-  );
+  ctx.log('info', 'scan_started', {
+    range_start: now.toISOString(),
+    range_end: threeDaysFromNow.toISOString(),
+  });
 
   // 1. Get quotes expiring within 3 days that are still in 'sent' status
   const { data: expiringQuotes, error: fetchError } = await supabase
@@ -22,11 +24,11 @@ Deno.serve(async _req => {
     .gte('valid_until', now.toISOString().split('T')[0]);
 
   if (fetchError) {
-    console.error('Error fetching expiring quotes:', fetchError);
-    return new Response(JSON.stringify({ error: fetchError.message }), { status: 500 });
+    ctx.log('error', 'fetch_failed', { error: fetchError.message });
+    return new Response(JSON.stringify({ error: fetchError.message, request_id: ctx.requestId }), { status: 500 });
   }
 
-  console.info(`Found ${expiringQuotes?.length || 0} quotes expiring soon`);
+  ctx.log('info', 'expiring_quotes_found', { count: expiringQuotes?.length ?? 0 });
 
   // 2. Create notifications for each expiring quote
   const notifications =
@@ -45,9 +47,9 @@ Deno.serve(async _req => {
       .insert(notifications);
 
     if (notifyError) {
-      console.error('Error creating notifications:', notifyError);
+      ctx.log('error', 'notify_failed', { error: notifyError.message });
     } else {
-      console.info(`Created ${notifications.length} notifications`);
+      ctx.log('info', 'notifications_created', { count: notifications.length });
     }
   }
 
@@ -59,11 +61,15 @@ Deno.serve(async _req => {
     .lt('valid_until', now.toISOString().split('T')[0]);
 
   if (expireError) {
-    console.error('Error auto-expiring quotes:', expireError);
+    ctx.log('error', 'auto_expire_failed', { error: expireError.message });
   }
 
   return new Response(
-    JSON.stringify({ success: true, processed: expiringQuotes?.length || 0 }),
-    { status: 200 }
+    JSON.stringify({
+      success: true,
+      processed: expiringQuotes?.length || 0,
+      request_id: ctx.requestId,
+    }),
+    { status: 200, headers: { 'Content-Type': 'application/json' } },
   );
-});
+}));
