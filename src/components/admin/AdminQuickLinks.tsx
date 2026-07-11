@@ -20,6 +20,9 @@ import {
   Wallet,
   Target,
   Webhook,
+  Gauge,
+  Repeat,
+  Zap,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
@@ -54,6 +57,24 @@ const QUICK_LINKS = [
     icon: Webhook,
     label: 'Webhooks',
     color: 'text-chart-4',
+  },
+  {
+    to: '/admin/platform-slo',
+    icon: Gauge,
+    label: 'Platform SLO',
+    color: 'text-emerald-500',
+  },
+  {
+    to: '/admin/quote-conversions',
+    icon: Repeat,
+    label: 'Conversões Quote→Sale',
+    color: 'text-chart-1',
+  },
+  {
+    to: '/admin/web-vitals',
+    icon: Zap,
+    label: 'Web Vitals',
+    color: 'text-chart-2',
   },
   {
     to: '/usage-analytics',
