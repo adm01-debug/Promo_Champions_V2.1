@@ -22,6 +22,7 @@
 // Header opcional: X-Request-Id (propagado; se ausente, gera).
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
