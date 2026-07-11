@@ -8,9 +8,6 @@
 
 account-engagement-aggregator
 aggregate-coaching-scorecard
-analyze-question-quality
-analyze-skill-gaps
-analyze-stage-conversion
 analyze-win-loss
 auto-enroll-cadence
 auto-reassign-inactive
