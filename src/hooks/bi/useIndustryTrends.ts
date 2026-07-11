@@ -62,21 +62,22 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
           : Promise.resolve({ data: [] })
       ]);
 
-      const clientSeasonality = (clientSeasonalityRes || []) as any[];
-      const industrySeasonality = (industrySeasonalityRes || []) as any[];
+      type SeasonRow = { month: number | string; quotes_count?: number | string; avg_quotes_per_company?: number | string };
+      const clientSeasonality = (clientSeasonalityRes ?? []) as SeasonRow[];
+      const industrySeasonality = (industrySeasonalityRes ?? []) as SeasonRow[];
 
       const hasEnoughClientData = clientSeasonality.length >= 3;
       const hasEnoughIndustryData = industrySeasonality.length >= 3;
 
-      const finalClientSeasonality = hasEnoughClientData ? clientSeasonality : getMockSeasonality(clientId!);
-      const finalIndustrySeasonality = hasEnoughIndustryData ? industrySeasonality : getMockSeasonality(ramoAtividade || 'generic');
+      const finalClientSeasonality = hasEnoughClientData ? clientSeasonality : (getMockSeasonality(clientId!) as SeasonRow[]);
+      const finalIndustrySeasonality = hasEnoughIndustryData ? industrySeasonality : (getMockSeasonality(ramoAtividade || 'generic') as SeasonRow[]);
 
-      const normalizeIntensity = (data: any[]) => {
+      const normalizeIntensity = (data: SeasonRow[]) => {
         if (!data || data.length === 0) return [];
-        const maxVal = Math.max(...data.map(d => Number(d.quotes_count || d.avg_quotes_per_company || 0)));
+        const maxVal = Math.max(...data.map(d => Number(d.quotes_count ?? d.avg_quotes_per_company ?? 0)));
         return data.map(d => ({
           ...d,
-          intensity: maxVal > 0 ? (Number(d.quotes_count || d.avg_quotes_per_company || 0) / maxVal) * 100 : 0
+          intensity: maxVal > 0 ? (Number(d.quotes_count ?? d.avg_quotes_per_company ?? 0) / maxVal) * 100 : 0
         }));
       };
 
