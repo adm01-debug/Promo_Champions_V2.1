@@ -28,7 +28,7 @@ async function sendWebPushNotification(
   }
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
