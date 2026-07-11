@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-calibrate-win-probability
-check-v4-callback-alerts
-coaching-impact-summary
 coaching-intelligence
 coaching-session-prep
 collect-race-powerup

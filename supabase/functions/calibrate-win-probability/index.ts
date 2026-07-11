@@ -1,6 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from '../_shared/request-id.ts';
 
 
 
@@ -30,7 +30,7 @@ function blendProbability(baseline: number, winRate: number, confidence: number)
   return Math.max(0, Math.min(100, Math.round(w * 100) / 100));
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId('calibrate-win-probability', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -176,4 +176,4 @@ serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
-});
+}));
