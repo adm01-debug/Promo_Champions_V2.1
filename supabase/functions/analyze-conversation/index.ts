@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 interface Payload {
@@ -10,7 +11,7 @@ interface Payload {
 
 const SOURCES = new Set(["call", "email", "meeting", "whatsapp"]);
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('analyze-conversation', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -141,4 +142,4 @@ ${body.transcript.slice(0, 14000)}`,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

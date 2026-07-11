@@ -8,13 +8,10 @@
 
 account-engagement-aggregator
 aggregate-coaching-scorecard
-analyze-call
-analyze-conversation
 analyze-conversation-metrics
 analyze-objection-handling
 analyze-pipeline-coverage
 analyze-question-quality
-analyze-sentiment-timeline
 analyze-skill-gaps
 analyze-stage-conversion
 analyze-win-loss
