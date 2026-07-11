@@ -1,7 +1,7 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
@@ -13,7 +13,7 @@ interface Payload {
   amount: number;
 }
 
-serve(async req => {
+Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -166,15 +166,16 @@ serve(async req => {
       results.push({ id: recipient.id, name: recipient.name });
     }
 
-    return new Response(JSON.stringify({ success: true, notified: results.length }), {
+    ctx.log('info', 'broadcast_ok', { notified: results.length, sale_id });
+    return new Response(JSON.stringify({ success: true, notified: results.length, request_id: ctx.requestId }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('Broadcast error:', errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    ctx.log('error', 'broadcast_failed', { error: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage, request_id: ctx.requestId }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));
