@@ -42,7 +42,7 @@ export const useStockForecast = () => {
 
       return inventory.map(item => {
         const productId = item.product_id!;
-        const productName = (item as any).products?.name || 'Produto Desconhecido';
+        const productName = (item as { products?: { name?: string } | null }).products?.name || 'Produto Desconhecido';
         const currentStock = item.current_stock;
         const totalSales = salesCounts[productId] || 0;
         const dailyVelocity = totalSales / 30;
