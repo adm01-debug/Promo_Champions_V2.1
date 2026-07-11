@@ -72,11 +72,9 @@ extract-deal-stakeholders
 generate-executive-briefing
 generate-loss-coaching
 generate-revenue-forecast
-get-client-ip
 helpdesk-sync
 inbound-email-webhook
 lead-scoring
-log-web-vitals
 mine-win-loss-patterns
 multichannel-status-webhook
 new-device-alert
@@ -97,7 +95,6 @@ process-cadence-tasks
 process-race-event
 process-scheduled-sends
 purchase-intelligence-forecast
-push-subscribe
 qbr-generator
 qbr-scheduler
 race-commentary
