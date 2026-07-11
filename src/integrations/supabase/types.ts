@@ -19737,6 +19737,20 @@ export type Database = {
         }
         Relationships: []
       }
+      v_web_vitals_p75: {
+        Row: {
+          budget_p75: number | null
+          day: string | null
+          device_type: string | null
+          metric_name: string | null
+          p50: number | null
+          p75: number | null
+          p95: number | null
+          route: string | null
+          samples: number | null
+        }
+        Relationships: []
+      }
       web_vitals_p75_last7d: {
         Row: {
           avg_value: number | null
@@ -19943,6 +19957,13 @@ export type Database = {
           rule_name: string
         }[]
       }
+      fn_admin_cleanup_stale_logs: {
+        Args: { _days?: number }
+        Returns: {
+          deleted_rows: number
+          table_name: string
+        }[]
+      }
       fn_admin_conversion_trail: {
         Args: { _quote_id?: string; _sale_id?: string }
         Returns: Json
@@ -19974,6 +19995,10 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      fn_admin_reset_circuit: {
+        Args: { _circuit_name: string; _reason?: string }
+        Returns: string
       }
       fn_admin_security_definer_exposure: {
         Args: never
@@ -20011,7 +20036,34 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      fn_admin_web_vitals_p75: {
+        Args: never
+        Returns: {
+          budget_p75: number | null
+          day: string | null
+          device_type: string | null
+          metric_name: string | null
+          p50: number | null
+          p75: number | null
+          p95: number | null
+          route: string | null
+          samples: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "v_web_vitals_p75"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       fn_backfill_orders_conversion_seq: { Args: never; Returns: Json }
+      fn_cleanup_stale_logs: {
+        Args: { _days?: number }
+        Returns: {
+          deleted_rows: number
+          table_name: string
+        }[]
+      }
       fn_cleanup_webhook_dedupe: {
         Args: never
         Returns: {
