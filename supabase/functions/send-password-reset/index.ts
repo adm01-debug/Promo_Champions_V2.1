@@ -8,7 +8,7 @@ interface PasswordResetRequest {
   requestId: string;
 }
 
-serve(async (req: Request): Promise<Response> => {
+Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
