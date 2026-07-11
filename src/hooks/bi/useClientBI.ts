@@ -17,8 +17,10 @@ export const useClientBI = (clientId?: string, ramoAtividade?: string) => {
           supabase.rpc('get_client_seasonality', { _client_id: clientId, _months: 24 }),
         ]);
 
-      const clientProducts = (clientProductsRes || []) as any[];
-      const clientSeasonality = (clientSeasonalityRes || []) as any[];
+      type ClientProduct = { product_name: string };
+      type ClientSeason = { total_revenue: number | string; avg_ticket: number | string; quotes_count: number | string; month?: number };
+      const clientProducts = (clientProductsRes ?? []) as ClientProduct[];
+      const clientSeasonality = (clientSeasonalityRes ?? []) as ClientSeason[];
       const hasEnoughData = clientSeasonality.length >= 3;
       const finalSeasonality = hasEnoughData
         ? clientSeasonality
