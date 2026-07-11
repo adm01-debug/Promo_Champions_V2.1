@@ -20,6 +20,9 @@ import {
   Wallet,
   Target,
   Webhook,
+  Gauge,
+  Repeat,
+  Zap,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
