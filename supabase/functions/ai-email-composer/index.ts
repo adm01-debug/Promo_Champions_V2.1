@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 interface ContactContext {
@@ -92,7 +93,7 @@ async function resolveContext(
   };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -257,4 +258,4 @@ Gere o e-mail agora chamando a tool emit_email.`;
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));
