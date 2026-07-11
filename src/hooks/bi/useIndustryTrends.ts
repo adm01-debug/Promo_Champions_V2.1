@@ -77,6 +77,9 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
         const maxVal = Math.max(...data.map(d => Number(d.quotes_count ?? d.avg_quotes_per_company ?? 0)));
         return data.map(d => ({
           ...d,
+          month: Number(d.month),
+          quotes_count: d.quotes_count !== undefined ? Number(d.quotes_count) : undefined,
+          avg_quotes_per_company: d.avg_quotes_per_company !== undefined ? Number(d.avg_quotes_per_company) : undefined,
           intensity: maxVal > 0 ? (Number(d.quotes_count ?? d.avg_quotes_per_company ?? 0) / maxVal) * 100 : 0
         }));
       };
