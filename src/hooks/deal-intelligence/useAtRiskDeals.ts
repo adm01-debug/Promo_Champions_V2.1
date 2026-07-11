@@ -97,7 +97,7 @@ export function useAtRiskDeals() {
         }
 
         // 4. Value Anomaly
-        const productPrice = (sale as any).products?.price || 0;
+        const productPrice = (sale as { products?: { price?: number } | null }).products?.price || 0;
         if (productPrice > 0 && sale.amount > productPrice * 2.5) {
           riskFactors.push('Valor do deal atípico (muito superior ao preço de lista)');
           riskScore += 15;
