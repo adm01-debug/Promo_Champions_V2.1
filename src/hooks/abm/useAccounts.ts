@@ -54,7 +54,7 @@ export interface AccountPlan {
   swot_opportunities: string[] | null;
   swot_threats: string[] | null;
   account_strategy: string | null;
-  action_plan: any;
+  action_plan: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }
