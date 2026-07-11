@@ -1,14 +1,14 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface PasswordResetRequest {
   email: string;
   requestId: string;
 }
 
-serve(async (req: Request): Promise<Response> => {
+Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -171,4 +171,4 @@ serve(async (req: Request): Promise<Response> => {
       }
     );
   }
-});
+}));
