@@ -12021,6 +12021,7 @@ export type Database = {
           client_id: string | null
           client_name: string | null
           created_at: string
+          event_at: string | null
           id: string
           last_correlation_key: string | null
           last_event: string | null
@@ -12039,6 +12040,7 @@ export type Database = {
           client_id?: string | null
           client_name?: string | null
           created_at?: string
+          event_at?: string | null
           id?: string
           last_correlation_key?: string | null
           last_event?: string | null
@@ -12057,6 +12059,7 @@ export type Database = {
           client_id?: string | null
           client_name?: string | null
           created_at?: string
+          event_at?: string | null
           id?: string
           last_correlation_key?: string | null
           last_event?: string | null
