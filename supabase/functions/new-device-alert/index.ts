@@ -91,7 +91,7 @@ const generateEmailHTML = (data: NewDeviceAlertRequest) => `
 </html>
 `;
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Response> => {
   console.info("New device alert function called");
 
   // Handle CORS preflight requests
