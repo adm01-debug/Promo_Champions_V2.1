@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get("BITRIX24_DOMAIN");
 const BITRIX24_CLIENT_ID = Deno.env.get("BITRIX24_CLIENT_ID");
@@ -8,7 +8,7 @@ const BITRIX24_CLIENT_SECRET = Deno.env.get("BITRIX24_CLIENT_SECRET");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-serve(async (req) => {
+Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -198,4 +198,4 @@ serve(async (req) => {
       }
     );
   }
-});
+}));

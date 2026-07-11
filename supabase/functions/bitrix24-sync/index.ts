@@ -1,6 +1,6 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -464,7 +464,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
   }
 }
 
-serve(async req => {
+Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -565,7 +565,7 @@ serve(async req => {
         error_message: errorMessage,
         duration_ms: durationMs,
         triggered_by: body.triggered_by || 'manual',
-      });
+      }));
     } catch (logError) {
       console.error('Error logging sync failure:', logError);
     }
@@ -583,4 +583,4 @@ serve(async req => {
       }
     );
   }
-});
+}));
