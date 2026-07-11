@@ -280,6 +280,6 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
-};
+});
 
-serve(handler);
+Deno.serve(handler);
