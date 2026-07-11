@@ -40,7 +40,6 @@ const INVALID_TRANSPORTABLE_IDS = [
   "<script>alert(1)</script>",
   "'; DROP TABLE users;--",
   "../../etc/passwd",
-  "🔥🔥🔥🔥🔥🔥🔥🔥",
   "id;cookie=x",
   "id\"quoted\"",
   "id\\backslash",
@@ -49,12 +48,13 @@ const INVALID_TRANSPORTABLE_IDS = [
 ];
 
 // IDs que o próprio runtime Deno/Fetch rejeita ANTES de chegar à edge
-// function (CRLF injection, null byte). Documentam a camada extra de defesa
-// da plataforma — a construção do Request precisa lançar TypeError.
+// function (CRLF injection, null byte, bytes fora de ASCII). Documentam
+// a camada extra de defesa da plataforma — Request precisa lançar TypeError.
 const RUNTIME_BLOCKED_IDS = [
   "id\r\nX-Injected: 1",
   "id\x00null",
   "id\nnewline",
+  "🔥🔥🔥🔥🔥🔥🔥🔥",
 ];
 
 const okHandler = () => Promise.resolve(new Response(JSON.stringify({ ok: true }), { status: 200 }));
