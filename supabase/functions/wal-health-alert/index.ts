@@ -36,18 +36,24 @@ function bytes(n: number): string {
 }
 
 async function postSlack(webhook: string, text: string, blocks?: unknown) {
-  const res = await fetch(webhook, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(blocks ? { text, blocks } : { text }),
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
-  }
+  await withEdgeCircuitBreaker(
+    "slack:wal-health-alert",
+    async () => {
+      const res = await fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(blocks ? { text, blocks } : { text }),
+      });
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
+      }
+    },
+    { failureThreshold: 3, resetTimeout: 60_000, timeoutMs: 5_000 },
+  );
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
