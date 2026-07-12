@@ -1,18 +1,24 @@
-import { useEffect, useCallback } from 'react';
-import { useBlocker } from 'react-router-dom';
-import { toast } from 'sonner';
-import { triggerHaptic } from '@/lib/haptics';
+import { useEffect } from 'react';
 
 /**
- * useFormGuard - Prevents navigation away from a page if a form is dirty.
- * @param isDirty - Whether the form has unsaved changes.
- * @param message - Custom message to show in the browser dialog (note: most modern browsers show a generic message).
+ * useFormGuard - Avisa o usuário antes de fechar/recarregar a aba com alterações não salvas.
+ *
+ * Observação: `useBlocker` do react-router-dom exige um data router
+ * (`createBrowserRouter`). O projeto usa `<BrowserRouter>` clássico, portanto
+ * o bloqueio de navegação SPA foi removido para eliminar o erro
+ * "useBlocker must be used within a data router". A proteção via
+ * `beforeunload` (fechar/recarregar aba) continua ativa e cobre o caso crítico
+ * de perda de dados. Diálogos de confirmação em navegação interna devem ser
+ * implementados pontualmente no componente (ex.: interceptar clique/close).
+ *
+ * @param isDirty - Se o formulário possui alterações não salvas.
+ * @param message - Mensagem exibida no diálogo do navegador (a maioria dos
+ *                  browsers modernos mostra um texto genérico).
  */
 export function useFormGuard(
   isDirty: boolean,
   message: string = 'Você tem alterações não salvas. Deseja realmente sair?'
 ) {
-  // Handle browser close/refresh
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
@@ -26,37 +32,6 @@ export function useFormGuard(
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isDirty, message]);
 
-  // Handle SPA navigation (React Router)
-  const blocker = useBlocker(
-    useCallback(
-      ({
-        currentLocation,
-        nextLocation,
-      }: {
-        currentLocation: { pathname: string };
-        nextLocation: { pathname: string };
-      }) => isDirty && currentLocation.pathname !== nextLocation.pathname,
-      [isDirty]
-    )
-  );
-
-  // If navigation is blocked, show a notification/dialog
-  useEffect(() => {
-    if (blocker.state === 'blocked') {
-      triggerHaptic('medium');
-      const confirmLeave = window.confirm(message);
-      if (confirmLeave) {
-        triggerHaptic('success');
-        blocker.proceed();
-      } else {
-        triggerHaptic('light');
-        blocker.reset();
-        toast.info('Navegação cancelada para proteger seus dados.', {
-          icon: '🛡️',
-        });
-      }
-    }
-  }, [blocker, message]);
-
-  return blocker;
+  // Mantém shape estável para consumidores existentes.
+  return { state: 'unblocked' as const, proceed: () => {}, reset: () => {} };
 }
