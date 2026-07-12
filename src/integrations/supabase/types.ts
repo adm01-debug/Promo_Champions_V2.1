@@ -5439,6 +5439,33 @@ export type Database = {
         }
         Relationships: []
       }
+      dead_letter_replay_audit: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          outcome: string
+          performed_by: string | null
+          performed_role: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          outcome: string
+          performed_by?: string | null
+          performed_role: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          outcome?: string
+          performed_by?: string | null
+          performed_role?: string
+        }
+        Relationships: []
+      }
       deal_chat_history: {
         Row: {
           created_at: string
