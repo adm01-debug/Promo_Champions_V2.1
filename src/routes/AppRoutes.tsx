@@ -16,7 +16,7 @@ import {
   Vendas, Clientes, Produtos, Pipeline, KanbanClientes, MapaClientes, Calendario, Portfolio,
   // Prospecção & Atividades
   Atividades, Cadencias, QuoteCadencias, Tarefas, ICP, FonteLeads, Playbooks, FollowUpInteligente, FollowUpAudit, Sequences, BulkComposer, SendTimeOptimization, EmailEngagementScoring, AccountBasedEngagement, AccountDetail, PowerDialer,
-  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
+  LeadScoring, Multichannel, EmailTracking, Automacoes, ConversationalIntelligence, RevenueIntelligence, RevenueForecast, RevenueForecastV2, AccountBasedSelling, AutomationBuilder, AutomacaoInteligente,
   // Vendas & Comercial
   Orcamentos, AssinaturaDigital, Fornecedores, ComparadorPrecos, Comissoes, Agenda, AdminComissoes, CommissionRules, ApprovalWorkflows, Webhooks, AuditLogs, SLATracking, LeadRouting, Workflows,
   // Analytics & BI
