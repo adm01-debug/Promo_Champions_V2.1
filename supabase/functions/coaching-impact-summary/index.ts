@@ -20,7 +20,7 @@ interface ImpactRow {
   delta_ticket: number;
 }
 
-Deno.Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
+Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
