@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -30,14 +31,17 @@ Deno.serve(async req => {
     ];
     const ownerBySale = new Map<string, string | null>();
     if (saleIds.length) {
-      const { data: sales } = await admin
-        .from('sales')
-        .select('id, salesperson_id, salespeople:salesperson_id(auth_user_id)')
-        .in('id', saleIds);
-      for (const s of (sales ?? []) as Array<{
-        id: string;
-        salespeople?: { auth_user_id?: string | null } | null;
-      }>) {
+      type SaleRow = { id: string; salespeople?: { auth_user_id?: string | null } | null };
+      const sales = await chunkedIn<SaleRow>(
+        saleIds,
+        (chunk) =>
+          admin
+            .from('sales')
+            .select('id, salesperson_id, salespeople:salesperson_id(auth_user_id)')
+            .in('id', chunk),
+        { parallel: true, label: 'refresh-stage-baselines.sales' }
+      );
+      for (const s of sales) {
         const ownerId = s.salespeople?.auth_user_id ?? null;
         ownerBySale.set(s.id, ownerId);
       }

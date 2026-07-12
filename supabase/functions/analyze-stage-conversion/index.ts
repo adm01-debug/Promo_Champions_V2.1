@@ -1,5 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -140,13 +142,18 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
     const ownerBySale = new Map<string, string | null>();
     const lostReasonBySale = new Map<string, string | null>();
     if (saleIds.length) {
-      const { data: sales } = await admin
-        .from('sales')
-        .select(
-          'id, status, lost_reason, salesperson_id, salespeople:salesperson_id(auth_user_id)'
-        )
-        .in('id', saleIds);
-      for (const s of (sales ?? []) as SaleRow[]) {
+      const sales = await chunkedIn<SaleRow>(
+        saleIds,
+        (chunk) =>
+          admin
+            .from('sales')
+            .select(
+              'id, status, lost_reason, salesperson_id, salespeople:salesperson_id(auth_user_id)'
+            )
+            .in('id', chunk),
+        { parallel: true, label: 'analyze-stage-conversion.sales' }
+      );
+      for (const s of sales) {
         ownerBySale.set(s.id, s.salespeople?.auth_user_id ?? null);
         lostReasonBySale.set(s.id, s.lost_reason ?? null);
       }
