@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      _internal_secrets: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       access_denied_logs: {
         Row: {
           attempted_path: string
@@ -945,6 +963,51 @@ export type Database = {
           steps?: Json
           target_entity_id?: string | null
           target_entity_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_narrative_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          expires_at: string
+          hit_count: number
+          id: string
+          model: string | null
+          narrative: string
+          narrative_type: string
+          payload_hash: string
+          tokens_input: number | null
+          tokens_output: number | null
+          updated_at: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          expires_at: string
+          hit_count?: number
+          id?: string
+          model?: string | null
+          narrative: string
+          narrative_type: string
+          payload_hash: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+          updated_at?: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          hit_count?: number
+          id?: string
+          model?: string | null
+          narrative?: string
+          narrative_type?: string
+          payload_hash?: string
+          tokens_input?: number | null
+          tokens_output?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -20041,6 +20104,7 @@ export type Database = {
           processed: number
         }[]
       }
+      cleanup_expired_narrative_cache: { Args: never; Returns: number }
       coaching_progress_by_salesperson: {
         Args: { _days?: number; _salesperson_id: string }
         Returns: {
