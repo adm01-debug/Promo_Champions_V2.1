@@ -65,6 +65,8 @@ function AdminConexoesContent() {
           <AutoTestJobStatusCard />
         </div>
 
+        <CronJobsPanel />
+
         <SmokeTestChecklist />
 
         <Tabs defaultValue="database" className="space-y-4">
