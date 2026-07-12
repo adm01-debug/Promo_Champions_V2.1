@@ -92,11 +92,15 @@ export function useV4CallbackActions() {
 
   const retry = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await supabase
-        .from("v4_callback_dead_letters")
-        .update({ next_retry_at: new Date().toISOString() })
-        .in("id", ids);
-      if (error) throw error;
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) => supabase
+          .from("v4_callback_dead_letters")
+          .update({ next_retry_at: new Date().toISOString() })
+          .in("id", chunk as string[])
+          .select("id"),
+        { label: "v4.retry" },
+      );
       return ids.length;
     },
     onSuccess: (n) => { toast.success(`${n} evento(s) reagendado(s) para agora`); invalidate(); },
@@ -105,11 +109,15 @@ export function useV4CallbackActions() {
 
   const reset = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await supabase
-        .from("v4_callback_dead_letters")
-        .update({ attempts: 0, next_retry_at: new Date().toISOString(), last_error: null })
-        .in("id", ids);
-      if (error) throw error;
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) => supabase
+          .from("v4_callback_dead_letters")
+          .update({ attempts: 0, next_retry_at: new Date().toISOString(), last_error: null })
+          .in("id", chunk as string[])
+          .select("id"),
+        { label: "v4.reset" },
+      );
       return ids.length;
     },
     onSuccess: (n) => { toast.success(`${n} evento(s) com tentativas resetadas`); invalidate(); },
@@ -118,11 +126,15 @@ export function useV4CallbackActions() {
 
   const archive = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await supabase
-        .from("v4_callback_dead_letters")
-        .update({ resolved_at: new Date().toISOString(), last_error: "manually_archived" })
-        .in("id", ids);
-      if (error) throw error;
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) => supabase
+          .from("v4_callback_dead_letters")
+          .update({ resolved_at: new Date().toISOString(), last_error: "manually_archived" })
+          .in("id", chunk as string[])
+          .select("id"),
+        { label: "v4.archive" },
+      );
       return ids.length;
     },
     onSuccess: (n) => { toast.success(`${n} evento(s) arquivado(s)`); invalidate(); },
