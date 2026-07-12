@@ -77,6 +77,7 @@ export const RevenueIntelligence = lazyWithPrefetch(
   () => import('@/pages/RevenueIntelligence')
 );
 export const RevenueForecast = lazyWithPrefetch(() => import('@/pages/RevenueForecast'));
+export const RevenueForecastV2 = lazyWithPrefetch(() => import('@/pages/RevenueForecastV2'));
 export const AccountBasedSelling = lazyWithPrefetch(
   () => import('@/pages/AccountBasedSelling')
 );
