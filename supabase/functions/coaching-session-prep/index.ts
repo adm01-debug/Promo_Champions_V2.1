@@ -15,7 +15,7 @@ interface PrepResponse {
   suggested_focus_skills: string[];
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
