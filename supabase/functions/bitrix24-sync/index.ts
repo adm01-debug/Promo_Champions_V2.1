@@ -338,15 +338,20 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
 
     const clientIds = clientsWithoutBitrix.map(c => c.id);
 
-    const { data: icpDataList } = await supabase
-      .from('icp_data')
-      .select(
-        'client_id, bitrix_id, capital_social, num_colaboradores, ramo_atividade, grupo_nicho'
-      )
-      .in('client_id', clientIds);
+    const icpDataList = await chunkedIn<IcpData>(
+      clientIds,
+      (chunk) =>
+        supabase
+          .from('icp_data')
+          .select(
+            'client_id, bitrix_id, capital_social, num_colaboradores, ramo_atividade, grupo_nicho'
+          )
+          .in('client_id', chunk),
+      { parallel: true, label: 'bitrix24-sync.icp_by_client' }
+    );
 
     const icpMap = new Map<string, IcpData>();
-    icpDataList?.forEach(icp => {
+    icpDataList.forEach(icp => {
       icpMap.set(icp.client_id, icp);
     });
 
