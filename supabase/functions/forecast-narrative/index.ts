@@ -226,6 +226,11 @@ Gere a narrativa executiva.`;
     { onConflict: 'cache_key' },
   );
   await authClient.from('revenue_forecasts').update({ ai_summary: narrative }).eq('id', forecastId);
+  ctx.log('info', 'narrative_generated', {
+    userId, forecastId,
+    tokens_input: usage.prompt_tokens ?? null,
+    tokens_output: usage.completion_tokens ?? null,
+  });
 
   return new Response(
     JSON.stringify({ narrative, cached: false, generated_at: new Date().toISOString() }),
