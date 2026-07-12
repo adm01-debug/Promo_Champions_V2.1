@@ -50,7 +50,8 @@ export function CronAlertBreakdownChart() {
                 dataKey="jobname"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={11}
-                width={160}
+                width={180}
+                tickFormatter={(v: string) => (v.length > 22 ? `${v.slice(0, 20)}…` : v)}
               />
               <Tooltip
                 cursor={{ fill: "hsl(var(--muted) / 0.4)" }}
@@ -60,6 +61,8 @@ export function CronAlertBreakdownChart() {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
+                labelFormatter={(label: string) => label}
+                formatter={(value: number, name: string) => [value, name]}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Bar dataKey="stalled" stackId="a" fill="hsl(38 92% 50%)" name="Travados" radius={[0, 0, 0, 0]} />
