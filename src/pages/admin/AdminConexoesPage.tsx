@@ -68,6 +68,8 @@ function AdminConexoesContent() {
 
         <CronJobsPanel />
 
+        <DbRollbackRatePanel />
+
         <SmokeTestChecklist />
 
         <Tabs defaultValue="database" className="space-y-4">
