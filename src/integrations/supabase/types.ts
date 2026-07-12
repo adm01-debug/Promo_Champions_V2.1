@@ -19765,6 +19765,18 @@ export type Database = {
       }
     }
     Functions: {
+      admin_get_cron_job_stats: {
+        Args: { _limit?: number }
+        Returns: {
+          duration_ms: number
+          end_time: string
+          jobid: number
+          jobname: string
+          return_message: string
+          start_time: string
+          status: string
+        }[]
+      }
       append_agent_step: {
         Args: {
           _executed_by?: string
