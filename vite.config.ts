@@ -70,8 +70,8 @@ export default defineConfig({
           }
           // Radix depends tightly on React — keep in the same chunk to guarantee load order.
           if (id.includes('@radix-ui/')) return 'vendor-core';
-          // Data layer
-          if (id.includes('@tanstack/react-query') || id.includes('@supabase/supabase-js')) {
+          // Data layer — supabase-js pulls postgrest/gotrue/realtime/storage/functions as siblings
+          if (id.includes('@tanstack/react-query') || id.includes('@supabase/')) {
             return 'vendor-data';
           }
           // Heavy & lazy-only libs — isolated so they only load on routes that import them
