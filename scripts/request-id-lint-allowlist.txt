@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-detect-winloss-at-risk
-enrich-lead
-expansion-detector
 export-winloss-pdf
 external-db-bridge
 extract-coaching-actions

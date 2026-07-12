@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 interface Playbook {
@@ -50,7 +51,7 @@ function evalAccount(pb: Playbook, acc: Account, usage?: { adoption_score?: numb
   return { match, confidence, estValue: Math.round(baseValue) };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("expansion-detector", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -109,4 +110,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

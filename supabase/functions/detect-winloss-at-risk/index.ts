@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
 const EXCLUDED_STATUSES = ["won", "lost", "completed"];
@@ -15,7 +15,7 @@ function log(event: string, data: Record<string, unknown>) {
   console.info(JSON.stringify({ fn: "detect-winloss-at-risk", event, ...data }));
 }
 
-serve(async (req: Request) => {
+Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -95,4 +95,4 @@ serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
