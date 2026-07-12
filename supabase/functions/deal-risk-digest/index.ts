@@ -177,17 +177,10 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     inserted = count ?? toInsert.length;
   }
 
-  const summary = {
-    ok: true,
-    salespeople_analyzed: bySeller.size,
-    digests_created: inserted,
-    skipped_idempotent: skipped,
-    elapsed_ms: Date.now() - startedAt,
-  };
-  ctx.log('info', 'digest_summary', summary);
+  let slack: SlackResult = { attempted: false, ok: false };
   if (inserted > 0) {
-    await postSlack(
-      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${summary.elapsed_ms}ms.`,
+    slack = await postSlack(
+      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${Date.now() - startedAt}ms.`,
     );
   }
 
@@ -197,8 +190,11 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     digests_created: inserted,
     skipped_idempotent: skipped,
     elapsed_ms: Date.now() - startedAt,
+    slack_attempted: slack.attempted,
+    slack_ok: slack.ok,
+    slack_error: slack.error ?? null,
   };
-  
+  ctx.log('info', 'digest_summary', summary);
 
   return new Response(JSON.stringify(summary), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
