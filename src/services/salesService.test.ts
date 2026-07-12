@@ -133,9 +133,11 @@ describe('salesService.getSales', () => {
 
     expect(orMock).toHaveBeenCalledTimes(1);
     const filter = orMock.mock.calls[0][0] as string;
-    // Sem vírgulas/parenteses/asterisco no filtro
-    expect(filter).not.toMatch(/[,()*]/);
-    expect(filter).toContain('client_name.ilike.%acme  evil %');
+    // O user input sanitizado ("acme  evil") não deve conter caracteres perigosos
+    // (a vírgula entre client_name/product_name é sintaxe PostgREST, esperada).
+    expect(filter).toContain('%acme  evil%');
+    expect(filter).not.toMatch(/[()*]/);
+    expect(filter.match(/,/g)).toHaveLength(1); // apenas o separador PostgREST
   });
 
   it('não chama .or() quando o searchTerm sanitizado fica vazio', async () => {
