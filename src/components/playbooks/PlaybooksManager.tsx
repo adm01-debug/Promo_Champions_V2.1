@@ -90,28 +90,74 @@ export const PlaybooksManager = () => {
       <PlaybookAdherenceStats />
 
       {/* Tabs */}
-      <Tabs defaultValue="lead" className="w-full">
-        <TabsList className="grid grid-cols-4 mb-6 glass border border-border/40">
-          {stages.map((stage) => {
+      <Tabs value={activeStage} onValueChange={(v) => setActiveStage(v as typeof stages[number])} className="w-full">
+        {/* Hub strip: cards por stage, funcionam como navegação principal + contador */}
+        <div
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4"
+          role="tablist"
+          aria-label="Etapas do funil"
+        >
+          {stages.map((stage, idx) => {
             const config = stageConfig[stage];
             const Icon = config.icon;
             const count = groupedByStage[stage]?.length || 0;
+            const isActive = activeStage === stage;
             return (
-              <TabsTrigger
+              <motion.button
                 key={stage}
-                value={stage}
-                className="gap-2 transition-all duration-200 data-[state=active]:shadow-md"
+                type="button"
+                onClick={() => setActiveStage(stage)}
+                aria-pressed={isActive}
+                aria-label={`${config.label}: ${count} playbook${count === 1 ? "" : "s"}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className={cn(
+                  "text-left rounded-xl border p-4 transition-all min-h-11",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  isActive
+                    ? "border-primary/60 bg-primary/5 shadow-md shadow-primary/10"
+                    : "border-border/40 bg-card/40 hover:border-border hover:bg-card/60"
+                )}
               >
-                <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline font-medium">{config.label}</span>
-                {count > 0 && (
-                  <span className="text-[10px] bg-primary/20 text-primary rounded-full px-1.5 py-0.5 font-semibold">
+                <div className="flex items-center justify-between mb-2">
+                  <div
+                    className={cn(
+                      "p-2 rounded-lg",
+                      isActive ? "bg-primary/20 text-primary" : "bg-muted/40 text-muted-foreground"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </div>
+                  <span
+                    className={cn(
+                      "text-xl font-black tabular-nums",
+                      isActive ? "text-primary" : "text-foreground"
+                    )}
+                  >
                     {count}
                   </span>
-                )}
-              </TabsTrigger>
+                </div>
+                <p className={cn("text-sm font-semibold", isActive ? "text-primary" : "text-foreground")}>
+                  {config.label}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {count === 0 ? "Sem playbooks" : count === 1 ? "1 playbook" : `${count} playbooks`}
+                </p>
+              </motion.button>
             );
           })}
+        </div>
+
+        {/* TabsList escondida — usada apenas para a11y (linkagem tab↔panel) */}
+        <TabsList className="sr-only">
+          {stages.map((stage) => (
+            <TabsTrigger key={stage} value={stage}>
+              {stageConfig[stage].label}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         {stages.map((stage) => {
@@ -119,20 +165,13 @@ export const PlaybooksManager = () => {
           const stagePlaybooks = groupedByStage[stage] || [];
 
           return (
-            <TabsContent key={stage} value={stage} className="space-y-4">
+            <TabsContent key={stage} value={stage} className="space-y-4 mt-4">
               {stagePlaybooks.length === 0 ? (
-                <Card variant="elevated" className="glass border-border/40 dark:border-glow">
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-4 shadow-inner">
-                      <BookOpen className="h-12 w-12 text-muted-foreground opacity-50" />
-                    </div>
-                    <p className="text-muted-foreground font-medium">
-                      {searchQuery
-                        ? "Nenhum resultado para esta busca"
-                        : "Nenhum playbook para esta etapa"}
-                    </p>
-                  </CardContent>
-                </Card>
+                <PlaybookEmptyState
+                  stageLabel={config.label}
+                  isSearching={!!searchQuery.trim()}
+                  onClearSearch={() => setSearchQuery("")}
+                />
               ) : (
                 stagePlaybooks.map((playbook, index) => (
                   <PlaybookCard
