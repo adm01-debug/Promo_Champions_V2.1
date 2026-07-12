@@ -20513,6 +20513,13 @@ export type Database = {
         Returns: Json
       }
       process_weekly_league_reset: { Args: never; Returns: undefined }
+      purge_telemetry_retention: {
+        Args: never
+        Returns: {
+          deleted_rows: number
+          table_name: string
+        }[]
+      }
       recompute_engagement_score: {
         Args: { _contact_id: string; _contact_type: string }
         Returns: number
