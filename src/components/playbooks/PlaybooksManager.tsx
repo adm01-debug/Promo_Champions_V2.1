@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { usePlaybooks } from "@/hooks/usePlaybooks";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Search, Users, Star, FileText, Handshake } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { PlaybookCard } from "./PlaybookCard";
 import { PlaybookAdherenceStats } from "./PlaybookAdherenceStats";
+import { PlaybookEmptyState } from "./PlaybookEmptyState";
 
 const stageConfig = {
   lead: { label: "Lead", icon: Users, color: "bg-muted-foreground" },
