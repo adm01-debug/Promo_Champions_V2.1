@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -22,7 +23,7 @@ function buildMessage(rank: number, totalSales: number, gapToFirst: number, gapT
   return `Você está em ${rank}º lugar. Hora de acelerar! ${fmtBRL(gapToNext)} para subir uma posição e entrar no jogo.`;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -100,4 +101,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

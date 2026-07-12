@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface Payload {
   pattern_id?: string;
@@ -6,7 +7,7 @@ interface Payload {
   confidence?: number;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("notify-critical-pattern", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -49,4 +50,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

@@ -6,12 +6,9 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-multichannel-status-webhook
 next-best-action
 nlq-query
-notify-critical-pattern
 notify-quote-conversion
-notify-ranking-position
 notify-v4-quote-status
 onboarding-launcher
 pipeline-pulse-aggregator
