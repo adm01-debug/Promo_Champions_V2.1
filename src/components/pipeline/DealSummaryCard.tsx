@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { CACHE_TIMES } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
