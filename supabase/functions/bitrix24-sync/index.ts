@@ -592,7 +592,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
         error_message: errorMessage,
         duration_ms: durationMs,
         triggered_by: body.triggered_by || 'manual',
-      }));
+      });
     } catch (logError) {
       console.error('Error logging sync failure:', logError);
     }
