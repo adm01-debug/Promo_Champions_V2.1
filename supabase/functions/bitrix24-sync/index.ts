@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -136,13 +137,18 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
 
     // Batch lookup: one query to find all existing ICP records for these Bitrix IDs
     const bitrixIds = companies.map(c => c.ID);
-    const { data: existingIcpList } = await supabase
-      .from('icp_data')
-      .select('client_id, bitrix_id')
-      .in('bitrix_id', bitrixIds);
+    const existingIcpList = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+      bitrixIds,
+      (chunk) =>
+        supabase
+          .from('icp_data')
+          .select('client_id, bitrix_id')
+          .in('bitrix_id', chunk),
+      { parallel: true, label: 'bitrix24-sync.icp_by_bitrix' }
+    );
 
     const icpByBitrixId = new Map<string, string>(); // bitrix_id -> client_id
-    existingIcpList?.forEach(icp => {
+    existingIcpList.forEach(icp => {
       if (icp.bitrix_id && icp.client_id) icpByBitrixId.set(icp.bitrix_id, icp.client_id);
     });
 
