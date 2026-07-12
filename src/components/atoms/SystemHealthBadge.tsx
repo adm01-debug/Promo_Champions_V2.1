@@ -26,7 +26,9 @@ export function SystemHealthBadge() {
     checkSystemHealth();
 
     // Periodic check
-    const interval = setInterval(checkSystemHealth, 60000); // Every minute
+    // Verificação a cada 3 minutos para reduzir carga no Postgres
+    // (uma única query filtrada substitui o antigo par de queries por minuto).
+    const interval = setInterval(checkSystemHealth, 180000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -42,27 +44,23 @@ export function SystemHealthBadge() {
     }
 
     try {
-      // Check Supabase connectivity
-      const { error } = await supabase.from('error_logs').select('id').limit(1);
-      if (error) {
-        setStatus('error');
-        return;
-      }
-
-      // Check if there are critical errors in the last hour
+      // Query única: valida conectividade E detecta erros críticos recentes.
+      // Usa o índice (severity, created_at) em error_logs — muito mais barata
+      // que o LIMIT 1 sem filtro que rodava antes.
       const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
-      const { data: recentErrors } = await supabase
+      const { data: recentErrors, error } = await supabase
         .from('error_logs')
         .select('id')
         .eq('severity', 'critical')
         .gt('created_at', oneHourAgo)
         .limit(1);
 
-      if (recentErrors && recentErrors.length > 0) {
-        setStatus('warning');
-      } else {
-        setStatus('healthy');
+      if (error) {
+        setStatus('error');
+        return;
       }
+
+      setStatus(recentErrors && recentErrors.length > 0 ? 'warning' : 'healthy');
     } catch {
       setStatus('error');
     }
