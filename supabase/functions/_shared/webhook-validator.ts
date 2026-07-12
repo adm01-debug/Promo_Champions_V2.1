@@ -215,8 +215,20 @@ export const WebhookContracts = {
       extra: z.string().optional(),
     }),
     salespersonId: z.string().optional(),
-    action: z.enum(["page_suggestion", "smart_tip", "auto_fill", "quick_answer"]).optional(),
+    action: z
+      .enum([
+        "page_suggestion",
+        "smart_tip",
+        "auto_fill",
+        "quick_answer",
+        "forecast_narrative",
+        "coaching_plan",
+      ])
+      .optional(),
     question: z.string().optional(),
+    // Skill-specific payloads
+    forecast_id: z.string().uuid().optional(),
+    recording_id: z.string().uuid().optional(),
   }),
 };
 
