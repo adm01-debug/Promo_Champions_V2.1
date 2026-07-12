@@ -5289,6 +5289,36 @@ export type Database = {
           },
         ]
       }
+      db_rollback_snapshots: {
+        Row: {
+          captured_at: string
+          deadlocks: number
+          id: string
+          temp_bytes: number
+          temp_files: number
+          xact_commit: number
+          xact_rollback: number
+        }
+        Insert: {
+          captured_at?: string
+          deadlocks?: number
+          id?: string
+          temp_bytes?: number
+          temp_files?: number
+          xact_commit: number
+          xact_rollback: number
+        }
+        Update: {
+          captured_at?: string
+          deadlocks?: number
+          id?: string
+          temp_bytes?: number
+          temp_files?: number
+          xact_commit?: number
+          xact_rollback?: number
+        }
+        Relationships: []
+      }
       deal_chat_history: {
         Row: {
           created_at: string
@@ -19801,6 +19831,7 @@ export type Database = {
       }
     }
     Functions: {
+      admin_capture_rollback_snapshot: { Args: never; Returns: string }
       admin_get_cron_job_stats: {
         Args: { _limit?: number }
         Returns: {
@@ -19811,6 +19842,18 @@ export type Database = {
           return_message: string
           start_time: string
           status: string
+        }[]
+      }
+      admin_get_rollback_rate_series: {
+        Args: { _hours?: number }
+        Returns: {
+          captured_at: string
+          commits_per_min: number
+          deadlocks: number
+          rollback_ratio_pct: number
+          rollbacks_per_min: number
+          xact_commit: number
+          xact_rollback: number
         }[]
       }
       append_agent_step: {
@@ -20154,6 +20197,7 @@ export type Database = {
           schedule: string
         }[]
       }
+      fn_purge_rollback_snapshots: { Args: never; Returns: number }
       fn_record_conversion_attempt: {
         Args: {
           _error_code: string
