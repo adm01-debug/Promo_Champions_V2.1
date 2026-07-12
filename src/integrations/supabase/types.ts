@@ -15951,6 +15951,60 @@ export type Database = {
           },
         ]
       }
+      slow_query_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          calls: number
+          created_at: string
+          detection_count: number
+          first_detected_at: string
+          id: string
+          last_detected_at: string
+          max_exec_ms: number
+          mean_exec_ms: number
+          query_hash: string
+          query_preview: string
+          threshold_mean_ms: number
+          threshold_min_calls: number
+          total_exec_ms: number
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          calls: number
+          created_at?: string
+          detection_count?: number
+          first_detected_at?: string
+          id?: string
+          last_detected_at?: string
+          max_exec_ms: number
+          mean_exec_ms: number
+          query_hash: string
+          query_preview: string
+          threshold_mean_ms: number
+          threshold_min_calls: number
+          total_exec_ms: number
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          calls?: number
+          created_at?: string
+          detection_count?: number
+          first_detected_at?: string
+          id?: string
+          last_detected_at?: string
+          max_exec_ms?: number
+          mean_exec_ms?: number
+          query_hash?: string
+          query_preview?: string
+          threshold_mean_ms?: number
+          threshold_min_calls?: number
+          total_exec_ms?: number
+        }
+        Relationships: []
+      }
       sms_verification_codes: {
         Row: {
           code: string
@@ -20046,6 +20100,13 @@ export type Database = {
         Returns: boolean
       }
       detect_renewal_risks: { Args: never; Returns: number }
+      detect_slow_queries: {
+        Args: { _mean_ms?: number; _min_calls?: number }
+        Returns: {
+          inserted: number
+          updated: number
+        }[]
+      }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
       enforce_telemetry_retention: { Args: never; Returns: Json }
