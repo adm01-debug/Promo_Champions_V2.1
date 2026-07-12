@@ -193,7 +193,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     skipped_idempotent: skipped,
     elapsed_ms: Date.now() - startedAt,
   };
-  console.log('[deal-risk-digest]', JSON.stringify(summary));
+  
 
   return new Response(JSON.stringify(summary), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
