@@ -4,7 +4,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+
+interface DeadLetterJob {
+  id: string;
+  idempotency_key: string;
+  salesperson_id: string | null;
+  attempts: number;
+  last_error: string | null;
+  locked_by: string | null;
+  created_at: string;
+  updated_at: string;
+  next_attempt_at: string;
+}
 
 interface DeadLetterJob {
   id: string;
