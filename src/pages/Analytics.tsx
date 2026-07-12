@@ -18,6 +18,7 @@ import { ChurnPredictionPanel } from '@/components/analytics/ChurnPredictionPane
 import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
 import { LTVBySegment } from '@/components/analytics/LTVBySegment';
 import { AIPerformanceInsights } from '@/components/analytics/AIPerformanceInsights';
+import { CohortRetentionHeatmap } from '@/components/analytics/CohortRetentionHeatmap';
 import { AnimatedTabContent } from '@/components/analytics/AnimatedTabContent';
 import { Tabs } from '@/components/ui/tabs';
 import {
@@ -78,6 +79,7 @@ const TAB_CATEGORIES: Array<{
       { value: 'churn', label: 'Churn', icon: AlertTriangle },
       { value: 'churn-risk', label: 'Risco Churn', icon: ShieldAlert },
       { value: 'cohort', label: 'Cohort', icon: UserCheck },
+      { value: 'cohort-heatmap', label: 'Cohort Heatmap', icon: Flame },
       { value: 'ltv', label: 'LTV', icon: DollarSign },
     ],
   },
@@ -110,6 +112,7 @@ const TAB_CONTENT: Record<string, React.FC> = {
   weekly: WeeklyPerformanceComparison,
   'churn-risk': ChurnPredictionPanel,
   cohort: CohortAnalysis,
+  'cohort-heatmap': CohortRetentionHeatmap,
   ltv: LTVBySegment,
 };
 
