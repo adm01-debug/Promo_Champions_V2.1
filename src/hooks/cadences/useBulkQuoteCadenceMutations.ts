@@ -11,7 +11,11 @@ function invalidate(qc: ReturnType<typeof useQueryClient>) {
 
 type BulkInput = { ids: string[] };
 
-async function bulkUpdate(ids: string[], patch: Record<string, unknown>, label: string) {
+async function bulkUpdate(
+  ids: string[],
+  patch: { status: "paused" | "active" | "cancelled"; completed_at?: string },
+  label: string,
+) {
   if (ids.length === 0) return;
   await chunkedIn<{ id: string }>(
     ids,
