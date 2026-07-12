@@ -1,13 +1,24 @@
 import { FC, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Send, Loader2 } from 'lucide-react';
+import { Sparkles, X, Send, Loader2, TrendingUp, Headphones } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAICopilot } from '@/hooks/ai/useAICopilot';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { supabase } from '@/integrations/supabase/client';
 
 export const AICopilotFab: FC = () => {
-  const { suggestion, isLoading, isOpen, toggle, dismiss, askCopilot } = useAICopilot();
+  const {
+    suggestion,
+    isLoading,
+    isOpen,
+    toggle,
+    dismiss,
+    askCopilot,
+    getForecastNarrative,
+    getCoachingPlan,
+  } = useAICopilot();
   const [question, setQuestion] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
