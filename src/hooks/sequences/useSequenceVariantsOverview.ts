@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 
 export interface StepVariantOverviewRow {
   step_id: string;
@@ -26,11 +27,15 @@ export function useSequenceVariantsOverview(sequenceId: string | undefined) {
       const stepIds = (steps ?? []).map((s) => s.id);
       if (stepIds.length === 0) return [];
 
-      const { data: perf, error: perfErr } = await supabase
-        .from("sequence_variant_performance")
-        .select("step_id, variant_id, label, sent, replied, reply_rate")
-        .in("step_id", stepIds);
-      if (perfErr) throw perfErr;
+      type PerfRow = { step_id: string; variant_id: string; label: string; sent: number | null; replied: number | null; reply_rate: number | null };
+      const perf = await chunkedIn<PerfRow>(
+        stepIds,
+        (chunk) => supabase
+          .from("sequence_variant_performance")
+          .select("step_id, variant_id, label, sent, replied, reply_rate")
+          .in("step_id", chunk as string[]) as unknown as PromiseLike<{ data: PerfRow[] | null; error: { message?: string } | null }>,
+        { parallel: true, label: "seq.variants" },
+      );
 
       const stepMap = new Map((steps ?? []).map((s) => [s.id, s]));
       return (perf ?? []).map((p) => ({

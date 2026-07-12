@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 
 export interface PlaybookItem {
   id: string;
@@ -70,13 +71,15 @@ export const usePlaybooksByStage = (stage: string) => {
       if (!playbooks || playbooks.length === 0) return [];
 
       const playbookIds = playbooks.map((p) => p.id);
-      const { data: items, error: itemsError } = await supabase
-        .from("playbook_items")
-        .select("*")
-        .in("playbook_id", playbookIds)
-        .order("item_order");
-
-      if (itemsError) throw itemsError;
+      const items = await chunkedIn<PlaybookItem>(
+        playbookIds,
+        (chunk) => supabase
+          .from("playbook_items")
+          .select("*")
+          .in("playbook_id", chunk as string[])
+          .order("item_order") as unknown as PromiseLike<{ data: PlaybookItem[] | null; error: { message?: string } | null }>,
+        { parallel: true, label: "playbooks.items" },
+      );
 
       return (playbooks as Playbook[]).map((playbook) => ({
         ...playbook,
