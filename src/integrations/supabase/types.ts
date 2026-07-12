@@ -20073,6 +20073,16 @@ export type Database = {
         Returns: string
       }
       compute_pipeline_inspection: { Args: never; Returns: number }
+      compute_salesperson_retention_cohort: {
+        Args: { _months_back?: number }
+        Returns: {
+          cohort_month: string
+          cohort_size: number
+          month_offset: number
+          retained: number
+          retention_pct: number
+        }[]
+      }
       count_failed_login_attempts: {
         Args: { check_email: string; check_ip: string; window_minutes?: number }
         Returns: number
