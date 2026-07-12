@@ -1,9 +1,11 @@
+import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { cn } from '@/lib/utils';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Trophy, Swords, Flame, TrendingUp, Target, Monitor, Bell, Shield, Gift, Users, Award, MessageCircle, Tv, Star, BarChart3, Clock, User, Crown, Coins, MapPin, Search, ListChecks } from 'lucide-react';
+import { ArenaCategoryHub, type ArenaCategory, type ArenaCategoryId } from '@/components/competitive/ArenaCategoryHub';
 import {
   VictoryFeed, BattleArena, SeasonAndPowerUps, EvolutionChart,
   WeeklyRanking, DailyMissions, LiveScoreboard, RankNotifications,
