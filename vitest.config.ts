@@ -25,6 +25,8 @@ export default defineConfig({
         'src/utils/dateHelpers.ts',
         'src/utils/fuzzing.ts',
         'src/lib/revenueForecast/forecastEngine.ts',
+        'src/lib/revenueForecast/csvExport.ts',
+        'src/lib/auth/passwordErrorMessages.ts',
         'src/components/reporting/funnelReportHelpers.ts',
         'src/hooks/reports/salesReportHelpers.ts',
         'src/services/salesService.ts',
