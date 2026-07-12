@@ -10,7 +10,7 @@ const point = (i: number, isForecast = false): ScenarioChartKeyPoint => ({
 });
 
 describe('buildScenarioChartKey', () => {
-  const base = { fitN: 6, bandMode: 'sigma' as const, confidenceZ: 1.96, horizon: 3, stdDev: 12.5 };
+  const base = { fitN: 6, bandMode: 'see' as const, confidenceZ: 1.96, horizon: 3, stdDev: 12.5 };
 
   it('retorna scenario-empty quando data vazia', () => {
     expect(buildScenarioChartKey({ ...base, data: [] })).toBe('scenario-empty');
