@@ -75,6 +75,9 @@ function AdminConexoesContent() {
 
         <CronAlertMetricsPanel />
 
+        <CronAlertBreakdownChart />
+
+
         <DeadLetterIngestPanel />
 
 
