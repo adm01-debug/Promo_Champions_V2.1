@@ -8,6 +8,7 @@ import {
   validationErrorResponse,
 } from '../_shared/validation.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 serve(async req => {
   if (req.method === 'OPTIONS') {
@@ -159,12 +160,17 @@ serve(async req => {
         .order('effectiveness_score', { ascending: false })
         .limit(10);
 
-      // Get lead scores for pending deals
+      // Get lead scores for pending deals (chunked to evitar overflow de URL)
       const pendingDealIds = pendingDeals.map(d => d.id);
-      const { data: leadScores } = await supabase
-        .from('lead_scores')
-        .select('sale_id, score, factors')
-        .in('sale_id', pendingDealIds);
+      const leadScores = await chunkedIn<{ sale_id: string; score: number; factors: unknown }>(
+        pendingDealIds,
+        (chunk) =>
+          supabase
+            .from('lead_scores')
+            .select('sale_id, score, factors')
+            .in('sale_id', chunk),
+        { parallel: true, label: 'sales-assistant-chat.lead_scores' }
+      );
 
       // Generate performance-based suggestions
       const lossReasons =
