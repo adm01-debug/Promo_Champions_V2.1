@@ -232,7 +232,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
   const st2 = agoMinutes(10).toISOString();
 
   // marca a mesma falha duas vezes (retry do alerter) → upsert idempotente
-  const r1 = await rpc("fn_admin_mark_cron_failure_alerted", {
+  const r1 = await rpc("fn_test_mark_cron_failure", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st1,
@@ -241,7 +241,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
     _notified_admin_count: 2,
   });
   assertEquals(r1.error, null);
-  const r2 = await rpc("fn_admin_mark_cron_failure_alerted", {
+  const r2 = await rpc("fn_test_mark_cron_failure", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st1,
@@ -253,7 +253,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
   assertEquals(r1.data, r2.data, "upsert deve retornar o MESMO id para (jobid, start_time)");
 
   // nova execução falha (start_time diferente) → nova linha
-  const r3 = await rpc("fn_admin_mark_cron_failure_alerted", {
+  const r3 = await rpc("fn_test_mark_cron_failure", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st2,
