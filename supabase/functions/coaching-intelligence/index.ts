@@ -113,4 +113,4 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
