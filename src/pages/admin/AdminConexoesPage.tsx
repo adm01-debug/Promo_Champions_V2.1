@@ -72,6 +72,8 @@ function AdminConexoesContent() {
 
         <DbRollbackRatePanel />
 
+        <SlowQueryAlertsPanel />
+
         <TopQueriesPanel />
 
         <SmokeTestChecklist />
