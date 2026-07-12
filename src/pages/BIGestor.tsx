@@ -37,6 +37,11 @@ import { useNavigate } from 'react-router-dom';
 const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaChart'));
 const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
 const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
+const CohortRetentionHeatmap = lazy(() =>
+  import('@/components/analytics/CohortRetentionHeatmap').then((m) => ({
+    default: m.CohortRetentionHeatmap,
+  }))
+);
 
 const ChartFallback = ({ height = 250 }: { height?: number }) => (
   <Skeleton className="w-full" style={{ height }} />
