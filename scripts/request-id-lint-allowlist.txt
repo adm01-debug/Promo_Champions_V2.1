@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-coaching-intelligence
-coaching-session-prep
-collect-race-powerup
 compute-forecast-accuracy
 conversational-intelligence
 create-stagnant-tasks
