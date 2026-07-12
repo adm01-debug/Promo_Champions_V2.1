@@ -24,7 +24,7 @@ interface ForecastRow {
 const BRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v ?? 0);
 
-Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
+Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -34,6 +34,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
 
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
+    ctx.log('warn', 'auth_missing');
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -47,26 +48,35 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
 
   const { data: userData, error: userErr } = await authClient.auth.getUser();
   if (userErr || !userData?.user) {
+    ctx.log('warn', 'auth_invalid', { error: userErr?.message });
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+  const userId = userData.user.id;
 
   const rlBlock = enforceRateLimit(req, { name: 'forecast-narrative', limit: 20, windowSeconds: 60 });
-  if (rlBlock) return rlBlock;
+  if (rlBlock) {
+    ctx.log('warn', 'rate_limited', { userId });
+    return rlBlock;
+  }
 
   let body: { forecast_id?: string };
   try { body = await req.json(); } catch {
+    ctx.log('warn', 'invalid_json', { userId });
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
       status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   const forecastId = body?.forecast_id;
-  if (!forecastId || typeof forecastId !== 'string') {
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!forecastId || typeof forecastId !== 'string' || !uuidRe.test(forecastId)) {
+    ctx.log('warn', 'validation_failed', { userId, field: 'forecast_id' });
     return new Response(JSON.stringify({ error: 'forecast_id (uuid) required' }), {
       status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 
   const { data: forecast, error: fErr } = await authClient
     .from('revenue_forecasts')
