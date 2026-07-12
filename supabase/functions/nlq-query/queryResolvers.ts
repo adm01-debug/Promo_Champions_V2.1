@@ -1,6 +1,7 @@
 // Pure resolvers for whitelisted NLQ tools. Uses caller's Supabase client (RLS applied).
 // deno-lint-ignore-file no-explicit-any
 import { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 export type ResolverResult = {
   rows: Record<string, unknown>[];
@@ -201,11 +202,16 @@ export async function querySalesMetric(
     const ids = [...buckets.keys()].filter(id => id !== 'unassigned');
     let nameMap = new Map<string, string>();
     if (ids.length > 0) {
-      const { data: ppl } = await supabase
-        .from('salespeople_public')
-        .select('id, name')
-        .in('id', ids);
-      nameMap = new Map((ppl ?? []).map((p: SalespersonRow) => [p.id, p.name]));
+      const ppl = await chunkedIn<SalespersonRow>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('salespeople_public')
+            .select('id, name')
+            .in('id', chunk),
+        { parallel: true, label: 'nlq-query.salespeople_public' }
+      );
+      nameMap = new Map(ppl.map((p) => [p.id, p.name]));
     }
     rows = [...buckets.entries()]
       .map(([id, v]) => ({

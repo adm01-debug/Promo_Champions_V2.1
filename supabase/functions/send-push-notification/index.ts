@@ -61,6 +61,8 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       );
     }
 
+    // Já validado acima: user_ids.length <= 100 → seguro para .in() direto.
+    // chunked-in-lint-ignore-next-line
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
       .select('*')

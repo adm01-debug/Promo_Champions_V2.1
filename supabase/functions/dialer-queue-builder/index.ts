@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface BuildPayload {
   queue_id: string;
@@ -76,13 +77,18 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
     }
 
     const saleIds = sales.map((s) => s.id);
-    const { data: scores } = await supabase
-      .from("email_engagement_scores")
-      .select("sale_id, score")
-      .in("sale_id", saleIds);
+    const scores = await chunkedIn<{ sale_id: string; score: number }>(
+      saleIds,
+      (chunk) =>
+        supabase
+          .from("email_engagement_scores")
+          .select("sale_id, score")
+          .in("sale_id", chunk),
+      { parallel: true, label: "dialer-queue-builder.scores" }
+    );
 
     const scoreMap = new Map<string, number>(
-      (scores ?? []).map((s) => [s.sale_id as string, Number(s.score) || 0]),
+      scores.map((s) => [s.sale_id, Number(s.score) || 0]),
     );
 
     const now = Date.now();

@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -102,12 +103,17 @@ Deno.serve(async (req) => {
 
       let targetIds = candidateIds;
       if (onlyMissing && candidateIds.length > 0) {
-        const { data: existing } = await admin
-          .from("semantic_index")
-          .select("entity_id")
-          .eq("entity_type", t)
-          .in("entity_id", candidateIds);
-        const indexedSet = new Set((existing ?? []).map((r) => r.entity_id as string));
+        const existing = await chunkedIn<{ entity_id: string }>(
+          candidateIds,
+          (chunk) =>
+            admin
+              .from("semantic_index")
+              .select("entity_id")
+              .eq("entity_type", t)
+              .in("entity_id", chunk),
+          { parallel: true, label: `semantic-reindex-batch.${t}` }
+        );
+        const indexedSet = new Set(existing.map((r) => r.entity_id));
         targetIds = candidateIds.filter((id) => !indexedSet.has(id));
       }
 
