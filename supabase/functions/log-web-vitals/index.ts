@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 interface Sample {
   route: string;
@@ -46,6 +47,10 @@ Deno.serve(
     if (req.method !== "POST") {
       return new Response("Method not allowed", { status: 405, headers: corsHeaders });
     }
+
+    // S1: rate-limit por IP — 120 req / 60s por isolate (bypass p/ requisições autenticadas)
+    const rl = enforceRateLimit(req, { name: "log-web-vitals", limit: 120, windowSeconds: 60 });
+    if (rl) return rl;
 
     try {
       const ua = req.headers.get("user-agent");
