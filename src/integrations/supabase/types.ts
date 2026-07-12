@@ -20297,6 +20297,15 @@ export type Database = {
         Args: { _quote_id?: string; _sale_id?: string }
         Returns: Json
       }
+      fn_admin_cron_alert_breakdown: {
+        Args: never
+        Returns: {
+          alerts: number
+          failed: number
+          jobname: string
+          stalled: number
+        }[]
+      }
       fn_admin_cron_alert_metrics: { Args: never; Returns: Json }
       fn_admin_get_new_cron_failures: {
         Args: { _since_minutes?: number }
