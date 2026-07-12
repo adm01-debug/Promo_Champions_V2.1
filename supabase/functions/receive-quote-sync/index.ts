@@ -352,6 +352,10 @@ async function handlePromoGifts(
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  // S1: rate-limit por IP — 300 req / 60s (webhook legítimo raramente ultrapassa; HMAC valida acima)
+  const rl = enforceRateLimit(req, { name: "receive-quote-sync", limit: 300, windowSeconds: 60, bypassAuthenticated: false });
+  if (rl) return rl;
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const supabase = supabaseUrl && serviceKey ? createClient(supabaseUrl, serviceKey) : null;
