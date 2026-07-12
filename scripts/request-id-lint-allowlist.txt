@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-compute-forecast-accuracy
-conversational-intelligence
-create-stagnant-tasks
 customer-success-360
 customer-success-hub
 deal-probability
