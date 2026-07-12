@@ -78,13 +78,17 @@ export const useSalesAssistant = (
         .limit(50);
       if (error) throw error;
       // Batch-count messages for all conversations in one query instead of N separate requests
-      const convIds = (convs || []).map(c => c.id);
-      const { data: countRows } = convIds.length
-        ? await supabase
-            .from('chat_messages')
-            .select('conversation_id')
-            .in('conversation_id', convIds)
-        : { data: [] };
+      type CountRow = { conversation_id: string };
+      const countRows: CountRow[] = convIds.length
+        ? await chunkedIn<CountRow>(
+            convIds,
+            (chunk) => supabase
+              .from('chat_messages')
+              .select('conversation_id')
+              .in('conversation_id', chunk as string[]),
+            { parallel: true, label: 'sales-assistant.msg-count' },
+          )
+        : [];
       const countMap: Record<string, number> = {};
       (countRows || []).forEach(r => {
         countMap[r.conversation_id] = (countMap[r.conversation_id] || 0) + 1;
