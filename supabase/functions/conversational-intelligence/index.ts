@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface RecordingRow {
   id: string;
@@ -62,12 +63,15 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
     const ids = (recordings ?? []).map((r: RecordingRow) => r.id);
     let insights: InsightRow[] = [];
     if (ids.length > 0) {
-      const { data: ins, error: insErr } = await admin
-        .from("call_insights")
-        .select("*")
-        .in("recording_id", ids);
-      if (insErr) throw insErr;
-      insights = (ins ?? []) as InsightRow[];
+      insights = await chunkedIn<InsightRow>(
+        ids,
+        (chunk) =>
+          admin
+            .from("call_insights")
+            .select("*")
+            .in("recording_id", chunk),
+        { parallel: true, label: "conversational-intelligence.insights" }
+      );
     }
 
     const insightMap = new Map(insights.map((i) => [i.recording_id, i]));

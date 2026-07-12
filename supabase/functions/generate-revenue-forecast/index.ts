@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -83,20 +84,30 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
 
     // Fetch enrichment signals
     const dealIds = dealList.map((d) => d.id);
-    const [healthRes, velocityRes] = await Promise.all([
+    const [healthRows, velocityRows] = await Promise.all([
       dealIds.length
-        ? supabase.from("deal_health_scores").select("sale_id, health_score").in("sale_id", dealIds)
-        : Promise.resolve({ data: [], error: null }),
+        ? chunkedIn<{ sale_id: string; health_score: number }>(
+            dealIds,
+            (chunk) =>
+              supabase.from("deal_health_scores").select("sale_id, health_score").in("sale_id", chunk),
+            { parallel: true, label: "generate-revenue-forecast.health" }
+          )
+        : Promise.resolve([] as { sale_id: string; health_score: number }[]),
       dealIds.length
-        ? supabase.from("deal_velocity_predictions").select("sale_id, status").in("sale_id", dealIds)
-        : Promise.resolve({ data: [], error: null }),
+        ? chunkedIn<{ sale_id: string; status: string }>(
+            dealIds,
+            (chunk) =>
+              supabase.from("deal_velocity_predictions").select("sale_id, status").in("sale_id", chunk),
+            { parallel: true, label: "generate-revenue-forecast.velocity" }
+          )
+        : Promise.resolve([] as { sale_id: string; status: string }[]),
     ]);
 
     const healthMap = new Map<string, number>(
-      (healthRes.data ?? []).map((h: { sale_id: string; health_score: number }) => [h.sale_id, Number(h.health_score)]),
+      healthRows.map((h) => [h.sale_id, Number(h.health_score)]),
     );
     const velocityMap = new Map<string, string>(
-      (velocityRes.data ?? []).map((v: { sale_id: string; status: string }) => [v.sale_id, v.status]),
+      velocityRows.map((v) => [v.sale_id, v.status]),
     );
 
     // Fetch goal

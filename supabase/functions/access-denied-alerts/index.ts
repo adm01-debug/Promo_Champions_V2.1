@@ -2,6 +2,7 @@ import { Resend } from 'https://esm.sh/resend@2.0.0';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
@@ -240,13 +241,18 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
 
     // Get admin emails from salespeople table (linked by auth_user_id)
     const adminUserIds = adminRoles.map(r => r.user_id);
-    const { data: adminSalespeople } = await supabase
-      .from('salespeople')
-      .select('email')
-      .in('auth_user_id', adminUserIds)
-      .not('email', 'is', null);
+    const adminSalespeople = await chunkedIn<{ email: string | null }>(
+      adminUserIds,
+      (chunk) =>
+        supabase
+          .from('salespeople')
+          .select('email')
+          .in('auth_user_id', chunk)
+          .not('email', 'is', null),
+      { parallel: true, label: 'access-denied-alerts.admin_emails' }
+    );
 
-    const adminEmails = adminSalespeople?.map(s => s.email).filter(Boolean) || [];
+    const adminEmails = adminSalespeople.map(s => s.email).filter(Boolean) as string[];
 
     // Also check notification_preferences for admin emails
     const { data: notifPrefs } = await supabase

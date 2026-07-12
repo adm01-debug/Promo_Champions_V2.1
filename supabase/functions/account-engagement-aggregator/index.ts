@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 
 
@@ -46,11 +47,15 @@ Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
 
       let scores: { sale_id: string; score: number; tier: string }[] = [];
       if (saleIds.length > 0) {
-        const { data } = await supabase
-          .from("email_engagement_scores")
-          .select("sale_id, score, tier")
-          .in("sale_id", saleIds);
-        scores = (data ?? []) as typeof scores;
+        scores = await chunkedIn<{ sale_id: string; score: number; tier: string }>(
+          saleIds,
+          (chunk) =>
+            supabase
+              .from("email_engagement_scores")
+              .select("sale_id, score, tier")
+              .in("sale_id", chunk),
+          { parallel: true, label: "account-engagement-aggregator.scores" }
+        );
       }
 
       const scoreMap = new Map(scores.map((s) => [s.sale_id, s]));

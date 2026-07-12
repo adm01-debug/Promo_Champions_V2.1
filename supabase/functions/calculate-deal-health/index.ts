@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 interface Sale {
   id: string;
@@ -85,19 +86,29 @@ async function gatherContext(
   let criticalMomentsHigh = 0;
   let competitorMentions = 0;
   if (recordingIds.length) {
-    const { count: cmCount } = await supabase
-      .from('call_critical_moments')
-      .select('id', { count: 'exact', head: true })
-      .in('recording_id', recordingIds)
-      .in('severity', ['high', 'critical'])
-      .eq('status', 'new');
-    criticalMomentsHigh = cmCount || 0;
+    const cmRows = await chunkedIn<{ id: string }>(
+      recordingIds,
+      (chunk) =>
+        supabase
+          .from('call_critical_moments')
+          .select('id')
+          .in('recording_id', chunk)
+          .in('severity', ['high', 'critical'])
+          .eq('status', 'new'),
+      { parallel: true, label: 'calculate-deal-health.critical_moments' }
+    );
+    criticalMomentsHigh = cmRows.length;
 
-    const { count: compCount } = await supabase
-      .from('competitor_mentions')
-      .select('id', { count: 'exact', head: true })
-      .in('recording_id', recordingIds);
-    competitorMentions = compCount || 0;
+    const compRows = await chunkedIn<{ id: string }>(
+      recordingIds,
+      (chunk) =>
+        supabase
+          .from('competitor_mentions')
+          .select('id')
+          .in('recording_id', chunk),
+      { parallel: true, label: 'calculate-deal-health.competitor_mentions' }
+    );
+    competitorMentions = compRows.length;
   }
 
   const { count: pendingCoaching } = await supabase
@@ -428,4 +439,4 @@ Deno.serve(async req => {
       }
     );
   }
-}));
+});
