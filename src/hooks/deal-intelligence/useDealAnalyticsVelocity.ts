@@ -63,7 +63,7 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
       // Calculate velocities per stage
       const stageMap = new Map<string, number[]>();
 
-      (stageHistory || []).forEach(history => {
+      (stageHistory || []).forEach((history: StageRow) => {
         if (history.exited_at) {
           const entered = new Date(history.entered_at);
           const exited = new Date(history.exited_at);
