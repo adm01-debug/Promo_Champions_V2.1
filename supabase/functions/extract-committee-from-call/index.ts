@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 const SYSTEM_PROMPT = `Você é um analista B2B sênior. Extraia stakeholders mencionados na transcrição de uma call de vendas.
@@ -18,7 +19,7 @@ interface Stakeholder {
   confidence: number;
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -245,4 +246,4 @@ Deno.serve(async req => {
       }
     );
   }
-});
+}));
