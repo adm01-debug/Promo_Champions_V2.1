@@ -35,39 +35,42 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch deals data
-    const { data: deals, error: dealsError } = await supabase
-      .from('sales')
-      .select('*')
-      .in('id', dealIds);
+    // PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap);
+    // chunk dealIds so we never build an oversize URL.
+    const DB_CHUNK = 100;
+    const chunks: string[][] = [];
+    for (let i = 0; i < dealIds.length; i += DB_CHUNK) chunks.push(dealIds.slice(i, i + DB_CHUNK));
 
-    if (dealsError) {
-      console.error('Error fetching deals:', dealsError);
-      throw dealsError;
+    const deals: Record<string, unknown>[] = [];
+    const stageHistory: Record<string, unknown>[] = [];
+    const tasksSince = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const tasks: Record<string, unknown>[] = [];
+
+    for (const chunk of chunks) {
+      const [dealsRes, historyRes, tasksRes] = await Promise.all([
+        supabase.from('sales').select('*').in('id', chunk),
+        supabase.from('deal_stage_history').select('*').in('sale_id', chunk).order('entered_at', { ascending: false }),
+        supabase.from('tasks').select('*').in('sale_id', chunk).gte('created_at', tasksSince),
+      ]);
+
+      if (dealsRes.error) {
+        console.error('Error fetching deals chunk:', JSON.stringify(dealsRes.error));
+        throw new Error(`sales fetch failed: ${dealsRes.error.message ?? 'unknown'}`);
+      }
+      if (historyRes.error) {
+        console.error('Error fetching stage history chunk:', JSON.stringify(historyRes.error));
+        throw new Error(`deal_stage_history fetch failed: ${historyRes.error.message ?? 'unknown'}`);
+      }
+      if (tasksRes.error) {
+        console.error('Error fetching tasks chunk:', JSON.stringify(tasksRes.error));
+      }
+
+      if (dealsRes.data) deals.push(...dealsRes.data);
+      if (historyRes.data) stageHistory.push(...historyRes.data);
+      if (tasksRes.data) tasks.push(...tasksRes.data);
     }
 
-    // Fetch stage history for time analysis
-    const { data: stageHistory, error: historyError } = await supabase
-      .from('deal_stage_history')
-      .select('*')
-      .in('sale_id', dealIds)
-      .order('entered_at', { ascending: false });
 
-    if (historyError) {
-      console.error('Error fetching stage history:', historyError);
-      throw historyError;
-    }
-
-    // Fetch tasks for activity analysis
-    const { data: tasks, error: tasksError } = await supabase
-      .from('tasks')
-      .select('*')
-      .in('sale_id', dealIds)
-      .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-
-    if (tasksError) {
-      console.error('Error fetching tasks:', tasksError);
-    }
 
     const scores: Record<string, { score: number; factors: ScoringFactors; labels: Record<string, string> }> = {};
 
