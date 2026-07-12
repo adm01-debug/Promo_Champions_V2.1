@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 import { toast } from "sonner";
 
 function invalidate(qc: ReturnType<typeof useQueryClient>) {
@@ -10,17 +11,23 @@ function invalidate(qc: ReturnType<typeof useQueryClient>) {
 
 type BulkInput = { ids: string[] };
 
+async function bulkUpdate(ids: string[], patch: Record<string, unknown>, label: string) {
+  if (ids.length === 0) return;
+  await chunkedIn<{ id: string }>(
+    ids,
+    (chunk) => supabase
+      .from("prospect_cadences")
+      .update(patch)
+      .in("id", chunk as string[])
+      .select("id"),
+    { label },
+  );
+}
+
 export function useBulkPauseQuoteCadences() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ids }: BulkInput) => {
-      if (ids.length === 0) return;
-      const { error } = await supabase
-        .from("prospect_cadences")
-        .update({ status: "paused" })
-        .in("id", ids);
-      if (error) throw error;
-    },
+    mutationFn: async ({ ids }: BulkInput) => bulkUpdate(ids, { status: "paused" }, "cadences.pause"),
     onSuccess: (_, v) => {
       invalidate(qc);
       toast.success(`${v.ids.length} follow-up(s) pausado(s)`);
@@ -32,14 +39,7 @@ export function useBulkPauseQuoteCadences() {
 export function useBulkResumeQuoteCadences() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ids }: BulkInput) => {
-      if (ids.length === 0) return;
-      const { error } = await supabase
-        .from("prospect_cadences")
-        .update({ status: "active" })
-        .in("id", ids);
-      if (error) throw error;
-    },
+    mutationFn: async ({ ids }: BulkInput) => bulkUpdate(ids, { status: "active" }, "cadences.resume"),
     onSuccess: (_, v) => {
       invalidate(qc);
       toast.success(`${v.ids.length} follow-up(s) retomado(s)`);
@@ -51,14 +51,8 @@ export function useBulkResumeQuoteCadences() {
 export function useBulkCancelQuoteCadences() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ ids }: BulkInput) => {
-      if (ids.length === 0) return;
-      const { error } = await supabase
-        .from("prospect_cadences")
-        .update({ status: "cancelled", completed_at: new Date().toISOString() })
-        .in("id", ids);
-      if (error) throw error;
-    },
+    mutationFn: async ({ ids }: BulkInput) =>
+      bulkUpdate(ids, { status: "cancelled", completed_at: new Date().toISOString() }, "cadences.cancel"),
     onSuccess: (_, v) => {
       invalidate(qc);
       toast.success(`${v.ids.length} follow-up(s) cancelado(s)`);
