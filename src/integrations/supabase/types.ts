@@ -20423,6 +20423,14 @@ export type Database = {
         }[]
       }
       fn_convert_quote_to_sale: { Args: { _quote_id: string }; Returns: Json }
+      fn_cron_expected_interval: {
+        Args: { _schedule: string }
+        Returns: string
+      }
+      fn_cron_stalled_threshold: {
+        Args: { _schedule: string }
+        Returns: string
+      }
       fn_get_orders_conversion_seq_last: { Args: never; Returns: number }
       fn_list_cron_jobs: {
         Args: never
@@ -20453,6 +20461,11 @@ export type Database = {
         }
         Returns: string
       }
+      fn_test_backdate_cron_alert: {
+        Args: { _hours: number; _jobid: number }
+        Returns: number
+      }
+      fn_test_cleanup_cron_alerts: { Args: { _jobid: number }; Returns: number }
       fn_test_cleanup_dedupe_privileges: {
         Args: never
         Returns: {
@@ -20461,6 +20474,15 @@ export type Database = {
           passed: boolean
           role_name: string
         }[]
+      }
+      fn_test_simulate_stalled_check: {
+        Args: {
+          _jobid: number
+          _jobname: string
+          _last_run: string
+          _schedule: string
+        }
+        Returns: Json
       }
       generate_api_token: { Args: never; Returns: string }
       generate_device_fingerprint: {
