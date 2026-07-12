@@ -17,7 +17,7 @@ interface CoachingTarget {
   recommended_action: string;
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
