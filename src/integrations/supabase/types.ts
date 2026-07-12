@@ -4857,6 +4857,42 @@ export type Database = {
           },
         ]
       }
+      cron_failure_alerts: {
+        Row: {
+          alerted_at: string
+          created_at: string
+          id: string
+          jobid: number
+          jobname: string | null
+          notified_admin_count: number
+          return_message: string | null
+          start_time: string
+          status: string
+        }
+        Insert: {
+          alerted_at?: string
+          created_at?: string
+          id?: string
+          jobid: number
+          jobname?: string | null
+          notified_admin_count?: number
+          return_message?: string | null
+          start_time: string
+          status: string
+        }
+        Update: {
+          alerted_at?: string
+          created_at?: string
+          id?: string
+          jobid?: number
+          jobname?: string | null
+          notified_admin_count?: number
+          return_message?: string | null
+          start_time?: string
+          status?: string
+        }
+        Relationships: []
+      }
       cs_tickets: {
         Row: {
           assigned_to: string | null
@@ -19980,6 +20016,28 @@ export type Database = {
       fn_admin_conversion_trail: {
         Args: { _quote_id?: string; _sale_id?: string }
         Returns: Json
+      }
+      fn_admin_get_new_cron_failures: {
+        Args: { _since_minutes?: number }
+        Returns: {
+          end_time: string
+          jobid: number
+          jobname: string
+          return_message: string
+          start_time: string
+          status: string
+        }[]
+      }
+      fn_admin_mark_cron_failure_alerted: {
+        Args: {
+          _jobid: number
+          _jobname: string
+          _notified_admin_count: number
+          _return_message: string
+          _start_time: string
+          _status: string
+        }
+        Returns: string
       }
       fn_admin_platform_slo: {
         Args: never
