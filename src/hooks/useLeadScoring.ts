@@ -227,20 +227,30 @@ export const useCalculateLeadScores = () => {
     mutationFn: async (saleIds: string[]) => {
       if (saleIds.length === 0) return {};
 
-      const { data, error } = await supabase.functions.invoke<{
-        scores: Record<string, any>;
-      }>('lead-scoring', {
-        body: { dealIds: saleIds },
-      });
+      // Contrato do webhook aceita no máximo 500 dealIds por chamada.
+      // Fazemos chunking client-side para suportar bases grandes (900+ deals).
+      const CHUNK_SIZE = 500;
+      const merged: Record<string, unknown> = {};
 
-      if (error) throw error;
-      return data?.scores || {};
+      for (let i = 0; i < saleIds.length; i += CHUNK_SIZE) {
+        const chunk = saleIds.slice(i, i + CHUNK_SIZE);
+        const { data, error } = await supabase.functions.invoke<{
+          scores: Record<string, unknown>;
+        }>('lead-scoring', {
+          body: { dealIds: chunk },
+        });
+        if (error) throw error;
+        Object.assign(merged, data?.scores || {});
+      }
+
+      return merged;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lead-scoring'] });
     },
   });
 };
+
 
 function calculateCompanySizeScore(numColaboradores?: number | null): number {
   if (!numColaboradores) return 5;
