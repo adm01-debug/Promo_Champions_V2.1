@@ -18,6 +18,7 @@ import { ChurnPredictionPanel } from '@/components/analytics/ChurnPredictionPane
 import { CohortAnalysis } from '@/components/analytics/CohortAnalysis';
 import { LTVBySegment } from '@/components/analytics/LTVBySegment';
 import { AIPerformanceInsights } from '@/components/analytics/AIPerformanceInsights';
+import { CohortRetentionHeatmap } from '@/components/analytics/CohortRetentionHeatmap';
 import { AnimatedTabContent } from '@/components/analytics/AnimatedTabContent';
 import { Tabs } from '@/components/ui/tabs';
 import {
