@@ -2,6 +2,8 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
+
 
 
 
