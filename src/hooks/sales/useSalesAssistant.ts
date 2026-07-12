@@ -78,6 +78,7 @@ export const useSalesAssistant = (
         .limit(50);
       if (error) throw error;
       // Batch-count messages for all conversations in one query instead of N separate requests
+      const convIds = (convs || []).map(c => c.id);
       type CountRow = { conversation_id: string };
       const countRows: CountRow[] = convIds.length
         ? await chunkedIn<CountRow>(
