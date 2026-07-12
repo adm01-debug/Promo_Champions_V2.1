@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -43,12 +44,15 @@ export const CohortAnalysis: FC = () => {
 
       // Also fetch client names for mapping
       const allClientIds = (clients || []).map(c => c.id);
-      const { data: clientNames } = await supabase
-        .from('clients')
-        .select('id, name')
-        .in('id', allClientIds.length > 0 ? allClientIds : ['none']);
+      const clientNames = allClientIds.length > 0
+        ? await chunkedIn<{ id: string; name: string }>(
+            allClientIds,
+            (chunk) => supabase.from('clients').select('id, name').in('id', chunk as string[]),
+            { parallel: true, label: 'cohort.client-names' },
+          )
+        : [];
 
-      const nameToId = new Map(clientNames?.map(c => [c.name, c.id]) || []);
+      const nameToId = new Map(clientNames.map(c => [c.name, c.id]));
 
       // Build cohorts by month of client creation
       const cohortMap = new Map<string, Set<string>>();

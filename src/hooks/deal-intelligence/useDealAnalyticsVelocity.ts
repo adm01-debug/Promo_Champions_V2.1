@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { isWonSaleStatus } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 interface StageVelocity {
   stage: string;
@@ -49,15 +50,20 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
       const saleIds = (sales || []).map(s => s.id);
 
       // Get stage history
-      const { data: stageHistory } = await supabase
-        .from('deal_stage_history')
-        .select('sale_id, stage, entered_at, exited_at')
-        .in('sale_id', saleIds.length > 0 ? saleIds : ['none']);
+      type StageRow = { sale_id: string; stage: string; entered_at: string; exited_at: string | null };
+      const stageHistory = saleIds.length > 0 ? await chunkedIn<StageRow>(
+        saleIds,
+        (chunk) => supabase
+          .from('deal_stage_history')
+          .select('sale_id, stage, entered_at, exited_at')
+          .in('sale_id', chunk as string[]),
+        { parallel: true, label: 'deal-velocity.stage-history' },
+      ) : [];
 
       // Calculate velocities per stage
       const stageMap = new Map<string, number[]>();
 
-      (stageHistory || []).forEach(history => {
+      (stageHistory || []).forEach((history: StageRow) => {
         if (history.exited_at) {
           const entered = new Date(history.entered_at);
           const exited = new Date(history.exited_at);

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export interface ClientPortfolioItem {
@@ -106,13 +107,11 @@ export const usePortfolioStats = (salespersonId?: string) => {
     queryFn: async () => {
       if (clientIds.length === 0) return [] as Array<{ client_id: string; is_icp_match: boolean | null }>;
 
-      const { data, error } = await supabase
-        .from('icp_data')
-        .select('client_id, is_icp_match')
-        .in('client_id', clientIds);
-
-      if (error) throw error;
-      return (data || []) as Array<{ client_id: string; is_icp_match: boolean | null }>;
+      return await chunkedIn<{ client_id: string; is_icp_match: boolean | null }>(
+        clientIds,
+        (chunk) => supabase.from('icp_data').select('client_id, is_icp_match').in('client_id', chunk as string[]),
+        { parallel: true, label: 'portfolio.icp' },
+      );
     },
     enabled: clientIds.length > 0,
   });

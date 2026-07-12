@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 import { toast } from "sonner";
 
 export interface InsightComment {
@@ -53,15 +54,15 @@ export function useInsightComments(insightId: string | null) {
       if (!rows.length) return [];
 
       const authorIds = Array.from(new Set(rows.map((r) => r.author_id)));
-      const { data: people } = await supabase
-        .from("salespeople_public")
-        .select("id, name, avatar_url")
-        .in("id", authorIds);
-      const map = new Map(
-        ((people ?? []) as Array<{ id: string; name: string | null; avatar_url: string | null }>).map(
-          (p) => [p.id, p],
-        ),
+      const people = await chunkedIn<{ id: string; name: string | null; avatar_url: string | null }>(
+        authorIds,
+        (chunk) => supabase
+          .from("salespeople_public")
+          .select("id, name, avatar_url")
+          .in("id", chunk as string[]),
+        { parallel: true, label: "insight-comments.authors" },
       );
+      const map = new Map(people.map((p) => [p.id, p]));
 
       return rows.map((r) => ({
         ...r,

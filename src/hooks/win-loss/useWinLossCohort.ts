@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 
 export interface CohortCell {
@@ -25,11 +26,13 @@ export const useWinLossCohort = (rows: WLAnalysisRow[]) => {
     queryKey: ["wl-cohort-sales", ids.sort().join(",")],
     enabled: ids.length > 0,
     queryFn: async (): Promise<Record<string, string>> => {
-      const { data } = await supabase.from("sales").select("id, created_at").in("id", ids);
+      const data = await chunkedIn<{ id: string; created_at: string }>(
+        ids,
+        (chunk) => supabase.from("sales").select("id, created_at").in("id", chunk as string[]),
+        { parallel: true, label: "wl.cohort.sales" },
+      );
       const map: Record<string, string> = {};
-      ((data as Array<{ id: string; created_at: string }> | null) ?? []).forEach(s => {
-        map[s.id] = s.created_at;
-      });
+      data.forEach(s => { map[s.id] = s.created_at; });
       return map;
     },
     staleTime: 60_000,
