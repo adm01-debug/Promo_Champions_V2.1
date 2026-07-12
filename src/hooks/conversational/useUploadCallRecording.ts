@@ -11,8 +11,15 @@ interface UploadInput {
 }
 
 /**
- * Faz upload de um arquivo de áudio para o bucket privado `call-recordings`
- * e cria o registro correspondente em `call_recordings` (status = 'ready').
+ * Faz upload do áudio para o bucket privado `call-recordings` e ENFILEIRA
+ * a criação da linha em `call_recordings` em `call_recording_ingest_jobs`.
+ *
+ * Vantagens sobre o insert direto:
+ *  • idempotência: `idempotency_key = sha256(salesperson_id|audio_url|size|mtime)`
+ *    → reenvios/reties nunca duplicam registros;
+ *  • retry automático com backoff exponencial + jitter no worker
+ *    (`process-call-recording-ingest`);
+ *  • rollback do arquivo em caso de falha ao enfileirar.
  */
 export function useUploadCallRecording() {
   const qc = useQueryClient();
@@ -35,37 +42,61 @@ export function useUploadCallRecording() {
         });
       if (upErr) throw upErr;
 
-      const { error: insErr } = await supabase
-        .from("call_recordings")
+      const idempotencyKey = await sha256(
+        [sp as string, path, input.file.size, input.file.lastModified].join("|"),
+      );
+
+      const payload = {
+        id: recordingId,
+        salesperson_id: sp as string,
+        sale_id: input.sale_id ?? null,
+        client_id: input.client_id ?? null,
+        title: input.title,
+        audio_url: path,
+        duration_seconds: input.duration_seconds ?? 0,
+        status: "ready" as const,
+        metadata: {
+          original_filename: input.file.name,
+          size_bytes: input.file.size,
+          mime_type: input.file.type,
+        },
+      };
+
+      const { error: qErr } = await supabase
+        .from("call_recording_ingest_jobs")
         .insert({
-          id: recordingId,
+          idempotency_key: idempotencyKey,
+          recording_id: recordingId,
           salesperson_id: sp as string,
-          sale_id: input.sale_id ?? null,
-          client_id: input.client_id ?? null,
-          title: input.title,
-          audio_url: path,
-          duration_seconds: input.duration_seconds ?? 0,
-          status: "ready",
-          metadata: {
-            original_filename: input.file.name,
-            size_bytes: input.file.size,
-            mime_type: input.file.type,
-          },
+          payload,
         });
-      if (insErr) {
-        // rollback: remove arquivo se a linha falhar
+
+      if (qErr && qErr.code !== "23505" /* dedupe = já enfileirado */) {
         await supabase.storage.from("call-recordings").remove([path]).catch(() => {});
-        throw insErr;
+        throw qErr;
       }
 
-      return { id: recordingId, path };
+      // Dispara o worker imediatamente para reduzir latência; se falhar,
+      // o cron de 1min ainda drena a fila.
+      supabase.functions.invoke("process-call-recording-ingest", { body: {} }).catch(() => {});
+
+      return { id: recordingId, path, idempotency_key: idempotencyKey };
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["call-recordings"] });
-      toast.success("Áudio enviado com sucesso! 🎙️");
+      qc.invalidateQueries({ queryKey: ["call-recording-ingest-jobs"] });
+      toast.success("Áudio enviado — processamento em andamento 🎙️");
     },
-    onError: (e) => toast.error(`Falha no upload: ${e instanceof Error ? e.message : "erro desconhecido"}`),
+    onError: (e) =>
+      toast.error(`Falha no upload: ${e instanceof Error ? e.message : "erro desconhecido"}`),
   });
+}
+
+async function sha256(input: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 /**

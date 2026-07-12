@@ -2851,6 +2851,63 @@ export type Database = {
           },
         ]
       }
+      call_recording_ingest_jobs: {
+        Row: {
+          attempts: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          last_error_at: string | null
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          next_attempt_at: string
+          payload: Json
+          recording_id: string
+          salesperson_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          last_error?: string | null
+          last_error_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload: Json
+          recording_id: string
+          salesperson_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          last_error?: string | null
+          last_error_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload?: Json
+          recording_id?: string
+          salesperson_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       call_recordings: {
         Row: {
           action_items: Json
@@ -20123,6 +20180,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      complete_call_recording_ingest_job: {
+        Args: { _error?: string; _job_id: string; _success: boolean }
+        Returns: undefined
+      }
       compute_forecast_rollup: {
         Args: { _horizon_days?: number }
         Returns: {
@@ -20172,6 +20233,33 @@ export type Database = {
       declare_step_winner: {
         Args: { _step_id: string; _variant_label: string }
         Returns: boolean
+      }
+      dequeue_call_recording_ingest_jobs: {
+        Args: { _batch_size?: number; _worker_id?: string }
+        Returns: {
+          attempts: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          last_error_at: string | null
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          next_attempt_at: string
+          payload: Json
+          recording_id: string
+          salesperson_id: string
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "call_recording_ingest_jobs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       detect_renewal_risks: { Args: never; Returns: number }
       detect_slow_queries: {
