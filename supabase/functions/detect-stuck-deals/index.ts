@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -20,7 +21,7 @@ function classify(hours: number, p75: number, p90: number): "watch" | "stuck" | 
   return "watch";
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("detect-stuck-deals", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -90,4 +91,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
