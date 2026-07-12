@@ -131,6 +131,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
     .maybeSingle();
 
   if (cached?.narrative) {
+    ctx.log('info', 'cache_hit', { userId, forecastId, cacheKey });
     await serviceClient
       .from('ai_narrative_cache')
       .update({ hit_count: (cached.hit_count ?? 0) + 1 })
@@ -140,6 +141,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   }
+
 
   const factorsText = (forecast.factors ?? [])
     .map((f) => `- [${f.impact.toUpperCase()}] ${f.label}: ${f.detail}`)
