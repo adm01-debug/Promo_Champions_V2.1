@@ -26,6 +26,7 @@ import { CronAlertMetricsPanel } from "@/components/admin/connections/CronAlertM
 import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRatePanel";
 import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel";
 import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAlertsPanel";
+import { DeadLetterIngestPanel } from "@/components/admin/connections/DeadLetterIngestPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
