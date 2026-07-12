@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface Body {
   sale_ids?: string[];
@@ -13,7 +14,7 @@ function tierFor(score: number): "cold" | "warm" | "hot" | "champion" {
   return "cold";
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("email-engagement-scorer", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -119,4 +120,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
