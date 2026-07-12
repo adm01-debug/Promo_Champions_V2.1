@@ -59,6 +59,56 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
     }
 
     const { context, salespersonId, action } = validation.data;
+    const forecastId = (validation.data as { forecast_id?: string }).forecast_id;
+    const recordingId = (validation.data as { recording_id?: string }).recording_id;
+
+    // ────────────────────────────────────────────────────────────────
+    // SKILLS ROUTER — delega para edge functions especialistas
+    // ────────────────────────────────────────────────────────────────
+    if (action === 'forecast_narrative') {
+      if (!forecastId) {
+        return new Response(
+          JSON.stringify({ error: 'forecast_id (uuid) obrigatório para skill forecast_narrative' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+      const skillResp = await fetch(`${supabaseUrl}/functions/v1/forecast-narrative`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+        },
+        body: JSON.stringify({ forecast_id: forecastId }),
+      });
+      const skillBody = await skillResp.text();
+      return new Response(skillBody, {
+        status: skillResp.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (action === 'coaching_plan') {
+      if (!recordingId) {
+        return new Response(
+          JSON.stringify({ error: 'recording_id (uuid) obrigatório para skill coaching_plan' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+      const skillResp = await fetch(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+        },
+        body: JSON.stringify({ recording_id: recordingId }),
+      });
+      const skillBody = await skillResp.text();
+      return new Response(skillBody, {
+        status: skillResp.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    // ────────────────────────────────────────────────────────────────
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
