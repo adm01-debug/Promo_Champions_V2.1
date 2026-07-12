@@ -112,6 +112,7 @@ const TAB_CONTENT: Record<string, React.FC> = {
   weekly: WeeklyPerformanceComparison,
   'churn-risk': ChurnPredictionPanel,
   cohort: CohortAnalysis,
+  'cohort-heatmap': CohortRetentionHeatmap,
   ltv: LTVBySegment,
 };
 
