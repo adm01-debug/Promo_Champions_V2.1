@@ -104,7 +104,9 @@ export function DeadLetterIngestPanel() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertOctagon className="h-4 w-4 text-destructive" />
             Fila de ingestão — Dead-letter
-            <Badge variant="outline" className="ml-2">{jobs.length}</Badge>
+            <Badge variant="outline" className="ml-2">
+              {totalCount > jobs.length ? `${jobs.length} de ${totalCount}` : jobs.length}
+            </Badge>
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={() => void load()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
