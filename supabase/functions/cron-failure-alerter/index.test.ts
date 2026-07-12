@@ -16,14 +16,28 @@ import {
   assert,
   assertNotEquals,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
 const ANON = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
 
-const supabase = createClient(SUPABASE_URL, ANON, {
-  auth: { persistSession: false, autoRefreshToken: false },
-});
+// Chama uma RPC via PostgREST — evita dependência npm no runner de tests.
+async function rpc<T = unknown>(fn: string, params: Record<string, unknown>): Promise<{
+  data: T | null;
+  error: { message: string } | null;
+}> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: {
+      apikey: ANON,
+      Authorization: `Bearer ${ANON}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  const text = await res.text();
+  if (!res.ok) return { data: null, error: { message: text || `HTTP ${res.status}` } };
+  try { return { data: text ? JSON.parse(text) as T : null, error: null }; }
+  catch { return { data: text as unknown as T, error: null }; }
+}
 
 // Base id sintético — usar offsets negativos distintos por cenário.
 const JOB = {
@@ -41,8 +55,8 @@ const JOB = {
 } as const;
 
 async function cleanup(jobid: number) {
-  const { error } = await supabase.rpc("fn_test_cleanup_cron_alerts", { _jobid: jobid });
-  if (error) throw error;
+  const { error } = await rpc("fn_test_cleanup_cron_alerts", { _jobid: jobid });
+  if (error) throw new Error(error.message);
 }
 
 async function simulate(
@@ -51,20 +65,20 @@ async function simulate(
   schedule: string,
   lastRun: Date,
 ) {
-  const { data, error } = await supabase.rpc("fn_test_simulate_stalled_check", {
-    _jobid: jobid,
-    _jobname: jobname,
-    _schedule: schedule,
-    _last_run: lastRun.toISOString(),
-  });
-  if (error) throw error;
-  return data as {
+  const { data, error } = await rpc<{
     alert_created: boolean;
     skipped_reason: string | null;
     expected_interval: string;
     threshold: string;
     gap: string;
-  };
+  }>("fn_test_simulate_stalled_check", {
+    _jobid: jobid,
+    _jobname: jobname,
+    _schedule: schedule,
+    _last_run: lastRun.toISOString(),
+  });
+  if (error) throw new Error(error.message);
+  return data!;
 }
 
 async function backdate(jobid: number, hoursAgo: number) {
