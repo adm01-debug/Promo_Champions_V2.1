@@ -30,6 +30,13 @@ vi.mock('@/components/dashboard/modules/OverviewModule', () => ({
   OverviewModule: () => <div data-testid="overview-module">Overview Module</div>
 }));
 
+// Stub DevKpiDebugPanel — it fires a live supabase.rpc('get_dashboard_kpis') in useEffect
+// which floods the test runner with unhandled errors. The panel is dev-only tooling.
+vi.mock('@/components/dashboard/DevKpiDebugPanel', () => ({
+  DevKpiDebugPanel: () => null,
+  default: () => null,
+}));
+
 // Mock DropdownMenu for testing
 vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenu: ({ children }: any) => <div>{children}</div>,
