@@ -73,6 +73,10 @@ async function scan(): Promise<Offense[]> {
     const lines = text.split("\n");
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      // Diretiva de escape: `// chunked-in-lint-ignore-next-line` na linha anterior.
+      const prev = i > 0 ? lines[i - 1] : "";
+      if (/chunked-in-lint-ignore-next-line/.test(prev)) continue;
+
       IN_CALL_RE.lastIndex = 0;
       let m: RegExpExecArray | null;
       while ((m = IN_CALL_RE.exec(line)) !== null) {
