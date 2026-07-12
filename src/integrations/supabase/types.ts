@@ -967,6 +967,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_narrative_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          expires_at: string
+          hit_count: number
+          id: string
+          model: string | null
+          narrative: string
+          narrative_type: string
+          payload_hash: string
+          tokens_input: number | null
+          tokens_output: number | null
+          updated_at: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          expires_at: string
+          hit_count?: number
+          id?: string
+          model?: string | null
+          narrative: string
+          narrative_type: string
+          payload_hash: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+          updated_at?: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          hit_count?: number
+          id?: string
+          model?: string | null
+          narrative?: string
+          narrative_type?: string
+          payload_hash?: string
+          tokens_input?: number | null
+          tokens_output?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_sales_insights: {
         Row: {
           confidence_score: number | null
@@ -20059,6 +20104,7 @@ export type Database = {
           processed: number
         }[]
       }
+      cleanup_expired_narrative_cache: { Args: never; Returns: number }
       coaching_progress_by_salesperson: {
         Args: { _days?: number; _salesperson_id: string }
         Returns: {
