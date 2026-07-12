@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-export-winloss-pdf
-external-db-bridge
-extract-coaching-actions
 extract-committee-from-call
 extract-deal-stakeholders
 generate-executive-briefing

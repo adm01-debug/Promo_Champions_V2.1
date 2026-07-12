@@ -1,5 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface AnalysisRow {
@@ -10,7 +10,7 @@ interface AnalysisRow {
   analyzed_at: string;
 }
 
-serve(async req => {
+Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -112,4 +112,4 @@ serve(async req => {
       }
     );
   }
-});
+}));
