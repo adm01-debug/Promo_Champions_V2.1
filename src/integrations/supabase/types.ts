@@ -20559,6 +20559,7 @@ export type Database = {
         Args: { _salesperson_id: string; _season_id: string }
         Returns: Json
       }
+      reset_pg_stat_statements_weekly: { Args: never; Returns: undefined }
       schedule_next_qbrs: { Args: never; Returns: number }
       search_call_library: {
         Args: { _limit?: number; _query: string }
