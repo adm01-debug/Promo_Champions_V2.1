@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-extract-committee-from-call
-extract-deal-stakeholders
-generate-executive-briefing
 generate-loss-coaching
 generate-revenue-forecast
 helpdesk-sync
