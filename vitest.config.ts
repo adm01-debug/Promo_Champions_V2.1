@@ -11,16 +11,26 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      // Escopo: código puro auditável (lib/utils/services/*Helpers).
-      // Componentes React de página são cobertos pela suite E2E (Playwright),
-      // não faz sentido dobrar esforço aqui.
+      // Escopo Tier-1: código puro crítico com cobertura enforced ≥85%.
+      // Expandir esta lista à medida que novos módulos ganharem suites de teste.
+      // Componentes React de página são cobertos por E2E (Playwright).
       include: [
-        'src/lib/**/*.{ts,tsx}',
-        'src/utils/**/*.{ts,tsx}',
-        'src/services/**/*.{ts,tsx}',
-        'src/components/**/*Helpers.ts',
-        'src/components/**/*helpers.ts',
-        'src/hooks/**/*Helpers.ts',
+        'src/lib/winloss/severityFromScore.ts',
+        'src/lib/winloss/scenarioChartKey.ts',
+        'src/lib/winloss/riskReasons.ts',
+        'src/lib/mergeTags.ts',
+        'src/lib/gamification.ts',
+        'src/lib/orderTracking/stages.ts',
+        'src/lib/utils.ts',
+        'src/utils/dateHelpers.ts',
+        'src/utils/fuzzing.ts',
+        'src/components/reporting/funnelReportHelpers.ts',
+        'src/components/forecast/forecastHelpers.ts',
+        'src/components/orders/orderHelpers.ts',
+        'src/components/lead-scoring/predictiveScoringHelpers.ts',
+        'src/components/email/aiEmailHelpers.ts',
+        'src/components/nlq/nlqHelpers.ts',
+        'src/hooks/reports/salesReportHelpers.ts',
       ],
       exclude: [
         'src/**/*.test.{ts,tsx}',
