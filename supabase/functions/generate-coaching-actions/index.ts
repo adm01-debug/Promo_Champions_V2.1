@@ -28,21 +28,28 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const lovableKey = Deno.env.get('LOVABLE_API_KEY');
-  const cronSecret = Deno.env.get('COACHING_CRON_SECRET');
-
   if (!lovableKey) {
     return new Response(JSON.stringify({ error: 'AI not configured' }), {
       status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
-  // Auth: user JWT OR cron secret
+  const admin = createClient(supabaseUrl, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  // Auth: user JWT OR shared X-Cron-Secret matching public._internal_secrets['coaching_cron_secret']
   const authHeader = req.headers.get('Authorization');
   const providedSecret = req.headers.get('X-Cron-Secret');
   let isCron = false;
 
   if (!authHeader) {
-    if (!cronSecret || providedSecret !== cronSecret) {
+    const { data: sec } = await admin
+      .from('_internal_secrets')
+      .select('value')
+      .eq('key', 'coaching_cron_secret')
+      .maybeSingle();
+    if (!sec?.value || providedSecret !== sec.value) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
