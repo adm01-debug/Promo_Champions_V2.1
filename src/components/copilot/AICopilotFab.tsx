@@ -23,6 +23,33 @@ export const AICopilotFab: FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
+  // Skill targets: buscamos IDs recentes para habilitar os chips só quando fazem sentido
+  const { data: skillTargets } = useQuery({
+    queryKey: ['copilot-skill-targets'],
+    enabled: isOpen,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const [{ data: forecast }, { data: recording }] = await Promise.all([
+        supabase
+          .from('revenue_forecasts')
+          .select('id')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from('call_recordings')
+          .select('id')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+      return {
+        forecastId: (forecast as { id?: string } | null)?.id ?? null,
+        recordingId: (recording as { id?: string } | null)?.id ?? null,
+      };
+    },
+  });
+
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
