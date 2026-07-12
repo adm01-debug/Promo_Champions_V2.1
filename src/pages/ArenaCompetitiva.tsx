@@ -111,6 +111,13 @@ const ArenaCompetitiva = () => {
 
   const { unreadCount } = useRankNotifications(currentSalesperson?.id);
 
+  const visibleTabs = useMemo(() => {
+    const cat = CATEGORIES.find((c) => c.id === activeCategory);
+    if (!cat) return ALL_TABS;
+    const set = new Set(cat.tabs);
+    return ALL_TABS.filter((t) => set.has(t.value));
+  }, [activeCategory]);
+
   return (
     <>
       <Helmet>
