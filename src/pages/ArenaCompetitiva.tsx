@@ -20,7 +20,80 @@ import { supabase } from '@/integrations/supabase/client';
 import { useRankNotifications } from '@/hooks/useRankNotifications';
 import { Badge } from '@/components/ui/badge';
 
+const ALL_TABS = [
+  { value: 'feed', icon: Trophy, label: 'Vitórias' },
+  { value: 'profile', icon: User, label: 'Perfil' },
+  { value: 'ranking', icon: Flame, label: 'Ranking' },
+  { value: 'badges', icon: Award, label: 'Badges' },
+  { value: 'fame', icon: Star, label: 'Kudos' },
+  { value: 'streaks', icon: TrendingUp, label: 'Streaks' },
+  { value: 'leagues', icon: Shield, label: 'Ligas' },
+  { value: 'h2h', icon: Users, label: '1v1' },
+  { value: 'bench', icon: BarChart3, label: 'Bench' },
+  { value: 'heatmap', icon: Clock, label: 'Heatmap' },
+  { value: 'goals', icon: Target, label: 'Metas' },
+  { value: 'missions', icon: Target, label: 'Missões' },
+  { value: 'chat', icon: MessageCircle, label: 'Chat' },
+  { value: 'wheel', icon: Gift, label: 'Roda' },
+  { value: 'battles', icon: Swords, label: 'Duelos' },
+  { value: 'tournament', icon: Crown, label: 'Torneios' },
+  { value: 'bets', icon: Coins, label: 'Apostas' },
+  { value: 'territory', icon: MapPin, label: 'Territórios' },
+  { value: 'tv', icon: Tv, label: 'TV' },
+  { value: 'tvpro', icon: Monitor, label: 'TV Pro' },
+  { value: 'scoreboard', icon: Monitor, label: 'Placar' },
+  { value: 'comparison', icon: Search, label: 'Market Intel' },
+  { value: 'plan', icon: ListChecks, label: 'Plano 10 Etapas', special: true },
+  { value: 'evolution', icon: TrendingUp, label: 'Evolução' },
+] as const;
+
+const CATEGORIES: ArenaCategory[] = [
+  {
+    id: 'ranking',
+    label: 'Ranking & Ligas',
+    description: 'Posições, streaks, ligas e 1v1',
+    icon: Flame,
+    tabs: ['ranking', 'leagues', 'streaks', 'h2h', 'bench'],
+    gradient: 'bg-gradient-to-br from-orange-500/20 via-red-500/10 to-transparent',
+  },
+  {
+    id: 'competitions',
+    label: 'Competições',
+    description: 'Duelos, torneios, apostas e territórios',
+    icon: Swords,
+    tabs: ['battles', 'tournament', 'bets', 'territory', 'missions', 'wheel'],
+    gradient: 'bg-gradient-to-br from-primary/20 via-blue-500/10 to-transparent',
+  },
+  {
+    id: 'profile',
+    label: 'Perfil & Progresso',
+    description: 'Perfil, badges, kudos, metas e vitórias',
+    icon: User,
+    tabs: ['feed', 'profile', 'badges', 'fame', 'goals', 'evolution', 'heatmap'],
+    gradient: 'bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-transparent',
+  },
+  {
+    id: 'broadcast',
+    label: 'TV & Placar',
+    description: 'Modos de exibição para monitores',
+    icon: Tv,
+    tabs: ['tv', 'tvpro', 'scoreboard'],
+    gradient: 'bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-transparent',
+  },
+  {
+    id: 'tools',
+    label: 'Ferramentas',
+    description: 'Chat, comparativos e plano de melhoria',
+    icon: ListChecks,
+    tabs: ['chat', 'comparison', 'plan'],
+    gradient: 'bg-gradient-to-br from-yellow-500/20 via-amber-500/10 to-transparent',
+  },
+];
+
 const ArenaCompetitiva = () => {
+  const [activeCategory, setActiveCategory] = useState<ArenaCategoryId>('ranking');
+  const [activeTab, setActiveTab] = useState<string>('ranking');
+
   const { data: currentSalesperson } = useQuery({
     queryKey: ['arena-current-sp'],
     queryFn: async () => {
