@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
@@ -124,7 +125,7 @@ async function generateInsights(patterns: Array<Record<string, unknown>>, totalR
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("mine-win-loss-patterns", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const authHeader = req.headers.get("Authorization");
@@ -163,4 +164,4 @@ Deno.serve(async (req) => {
     console.error("mine-win-loss-patterns error", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
-});
+}));

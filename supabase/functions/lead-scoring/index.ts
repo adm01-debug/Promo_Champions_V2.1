@@ -1,7 +1,7 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface ScoringFactors {
   dealValue: number;
@@ -11,7 +11,7 @@ interface ScoringFactors {
   recentActivity: number;
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -207,4 +207,4 @@ serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-});
+}));
