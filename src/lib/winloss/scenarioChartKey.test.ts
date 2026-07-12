@@ -35,7 +35,7 @@ describe('buildScenarioChartKey', () => {
     const k1 = buildScenarioChartKey({ ...base, data });
     const k2 = buildScenarioChartKey({ ...base, data });
     expect(k1).toBe(k2);
-    expect(k1).toContain('scenario-sigma-z1.96');
+    expect(k1).toContain('scenario-see-z1.96');
     expect(k1).toContain('h3');
     expect(k1).toContain('n4');
     expect(k1).toContain('fit6');
