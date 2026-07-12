@@ -77,13 +77,20 @@ export default defineConfig({
           // Heavy & lazy-only libs — isolated so they only load on routes that import them
           if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
           if (id.includes('framer-motion')) return 'vendor-motion';
-          if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf';
+          if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('html-to-image')) return 'vendor-pdf';
           if (id.includes('xlsx') || id.includes('exceljs')) return 'vendor-excel';
-          if (id.includes('leaflet')) return 'vendor-maps';
+          if (id.includes('leaflet') || id.includes('react-leaflet')) return 'vendor-maps';
+          if (id.includes('@xyflow') || id.includes('reactflow')) return 'vendor-flow';
           if (id.includes('@dnd-kit')) return 'vendor-dnd';
           if (id.includes('date-fns')) return 'vendor-date';
           if (id.includes('lucide-react')) return 'vendor-icons';
-          if (id.includes('zod') || id.includes('react-hook-form')) return 'vendor-forms';
+          if (id.includes('zod') || id.includes('react-hook-form') || id.includes('@hookform')) return 'vendor-forms';
+          if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-') || id.includes('micromark') || id.includes('mdast-') || id.includes('hast-') || id.includes('unified') || id.includes('unist-')) return 'vendor-markdown';
+          if (id.includes('papaparse') || id.includes('fuse.js')) return 'vendor-data-utils';
+          if (id.includes('canvas-confetti')) return 'vendor-confetti';
+          if (id.includes('cmdk') || id.includes('embla-carousel') || id.includes('vaul') || id.includes('input-otp') || id.includes('react-day-picker') || id.includes('react-resizable-panels') || id.includes('react-window') || id.includes('react-intersection-observer')) return 'vendor-ui-extras';
+          if (id.includes('sonner') || id.includes('next-themes') || id.includes('react-helmet-async')) return 'vendor-ui-utils';
+          if (id.includes('@lovable.dev/cloud-auth-js') || id.includes('web-vitals')) return 'vendor-platform';
           return 'vendor';
         },
       },
