@@ -52,12 +52,8 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
     });
   }
 
-  const rl = await checkRateLimit(`forecast-narrative:${userData.user.id}`, { max: 20, windowSec: 60 });
-  if (!rl.allowed) {
-    return new Response(JSON.stringify({ error: 'Rate limit exceeded', retry_after_sec: rl.retryAfter }), {
-      status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) },
-    });
-  }
+  const rlBlock = enforceRateLimit(req, { name: 'forecast-narrative', limit: 20, windowSeconds: 60 });
+  if (rlBlock) return rlBlock;
 
   let body: { forecast_id?: string };
   try { body = await req.json(); } catch {
