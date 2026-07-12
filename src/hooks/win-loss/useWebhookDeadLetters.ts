@@ -102,11 +102,15 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = "pending") {
 
   const archive = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await supabase
-        .from("winloss_webhook_dead_letters")
-        .update(updatePayload("winloss_webhook_dead_letters", { status: "archived" }))
-        .in("id", ids);
-      if (error) throw error;
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) => supabase
+          .from("winloss_webhook_dead_letters")
+          .update(updatePayload("winloss_webhook_dead_letters", { status: "archived" }))
+          .in("id", chunk as string[])
+          .select("id"),
+        { label: "winloss.dl.archive" },
+      );
     },
     onSuccess: () => {
       toast.success("Arquivado");
