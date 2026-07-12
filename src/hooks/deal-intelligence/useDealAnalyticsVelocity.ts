@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { isWonSaleStatus } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 interface StageVelocity {
   stage: string;
