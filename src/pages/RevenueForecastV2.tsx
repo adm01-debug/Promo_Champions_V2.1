@@ -101,18 +101,42 @@ export default function RevenueForecastV2() {
         />
       </Helmet>
       <div className="container mx-auto py-6 px-4 space-y-6">
-        <header className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+        <header className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <Sparkles className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Revenue Forecast v2
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Ensemble Holt-Winters + Linear + Monte Carlo · bandas P10/P50/P90 · what-if
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Revenue Forecast v2
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Ensemble Holt-Winters + Linear + Monte Carlo · bandas P10/P50/P90 · what-if
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!adjusted}
+            onClick={() => {
+              if (!adjusted) return;
+              const csv = buildRevenueForecastCsv(adjusted);
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `revenue-forecast-v2-${horizon}m.csv`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            aria-label="Exportar CSV"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exportar CSV
+          </Button>
         </header>
 
         <div className="grid gap-4 md:grid-cols-4">
