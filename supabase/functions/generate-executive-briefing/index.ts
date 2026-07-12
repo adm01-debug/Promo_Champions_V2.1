@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface BriefingPayload {
   headline: string;
@@ -20,7 +21,7 @@ Retorne via tool call \`generate_briefing\` com:
 - recommended_actions: exatamente 3 ações concretas para o dia
 Tom: estratégico, direto, sem jargão vazio.`;
 
-Deno.serve(async (req: Request) => {
+Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -162,4 +163,4 @@ Deno.serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
