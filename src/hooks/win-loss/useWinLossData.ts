@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chunkedIn } from "@/lib/supabase/chunkedIn";
 import {
   periodSinceISO,
   type WinLossFilterState,
@@ -39,12 +40,13 @@ export const useFilteredWinLossAnalyses = (filters: WinLossFilterState) =>
 
       // Salesperson filter via sales join (small N — client filter to keep query simple)
       if (filters.salespersonIds.length && rows.length) {
-        const { data: sales } = await supabase
-          .from("sales")
-          .select("id,salesperson_id")
-          .in("id", rows.map(r => r.sale_id));
+        const sales = await chunkedIn<{ id: string; salesperson_id: string | null }>(
+          rows.map((r) => r.sale_id),
+          (chunk) => supabase.from("sales").select("id,salesperson_id").in("id", chunk as string[]),
+          { parallel: true, label: "wl.sales" },
+        );
         const allow = new Set(
-          (sales ?? [])
+          sales
             .filter(s => filters.salespersonIds.includes(s.salesperson_id ?? ""))
             .map(s => s.id),
         );
