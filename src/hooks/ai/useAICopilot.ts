@@ -111,6 +111,83 @@ export function useAICopilot() {
     fetchSuggestion('quick_answer', question);
   }, [fetchSuggestion]);
 
+  /**
+   * SKILL: Narrativa de forecast
+   * Explica o forecast atual em linguagem natural (usa cache semântico via forecast-narrative).
+   */
+  const getForecastNarrative = useCallback(
+    async (forecastId: string): Promise<{ narrative?: string; cached?: boolean; error?: string }> => {
+      loadingRef.current = true;
+      setIsLoading(true);
+      try {
+        const page = PAGE_CONTEXT_MAP[location.pathname] || location.pathname;
+        const { data, error } = await supabase.functions.invoke('ai-copilot', {
+          body: {
+            context: { page },
+            salespersonId: salesperson?.id,
+            action: 'forecast_narrative',
+            forecast_id: forecastId,
+          },
+        });
+        if (error) return { error: error.message };
+        if (data?.narrative) {
+          setSuggestion({
+            text: data.narrative,
+            timestamp: Date.now(),
+            page: location.pathname,
+          });
+          setIsOpen(true);
+          setIsDismissed(false);
+        }
+        return data ?? {};
+      } finally {
+        loadingRef.current = false;
+        setIsLoading(false);
+      }
+    },
+    [location.pathname, salesperson?.id],
+  );
+
+  /**
+   * SKILL: Plano de coaching automático
+   * Gera 3 ações de coaching a partir de uma gravação (usa generate-coaching-actions).
+   */
+  const getCoachingPlan = useCallback(
+    async (recordingId: string): Promise<{ actions?: unknown[]; error?: string }> => {
+      loadingRef.current = true;
+      setIsLoading(true);
+      try {
+        const page = PAGE_CONTEXT_MAP[location.pathname] || location.pathname;
+        const { data, error } = await supabase.functions.invoke('ai-copilot', {
+          body: {
+            context: { page },
+            salespersonId: salesperson?.id,
+            action: 'coaching_plan',
+            recording_id: recordingId,
+          },
+        });
+        if (error) return { error: error.message };
+        if (Array.isArray(data?.actions) && data.actions.length > 0) {
+          const first = data.actions[0] as { tip?: string };
+          if (first?.tip) {
+            setSuggestion({
+              text: `🎯 Coaching: ${first.tip}${data.actions.length > 1 ? ` (+${data.actions.length - 1} ações)` : ''}`,
+              timestamp: Date.now(),
+              page: location.pathname,
+            });
+            setIsOpen(true);
+            setIsDismissed(false);
+          }
+        }
+        return data ?? {};
+      } finally {
+        loadingRef.current = false;
+        setIsLoading(false);
+      }
+    },
+    [location.pathname, salesperson?.id],
+  );
+
   const dismiss = useCallback(() => {
     setIsOpen(false);
     setIsDismissed(true);
@@ -136,5 +213,7 @@ export function useAICopilot() {
     dismiss,
     askCopilot,
     fetchSuggestion,
+    getForecastNarrative,
+    getCoachingPlan,
   };
 }
