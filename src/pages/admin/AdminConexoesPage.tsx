@@ -74,6 +74,9 @@ function AdminConexoesContent() {
 
         <CronAlertMetricsPanel />
 
+        <DeadLetterIngestPanel />
+
+
         <DbRollbackRatePanel />
 
         <SlowQueryAlertsPanel />
