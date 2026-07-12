@@ -144,12 +144,13 @@ export function enforceRateLimit(req: Request, cfg: RateLimitConfig): Response |
           "Prefer": "return=minimal",
         },
         body: JSON.stringify({
-          endpoint: cfg.name,
           identifier: r.clientKey,
-          limit_value: cfg.limit,
-          window_seconds: cfg.windowSeconds,
+          identifier_type: "ip",
+          action: cfg.name,
+          request_count: cfg.limit,
+          window_start: new Date(Date.now() - cfg.windowSeconds * 1000).toISOString(),
+          window_end: new Date().toISOString(),
           blocked: true,
-          user_agent: req.headers.get("user-agent")?.slice(0, 300) ?? null,
         }),
       }).catch(() => {/* fail-open */});
     });
