@@ -1,13 +1,13 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
 
 interface AnalysisRow { id: string; sale_id: string; outcome: string; primary_reason: string | null; competitor: string | null; lost_stage: string | null; segment: string | null; amount: number | null }
 
-serve(async (req) => {
+Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -91,4 +91,4 @@ Gere EXATAMENTE 3 lições acionáveis e curtíssimas (máx 18 palavras cada), f
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

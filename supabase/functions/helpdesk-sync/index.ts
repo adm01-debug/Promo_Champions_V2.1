@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 type Provider = "zendesk" | "intercom" | "freshdesk";
@@ -66,7 +67,7 @@ async function fetchFreshdesk(domain: string, apiKey: string) {
   }));
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -127,4 +128,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
