@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -14,7 +15,7 @@ function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -171,4 +172,4 @@ Deno.serve(async (req) => {
       },
     );
   }
-});
+}));
