@@ -57,13 +57,12 @@ export function useSentimentTrend() {
       );
       const saleStatus = new Map<string, string>();
       if (saleIds.length) {
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('id, status')
-          .in('id', saleIds);
-        ((sales as SaleRow[] | null) ?? []).forEach(s =>
-          saleStatus.set(s.id, s.status ?? '')
+        const sales = await chunkedIn<SaleRow>(
+          saleIds,
+          (chunk) => supabase.from('sales').select('id, status').in('id', chunk as string[]),
+          { parallel: true, label: 'sentiment.sales' },
         );
+        sales.forEach(s => saleStatus.set(s.id, s.status ?? ''));
       }
 
       const buckets = new Map<
