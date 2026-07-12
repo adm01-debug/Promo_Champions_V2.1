@@ -457,6 +457,13 @@ const BIGestor = () => {
               <CriticalMomentsFeed
                 onOpenRecording={() => navigate('/conversational-intelligence')}
               />
+
+              {/* Cohort Retention M0-M12 */}
+              <LazyVisible minHeight={320} fallback={<ChartFallback height={320} />}>
+                <Suspense fallback={<ChartFallback height={320} />}>
+                  <CohortRetentionHeatmap />
+                </Suspense>
+              </LazyVisible>
             </div>
           </div>
         </PageTransition>
