@@ -63,13 +63,17 @@ export const useDealSummaries = (dealIds: string[]) => {
     queryKey: ['deal-summaries', dealIds],
     queryFn: async () => {
       if (!dealIds.length) return [];
-      const { data, error } = await supabase
-        .from('sales')
-        .select('id, client_name, amount, status, created_at, updated_at')
-        .in('id', dealIds);
-      if (error) throw error;
+      type SaleRow = { id: string; client_name: string; amount: number | null; status: string; created_at: string; updated_at: string };
+      const data = await chunkedIn<SaleRow>(
+        dealIds,
+        (chunk) => supabase
+          .from('sales')
+          .select('id, client_name, amount, status, created_at, updated_at')
+          .in('id', chunk as string[]),
+        { parallel: true, label: 'deal-summaries' },
+      );
 
-      return (data || []).map(d => {
+      return data.map(d => {
         const { summary, next_steps, risks } = generateLocalSummary(d);
         const daysSince = Math.floor(
           (Date.now() - new Date(d.updated_at).getTime()) / 86400000
