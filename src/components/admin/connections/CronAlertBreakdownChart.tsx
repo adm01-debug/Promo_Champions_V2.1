@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -61,18 +61,9 @@ export function CronAlertBreakdownChart() {
                   fontSize: 12,
                 }}
               />
-              <Bar dataKey="alerts" radius={[0, 4, 4, 0]}>
-                {data.map((row, i) => (
-                  <Cell
-                    key={i}
-                    fill={
-                      row.stalled >= row.failed
-                        ? "hsl(var(--warning, 38 92% 50%))"
-                        : "hsl(var(--destructive))"
-                    }
-                  />
-                ))}
-              </Bar>
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="stalled" stackId="a" fill="hsl(38 92% 50%)" name="Travados" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="failed" stackId="a" fill="hsl(var(--destructive))" name="Falhas" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

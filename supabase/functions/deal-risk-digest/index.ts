@@ -18,9 +18,11 @@ interface AtRiskDeal {
   client_id: string | null;
 }
 
-async function postSlack(text: string): Promise<void> {
+interface SlackResult { attempted: boolean; ok: boolean; error?: string }
+
+async function postSlack(text: string): Promise<SlackResult> {
   const url = Deno.env.get('SLACK_DIGEST_WEBHOOK_URL');
-  if (!url) return;
+  if (!url) return { attempted: false, ok: false };
   try {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 5_000);
@@ -32,8 +34,11 @@ async function postSlack(text: string): Promise<void> {
     });
     clearTimeout(t);
     await res.text().catch(() => undefined);
+    return { attempted: true, ok: res.ok, error: res.ok ? undefined : `http_${res.status}` };
   } catch (err) {
-    console.warn('[deal-risk-digest] slack fallback failed', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn('[deal-risk-digest] slack fallback failed', msg);
+    return { attempted: true, ok: false, error: msg };
   }
 }
 
@@ -172,17 +177,10 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     inserted = count ?? toInsert.length;
   }
 
-  const summary = {
-    ok: true,
-    salespeople_analyzed: bySeller.size,
-    digests_created: inserted,
-    skipped_idempotent: skipped,
-    elapsed_ms: Date.now() - startedAt,
-  };
-  ctx.log('info', 'digest_summary', summary);
+  let slack: SlackResult = { attempted: false, ok: false };
   if (inserted > 0) {
-    await postSlack(
-      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${summary.elapsed_ms}ms.`,
+    slack = await postSlack(
+      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${Date.now() - startedAt}ms.`,
     );
   }
 
@@ -192,8 +190,11 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     digests_created: inserted,
     skipped_idempotent: skipped,
     elapsed_ms: Date.now() - startedAt,
+    slack_attempted: slack.attempted,
+    slack_ok: slack.ok,
+    slack_error: slack.error ?? null,
   };
-  
+  ctx.log('info', 'digest_summary', summary);
 
   return new Response(JSON.stringify(summary), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
