@@ -283,3 +283,52 @@ Deno.test("guard-rail: fn_test_cleanup_cron_alerts rejeita jobid >= 0", async ()
   const { error } = await rpc("fn_test_cleanup_cron_alerts", { _jobid: 0 });
   assert(error !== null);
 });
+
+// ─── E2E: dispara a edge function real e valida a resposta ───────────────
+// A função escaneia falhas em cron.job_run_details (schema restrito). Não
+// injetamos dados sintéticos lá — apenas confirmamos que o handler responde
+// 200 com o envelope esperado e que dedupe/idempotência não regridem.
+Deno.test("E2E — cron-failure-alerter responde 200 com envelope válido", async () => {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/cron-failure-alerter?since_minutes=30`, {
+    method: "POST",
+    headers: {
+      apikey: ANON,
+      Authorization: `Bearer ${ANON}`,
+      "Content-Type": "application/json",
+    },
+    body: "{}",
+  });
+  const text = await res.text();
+  assertEquals(res.status, 200, `edge status inesperado: ${res.status} body=${text.slice(0, 300)}`);
+  const body = JSON.parse(text);
+  assertEquals(body.ok, true);
+  assert(typeof body.failures === "number", "failures deve ser number");
+  assert(typeof body.notified === "number", "notified deve ser number");
+  assert(typeof body.requestId === "string" && body.requestId.length > 0);
+});
+
+Deno.test("E2E — chamadas consecutivas são idempotentes (mesma janela, sem novos alertas)", async () => {
+  const call = async () => {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/cron-failure-alerter?since_minutes=5`, {
+      method: "POST",
+      headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, "Content-Type": "application/json" },
+      body: "{}",
+    });
+    return JSON.parse(await r.text()) as { ok: boolean; failures: number; notified: number };
+  };
+  const a = await call();
+  const b = await call();
+  assertEquals(a.ok, true);
+  assertEquals(b.ok, true);
+  // Segunda chamada não deve criar novas notificações para as MESMAS falhas.
+  assert(b.notified <= a.notified,
+    `dedupe regrediu: primeira notificou ${a.notified}, segunda notificou ${b.notified}`);
+});
+
+Deno.test("E2E — OPTIONS preflight retorna CORS headers", async () => {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/cron-failure-alerter`, { method: "OPTIONS" });
+  await res.text();
+  assertEquals(res.status, 200);
+  assert(res.headers.get("access-control-allow-origin") !== null, "CORS ausente");
+});
+
