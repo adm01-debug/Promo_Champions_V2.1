@@ -19856,6 +19856,19 @@ export type Database = {
           xact_rollback: number
         }[]
       }
+      admin_reset_query_stats: { Args: never; Returns: undefined }
+      admin_top_queries: {
+        Args: { _limit?: number }
+        Returns: {
+          calls: number
+          hit_ratio: number
+          max_exec_ms: number
+          mean_exec_ms: number
+          query: string
+          rows_returned: number
+          total_exec_ms: number
+        }[]
+      }
       append_agent_step: {
         Args: {
           _executed_by?: string
