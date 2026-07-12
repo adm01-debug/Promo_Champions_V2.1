@@ -18,9 +18,11 @@ interface AtRiskDeal {
   client_id: string | null;
 }
 
-async function postSlack(text: string): Promise<void> {
+interface SlackResult { attempted: boolean; ok: boolean; error?: string }
+
+async function postSlack(text: string): Promise<SlackResult> {
   const url = Deno.env.get('SLACK_DIGEST_WEBHOOK_URL');
-  if (!url) return;
+  if (!url) return { attempted: false, ok: false };
   try {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 5_000);
@@ -32,8 +34,11 @@ async function postSlack(text: string): Promise<void> {
     });
     clearTimeout(t);
     await res.text().catch(() => undefined);
+    return { attempted: true, ok: res.ok, error: res.ok ? undefined : `http_${res.status}` };
   } catch (err) {
-    console.warn('[deal-risk-digest] slack fallback failed', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn('[deal-risk-digest] slack fallback failed', msg);
+    return { attempted: true, ok: false, error: msg };
   }
 }
 
