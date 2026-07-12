@@ -1,15 +1,20 @@
 /**
  * Product Analytics — lightweight client-side tracker.
- * Tracks page views, time-on-page, and interaction counts.
- * Batches writes to reduce DB calls.
+ *
+ * Estratégia otimizada: mantém a sessão de página em memória e grava UMA
+ * única linha no flush (saída/troca de rota). Isso substitui o antigo par
+ * INSERT (na entrada) + UPDATE (no flush) por 1 INSERT final, cortando ~50%
+ * das chamadas ao Postgres e eliminando por completo o UPDATE por id, que
+ * também economiza WAL e pressão de autovacuum.
+ *
+ * Falhas são engolidas — analytics jamais deve quebrar o app.
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// Generate a stable session id per browser tab
+// Session id estável por aba do navegador
 const SESSION_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 interface PageSession {
-  id?: string;
   route: string;
   pageTitle: string;
   enteredAt: number;
@@ -30,10 +35,14 @@ function getDeviceType(): string {
 }
 
 /**
- * Called on route change — flush previous page and start tracking new one.
+ * Chamado na troca de rota — faz flush da página anterior e inicia a nova.
+ * NÃO grava mais no DB na entrada; apenas registra estado em memória.
  */
-export async function trackPageEnter(route: string, pageTitle: string, referrer: string | null) {
-  // Flush the previous page first
+export async function trackPageEnter(
+  route: string,
+  pageTitle: string,
+  referrer: string | null,
+) {
   await flushCurrentPage();
 
   currentPage = {
@@ -44,34 +53,10 @@ export async function trackPageEnter(route: string, pageTitle: string, referrer:
     referrerRoute: referrer,
     flushed: false,
   };
-
-  if (!salespersonId) return;
-
-  try {
-    const { data } = await supabase
-      .from("page_analytics")
-      .insert({
-        salesperson_id: salespersonId,
-        route,
-        page_title: pageTitle,
-        session_id: SESSION_ID,
-        device_type: getDeviceType(),
-        referrer_route: referrer,
-        entered_at: new Date().toISOString(),
-      })
-      .select("id")
-      .single();
-
-    if (data && currentPage) {
-      currentPage.id = data.id;
-    }
-  } catch {
-    // Silent fail — analytics should never break the app
-  }
 }
 
 /**
- * Record an interaction (click, form submit, etc.)
+ * Registra uma interação (clique, submit, etc.) na página corrente.
  */
 export function trackInteraction() {
   if (currentPage) {
@@ -80,36 +65,48 @@ export function trackInteraction() {
 }
 
 /**
- * Flush duration + interactions for the current page to the DB.
+ * Grava a página corrente com duração + interações em UMA linha só.
+ * Idempotente: chamadas repetidas não duplicam.
  */
 export async function flushCurrentPage() {
-  if (!currentPage || currentPage.flushed || !currentPage.id || !salespersonId) {
+  const page = currentPage;
+  if (!page || page.flushed || !salespersonId) {
     currentPage = null;
     return;
   }
 
-  const durationSeconds = Math.round((Date.now() - currentPage.enteredAt) / 1000);
-  const pageId = currentPage.id;
-  const interactions = currentPage.interactions;
+  page.flushed = true;
+  const enteredAtIso = new Date(page.enteredAt).toISOString();
+  const exitedAt = new Date();
+  const durationSeconds = Math.max(
+    0,
+    Math.round((exitedAt.getTime() - page.enteredAt) / 1000),
+  );
 
-  currentPage.flushed = true;
+  // Descartar pings triviais (<1s sem interação) — reduz ruído e writes.
+  const trivial = durationSeconds < 1 && page.interactions === 0;
   currentPage = null;
+  if (trivial) return;
 
   try {
-    await supabase
-      .from("page_analytics")
-      .update({
-        duration_seconds: durationSeconds,
-        interactions,
-        exited_at: new Date().toISOString(),
-      })
-      .eq("id", pageId);
+    await supabase.from("page_analytics").insert({
+      salesperson_id: salespersonId,
+      route: page.route,
+      page_title: page.pageTitle,
+      session_id: SESSION_ID,
+      device_type: getDeviceType(),
+      referrer_route: page.referrerRoute,
+      entered_at: enteredAtIso,
+      exited_at: exitedAt.toISOString(),
+      duration_seconds: durationSeconds,
+      interactions: page.interactions,
+    });
   } catch {
     // Silent fail
   }
 }
 
-// Flush on tab close / navigate away
+// Flush ao fechar a aba / sair para outra origem
 if (typeof window !== "undefined") {
   window.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
