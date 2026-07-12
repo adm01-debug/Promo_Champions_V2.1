@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { RevenueForecastCard } from "./RevenueForecastCard";
 import { ForecastDealsTable } from "./ForecastDealsTable";
 import { BuyingCommitteeMap } from "./BuyingCommitteeMap";
+import { ForecastNarrative } from "./ForecastNarrative";
 import {
   ForecastPeriodType,
   useRevenueForecast,
