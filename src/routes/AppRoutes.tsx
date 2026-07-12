@@ -151,6 +151,7 @@ export function AppRoutes() {
                       <Route path="/conversational-intelligence" element={<ConversationalIntelligence />} />
                       <Route path="/revenue-intelligence" element={<Manager><RevenueIntelligence /></Manager>} />
                       <Route path="/revenue-forecast" element={<Manager><RevenueForecast /></Manager>} />
+                      <Route path="/revenue-forecast-v2" element={<Manager><RevenueForecastV2 /></Manager>} />
                       <Route path="/abm" element={<AccountBasedSelling />} />
                       <Route path="/workflow-builder" element={<Manager><AutomationBuilder /></Manager>} />
                       <Route path="/automacao-inteligente" element={<Manager><AutomacaoInteligente /></Manager>} />
