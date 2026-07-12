@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 
 const SLOW_QUERY_THRESHOLD_MS = 3000;
 const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;
@@ -91,7 +92,7 @@ const ALLOWED_TABLES = new Set([
   'notifications',
 ]);
 
-Deno.serve(async req => {
+Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -337,4 +338,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

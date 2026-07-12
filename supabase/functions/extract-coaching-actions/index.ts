@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 
@@ -30,7 +31,7 @@ const ALLOWED_CATEGORIES = [
 ];
 const ALLOWED_SEVERITY = ["info", "warning", "critical"];
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("extract-coaching-actions", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -181,4 +182,4 @@ Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));
