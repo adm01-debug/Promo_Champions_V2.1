@@ -50,10 +50,15 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
       const saleIds = (sales || []).map(s => s.id);
 
       // Get stage history
-      const { data: stageHistory } = await supabase
-        .from('deal_stage_history')
-        .select('sale_id, stage, entered_at, exited_at')
-        .in('sale_id', saleIds.length > 0 ? saleIds : ['none']);
+      type StageRow = { sale_id: string; stage: string; entered_at: string; exited_at: string | null };
+      const stageHistory = saleIds.length > 0 ? await chunkedIn<StageRow>(
+        saleIds,
+        (chunk) => supabase
+          .from('deal_stage_history')
+          .select('sale_id, stage, entered_at, exited_at')
+          .in('sale_id', chunk as string[]),
+        { parallel: true, label: 'deal-velocity.stage-history' },
+      ) : [];
 
       // Calculate velocities per stage
       const stageMap = new Map<string, number[]>();
