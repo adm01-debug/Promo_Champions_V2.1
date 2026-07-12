@@ -20475,6 +20475,17 @@ export type Database = {
           role_name: string
         }[]
       }
+      fn_test_mark_cron_failure: {
+        Args: {
+          _jobid: number
+          _jobname: string
+          _notified_admin_count: number
+          _return_message: string
+          _start_time: string
+          _status: string
+        }
+        Returns: string
+      }
       fn_test_simulate_stalled_check: {
         Args: {
           _jobid: number
