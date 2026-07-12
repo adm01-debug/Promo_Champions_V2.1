@@ -182,4 +182,4 @@ Retorne apenas a lista de frases diretas.`;
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
