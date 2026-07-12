@@ -24,6 +24,7 @@ import { GlobalRefreshFromDbButton } from "@/components/admin/connections/Global
 import { CronJobsPanel } from "@/components/admin/connections/CronJobsPanel";
 import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRatePanel";
 import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel";
+import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAlertsPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
