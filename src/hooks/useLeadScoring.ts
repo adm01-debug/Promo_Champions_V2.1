@@ -141,7 +141,7 @@ export const useLeadScoring = (leadId?: string) => {
         { parallel: true, label: 'lead-scoring.risk' },
       );
 
-      const riskMap = new Map(riskData.map(r => [r.sale_id, r]));
+      const riskMap = new Map(riskData.map(r => [r.sale_id, r as unknown]));
 
       return clients
         .map(client => {
