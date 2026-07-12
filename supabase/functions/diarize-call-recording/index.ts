@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface Turn {
@@ -164,7 +165,7 @@ async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] 
   }
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -241,7 +242,7 @@ Deno.serve(async req => {
     console.error('diarize-call-recording fatal:', e);
     return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
   }
-});
+}));
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

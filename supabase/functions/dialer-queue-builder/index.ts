@@ -1,12 +1,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface BuildPayload {
   queue_id: string;
   max_items?: number;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -136,4 +137,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

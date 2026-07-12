@@ -1,9 +1,9 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
-serve(async (req) => {
+Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -97,4 +97,4 @@ serve(async (req) => {
       }
     );
   }
-});
+}));
