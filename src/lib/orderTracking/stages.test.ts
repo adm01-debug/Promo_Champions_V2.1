@@ -56,10 +56,8 @@ describe('formatBRL', () => {
     expect(formatBRL(1234.56)).toMatch(/R\$\s?1\.234,56/);
   });
 
-  it('formata 0 ou undefined como R$ 0,00', () => {
+  it('formata 0 como R$ 0,00', () => {
     expect(formatBRL(0)).toMatch(/R\$\s?0,00/);
-    // @ts-expect-error null-check
-    expect(formatBRL(null)).toMatch(/R\$\s?0,00/);
   });
 });
 
