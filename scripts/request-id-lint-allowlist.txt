@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-inbound-email-webhook
-lead-scoring
-mine-win-loss-patterns
 multichannel-status-webhook
 next-best-action
 nlq-query
