@@ -20181,6 +20181,7 @@ export type Database = {
           updated: number
         }[]
       }
+      detect_stalled_cron_jobs: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
       enforce_telemetry_retention: { Args: never; Returns: Json }
