@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -136,13 +137,18 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
 
     // Batch lookup: one query to find all existing ICP records for these Bitrix IDs
     const bitrixIds = companies.map(c => c.ID);
-    const { data: existingIcpList } = await supabase
-      .from('icp_data')
-      .select('client_id, bitrix_id')
-      .in('bitrix_id', bitrixIds);
+    const existingIcpList = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+      bitrixIds,
+      (chunk) =>
+        supabase
+          .from('icp_data')
+          .select('client_id, bitrix_id')
+          .in('bitrix_id', chunk),
+      { parallel: true, label: 'bitrix24-sync.icp_by_bitrix' }
+    );
 
     const icpByBitrixId = new Map<string, string>(); // bitrix_id -> client_id
-    existingIcpList?.forEach(icp => {
+    existingIcpList.forEach(icp => {
       if (icp.bitrix_id && icp.client_id) icpByBitrixId.set(icp.bitrix_id, icp.client_id);
     });
 
@@ -262,11 +268,17 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
     const companyIds = deals.map(d => d.COMPANY_ID).filter(Boolean) as string[];
     const clientNameByBitrixId = new Map<string, string>();
     if (companyIds.length > 0) {
-      const { data: icpRows } = await supabase
-        .from('icp_data')
-        .select('bitrix_id, clients!inner(name)')
-        .in('bitrix_id', companyIds);
-      icpRows?.forEach((row: { bitrix_id: string | null; clients: { name: string } | null }) => {
+      type IcpJoinRow = { bitrix_id: string | null; clients: { name: string } | null };
+      const icpRows = await chunkedIn<IcpJoinRow>(
+        companyIds,
+        (chunk) =>
+          supabase
+            .from('icp_data')
+            .select('bitrix_id, clients!inner(name)')
+            .in('bitrix_id', chunk),
+        { parallel: true, label: 'bitrix24-sync.deals_client_names' }
+      );
+      icpRows.forEach((row) => {
         if (row.bitrix_id && row.clients?.name) {
           clientNameByBitrixId.set(row.bitrix_id, row.clients.name);
         }
@@ -326,15 +338,20 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
 
     const clientIds = clientsWithoutBitrix.map(c => c.id);
 
-    const { data: icpDataList } = await supabase
-      .from('icp_data')
-      .select(
-        'client_id, bitrix_id, capital_social, num_colaboradores, ramo_atividade, grupo_nicho'
-      )
-      .in('client_id', clientIds);
+    const icpDataList = await chunkedIn<IcpData>(
+      clientIds,
+      (chunk) =>
+        supabase
+          .from('icp_data')
+          .select(
+            'client_id, bitrix_id, capital_social, num_colaboradores, ramo_atividade, grupo_nicho'
+          )
+          .in('client_id', chunk),
+      { parallel: true, label: 'bitrix24-sync.icp_by_client' }
+    );
 
     const icpMap = new Map<string, IcpData>();
-    icpDataList?.forEach(icp => {
+    icpDataList.forEach(icp => {
       icpMap.set(icp.client_id, icp);
     });
 
@@ -413,20 +430,30 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
     const clientNames = [...new Set(sales.map(s => s.client_name).filter(Boolean))];
     const bitrixIdByClientName = new Map<string, string>();
     if (clientNames.length > 0) {
-      const { data: clientRows } = await supabase
-        .from('clients')
-        .select('id, name')
-        .in('name', clientNames);
+      const clientRows = await chunkedIn<{ id: string; name: string }>(
+        clientNames,
+        (chunk) =>
+          supabase
+            .from('clients')
+            .select('id, name')
+            .in('name', chunk),
+        { parallel: true, label: 'bitrix24-sync.clients_by_name' }
+      );
 
-      if (clientRows?.length) {
+      if (clientRows.length) {
         const clientIds = clientRows.map(c => c.id);
-        const { data: icpRows } = await supabase
-          .from('icp_data')
-          .select('client_id, bitrix_id')
-          .in('client_id', clientIds);
+        const icpRows = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+          clientIds,
+          (chunk) =>
+            supabase
+              .from('icp_data')
+              .select('client_id, bitrix_id')
+              .in('client_id', chunk),
+          { parallel: true, label: 'bitrix24-sync.icp_by_client_reverse' }
+        );
 
         const bitrixIdByClientId = new Map<string, string>();
-        icpRows?.forEach(icp => {
+        icpRows.forEach(icp => {
           if (icp.client_id && icp.bitrix_id) bitrixIdByClientId.set(icp.client_id, icp.bitrix_id);
         });
         clientRows.forEach(c => {
@@ -565,7 +592,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
         error_message: errorMessage,
         duration_ms: durationMs,
         triggered_by: body.triggered_by || 'manual',
-      }));
+      });
     } catch (logError) {
       console.error('Error logging sync failure:', logError);
     }
