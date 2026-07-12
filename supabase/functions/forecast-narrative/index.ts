@@ -177,16 +177,33 @@ Gere a narrativa executiva.`;
     }),
   });
 
+  const logDeadLetter = async (reason: string, httpStatus: number | null, detail: string | null) => {
+    try {
+      await serviceClient.from('forecast_narrative_dead_letters').insert({
+        forecast_id: forecastId,
+        user_id: userId,
+        reason,
+        http_status: httpStatus,
+        error_detail: detail?.slice(0, 2000) ?? null,
+        request_id: ctx.requestId ?? null,
+      });
+    } catch (e) {
+      ctx.log('warn', 'dlq_insert_failed', { userId, forecastId, error: (e as Error).message });
+    }
+  };
+
   if (aiRes.status === 429) {
-    await aiRes.text();
+    const t = await aiRes.text();
     ctx.log('warn', 'ai_rate_limited', { userId, forecastId });
+    await logDeadLetter('rate_limited', 429, t);
     return new Response(JSON.stringify({ error: 'AI rate limit — tente novamente em instantes' }), {
       status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   if (aiRes.status === 402) {
-    await aiRes.text();
+    const t = await aiRes.text();
     ctx.log('error', 'ai_payment_required', { userId, forecastId });
+    await logDeadLetter('payment_required', 402, t);
     return new Response(JSON.stringify({ error: 'Créditos IA insuficientes na workspace' }), {
       status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -194,6 +211,7 @@ Gere a narrativa executiva.`;
   if (!aiRes.ok) {
     const errText = await aiRes.text();
     ctx.log('error', 'ai_error', { userId, forecastId, status: aiRes.status, detail: errText.slice(0, 300) });
+    await logDeadLetter('provider_error', aiRes.status, errText);
     return new Response(JSON.stringify({ error: 'AI provider error', status: aiRes.status }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -204,6 +222,7 @@ Gere a narrativa executiva.`;
   const usage = aiJson?.usage ?? {};
   if (!narrative) {
     ctx.log('error', 'ai_empty_narrative', { userId, forecastId });
+    await logDeadLetter('empty_narrative', aiRes.status, null);
     return new Response(JSON.stringify({ error: 'AI returned empty narrative' }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
