@@ -195,6 +195,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Inteligência de Compras", url: "/inteligencia-compras", icon: Flame },
       { title: "Saúde dos Deals", url: "/deal-intelligence", icon: HeartPulse },
       { title: "Win/Loss Intelligence", url: "/win-loss-intelligence", icon: Crown },
+      { title: "Win/Loss Analysis", url: "/analytics/win-loss", icon: Trophy },
       { title: "RevOps Hub", url: "/revops", icon: Gauge },
       { title: "Pricing Intelligence", url: "/pricing-intelligence", icon: DollarSign },
       { title: "Territory Optimization", url: "/territory-optimization", icon: MapPin },
