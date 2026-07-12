@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { format } from 'date-fns';
 
 export type ActionType =
@@ -130,20 +131,16 @@ export function useActiveCadencesBySaleIds(saleIds: string[]) {
     queryKey: ['active-cadences-by-sales', saleIds],
     enabled: saleIds.length > 0,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('prospect_cadences')
-        .select(
-          `
-          sale_id,
-          status,
-          current_step,
-          cadence:cadences(name)
-        `
-        )
-        .in('sale_id', saleIds)
-        .in('status', ['active', 'paused']);
-
-      if (error) throw error;
+      type Row = { sale_id: string | null; status: string; current_step: number; cadence: { name: string } | null };
+      const data = await chunkedIn<Row>(
+        saleIds,
+        (chunk) => supabase
+          .from('prospect_cadences')
+          .select(`sale_id, status, current_step, cadence:cadences(name)`)
+          .in('sale_id', chunk as string[])
+          .in('status', ['active', 'paused']) as unknown as PromiseLike<{ data: Row[] | null; error: { message?: string } | null }>,
+        { parallel: true, label: 'active-cadences-by-sales' },
+      );
 
       const cadenceMap: Record<
         string,

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 export interface ReplayAuditEntry {
   id: string;
@@ -53,15 +54,17 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
     enabled: deadLetterIds.length > 0,
     staleTime: 10_000,
     queryFn: async (): Promise<Map<string, ReplayAuditEntry>> => {
-      const { data, error } = await supabase
-        .from('winloss_webhook_replay_audit')
-        .select('*')
-        .in('dead_letter_id', deadLetterIds)
-        .order('created_at', { ascending: false })
-        .limit(500);
-
-      if (error) throw error;
-      const entries = (data || []) as unknown as ReplayAuditEntry[];
+      const data = await chunkedIn<unknown>(
+        deadLetterIds,
+        (chunk) => supabase
+          .from('winloss_webhook_replay_audit')
+          .select('*')
+          .in('dead_letter_id', chunk as string[])
+          .order('created_at', { ascending: false })
+          .limit(500) as unknown as PromiseLike<{ data: unknown[] | null; error: { message?: string } | null }>,
+        { parallel: true, label: 'winloss-replay-audit' },
+      );
+      const entries = data as unknown as ReplayAuditEntry[];
       const map = new Map<string, ReplayAuditEntry>();
       for (const r of entries) {
         if (!r.dead_letter_id) continue;
