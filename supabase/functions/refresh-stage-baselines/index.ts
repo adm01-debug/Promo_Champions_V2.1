@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
