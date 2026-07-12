@@ -7592,6 +7592,39 @@ export type Database = {
           },
         ]
       }
+      forecast_narrative_dead_letters: {
+        Row: {
+          created_at: string
+          error_detail: string | null
+          forecast_id: string | null
+          http_status: number | null
+          id: string
+          reason: string
+          request_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_detail?: string | null
+          forecast_id?: string | null
+          http_status?: number | null
+          id?: string
+          reason: string
+          request_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_detail?: string | null
+          forecast_id?: string | null
+          http_status?: number | null
+          id?: string
+          reason?: string
+          request_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       forecast_snapshots: {
         Row: {
           best_case_amount: number
