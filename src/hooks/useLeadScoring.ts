@@ -122,21 +122,26 @@ export const useLeadScoring = (leadId?: string) => {
 
       // Get ICP data for enrichment
       const clientIds = clients.map(c => c.id);
-      const { data: icpData } = await supabase
-        .from('icp_data')
-        .select(
-          'client_id, is_icp_match, num_colaboradores, capital_social, ramo_atividade'
-        )
-        .in('client_id', clientIds.length > 0 ? clientIds : ['none']);
+      type IcpRow = { client_id: string; is_icp_match: boolean | null; num_colaboradores: number | null; capital_social: number | null; ramo_atividade: string | null };
+      const icpData = await chunkedIn<IcpRow>(
+        clientIds,
+        (chunk) => supabase
+          .from('icp_data')
+          .select('client_id, is_icp_match, num_colaboradores, capital_social, ramo_atividade')
+          .in('client_id', chunk as string[]),
+        { parallel: true, label: 'lead-scoring.icp' },
+      );
 
-      const icpMap = new Map((icpData || []).map(d => [d.client_id, d]));
+      const icpMap = new Map(icpData.map(d => [d.client_id, d]));
 
-      const { data: riskData } = await supabase
-        .from('lead_churn_risk')
-        .select('*')
-        .in('sale_id', allDealIds.length > 0 ? allDealIds : ['none']);
+      type RiskRow = { sale_id: string; [k: string]: unknown };
+      const riskData = await chunkedIn<RiskRow>(
+        allDealIds,
+        (chunk) => supabase.from('lead_churn_risk').select('*').in('sale_id', chunk as string[]),
+        { parallel: true, label: 'lead-scoring.risk' },
+      );
 
-      const riskMap = new Map((riskData || []).map(r => [r.sale_id, r]));
+      const riskMap = new Map(riskData.map(r => [r.sale_id, r]));
 
       return clients
         .map(client => {
