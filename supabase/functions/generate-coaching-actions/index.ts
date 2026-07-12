@@ -80,10 +80,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
     });
   }
 
-  // Always use service role for DB access — we need to write regardless of caller identity for cron path.
-  const admin = createClient(supabaseUrl, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  // admin client already initialized above
 
   // Load recording
   const { data: rec, error: recErr } = await admin
