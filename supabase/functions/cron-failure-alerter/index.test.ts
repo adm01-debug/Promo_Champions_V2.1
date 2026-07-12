@@ -82,7 +82,7 @@ async function simulate(
 }
 
 async function backdate(jobid: number, hoursAgo: number) {
-  const { data, error } = await supabase.rpc("fn_test_backdate_cron_alert", {
+  const { data, error } = await rpc("fn_test_backdate_cron_alert", {
     _jobid: jobid,
     _hours: hoursAgo,
   });
@@ -107,7 +107,7 @@ Deno.test("fn_cron_expected_interval → cada schedule mapeia para o intervalo c
     ["weird string", "1 day"],
   ];
   for (const [schedule, expectedContains] of cases) {
-    const { data, error } = await supabase.rpc("fn_cron_expected_interval", { _schedule: schedule });
+    const { data, error } = await rpc("fn_cron_expected_interval", { _schedule: schedule });
     assertEquals(error, null, `schedule=${schedule} error=${error?.message}`);
     assert(
       String(data).includes(expectedContains),
@@ -232,7 +232,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
   const st2 = agoMinutes(10).toISOString();
 
   // marca a mesma falha duas vezes (retry do alerter) → upsert idempotente
-  const r1 = await supabase.rpc("fn_admin_mark_cron_failure_alerted", {
+  const r1 = await rpc("fn_admin_mark_cron_failure_alerted", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st1,
@@ -241,7 +241,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
     _notified_admin_count: 2,
   });
   assertEquals(r1.error, null);
-  const r2 = await supabase.rpc("fn_admin_mark_cron_failure_alerted", {
+  const r2 = await rpc("fn_admin_mark_cron_failure_alerted", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st1,
@@ -253,7 +253,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
   assertEquals(r1.data, r2.data, "upsert deve retornar o MESMO id para (jobid, start_time)");
 
   // nova execução falha (start_time diferente) → nova linha
-  const r3 = await supabase.rpc("fn_admin_mark_cron_failure_alerted", {
+  const r3 = await rpc("fn_admin_mark_cron_failure_alerted", {
     _jobid: JOB.intermittent,
     _jobname: "job-intermittent",
     _start_time: st2,
@@ -269,7 +269,7 @@ Deno.test("falha intermitente → mesmo start_time é upsert (1 linha), start_ti
 
 // ─── Sanidade: RPCs de teste rejeitam jobids reais (>= 0) ────────────────
 Deno.test("guard-rail: fn_test_simulate_stalled_check rejeita jobid >= 0", async () => {
-  const { error } = await supabase.rpc("fn_test_simulate_stalled_check", {
+  const { error } = await rpc("fn_test_simulate_stalled_check", {
     _jobid: 1,
     _jobname: "real-job",
     _schedule: "*/5 * * * *",
@@ -280,6 +280,6 @@ Deno.test("guard-rail: fn_test_simulate_stalled_check rejeita jobid >= 0", async
 });
 
 Deno.test("guard-rail: fn_test_cleanup_cron_alerts rejeita jobid >= 0", async () => {
-  const { error } = await supabase.rpc("fn_test_cleanup_cron_alerts", { _jobid: 0 });
+  const { error } = await rpc("fn_test_cleanup_cron_alerts", { _jobid: 0 });
   assert(error !== null);
 });
