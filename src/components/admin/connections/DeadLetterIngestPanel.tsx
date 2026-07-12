@@ -152,7 +152,3 @@ export function DeadLetterIngestPanel() {
     </>
   );
 }
-      </CardContent>
-    </Card>
-  );
-}
