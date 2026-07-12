@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { RevenueForecastCard } from "./RevenueForecastCard";
 import { ForecastDealsTable } from "./ForecastDealsTable";
 import { BuyingCommitteeMap } from "./BuyingCommitteeMap";
+import { ForecastNarrative } from "./ForecastNarrative";
 import {
   ForecastPeriodType,
   useRevenueForecast,
@@ -28,6 +29,7 @@ export const AIForecastPanel: FC = () => {
         onChangeStart={setPeriodStart}
         ownerId={null}
       />
+      <ForecastNarrative forecastId={data?.id} cachedNarrative={data?.ai_summary} />
       <ForecastDealsTable 
         forecastId={data?.id} 
         onSelectSale={setSelectedSaleId}
