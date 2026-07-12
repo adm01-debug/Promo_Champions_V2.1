@@ -162,11 +162,28 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
       .insert(toInsert, { count: 'exact' });
     if (insErr) {
       console.error('[deal-risk-digest] insert failed', insErr);
+      await postSlack(
+        `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+      );
       return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     inserted = count ?? toInsert.length;
+  }
+
+  const summary = {
+    ok: true,
+    salespeople_analyzed: bySeller.size,
+    digests_created: inserted,
+    skipped_idempotent: skipped,
+    elapsed_ms: Date.now() - startedAt,
+  };
+  ctx.log('info', 'digest_summary', summary);
+  if (inserted > 0) {
+    await postSlack(
+      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${summary.elapsed_ms}ms.`,
+    );
   }
 
   const summary = {
