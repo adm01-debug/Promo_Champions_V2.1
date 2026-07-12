@@ -63,7 +63,9 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     // Calculate probability for each deal
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
 
-    for (const deal of deals || []) {
+    for (const raw of deals || []) {
+      const deal = raw as { id: string; status: string; amount: number; category: string };
+
       const factors: string[] = [];
       let probability = stageProbabilities[deal.status] || 10;
 
