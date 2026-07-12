@@ -3,7 +3,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { checkRateLimit } from '../_shared/rate-limit.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 interface Factor { label: string; impact: 'positive' | 'negative' | 'neutral'; detail: string }
 interface ForecastRow {
