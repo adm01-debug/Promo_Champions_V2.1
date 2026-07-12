@@ -430,20 +430,30 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
     const clientNames = [...new Set(sales.map(s => s.client_name).filter(Boolean))];
     const bitrixIdByClientName = new Map<string, string>();
     if (clientNames.length > 0) {
-      const { data: clientRows } = await supabase
-        .from('clients')
-        .select('id, name')
-        .in('name', clientNames);
+      const clientRows = await chunkedIn<{ id: string; name: string }>(
+        clientNames,
+        (chunk) =>
+          supabase
+            .from('clients')
+            .select('id, name')
+            .in('name', chunk),
+        { parallel: true, label: 'bitrix24-sync.clients_by_name' }
+      );
 
-      if (clientRows?.length) {
+      if (clientRows.length) {
         const clientIds = clientRows.map(c => c.id);
-        const { data: icpRows } = await supabase
-          .from('icp_data')
-          .select('client_id, bitrix_id')
-          .in('client_id', clientIds);
+        const icpRows = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+          clientIds,
+          (chunk) =>
+            supabase
+              .from('icp_data')
+              .select('client_id, bitrix_id')
+              .in('client_id', chunk),
+          { parallel: true, label: 'bitrix24-sync.icp_by_client_reverse' }
+        );
 
         const bitrixIdByClientId = new Map<string, string>();
-        icpRows?.forEach(icp => {
+        icpRows.forEach(icp => {
           if (icp.client_id && icp.bitrix_id) bitrixIdByClientId.set(icp.client_id, icp.bitrix_id);
         });
         clientRows.forEach(c => {
