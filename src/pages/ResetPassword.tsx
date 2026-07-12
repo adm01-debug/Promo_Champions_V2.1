@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import { Loader2, Lock, CheckCircle } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { classifyPasswordError } from "@/lib/auth/passwordErrorMessages";
 
-const passwordSchema = z.string().min(6, "Senha deve ter pelo menos 6 caracteres");
+const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -57,7 +58,7 @@ export default function ResetPassword() {
     setIsLoading(false);
 
     if (error) {
-      toast.error("Erro ao atualizar senha. Tente novamente.");
+      toast.error(classifyPasswordError(error).message);
     } else {
       setIsSuccess(true);
       toast.success("Senha atualizada com sucesso!");
