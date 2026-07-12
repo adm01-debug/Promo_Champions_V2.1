@@ -79,6 +79,7 @@ const TAB_CATEGORIES: Array<{
       { value: 'churn', label: 'Churn', icon: AlertTriangle },
       { value: 'churn-risk', label: 'Risco Churn', icon: ShieldAlert },
       { value: 'cohort', label: 'Cohort', icon: UserCheck },
+      { value: 'cohort-heatmap', label: 'Cohort Heatmap', icon: Flame },
       { value: 'ltv', label: 'LTV', icon: DollarSign },
     ],
   },
