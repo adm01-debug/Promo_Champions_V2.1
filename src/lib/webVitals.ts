@@ -44,31 +44,56 @@ interface VitalsPayload {
   connection_type: string | null;
 }
 
-function sendBeacon(payload: VitalsPayload): void {
+function sendBeacon(body: string): void {
   try {
-    const body = JSON.stringify(payload);
-    // sendBeacon must use a CORS-safelisted Content-Type; use Blob with text/plain
+    // sendBeacon precisa de Content-Type CORS-safelisted → Blob text/plain
     const blob = new Blob([body], { type: 'text/plain' });
     const queued = navigator.sendBeacon?.(`${ENDPOINT}?apikey=${SUPABASE_PUBLISHABLE_KEY}`, blob);
     if (queued) return;
   } catch {
     /* fall through to fetch */
   }
-  // Fallback for unload-safe delivery
   void fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: SUPABASE_PUBLISHABLE_KEY },
-    body: JSON.stringify(payload),
+    body,
     keepalive: true,
   }).catch(() => {
     /* swallow — telemetry must never break UX */
   });
 }
 
+// Fila de amostras — 1 POST por sessão em vez de 1 por métrica (5x menos writes).
+const queue: VitalsPayload[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+
+function flushQueue() {
+  if (flushTimer) {
+    clearTimeout(flushTimer);
+    flushTimer = null;
+  }
+  if (queue.length === 0) return;
+  const batch = queue.splice(0, queue.length);
+  sendBeacon(JSON.stringify({ samples: batch }));
+}
+
+function scheduleFlush() {
+  if (flushTimer) return;
+  // Safety flush caso a aba não dispare visibilitychange (ex.: SPA long-lived).
+  flushTimer = setTimeout(flushQueue, 5000);
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushQueue();
+  });
+  window.addEventListener('pagehide', flushQueue);
+}
+
 /**
  * Reports Core Web Vitals.
  * DEV: logs to console.
- * PROD: persists to `web_vitals_samples` via the `log-web-vitals` edge function (sendBeacon).
+ * PROD: enfileira e envia em batch para `web_vitals_samples` via edge function.
  */
 export function reportWebVitals(onReport?: (metric: Metric) => void) {
   const sessionId = typeof window !== 'undefined' ? getSessionId() : 'ssr';
@@ -87,7 +112,7 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
       return;
     }
 
-    sendBeacon({
+    queue.push({
       route: normalizeRoute(window.location.pathname),
       metric: metric.name,
       value: metric.value,
@@ -97,6 +122,7 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
       viewport_width: window.innerWidth,
       connection_type: getConnectionType(),
     });
+    scheduleFlush();
   };
 
   import('web-vitals').then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
@@ -107,3 +133,4 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
     onTTFB(handler);
   });
 }
+
