@@ -23,6 +23,7 @@ const stages = ["lead", "qualified", "proposal", "negotiation"] as const;
 export const PlaybooksManager = () => {
   const { data: playbooks, isLoading } = usePlaybooks();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeStage, setActiveStage] = useState<(typeof stages)[number]>("lead");
 
   if (isLoading) {
     return (
