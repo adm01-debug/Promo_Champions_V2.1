@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface HealthFactor {
@@ -27,7 +28,7 @@ interface AccountHealth {
   };
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -140,4 +141,4 @@ Deno.serve(async req => {
       }
     );
   }
-});
+}));

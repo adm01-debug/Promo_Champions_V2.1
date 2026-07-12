@@ -15,7 +15,7 @@ function log(level: "info" | "warn" | "error", event: string, data: Record<strin
   else console.log(line);
 }
 
-Deno.Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
+Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 

@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-customer-success-360
-customer-success-hub
-deal-probability
 demand-forecast
 detect-at-risk-deals
 detect-coaching-opportunities
