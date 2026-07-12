@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';
 
 /** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
@@ -253,51 +254,80 @@ export const handler = async (req: Request): Promise<Response> => {
     let rows: SourceRow[] = [];
 
     if (source === 'dlq') {
-      const { data, error } = await supabase
-        .from('winloss_webhook_dead_letters')
-        .select('id, subscription_id, event, payload, replay_count')
-        .in('id', ids);
-      if (error) throw error;
-      rows = (data ?? []).map(r => ({
-        id: r.id as string,
-        subscription_id: r.subscription_id as string,
-        event: r.event as string,
+      type DlqRow = {
+        id: string;
+        subscription_id: string;
+        event: string;
+        payload: Record<string, unknown> | null;
+        replay_count: number | null;
+      };
+      const data = await chunkedIn<DlqRow>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('winloss_webhook_dead_letters')
+            .select('id, subscription_id, event, payload, replay_count')
+            .in('id', chunk),
+        { parallel: true, label: 'winloss-webhook-replay.dlq_load' }
+      );
+      rows = data.map(r => ({
+        id: r.id,
+        subscription_id: r.subscription_id,
+        event: r.event,
         payload: (r.payload ?? {}) as Record<string, unknown>,
-        replay_count: (r.replay_count ?? 0) as number,
+        replay_count: r.replay_count ?? 0,
         dlq: true,
       }));
 
-      // Mark replaying (best-effort)
+      // Mark replaying (best-effort, chunked)
       if (rows.length) {
-        const { error: markErr } = await supabase
-          .from('winloss_webhook_dead_letters')
-          .update({ status: 'replaying' })
-          .in(
-            'id',
-            rows.map(r => r.id)
+        const rowIds = rows.map(r => r.id);
+        try {
+          await chunkedIn<{ id: string }>(
+            rowIds,
+            (chunk) =>
+              supabase
+                .from('winloss_webhook_dead_letters')
+                .update({ status: 'replaying' })
+                .in('id', chunk)
+                .select('id'),
+            { parallel: false, label: 'winloss-webhook-replay.dlq_mark' }
           );
-        if (markErr)
+        } catch (markErr) {
           jlog('warn', {
             msg: 'dlq_mark_replaying_failed',
             requestId,
             ...describeError(markErr),
           });
+        }
       }
     } else {
-      const { data, error } = await supabase
-        .from('winloss_webhook_deliveries')
-        .select('id, subscription_id, event, payload, succeeded')
-        .in('id', ids);
-      if (error) throw error;
-      rows = (data ?? []).map(r => ({
-        id: r.id as string,
-        subscription_id: r.subscription_id as string,
-        event: r.event as string,
+      type DeliveryRow = {
+        id: string;
+        subscription_id: string;
+        event: string;
+        payload: Record<string, unknown> | null;
+        succeeded: boolean;
+      };
+      const data = await chunkedIn<DeliveryRow>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('winloss_webhook_deliveries')
+            .select('id, subscription_id, event, payload, succeeded')
+            .in('id', chunk),
+        { parallel: true, label: 'winloss-webhook-replay.delivery_load' }
+      );
+      rows = data.map(r => ({
+        id: r.id,
+        subscription_id: r.subscription_id,
+        event: r.event,
         payload: (r.payload ?? {}) as Record<string, unknown>,
-        succeeded: r.succeeded as boolean,
+        succeeded: r.succeeded,
         replay_count: 0,
       }));
     }
+
 
     jlog('info', { msg: 'replay_start', requestId, source, count: rows.length, ids });
 
