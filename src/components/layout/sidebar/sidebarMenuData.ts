@@ -86,6 +86,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
       { title: "Ranking Global", url: "/ranking", icon: Trophy },
       { title: "Circuito de Duelos", url: "/arena", icon: Swords },
+      { title: "Coleção de Badges", url: "/gamificacao/badges", icon: Trophy },
     ],
   },
   {
@@ -136,6 +137,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Equipe (Activity)", url: "/team-activity", icon: Rss },
       { title: "Ranking Global", url: "/ranking", icon: Trophy },
       { title: "Circuito de Duelos", url: "/arena", icon: Swords },
+      { title: "Coleção de Badges", url: "/gamificacao/badges", icon: Trophy },
     ],
   },
   {
