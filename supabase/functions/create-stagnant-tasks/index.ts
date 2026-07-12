@@ -2,6 +2,8 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
+
 
 
 
@@ -58,15 +60,22 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
     const dealIds = stagnantDeals.map(d => d.id);
     const today = new Date().toISOString().split('T')[0];
     
-    const { data: existingTasks } = await supabase
-      .from('tasks')
-      .select('sale_id')
-      .in('sale_id', dealIds)
-      .gte('due_date', today)
-      .neq('status', 'completed')
-      .neq('status', 'cancelled');
-    
-    const existingDealIds = new Set(existingTasks?.map(t => t.sale_id) || []);
+    // Chunked to avoid PostgREST URL overflow when there are hundreds of stagnant deals
+    const existingTasks = await chunkedIn<{ sale_id: string }>(
+      dealIds,
+      (chunk) =>
+        supabase
+          .from('tasks')
+          .select('sale_id')
+          .in('sale_id', chunk)
+          .gte('due_date', today)
+          .neq('status', 'completed')
+          .neq('status', 'cancelled'),
+      { label: 'tasks lookup' },
+    );
+
+    const existingDealIds = new Set(existingTasks.map((t) => t.sale_id));
+
     
     // Filter out deals that already have pending tasks
     const dealsNeedingTasks = stagnantDeals.filter(d => !existingDealIds.has(d.id));

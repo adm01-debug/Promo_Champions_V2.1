@@ -1,6 +1,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
+
 
 // Base probabilities by stage
 const stageProbabilities: Record<string, number> = {
@@ -30,31 +32,40 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       });
     }
 
-    // Fetch deals
-    const { data: deals, error: dealsError } = await supabase
-      .from('sales')
-      .select('*')
-      .in('id', dealIds);
-
-    if (dealsError) throw dealsError;
+    // Fetch deals (chunked to avoid PostgREST URL overflow on large arrays)
+    const deals = await chunkedIn<Record<string, unknown>>(
+      dealIds,
+      (chunk) => supabase.from('sales').select('*').in('id', chunk),
+      { label: 'sales fetch' },
+    );
 
     // Fetch historical win/loss data for context
-    await supabase
-      .from('deal_outcomes')
-      .select('outcome, sale_id')
-      .in('sale_id', dealIds);
+    await chunkedIn<Record<string, unknown>>(
+      dealIds,
+      (chunk) => supabase.from('deal_outcomes').select('outcome, sale_id').in('sale_id', chunk),
+      { label: 'deal_outcomes fetch' },
+    );
 
     // Fetch stage history for velocity analysis
-    const { data: stageHistory } = await supabase
-      .from('deal_stage_history')
-      .select('*')
-      .in('sale_id', dealIds)
-      .order('entered_at', { ascending: false });
+    const stageHistory = await chunkedIn<Record<string, unknown>>(
+      dealIds,
+      (chunk) =>
+        supabase
+          .from('deal_stage_history')
+          .select('*')
+          .in('sale_id', chunk)
+          .order('entered_at', { ascending: false }),
+      { label: 'deal_stage_history fetch' },
+    );
+
+
 
     // Calculate probability for each deal
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
 
-    for (const deal of deals || []) {
+    for (const raw of deals || []) {
+      const deal = raw as { id: string; status: string; amount: number; category: string };
+
       const factors: string[] = [];
       let probability = stageProbabilities[deal.status] || 10;
 
