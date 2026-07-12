@@ -119,8 +119,39 @@ export const AICopilotFab: FC = () => {
               )}
             </div>
 
+            {/* Skills strip */}
+            <div className="px-3 pb-2 flex flex-wrap gap-1.5" role="group" aria-label="Skills do Copilot">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isLoading || !skillTargets?.forecastId}
+                onClick={() => skillTargets?.forecastId && getForecastNarrative(skillTargets.forecastId)}
+                className="h-7 gap-1.5 text-[11px] font-semibold border-primary/20 hover:border-primary/50 hover:bg-primary/10"
+                aria-label="Explicar o forecast atual"
+                title={skillTargets?.forecastId ? 'Explica o forecast mais recente' : 'Sem forecast disponível'}
+              >
+                <TrendingUp className="h-3 w-3" aria-hidden="true" />
+                Forecast
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isLoading || !skillTargets?.recordingId}
+                onClick={() => skillTargets?.recordingId && getCoachingPlan(skillTargets.recordingId)}
+                className="h-7 gap-1.5 text-[11px] font-semibold border-primary/20 hover:border-primary/50 hover:bg-primary/10"
+                aria-label="Gerar plano de coaching da última call"
+                title={skillTargets?.recordingId ? 'Coaching da call mais recente' : 'Sem gravação disponível'}
+              >
+                <Headphones className="h-3 w-3" aria-hidden="true" />
+                Coaching
+              </Button>
+            </div>
+
             {/* Quick Ask Input */}
             <form onSubmit={handleSubmit} className="px-3 pb-3">
+
               <div className="flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-xl px-3 py-2.5 focus-within:border-primary/40 focus-within:bg-primary/10 transition-all">
                 <input
                   ref={inputRef}
