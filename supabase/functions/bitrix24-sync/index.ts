@@ -268,11 +268,17 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
     const companyIds = deals.map(d => d.COMPANY_ID).filter(Boolean) as string[];
     const clientNameByBitrixId = new Map<string, string>();
     if (companyIds.length > 0) {
-      const { data: icpRows } = await supabase
-        .from('icp_data')
-        .select('bitrix_id, clients!inner(name)')
-        .in('bitrix_id', companyIds);
-      icpRows?.forEach((row: { bitrix_id: string | null; clients: { name: string } | null }) => {
+      type IcpJoinRow = { bitrix_id: string | null; clients: { name: string } | null };
+      const icpRows = await chunkedIn<IcpJoinRow>(
+        companyIds,
+        (chunk) =>
+          supabase
+            .from('icp_data')
+            .select('bitrix_id, clients!inner(name)')
+            .in('bitrix_id', chunk),
+        { parallel: true, label: 'bitrix24-sync.deals_client_names' }
+      );
+      icpRows.forEach((row) => {
         if (row.bitrix_id && row.clients?.name) {
           clientNameByBitrixId.set(row.bitrix_id, row.clients.name);
         }
