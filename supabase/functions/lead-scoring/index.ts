@@ -177,19 +177,24 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
         factors,
         labels
       };
+    }
 
-      // Upsert score to database
+    // Bulk upsert scores in a single round-trip (avoids N sequential writes / timeouts)
+    const nowIso = new Date().toISOString();
+    const upsertRows = Object.entries(scores).map(([sale_id, s]) => ({
+      sale_id,
+      score: s.score,
+      factors: { ...s.factors, labels: s.labels },
+      calculated_at: nowIso,
+    }));
+
+    if (upsertRows.length > 0) {
       const { error: upsertError } = await supabase
         .from('lead_scores')
-        .upsert({
-          sale_id: deal.id,
-          score: Math.min(100, totalScore),
-          factors: { ...factors, labels },
-          calculated_at: new Date().toISOString()
-        }, { onConflict: 'sale_id' });
+        .upsert(upsertRows, { onConflict: 'sale_id' });
 
       if (upsertError) {
-        console.error('Error upserting score:', upsertError);
+        console.error('Bulk upsert error:', JSON.stringify(upsertError));
       }
     }
 
@@ -201,10 +206,17 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
     );
 
   } catch (error) {
-    console.error('Error in lead-scoring function:', error);
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'object' && error !== null
+          ? JSON.stringify(error)
+          : String(error);
+    console.error('Error in lead-scoring function:', message, error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: message || 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 }));
+
