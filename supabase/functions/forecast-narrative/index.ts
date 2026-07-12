@@ -92,6 +92,45 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
     });
   }
 
+  // Semantic cache: hash forecast payload (rounded) → dedupe identical requests within 6h
+  const cacheKeyPayload = JSON.stringify({
+    t: 'forecast-narrative',
+    id: forecastId,
+    p: forecast.period_type,
+    c: Math.round(forecast.commit_amount),
+    b: Math.round(forecast.best_case_amount),
+    u: Math.round(forecast.upside_amount),
+    w: Math.round(forecast.weighted_pipeline),
+    g: Math.round(forecast.goal_amount),
+    d: forecast.deals_count,
+    cf: Math.round(forecast.confidence_score * 100),
+    f: (forecast.factors ?? []).map((x) => `${x.impact}:${x.label}`).join('|'),
+  });
+  const hashBuf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(cacheKeyPayload));
+  const payloadHash = Array.from(new Uint8Array(hashBuf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const cacheKey = `forecast-narrative:${forecastId}:${payloadHash.slice(0, 16)}`;
+
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const serviceClient = createClient(supabaseUrl, serviceKey);
+
+  const { data: cached } = await serviceClient
+    .from('ai_narrative_cache')
+    .select('narrative, hit_count')
+    .eq('cache_key', cacheKey)
+    .gt('expires_at', new Date().toISOString())
+    .maybeSingle();
+
+  if (cached?.narrative) {
+    await serviceClient
+      .from('ai_narrative_cache')
+      .update({ hit_count: (cached.hit_count ?? 0) + 1 })
+      .eq('cache_key', cacheKey);
+    return new Response(
+      JSON.stringify({ narrative: cached.narrative, cached: true, generated_at: new Date().toISOString() }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+  }
+
   const factorsText = (forecast.factors ?? [])
     .map((f) => `- [${f.impact.toUpperCase()}] ${f.label}: ${f.detail}`)
     .join('\n') || '(sem fatores registrados)';
@@ -113,11 +152,12 @@ ${factorsText}
 
 Gere a narrativa executiva.`;
 
+  const model = 'google/gemini-2.5-flash';
   const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${lovableApiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
+      model,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
@@ -147,16 +187,32 @@ Gere a narrativa executiva.`;
 
   const aiJson = await aiRes.json();
   const narrative: string = aiJson?.choices?.[0]?.message?.content?.trim() ?? '';
+  const usage = aiJson?.usage ?? {};
   if (!narrative) {
     return new Response(JSON.stringify({ error: 'AI returned empty narrative' }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
-  // Persist so we don't spend credits re-generating the same view
+  const expiresAt = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
+  await serviceClient.from('ai_narrative_cache').upsert(
+    {
+      cache_key: cacheKey,
+      narrative_type: 'forecast-narrative',
+      payload_hash: payloadHash,
+      narrative,
+      model,
+      tokens_input: usage.prompt_tokens ?? null,
+      tokens_output: usage.completion_tokens ?? null,
+      hit_count: 0,
+      expires_at: expiresAt,
+    },
+    { onConflict: 'cache_key' },
+  );
   await authClient.from('revenue_forecasts').update({ ai_summary: narrative }).eq('id', forecastId);
 
-  return new Response(JSON.stringify({ narrative, generated_at: new Date().toISOString() }), {
-    status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+  return new Response(
+    JSON.stringify({ narrative, cached: false, generated_at: new Date().toISOString() }),
+    { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+  );
 }));
