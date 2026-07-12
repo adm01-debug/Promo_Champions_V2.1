@@ -7,9 +7,6 @@
 # New edge functions MUST NOT be added here.
 
 detect-winloss-at-risk
-elevenlabs-tts
-elevenlabs-voice
-email-bulk-send
 email-composer-bulk
 email-engagement-scorer
 engagement-score-recompute
