@@ -22,6 +22,7 @@ import { CredentialsSourceFilter } from "@/components/admin/connections/Credenti
 import { HealthStatusFilter } from "@/components/admin/connections/HealthStatusFilter";
 import { GlobalRefreshFromDbButton } from "@/components/admin/connections/GlobalRefreshFromDbButton";
 import { CronJobsPanel } from "@/components/admin/connections/CronJobsPanel";
+import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRatePanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
