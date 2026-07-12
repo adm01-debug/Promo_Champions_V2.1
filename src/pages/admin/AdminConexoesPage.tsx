@@ -71,6 +71,8 @@ function AdminConexoesContent() {
 
         <DbRollbackRatePanel />
 
+        <TopQueriesPanel />
+
         <SmokeTestChecklist />
 
         <Tabs defaultValue="database" className="space-y-4">
