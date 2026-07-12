@@ -34,29 +34,47 @@ interface DeadLetterJob {
   next_attempt_at: string;
 }
 
+const PAGE_LIMIT = 100;
+
 export function DeadLetterIngestPanel() {
   const [jobs, setJobs] = useState<DeadLetterJob[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [replaying, setReplaying] = useState<string | null>(null);
   const [confirmJob, setConfirmJob] = useState<DeadLetterJob | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc(
-      "fn_admin_list_dead_letter_ingest_jobs" as never,
-      { _limit: 100 } as never,
-    );
+    const [{ data, error }, { count, error: cErr }] = await Promise.all([
+      supabase.rpc("fn_admin_list_dead_letter_ingest_jobs" as never, { _limit: PAGE_LIMIT } as never),
+      supabase
+        .from("call_recording_ingest_jobs")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "dead_letter"),
+    ]);
     if (error) {
       toast.error("Falha ao carregar jobs em dead-letter", { description: error.message });
     } else {
       setJobs((data ?? []) as DeadLetterJob[]);
     }
+    if (!cErr) setTotalCount(count ?? 0);
     setLoading(false);
   }, []);
 
   useEffect(() => {
     void load();
+    // Realtime subscription — recarrega em qualquer mudança de status dead_letter.
+    const channel = supabase
+      .channel("dead-letter-ingest-jobs")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "call_recording_ingest_jobs" },
+        () => { void load(); },
+      )
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
   }, [load]);
+
 
   const replay = useCallback(
     async (id: string) => {
@@ -86,7 +104,9 @@ export function DeadLetterIngestPanel() {
           <CardTitle className="flex items-center gap-2 text-base">
             <AlertOctagon className="h-4 w-4 text-destructive" />
             Fila de ingestão — Dead-letter
-            <Badge variant="outline" className="ml-2">{jobs.length}</Badge>
+            <Badge variant="outline" className="ml-2">
+              {totalCount > jobs.length ? `${jobs.length} de ${totalCount}` : jobs.length}
+            </Badge>
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={() => void load()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />

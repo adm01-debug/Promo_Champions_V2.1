@@ -20459,6 +20459,13 @@ export type Database = {
         Args: { _schedule: string }
         Returns: string
       }
+      fn_gc_call_recording_ingest_jobs: {
+        Args: never
+        Returns: {
+          deleted_dead_letter: number
+          deleted_succeeded: number
+        }[]
+      }
       fn_get_orders_conversion_seq_last: { Args: never; Returns: number }
       fn_list_cron_jobs: {
         Args: never
