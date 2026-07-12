@@ -23,6 +23,7 @@ import { HealthStatusFilter } from "@/components/admin/connections/HealthStatusF
 import { GlobalRefreshFromDbButton } from "@/components/admin/connections/GlobalRefreshFromDbButton";
 import { CronJobsPanel } from "@/components/admin/connections/CronJobsPanel";
 import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRatePanel";
+import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
