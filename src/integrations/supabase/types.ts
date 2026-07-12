@@ -19944,6 +19944,7 @@ export type Database = {
       detect_renewal_risks: { Args: never; Returns: number }
       disable_sms: { Args: never; Returns: boolean }
       disable_totp: { Args: never; Returns: boolean }
+      enforce_telemetry_retention: { Args: never; Returns: Json }
       enroll_quote_in_cadence: {
         Args: { _cadence_id: string; _quote_id: string }
         Returns: string
