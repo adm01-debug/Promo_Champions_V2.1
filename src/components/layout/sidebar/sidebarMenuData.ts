@@ -190,6 +190,7 @@ export const gestaoGroupedItems: MenuGroup[] = [
       { title: "Cohort Heatmap", url: "/relatorios/cohort", icon: LayoutGrid },
       { title: "Lead Scoring", url: "/lead-scoring", icon: Target },
       { title: "Neural Forecast Hub", url: "/revenue-forecast", icon: Brain },
+      { title: "Revenue Forecast v2", url: "/revenue-forecast-v2", icon: Brain },
       { title: "Forecast Ponderado", url: "/forecast", icon: TrendingUp },
       { title: "Inteligência Preditiva", url: "/inteligencia-preditiva", icon: Brain },
       { title: "Inteligência de Compras", url: "/inteligencia-compras", icon: Flame },

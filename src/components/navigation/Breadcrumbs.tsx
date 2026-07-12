@@ -91,6 +91,7 @@ const routeLabels: Record<string, string> = {
   vendedor: 'Vendedor',
   'revenue-intelligence': 'Revenue Intelligence',
   'revenue-forecast': 'Previsão de Receita',
+  'revenue-forecast-v2': 'Previsão de Receita v2',
   'customer-success': 'Customer Success',
   'sales-enablement': 'Enablement',
   'pricing-intelligence': 'Pricing',
