@@ -4,7 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 
 
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
