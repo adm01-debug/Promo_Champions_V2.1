@@ -25,6 +25,9 @@ export default defineConfig({
         'src/utils/dateHelpers.ts',
         'src/utils/fuzzing.ts',
         'src/lib/revenueForecast/forecastEngine.ts',
+        'src/components/reporting/funnelReportHelpers.ts',
+        'src/hooks/reports/salesReportHelpers.ts',
+        'src/services/salesService.ts',
       ],
       exclude: [
         'src/**/*.test.{ts,tsx}',
