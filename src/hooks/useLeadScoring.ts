@@ -182,7 +182,7 @@ export const useLeadScoring = (leadId?: string) => {
               labels: bestLabels,
               bestDealId,
               trend: trendMap.get(bestDealId || '') || [],
-              churnRisk: bestDealId ? (riskMap.get(bestDealId) as ChurnRisk) : undefined,
+              churnRisk: bestDealId ? (riskMap.get(bestDealId) as unknown as ChurnRisk) : undefined,
             };
           }
 
