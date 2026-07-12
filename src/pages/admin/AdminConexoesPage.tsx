@@ -23,9 +23,11 @@ import { HealthStatusFilter } from "@/components/admin/connections/HealthStatusF
 import { GlobalRefreshFromDbButton } from "@/components/admin/connections/GlobalRefreshFromDbButton";
 import { CronJobsPanel } from "@/components/admin/connections/CronJobsPanel";
 import { CronAlertMetricsPanel } from "@/components/admin/connections/CronAlertMetricsPanel";
+import { CronAlertBreakdownChart } from "@/components/admin/connections/CronAlertBreakdownChart";
 import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRatePanel";
 import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel";
 import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAlertsPanel";
+import { DeadLetterIngestPanel } from "@/components/admin/connections/DeadLetterIngestPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
@@ -72,6 +74,12 @@ function AdminConexoesContent() {
         <CronJobsPanel />
 
         <CronAlertMetricsPanel />
+
+        <CronAlertBreakdownChart />
+
+
+        <DeadLetterIngestPanel />
+
 
         <DbRollbackRatePanel />
 

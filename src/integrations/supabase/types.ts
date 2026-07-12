@@ -20297,6 +20297,15 @@ export type Database = {
         Args: { _quote_id?: string; _sale_id?: string }
         Returns: Json
       }
+      fn_admin_cron_alert_breakdown: {
+        Args: never
+        Returns: {
+          alerts: number
+          failed: number
+          jobname: string
+          stalled: number
+        }[]
+      }
       fn_admin_cron_alert_metrics: { Args: never; Returns: Json }
       fn_admin_get_new_cron_failures: {
         Args: { _since_minutes?: number }
@@ -20307,6 +20316,20 @@ export type Database = {
           return_message: string
           start_time: string
           status: string
+        }[]
+      }
+      fn_admin_list_dead_letter_ingest_jobs: {
+        Args: { _limit?: number }
+        Returns: {
+          attempts: number
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string
+          locked_by: string
+          next_attempt_at: string
+          salesperson_id: string
+          updated_at: string
         }[]
       }
       fn_admin_mark_cron_failure_alerted: {
@@ -20347,6 +20370,10 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      fn_admin_replay_dead_letter_ingest_job: {
+        Args: { _job_id: string }
+        Returns: boolean
       }
       fn_admin_reset_circuit: {
         Args: { _circuit_name: string; _reason?: string }

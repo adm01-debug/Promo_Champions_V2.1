@@ -18,7 +18,26 @@ interface AtRiskDeal {
   client_id: string | null;
 }
 
-Deno.serve(withRequestId('deal-risk-digest', async (req, _ctx) => {
+async function postSlack(text: string): Promise<void> {
+  const url = Deno.env.get('SLACK_DIGEST_WEBHOOK_URL');
+  if (!url) return;
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 5_000);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+      signal: ctl.signal,
+    });
+    clearTimeout(t);
+    await res.text().catch(() => undefined);
+  } catch (err) {
+    console.warn('[deal-risk-digest] slack fallback failed', err instanceof Error ? err.message : err);
+  }
+}
+
+Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   const startedAt = Date.now();
@@ -143,6 +162,9 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, _ctx) => {
       .insert(toInsert, { count: 'exact' });
     if (insErr) {
       console.error('[deal-risk-digest] insert failed', insErr);
+      await postSlack(
+        `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+      );
       return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -157,7 +179,21 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, _ctx) => {
     skipped_idempotent: skipped,
     elapsed_ms: Date.now() - startedAt,
   };
-  console.log('[deal-risk-digest]', JSON.stringify(summary));
+  ctx.log('info', 'digest_summary', summary);
+  if (inserted > 0) {
+    await postSlack(
+      `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${summary.elapsed_ms}ms.`,
+    );
+  }
+
+  const summary = {
+    ok: true,
+    salespeople_analyzed: bySeller.size,
+    digests_created: inserted,
+    skipped_idempotent: skipped,
+    elapsed_ms: Date.now() - startedAt,
+  };
+  
 
   return new Response(JSON.stringify(summary), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -24,7 +24,7 @@ interface ForecastRow {
 const BRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v ?? 0);
 
-Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
+Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -34,6 +34,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
 
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
+    ctx.log('warn', 'auth_missing');
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -47,26 +48,35 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
 
   const { data: userData, error: userErr } = await authClient.auth.getUser();
   if (userErr || !userData?.user) {
+    ctx.log('warn', 'auth_invalid', { error: userErr?.message });
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+  const userId = userData.user.id;
 
   const rlBlock = enforceRateLimit(req, { name: 'forecast-narrative', limit: 20, windowSeconds: 60 });
-  if (rlBlock) return rlBlock;
+  if (rlBlock) {
+    ctx.log('warn', 'rate_limited', { userId });
+    return rlBlock;
+  }
 
   let body: { forecast_id?: string };
   try { body = await req.json(); } catch {
+    ctx.log('warn', 'invalid_json', { userId });
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
       status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   const forecastId = body?.forecast_id;
-  if (!forecastId || typeof forecastId !== 'string') {
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!forecastId || typeof forecastId !== 'string' || !uuidRe.test(forecastId)) {
+    ctx.log('warn', 'validation_failed', { userId, field: 'forecast_id' });
     return new Response(JSON.stringify({ error: 'forecast_id (uuid) required' }), {
       status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 
   const { data: forecast, error: fErr } = await authClient
     .from('revenue_forecasts')
@@ -121,6 +131,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
     .maybeSingle();
 
   if (cached?.narrative) {
+    ctx.log('info', 'cache_hit', { userId, forecastId, cacheKey });
     await serviceClient
       .from('ai_narrative_cache')
       .update({ hit_count: (cached.hit_count ?? 0) + 1 })
@@ -130,6 +141,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, _ctx) => {
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   }
+
 
   const factorsText = (forecast.factors ?? [])
     .map((f) => `- [${f.impact.toUpperCase()}] ${f.label}: ${f.detail}`)
@@ -167,19 +179,21 @@ Gere a narrativa executiva.`;
 
   if (aiRes.status === 429) {
     await aiRes.text();
+    ctx.log('warn', 'ai_rate_limited', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'AI rate limit — tente novamente em instantes' }), {
       status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   if (aiRes.status === 402) {
     await aiRes.text();
+    ctx.log('error', 'ai_payment_required', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'Créditos IA insuficientes na workspace' }), {
       status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   if (!aiRes.ok) {
     const errText = await aiRes.text();
-    console.error('[forecast-narrative] AI error', aiRes.status, errText);
+    ctx.log('error', 'ai_error', { userId, forecastId, status: aiRes.status, detail: errText.slice(0, 300) });
     return new Response(JSON.stringify({ error: 'AI provider error', status: aiRes.status }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -189,10 +203,12 @@ Gere a narrativa executiva.`;
   const narrative: string = aiJson?.choices?.[0]?.message?.content?.trim() ?? '';
   const usage = aiJson?.usage ?? {};
   if (!narrative) {
+    ctx.log('error', 'ai_empty_narrative', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'AI returned empty narrative' }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 
   const expiresAt = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
   await serviceClient.from('ai_narrative_cache').upsert(
@@ -210,6 +226,11 @@ Gere a narrativa executiva.`;
     { onConflict: 'cache_key' },
   );
   await authClient.from('revenue_forecasts').update({ ai_summary: narrative }).eq('id', forecastId);
+  ctx.log('info', 'narrative_generated', {
+    userId, forecastId,
+    tokens_input: usage.prompt_tokens ?? null,
+    tokens_output: usage.completion_tokens ?? null,
+  });
 
   return new Response(
     JSON.stringify({ narrative, cached: false, generated_at: new Date().toISOString() }),
