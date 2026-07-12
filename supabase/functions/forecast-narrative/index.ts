@@ -179,19 +179,21 @@ Gere a narrativa executiva.`;
 
   if (aiRes.status === 429) {
     await aiRes.text();
+    ctx.log('warn', 'ai_rate_limited', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'AI rate limit — tente novamente em instantes' }), {
       status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   if (aiRes.status === 402) {
     await aiRes.text();
+    ctx.log('error', 'ai_payment_required', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'Créditos IA insuficientes na workspace' }), {
       status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
   if (!aiRes.ok) {
     const errText = await aiRes.text();
-    console.error('[forecast-narrative] AI error', aiRes.status, errText);
+    ctx.log('error', 'ai_error', { userId, forecastId, status: aiRes.status, detail: errText.slice(0, 300) });
     return new Response(JSON.stringify({ error: 'AI provider error', status: aiRes.status }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -201,10 +203,12 @@ Gere a narrativa executiva.`;
   const narrative: string = aiJson?.choices?.[0]?.message?.content?.trim() ?? '';
   const usage = aiJson?.usage ?? {};
   if (!narrative) {
+    ctx.log('error', 'ai_empty_narrative', { userId, forecastId });
     return new Response(JSON.stringify({ error: 'AI returned empty narrative' }), {
       status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
 
   const expiresAt = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
   await serviceClient.from('ai_narrative_cache').upsert(
