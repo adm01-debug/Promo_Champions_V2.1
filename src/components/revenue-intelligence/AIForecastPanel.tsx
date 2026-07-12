@@ -29,6 +29,7 @@ export const AIForecastPanel: FC = () => {
         onChangeStart={setPeriodStart}
         ownerId={null}
       />
+      <ForecastNarrative forecastId={data?.id} cachedNarrative={data?.ai_summary} />
       <ForecastDealsTable 
         forecastId={data?.id} 
         onSelectSale={setSelectedSaleId}
