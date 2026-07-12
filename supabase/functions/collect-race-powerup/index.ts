@@ -95,4 +95,4 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));
