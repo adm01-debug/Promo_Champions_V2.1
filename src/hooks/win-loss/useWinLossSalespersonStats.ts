@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import {
   aggregateBySalesperson,
   type SalespersonStat,
@@ -14,13 +15,12 @@ export const useSalespersonWinLossStats = (
   const { data: sales = [], isLoading: l1 } = useQuery({
     queryKey: ['wl-sp-sales', idsKey],
     queryFn: async () => {
-      if (!ids.length) return [];
-      const { data, error } = await supabase
-        .from('sales')
-        .select('id,salesperson_id')
-        .in('id', ids);
-      if (error) throw error;
-      return data ?? [];
+      if (!ids.length) return [] as Array<{ id: string; salesperson_id: string | null }>;
+      return await chunkedIn<{ id: string; salesperson_id: string | null }>(
+        ids,
+        (chunk) => supabase.from('sales').select('id,salesperson_id').in('id', chunk as string[]),
+        { parallel: true, label: 'wl-sp-sales' },
+      );
     },
     enabled: ids.length > 0,
   });
@@ -29,13 +29,12 @@ export const useSalespersonWinLossStats = (
   const { data: people = [], isLoading: l2 } = useQuery({
     queryKey: ['wl-sp-people', spIdsKey],
     queryFn: async () => {
-      if (!spIds.length) return [];
-      const { data, error } = await supabase
-        .from('salespeople_public')
-        .select('id,name')
-        .in('id', spIds);
-      if (error) throw error;
-      return data ?? [];
+      if (!spIds.length) return [] as Array<{ id: string | null; name: string | null }>;
+      return await chunkedIn<{ id: string | null; name: string | null }>(
+        spIds,
+        (chunk) => supabase.from('salespeople_public').select('id,name').in('id', chunk as string[]),
+        { parallel: true, label: 'wl-sp-people' },
+      );
     },
     enabled: spIds.length > 0,
   });
