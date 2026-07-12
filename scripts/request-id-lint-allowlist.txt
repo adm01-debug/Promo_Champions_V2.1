@@ -6,9 +6,6 @@
 #   2. a function in this list has already adopted withRequestId (stale entry).
 # New edge functions MUST NOT be added here.
 
-demand-forecast
-detect-at-risk-deals
-detect-coaching-opportunities
 detect-competitor-mentions
 detect-critical-moments
 detect-stuck-deals
