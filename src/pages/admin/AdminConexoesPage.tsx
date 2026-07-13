@@ -29,6 +29,7 @@ import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel"
 import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAlertsPanel";
 import { DeadLetterIngestPanel } from "@/components/admin/connections/DeadLetterIngestPanel";
 import { ForecastNarrativeDlqPanel } from "@/components/admin/connections/ForecastNarrativeDlqPanel";
+import { EdgeRetryEventsPanel } from "@/components/admin/connections/EdgeRetryEventsPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
