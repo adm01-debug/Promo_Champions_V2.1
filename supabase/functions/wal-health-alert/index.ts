@@ -20,6 +20,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
@@ -35,21 +36,38 @@ function bytes(n: number): string {
   return `${v.toFixed(1)} ${units[i]}`;
 }
 
-async function postSlack(webhook: string, text: string, blocks?: unknown) {
+async function postSlack(webhook: string, text: string, blocks?: unknown, requestId?: string) {
   await withEdgeCircuitBreaker(
     "slack:wal-health-alert",
     async () => {
-      const res = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(blocks ? { text, blocks } : { text }),
+      await withRetry(async (_attempt, signal) => {
+        const res = await fetch(webhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(blocks ? { text, blocks } : { text }),
+          signal,
+        });
+        if (!res.ok) {
+          const body = await res.text();
+          if (res.status === 429 || res.status >= 500) throw res;
+          throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
+        }
+      }, {
+        maxAttempts: 3,
+        baseDelayMs: 300,
+        maxDelayMs: 3000,
+        timeoutMs: 6_000,
+        isRetryable: (err) => err instanceof Response
+          ? (err.status === 429 || err.status >= 500)
+          : ((err as { name?: string })?.name === "AbortError" || (err as { name?: string })?.name === "TypeError"),
+        telemetry: {
+          functionName: "wal-health-alert",
+          operation: "slack_post",
+          requestId: requestId ?? null,
+        },
       });
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(`slack webhook ${res.status}: ${body.slice(0, 200)}`);
-      }
     },
-    { failureThreshold: 3, resetTimeout: 60_000, timeoutMs: 5_000 },
+    { failureThreshold: 3, resetTimeout: 60_000, timeoutMs: 20_000 },
   );
 }
 
@@ -135,7 +153,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
           },
         ],
       },
-    ]);
+    ], ctx.requestId);
 
     return new Response(
       JSON.stringify({ ok: true, alerts, snapshot: data }),

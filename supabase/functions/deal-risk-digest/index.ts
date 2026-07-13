@@ -6,6 +6,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
+import { withRetry, RetryError } from '../_shared/retry.ts';
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
@@ -22,31 +23,47 @@ interface AtRiskDeal {
 
 interface SlackResult { attempted: boolean; ok: boolean; error?: string; circuit_open?: boolean }
 
-async function postSlack(text: string): Promise<SlackResult> {
+async function postSlack(text: string, requestId?: string | null): Promise<SlackResult> {
   const url = Deno.env.get('SLACK_DIGEST_WEBHOOK_URL');
   if (!url) return { attempted: false, ok: false };
   try {
     await withEdgeCircuitBreaker(SLACK_CIRCUIT, async () => {
-      const ctl = new AbortController();
-      const t = setTimeout(() => ctl.abort(), 5_000);
-      try {
+      await withRetry(async (_attempt, signal) => {
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text }),
-          signal: ctl.signal,
+          signal,
         });
         await res.text().catch(() => undefined);
-        if (!res.ok) throw new Error(`http_${res.status}`);
-      } finally {
-        clearTimeout(t);
-      }
-    }, { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 6_000 });
+        if (!res.ok) {
+          if (res.status === 429 || res.status >= 500) throw res;
+          throw new Error(`http_${res.status}`);
+        }
+      }, {
+        maxAttempts: 3,
+        baseDelayMs: 300,
+        maxDelayMs: 3000,
+        timeoutMs: 5_000,
+        isRetryable: (err) => err instanceof Response
+          ? (err.status === 429 || err.status >= 500)
+          : ((err as { name?: string })?.name === 'AbortError' || (err as { name?: string })?.name === 'TypeError'),
+        telemetry: {
+          functionName: 'deal-risk-digest',
+          operation: 'slack_post',
+          requestId: requestId ?? null,
+        },
+      });
+    }, { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 20_000 });
     return { attempted: true, ok: true };
   } catch (err) {
     if (err instanceof CircuitBreakerOpenError) {
       console.warn('[deal-risk-digest] slack circuit open, skipping fallback');
       return { attempted: false, ok: false, error: 'circuit_open', circuit_open: true };
+    }
+    if (err instanceof RetryError) {
+      console.warn('[deal-risk-digest] slack retry exhausted', err.attempts);
+      return { attempted: true, ok: false, error: `retry_exhausted:${err.attempts}` };
     }
     const msg = err instanceof Error ? err.message : String(err);
     console.warn('[deal-risk-digest] slack fallback failed', msg);
@@ -181,6 +198,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
       console.error('[deal-risk-digest] insert failed', insErr);
       await postSlack(
         `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+        ctx.requestId,
       );
       return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -193,6 +211,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   if (inserted > 0) {
     slack = await postSlack(
       `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${Date.now() - startedAt}ms.`,
+      ctx.requestId,
     );
   }
 
