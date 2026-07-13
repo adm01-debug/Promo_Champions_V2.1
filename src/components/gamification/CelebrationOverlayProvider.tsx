@@ -116,7 +116,7 @@ export function CelebrationOverlayProvider() {
     loadSalespersonNames();
 
     // Subscribe to victory_feed for current user
-    let victoryChannel: any;
+    let victoryChannel: RealtimeChannel | undefined;
     if (salesperson?.id) {
       victoryChannel = supabase
         .channel('victory-celebrations')
