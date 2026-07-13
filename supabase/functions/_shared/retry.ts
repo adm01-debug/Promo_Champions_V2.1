@@ -150,7 +150,21 @@ export async function withRetry<T>(
 ): Promise<T> {
   const cfg = { ...DEFAULTS, ...config };
   const isRetryable = config.isRetryable ?? defaultIsRetryable;
+  const tel = config.telemetry;
   let lastError: unknown;
+
+  const errMeta = (err: unknown) => {
+    const status = err instanceof Response
+      ? err.status
+      : (err && typeof err === "object" && "status" in err && Number.isFinite(Number((err as { status: unknown }).status))
+        ? Number((err as { status: number }).status)
+        : null);
+    return {
+      status_code: status,
+      error_name: (err as { name?: string })?.name ?? null,
+      error_message: ((err as Error)?.message ?? String(err))?.slice(0, 500) ?? null,
+    };
+  };
 
   for (let attempt = 0; attempt < cfg.maxAttempts; attempt++) {
     if (config.signal?.aborted) {
@@ -163,11 +177,34 @@ export async function withRetry<T>(
 
     try {
       const result = await fn(attempt, perAttemptCtrl.signal);
+      if (tel && attempt > 0) {
+        void emitRetryEvent({
+          function_name: tel.functionName,
+          operation: tel.operation,
+          attempt: attempt + 1,
+          total_attempts: attempt + 1,
+          outcome: "success_after_retry",
+          request_id: tel.requestId ?? null,
+        });
+      }
       return result;
     } catch (err) {
       lastError = err;
       const isLast = attempt === cfg.maxAttempts - 1;
-      if (isLast || !isRetryable(err, attempt)) {
+      const retryable = isRetryable(err, attempt);
+      if (isLast || !retryable) {
+        if (tel) {
+          const meta = errMeta(err);
+          void emitRetryEvent({
+            function_name: tel.functionName,
+            operation: tel.operation,
+            attempt: attempt + 1,
+            total_attempts: attempt + 1,
+            outcome: retryable ? "exhausted" : "non_retryable",
+            request_id: tel.requestId ?? null,
+            ...meta,
+          });
+        }
         throw new RetryError(
           `retry_exhausted after ${attempt + 1} attempt(s): ${(err as Error)?.message ?? String(err)}`,
           attempt + 1,
@@ -176,6 +213,18 @@ export async function withRetry<T>(
       }
       const retryAfterMs = extractRetryAfterMs(err);
       const delay = retryAfterMs ?? computeDelay(attempt, cfg.baseDelayMs, cfg.maxDelayMs);
+      if (tel) {
+        const meta = errMeta(err);
+        void emitRetryEvent({
+          function_name: tel.functionName,
+          operation: tel.operation,
+          attempt: attempt + 1,
+          outcome: "retry",
+          delay_ms: delay,
+          request_id: tel.requestId ?? null,
+          ...meta,
+        });
+      }
       config.onRetry?.(err, attempt + 1, delay);
       await sleep(delay, config.signal);
     } finally {
