@@ -143,7 +143,7 @@ export const FuturisticSpeedometerDashboard = () => {
   }, [kpis]);
 
   const saveSettings = useCallback(
-    async (newSettings: any) => {
+    async (newSettings: SpeedometerSettings) => {
       if (!user?.id) return;
       setIsSyncing(true);
 
