@@ -17,6 +17,60 @@ export interface RetryConfig {
   isRetryable?: (err: unknown, attempt: number) => boolean;
   onRetry?: (err: unknown, attempt: number, delayMs: number) => void;
   signal?: AbortSignal;
+  // Telemetria persistente em `edge_retry_events` (fire-and-forget via service_role).
+  telemetry?: {
+    functionName: string;
+    operation: string;
+    requestId?: string | null;
+  };
+}
+
+interface SupabaseInsertClient {
+  from(table: string): {
+    insert(row: Record<string, unknown>): Promise<{ error: unknown }> | { error: unknown };
+  };
+}
+
+let telemetryClient: SupabaseInsertClient | null = null;
+function getTelemetryClient(): SupabaseInsertClient | null {
+  if (telemetryClient) return telemetryClient;
+  try {
+    const url = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env.get("SUPABASE_URL");
+    const key = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !key) return null;
+    // Dynamic import via npm specifier (Deno-only). No-op no ambiente de testes puros.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g = globalThis as any;
+    if (!g.__retryTelemetryInit) {
+      g.__retryTelemetryInit = import("npm:@supabase/supabase-js@2.49.4")
+        .then((mod) => {
+          telemetryClient = mod.createClient(url, key, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          }) as unknown as SupabaseInsertClient;
+        })
+        .catch(() => { /* swallow: telemetria é best-effort */ });
+    }
+  } catch { /* swallow */ }
+  return telemetryClient;
+}
+
+async function emitRetryEvent(row: {
+  function_name: string;
+  operation: string;
+  attempt: number;
+  total_attempts?: number | null;
+  outcome: "retry" | "success_after_retry" | "exhausted" | "non_retryable";
+  status_code?: number | null;
+  error_name?: string | null;
+  error_message?: string | null;
+  delay_ms?: number | null;
+  request_id?: string | null;
+}) {
+  const client = getTelemetryClient();
+  if (!client) return;
+  try {
+    await client.from("edge_retry_events").insert(row);
+  } catch { /* swallow: best-effort */ }
 }
 
 export class RetryError extends Error {
