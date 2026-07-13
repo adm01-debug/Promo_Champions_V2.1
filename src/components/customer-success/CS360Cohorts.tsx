@@ -11,14 +11,14 @@ const CHART_COLORS = [
   "hsl(var(--accent))"
 ];
 
-interface CohortData {
+export interface CohortData {
   month: string;
   retained: number;
   churned: number;
   revenue: number;
 }
 
-interface OrdersByStatus {
+export interface OrdersByStatus {
   status: string;
   count: number;
   value: number;

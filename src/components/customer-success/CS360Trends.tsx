@@ -4,7 +4,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { formatBRL } from "./cs360Helpers";
 import type { ValueType } from "recharts/types/component/DefaultTooltipContent";
 
-interface EvolutionData {
+export interface EvolutionData {
   name: string;
   ltv: number;
   ticket: number;
