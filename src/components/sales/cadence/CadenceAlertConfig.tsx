@@ -29,10 +29,10 @@ const VARIABLES = [
 ];
 
 export function CadenceAlertConfig() {
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<AlertTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<AlertTemplateForm>({
     name: '',
     type: 'push',
     subject: '',
@@ -84,8 +84,8 @@ export function CadenceAlertConfig() {
       }
       setEditingId(null);
       fetchTemplates();
-    } catch (error: any) {
-      toast.error('Erro ao salvar: ' + error.message);
+    } catch (error) {
+      toast.error('Erro ao salvar: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
@@ -102,7 +102,7 @@ export function CadenceAlertConfig() {
   };
 
   const insertVariable = (variable: string) => {
-    setFormData((prev: any) => ({
+    setFormData(prev => ({
       ...prev,
       content: (prev.content || '') + `{{${variable}}}`,
     }));
