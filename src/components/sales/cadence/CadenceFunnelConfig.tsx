@@ -294,7 +294,7 @@ export function CadenceFunnelConfig() {
                 </label>
                 <Select
                   value={newRule.alert_priority}
-                  onValueChange={v => setNewRule({ ...newRule, alert_priority: v })}
+                  onValueChange={v => setNewRule({ ...newRule, alert_priority: v as FunnelRule['alert_priority'] })}
                 >
                   <SelectTrigger className="h-8 text-xs">
                     <SelectValue />
