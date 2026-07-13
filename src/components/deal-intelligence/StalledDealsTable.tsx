@@ -78,11 +78,11 @@ export function StalledDealsTable() {
                   key={d.id}
                   className="flex items-center gap-3 p-3 rounded-lg glass border border-border/30 hover:border-primary/40 transition-all"
                 >
-                  <DealHealthScoreBadge score={d.health_score} tier={d.tier} size="md" />
+                  <DealHealthScoreBadge score={d.health_score} tier={d.tier as HealthTier} size="md" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{sale?.client_name || "—"}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {sale?.product_name} · {tierLabel(d.tier)} · {d.days_in_stage ?? 0}d no estágio
+                      {sale?.product_name} · {tierLabel(d.tier as HealthTier)} · {d.days_in_stage ?? 0}d no estágio
                     </p>
                   </div>
                   <Button
