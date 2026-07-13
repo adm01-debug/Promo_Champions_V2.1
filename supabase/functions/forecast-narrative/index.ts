@@ -165,17 +165,59 @@ ${factorsText}
 Gere a narrativa executiva.`;
 
   const model = 'google/gemini-2.5-flash';
-  const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${lovableApiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    }),
-  });
+  let aiRes: Response;
+  try {
+    aiRes = await withRetry(async (_attempt, signal) => {
+      const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${lovableApiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+        }),
+        signal,
+      });
+      // Retry apenas em 429 / 5xx. 402/4xx não-retryable — throw como Response e isRetryable filtra.
+      if (r.status === 429 || r.status >= 500) throw r;
+      return r;
+    }, {
+      maxAttempts: 3,
+      baseDelayMs: 400,
+      maxDelayMs: 4000,
+      timeoutMs: 20_000,
+      isRetryable: (err) => err instanceof Response
+        ? (err.status === 429 || err.status >= 500)
+        : ((err as { name?: string })?.name === 'AbortError' || (err as { name?: string })?.name === 'TypeError'),
+      onRetry: (err, attempt, delayMs) => {
+        const status = err instanceof Response ? err.status : (err as Error)?.name;
+        ctx.log('warn', 'ai_gateway_retry', { attempt, delayMs, status });
+      },
+    });
+  } catch (err) {
+    const inner = (err as RetryError).lastError;
+    if (inner instanceof Response) {
+      aiRes = inner; // deixa o tratamento abaixo classificar (429/402/5xx)
+    } else {
+      ctx.log('error', 'ai_gateway_network_failure', { error: (err as Error)?.message });
+      // registra DLQ e retorna 502
+      try {
+        await serviceClient.from('forecast_narrative_dead_letters').insert({
+          forecast_id: forecastId,
+          user_id: userId,
+          reason: 'network_error',
+          http_status: null,
+          error_detail: ((err as Error)?.message ?? String(err)).slice(0, 2000),
+          request_id: ctx.requestId ?? null,
+        });
+      } catch { /* swallow */ }
+      return new Response(JSON.stringify({ error: 'AI gateway unreachable' }), {
+        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+  }
 
   const logDeadLetter = async (reason: string, httpStatus: number | null, detail: string | null) => {
     try {
