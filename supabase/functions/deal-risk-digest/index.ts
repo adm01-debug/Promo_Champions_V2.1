@@ -198,6 +198,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
       console.error('[deal-risk-digest] insert failed', insErr);
       await postSlack(
         `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+        ctx.requestId,
       );
       return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
