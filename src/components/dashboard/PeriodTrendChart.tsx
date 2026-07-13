@@ -27,7 +27,7 @@ const formatCurrencyCompact = (v: number) =>
     ? `R$ ${(v / 1000).toFixed(1)}k`
     : `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { fullLabel: string; revenue: number; count: number } }> }) => {
   if (!active || !payload?.length) return null;
   const point = payload[0].payload;
   return (
