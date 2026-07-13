@@ -22,7 +22,7 @@ const KPIRow = React.memo(function KPIRow({
   label: string;
   value: number;
   format: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   index: number;
 }) {
   const animated = useCountUp(value, { duration: 800 + index * 150 });

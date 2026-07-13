@@ -176,7 +176,7 @@ export const IntelligenceZones = () => {
             <span className="text-primary">Especialista</span>
           </h3>
           <div className="space-y-4 relative z-10">
-            {data?.expertCurated.map((item: any, i: number) => (
+            {data?.expertCurated.map((item: { name: string; reason: string }, i: number) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: 20 }}
