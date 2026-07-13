@@ -37,7 +37,7 @@ interface CS360OrdersDialogProps {
   orderSearch: string;
   setOrderSearch: (s: string) => void;
   orders: Order[];
-  accountById: Map<string, { name?: string | null } & Record<string, unknown>>;
+  accountById: Map<string, { name?: string | null }>;
   orderSortField: string;
   orderSortOrder: 'asc' | 'desc';
   toggleSort: (field: string) => void;
@@ -45,7 +45,7 @@ interface CS360OrdersDialogProps {
   orderPage: number;
   setOrderPage: (page: number) => void;
   totalPages: number;
-  ordersByStatus: Array<{ key: string; label?: string; count?: number } & Record<string, unknown>>;
+  ordersByStatus: Array<{ key: string; label?: string; count?: number; color?: string; icon?: React.ComponentType<{ className?: string }> }>;
   orderModalStatus: string | null;
 }
 
