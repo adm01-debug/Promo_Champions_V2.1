@@ -119,6 +119,14 @@ export function EdgeRetryEventsPanel() {
           />
         </div>
 
+        <div className="rounded-md border border-border/40 bg-card/20 p-2">
+          <p className="text-[11px] text-muted-foreground mb-1 px-1">
+            Distribuição por hora (últimas 24h)
+          </p>
+          <EdgeRetryTimeSeriesChart rows={data} />
+        </div>
+
+
         {isLoading ? (
           <div className="space-y-2">
             <Skeleton className="h-14 w-full" />
