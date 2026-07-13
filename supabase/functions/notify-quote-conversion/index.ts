@@ -23,6 +23,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
+import { withRetry, RetryError } from "../_shared/retry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,22 +100,41 @@ async function postSlack(webhookUrl: string, p: Payload, requestId: string) {
     await withEdgeCircuitBreaker(
       "slack:quote-conversion",
       async () => {
-        const res = await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+        await withRetry(async (_attempt, signal) => {
+          const res = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+            signal,
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            log("error", requestId, "slack_post_failed", { status: res.status, body: text.slice(0, 500) });
+            if (res.status === 429 || res.status >= 500) throw res;
+            throw new Error(`slack_http_${res.status}`);
+          }
+        }, {
+          maxAttempts: 3,
+          baseDelayMs: 300,
+          maxDelayMs: 3000,
+          timeoutMs: 7_000,
+          isRetryable: (err) => err instanceof Response
+            ? (err.status === 429 || err.status >= 500)
+            : ((err as { name?: string })?.name === "AbortError" || (err as { name?: string })?.name === "TypeError"),
+          telemetry: {
+            functionName: "notify-quote-conversion",
+            operation: "slack_post",
+            requestId,
+          },
         });
-        if (!res.ok) {
-          const text = await res.text();
-          log("error", requestId, "slack_post_failed", { status: res.status, body: text.slice(0, 500) });
-          throw new Error(`slack_http_${res.status}`);
-        }
       },
-      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 8_000 },
+      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 25_000 },
     );
   } catch (err) {
     if (err instanceof CircuitBreakerOpenError) {
       log("warn", requestId, "slack_circuit_open", { circuit: "slack:quote-conversion" });
+    } else if (err instanceof RetryError) {
+      log("warn", requestId, "slack_retry_exhausted", { attempts: err.attempts });
     }
   }
 }
@@ -124,26 +144,45 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
     await withEdgeCircuitBreaker(
       "webhook:quote-conversion",
       async () => {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Request-Id": requestId,
-            "X-Event": "quote_conversion",
+        await withRetry(async (_attempt, signal) => {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Request-Id": requestId,
+              "X-Event": "quote_conversion",
+            },
+            body: JSON.stringify({ event: "quote_conversion", request_id: requestId, ...p }),
+            signal,
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            log("error", requestId, "webhook_post_failed", { status: res.status, body: text.slice(0, 500) });
+            if (res.status === 429 || res.status >= 500) throw res;
+            throw new Error(`webhook_http_${res.status}`);
+          }
+        }, {
+          maxAttempts: 3,
+          baseDelayMs: 300,
+          maxDelayMs: 3000,
+          timeoutMs: 7_000,
+          isRetryable: (err) => err instanceof Response
+            ? (err.status === 429 || err.status >= 500)
+            : ((err as { name?: string })?.name === "AbortError" || (err as { name?: string })?.name === "TypeError"),
+          telemetry: {
+            functionName: "notify-quote-conversion",
+            operation: "generic_webhook_post",
+            requestId,
           },
-          body: JSON.stringify({ event: "quote_conversion", request_id: requestId, ...p }),
         });
-        if (!res.ok) {
-          const text = await res.text();
-          log("error", requestId, "webhook_post_failed", { status: res.status, body: text.slice(0, 500) });
-          throw new Error(`webhook_http_${res.status}`);
-        }
       },
-      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 8_000 },
+      { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 25_000 },
     );
   } catch (err) {
     if (err instanceof CircuitBreakerOpenError) {
       log("warn", requestId, "webhook_circuit_open", { circuit: "webhook:quote-conversion" });
+    } else if (err instanceof RetryError) {
+      log("warn", requestId, "webhook_retry_exhausted", { attempts: err.attempts });
     }
   }
 }
