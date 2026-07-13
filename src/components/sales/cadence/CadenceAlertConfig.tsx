@@ -28,11 +28,28 @@ const VARIABLES = [
   { name: 'singu_preferred_service', label: 'Serviço Preferido' },
 ];
 
+interface AlertTemplateForm {
+  name: string;
+  type: 'push' | 'email' | 'sms' | string;
+  subject: string;
+  content: string;
+  start_time: string;
+  end_time: string;
+  timezone: string;
+  days_of_week: string[];
+}
+
+interface AlertTemplate extends AlertTemplateForm {
+  id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export function CadenceAlertConfig() {
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<AlertTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<AlertTemplateForm>({
     name: '',
     type: 'push',
     subject: '',
@@ -84,8 +101,8 @@ export function CadenceAlertConfig() {
       }
       setEditingId(null);
       fetchTemplates();
-    } catch (error: any) {
-      toast.error('Erro ao salvar: ' + error.message);
+    } catch (error) {
+      toast.error('Erro ao salvar: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
@@ -102,7 +119,7 @@ export function CadenceAlertConfig() {
   };
 
   const insertVariable = (variable: string) => {
-    setFormData((prev: any) => ({
+    setFormData(prev => ({
       ...prev,
       content: (prev.content || '') + `{{${variable}}}`,
     }));

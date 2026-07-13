@@ -25,11 +25,24 @@ const OUTCOMES = [
   { id: "rejeitado", label: "Rejeitado/Lixo" },
 ];
 
+interface OutcomeRuleForm {
+  outcome: string;
+  to_stage: string;
+  next_action: string;
+  retry_delay_hours: number;
+  max_retries: number;
+  push_template_id: string | null;
+  email_template_id: string | null;
+  timezone: string;
+}
+interface OutcomeRule extends OutcomeRuleForm { id: string; created_at?: string }
+interface AlertTemplateOption { id: string; name: string; type: string }
+
 export function CadenceOutcomeConfig() {
-  const [rules, setRules] = useState<any[]>([]);
+  const [rules, setRules] = useState<OutcomeRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<OutcomeRuleForm>({
     outcome: "nao_atendeu",
     to_stage: "new",
     next_action: "retry",
@@ -39,7 +52,7 @@ export function CadenceOutcomeConfig() {
     email_template_id: null,
     timezone: "America/Sao_Paulo"
   });
-  const [alertTemplates, setAlertTemplates] = useState<any[]>([]);
+  const [alertTemplates, setAlertTemplates] = useState<AlertTemplateOption[]>([]);
 
   useEffect(() => {
     fetchRules();
@@ -72,8 +85,8 @@ export function CadenceOutcomeConfig() {
       toast.success("Regra de desfecho adicionada");
       setIsAdding(false);
       fetchRules();
-    } catch (error: any) {
-      toast.error("Erro: " + error.message);
+    } catch (error) {
+      toast.error("Erro: " + (error instanceof Error ? error.message : String(error)));
     }
   };
 
