@@ -155,7 +155,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                 className="overflow-hidden"
               >
                 <div className="mt-4 space-y-3 border-t border-white/5 pt-4">
-                  {comments.map((c: Record<string, any>) => (
+                  {comments.map((c: Record<string, unknown> & { id?: string; content?: string; salespeople?: Record<string, string> | null }) => (
                     <div key={c.id} className="flex gap-3 text-xs bg-black/10 p-2.5 rounded-2xl border border-white/5">
                       <span className="font-black italic text-primary min-w-fit uppercase tracking-tighter">{(c.salespeople as Record<string, string> | null)?.name || '?'}:</span>
                       <span className="text-muted-foreground break-words">{c.content}</span>
