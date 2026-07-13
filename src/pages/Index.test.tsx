@@ -39,10 +39,10 @@ vi.mock('@/components/dashboard/DevKpiDebugPanel', () => ({
 
 // Mock DropdownMenu for testing
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuContent: ({ children }: any) => <div data-testid="dropdown-content">{children}</div>,
-  DropdownMenuItem: ({ children, onClick }: any) => (
+  DropdownMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div data-testid="dropdown-content">{children}</div>,
+  DropdownMenuItem: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
     <button onClick={onClick}>{children}</button>
   ),
 }));
@@ -105,10 +105,10 @@ describe('Dashboard Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({ salesperson: mockSalesperson });
-    (useDashboardKPIsPeriod as any).mockReturnValue({ data: mockKPIs, isLoading: false, isError: false });
-    (useGoalsDashboard as any).mockReturnValue({ data: { totalSales: 50, totalGoal: 100 }, isLoading: false });
-    (useSalesChartData as any).mockReturnValue({ data: [], isLoading: false });
+    vi.mocked(useAuth).mockReturnValue({ salesperson: mockSalesperson });
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ data: mockKPIs, isLoading: false, isError: false });
+    vi.mocked(useGoalsDashboard).mockReturnValue({ data: { totalSales: 50, totalGoal: 100 }, isLoading: false });
+    vi.mocked(useSalesChartData).mockReturnValue({ data: [], isLoading: false });
   });
 
   it('recalculates KPIs when period is changed', async () => {
@@ -125,7 +125,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('shows skeleton states while loading', () => {
-    (useDashboardKPIsPeriod as any).mockReturnValue({ data: null, isLoading: true, isError: false });
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ data: null, isLoading: true, isError: false });
     
     renderWithProviders(<Index />);
     
@@ -135,7 +135,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('handles data fetch failure and recovery', async () => {
-    (useDashboardKPIsPeriod as any).mockReturnValue({ 
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ 
       data: null, 
       isLoading: false, 
       isError: true, 
@@ -157,7 +157,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for Closer role', () => {
-    (useAuth as any).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'closer' } });
+    vi.mocked(useAuth).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'closer' } });
     
     renderWithProviders(<Index />);
     
@@ -166,8 +166,8 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for SDR role', () => {
-    (useAuth as any).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'sdr' } });
-    (useDashboardKPIsPeriod as any).mockReturnValue({ 
+    vi.mocked(useAuth).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'sdr' } });
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ 
       data: {
         ...mockKPIs,
         current: { ...mockKPIs.current, meetingsScheduled: 15, qualifiedLeads: 20 }
