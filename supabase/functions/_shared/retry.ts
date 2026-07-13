@@ -17,6 +17,60 @@ export interface RetryConfig {
   isRetryable?: (err: unknown, attempt: number) => boolean;
   onRetry?: (err: unknown, attempt: number, delayMs: number) => void;
   signal?: AbortSignal;
+  // Telemetria persistente em `edge_retry_events` (fire-and-forget via service_role).
+  telemetry?: {
+    functionName: string;
+    operation: string;
+    requestId?: string | null;
+  };
+}
+
+interface SupabaseInsertClient {
+  from(table: string): {
+    insert(row: Record<string, unknown>): Promise<{ error: unknown }> | { error: unknown };
+  };
+}
+
+let telemetryClient: SupabaseInsertClient | null = null;
+function getTelemetryClient(): SupabaseInsertClient | null {
+  if (telemetryClient) return telemetryClient;
+  try {
+    const url = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env.get("SUPABASE_URL");
+    const key = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !key) return null;
+    // Dynamic import via npm specifier (Deno-only). No-op no ambiente de testes puros.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g = globalThis as any;
+    if (!g.__retryTelemetryInit) {
+      g.__retryTelemetryInit = import("npm:@supabase/supabase-js@2.49.4")
+        .then((mod) => {
+          telemetryClient = mod.createClient(url, key, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          }) as unknown as SupabaseInsertClient;
+        })
+        .catch(() => { /* swallow: telemetria é best-effort */ });
+    }
+  } catch { /* swallow */ }
+  return telemetryClient;
+}
+
+async function emitRetryEvent(row: {
+  function_name: string;
+  operation: string;
+  attempt: number;
+  total_attempts?: number | null;
+  outcome: "retry" | "success_after_retry" | "exhausted" | "non_retryable";
+  status_code?: number | null;
+  error_name?: string | null;
+  error_message?: string | null;
+  delay_ms?: number | null;
+  request_id?: string | null;
+}) {
+  const client = getTelemetryClient();
+  if (!client) return;
+  try {
+    await client.from("edge_retry_events").insert(row);
+  } catch { /* swallow: best-effort */ }
 }
 
 export class RetryError extends Error {
@@ -96,7 +150,21 @@ export async function withRetry<T>(
 ): Promise<T> {
   const cfg = { ...DEFAULTS, ...config };
   const isRetryable = config.isRetryable ?? defaultIsRetryable;
+  const tel = config.telemetry;
   let lastError: unknown;
+
+  const errMeta = (err: unknown) => {
+    const status = err instanceof Response
+      ? err.status
+      : (err && typeof err === "object" && "status" in err && Number.isFinite(Number((err as { status: unknown }).status))
+        ? Number((err as { status: number }).status)
+        : null);
+    return {
+      status_code: status,
+      error_name: (err as { name?: string })?.name ?? null,
+      error_message: ((err as Error)?.message ?? String(err))?.slice(0, 500) ?? null,
+    };
+  };
 
   for (let attempt = 0; attempt < cfg.maxAttempts; attempt++) {
     if (config.signal?.aborted) {
@@ -109,11 +177,34 @@ export async function withRetry<T>(
 
     try {
       const result = await fn(attempt, perAttemptCtrl.signal);
+      if (tel && attempt > 0) {
+        void emitRetryEvent({
+          function_name: tel.functionName,
+          operation: tel.operation,
+          attempt: attempt + 1,
+          total_attempts: attempt + 1,
+          outcome: "success_after_retry",
+          request_id: tel.requestId ?? null,
+        });
+      }
       return result;
     } catch (err) {
       lastError = err;
       const isLast = attempt === cfg.maxAttempts - 1;
-      if (isLast || !isRetryable(err, attempt)) {
+      const retryable = isRetryable(err, attempt);
+      if (isLast || !retryable) {
+        if (tel) {
+          const meta = errMeta(err);
+          void emitRetryEvent({
+            function_name: tel.functionName,
+            operation: tel.operation,
+            attempt: attempt + 1,
+            total_attempts: attempt + 1,
+            outcome: retryable ? "exhausted" : "non_retryable",
+            request_id: tel.requestId ?? null,
+            ...meta,
+          });
+        }
         throw new RetryError(
           `retry_exhausted after ${attempt + 1} attempt(s): ${(err as Error)?.message ?? String(err)}`,
           attempt + 1,
@@ -122,6 +213,18 @@ export async function withRetry<T>(
       }
       const retryAfterMs = extractRetryAfterMs(err);
       const delay = retryAfterMs ?? computeDelay(attempt, cfg.baseDelayMs, cfg.maxDelayMs);
+      if (tel) {
+        const meta = errMeta(err);
+        void emitRetryEvent({
+          function_name: tel.functionName,
+          operation: tel.operation,
+          attempt: attempt + 1,
+          outcome: "retry",
+          delay_ms: delay,
+          request_id: tel.requestId ?? null,
+          ...meta,
+        });
+      }
       config.onRetry?.(err, attempt + 1, delay);
       await sleep(delay, config.signal);
     } finally {
