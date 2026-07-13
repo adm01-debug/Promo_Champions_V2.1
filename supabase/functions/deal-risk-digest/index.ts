@@ -5,10 +5,12 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
 const TOP_N = 5;
+const SLACK_CIRCUIT = 'slack:deal-risk-digest';
 
 interface AtRiskDeal {
   sale_id: string;
@@ -18,24 +20,34 @@ interface AtRiskDeal {
   client_id: string | null;
 }
 
-interface SlackResult { attempted: boolean; ok: boolean; error?: string }
+interface SlackResult { attempted: boolean; ok: boolean; error?: string; circuit_open?: boolean }
 
 async function postSlack(text: string): Promise<SlackResult> {
   const url = Deno.env.get('SLACK_DIGEST_WEBHOOK_URL');
   if (!url) return { attempted: false, ok: false };
   try {
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), 5_000);
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-      signal: ctl.signal,
-    });
-    clearTimeout(t);
-    await res.text().catch(() => undefined);
-    return { attempted: true, ok: res.ok, error: res.ok ? undefined : `http_${res.status}` };
+    await withEdgeCircuitBreaker(SLACK_CIRCUIT, async () => {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 5_000);
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+          signal: ctl.signal,
+        });
+        await res.text().catch(() => undefined);
+        if (!res.ok) throw new Error(`http_${res.status}`);
+      } finally {
+        clearTimeout(t);
+      }
+    }, { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 6_000 });
+    return { attempted: true, ok: true };
   } catch (err) {
+    if (err instanceof CircuitBreakerOpenError) {
+      console.warn('[deal-risk-digest] slack circuit open, skipping fallback');
+      return { attempted: false, ok: false, error: 'circuit_open', circuit_open: true };
+    }
     const msg = err instanceof Error ? err.message : String(err);
     console.warn('[deal-risk-digest] slack fallback failed', msg);
     return { attempted: true, ok: false, error: msg };
