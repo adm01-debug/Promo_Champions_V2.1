@@ -141,7 +141,7 @@ function TournamentBracketsComponent() {
     completed: { label: 'Finalizado', color: 'bg-success/20 text-success' },
   };
 
-  const metricLabels: Record<string, any> = {
+  const metricLabels: Record<string, string> = {
     revenue: 'Receita', deals: 'Deals', activities: 'Atividades', conversion: 'Conversão',
   };
 
