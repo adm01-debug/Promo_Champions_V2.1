@@ -136,7 +136,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
     const firstOrderMap = new Map<string, string>();
 
     orders.forEach(o => {
-      const accId = (o as any).account_id || (o as any).user_id;
+      const accId = o.account_id || o.user_id;
       const currentFirst = firstOrderMap.get(accId);
       if (!currentFirst || isAfter(parseISO(currentFirst), parseISO(o.created_at))) {
         firstOrderMap.set(accId, o.created_at);
@@ -144,7 +144,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
     });
 
     accounts.forEach(a => {
-      const firstDate = firstOrderMap.get(a.id) || (a as any).created_at;
+      const firstDate = firstOrderMap.get(a.id) || a.created_at;
       if (!firstDate) return;
 
       const month = format(startOfMonth(parseISO(firstDate)), 'MMM yy', { locale: ptBR });
@@ -224,19 +224,19 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || '';
       const accountName =
-        accountById.get((o as any).account_id)?.name.toLowerCase() || '';
+        accountById.get(o.account_id)?.name.toLowerCase() || '';
       return orderNum.includes(search) || accountName.includes(search);
     });
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
 
   const sortedAndPaginatedOrders = useMemo(() => {
-    const sorted = [...filteredModalOrders].sort((a: any, b: any) => {
-      let valA: any = a[orderSortField as keyof typeof a];
-      let valB: any = b[orderSortField as keyof typeof b];
+    const sorted = [...filteredModalOrders].sort((a, b) => {
+      let valA: string | number = a[orderSortField as keyof typeof a] as string | number;
+      let valB: string | number = b[orderSortField as keyof typeof b] as string | number;
 
       if (orderSortField === 'account_name') {
-        valA = accountById.get((a as any).account_id)?.name || '';
-        valB = accountById.get((b as any).account_id)?.name || '';
+        valA = accountById.get(a.account_id)?.name || '';
+        valB = accountById.get(b.account_id)?.name || '';
       }
 
       if (valA < valB) return orderSortOrder === 'asc' ? -1 : 1;
@@ -291,7 +291,14 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   };
 
   const exportPDF = () => {
-    const doc = new jsPDF() as any;
+    type JsPDFWithAutoTable = jsPDF & {
+      autoTable: (opts: {
+        head: (string | number)[][];
+        body: (string | number | null)[][];
+        startY?: number;
+      }) => void;
+    };
+    const doc = new jsPDF() as JsPDFWithAutoTable;
     doc.text('Relatório Customer Success 360', 14, 15);
     const tableData = accounts.map(a => [
       a.name,
