@@ -30,6 +30,7 @@ import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAl
 import { DeadLetterIngestPanel } from "@/components/admin/connections/DeadLetterIngestPanel";
 import { ForecastNarrativeDlqPanel } from "@/components/admin/connections/ForecastNarrativeDlqPanel";
 import { EdgeRetryEventsPanel } from "@/components/admin/connections/EdgeRetryEventsPanel";
+import { EdgeRetryThresholdCard } from "@/components/admin/connections/EdgeRetryThresholdCard";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
@@ -85,6 +86,9 @@ function AdminConexoesContent() {
         <ForecastNarrativeDlqPanel />
 
         <EdgeRetryEventsPanel />
+
+        <EdgeRetryThresholdCard />
+
 
 
         <DbRollbackRatePanel />
