@@ -10,7 +10,19 @@ import { cn } from '@/lib/utils';
 const REACTIONS = ['🔥', '👏', '🚀', '💪', '🏆'];
 
 interface VictoryFeedItemProps {
-  item: Record<string, any>;
+  item: Record<string, unknown> & {
+    id?: string;
+    event_type?: string;
+    title?: string;
+    description?: string | null;
+    value?: number;
+    salesperson_id?: string;
+    created_at?: string;
+    feed_reactions?: Array<{ reaction: string; salesperson_id: string }>;
+    feed_comments?: Array<Record<string, unknown> & { id?: string; content?: string }>;
+    metadata?: Record<string, unknown> | null;
+    salespeople?: Record<string, string> | null;
+  };
   currentSalespersonId?: string;
   eventIcons: Record<string, typeof Trophy>;
   eventColors: Record<string, string>;
@@ -79,7 +91,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                     <p className="text-sm font-black text-primary italic">R$ {Number(item.value).toLocaleString('pt-BR')}</p>
                   </div>
                 )}
-                {(item.metadata as any)?.sale_id && (
+                {(item.metadata as Record<string, unknown> | null | undefined)?.sale_id && (
                   <Button 
                     variant="link" 
                     size="sm" 
@@ -89,7 +101,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                     Ver Detalhes <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
                 )}
-                {(item.metadata as any)?.battle_id && (
+                {(item.metadata as Record<string, unknown> | null | undefined)?.battle_id && (
                   <Button 
                     variant="link" 
                     size="sm" 
@@ -143,7 +155,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                 className="overflow-hidden"
               >
                 <div className="mt-4 space-y-3 border-t border-white/5 pt-4">
-                  {comments.map((c: Record<string, any>) => (
+                  {comments.map((c: Record<string, unknown> & { id?: string; content?: string; salespeople?: Record<string, string> | null }) => (
                     <div key={c.id} className="flex gap-3 text-xs bg-black/10 p-2.5 rounded-2xl border border-white/5">
                       <span className="font-black italic text-primary min-w-fit uppercase tracking-tighter">{(c.salespeople as Record<string, string> | null)?.name || '?'}:</span>
                       <span className="text-muted-foreground break-words">{c.content}</span>

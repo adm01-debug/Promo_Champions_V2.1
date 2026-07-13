@@ -62,7 +62,7 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({
   const handleSave = () => {
     // Validation before save
     const currentTitle = editData.title ?? step.title;
-    const currentTaskType = editData.task_type ?? (step as any).task_type;
+    const currentTaskType = editData.task_type ?? (step as CadenceStep & { task_type?: string }).task_type;
     const currentActionType = editData.action_type ?? step.action_type;
     const currentTemplate = editData.template_content ?? step.template_content;
 
@@ -149,7 +149,7 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({
             <input
               type="checkbox"
               className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
-              checked={(editData.task_type ?? (step as any).task_type) === 'automatic'}
+              checked={(editData.task_type ?? (step as CadenceStep & { task_type?: string }).task_type) === 'automatic'}
               onChange={e =>
                 setEditData(d => ({
                   ...d,
@@ -248,7 +248,7 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({
                 Aprovação
               </Badge>
             )}
-            {(step as any).task_type === 'automatic' && (
+            {(step as CadenceStep & { task_type?: string }).task_type === 'automatic' && (
               <Zap className="h-3 w-3 text-status-success animate-pulse" />
             )}
           </div>

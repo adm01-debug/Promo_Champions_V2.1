@@ -5,6 +5,7 @@ import {
   TrendingDown,
   TrendingUp,
   Hourglass,
+  type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DealRiskMeter } from './DealRiskMeter';
@@ -16,6 +17,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
+type DealHealthWithSale = {
+  id: string;
+  health_score: number;
+  days_in_stage: number | null;
+  ai_recommendation: string | null;
+  sales?: { client_name?: string | null; product_name?: string | null } | null;
+};
 
 export function RiskAssessmentPanel() {
   const { data: deals, isLoading } = useDealHealthBatch({
@@ -38,7 +47,7 @@ export function RiskAssessmentPanel() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {deals?.slice(0, 6).map((deal: any) => (
+      {(deals as DealHealthWithSale[] | undefined)?.slice(0, 6).map((deal) => (
         <Card
           key={deal.id}
           className="glass border-border/40 hover:border-primary/40 transition-all duration-300 card-elevated"
@@ -135,7 +144,7 @@ function RiskFactor({
   value,
   status,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value: string;
   status: 'risk' | 'ok' | 'warning';
