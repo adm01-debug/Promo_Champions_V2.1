@@ -5,6 +5,7 @@ import {
   TrendingDown,
   TrendingUp,
   Hourglass,
+  type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DealRiskMeter } from './DealRiskMeter';
@@ -16,6 +17,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
+type DealHealthWithSale = {
+  id: string;
+  health_score: number;
+  days_in_stage: number | null;
+  ai_recommendation: string | null;
+  sales?: { client_name?: string | null; product_name?: string | null } | null;
+};
 
 export function RiskAssessmentPanel() {
   const { data: deals, isLoading } = useDealHealthBatch({
