@@ -201,7 +201,7 @@ function TournamentBracketsComponent() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {tournaments.map((t: Record<string, any>) => {
+          {tournaments.map((t: Tournament) => {
             const status = statusConfig[t.status] || statusConfig.upcoming;
             const matches = t.tournament_matches || [];
 
