@@ -76,7 +76,7 @@ const stepInputSchema = z
     }
   );
 
-interface NewStepInput extends z.infer<typeof stepInputSchema> {}
+type NewStepInput = z.infer<typeof stepInputSchema>;
 
 interface EditCadenceDialogProps {
   cadence: Cadence;
