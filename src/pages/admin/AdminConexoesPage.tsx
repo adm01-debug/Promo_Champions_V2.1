@@ -28,6 +28,7 @@ import { DbRollbackRatePanel } from "@/components/admin/connections/DbRollbackRa
 import { TopQueriesPanel } from "@/components/admin/connections/TopQueriesPanel";
 import { SlowQueryAlertsPanel } from "@/components/admin/connections/SlowQueryAlertsPanel";
 import { DeadLetterIngestPanel } from "@/components/admin/connections/DeadLetterIngestPanel";
+import { ForecastNarrativeDlqPanel } from "@/components/admin/connections/ForecastNarrativeDlqPanel";
 
 function AdminConexoesContent() {
   const [, setRefreshTick] = useState(0);
@@ -79,6 +80,8 @@ function AdminConexoesContent() {
 
 
         <DeadLetterIngestPanel />
+
+        <ForecastNarrativeDlqPanel />
 
 
         <DbRollbackRatePanel />
