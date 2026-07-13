@@ -23,6 +23,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
+import { withRetry, RetryError } from "../_shared/retry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
