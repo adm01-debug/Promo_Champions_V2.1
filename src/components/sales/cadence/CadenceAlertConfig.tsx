@@ -28,6 +28,23 @@ const VARIABLES = [
   { name: 'singu_preferred_service', label: 'Serviço Preferido' },
 ];
 
+interface AlertTemplateForm {
+  name: string;
+  type: 'push' | 'email' | 'sms' | string;
+  subject: string;
+  content: string;
+  start_time: string;
+  end_time: string;
+  timezone: string;
+  days_of_week: string[];
+}
+
+interface AlertTemplate extends AlertTemplateForm {
+  id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export function CadenceAlertConfig() {
   const [templates, setTemplates] = useState<AlertTemplate[]>([]);
   const [loading, setLoading] = useState(true);
