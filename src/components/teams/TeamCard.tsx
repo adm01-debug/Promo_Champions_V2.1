@@ -21,7 +21,7 @@ interface TeamCardProps {
   onDelete: (team: Team) => void;
 }
 
-function _TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
+function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
   const closerCount = team.closers?.length || 0;
   const hasSDR = !!team.sdr;
   const isComplete = hasSDR && closerCount >= 2;
@@ -169,4 +169,4 @@ function _TeamCard({ team, onEdit, onDelete }: TeamCardProps) {
   );
 }
 
-export const TeamCard = React.memo(_TeamCard);
+export const TeamCard = React.memo(TeamCardImpl);

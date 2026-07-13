@@ -16,7 +16,7 @@ const RANK_CONFIG = [
   { icon: Trophy, color: "text-orange-400", glow: "rgba(251, 146, 60, 0.3)", label: "Ace" },
 ];
 
-function _MiniLeaderboard() {
+function MiniLeaderboardImpl() {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
 
@@ -157,4 +157,4 @@ function _MiniLeaderboard() {
   );
 }
 
-export const MiniLeaderboard = React.memo(_MiniLeaderboard);
+export const MiniLeaderboard = React.memo(MiniLeaderboardImpl);

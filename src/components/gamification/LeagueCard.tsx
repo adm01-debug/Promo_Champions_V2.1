@@ -7,7 +7,7 @@ import { Trophy, Zap, Shield } from "lucide-react";
 import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/gamification/useLeagues";
 import { cn } from "@/lib/utils";
 
-function _LeagueCard() {
+function LeagueCardImpl() {
   const { data: members, isLoading } = useLeagues();
 
   if (isLoading) {
@@ -149,4 +149,4 @@ function _LeagueCard() {
   );
 }
 
-export const LeagueCard = React.memo(_LeagueCard);
+export const LeagueCard = React.memo(LeagueCardImpl);

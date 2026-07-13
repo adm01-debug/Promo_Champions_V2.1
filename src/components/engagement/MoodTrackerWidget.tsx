@@ -18,7 +18,7 @@ const MOODS = [
   { emoji: "🤩", label: "Excelente", value: 5, color: "bg-success/20 hover:bg-success/30 border-success/30" },
 ];
 
-function _MoodTrackerWidget({ className }: { className?: string }) {
+function MoodTrackerWidgetImpl({ className }: { className?: string }) {
   const { salesperson } = useAuth();
   const queryClient = useQueryClient();
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
@@ -119,4 +119,4 @@ function _MoodTrackerWidget({ className }: { className?: string }) {
   );
 }
 
-export const MoodTrackerWidget = React.memo(_MoodTrackerWidget);
+export const MoodTrackerWidget = React.memo(MoodTrackerWidgetImpl);

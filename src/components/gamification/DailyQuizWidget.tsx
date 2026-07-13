@@ -44,7 +44,7 @@ const QUIZ_BANK: QuizQuestion[] = [
   },
 ];
 
-function _DailyQuizWidget({ className }: { className?: string }) {
+function DailyQuizWidgetImpl({ className }: { className?: string }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -176,4 +176,4 @@ function _DailyQuizWidget({ className }: { className?: string }) {
   );
 }
 
-export const DailyQuizWidget = React.memo(_DailyQuizWidget);
+export const DailyQuizWidget = React.memo(DailyQuizWidgetImpl);

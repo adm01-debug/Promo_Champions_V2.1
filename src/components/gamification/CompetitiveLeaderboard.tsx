@@ -26,7 +26,7 @@ interface CompetitiveLeaderboardProps {
   showAll?: boolean;
 }
 
-function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeaderboardProps) {
+function CompetitiveLeaderboardImpl({ showAll: _showAll = false }: CompetitiveLeaderboardProps) {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { salesperson } = useAuth();
   const { data: xpData } = useAllSalespeopleXP();
@@ -186,4 +186,4 @@ function _CompetitiveLeaderboard({ showAll: _showAll = false }: CompetitiveLeade
   );
 }
 
-export const CompetitiveLeaderboard = React.memo(_CompetitiveLeaderboard);
+export const CompetitiveLeaderboard = React.memo(CompetitiveLeaderboardImpl);
