@@ -187,7 +187,7 @@ export const FuturisticSpeedometerDashboard = () => {
         .maybeSingle();
 
       if (data?.value && typeof data.value === 'object') {
-        const s = data.value as any;
+        const s = data.value as SpeedometerSettings;
         if (s.ticksCount) setTicksCount(s.ticksCount);
         if (s.gaugeMode) setGaugeMode(s.gaugeMode);
         if (typeof s.minVal === 'number') setMinVal(s.minVal);
