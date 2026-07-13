@@ -26,19 +26,21 @@ const SEMA_BG: Record<string, string> = {
   gray: 'bg-muted text-muted-foreground border-border',
 };
 
+type CS360Row = Record<string, unknown>;
+
 interface CS360TabsProps {
-  accounts: any[];
-  renewals: any[];
-  tickets: any[];
-  usage: any[];
-  onboarding: any[];
-  expansion: any[];
-  surveys: any[];
-  qbrs: any[];
-  accountById: Map<string, any>;
-  evolutionData: any[];
-  cohortData: any[];
-  ordersByStatus: any[];
+  accounts: CS360Row[];
+  renewals: CS360Row[];
+  tickets: CS360Row[];
+  usage: CS360Row[];
+  onboarding: CS360Row[];
+  expansion: CS360Row[];
+  surveys: CS360Row[];
+  qbrs: CS360Row[];
+  accountById: Map<string, CS360Row>;
+  evolutionData: CS360Row[];
+  cohortData: CS360Row[];
+  ordersByStatus: CS360Row[];
   onStatusClick: (status: string) => void;
 }
 
