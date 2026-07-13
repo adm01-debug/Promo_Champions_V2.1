@@ -5,7 +5,17 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'node_modules', '.lovable', 'bun.lock', 'package-lock.json'],
+    // Deno edge functions use `npm:`/`https:` imports + Deno globals that
+    // conflict with the Node/TS parser. They are linted independently via `deno lint`.
+    ignores: [
+      'dist',
+      'node_modules',
+      '.lovable',
+      'bun.lock',
+      'package-lock.json',
+      'supabase/functions/**',
+      '**/*.config.{ts,js,cjs,mjs}',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
