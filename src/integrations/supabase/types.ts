@@ -6402,6 +6402,51 @@ export type Database = {
         }
         Relationships: []
       }
+      edge_retry_events: {
+        Row: {
+          attempt: number
+          created_at: string
+          delay_ms: number | null
+          error_message: string | null
+          error_name: string | null
+          function_name: string
+          id: string
+          operation: string
+          outcome: string
+          request_id: string | null
+          status_code: number | null
+          total_attempts: number | null
+        }
+        Insert: {
+          attempt: number
+          created_at?: string
+          delay_ms?: number | null
+          error_message?: string | null
+          error_name?: string | null
+          function_name: string
+          id?: string
+          operation: string
+          outcome: string
+          request_id?: string | null
+          status_code?: number | null
+          total_attempts?: number | null
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          delay_ms?: number | null
+          error_message?: string | null
+          error_name?: string | null
+          function_name?: string
+          id?: string
+          operation?: string
+          outcome?: string
+          request_id?: string | null
+          status_code?: number | null
+          total_attempts?: number | null
+        }
+        Relationships: []
+      }
       email_bulk_drafts: {
         Row: {
           approved: boolean
