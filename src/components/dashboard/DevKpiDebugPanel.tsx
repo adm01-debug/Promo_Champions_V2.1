@@ -98,6 +98,8 @@ export function DevKpiDebugPanel() {
     );
   }
 
+  if (!isDev) return null;
+
   return (
     <aside
       role="region"
