@@ -71,7 +71,7 @@ export function StalledDealsTable() {
           </div>
         ) : (
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
-            {data.map((d: any) => {
+            {data.map((d) => {
               const sale = d.sales;
               return (
                 <div
