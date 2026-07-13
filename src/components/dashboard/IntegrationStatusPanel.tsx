@@ -76,7 +76,7 @@ export const IntegrationStatusPanel = () => {
     try {
       // Tenta buscar da nova tabela de logs unificada
       const { data: unifiedLogs, error: unifiedError } = await supabase
-        .from('integration_logs' as any)
+        .from('integration_logs')
         .select('*')
         .order('timestamp', { ascending: false })
         .limit(30);
@@ -88,7 +88,7 @@ export const IntegrationStatusPanel = () => {
         );
         // Fallback para email_logs se a tabela unificada falhar (compatibilidade)
         const { data: emailLogs, error: emailError } = await supabase
-          .from('email_logs' as any)
+          .from('email_logs')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(20);
@@ -168,7 +168,7 @@ export const IntegrationStatusPanel = () => {
     toast.promise(
       async () => {
         // Simula disparo de teste e loga no banco para validação
-        const { error } = await supabase.from('integration_logs' as any).insert([
+        const { error } = await supabase.from('integration_logs').insert([
           {
             integration_type: type,
             event_type: 'test_dispatch',
