@@ -85,8 +85,8 @@ export function CadenceOutcomeConfig() {
       toast.success("Regra de desfecho adicionada");
       setIsAdding(false);
       fetchRules();
-    } catch (error: any) {
-      toast.error("Erro: " + error.message);
+    } catch (error) {
+      toast.error("Erro: " + (error instanceof Error ? error.message : String(error)));
     }
   };
 
