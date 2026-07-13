@@ -30,10 +30,6 @@ interface TournamentMatch {
   player1_score?: number | null;
   player2_score?: number | null;
 }
-  player2_id: string | null;
-  winner_id: string | null;
-  status: string;
-}
 interface Tournament {
   id: string;
   name: string;
