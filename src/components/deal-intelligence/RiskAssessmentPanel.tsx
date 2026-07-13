@@ -144,7 +144,7 @@ function RiskFactor({
   value,
   status,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value: string;
   status: 'risk' | 'ok' | 'warning';
