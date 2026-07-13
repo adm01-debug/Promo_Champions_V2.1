@@ -42,7 +42,7 @@ export default class QuoteToSaleFailureReporter implements Reporter {
     if (!this.hasDefinitiveFailure) return;
     const src = path.join(this.root, this.runId);
     if (!fs.existsSync(src)) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[quote-to-sale reporter] Sem artefatos em ${src}; nada a empacotar.`);
       return;
     }
@@ -52,10 +52,10 @@ export default class QuoteToSaleFailureReporter implements Reporter {
         cwd: this.root,
         stdio: 'inherit',
       });
-      // eslint-disable-next-line no-console
+       
       console.log(`\n📦 [quote-to-sale] Artefatos empacotados em falha:\n   ${out}\n`);
     } catch (err) {
-      // eslint-disable-next-line no-console
+       
       console.error(`[quote-to-sale reporter] Falha ao empacotar artefatos:`, err);
     }
   }
