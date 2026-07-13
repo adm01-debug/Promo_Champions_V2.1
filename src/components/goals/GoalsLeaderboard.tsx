@@ -35,7 +35,7 @@ interface GoalsLeaderboardProps {
   isLoading?: boolean;
 }
 
-function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
+function GoalsLeaderboardImpl({ salespeople, isLoading }: GoalsLeaderboardProps) {
   const { data: xpData } = useAllSalespeopleXP();
 
   const [search, setSearch] = useState('');
@@ -278,4 +278,4 @@ function _GoalsLeaderboard({ salespeople, isLoading }: GoalsLeaderboardProps) {
   );
 }
 
-export const GoalsLeaderboard = React.memo(_GoalsLeaderboard);
+export const GoalsLeaderboard = React.memo(GoalsLeaderboardImpl);

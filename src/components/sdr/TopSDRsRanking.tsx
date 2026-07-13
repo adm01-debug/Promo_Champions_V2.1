@@ -10,7 +10,7 @@ import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 
-function _TopSDRsRanking() {
+function TopSDRsRankingImpl() {
   const { data: xpData } = useAllSalespeopleXP();
 
   const getXPInfo = (salespersonId: string) => {
@@ -189,4 +189,4 @@ function _TopSDRsRanking() {
   );
 }
 
-export const TopSDRsRanking = React.memo(_TopSDRsRanking);
+export const TopSDRsRanking = React.memo(TopSDRsRankingImpl);

@@ -27,7 +27,7 @@ export default async function globalSetup(): Promise<void> {
     process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON &&
     process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY
   ) {
-    // eslint-disable-next-line no-console
+     
     console.log('[e2e global-setup] Sessão Lovable já injetada — reutilizando.');
     return;
   }
@@ -39,7 +39,7 @@ export default async function globalSetup(): Promise<void> {
   const projectId = process.env.VITE_SUPABASE_PROJECT_ID;
 
   if (!email || !password || !url || !anon || !projectId) {
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[e2e global-setup] Credenciais ausentes — testes autenticados serão skipados. ' +
         'Defina E2E_TEST_EMAIL, E2E_TEST_PASSWORD, VITE_SUPABASE_URL, ' +
@@ -72,6 +72,6 @@ export default async function globalSetup(): Promise<void> {
     ),
   );
 
-  // eslint-disable-next-line no-console
+   
   console.log(`[e2e global-setup] Sessão real capturada para ${email}.`);
 }

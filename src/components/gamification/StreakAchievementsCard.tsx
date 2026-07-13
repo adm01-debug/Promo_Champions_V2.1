@@ -17,7 +17,7 @@ interface StreakAchievementsCardProps {
   compact?: boolean;
 }
 
-function _StreakAchievementsCard({ salespersonId, compact = false }: StreakAchievementsCardProps) {
+function StreakAchievementsCardImpl({ salespersonId, compact = false }: StreakAchievementsCardProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 
@@ -170,4 +170,4 @@ function _StreakAchievementsCard({ salespersonId, compact = false }: StreakAchie
   );
 }
 
-export const StreakAchievementsCard = React.memo(_StreakAchievementsCard);
+export const StreakAchievementsCard = React.memo(StreakAchievementsCardImpl);

@@ -41,7 +41,7 @@ function setPreviewRole(role: PreviewRole | null) {
 }
 
 export function DevKpiDebugPanel() {
-  if (!import.meta.env.DEV) return null;
+  const isDev = import.meta.env.DEV;
 
   const { user, session, salesperson } = useAuth();
   const { currentUserRole } = useUserRoles();
@@ -97,6 +97,8 @@ export function DevKpiDebugPanel() {
       </button>
     );
   }
+
+  if (!isDev) return null;
 
   return (
     <aside

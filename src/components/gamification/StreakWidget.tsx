@@ -13,7 +13,7 @@ interface StreakWidgetProps {
   salespersonId?: string;
 }
 
-function _StreakWidget({ salespersonId }: StreakWidgetProps) {
+function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
   const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
   const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
 
@@ -180,4 +180,4 @@ function _StreakWidget({ salespersonId }: StreakWidgetProps) {
   );
 }
 
-export const StreakWidget = React.memo(_StreakWidget);
+export const StreakWidget = React.memo(StreakWidgetImpl);

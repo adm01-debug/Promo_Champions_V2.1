@@ -9,7 +9,7 @@ import { useAllSalespeopleXP } from "@/hooks/gamification/useSalespersonXP";
 import { SalespersonLevelBadge } from "@/components/gamification/SalespersonLevelBadge";
 import { cn } from "@/lib/utils";
 
-function _TopClosersRanking() {
+function TopClosersRankingImpl() {
   const { data: closers } = useTopClosers();
   const { data: xpData } = useAllSalespeopleXP();
 
@@ -140,4 +140,4 @@ function _TopClosersRanking() {
   );
 }
 
-export const TopClosersRanking = React.memo(_TopClosersRanking);
+export const TopClosersRanking = React.memo(TopClosersRankingImpl);

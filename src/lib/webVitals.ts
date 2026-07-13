@@ -107,7 +107,7 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
     if (import.meta.env.DEV) {
       const label =
         metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
-      // eslint-disable-next-line no-console
+       
       console.info(`${label} [${metric.name}] ${Math.round(metric.value)} (${metric.rating})`);
       return;
     }

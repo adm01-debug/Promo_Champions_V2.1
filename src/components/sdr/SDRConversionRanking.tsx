@@ -127,7 +127,7 @@ function useSDRConversionRanking(period: PeriodFilter) {
   });
 }
 
-function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
+function SDRConversionRankingImpl({ period }: SDRConversionRankingProps) {
   const { data: sdrs, isLoading } = useSDRConversionRanking(period);
 
   const periodLabel =
@@ -297,4 +297,4 @@ function _SDRConversionRanking({ period }: SDRConversionRankingProps) {
     </Card>
   );
 }
-export const SDRConversionRanking = React.memo(_SDRConversionRanking);
+export const SDRConversionRanking = React.memo(SDRConversionRankingImpl);

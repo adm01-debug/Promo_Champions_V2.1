@@ -20,7 +20,7 @@ const PULSE_QUESTIONS: PulseQuestion[] = [
   { id: "enps", question: "De 0 a 10, qual a chance de recomendar nossa empresa como local de trabalho?", type: "enps" },
 ];
 
-function _PulseSurveyWidget({ className }: { className?: string }) {
+function PulseSurveyWidgetImpl({ className }: { className?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isComplete, setIsComplete] = useState(false);
@@ -154,4 +154,4 @@ function _PulseSurveyWidget({ className }: { className?: string }) {
   );
 }
 
-export const PulseSurveyWidget = React.memo(_PulseSurveyWidget);
+export const PulseSurveyWidget = React.memo(PulseSurveyWidgetImpl);

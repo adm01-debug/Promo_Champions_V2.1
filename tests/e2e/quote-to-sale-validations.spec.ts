@@ -12,7 +12,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   • Concorrência     — order_number continua único mesmo em rajadas paralelas.
  */
 
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL } from './helpers/auth';
 
 type RpcResult = {
   sale_id: string;

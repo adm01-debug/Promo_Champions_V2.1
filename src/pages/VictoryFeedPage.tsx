@@ -214,7 +214,7 @@ const VictoryFeedPage = () => {
                           className="h-8 px-2.5 ml-auto text-xs gap-1.5 text-muted-foreground hover:text-primary transition-colors"
                           onClick={() => {
                             const next = new Set(expandedComments);
-                            isExpanded ? next.delete(item.id) : next.add(item.id);
+                            if (isExpanded) next.delete(item.id); else next.add(item.id);
                             setExpandedComments(next);
                           }}
                         >

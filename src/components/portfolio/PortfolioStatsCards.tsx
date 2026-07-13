@@ -11,7 +11,7 @@ interface PortfolioStatsCardsProps {
   isLoading: boolean;
 }
 
-function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
+function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps) {
   const cards = [
     {
       title: "Total de Clientes",
@@ -172,4 +172,4 @@ function _PortfolioStatsCards({ stats, isLoading }: PortfolioStatsCardsProps) {
   );
 }
 
-export const PortfolioStatsCards = React.memo(_PortfolioStatsCards);
+export const PortfolioStatsCards = React.memo(PortfolioStatsCardsImpl);

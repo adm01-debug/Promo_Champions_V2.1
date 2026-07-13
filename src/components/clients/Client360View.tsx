@@ -7,27 +7,11 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
   PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   DollarSign,
   ShoppingBag,
@@ -38,11 +22,9 @@ import {
   Zap,
   MessageSquare,
   Copy,
-  Star,
   Download,
   Search,
   Filter,
-  Eye,
   User,
   History as HistoryIcon,
   Info,
