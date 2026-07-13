@@ -55,7 +55,11 @@ export function CelebrationOverlayProvider() {
   const [victoryData, setVictoryData] = useState<VictoryData | null>(null);
 
   // Queue for celebrations
-  const celebrationQueueRef = useRef<Array<{ type: 'levelUp' | 'streak' | 'victory'; data: any }>>([]);
+  const celebrationQueueRef = useRef<Array<
+    | { type: 'levelUp'; data: LevelUpData }
+    | { type: 'streak'; data: StreakData }
+    | { type: 'victory'; data: VictoryData }
+  >>([]);
   const isShowingRef = useRef(false);
 
   const processQueue = useCallback(() => {
