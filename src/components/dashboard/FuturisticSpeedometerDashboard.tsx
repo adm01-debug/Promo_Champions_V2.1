@@ -54,6 +54,28 @@ const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: 'year', label: 'Ano' },
 ];
 
+interface AlertHistoryEntry {
+  id: string;
+  title: string;
+  message: string;
+  priority: 'high' | 'medium' | 'low';
+  type: string;
+  created_at: string;
+  metadata: unknown;
+}
+
+type SpeedometerSettings = Partial<{
+  ticksCount: number;
+  gaugeMode: 'compact' | 'kilo' | 'standard';
+  minVal: number;
+  customMax: number;
+  customUnit: string;
+  autoScale: boolean;
+  oppThreshold: number;
+  retThreshold: number;
+  alertFrequency: 'daily' | 'weekly' | 'realtime';
+}>;
+
 export const FuturisticSpeedometerDashboard = () => {
   const { theme } = useDashboardTheme();
   const { user, salesperson: currentUser } = useAuth();
@@ -86,9 +108,9 @@ export const FuturisticSpeedometerDashboard = () => {
   const [alertFrequency, setAlertFrequency] = useState<'daily' | 'weekly' | 'realtime'>(
     'realtime'
   );
-  const [alertHistory, setAlertHistory] = useState<any[]>([]);
+  const [alertHistory, setAlertHistory] = useState<AlertHistoryEntry[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
-  const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
+  const [activeHudAlert, setActiveHudAlert] = useState<AlertHistoryEntry | null>(null);
   const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -121,7 +143,7 @@ export const FuturisticSpeedometerDashboard = () => {
   }, [kpis]);
 
   const saveSettings = useCallback(
-    async (newSettings: any) => {
+    async (newSettings: SpeedometerSettings) => {
       if (!user?.id) return;
       setIsSyncing(true);
 
@@ -135,7 +157,7 @@ export const FuturisticSpeedometerDashboard = () => {
       if (fetchError && import.meta.env.DEV)
         console.error('Error fetching settings:', fetchError);
 
-      const updatedValue = { ...((existing?.value as any) || {}), ...newSettings };
+      const updatedValue = { ...((existing?.value as SpeedometerSettings) || {}), ...newSettings };
 
       const { error: upsertError } = await supabase.from('user_app_settings').upsert({
         user_id: user.id,
@@ -165,7 +187,7 @@ export const FuturisticSpeedometerDashboard = () => {
         .maybeSingle();
 
       if (data?.value && typeof data.value === 'object') {
-        const s = data.value as any;
+        const s = data.value as SpeedometerSettings;
         if (s.ticksCount) setTicksCount(s.ticksCount);
         if (s.gaugeMode) setGaugeMode(s.gaugeMode);
         if (typeof s.minVal === 'number') setMinVal(s.minVal);
@@ -203,7 +225,7 @@ export const FuturisticSpeedometerDashboard = () => {
   }, [user?.id]);
 
   const testAlert = useCallback(() => {
-    const alert = {
+    const alert: AlertHistoryEntry = {
       id: Math.random().toString(36).substr(2, 9),
       title: 'Telemetria :: Alerta de Meta',
       message: 'Faturamento atingiu 92% da meta projetada para o período atual.',

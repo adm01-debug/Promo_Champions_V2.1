@@ -36,16 +36,16 @@ interface CS360OrdersDialogProps {
   statusName: string;
   orderSearch: string;
   setOrderSearch: (s: string) => void;
-  orders: any[];
-  accountById: Map<string, any>;
+  orders: Order[];
+  accountById: Map<string, { name?: string | null }>;
   orderSortField: string;
   orderSortOrder: 'asc' | 'desc';
   toggleSort: (field: string) => void;
-  sortedAndPaginatedOrders: any[];
+  sortedAndPaginatedOrders: Order[];
   orderPage: number;
   setOrderPage: (page: number) => void;
   totalPages: number;
-  ordersByStatus: any[];
+  ordersByStatus: Array<{ key: string; label?: string; count?: number; color?: string; icon?: React.ComponentType<{ className?: string }> }>;
   orderModalStatus: string | null;
 }
 
