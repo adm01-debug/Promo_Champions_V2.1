@@ -6,6 +6,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
+import { withRetry, RetryError } from '../_shared/retry.ts';
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
