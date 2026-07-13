@@ -211,6 +211,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   if (inserted > 0) {
     slack = await postSlack(
       `:bar_chart: *Deal Risk Digest* — ${inserted} vendedores notificados (${skipped} pulados por idempotência) em ${Date.now() - startedAt}ms.`,
+      ctx.requestId,
     );
   }
 
