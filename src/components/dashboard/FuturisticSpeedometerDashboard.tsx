@@ -54,6 +54,28 @@ const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
   { value: 'year', label: 'Ano' },
 ];
 
+interface AlertHistoryEntry {
+  id: string;
+  title: string;
+  message: string;
+  priority: 'high' | 'medium' | 'low';
+  type: string;
+  created_at: string;
+  metadata: unknown;
+}
+
+type SpeedometerSettings = Partial<{
+  ticksCount: number;
+  gaugeMode: string;
+  minVal: number;
+  customMax: number | string;
+  customUnit: string;
+  autoScale: boolean;
+  oppThreshold: number;
+  retThreshold: number;
+  alertFrequency: 'daily' | 'weekly' | 'realtime';
+}>;
+
 export const FuturisticSpeedometerDashboard = () => {
   const { theme } = useDashboardTheme();
   const { user, salesperson: currentUser } = useAuth();
