@@ -225,7 +225,7 @@ export const FuturisticSpeedometerDashboard = () => {
   }, [user?.id]);
 
   const testAlert = useCallback(() => {
-    const alert = {
+    const alert: AlertHistoryEntry = {
       id: Math.random().toString(36).substr(2, 9),
       title: 'Telemetria :: Alerta de Meta',
       message: 'Faturamento atingiu 92% da meta projetada para o período atual.',
