@@ -106,10 +106,10 @@ describe('Dashboard Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useAuth).mockReturnValue({ salesperson: mockSalesperson });
-    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ data: mockKPIs, isLoading: false, isError: false });
-    vi.mocked(useGoalsDashboard).mockReturnValue({ data: { totalSales: 50, totalGoal: 100 }, isLoading: false });
-    vi.mocked(useSalesChartData).mockReturnValue({ data: [], isLoading: false });
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ salesperson: mockSalesperson });
+    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: mockKPIs, isLoading: false, isError: false });
+    (useGoalsDashboard as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: { totalSales: 50, totalGoal: 100 }, isLoading: false });
+    (useSalesChartData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: [], isLoading: false });
   });
 
   it('recalculates KPIs when period is changed', async () => {
@@ -126,7 +126,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('shows skeleton states while loading', () => {
-    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ data: null, isLoading: true, isError: false });
+    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: null, isLoading: true, isError: false });
     
     renderWithProviders(<Index />);
     
@@ -136,7 +136,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('handles data fetch failure and recovery', async () => {
-    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ 
+    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
       data: null, 
       isLoading: false, 
       isError: true, 
@@ -158,7 +158,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for Closer role', () => {
-    vi.mocked(useAuth).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'closer' } });
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'closer' } });
     
     renderWithProviders(<Index />);
     
@@ -167,8 +167,8 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for SDR role', () => {
-    vi.mocked(useAuth).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'sdr' } });
-    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({ 
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ salesperson: { ...mockSalesperson, role: 'sdr' } });
+    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
       data: {
         ...mockKPIs,
         current: { ...mockKPIs.current, meetingsScheduled: 15, qualifiedLeads: 20 }
