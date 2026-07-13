@@ -84,6 +84,8 @@ function AdminConexoesContent() {
 
         <ForecastNarrativeDlqPanel />
 
+        <EdgeRetryEventsPanel />
+
 
         <DbRollbackRatePanel />
 
