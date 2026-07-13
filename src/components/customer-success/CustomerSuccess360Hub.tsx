@@ -224,7 +224,6 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || '';
       const accountName =
-      const accountName =
         accountById.get(o.account_id)?.name.toLowerCase() || '';
       return orderNum.includes(search) || accountName.includes(search);
     });
