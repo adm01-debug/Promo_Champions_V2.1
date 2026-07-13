@@ -4,10 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Sparkles } from 'lucide-react';
-import { CS360Trends } from './CS360Trends';
-import { CS360Cohorts } from './CS360Cohorts';
+import { CS360Trends, type EvolutionData } from './CS360Trends';
+import { CS360Cohorts, type CohortData, type OrdersByStatus } from './CS360Cohorts';
 import { HelpdeskConnectorPanel } from './HelpdeskConnectorPanel';
 import { SurveyTriggerDialog } from './SurveyTriggerDialog';
+import type {
+  CS360AccountRow,
+  CS360Renewal,
+  CS360Ticket,
+  CS360UsageRow,
+  CS360OnboardingRow,
+  CS360ExpansionRow,
+  CS360SurveyRow,
+  CS360QBRRow,
+} from '@/hooks/customer-success/useCustomerSuccess360';
 import {
   formatBRL,
   daysUntil,
@@ -26,21 +36,19 @@ const SEMA_BG: Record<string, string> = {
   gray: 'bg-muted text-muted-foreground border-border',
 };
 
-type CS360Row = Record<string, unknown>;
-
 interface CS360TabsProps {
-  accounts: CS360Row[];
-  renewals: CS360Row[];
-  tickets: CS360Row[];
-  usage: CS360Row[];
-  onboarding: CS360Row[];
-  expansion: CS360Row[];
-  surveys: CS360Row[];
-  qbrs: CS360Row[];
-  accountById: Map<string, CS360Row>;
-  evolutionData: CS360Row[];
-  cohortData: CS360Row[];
-  ordersByStatus: CS360Row[];
+  accounts: CS360AccountRow[];
+  renewals: CS360Renewal[];
+  tickets: CS360Ticket[];
+  usage: CS360UsageRow[];
+  onboarding: CS360OnboardingRow[];
+  expansion: CS360ExpansionRow[];
+  surveys: CS360SurveyRow[];
+  qbrs: CS360QBRRow[];
+  accountById: Map<string, CS360AccountRow>;
+  evolutionData: EvolutionData[];
+  cohortData: CohortData[];
+  ordersByStatus: OrdersByStatus[];
   onStatusClick: (status: string) => void;
 }
 
