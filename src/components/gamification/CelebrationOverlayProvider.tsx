@@ -146,8 +146,8 @@ export function CelebrationOverlayProvider() {
     const xpChannel = supabase
       .channel('xp-celebrations-overlay')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' }, (payload) => {
-        const newRecord = payload.new as any;
-        const oldRecord = payload.old as any;
+        const newRecord = payload.new as { total_xp?: number; salesperson_id?: string } | null;
+        const oldRecord = payload.old as { total_xp?: number; salesperson_id?: string } | null;
         if (!newRecord || !oldRecord) return;
         const oldLevel = calculateLevelFromXP(oldRecord.total_xp);
         const newLevel = calculateLevelFromXP(newRecord.total_xp);
