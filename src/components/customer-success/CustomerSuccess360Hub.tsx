@@ -224,19 +224,20 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || '';
       const accountName =
-        accountById.get((o as any).account_id)?.name.toLowerCase() || '';
+      const accountName =
+        accountById.get(o.account_id)?.name.toLowerCase() || '';
       return orderNum.includes(search) || accountName.includes(search);
     });
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
 
   const sortedAndPaginatedOrders = useMemo(() => {
-    const sorted = [...filteredModalOrders].sort((a: any, b: any) => {
-      let valA: any = a[orderSortField as keyof typeof a];
-      let valB: any = b[orderSortField as keyof typeof b];
+    const sorted = [...filteredModalOrders].sort((a, b) => {
+      let valA: string | number = a[orderSortField as keyof typeof a] as string | number;
+      let valB: string | number = b[orderSortField as keyof typeof b] as string | number;
 
       if (orderSortField === 'account_name') {
-        valA = accountById.get((a as any).account_id)?.name || '';
-        valB = accountById.get((b as any).account_id)?.name || '';
+        valA = accountById.get(a.account_id)?.name || '';
+        valB = accountById.get(b.account_id)?.name || '';
       }
 
       if (valA < valB) return orderSortOrder === 'asc' ? -1 : 1;
