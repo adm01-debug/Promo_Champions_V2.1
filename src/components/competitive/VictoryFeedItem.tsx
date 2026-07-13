@@ -11,15 +11,15 @@ const REACTIONS = ['🔥', '👏', '🚀', '💪', '🏆'];
 
 interface VictoryFeedItemProps {
   item: Record<string, unknown> & {
-    id: string;
+    id?: string;
     event_type?: string;
     title?: string;
     description?: string | null;
     value?: number;
     salesperson_id?: string;
-    created_at: string;
+    created_at?: string;
     feed_reactions?: Array<{ reaction: string; salesperson_id: string }>;
-    feed_comments?: Array<Record<string, unknown> & { id: string; content: string }>;
+    feed_comments?: Array<Record<string, unknown> & { id?: string; content?: string }>;
     metadata?: Record<string, unknown> | null;
     salespeople?: Record<string, string> | null;
   };
