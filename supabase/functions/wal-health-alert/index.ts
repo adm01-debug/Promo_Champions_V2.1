@@ -153,7 +153,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
           },
         ],
       },
-    ]);
+    ], ctx.requestId);
 
     return new Response(
       JSON.stringify({ ok: true, alerts, snapshot: data }),
