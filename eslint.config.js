@@ -52,17 +52,18 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
     },
   },
-  // Logging is legitimate in build scripts, Deno edge functions and test suites
+  // Logging is legitimate in build scripts and test suites
   {
     files: [
       'scripts/**',
-      'supabase/functions/**',
       'tests/**',
       'src/test/**',
       '**/*.test.{ts,tsx}',
     ],
     rules: {
       'no-console': 'off',
+      // Playwright fixtures shadow the `use` identifier — this is not a React hook.
+      'react-hooks/rules-of-hooks': 'off',
     },
   }
 );
