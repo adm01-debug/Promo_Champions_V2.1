@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Activity, RefreshCw, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { EdgeRetryTimeSeriesChart } from "./EdgeRetryTimeSeriesChart";
 
 type Outcome = "retry" | "success_after_retry" | "exhausted" | "non_retryable";
 
