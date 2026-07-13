@@ -291,7 +291,14 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   };
 
   const exportPDF = () => {
-    const doc = new jsPDF() as any;
+    type JsPDFWithAutoTable = jsPDF & {
+      autoTable: (opts: {
+        head: (string | number)[][];
+        body: (string | number | null)[][];
+        startY?: number;
+      }) => void;
+    };
+    const doc = new jsPDF() as JsPDFWithAutoTable;
     doc.text('Relatório Customer Success 360', 14, 15);
     const tableData = accounts.map(a => [
       a.name,
