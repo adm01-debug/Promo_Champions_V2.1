@@ -63,7 +63,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
                     onSelect({
                       id: client.id,
                       name: client.name,
-                      ramo_atividade: (client as any).ramo_atividade || null
+                      ramo_atividade: (client as { ramo_atividade?: string | null }).ramo_atividade || null
                     });
                     setOpen(false);
                   }}
@@ -72,7 +72,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
                   <div className="flex flex-col">
                     <span className="font-bold">{client.name}</span>
                     <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                      {(client as any).ramo_atividade || "Sem ramo definido"}
+                      {(client as { ramo_atividade?: string | null }).ramo_atividade || "Sem ramo definido"}
                     </span>
                   </div>
                   <Check
