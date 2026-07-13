@@ -10,7 +10,19 @@ import { cn } from '@/lib/utils';
 const REACTIONS = ['🔥', '👏', '🚀', '💪', '🏆'];
 
 interface VictoryFeedItemProps {
-  item: Record<string, any>;
+  item: Record<string, unknown> & {
+    id: string;
+    event_type?: string;
+    title?: string;
+    description?: string | null;
+    value?: number;
+    salesperson_id?: string;
+    created_at: string;
+    feed_reactions?: Array<{ reaction: string; salesperson_id: string }>;
+    feed_comments?: Array<Record<string, unknown> & { id: string; content: string }>;
+    metadata?: Record<string, unknown> | null;
+    salespeople?: Record<string, string> | null;
+  };
   currentSalespersonId?: string;
   eventIcons: Record<string, typeof Trophy>;
   eventColors: Record<string, string>;
