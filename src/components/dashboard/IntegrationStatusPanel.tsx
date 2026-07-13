@@ -95,7 +95,7 @@ export const IntegrationStatusPanel = () => {
 
         if (emailError) throw emailError;
 
-        const formattedLogs: LogEntry[] = (emailLogs || []).map((log: any) => ({
+        const formattedLogs: LogEntry[] = (emailLogs || []).map((log) => ({
           id: log.id,
           timestamp: log.created_at,
           type: 'email',
@@ -107,7 +107,7 @@ export const IntegrationStatusPanel = () => {
 
         setLogs(formattedLogs);
       } else {
-        const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log: any) => ({
+        const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log) => ({
           id: log.id,
           timestamp: log.timestamp,
           type: log.integration_type,
