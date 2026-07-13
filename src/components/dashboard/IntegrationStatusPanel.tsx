@@ -110,7 +110,7 @@ export const IntegrationStatusPanel = () => {
         const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log) => ({
           id: log.id,
           timestamp: log.timestamp,
-          type: log.integration_type,
+          type: log.integration_type as LogEntry['type'],
           event:
             log.event_type === 'config_check'
               ? `Diagnóstico: ${log.integration_type}`
