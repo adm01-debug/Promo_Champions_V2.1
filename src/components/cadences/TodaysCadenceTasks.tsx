@@ -160,7 +160,7 @@ export function TodaysCadenceTasks() {
         try {
           await supabase
             .from('cadence_tasks')
-            .update({ call_result: callResult } as any)
+            .update({ call_result: callResult } as never)
             .eq('id', notesTaskId);
 
           // Registrar log detalhado
@@ -180,7 +180,7 @@ export function TodaysCadenceTasks() {
                 client_id: String(prospectCadence.sale_id),
                 event_type: 'interaction',
                 action: 'Call Logged',
-                details: { result: callResult, notes: noteText } as any,
+                details: { result: callResult, notes: noteText } as unknown as never,
                 created_by: (await supabase.auth.getUser()).data.user?.id,
               },
             ]);
@@ -428,14 +428,14 @@ export function TodaysCadenceTasks() {
                           step?.action_type === 'call') && (
                           <div className="flex gap-2 mb-1">
                             {step?.action_type === 'whatsapp' &&
-                              (sale as any)?.client_phone && (
+                              (sale?.client_phone as string | undefined) && (
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   className="h-7 text-[10px] gap-1.5 flex-1 bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
                                   onClick={() =>
                                     window.open(
-                                      `https://wa.me/${(sale as any).client_phone.replace(/\D/g, '')}`,
+                                      `https://wa.me/${String(sale?.client_phone ?? '').replace(/\D/g, '')}`,
                                       '_blank'
                                     )
                                   }
@@ -444,14 +444,14 @@ export function TodaysCadenceTasks() {
                                 </Button>
                               )}
                             {step?.action_type === 'linkedin' &&
-                              (sale as any)?.client_linkedin && (
+                              (sale?.client_linkedin as string | undefined) && (
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   className="h-7 text-[10px] gap-1.5 flex-1 bg-blue-500/10 text-blue-600 border-blue-500/30 hover:bg-blue-500/20"
                                   onClick={() =>
                                     window.open(
-                                      String((sale as any).client_linkedin),
+                                      String(sale?.client_linkedin ?? ''),
                                       '_blank'
                                     )
                                   }
@@ -463,7 +463,7 @@ export function TodaysCadenceTasks() {
                         )}
 
                         <div className="flex items-center gap-2">
-                          {(task as any).task_type === 'automatic' ? (
+                          {task.task_type === 'automatic' ? (
                             <div className="flex-1 flex items-center justify-center p-1.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold animate-pulse">
                               <Zap className="h-3 w-3 mr-1" /> EXECUTANDO AUTOMATICAMENTE
                             </div>
