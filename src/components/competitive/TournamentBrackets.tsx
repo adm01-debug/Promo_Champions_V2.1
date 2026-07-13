@@ -14,6 +14,30 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+interface TournamentParticipant {
+  salesperson_id: string;
+  seed?: number;
+  salespeople?: { id: string; name: string } | null;
+}
+interface TournamentMatch {
+  id: string;
+  round_number: number;
+  match_order: number;
+  player1_id: string | null;
+  player2_id: string | null;
+  winner_id: string | null;
+  status: string;
+}
+interface Tournament {
+  id: string;
+  name: string;
+  status: string;
+  metric_type: string;
+  total_rounds: number;
+  tournament_participants?: TournamentParticipant[];
+  tournament_matches?: TournamentMatch[];
+}
+
 function TournamentBracketsComponent() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
