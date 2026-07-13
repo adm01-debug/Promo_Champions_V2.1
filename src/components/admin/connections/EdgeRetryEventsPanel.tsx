@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Activity, RefreshCw, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { EdgeRetryTimeSeriesChart } from "./EdgeRetryTimeSeriesChart";
 
 type Outcome = "retry" | "success_after_retry" | "exhausted" | "non_retryable";
 
@@ -117,6 +118,14 @@ export function EdgeRetryEventsPanel() {
             aria-label="Filtrar por nome da função"
           />
         </div>
+
+        <div className="rounded-md border border-border/40 bg-card/20 p-2">
+          <p className="text-[11px] text-muted-foreground mb-1 px-1">
+            Distribuição por hora (últimas 24h)
+          </p>
+          <EdgeRetryTimeSeriesChart rows={data} />
+        </div>
+
 
         {isLoading ? (
           <div className="space-y-2">
