@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { calculateLevelFromXP, getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
 import { useLevelUpCelebration } from '@/hooks/gamification/useLevelUpCelebration';
 import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
