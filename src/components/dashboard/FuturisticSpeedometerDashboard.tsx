@@ -157,7 +157,7 @@ export const FuturisticSpeedometerDashboard = () => {
       if (fetchError && import.meta.env.DEV)
         console.error('Error fetching settings:', fetchError);
 
-      const updatedValue = { ...((existing?.value as any) || {}), ...newSettings };
+      const updatedValue = { ...((existing?.value as SpeedometerSettings) || {}), ...newSettings };
 
       const { error: upsertError } = await supabase.from('user_app_settings').upsert({
         user_id: user.id,
