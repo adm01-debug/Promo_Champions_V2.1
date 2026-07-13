@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { useFunnelRules } from '@/hooks/cadences/useCadenceQueries';
+import { useFunnelRules, type FunnelRule } from '@/hooks/cadences/useCadenceQueries';
 import { Zap, ArrowRight, Plus, Trash2, Settings2, Info } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,7 +44,7 @@ export function CadenceFunnelConfig() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
 
-  const [newRule, setNewRule] = useState<any>({
+  const [newRule, setNewRule] = useState<Omit<FunnelRule, "id" | "cadence_id">>({
     from_stage: 'new',
     to_stage: 'high_interest',
     condition_type: 'email_open',
@@ -85,11 +85,11 @@ export function CadenceFunnelConfig() {
 
       setIsAdding(false);
       queryClient.invalidateQueries({ queryKey: ['funnel-rules'] });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Erro ao adicionar regra',
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     }
   };
@@ -106,11 +106,11 @@ export function CadenceFunnelConfig() {
       });
 
       queryClient.invalidateQueries({ queryKey: ['funnel-rules'] });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Erro ao remover regra',
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     }
   };
@@ -125,11 +125,11 @@ export function CadenceFunnelConfig() {
       if (error) throw error;
 
       queryClient.invalidateQueries({ queryKey: ['funnel-rules'] });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Erro ao atualizar regra',
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     }
   };
@@ -209,7 +209,7 @@ export function CadenceFunnelConfig() {
                 <Select
                   value={newRule.condition_type}
                   onValueChange={v =>
-                    setNewRule({ ...newRule, condition_type: v as any })
+                    setNewRule({ ...newRule, condition_type: v as FunnelRule['condition_type'] })
                   }
                 >
                   <SelectTrigger className="h-8 text-xs">
@@ -335,7 +335,7 @@ export function CadenceFunnelConfig() {
               </p>
             </div>
           ) : (
-            rules.map((rule: any) => (
+            rules.map((rule: FunnelRule) => (
               <div
                 key={rule.id}
                 className="flex items-center justify-between p-3 rounded-xl border border-border/30 bg-muted/20 hover:bg-muted/30 transition-colors group"
