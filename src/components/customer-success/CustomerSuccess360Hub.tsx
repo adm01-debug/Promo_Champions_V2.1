@@ -136,7 +136,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
     const firstOrderMap = new Map<string, string>();
 
     orders.forEach(o => {
-      const accId = (o as any).account_id || (o as any).user_id;
+      const accId = o.account_id || o.user_id;
       const currentFirst = firstOrderMap.get(accId);
       if (!currentFirst || isAfter(parseISO(currentFirst), parseISO(o.created_at))) {
         firstOrderMap.set(accId, o.created_at);
@@ -144,7 +144,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
     });
 
     accounts.forEach(a => {
-      const firstDate = firstOrderMap.get(a.id) || (a as any).created_at;
+      const firstDate = firstOrderMap.get(a.id) || a.created_at;
       if (!firstDate) return;
 
       const month = format(startOfMonth(parseISO(firstDate)), 'MMM yy', { locale: ptBR });
