@@ -47,7 +47,7 @@ export function RiskAssessmentPanel() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {deals?.slice(0, 6).map((deal: any) => (
+      {(deals as DealHealthWithSale[] | undefined)?.slice(0, 6).map((deal) => (
         <Card
           key={deal.id}
           className="glass border-border/40 hover:border-primary/40 transition-all duration-300 card-elevated"
