@@ -66,9 +66,9 @@ interface AlertHistoryEntry {
 
 type SpeedometerSettings = Partial<{
   ticksCount: number;
-  gaugeMode: string;
+  gaugeMode: 'compact' | 'kilo' | 'standard';
   minVal: number;
-  customMax: number | string;
+  customMax: number;
   customUnit: string;
   autoScale: boolean;
   oppThreshold: number;
