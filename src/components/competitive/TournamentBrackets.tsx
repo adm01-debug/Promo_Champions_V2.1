@@ -14,6 +14,32 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+interface TournamentParticipant {
+  salesperson_id: string;
+  seed?: number;
+  salespeople?: { id: string; name: string } | null;
+}
+interface TournamentMatch {
+  id: string;
+  round_number: number;
+  match_order: number;
+  player1_id: string | null;
+  player2_id: string | null;
+  winner_id: string | null;
+  status: string;
+  player1_score?: number | null;
+  player2_score?: number | null;
+}
+interface Tournament {
+  id: string;
+  name: string;
+  status: string;
+  metric_type: string;
+  total_rounds: number;
+  tournament_participants?: TournamentParticipant[];
+  tournament_matches?: TournamentMatch[];
+}
+
 function TournamentBracketsComponent() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
@@ -115,7 +141,7 @@ function TournamentBracketsComponent() {
     completed: { label: 'Finalizado', color: 'bg-success/20 text-success' },
   };
 
-  const metricLabels: Record<string, any> = {
+  const metricLabels: Record<string, string> = {
     revenue: 'Receita', deals: 'Deals', activities: 'Atividades', conversion: 'Conversão',
   };
 
@@ -177,7 +203,7 @@ function TournamentBracketsComponent() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {tournaments.map((t: Record<string, any>) => {
+          {tournaments.map((t: Tournament) => {
             const status = statusConfig[t.status] || statusConfig.upcoming;
             const matches = t.tournament_matches || [];
 
@@ -221,7 +247,7 @@ function TournamentBracketsComponent() {
                     <div className="overflow-x-auto pb-4 scrollbar-hide">
                       <div className="flex gap-12 min-w-max px-4">
                         {Array.from({ length: t.total_rounds }, (_, r) => {
-                          const roundMatches = matches.filter((m: any) => m.round_number === r + 1).sort((a: any, b: any) => a.match_order - b.match_order);
+                          const roundMatches = (matches as TournamentMatch[]).filter((m) => m.round_number === r + 1).sort((a, b) => a.match_order - b.match_order);
                           const isFinal = r + 1 === t.total_rounds;
                           const isSemi = r + 1 === t.total_rounds - 1;
                           const label = isFinal ? 'Grande Final' : isSemi ? 'Semi-Finais' : `Round ${r + 1}`;
@@ -235,9 +261,9 @@ function TournamentBracketsComponent() {
                               </div>
                               
                               <div className="flex flex-col justify-around flex-1 gap-8">
-                                {roundMatches.length > 0 ? roundMatches.map((match: any) => {
-                                  const p1 = t.tournament_participants?.find((p: any) => p.salesperson_id === match.player1_id);
-                                  const p2 = match.player2_id ? t.tournament_participants?.find((p: any) => p.salesperson_id === match.player2_id) : null;
+                                {roundMatches.length > 0 ? roundMatches.map((match) => {
+                                  const p1 = t.tournament_participants?.find((p) => p.salesperson_id === match.player1_id);
+                                  const p2 = match.player2_id ? t.tournament_participants?.find((p) => p.salesperson_id === match.player2_id) : null;
                                   
                                   const p1Name = p1?.salespeople?.name || 'TBD';
                                   const p2Name = match.player2_id ? (p2?.salespeople?.name || 'TBD') : 'BYE (Avança)';
