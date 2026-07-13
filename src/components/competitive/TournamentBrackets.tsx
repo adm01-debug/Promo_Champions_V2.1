@@ -245,7 +245,7 @@ function TournamentBracketsComponent() {
                     <div className="overflow-x-auto pb-4 scrollbar-hide">
                       <div className="flex gap-12 min-w-max px-4">
                         {Array.from({ length: t.total_rounds }, (_, r) => {
-                          const roundMatches = matches.filter((m: any) => m.round_number === r + 1).sort((a: any, b: any) => a.match_order - b.match_order);
+                          const roundMatches = (matches as TournamentMatch[]).filter((m) => m.round_number === r + 1).sort((a, b) => a.match_order - b.match_order);
                           const isFinal = r + 1 === t.total_rounds;
                           const isSemi = r + 1 === t.total_rounds - 1;
                           const label = isFinal ? 'Grande Final' : isSemi ? 'Semi-Finais' : `Round ${r + 1}`;
@@ -259,9 +259,9 @@ function TournamentBracketsComponent() {
                               </div>
                               
                               <div className="flex flex-col justify-around flex-1 gap-8">
-                                {roundMatches.length > 0 ? roundMatches.map((match: any) => {
-                                  const p1 = t.tournament_participants?.find((p: any) => p.salesperson_id === match.player1_id);
-                                  const p2 = match.player2_id ? t.tournament_participants?.find((p: any) => p.salesperson_id === match.player2_id) : null;
+                                {roundMatches.length > 0 ? roundMatches.map((match) => {
+                                  const p1 = t.tournament_participants?.find((p) => p.salesperson_id === match.player1_id);
+                                  const p2 = match.player2_id ? t.tournament_participants?.find((p) => p.salesperson_id === match.player2_id) : null;
                                   
                                   const p1Name = p1?.salespeople?.name || 'TBD';
                                   const p2Name = match.player2_id ? (p2?.salespeople?.name || 'TBD') : 'BYE (Avança)';
