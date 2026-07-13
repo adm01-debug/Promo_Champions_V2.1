@@ -79,10 +79,10 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
     if (asChild) {
       return (
         <span
-          onClick={handleClick as any}
+          onClick={handleClick as unknown as React.MouseEventHandler<HTMLSpanElement>}
           className={cn(rippleButtonVariants({ variant, size }), 'relative overflow-hidden', className)}
-          ref={ref as any}
-          {...(props as any)}
+          ref={ref as unknown as React.Ref<HTMLSpanElement>}
+          {...(props as unknown as React.HTMLAttributes<HTMLSpanElement>)}
         >
           {ripples.map(r => (
             <span
