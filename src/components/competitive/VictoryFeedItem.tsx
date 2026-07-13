@@ -91,7 +91,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                     <p className="text-sm font-black text-primary italic">R$ {Number(item.value).toLocaleString('pt-BR')}</p>
                   </div>
                 )}
-                {(item.metadata as any)?.sale_id && (
+                {(item.metadata as Record<string, unknown> | null | undefined)?.sale_id && (
                   <Button 
                     variant="link" 
                     size="sm" 
@@ -101,7 +101,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                     Ver Detalhes <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
                 )}
-                {(item.metadata as any)?.battle_id && (
+                {(item.metadata as Record<string, unknown> | null | undefined)?.battle_id && (
                   <Button 
                     variant="link" 
                     size="sm" 
