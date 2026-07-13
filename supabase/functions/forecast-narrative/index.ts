@@ -196,6 +196,11 @@ Gere a narrativa executiva.`;
         const status = err instanceof Response ? err.status : (err as Error)?.name;
         ctx.log('warn', 'ai_gateway_retry', { attempt, delayMs, status });
       },
+      telemetry: {
+        functionName: 'forecast-narrative',
+        operation: 'ai_gateway_completion',
+        requestId: ctx.requestId ?? null,
+      },
     });
   } catch (err) {
     const inner = (err as RetryError).lastError;
