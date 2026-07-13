@@ -86,9 +86,9 @@ export const FuturisticSpeedometerDashboard = () => {
   const [alertFrequency, setAlertFrequency] = useState<'daily' | 'weekly' | 'realtime'>(
     'realtime'
   );
-  const [alertHistory, setAlertHistory] = useState<any[]>([]);
+  const [alertHistory, setAlertHistory] = useState<AlertHistoryEntry[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
-  const [activeHudAlert, setActiveHudAlert] = useState<any>(null);
+  const [activeHudAlert, setActiveHudAlert] = useState<AlertHistoryEntry | null>(null);
   const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
 
