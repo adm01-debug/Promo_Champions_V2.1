@@ -269,7 +269,7 @@ const FollowUpAudit = () => {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      logs.map((log: any) => {
+                      logs.map((log: AuditLog) => {
                         const actionKey = log.action_type || 'unknown';
                         const action = actionIcons[actionKey] || {
                           icon: History,
