@@ -84,7 +84,12 @@ export default function Orcamentos() {
     total_price: number;
     product_id?: string;
     subtotal?: number;
-    personalizations?: any[];
+    personalizations?: Array<{
+      technique_name: string;
+      colors_count: number;
+      positions_count: number;
+      total_cost: number;
+    }>;
   }
 
   const [items, setItems] = useState<LocalQuoteItem[]>([]);
