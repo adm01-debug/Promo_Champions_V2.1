@@ -18,7 +18,7 @@ interface Props {
   intents?: Intent[];
 }
 
-const INTENT_CONFIG: Record<IntentType, { icon: any; color: string; label: string }> = {
+const INTENT_CONFIG: Record<IntentType, { icon: LucideIcon; color: string; label: string }> = {
   buying_signal: { icon: Zap, color: "text-success bg-success/10 border-success/20", label: "Sinal de Compra" },
   objection: { icon: AlertCircle, color: "text-warning bg-warning/10 border-warning/20", label: "Objeção" },
   comparison: { icon: Repeat, color: "text-info bg-info/10 border-info/20", label: "Comparação" },
