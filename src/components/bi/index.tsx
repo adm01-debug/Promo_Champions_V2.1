@@ -20,10 +20,6 @@ interface BIStubProps extends Record<string, unknown> {
   className?: string;
   title?: React.ReactNode;
 }
-  children?: React.ReactNode;
-  className?: string;
-  title?: React.ReactNode;
-}
 
 export const BIMetricsGrid: React.FC<BIStubProps> = ({ children, className }) => (
   <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-4 ${className ?? ""}`}>{children}</div>
