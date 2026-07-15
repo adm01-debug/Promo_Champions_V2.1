@@ -45,7 +45,7 @@ export function ClientPurchaseHistory({ clientId }: Props) {
   const { data: orders, isLoading } = usePurchaseHistory(clientId);
 
   // Persist filters per client using localStorage
-  const getPersistedState = (key: string, defaultValue: any) => {
+  const getPersistedState = (key: string, defaultValue: unknown) => {
     if (!clientId) return defaultValue;
     const saved = localStorage.getItem(`purchase_filters_${clientId}`);
     if (!saved) return defaultValue;
@@ -180,7 +180,7 @@ export function ClientPurchaseHistory({ clientId }: Props) {
                       }}
                       className="text-xs"
                     >
-                      {statusLabel(status as any)}
+                      {statusLabel(status as never)}
                     </DropdownMenuCheckboxItem>
                   )
                 )}
