@@ -89,7 +89,7 @@ const ChartFallback = ({ height = 280 }: { height?: number }) => (
 
 const SDRDashboardInner = () => {
   const [period, setPeriod] = useState<'week' | 'month' | 'quarter'>('month');
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: metrics, isLoading } = useSDRMetrics(period, filters, searchTerm);
@@ -167,7 +167,7 @@ const SDRDashboardInner = () => {
 
           <Tabs
             value={period}
-            onValueChange={(v: any) => setPeriod(v)}
+            onValueChange={(v: string) => setPeriod(v as "week" | "month" | "quarter")}
             className="w-auto"
           >
             <TabsList className="h-8 bg-muted/30">
