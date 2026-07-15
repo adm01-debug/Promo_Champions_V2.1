@@ -183,11 +183,6 @@ export const DashboardSettings = memo(
                     setAlertFrequency(value);
                     saveSettings({ alertFrequency: value });
                   }}
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  // @ts-expect-error legacy placeholder removed below
-                    setAlertFrequency(v);
-                    saveSettings({ alertFrequency: v });
-                  }}
                 >
                   <SelectTrigger className="h-7 text-[10px] font-mono uppercase bg-background/40 border-border/40">
                     <SelectValue placeholder="Freq" />
