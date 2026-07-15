@@ -67,7 +67,7 @@ export const SentimentTimelineChart = ({
 
   const shifts = useMemo(() => (timeline ? detectShifts(timeline) : []), [timeline]);
 
-  const handleClick = (e: { activePayload?: Array<{ payload?: { start_sec?: number } }> }) => {
+  const handleClick = (e: { activePayload?: Array<{ payload?: { start_sec: number; excerpt?: string } }> }) => {
     const seg = e?.activePayload?.[0]?.payload;
     if (seg) {
       if (onSeek) onSeek(seg.start_sec);
