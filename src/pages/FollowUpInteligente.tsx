@@ -78,7 +78,7 @@ const FollowUpInteligente = memo(() => {
         sale_id: saleId,
         user_id: salesperson?.id,
         action_type: actionType,
-        details,
+        details: details as never,
         status,
       });
       if (error) throw error;
