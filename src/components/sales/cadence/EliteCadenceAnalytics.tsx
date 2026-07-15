@@ -34,7 +34,7 @@ export function EliteCadenceAnalytics() {
 
       const statsByChannel: Record<string, { total: number; completed: number }> = {};
 
-      stepStats?.forEach((task: any) => {
+      stepStats?.forEach((task: { status?: string; cadence_step?: { action_type?: string } | null }) => {
         const type = task.cadence_step?.action_type || 'other';
         if (!statsByChannel[type]) statsByChannel[type] = { total: 0, completed: 0 };
         statsByChannel[type].total++;
@@ -225,7 +225,7 @@ export function EliteCadenceAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {metrics?.channels.map((channel: any) => (
+              {metrics?.channels.map((channel: { type: string; rate: number; total: number }) => (
                 <div key={channel.type} className="flex items-center gap-4">
                   <div className="w-20 text-[10px] font-bold uppercase text-muted-foreground">
                     {channel.type}
