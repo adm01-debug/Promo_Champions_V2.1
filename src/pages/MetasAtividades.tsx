@@ -353,7 +353,7 @@ export default function MetasAtividades() {
                                       {
                                         clientX: rect.left + rect.width / 2,
                                         clientY: rect.top + rect.height / 2,
-                                      } as any,
+                                      } as unknown as React.MouseEvent,
                                       'ritmo'
                                     );
                                   }}
