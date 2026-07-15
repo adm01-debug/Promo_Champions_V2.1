@@ -44,7 +44,7 @@ export function RecentProspects({
       }
 
       if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
+        query = query.eq('status', filters.status as string);
       }
 
       const { data: sales } = await query
