@@ -65,7 +65,7 @@ export interface SpeedometerProps {
   delta?: number;
   size?: number;
   ticksCount?: number;
-  drilldownData?: any[];
+  drilldownData?: Array<Record<string, unknown>>;
   explanation?: string;
 }
 
