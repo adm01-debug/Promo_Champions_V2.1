@@ -12,7 +12,9 @@ import {
   Sparkles,
   ChevronRight,
   TrendingDown,
+  type LucideIcon,
 } from 'lucide-react';
+import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
