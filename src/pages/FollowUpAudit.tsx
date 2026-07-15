@@ -335,7 +335,14 @@ const FollowUpAudit = () => {
                                     size="icon"
                                     variant="ghost"
                                     className="h-7 w-7"
-                                    onClick={() => handleRetry(log as any)}
+                                    onClick={() =>
+                                      handleRetry({
+                                        action_type: log.action_type ?? '',
+                                        details: log.details as string | { message_preview?: string } | null,
+                                        retry_count: log.retry_count ?? 0,
+                                        id: log.id,
+                                      })
+                                    }
                                   >
                                     <RotateCw className="h-3.5 w-3.5" />
                                   </Button>
