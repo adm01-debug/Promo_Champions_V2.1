@@ -53,6 +53,17 @@ const actionIcons: Record<
   intent_trigger: { icon: Zap, color: 'text-red-500', label: 'Gatilho de Intenção' },
 };
 
+interface AuditLog {
+  id: string;
+  created_at: string | null;
+  lead_name?: string | null;
+  action_type?: string | null;
+  user_name?: string | null;
+  status?: string | null;
+  details?: string | { message_preview?: string } | null;
+  retry_count?: number | null;
+}
+
 const FollowUpAudit = () => {
   const [searchLead, setSearchLead] = useState('');
   const [searchSalesperson, setSearchSalesperson] = useState('');
