@@ -124,7 +124,7 @@ export const SessionManager = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">
-                          {getBrowserName(session.user_agent)} em {deviceInfo.os || 'Unknown OS'}
+                          {getBrowserName(session.user_agent)} em {String(deviceInfo.os ?? 'Unknown OS')}
                         </p>
                         {isCurrent && (
                           <Badge variant="default" className="text-xs">
