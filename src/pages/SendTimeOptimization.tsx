@@ -101,7 +101,7 @@ export default function SendTimeOptimizationPage() {
                 Nenhum perfil ainda. Use "Recalcular todos" para gerar.
               </div>
             )}
-            {top.map((p: any) => (
+            {top.map(p => (
               <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
                 <div className="space-y-1 min-w-0">
                   <div className="text-sm font-mono text-muted-foreground">{p.sale_id.slice(0, 8)}…</div>
