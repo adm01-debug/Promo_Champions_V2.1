@@ -139,7 +139,7 @@ export default function AdminComissoes() {
           <motion.div variants={itemVariants}>
             <Tabs
               value={statusFilter}
-              onValueChange={v => setStatusFilter(v as any)}
+              onValueChange={v => setStatusFilter(v as CommissionStatus | 'all')}
               className="space-y-6"
             >
               <TabsList className="bg-white/5 border border-white/10 p-1">
