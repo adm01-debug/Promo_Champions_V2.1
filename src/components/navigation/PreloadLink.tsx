@@ -6,7 +6,7 @@ import { triggerHaptic } from '@/lib/haptics';
 
 export type PrefetchableRouteComponent = {
   prefetch?: () => Promise<unknown> | unknown;
-};
+} | React.LazyExoticComponent<React.ComponentType<unknown>>;
 
 const prefetchedTargets = new Set<string>();
 
