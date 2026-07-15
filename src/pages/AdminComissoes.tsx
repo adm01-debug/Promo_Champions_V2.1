@@ -302,7 +302,7 @@ export default function AdminComissoes() {
                                 variant="ghost"
                                 className="h-8 w-8 text-muted-foreground hover:text-white"
                                 onClick={() => {
-                                  setSelectedCommission(c);
+                                  setSelectedCommission({ ...c, targetStatus: c.status });
                                   setNotes(c.payment_notes || '');
                                   setIsDialogOpen(true);
                                 }}
