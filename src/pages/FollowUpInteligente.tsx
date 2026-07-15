@@ -558,7 +558,7 @@ const FollowUpInteligente = memo(() => {
                         const vars = template.match(/{{(.*?)}}/g) || [];
                         vars.forEach(v => {
                           const key = v.replace(/{{|}}/g, '');
-                          msg = msg.replace(v, (currentLeadForWA as any)[key] || `[${key}?]`);
+                          msg = msg.replace(v, (currentLeadForWA as Record<string, string | undefined>)[key] || `[${key}?]`);
                         });
                         return msg;
                       })()}
