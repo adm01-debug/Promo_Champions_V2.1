@@ -45,13 +45,13 @@ export function ClientPurchaseHistory({ clientId }: Props) {
   const { data: orders, isLoading } = usePurchaseHistory(clientId);
 
   // Persist filters per client using localStorage
-  const getPersistedState = (key: string, defaultValue: unknown) => {
+  const getPersistedState = <T,>(key: string, defaultValue: T): T => {
     if (!clientId) return defaultValue;
     const saved = localStorage.getItem(`purchase_filters_${clientId}`);
     if (!saved) return defaultValue;
     try {
       const parsed = JSON.parse(saved);
-      return parsed[key] ?? defaultValue;
+      return (parsed[key] as T) ?? defaultValue;
     } catch {
       return defaultValue;
     }
