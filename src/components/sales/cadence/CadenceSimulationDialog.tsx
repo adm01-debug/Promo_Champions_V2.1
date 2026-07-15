@@ -96,7 +96,7 @@ export function CadenceSimulationDialog() {
       transitioned: boolean;
       new_stage: string;
       event_count: number;
-      applied_rule?: any;
+      applied_rule?: Record<string, unknown>;
       planned_actions?: string[];
     };
 

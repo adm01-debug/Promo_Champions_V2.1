@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface SDRAdvancedFiltersProps {
   onSearch: (value: string) => void;
-  onFilterChange: (filters: any) => void;
+  onFilterChange: (filters: Record<string, unknown>) => void;
 }
 
 export function SDRAdvancedFilters({

@@ -63,7 +63,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         onKeyDown={(e) => {
           if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
-            handleClick(e as any);
+            handleClick(e as unknown as React.MouseEvent<HTMLDivElement>);
           }
         }}
         {...props}

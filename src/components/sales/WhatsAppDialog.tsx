@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface WhatsAppDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sale: any;
+  sale: Record<string, unknown>;
 }
 
 export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps) {

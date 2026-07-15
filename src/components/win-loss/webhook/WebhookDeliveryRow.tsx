@@ -14,7 +14,7 @@ import { ptBR } from 'date-fns/locale';
 import { getEventLabel } from '../webhookHelpers';
 
 interface WebhookDeliveryRowProps {
-  delivery: any;
+  delivery: Record<string, unknown>;
   isSelected: boolean;
   onToggle: (id: string) => void;
   isProcessing: boolean;

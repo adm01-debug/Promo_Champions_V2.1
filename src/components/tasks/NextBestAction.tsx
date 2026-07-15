@@ -82,7 +82,7 @@ export function NextBestAction() {
 
   const handleCreateTask = (suggestion: ActionSuggestion) => {
     // Map suggestion action types to supported TaskTypes
-    let taskType: any = 'other';
+    let taskType: string = 'other';
     const type = suggestion.actionType;
 
     if (type === 'call' || type === 'call_now') taskType = 'call';

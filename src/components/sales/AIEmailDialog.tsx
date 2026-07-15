@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface AIEmailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sale: any;
+  sale: Record<string, unknown>;
 }
 
 export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) {

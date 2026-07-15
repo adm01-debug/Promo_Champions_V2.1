@@ -13,7 +13,7 @@ interface LeadDetailedAuditLogsProps {
   clientName?: string;
 }
 
-const EVENT_ICONS: Record<string, any> = {
+const EVENT_ICONS: Record<string, LucideIcon> = {
   interaction: Activity,
   trigger: Zap,
   transition: ArrowRight,

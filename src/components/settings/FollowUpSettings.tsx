@@ -94,7 +94,7 @@ export function FollowUpSettings() {
       queryClient.invalidateQueries({ queryKey: ["template-versions"] });
       setIsPreviewOpen(false);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error("Erro ao atualizar configurações: " + error.message);
     },
   });
