@@ -95,7 +95,7 @@ export function BulkDraftRow({ draft }: Props) {
                 size="sm"
                 onClick={() => {
                   update.mutate(
-                    { id: draft.id, patch: { subject, body, recipient_email: email || null } as any },
+                    { id: draft.id, patch: { subject, body, recipient_email: email || null } as never },
                     { onSuccess: () => setOpen(false) },
                   );
                 }}
