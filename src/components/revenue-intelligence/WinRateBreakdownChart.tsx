@@ -74,7 +74,7 @@ export const WinRateBreakdownChart: FC<Props> = ({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 8,
                 }}
-                formatter={(v: any, name: any) => (name === 'win_rate' ? `${v}%` : v)}
+                formatter={(v: number | string, name: string) => (name === 'win_rate' ? `${v}%` : v)}
               />
               <Bar dataKey="win_rate" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]} />
             </BarChart>
