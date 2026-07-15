@@ -219,7 +219,7 @@ const UsageAnalytics = () => {
                       cx="50%"
                       cy="50%"
                       outerRadius={100}
-                      label={(props: any) => props.path}
+                      label={(props: { path?: string }) => props.path ?? ''}
                     >
                       {pieData.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
