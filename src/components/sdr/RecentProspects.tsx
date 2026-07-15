@@ -23,7 +23,7 @@ export function RecentProspects({
   onSelectLead?: (id: string, name: string, score: number) => void, 
   selectedLeadId?: string | null,
   searchTerm?: string,
-  filters?: any
+  filters?: Record<string, unknown>
 }) {
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
@@ -132,7 +132,7 @@ export function RecentProspects({
             {prospects?.map((prospect, index) => {
               const temp = getTemperature(prospect.score);
               const TempIcon = temp.icon;
-              const enrichment = (prospect as any).enrichment_data;
+              const enrichment = (prospect as { enrichment_data?: Record<string, unknown> }).enrichment_data;
               const isEnrichingCurrent = enrichingId === prospect.id;
               
               return (
