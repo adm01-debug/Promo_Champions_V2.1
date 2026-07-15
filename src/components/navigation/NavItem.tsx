@@ -13,7 +13,8 @@ interface NavItemProps {
   isCollapsed?: boolean;
   badgeCount?: number;
   badgeVariant?: "default" | "warning" | "destructive";
-  component?: PrefetchableRouteComponent; // Passed for prefetching
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component?: any; // Passed for prefetching (mixed lazy/prefetch shapes)
   id?: string;
 }
 
