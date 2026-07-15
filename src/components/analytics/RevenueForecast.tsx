@@ -211,7 +211,7 @@ export const RevenueForecast: FC = () => {
     );
   }
 
-  const fmt = (v: any) => `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  const fmt = (v: number | string) => `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   return (
     <div className="space-y-4">
