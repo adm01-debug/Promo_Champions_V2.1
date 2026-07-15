@@ -64,9 +64,9 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
         </Card>
       ) : (
         <AnimatePresence mode="popLayout">
-          {feedItems.map((item: Record<string, unknown>, index: number) => (
+          {feedItems.map((item: { id?: string } & Record<string, unknown>, index: number) => (
             <motion.div
-              key={item.id}
+              key={String(item.id ?? index)}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
