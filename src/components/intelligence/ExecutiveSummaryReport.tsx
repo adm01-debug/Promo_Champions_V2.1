@@ -12,7 +12,9 @@ import {
   Sparkles,
   ChevronRight,
   TrendingDown,
+  type LucideIcon,
 } from 'lucide-react';
+import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
@@ -282,7 +284,7 @@ function InsightRow({
   text,
   tone = 'default',
 }: {
-  icon: any;
+  icon: LucideIcon;
   text: string;
   tone?: 'default' | 'good' | 'warn';
 }) {
@@ -338,7 +340,7 @@ function ActionCard({
   );
 }
 
-function ShieldCheck(props: any) {
+function ShieldCheck(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
