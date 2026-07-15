@@ -21,6 +21,7 @@ export function ContactRulesDialog() {
     if (open) {
       fetchRules();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const fetchRules = async () => {
