@@ -50,7 +50,7 @@ export function VictoryOverlay({
     }
   }, [isVisible, onComplete]);
 
-  const icons: Record<string, any> = {
+  const icons: Record<string, LucideIcon> = {
     sale: Trophy,
     achievement: Star,
     streak: PartyPopper,
