@@ -474,7 +474,7 @@ const FollowUpInteligente = memo(() => {
                   Nenhuma ação registrada para este lead.
                 </p>
               )}
-              {auditLogs.map((log: any) => (
+              {(auditLogs as Array<{ id: string; action_type: string; created_at: string; details: unknown }>).map((log) => (
                 <div
                   key={log.id}
                   className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative"
