@@ -54,7 +54,7 @@ const KPICard = ({
   color,
   delay,
 }: {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   value: string | number;
   subtext: React.ReactNode;
