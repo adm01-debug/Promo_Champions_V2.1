@@ -95,7 +95,7 @@ export function FollowUpSettings() {
       setIsPreviewOpen(false);
     },
     onError: (error: unknown) => {
-      toast.error("Erro ao atualizar configurações: " + error.message);
+      toast.error("Erro ao atualizar configurações: " + (error instanceof Error ? error.message : String(error)));
     },
   });
 
