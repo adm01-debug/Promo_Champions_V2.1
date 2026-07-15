@@ -28,7 +28,7 @@ export const WebhookSimulationPanel = () => {
       });
 
       if (error) throw error;
-      setResults(data);
+      setResults(data as { passed: number; failed: number; vulnerabilities_detected: unknown[] });
       setProgress(100);
       toast.success("Simulação de estresse concluída!");
     } catch (err) {
