@@ -14,8 +14,12 @@ export { BITopClientsSection } from "./BITopClientsSection";
 export { BIVendasMacro } from "./BIVendasMacro";
 export { BIGestorTeamSection } from "./BIGestorTeamSection";
 
-// Stub components for legacy imports — accept arbitrary children/className without leaking `any`
-interface BIStubProps {
+// Stub components for legacy imports — accept extra unknown props without leaking `any`
+interface BIStubProps extends Record<string, unknown> {
+  children?: React.ReactNode;
+  className?: string;
+  title?: React.ReactNode;
+}
   children?: React.ReactNode;
   className?: string;
   title?: React.ReactNode;
