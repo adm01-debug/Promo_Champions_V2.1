@@ -235,9 +235,10 @@ export const DashboardSettings = memo(
                 </label>
                 <Select
                   value={gaugeMode}
-                  onValueChange={(v: any) => {
-                    setGaugeMode(v);
-                    saveSettings({ gaugeMode: v });
+                  onValueChange={v => {
+                    const value = v as GaugeMode;
+                    setGaugeMode(value);
+                    saveSettings({ gaugeMode: value });
                   }}
                 >
                   <SelectTrigger className="h-7 text-[10px] font-mono uppercase bg-background/40 border-border/40">
