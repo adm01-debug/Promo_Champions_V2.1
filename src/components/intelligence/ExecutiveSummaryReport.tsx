@@ -282,7 +282,7 @@ function InsightRow({
   text,
   tone = 'default',
 }: {
-  icon: any;
+  icon: LucideIcon;
   text: string;
   tone?: 'default' | 'good' | 'warn';
 }) {
@@ -338,7 +338,7 @@ function ActionCard({
   );
 }
 
-function ShieldCheck(props: any) {
+function ShieldCheck(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
