@@ -1,6 +1,7 @@
 import React, { FC, memo } from "react";
 import { useLocation } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
+import type { PrefetchableRouteComponent } from "./PreloadLink";
 import { motion } from "framer-motion";
 import { PreloadLink } from "./PreloadLink";
 import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
