@@ -28,7 +28,7 @@ export function CallFeedbackForm({ recordingId, clientId, onSuccess }: Props) {
     setIsSubmitting(true);
     try {
       // Registrar log detalhado de feedback manual
-      const { error } = await (supabase as any).from('lead_detailed_logs').insert({
+      const { error } = await supabase.from('lead_detailed_logs').insert({
         event_type: 'call_feedback',
         client_id: clientId || undefined,
         action: 'Manual Manager Feedback',
