@@ -27,6 +27,7 @@ import {
   useIncrementObjectionUsage,
   useDeleteObjection,
 } from '@/hooks/useObjectionsLibrary';
+import type { Objection } from '@/hooks/useObjectionsLibrary';
 import {
   BookOpen,
   Plus,
@@ -72,7 +73,7 @@ export function ObjectionsLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingObjection, setEditingObjection] = useState<any>(null);
+  const [editingObjection, setEditingObjection] = useState<Objection | null>(null);
   const [newObjection, setNewObjection] = useState({
     objection: '',
     response: '',
@@ -140,7 +141,7 @@ export function ObjectionsLibrary() {
     setNewObjection({ ...newObjection, tags: newObjection.tags.filter(t => t !== tag) });
   };
 
-  const handleEdit = (obj: any) => {
+  const handleEdit = (obj: Objection) => {
     setEditingObjection(obj);
     setNewObjection({
       objection: obj.objection,

@@ -34,8 +34,8 @@ export function LeadSourceDistribution() {
       source: s.source,
     })) || [];
 
-  const formatCurrency = (value: any) =>
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  const formatCurrency = (value: number | string) =>
+    `R$ ${Number(value).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const conversionRate = data?.totalLeads && data.totalLeads > 0 
     ? ((data.totalClosed / data.totalLeads) * 100).toFixed(1)
@@ -90,7 +90,7 @@ export function LeadSourceDistribution() {
                   boxShadow: "0 10px 40px -10px hsl(var(--primary) / 0.3)",
                   backdropFilter: "blur(8px)",
                 }}
-                formatter={(value: any) => [`${value} leads`, 'Quantidade']}
+                formatter={(value: number | string) => [`${value} leads`, 'Quantidade']}
               />
               <Legend 
                 wrapperStyle={{ fontSize: '11px' }}
