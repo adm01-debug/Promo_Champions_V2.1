@@ -10,7 +10,7 @@ interface ActiveSession {
   session_token: string | null;
   ip_address: string | null;
   user_agent: string | null;
-  device_info: Record<string, any> | null;
+  device_info: Record<string, unknown> | null;
   last_activity: string;
   created_at: string;
   expires_at: string | null;
