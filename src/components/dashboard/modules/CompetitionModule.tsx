@@ -8,7 +8,7 @@ import { WeeklyChallengesCard } from "@/components/gamification/WeeklyChallenges
 import { BattleArena, PrizeWheel } from "@/components/competitive";
 
 interface CompetitionModuleProps {
-  salesperson: { id?: string; [key: string]: unknown } | null | undefined;
+  salesperson: { id?: string } | null | undefined;
 }
 
 export const CompetitionModule = ({ salesperson }: CompetitionModuleProps) => {
