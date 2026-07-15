@@ -20,9 +20,21 @@ const STATUS_COLORS = {
   behind: 'hsl(var(--destructive))',
 };
 
-const renderActiveShape = (props: any) => {
+interface ActiveShapeProps {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  payload: { name: string; value: number; color: string };
+  value: number;
+}
+
+const renderActiveShape = (props: unknown) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } =
-    props;
+    props as ActiveShapeProps;
   return (
     <g>
       <text
