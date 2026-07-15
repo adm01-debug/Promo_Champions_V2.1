@@ -42,7 +42,7 @@ export function ContactRulesDialog() {
       .maybeSingle();
 
     if (pref?.contact_rules) {
-      setRules(pref.contact_rules as any);
+      setRules(pref.contact_rules as typeof rules);
     }
   };
 
@@ -68,8 +68,8 @@ export function ContactRulesDialog() {
       if (error) throw error;
       toast.success("Regras de contato salvas!");
       setOpen(false);
-    } catch (e: any) {
-      toast.error(`Erro: ${e.message}`);
+    } catch (e) {
+      toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setLoading(false);
     }
