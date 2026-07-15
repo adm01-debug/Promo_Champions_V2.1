@@ -34,7 +34,7 @@ export function LeadSourceDistribution() {
       source: s.source,
     })) || [];
 
-  const formatCurrency = (value: any) =>
+  const formatCurrency = (value: number | string) =>
     `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const conversionRate = data?.totalLeads && data.totalLeads > 0 
