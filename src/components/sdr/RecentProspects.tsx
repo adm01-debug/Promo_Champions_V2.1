@@ -132,7 +132,7 @@ export function RecentProspects({
             {prospects?.map((prospect, index) => {
               const temp = getTemperature(prospect.score);
               const TempIcon = temp.icon;
-              const enrichment = (prospect as { enrichment_data?: Record<string, unknown> }).enrichment_data;
+              const enrichment = (prospect as { enrichment_data?: { linkedin_url?: string; company_size?: string | number; industry?: string } }).enrichment_data;
               const isEnrichingCurrent = enrichingId === prospect.id;
               
               return (
