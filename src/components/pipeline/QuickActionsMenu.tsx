@@ -167,7 +167,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
                   | 'high'
                   | 'medium'
                   | 'low',
-                task_type: (action.params.task_type || 'follow_up') as any,
+                task_type: (action.params.task_type || 'follow_up') as never,
                 sale_id: deal.id,
                 salesperson_id: deal.salesperson_id,
                 due_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
