@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import type { HTMLMotionProps } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
 
-export type PrefetchableRouteComponent = {
+type PrefetchableRouteComponent = {
   prefetch?: () => Promise<unknown> | unknown;
-} & Record<string, unknown>;
+};
 
 const prefetchedTargets = new Set<string>();
 
