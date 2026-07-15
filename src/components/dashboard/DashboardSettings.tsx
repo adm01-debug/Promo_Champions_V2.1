@@ -178,7 +178,13 @@ export const DashboardSettings = memo(
                 </label>
                 <Select
                   value={alertFrequency}
-                  onValueChange={(v: any) => {
+                  onValueChange={v => {
+                    const value = v as AlertFrequency;
+                    setAlertFrequency(value);
+                    saveSettings({ alertFrequency: value });
+                  }}
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  // @ts-expect-error legacy placeholder removed below
                     setAlertFrequency(v);
                     saveSettings({ alertFrequency: v });
                   }}
