@@ -12,6 +12,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+export type AlertFrequency = 'daily' | 'weekly' | 'realtime';
+export type GaugeMode = 'standard' | 'compact' | 'kilo';
+
+export interface DashboardSettingsPatch {
+  minVal?: number;
+  customMax?: number | null;
+  oppThreshold?: number;
+  retThreshold?: number;
+  alertFrequency?: AlertFrequency;
+  ticksCount?: number;
+  gaugeMode?: GaugeMode;
+}
+
 interface DashboardSettingsProps {
   isSyncing: boolean;
   minVal: number;
@@ -22,13 +35,13 @@ interface DashboardSettingsProps {
   setOppThreshold: (v: number) => void;
   retThreshold: number;
   setRetThreshold: (v: number) => void;
-  alertFrequency: 'daily' | 'weekly' | 'realtime';
-  setAlertFrequency: (v: 'daily' | 'weekly' | 'realtime') => void;
+  alertFrequency: AlertFrequency;
+  setAlertFrequency: (v: AlertFrequency) => void;
   ticksCount: number;
   setTicksCount: (v: number) => void;
-  gaugeMode: 'standard' | 'compact' | 'kilo';
-  setGaugeMode: (v: 'standard' | 'compact' | 'kilo') => void;
-  saveSettings: (s: any) => void;
+  gaugeMode: GaugeMode;
+  setGaugeMode: (v: GaugeMode) => void;
+  saveSettings: (s: DashboardSettingsPatch) => void;
   setIsAlertHistoryOpen: (v: boolean) => void;
 }
 
