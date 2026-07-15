@@ -71,14 +71,14 @@ const FollowUpInteligente = memo(() => {
     }: {
       saleId: string;
       actionType: string;
-      details: Record<string, any>;
+      details: Record<string, unknown>;
       status?: string;
     }) => {
       const { error } = await supabase.from('follow_up_audit_logs').insert({
         sale_id: saleId,
         user_id: salesperson?.id,
         action_type: actionType,
-        details,
+        details: details as never,
         status,
       });
       if (error) throw error;
@@ -474,7 +474,7 @@ const FollowUpInteligente = memo(() => {
                   Nenhuma ação registrada para este lead.
                 </p>
               )}
-              {auditLogs.map((log: any) => (
+              {(auditLogs as Array<{ id: string; action_type: string; created_at: string; details: unknown; user_name?: string | null; status?: string | null }>).map((log) => (
                 <div
                   key={log.id}
                   className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative"
@@ -558,7 +558,7 @@ const FollowUpInteligente = memo(() => {
                         const vars = template.match(/{{(.*?)}}/g) || [];
                         vars.forEach(v => {
                           const key = v.replace(/{{|}}/g, '');
-                          msg = msg.replace(v, (currentLeadForWA as any)[key] || `[${key}?]`);
+                          msg = msg.replace(v, (currentLeadForWA as unknown as Record<string, string | undefined>)[key] || `[${key}?]`);
                         });
                         return msg;
                       })()}

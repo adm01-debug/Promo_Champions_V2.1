@@ -20,9 +20,21 @@ const STATUS_COLORS = {
   behind: 'hsl(var(--destructive))',
 };
 
-const renderActiveShape = (props: any) => {
+interface ActiveShapeProps {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+  payload: { name: string; value: number; color: string };
+  value: number;
+}
+
+const renderActiveShape = (props: unknown) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } =
-    props;
+    props as ActiveShapeProps;
   return (
     <g>
       <text
@@ -110,7 +122,7 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
         <div className="relative h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              {React.createElement(Pie as any, {
+              {React.createElement(Pie as unknown as React.ComponentType<Record<string, unknown>>, {
                 activeIndex,
                 activeShape: renderActiveShape,
                 data,
@@ -121,7 +133,7 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
                 paddingAngle: 6,
                 dataKey: 'value',
                 stroke: 'none',
-                onMouseEnter: (_: any, index: number) => setActiveIndex(index),
+                onMouseEnter: (_: unknown, index: number) => setActiveIndex(index),
                 children: data.map((entry, i) => (
                   <Cell
                     key={i}

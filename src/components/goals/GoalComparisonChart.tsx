@@ -95,8 +95,8 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
             />
             <Tooltip
               cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
-              formatter={(v: any, name: any) => [
-                `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+              formatter={(v: number | string, name: string) => [
+                `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
                 name === 'vendido' ? 'Vendido' : name === 'meta' ? 'Meta' : 'Forecast',
               ]}
               contentStyle={{

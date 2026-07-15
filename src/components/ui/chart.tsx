@@ -115,11 +115,11 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
-    }: any,
+    },
     ref,
   ) => {
-    const payload = payloadProp as any[] | undefined;
-    const label = labelProp as any;
+    const payload = payloadProp as Array<Record<string, unknown> & { dataKey?: string; name?: string; value?: number; color?: string; payload?: Record<string, unknown> & { fill?: string } }> | undefined;
+    const label = labelProp as React.ReactNode;
     const { config } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
@@ -176,7 +176,7 @@ const ChartTooltipContent = React.forwardRef<
                 )}
               >
                 {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                  formatter(item.value, item.name, item as never, index, (item.payload ?? []) as never)
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -232,7 +232,7 @@ const ChartLegend = RechartsPrimitive.Legend;
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    payload?: any[];
+    payload?: Array<{ value?: string | number; dataKey?: string; color?: string } & Record<string, unknown>>;
     verticalAlign?: "top" | "middle" | "bottom";
     hideIcon?: boolean;
     nameKey?: string;
@@ -249,7 +249,7 @@ const ChartLegendContent = React.forwardRef<
       ref={ref}
       className={cn("flex items-center justify-center gap-4", verticalAlign === "top" ? "pb-3" : "pt-3", className)}
     >
-      {payload.map((item: any) => {
+      {payload.map((item) => {
         const key = `${nameKey || item.dataKey || "value"}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
