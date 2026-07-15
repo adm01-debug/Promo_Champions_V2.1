@@ -141,7 +141,7 @@ export function ObjectionsLibrary() {
     setNewObjection({ ...newObjection, tags: newObjection.tags.filter(t => t !== tag) });
   };
 
-  const handleEdit = (obj: any) => {
+  const handleEdit = (obj: Objection) => {
     setEditingObjection(obj);
     setNewObjection({
       objection: obj.objection,
