@@ -4,7 +4,5 @@ Allow: /dashboard
 Allow: /auth
 Disallow: /admin/
 Disallow: /api/
-Disallow: /_next/
-Disallow: /static/
 
-Sitemap: https://promochampions.com.br/sitemap.xml
+Sitemap: https://pixels-with-personality-09.lovable.app/sitemap.xml
