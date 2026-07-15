@@ -21,9 +21,10 @@ export const NavGroup: FC<NavGroupProps> = memo(
       // Look for PreloadLinks in children and trigger their prefetch
       // This is a bit of a hack but efficient for grouped prefetching
       // The children are already rendered, so we just need to find the components
-      React.Children.forEach(children, (child: any) => {
-        if (child?.props?.component?.prefetch) {
-          child.props.component.prefetch();
+      React.Children.forEach(children, (child) => {
+        const props = (child as { props?: { component?: { prefetch?: () => void } } })?.props;
+        if (props?.component?.prefetch) {
+          props.component.prefetch();
         }
       });
     }, [children]);

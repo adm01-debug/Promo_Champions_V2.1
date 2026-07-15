@@ -18,8 +18,8 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const getDeviceIcon = (deviceInfo: Record<string, string> | null) => {
-  const os = deviceInfo?.os?.toLowerCase() || '';
+const getDeviceIcon = (deviceInfo: Record<string, unknown> | null) => {
+  const os = String(deviceInfo?.os ?? '').toLowerCase();
   if (os.includes('android') || os.includes('ios')) {
     return <Smartphone className="h-5 w-5" />;
   }
@@ -124,7 +124,7 @@ export const SessionManager = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">
-                          {getBrowserName(session.user_agent)} em {deviceInfo.os || 'Unknown OS'}
+                          {getBrowserName(session.user_agent)} em {String(deviceInfo.os ?? 'Unknown OS')}
                         </p>
                         {isCurrent && (
                           <Badge variant="default" className="text-xs">

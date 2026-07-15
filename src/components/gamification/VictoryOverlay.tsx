@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Star, PartyPopper, Zap, Sparkles } from 'lucide-react';
+import { Trophy, Star, PartyPopper, Zap, Sparkles, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 
@@ -50,7 +50,7 @@ export function VictoryOverlay({
     }
   }, [isVisible, onComplete]);
 
-  const icons: Record<string, any> = {
+  const icons: Record<string, LucideIcon> = {
     sale: Trophy,
     achievement: Star,
     streak: PartyPopper,

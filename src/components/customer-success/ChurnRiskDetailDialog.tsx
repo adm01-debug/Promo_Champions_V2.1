@@ -1,4 +1,5 @@
 import React from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -109,7 +110,7 @@ export function ChurnRiskDetailDialog({ account, open, onOpenChange }: Props) {
   );
 }
 
-function RiskFactor({ icon: Icon, label, value, description }: any) {
+function RiskFactor({ icon: Icon, label, value, description }: { icon: LucideIcon; label: string; value: string | number; description?: string }) {
   return (
     <div className="flex gap-4 p-3 rounded-xl bg-background/40 border border-border/50 group hover:border-destructive/30 transition-all">
       <div className="p-2 rounded-lg bg-destructive/10 text-destructive h-fit">

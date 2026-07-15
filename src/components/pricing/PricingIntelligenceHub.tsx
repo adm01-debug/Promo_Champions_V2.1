@@ -368,7 +368,7 @@ export function PricingIntelligenceHub() {
                     backdropFilter: 'blur(8px)',
                     boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
                   }}
-                  formatter={(v: any, name: any) =>
+                  formatter={(v: number | string, name: string) =>
                     name === 'revenue' ? fmtCurrency(Number(v)) : [`${v} deals`, 'Volume']
                   }
                 />

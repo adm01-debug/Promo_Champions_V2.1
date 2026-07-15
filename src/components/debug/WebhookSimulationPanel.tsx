@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export const WebhookSimulationPanel = () => {
   const [isRunning, setIsRunning] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<{ passed: number; failed: number; vulnerabilities_detected: unknown[] } | null>(null);
   const [progress, setProgress] = useState(0);
 
   const runSimulation = async () => {
@@ -28,7 +28,7 @@ export const WebhookSimulationPanel = () => {
       });
 
       if (error) throw error;
-      setResults(data);
+      setResults(data as { passed: number; failed: number; vulnerabilities_detected: unknown[] });
       setProgress(100);
       toast.success("Simulação de estresse concluída!");
     } catch (err) {

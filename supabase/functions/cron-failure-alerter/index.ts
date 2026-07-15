@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
         const payload = adminIds.map((uid) => ({
           user_id: uid,
           type: "system",
-          category: "admin_alert",
+          category: "system",
           priority: "high",
           title: `Cron falhou: ${jobLabel}`,
           message: (f.return_message ?? f.status).slice(0, 400),
