@@ -74,8 +74,8 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(v: any) => [
-                `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+              formatter={(v: number | string) => [
+                `R$ ${Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
                 "Valor Total",
               ]}
               contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
