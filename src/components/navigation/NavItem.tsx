@@ -14,7 +14,7 @@ interface NavItemProps {
   isCollapsed?: boolean;
   badgeCount?: number;
   badgeVariant?: "default" | "warning" | "destructive";
-  component?: { prefetch?: () => void } | React.ComponentType<unknown>; // Passed for prefetching
+  component?: PrefetchableRouteComponent; // Passed for prefetching
   id?: string;
 }
 
