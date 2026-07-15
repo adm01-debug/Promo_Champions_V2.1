@@ -53,6 +53,17 @@ const actionIcons: Record<
   intent_trigger: { icon: Zap, color: 'text-red-500', label: 'Gatilho de Intenção' },
 };
 
+interface AuditLog {
+  id: string;
+  created_at: string | null;
+  lead_name?: string | null;
+  action_type?: string | null;
+  user_name?: string | null;
+  status?: string | null;
+  details?: unknown;
+  retry_count?: number | null;
+}
+
 const FollowUpAudit = () => {
   const [searchLead, setSearchLead] = useState('');
   const [searchSalesperson, setSearchSalesperson] = useState('');
@@ -113,7 +124,7 @@ const FollowUpAudit = () => {
 
   const handleRetry = async (log: {
     action_type: string;
-    details: any;
+    details: string | { message_preview?: string } | null;
     retry_count: number;
     id: string;
   }) => {
@@ -258,7 +269,7 @@ const FollowUpAudit = () => {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      logs.map((log: any) => {
+                      logs.map((log: AuditLog) => {
                         const actionKey = log.action_type || 'unknown';
                         const action = actionIcons[actionKey] || {
                           icon: History,
@@ -324,7 +335,14 @@ const FollowUpAudit = () => {
                                     size="icon"
                                     variant="ghost"
                                     className="h-7 w-7"
-                                    onClick={() => handleRetry(log as any)}
+                                    onClick={() =>
+                                      handleRetry({
+                                        action_type: log.action_type ?? '',
+                                        details: log.details as string | { message_preview?: string } | null,
+                                        retry_count: log.retry_count ?? 0,
+                                        id: log.id,
+                                      })
+                                    }
                                   >
                                     <RotateCw className="h-3.5 w-3.5" />
                                   </Button>

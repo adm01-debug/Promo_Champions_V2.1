@@ -84,7 +84,12 @@ export default function Orcamentos() {
     total_price: number;
     product_id?: string;
     subtotal?: number;
-    personalizations?: any[];
+    personalizations?: Array<{
+      technique_name: string;
+      colors_count: number;
+      positions_count: number;
+      total_cost: number;
+    }>;
   }
 
   const [items, setItems] = useState<LocalQuoteItem[]>([]);
@@ -139,7 +144,7 @@ export default function Orcamentos() {
           Number(form.subtotal) > 0
             ? (Number(form.discount_amount) / Number(form.subtotal)) * 100
             : 0,
-        items: items as any,
+        items: items as unknown as import('@/hooks/useQuotes').QuoteItem[],
       },
       {
         onSuccess: () => {

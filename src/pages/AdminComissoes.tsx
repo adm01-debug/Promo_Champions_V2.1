@@ -29,7 +29,10 @@ import {
   useAllCommissions,
   useUpdateCommissionStatus,
   type CommissionStatus,
+  type Commission,
 } from '@/hooks/useCommissions';
+
+type SelectedCommission = Commission & { targetStatus: CommissionStatus };
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
@@ -61,7 +64,7 @@ const statusBadge: Record<CommissionStatus, { label: string; className: string }
 export default function AdminComissoes() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCommission, setSelectedCommission] = useState<any>(null);
+  const [selectedCommission, setSelectedCommission] = useState<SelectedCommission | null>(null);
   const [notes, setNotes] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -76,7 +79,7 @@ export default function AdminComissoes() {
       c.sales?.client_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAction = (commission: any, status: CommissionStatus) => {
+  const handleAction = (commission: Commission, status: CommissionStatus) => {
     setSelectedCommission({ ...commission, targetStatus: status });
     setNotes(commission.payment_notes || '');
     setIsDialogOpen(true);
@@ -136,7 +139,7 @@ export default function AdminComissoes() {
           <motion.div variants={itemVariants}>
             <Tabs
               value={statusFilter}
-              onValueChange={v => setStatusFilter(v as any)}
+              onValueChange={v => setStatusFilter(v as CommissionStatus | 'all')}
               className="space-y-6"
             >
               <TabsList className="bg-white/5 border border-white/10 p-1">
@@ -299,7 +302,7 @@ export default function AdminComissoes() {
                                 variant="ghost"
                                 className="h-8 w-8 text-muted-foreground hover:text-white"
                                 onClick={() => {
-                                  setSelectedCommission(c);
+                                  setSelectedCommission({ ...c, targetStatus: c.status });
                                   setNotes(c.payment_notes || '');
                                   setIsDialogOpen(true);
                                 }}

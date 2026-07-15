@@ -105,7 +105,7 @@ const TeamActivityFeed = () => {
               <div className="absolute left-6 top-0 bottom-0 w-px bg-border/40" />
 
               <div className="space-y-1">
-                {activities.map((act: any) => {
+                {activities.map(act => {
                   const cfg = activityIcons[act.activity_type] || activityIcons.note;
                   const sp = act.salespeople;
                   const Icon = cfg.icon;
@@ -142,9 +142,9 @@ const TeamActivityFeed = () => {
                                 variant="outline"
                                 className={cn(
                                   'text-[9px]',
-                                  act.outcome === 'positive' &&
+                                  (act.outcome as string) === 'positive' &&
                                     'text-status-success border-status-success/30',
-                                  act.outcome === 'negative' &&
+                                  (act.outcome as string) === 'negative' &&
                                     'text-destructive border-destructive/30'
                                 )}
                               >
