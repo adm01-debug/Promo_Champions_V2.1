@@ -76,7 +76,7 @@ import { toast } from 'sonner';
 
 export default function SDRDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>('month');
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>({});
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: metrics, isLoading } = useSDRMetrics(period, filters, searchTerm);
