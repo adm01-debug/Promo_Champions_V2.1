@@ -12,9 +12,10 @@ import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { getEventLabel } from '../webhookHelpers';
+import type { WebhookDelivery } from '@/hooks/win-loss/useWebhookDeliveries';
 
 interface WebhookDeliveryRowProps {
-  delivery: any;
+  delivery: WebhookDelivery;
   isSelected: boolean;
   onToggle: (id: string) => void;
   isProcessing: boolean;

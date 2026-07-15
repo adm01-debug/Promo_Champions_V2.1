@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 // Helper component that implements basic virtualization to avoid 
 // direct react-window imports that may fail in some build environments
-const List = ({ children: Component, height, itemCount, itemSize, width, className }: any) => {
+const List = ({ children: Component, height, itemCount, itemSize, width, className }: { children: React.ComponentType<{ index: number; style: React.CSSProperties }>; height: number; itemCount: number; itemSize: number; width: number | string; className?: string }) => {
   const [scrollTop, setScrollTop] = useState(0);
 
   // Simple virtualization logic

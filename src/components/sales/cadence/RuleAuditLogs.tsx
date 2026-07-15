@@ -8,8 +8,24 @@ import { GitBranch, Zap, Clock, Info, Search } from "lucide-react";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 
+interface AuditLogEntry {
+  id: string;
+  event_type: string;
+  created_at: string;
+  leads?: { client_name?: string } | null;
+  rule_applied?: { reason?: string } | null;
+  details?: {
+    transitioned?: boolean;
+    reason?: string;
+    old_stage?: string;
+    new_stage?: string;
+    event_count?: number;
+    planned_actions?: string[];
+  } | null;
+}
+
 export function RuleAuditLogs() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [_loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -27,7 +43,7 @@ export function RuleAuditLogs() {
           table: 'intent_audit_logs'
         },
         (payload) => {
-          setLogs(prev => [payload.new, ...prev].slice(0, 50));
+          setLogs(prev => [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50));
         }
       )
       .subscribe();
@@ -45,7 +61,7 @@ export function RuleAuditLogs() {
       .limit(50);
     
     if (!error) {
-      setLogs(data || []);
+      setLogs((data as unknown as AuditLogEntry[]) || []);
     }
     setLoading(false);
   };

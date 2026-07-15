@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Send, Loader2 } from "lucide-react";
 import { useWhatsApp } from "@/hooks/useWhatsApp";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface WhatsAppDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sale: any;
+  sale: Sale;
 }
 
 export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps) {

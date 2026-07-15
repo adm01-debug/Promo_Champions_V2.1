@@ -334,7 +334,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
                           variant="outline"
                           className="font-mono text-[9px] border-primary/30 text-primary"
                         >
-                          TOTAL: {(dataPoint as any)?.total ?? 0}
+                          TOTAL: {(dataPoint as Record<string, number>)?.total ?? 0}
                         </Badge>
                       </div>
                       <div className="space-y-2">

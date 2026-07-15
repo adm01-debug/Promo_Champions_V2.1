@@ -81,7 +81,7 @@ export function useLeadSourceAnalysis(months: number = 3) {
       const configMap = new Map((configs || []).map(c => [c.source_name, c]));
 
       // Group by source
-      const sourceMap = new Map<LeadSource, any[]>();
+      const sourceMap = new Map<LeadSource, Array<{ status: string; amount: number | string }>>();
 
       (sales || []).forEach(sale => {
         const source = (sale.source || 'other') as LeadSource;

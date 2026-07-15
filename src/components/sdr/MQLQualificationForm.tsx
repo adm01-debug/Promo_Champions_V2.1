@@ -128,9 +128,9 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
       // Invalidate queries to refresh UI
       queryClient.invalidateQueries({ queryKey: ['recent-prospects'] });
       queryClient.invalidateQueries({ queryKey: ['sdr-metrics'] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving qualification:', error);
-      toast.error('Erro ao salvar qualificação: ' + error.message);
+      toast.error('Erro ao salvar qualificação: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setLoading(false);
     }

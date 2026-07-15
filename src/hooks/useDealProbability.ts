@@ -70,7 +70,7 @@ export const useDealProbabilities = () => {
 
         if (!error && data?.probabilities) {
           const result: Record<string, number> = {};
-          Object.entries(data.probabilities).forEach(([id, val]: [string, any]) => {
+          Object.entries(data.probabilities).forEach(([id, val]: [string, { probability: number }]) => {
             result[id] = val.probability;
           });
           return result;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, Loader2, Send, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface AIEmailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sale: any;
+  sale: Sale;
 }
 
 export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) {
