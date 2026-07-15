@@ -79,7 +79,7 @@ export default function AdminComissoes() {
       c.sales?.client_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAction = (commission: any, status: CommissionStatus) => {
+  const handleAction = (commission: Commission, status: CommissionStatus) => {
     setSelectedCommission({ ...commission, targetStatus: status });
     setNotes(commission.payment_notes || '');
     setIsDialogOpen(true);
