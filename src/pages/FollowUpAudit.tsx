@@ -113,7 +113,7 @@ const FollowUpAudit = () => {
 
   const handleRetry = async (log: {
     action_type: string;
-    details: any;
+    details: string | { message_preview?: string } | null;
     retry_count: number;
     id: string;
   }) => {
