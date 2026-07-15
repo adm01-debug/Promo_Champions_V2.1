@@ -73,7 +73,7 @@ export function ObjectionsLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingObjection, setEditingObjection] = useState<any>(null);
+  const [editingObjection, setEditingObjection] = useState<Objection | null>(null);
   const [newObjection, setNewObjection] = useState({
     objection: '',
     response: '',
