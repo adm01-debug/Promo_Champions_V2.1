@@ -27,6 +27,7 @@ import {
   useIncrementObjectionUsage,
   useDeleteObjection,
 } from '@/hooks/useObjectionsLibrary';
+import type { Objection } from '@/hooks/useObjectionsLibrary';
 import {
   BookOpen,
   Plus,
