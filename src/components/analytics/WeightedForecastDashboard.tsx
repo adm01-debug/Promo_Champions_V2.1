@@ -17,7 +17,7 @@ const STAGE_COLORS = ["hsl(var(--muted-foreground))", "hsl(var(--primary))", "hs
 
 export function WeightedForecastDashboard() {
   const { data, isLoading } = useWeightedForecast();
-  const [impactFactors, setImpactFactors] = useState<any[]>([]);
+  const [impactFactors, setImpactFactors] = useState<Array<{ factor_name: string; impact_score: number; description: string }>>([]);
 
   useEffect(() => {
     const fetchImpact = async () => {
