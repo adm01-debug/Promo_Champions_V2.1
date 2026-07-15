@@ -144,7 +144,7 @@ export default function Orcamentos() {
           Number(form.subtotal) > 0
             ? (Number(form.discount_amount) / Number(form.subtotal)) * 100
             : 0,
-        items: items as any,
+        items: items as unknown as import('@/hooks/useQuotes').QuoteItem[],
       },
       {
         onSuccess: () => {
