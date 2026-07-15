@@ -61,7 +61,7 @@ export function RuleAuditLogs() {
       .limit(50);
     
     if (!error) {
-      setLogs(data || []);
+      setLogs((data as unknown as AuditLogEntry[]) || []);
     }
     setLoading(false);
   };
