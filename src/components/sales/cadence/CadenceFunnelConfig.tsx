@@ -39,7 +39,7 @@ const CONDITION_TYPES = [
 ];
 
 export function CadenceFunnelConfig() {
-  const { data: rules, isLoading } = useFunnelRules();
+  const { data: rules, isLoading: _isLoading } = useFunnelRules();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);

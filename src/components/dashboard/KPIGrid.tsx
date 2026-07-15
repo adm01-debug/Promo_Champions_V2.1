@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
 import { useDashboardKPIs } from '@/hooks/dashboard/useDashboardKPIs';
 
-interface KPIItem {
+interface _KPIItem {
   label: string;
   value: number;
   format: 'currency' | 'days' | 'number';

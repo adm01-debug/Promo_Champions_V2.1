@@ -13,7 +13,7 @@ interface Props {
   goal: number;
 }
 
-export const CategoryForecastCard: FC<Props> = ({ categories, goal }) => {
+export const CategoryForecastCard: FC<Props> = ({ categories, goal: _goal }) => {
   const total = categories.commit + categories.best_case + categories.pipeline;
 
   return (

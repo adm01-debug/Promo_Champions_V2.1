@@ -338,7 +338,7 @@ function ExternalPitLane() {
 }
 
 /** Drone hexacoptero minimalista com luz REC piscante e órbita lenta. */
-function FilmingDrone({ cx, cy, delay = 0 }: { cx: number; cy: number; delay?: number }) {
+function _FilmingDrone({ cx, cy, delay = 0 }: { cx: number; cy: number; delay?: number }) {
   return (
     <g transform={`translate(${cx} ${cy})`} aria-hidden>
       <g style={{ animation: `race-drone-orbit 6s linear infinite ${delay}s`, transformOrigin: '0 0' }}>

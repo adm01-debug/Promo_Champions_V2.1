@@ -10,7 +10,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
   if (streakDays <= 0) return null;
 
   const isMilestone = [7, 14, 21, 30, 50, 100].includes(streakDays);
-  const milestoneLevel = streakDays >= 100 ? 5 : streakDays >= 50 ? 4 : streakDays >= 30 ? 3 : streakDays >= 14 ? 2 : streakDays >= 7 ? 1 : 0;
+  const _milestoneLevel = streakDays >= 100 ? 5 : streakDays >= 50 ? 4 : streakDays >= 30 ? 3 : streakDays >= 14 ? 2 : streakDays >= 7 ? 1 : 0;
 
   const flameCount = Math.min(Math.ceil(streakDays / 3), 5);
   const intensity = Math.min(streakDays / 10, 1);

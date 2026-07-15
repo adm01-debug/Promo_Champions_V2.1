@@ -100,7 +100,7 @@ export const FuturisticSpeedometerDashboard = () => {
   const [minVal, setMinVal] = useState(0);
   const [customMax, setCustomMax] = useState<number | null>(null);
   const [customUnit, setCustomUnit] = useState('');
-  const [autoScale, setAutoScale] = useState(true);
+  const [_autoScale, setAutoScale] = useState(true);
 
   // Alert Settings
   const [oppThreshold, setOppThreshold] = useState(80);
@@ -111,7 +111,7 @@ export const FuturisticSpeedometerDashboard = () => {
   const [alertHistory, setAlertHistory] = useState<AlertHistoryEntry[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
   const [activeHudAlert, setActiveHudAlert] = useState<AlertHistoryEntry | null>(null);
-  const [notifiedEvents, setNotifiedEvents] = useState<Set<string>>(new Set());
+  const [_notifiedEvents, _setNotifiedEvents] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
 
   const setPeriod = (p: KPIPeriod) => {
@@ -179,7 +179,7 @@ export const FuturisticSpeedometerDashboard = () => {
     if (!user?.id) return;
 
     const loadSettings = async () => {
-      const { data, error } = await supabase
+      const { data, error: _error } = await supabase
         .from('user_app_settings')
         .select('value')
         .eq('user_id', user.id)

@@ -47,7 +47,7 @@ interface AlertTemplate extends AlertTemplateForm {
 
 export function CadenceAlertConfig() {
   const [templates, setTemplates] = useState<AlertTemplate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<AlertTemplateForm>({
     name: '',

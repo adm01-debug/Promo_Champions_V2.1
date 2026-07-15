@@ -73,8 +73,8 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
               const yTop = 180 - t * 140;
               const yBot = 180 - (t + 0.06) * 140;
               const xCenterTop = 200;
-              const widthTop = (340 - 60) * (1 - t * 0.78);
-              const widthBot = (340 - 60) * (1 - (t + 0.06) * 0.78);
+              const _widthTop = (340 - 60) * (1 - t * 0.78);
+              const _widthBot = (340 - 60) * (1 - (t + 0.06) * 0.78);
               return (
                 <line
                   key={i}

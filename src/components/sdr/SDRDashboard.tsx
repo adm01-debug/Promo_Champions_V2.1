@@ -217,7 +217,7 @@ const SDRDashboardInner = () => {
 
       {/* Upper Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((card, idx) => (
+        {statCards.map((card, _idx) => (
           <motion.div key={card.title} variants={itemVariants}>
             <SDRStatCard {...card} />
           </motion.div>

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 
 export function RuleAuditLogs() {
   const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {

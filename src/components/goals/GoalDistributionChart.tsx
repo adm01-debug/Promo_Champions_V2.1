@@ -33,7 +33,7 @@ interface ActiveShapeProps {
 }
 
 const renderActiveShape = (props: unknown) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } =
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload: _payload, value } =
     props as ActiveShapeProps;
   return (
     <g>

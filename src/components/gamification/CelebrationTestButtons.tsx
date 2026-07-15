@@ -64,7 +64,7 @@ export function CelebrationTestButtons() {
         description: 'XP de teste para celebração',
       });
       toast.success(`+${xpAmount} XP adicionado para ${salesperson.name}!`);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Erro ao adicionar XP");
     }
   };

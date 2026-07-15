@@ -38,7 +38,7 @@ export function WebhookDeliveryItem({
   isProcessing,
   isChecked,
   checkboxDisabled,
-  pendingId,
+  pendingId: _pendingId,
   isReplaying,
   result,
   reqId,

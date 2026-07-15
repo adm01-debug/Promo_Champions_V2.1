@@ -51,8 +51,8 @@ export function WebhookDeliveriesDrawer({
   subscriptionId,
   open,
   onOpenChange,
-  url,
-  resultRetentionMs,
+  url: _url,
+  resultRetentionMs: _resultRetentionMs,
 }: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
@@ -148,12 +148,12 @@ export function WebhookDeliveriesDrawer({
     });
 
   const toggleAll = () =>
-    setSelected(prev => {
+    setSelected(_prev => {
       if (allFailedSelected) return new Set();
       return new Set(failedIds.slice(0, MAX_REPLAY));
     });
 
-  const confirmSummary = useMemo(() => {
+  const _confirmSummary = useMemo(() => {
     if (!confirm || !data) return null;
     const byId = new Map(data.map(d => [d.id, d] as const));
     const items = confirm.ids.map(id => {
@@ -195,7 +195,7 @@ export function WebhookDeliveriesDrawer({
         return next;
       });
       toast.success(`${ids.length} reenvio(s) processado(s).`);
-    } catch (e) {
+    } catch (_e) {
       toast.error('Erro ao reenviar webhooks.');
     } finally {
       setProcessingIds(prev => {

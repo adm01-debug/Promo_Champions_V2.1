@@ -200,7 +200,7 @@ const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-2 italic flex items-center gap-2">
                   <Target className="size-3" /> Challengers
                 </h4>
-                {rest.map((person, idx) => (
+                {rest.map((person, _idx) => (
                   <motion.div
                     key={person.id}
                     initial={{ opacity: 0 }}

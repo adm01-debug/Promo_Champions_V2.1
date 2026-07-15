@@ -253,7 +253,7 @@ export function RaceArena({
     leader && second ? Number(leader.progress) - Number(second.progress) : null;
   const showGapLine = gapToSecond !== null && gapToSecond > 0 && gapToSecond < 0.05;
 
-  const gapMidPos = useMemo(() => {
+  const _gapMidPos = useMemo(() => {
     if (!showGapLine || !leader || !second) return null;
     const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
     return getPositionOnTrack(midProgress, 0);
@@ -395,6 +395,7 @@ export function RaceArena({
     if (mutated) setPitStopCars(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'),
     reducedMotion,
   ]);
