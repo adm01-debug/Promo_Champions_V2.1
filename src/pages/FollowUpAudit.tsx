@@ -60,7 +60,7 @@ interface AuditLog {
   action_type?: string | null;
   user_name?: string | null;
   status?: string | null;
-  details?: string | { message_preview?: string } | null;
+  details?: unknown;
   retry_count?: number | null;
 }
 
