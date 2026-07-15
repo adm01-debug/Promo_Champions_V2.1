@@ -115,11 +115,11 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
-    }: any,
+    },
     ref,
   ) => {
-    const payload = payloadProp as any[] | undefined;
-    const label = labelProp as any;
+    const payload = payloadProp as Array<Record<string, unknown> & { dataKey?: string; name?: string; value?: number; color?: string; payload?: Record<string, unknown> & { fill?: string } }> | undefined;
+    const label = labelProp as React.ReactNode;
     const { config } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
