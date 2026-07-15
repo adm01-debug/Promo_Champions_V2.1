@@ -142,9 +142,9 @@ const TeamActivityFeed = () => {
                                 variant="outline"
                                 className={cn(
                                   'text-[9px]',
-                                  act.outcome === 'positive' &&
+                                  (act.outcome as string) === 'positive' &&
                                     'text-status-success border-status-success/30',
-                                  act.outcome === 'negative' &&
+                                  (act.outcome as string) === 'negative' &&
                                     'text-destructive border-destructive/30'
                                 )}
                               >
