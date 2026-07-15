@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, Loader2, Send, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
