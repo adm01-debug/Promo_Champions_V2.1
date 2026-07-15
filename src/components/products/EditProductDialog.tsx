@@ -58,10 +58,10 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
     if (product) {
       form.reset({
         name: product.name || "",
-        sku: (product as any).sku || "",
+        sku: (product as { sku?: string; stock_quantity?: number }).sku || "",
         category: product.category || "Assinatura",
         price: product.price?.toString() || "0",
-        stock_quantity: (product as any).stock_quantity?.toString() || "0",
+        stock_quantity: (product as { sku?: string; stock_quantity?: number }).stock_quantity?.toString() || "0",
       });
     }
   }, [product, form]);
