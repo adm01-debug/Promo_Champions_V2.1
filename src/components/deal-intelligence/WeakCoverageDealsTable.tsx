@@ -26,7 +26,7 @@ export function WeakCoverageDealsTable({ onSelectDeal }: { onSelectDeal?: (saleI
           </p>
         ) : (
           <div className="space-y-2">
-            {data.map((row) => (
+            {(data as unknown as Array<{ id: string; sale_id: string; coverage_score: number; tier: string; gaps?: string[] | null; risks?: unknown[] | null; sales?: { client_name?: string | null } | null }>).map((row) => (
               <div 
                 key={row.id} 
                 className={cn(
