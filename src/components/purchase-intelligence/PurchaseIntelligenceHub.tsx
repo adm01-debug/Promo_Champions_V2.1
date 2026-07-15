@@ -168,7 +168,7 @@ export function PurchaseIntelligenceHub() {
                           <YAxis fontSize={12} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `R$${v/1000}k`} />
                           <Tooltip 
                             contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
-                            formatter={(value: any) => [`R$ ${value.toLocaleString('pt-BR')}`]}
+                            formatter={(value: number | string) => [`R$ ${Number(value).toLocaleString('pt-BR')}`]}
                           />
                           <Bar dataKey="gastado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Gastos Mensais" />
                         </BarChart>
