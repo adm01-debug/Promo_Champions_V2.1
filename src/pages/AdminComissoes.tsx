@@ -29,7 +29,10 @@ import {
   useAllCommissions,
   useUpdateCommissionStatus,
   type CommissionStatus,
+  type Commission,
 } from '@/hooks/useCommissions';
+
+type SelectedCommission = Commission & { targetStatus: CommissionStatus };
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
