@@ -198,7 +198,7 @@ const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, classNa
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {missions.map((mission, i) => {
           const Icon = missionIcons[mission.challenge_type] || missionIcons.default;
-          const gradient =
+          const _gradient =
             missionGradients[mission.challenge_type] || missionGradients.default;
           const progressPercent = Math.min(
             (mission.currentValue / mission.target_value) * 100,

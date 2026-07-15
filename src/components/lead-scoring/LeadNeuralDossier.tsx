@@ -62,7 +62,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
       link.click();
       document.body.removeChild(link);
       toast.success('Dossiê Neural exportado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro na extração de dados.');
     } finally {
       setIsExporting(false);

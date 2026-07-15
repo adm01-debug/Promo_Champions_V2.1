@@ -58,7 +58,7 @@ export function SchedulingRateGauge({
     return 'bg-destructive/15 border-destructive/30';
   };
 
-  const getProgressColor = (rate: number) => {
+  const _getProgressColor = (rate: number) => {
     if (rate >= 20) return '[&>div]:bg-primary';
     if (rate >= 10) return '[&>div]:bg-success';
     return '[&>div]:bg-destructive';

@@ -30,7 +30,7 @@ export const ExplainableWinProbability = React.memo(
     stage,
     hasRecentActivity,
     isICPMatch,
-    dealCategory,
+    _dealCategory,
   }: ExplainableWinProbabilityProps) => {
     const factors = useMemo((): WinProbabilityFactor[] => {
       const f: WinProbabilityFactor[] = [];

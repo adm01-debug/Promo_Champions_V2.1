@@ -20,7 +20,7 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
   const { data: members, isLoading } = useLeagues();
   const joinLeague = useJoinLeague();
 
-  const handleJoinLeague = (salespersonId: string, leagueId: string) => {
+  const _handleJoinLeague = (salespersonId: string, leagueId: string) => {
     joinLeague.mutate({ salespersonId, leagueId }, {
       onSuccess: () => toast.success("Entrou na liga!"),
       onError: () => toast.error("Erro ao entrar na liga"),

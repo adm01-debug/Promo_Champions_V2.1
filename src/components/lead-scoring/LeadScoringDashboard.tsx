@@ -123,7 +123,7 @@ function FactorBar({
 
 export function LeadScoringDashboard() {
   const { data: leads, isLoading, refetch } = useLeadScoring();
-  const [explainSaleId, setExplainSaleId] = useState<string | null>(null);
+  const [_explainSaleId, _setExplainSaleId] = useState<string | null>(null);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [churnFilter, setChurnFilter] = useState<string>('all');

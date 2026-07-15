@@ -16,7 +16,7 @@ const MAP_PATHS = [
 export const GeoBlockingMap = () => {
   const queryClient = useQueryClient();
 
-  const { data: blockedRegions, isLoading } = useQuery({
+  const { data: blockedRegions, _isLoading } = useQuery({
     queryKey: ['geo-blocked-regions'],
     queryFn: async () => {
       const { data, error } = await supabase

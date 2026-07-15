@@ -34,7 +34,7 @@ interface VictoryData {
 }
 
 // Streak milestone info mapping
-const STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: number }> = {
+const _STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: number }> = {
   'streak_3': { title: 'Iniciante Dedicado', icon: '🔥', xp: 50 },
   'streak_7': { title: 'Semana Perfeita', icon: '⚡', xp: 150 },
   'streak_14': { title: 'Duas Semanas de Fogo', icon: '🌟', xp: 400 },

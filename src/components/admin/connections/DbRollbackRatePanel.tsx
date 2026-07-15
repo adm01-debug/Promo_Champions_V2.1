@@ -58,7 +58,7 @@ export function DbRollbackRatePanel() {
       return { current: 0, peak: 0, avg: 0, ratio: 0, points: data.length, deadlocks: 0 };
     }
     const rates = meaningful.map((p) => Number(p.rollbacks_per_min) || 0);
-    const ratios = meaningful.map((p) => Number(p.rollback_ratio_pct) || 0);
+    const _ratios = meaningful.map((p) => Number(p.rollback_ratio_pct) || 0);
     const last = meaningful[meaningful.length - 1];
     const peak = rates.reduce((m, r) => (r > m ? r : m), 0);
     const avg = rates.reduce((s, r) => s + r, 0) / rates.length;

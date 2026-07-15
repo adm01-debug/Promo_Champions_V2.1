@@ -40,7 +40,7 @@ interface AlertTemplateOption { id: string; name: string; type: string }
 
 export function CadenceOutcomeConfig() {
   const [rules, setRules] = useState<OutcomeRule[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState<OutcomeRuleForm>({
     outcome: "nao_atendeu",

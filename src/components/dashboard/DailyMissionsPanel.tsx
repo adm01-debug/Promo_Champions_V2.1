@@ -71,7 +71,7 @@ export function DailyMissionsPanel() {
         </div>
         <CardContent className="p-3 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {missions.map((mission, index) => {
+            {missions.map((mission, _index) => {
               const progress = Math.min(
                 100,
                 (mission.currentValue / mission.target_value) * 100

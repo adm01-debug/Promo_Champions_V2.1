@@ -89,7 +89,7 @@ export const CreateSaleDialog = () => {
   );
 
   const selectedProductId = form.watch('product_id');
-  const { data: recommendations, isLoading: loadingRecs } =
+  const { data: recommendations, isLoading: _loadingRecs } =
     useProductRecommendations(selectedProductId);
 
   const onSubmit = (data: SaleFormData) => {

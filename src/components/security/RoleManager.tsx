@@ -198,7 +198,7 @@ export const AccessControl: FC<AccessControlProps> = ({
 
       <div className="space-y-2">
         {currentAccess.map((access) => {
-          const level = levelLabels[access.level];
+          const _level = levelLabels[access.level];
           
           return (
             <div key={access.userId} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">

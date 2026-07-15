@@ -255,7 +255,7 @@ export const MilestoneTracker: FC<MilestoneProps> = ({ milestones, onComplete })
       </div>
 
       <div className="space-y-4 relative z-10">
-        {milestones.map((milestone, index) => (
+        {milestones.map((milestone, _index) => (
           <div
             key={milestone.id}
             className={`flex items-start gap-5 p-5 rounded-2xl transition-all duration-500 border ${

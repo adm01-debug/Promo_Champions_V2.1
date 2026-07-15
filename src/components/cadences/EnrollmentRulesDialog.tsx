@@ -75,7 +75,7 @@ export function EnrollmentRulesDialog() {
       const { data, error } = await supabase.functions.invoke("auto-enroll-cadence", { body: {} });
       if (error) throw error;
       toast.success(`${data?.enrolled ?? 0} prospect(s) inscritos automaticamente!`);
-    } catch (e) {
+    } catch (_e) {
       toast.error("Erro ao executar auto-enrollment");
     } finally {
       setRunning(false);

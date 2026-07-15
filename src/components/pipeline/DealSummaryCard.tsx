@@ -106,7 +106,7 @@ interface DealSummaryCardProps {
 
 export const DealSummaryCard = React.memo(
   ({
-    dealId,
+    _dealId,
     clientName,
     amount,
     status,

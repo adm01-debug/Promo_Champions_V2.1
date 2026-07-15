@@ -25,19 +25,19 @@ export default function BusinessIntelligencePage() {
   } | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: clientBI, isLoading: loadingBI } = useClientBI(
+  const { data: clientBI, isLoading: _loadingBI } = useClientBI(
     selectedClient?.id,
     selectedClient?.ramo_atividade || undefined
   );
-  const { data: comparison, isLoading: loadingComparison } = useClientVsIndustry(
+  const { data: comparison, isLoading: _loadingComparison } = useClientVsIndustry(
     selectedClient?.id,
     selectedClient?.ramo_atividade || undefined
   );
-  const { data: trends, isLoading: loadingTrends } = useIndustryTrends(
+  const { data: trends, isLoading: _loadingTrends } = useIndustryTrends(
     selectedClient?.id,
     selectedClient?.ramo_atividade || undefined
   );
-  const { data: seasonality, isLoading: loadingSeasonality } = useClientSeasonality(
+  const { data: seasonality, isLoading: _loadingSeasonality } = useClientSeasonality(
     selectedClient?.id,
     selectedClient?.ramo_atividade || undefined
   );

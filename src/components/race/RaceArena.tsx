@@ -253,7 +253,7 @@ export function RaceArena({
     leader && second ? Number(leader.progress) - Number(second.progress) : null;
   const showGapLine = gapToSecond !== null && gapToSecond > 0 && gapToSecond < 0.05;
 
-  const gapMidPos = useMemo(() => {
+  const _gapMidPos = useMemo(() => {
     if (!showGapLine || !leader || !second) return null;
     const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
     return getPositionOnTrack(midProgress, 0);

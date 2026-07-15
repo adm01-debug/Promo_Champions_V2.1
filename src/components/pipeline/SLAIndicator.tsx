@@ -25,7 +25,7 @@ function SLAIndicatorComponent({ stageEnteredAt, stage, className }: SLAIndicato
   if (!limit) return null;
 
   const daysInStage = differenceInDays(new Date(), new Date(stageEnteredAt));
-  const hoursInStage = differenceInHours(new Date(), new Date(stageEnteredAt));
+  const _hoursInStage = differenceInHours(new Date(), new Date(stageEnteredAt));
   const pct = (daysInStage / limit) * 100;
 
   const isOverdue = daysInStage >= limit;
