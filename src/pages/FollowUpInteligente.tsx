@@ -71,7 +71,7 @@ const FollowUpInteligente = memo(() => {
     }: {
       saleId: string;
       actionType: string;
-      details: Record<string, any>;
+      details: Record<string, unknown>;
       status?: string;
     }) => {
       const { error } = await supabase.from('follow_up_audit_logs').insert({
