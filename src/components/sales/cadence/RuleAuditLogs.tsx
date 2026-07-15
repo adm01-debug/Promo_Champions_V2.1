@@ -43,7 +43,7 @@ export function RuleAuditLogs() {
           table: 'intent_audit_logs'
         },
         (payload) => {
-          setLogs(prev => [payload.new, ...prev].slice(0, 50));
+          setLogs(prev => [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50));
         }
       )
       .subscribe();
