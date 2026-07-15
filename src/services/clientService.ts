@@ -8,16 +8,16 @@ export const clientService = {
     return (data || []) as Client[];
   },
 
-  async createClient(input: any) {
+  async createClient(input: Partial<Client> & Record<string, unknown>) {
     const { data: { user } } = await supabase.auth.getUser();
-    const payload = { ...input, user_id: input.user_id || user?.id };
+    const payload = { ...input, user_id: (input.user_id as string | undefined) || user?.id } as never;
     const { data, error } = await supabase.from('clients').insert(payload).select().single();
     if (error) throw error;
     return data;
   },
 
-  async updateClient(id: string, updates: any) {
-    const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single();
+  async updateClient(id: string, updates: Partial<Client> & Record<string, unknown>) {
+    const { data, error } = await supabase.from('clients').update(updates as never).eq('id', id).select().single();
     if (error) throw error;
     return data;
   },
