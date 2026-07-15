@@ -29,7 +29,7 @@ export function ClientSelector({ onSelect, selectedId }: ClientSelectorProps) {
   const [selectedClientName, setSelectedClientName] = useState<string>("");
   const debouncedSearch = useDebouncedValue(searchValue, 300);
   
-  const { data: clients, _isLoading } = useClientSearch(debouncedSearch);
+  const { data: clients, isLoading: _isLoading } = useClientSearch(debouncedSearch);
   const foundClient = clients?.find((c) => c.id === selectedId);
 
   return (

@@ -51,8 +51,8 @@ export function WebhookDeliveriesDrawer({
   subscriptionId,
   open,
   onOpenChange,
-  _url,
-  _resultRetentionMs,
+  url: _url,
+  resultRetentionMs: _resultRetentionMs,
 }: Props) {
   const { data, isLoading, replay, isReplaying } = useWebhookDeliveries(subscriptionId);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());

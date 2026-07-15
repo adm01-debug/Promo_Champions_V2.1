@@ -179,7 +179,7 @@ export const FuturisticSpeedometerDashboard = () => {
     if (!user?.id) return;
 
     const loadSettings = async () => {
-      const { data, _error } = await supabase
+      const { data, error: _error } = await supabase
         .from('user_app_settings')
         .select('value')
         .eq('user_id', user.id)

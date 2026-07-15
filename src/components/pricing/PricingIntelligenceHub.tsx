@@ -797,7 +797,7 @@ export function PricingIntelligenceHub() {
 function KpiCard({
   icon: Icon,
   label,
-  _value,
+  value: _value,
   numericValue,
   isCurrency = false,
   isPercent = false,

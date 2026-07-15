@@ -22,7 +22,7 @@ export function CarLiveryOverlay({
   bodyW,
   bodyH,
   bodyR,
-  _primary,
+  primary: _primary,
   secondary,
   accent,
   uid,

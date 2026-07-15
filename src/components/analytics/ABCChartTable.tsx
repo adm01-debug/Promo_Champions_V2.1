@@ -97,7 +97,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({
   items,
   chartTitle,
   tableTitle,
-  _chartIcon,
+  chartIcon: _chartIcon,
   tableIcon,
   emptyIcon,
 }: ABCChartTableProps) {
