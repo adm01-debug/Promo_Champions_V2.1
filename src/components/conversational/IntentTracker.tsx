@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, Zap, MessageCircle, AlertCircle, ShoppingCart, Repeat } from "lucide-react";
