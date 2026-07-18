@@ -54,5 +54,16 @@ jobs:
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
+      # tests/e2e/ contains Playwright specs — must use Playwright, NOT vitest.
+      # Running `vitest run tests/e2e` collected 0 tests and exited 0 (false green).
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
       - name: Run E2E Journeys
-        run: npx vitest run tests/e2e
+        run: npm run test:e2e
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-enterprise
+          path: playwright-report/
+          retention-days: 14
