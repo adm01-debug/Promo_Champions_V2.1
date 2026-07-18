@@ -138,7 +138,8 @@ Cada módulo tem um responsável (frente), superfície-alvo e o tipo de falha ca
 
 ## Estado atual
 - ✅ Fase 0 concluída (etapas 1–6).
-- 🔄 Fase 1 em andamento (descoberta paralela — etapas 7–20).
-- ⏳ Fases 2–5 pendentes.
+- ✅ Fase 1 concluída (descoberta paralela — 10 agentes, 30 módulos cobertos).
+- ✅ Fase 2 (verificação/triagem) — relatório publicado em `RELATORIO_FALHAS.md` com **~128 achados** (10 CRÍTICOS distintos, 33 ALTOS, 49 MÉDIOS, 22 BAIXOS, 14 INFO).
+- ⏳ Fases 3–5 pendentes (bateria E2E dirigida, remediação priorizada, verificação final) — aguardam aprovação.
 
 > Conforme solicitado, a **primeira entrega é a descoberta e documentação exaustiva das falhas** (Fases 0–2). As fases de teste E2E e remediação (3–5) ficam para aprovação/execução subsequente.
