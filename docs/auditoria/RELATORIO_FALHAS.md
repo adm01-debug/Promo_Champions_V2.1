@@ -63,4 +63,59 @@ Um **sumário executivo com contagem consolidada** está no fim do documento (pr
 - **Local:** `src/pages/ResetPassword.tsx:116` ("pelo menos 6 caracteres") vs `:14` (`z.string().min(8)`)
 - **Impacto:** Texto confunde o usuário; requisito de senha não centralizado.
 
+---
+
+## Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A)
+
+### 🟠 ALTO — XSS armazenado em snippet de busca de calls (`ts_headline` renderizado como HTML cru)
+- **Local:** `src/components/conversational/CallLibrarySearch.tsx:21-28,98` (fonte: `src/hooks/conversational/useCallLibrarySearch.ts:31` → RPC `search_call_library`)
+- **CWE:** CWE-79 (Stored XSS)
+- **Descrição:** `HighlightedSnippet` injeta `r.snippet` via `dangerouslySetInnerHTML` sem sanitização. O snippet vem de `ts_headline` do Postgres sobre transcrições de calls. `ts_headline` **não escapa** o HTML do documento indexado — só envolve matches em `<b></b>`, preservando qualquer markup do texto original.
+- **Impacto:** Transcrição contendo `<img src=x onerror=...>`/`<script>` executa no navegador de quem pesquisa. XSS armazenado.
+- **Evidência:** `<p ... dangerouslySetInnerHTML={{ __html: html }} />` com `html = r.snippet ?? ""`.
+- **Correção sugerida:** DOMPurify no snippet, ou construir o highlight client-side a partir de texto escapado.
+
+### 🟡 MÉDIO — Sanitizador de markdown caseiro é contornável (BriefingNarrative)
+- **Local:** `src/components/executive-briefing/briefingHelpers.ts:58-60` (usado em `BriefingNarrative.tsx:15`)
+- **CWE:** CWE-79 / CWE-116 (Improper Encoding/Escaping)
+- **Descrição:** `sanitizeMarkdown` faz `md.replace(/<[^>]*>/g, "")` — single-pass, não recursivo. Entrada `<<img>img src=x onerror=alert(1)>` vira `<img src=x onerror=alert(1)>` após a 1ª remoção e não é reescaneada; depois é injetada via `dangerouslySetInnerHTML`.
+- **Impacto:** Bypass do filtro anti-XSS; `narrative` vem de `executive_briefings` (gerado por IA/armazenado). Regex não substitui DOMPurify.
+
+### 🟡 MÉDIO — `SlideOverPanel` (modal custom) sem trap de foco / Escape / ARIA
+- **Local:** `src/components/molecules/SlideOverPanel.tsx:37-101`
+- **CWE:** WCAG 2.1.1 / 2.4.3 (não-conformidade a11y)
+- **Descrição:** Dialog off-canvas `fixed inset-0` que não move foco ao abrir, não restaura ao fechar, sem trap (Tab escapa), sem fechar por `Escape`, sem `role="dialog"`/`aria-modal`. Backdrop é `<div onClick>` sem suporte a teclado.
+- **Impacto:** Usuários de teclado/leitor de tela presos fora/dentro do fluxo errado. Deveria usar o Radix Dialog já presente.
+
+### 🟡 MÉDIO — `level-up-celebration` (modal custom) sem role/aria-modal/Escape/foco
+- **Local:** `src/components/ui/level-up-celebration.tsx:33-45`
+- **Descrição:** Overlay modal `fixed inset-0` sem `role="dialog"`, `aria-modal`, fechamento por `Escape` ou gerência de foco (tem botão fechar com `aria-label`, mas o container não é anunciado como modal).
+- **Impacto:** Leitores de tela não anunciam contexto modal; foco não contido.
+
+### 🟡 MÉDIO — `ErrorBoundary` único envolve toda a árvore de rotas
+- **Local:** `src/routes/AppRoutes.tsx:103-106`, `App.tsx:94` (`GlobalErrorBoundary`)
+- **Descrição:** Um único boundary abrange todas as páginas internas; erro de render em qualquer página derruba toda a área de conteúdo. Boundaries próprios só em Map/Race/WinLoss.
+- **Impacto:** Falha localizada vira falha da aplicação inteira. Áreas críticas (pipeline, vendas, dashboards) sem boundary próprio.
+
+### 🔵 BAIXO — Chaves de lista com `index` em listas de dados/interativas
+- **Local:** `src/components/reporting/ReportPreview.tsx:120,185`; `EmbeddedReportView.tsx:72`; `src/components/shared/FilterPopover.tsx:83`; `src/components/sales/cadence/CadenceSimulationDialog.tsx:277`
+- **CWE:** CWE-664 (uso impróprio de recurso — reconciliação por posição)
+- **Descrição:** `key={i}` sobre coleções reais (linhas de tabela, filtros, passos de cadência). Reordenar/filtrar/inserir reconcilia por posição → bug de estado (inputs, seleção, foco), dados na linha errada.
+- **Impacto:** Estado "vaza" entre linhas em tabelas de relatório e diálogos de simulação.
+
+### 🔵 BAIXO — `aria-label` estático não reflete estado (ThemeToggle)
+- **Local:** `src/components/atoms/ThemeToggle.tsx:26`
+- **Descrição:** `aria-label="Tema claro"` fixo sobrescreve o `sr-only`; nome acessível é sempre "Tema claro" independente do tema. Idealmente `aria-pressed` + rótulo dinâmico.
+
+### 🔵 BAIXO — Virtualização inconsistente em listas grandes
+- **Local:** infra existe (`ui/virtualized-list.tsx`, `win-loss/VirtualDealsList.tsx`) mas usada só pontualmente; relatórios/leaderboards renderizam `rows.map` completo.
+- **Impacto:** Custo de DOM/re-render elevado e jank em datasets grandes (não é bug funcional).
+
+### ⚪ INFO — 3 `dangerouslySetInnerHTML` em `<style>` avaliadas como seguras
+- **Local:** `src/components/ui/chart.tsx:70`; `DailyActivityRanking.tsx:373`; `MetasAtividades.tsx:150`
+- **Descrição:** Duas injetam CSS 100% estático (sem risco). `chart.tsx:70` (shadcn) interpola `--color-${key}: ${color}` de config de dev — risco teórico de CSS injection só se `config.color` receber dado não confiável. Vale um guard de validação de cor.
+
+### ⚪ INFO — Console no client (168 ocorrências) — sem vazamento de PII/segredo confirmado
+- **Descrição:** `console.*` logando `email/token/senha` retornaram só `console.error('msg', error)`. `vite.config.ts` faz `pure: ['console.log','console.debug','console.info']` em produção mas mantém `console.error/warn`. Ressalva: objetos de erro do Supabase/WebAuthn podem conter detalhes de requisição — sanitizar antes de logar.
+
 <!-- SECOES SEGUINTES PREENCHIDAS CONFORME AGENTES CONCLUEM -->
