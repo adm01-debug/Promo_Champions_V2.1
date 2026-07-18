@@ -50,8 +50,8 @@ export const salesService = {
     return ((data || []) as SaleRow[]).map(sale => ({
       id: sale.id.substring(0, 8).toUpperCase(),
       fullId: sale.id,
-      cliente: sale.client?.name || sale.client_name,
-      produto: sale.product?.name || sale.product_name,
+      cliente: sale.client?.name || sale.client_name || '',
+      produto: sale.product?.name || sale.product_name || '',
       valor: Number(sale.amount || 0),
       status: sale.status,
       statusLabel: SALE_STATUS_LABELS[sale.status] || sale.status,

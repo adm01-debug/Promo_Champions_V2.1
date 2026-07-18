@@ -43,6 +43,7 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
       const t = setTimeout(() => markRead.mutate(notif.id), 4000);
       return () => clearTimeout(t);
     }
+    return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [notif?.id]);
 

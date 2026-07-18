@@ -21,7 +21,7 @@ export function OrdersTimeline({
       <div className="space-y-12">
         {orders.map((order, idx) => {
           const isHighValue = Number(order.amount) > averageTicket * 1.5;
-          const date = new Date(order.created_at);
+          const date = new Date(order.created_at ?? '');
           const month = date.getMonth();
           const isSeasonal = [10, 11, 0].includes(month); // BF and Xmas
 

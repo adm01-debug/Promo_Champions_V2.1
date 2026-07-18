@@ -36,8 +36,8 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
   const [commentInput, setCommentInput] = useState('');
   const [showComments, setShowComments] = useState(false);
 
-  const Icon = eventIcons[item.event_type] || Trophy;
-  const gradient = eventColors[item.event_type] || eventColors.sale || 'from-success/20 to-success/5';
+  const Icon = eventIcons[item.event_type ?? ''] || Trophy;
+  const gradient = eventColors[item.event_type ?? ''] || eventColors.sale || 'from-success/20 to-success/5';
   const reactions = item.feed_reactions || [];
   const comments = item.feed_comments || [];
 
@@ -48,16 +48,16 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
 
   const handleComment = () => {
     if (!commentInput.trim()) return;
-    onComment(item.id, commentInput.trim());
+    onComment(item.id ?? '', commentInput.trim());
     setCommentInput('');
   };
 
   return (
     <Card className={cn(
       "border-none shadow-lg overflow-hidden group/card transition-all duration-300 hover:shadow-xl relative",
-      item.value >= 10000 && "ring-2 ring-rank-gold/50 shadow-rank-gold/20"
+      (item.value ?? 0) >= 10000 && "ring-2 ring-rank-gold/50 shadow-rank-gold/20"
     )}>
-      {item.value >= 10000 && (
+      {(item.value ?? 0) >= 10000 && (
         <div className="absolute top-0 right-0 p-2 z-20">
           <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>
             <Trophy className="h-5 w-5 text-rank-gold drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
@@ -65,7 +65,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
         </div>
       )}
       <div className={cn('bg-gradient-to-r relative', gradient)}>
-        {item.value >= 10000 && (
+        {(item.value ?? 0) >= 10000 && (
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.15),transparent_50%)]" />
         )}
         <CardContent className="p-5">
@@ -79,29 +79,29 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
                   {(item.salespeople as Record<string, string> | null)?.name || 'Vendedor'}
                 </span>
                 <span className="text-[10px] text-muted-foreground font-medium">
-                  • {formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: ptBR })}
+                  • {formatDistanceToNow(new Date(item.created_at ?? ''), { addSuffix: true, locale: ptBR })}
                 </span>
               </div>
               <p className="font-display font-bold text-foreground text-lg leading-tight mt-1">{item.title}</p>
               {item.description && <p className="text-sm text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed">{item.description}</p>}
               
               <div className="flex items-center gap-3 mt-3 flex-wrap">
-                {item.value > 0 && (
+                {(item.value ?? 0) > 0 && (
                   <div className="px-3 py-1 rounded-xl bg-primary/10 border border-primary/20">
                     <p className="text-sm font-black text-primary italic">R$ {Number(item.value).toLocaleString('pt-BR')}</p>
                   </div>
                 )}
-                {(item.metadata as Record<string, unknown> | null | undefined)?.sale_id && (
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    className="h-6 p-0 text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:no-underline flex items-center gap-1 group/btn" 
+                {!!(item.metadata as Record<string, unknown> | null | undefined)?.sale_id && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="h-6 p-0 text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:no-underline flex items-center gap-1 group/btn"
                     onClick={() => window.location.href = `/vendedor/${item.salesperson_id}`}
                   >
                     Ver Detalhes <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
                 )}
-                {(item.metadata as Record<string, unknown> | null | undefined)?.battle_id && (
+                {!!(item.metadata as Record<string, unknown> | null | undefined)?.battle_id && (
                   <Button 
                     variant="link" 
                     size="sm" 
@@ -125,7 +125,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(({
               return (
                 <button
                   key={emoji}
-                  onClick={() => onReaction(item.id, emoji)}
+                  onClick={() => onReaction(item.id ?? '', emoji)}
                   className={cn(
                     'flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs transition-all hover:scale-105 active:scale-95',
                     hasReacted ? 'bg-primary/20 border border-primary/30 text-primary shadow-sm' : 'bg-black/20 border border-white/5 hover:bg-black/40 text-muted-foreground'

@@ -168,7 +168,7 @@ export const useBIDossierExport = (
         20,
         adoc.lastAutoTable.finalY + 15
       );
-      const trends = biData.sectorTrends.map(t => [t.name, t.growth, t.sales.toString()]);
+      const trends = biData.sectorTrends.map(t => [t.name, t.growth, (t.sales ?? 0).toString()]);
       adoc.autoTable({
         startY: adoc.lastAutoTable.finalY + 25,
         head: [['Produto em Alta', 'Crescimento', 'Volume de Vendas']],

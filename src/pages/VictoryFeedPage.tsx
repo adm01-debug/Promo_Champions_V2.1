@@ -158,7 +158,7 @@ const VictoryFeedPage = () => {
                               }).format(item.value ?? 0)}
                             </Badge>
                           )}
-                          {(item.metadata as Record<string, unknown> | null)?.sale_id && (
+                          {!!(item.metadata as Record<string, unknown> | null)?.sale_id && (
                             <Button
                               variant="link"
                               size="sm"
@@ -170,7 +170,7 @@ const VictoryFeedPage = () => {
                               Ver Detalhes <ArrowRight className="h-3 w-3" />
                             </Button>
                           )}
-                          {(item.metadata as Record<string, unknown> | null)?.battle_id && (
+                          {!!(item.metadata as Record<string, unknown> | null)?.battle_id && (
                             <Button
                               variant="link"
                               size="sm"

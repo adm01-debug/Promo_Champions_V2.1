@@ -26,7 +26,11 @@ export function WeightedForecastDashboard() {
         .select('*')
         .order('impact_score', { ascending: false })
         .limit(3);
-      if (factors) setImpactFactors(factors);
+      if (factors) setImpactFactors(factors.map(f => ({
+        factor_name: f.factor_name ?? '',
+        impact_score: f.impact_score ?? 0,
+        description: f.description ?? '',
+      })));
     };
     fetchImpact();
   }, []);

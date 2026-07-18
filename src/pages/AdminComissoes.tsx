@@ -333,7 +333,7 @@ export default function AdminComissoes() {
             </DialogTitle>
             <DialogDescription className="text-xs">
               Vendedor: {selectedCommission?.salespeople?.name} | Valor:{' '}
-              {formatBRL(selectedCommission?.commission_amount)}
+              {formatBRL(selectedCommission?.commission_amount ?? 0)}
             </DialogDescription>
           </DialogHeader>
 

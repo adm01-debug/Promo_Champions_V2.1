@@ -47,6 +47,7 @@ export function useAuthForm() {
       }, 1000);
       return () => clearInterval(i);
     }
+    return undefined;
   }, [lockoutStatus.isLocked, lockoutStatus.remainingSeconds, loginEmail, checkLoginAttempts]);
 
   const handleAuth = async (e: React.FormEvent) => {

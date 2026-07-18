@@ -41,6 +41,7 @@ export function VictoryOverlay({
     } else {
       setShowContent(false);
     }
+    return undefined;
   }, [isVisible]);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export function VictoryOverlay({
       const timer = setTimeout(() => onComplete(), 6000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isVisible, onComplete]);
 
   const icons: Record<string, LucideIcon> = {

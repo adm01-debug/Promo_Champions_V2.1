@@ -45,7 +45,7 @@ export function ICPPerformanceChart() {
           client_id: string | null;
         } | null;
         const clientId = sale?.client_id ?? undefined;
-        const isIcp = icpMap.get(clientId) || false;
+        const isIcp = (clientId ? icpMap.get(clientId) : false) || false;
         const amount = o.sales?.amount || 0;
 
         const category = isIcp ? performance.icp : performance.nonIcp;

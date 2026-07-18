@@ -284,6 +284,7 @@ export function RaceArena({
       const t = window.setTimeout(() => setZoomActive(false), 2000);
       return () => window.clearTimeout(t);
     }
+    return undefined;
   }, [closeBattle, reducedMotion, zoomActive]);
 
   const currentUserCar = useMemo(
@@ -327,6 +328,7 @@ export function RaceArena({
         window.clearTimeout(t2);
       };
     }
+    return undefined;
   }, [leaderProgress, finaleShown, reducedMotion, sorted, pushCommentary, pushBroadcast]);
 
   const gapBroadcastLastRef = useRef<number>(0);

@@ -71,7 +71,7 @@ export function CadenceOutcomeConfig() {
       .order("created_at", { ascending: true });
     
     if (error) toast.error("Erro ao carregar regras");
-    else setRules(data || []);
+    else setRules((data || []) as unknown as OutcomeRule[]);
     setLoading(false);
   };
 

@@ -26,6 +26,7 @@ export function LevelUpOverlay({
     } else {
       setShowContent(false);
     }
+    return undefined;
   }, [isVisible]);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function LevelUpOverlay({
       const timer = setTimeout(() => onComplete(), 4000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isVisible, onComplete]);
 
   return (

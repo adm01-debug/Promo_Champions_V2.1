@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 
 interface TournamentParticipant {
   salesperson_id: string;
-  seed?: number;
+  seed?: number | null;
   salespeople?: { id: string; name: string } | null;
 }
 interface TournamentMatch {

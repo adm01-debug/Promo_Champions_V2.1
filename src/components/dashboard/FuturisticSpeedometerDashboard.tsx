@@ -61,14 +61,14 @@ interface AlertHistoryEntry {
   priority: 'high' | 'medium' | 'low';
   type: string;
   created_at: string;
-  metadata: unknown;
+  metadata?: { threshold?: number };
 }
 
 type SpeedometerSettings = Partial<{
   ticksCount: number;
   gaugeMode: 'compact' | 'kilo' | 'standard';
   minVal: number;
-  customMax: number;
+  customMax: number | null;
   customUnit: string;
   autoScale: boolean;
   oppThreshold: number;
@@ -211,11 +211,11 @@ export const FuturisticSpeedometerDashboard = () => {
           historyData.map(n => ({
             id: n.id,
             title: n.title,
-            message: n.message,
+            message: n.message ?? '',
             priority: n.priority as 'high' | 'medium' | 'low',
             type: n.type,
             created_at: n.created_at,
-            metadata: n.metadata,
+            metadata: n.metadata as AlertHistoryEntry['metadata'],
           }))
         );
       }

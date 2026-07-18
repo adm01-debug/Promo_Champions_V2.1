@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { chunkedIn } from "@/lib/supabase/chunkedIn";
+import { chunkedIn, type PostgrestLike } from "@/lib/supabase/chunkedIn";
 import { toast } from "sonner";
 
 export interface InsightComment {
@@ -54,12 +54,12 @@ export function useInsightComments(insightId: string | null) {
       if (!rows.length) return [];
 
       const authorIds = Array.from(new Set(rows.map((r) => r.author_id)));
-      const people = await chunkedIn<{ id: string; name: string | null; avatar_url: string | null }>(
+      const people = await chunkedIn<{ id: string | null; name: string | null; avatar_url: string | null }>(
         authorIds,
         (chunk) => supabase
           .from("salespeople_public")
           .select("id, name, avatar_url")
-          .in("id", chunk as string[]),
+          .in("id", chunk as string[]) as unknown as PostgrestLike<{ id: string | null; name: string | null; avatar_url: string | null }>,
         { parallel: true, label: "insight-comments.authors" },
       );
       const map = new Map(people.map((p) => [p.id, p]));

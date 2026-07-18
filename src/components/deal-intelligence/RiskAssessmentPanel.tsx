@@ -93,7 +93,7 @@ export function RiskAssessmentPanel() {
                   icon={Hourglass}
                   label="Tempo no Estágio"
                   value={`${deal.days_in_stage || 0} dias`}
-                  status={deal.days_in_stage > 15 ? 'risk' : 'ok'}
+                  status={(deal.days_in_stage ?? 0) > 15 ? 'risk' : 'ok'}
                 />
                 <RiskFactor
                   icon={Activity}

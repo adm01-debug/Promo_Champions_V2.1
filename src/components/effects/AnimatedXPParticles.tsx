@@ -49,6 +49,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isActive, createParticles, onComplete]);
 
   if (!isActive && particles.length === 0) return null;

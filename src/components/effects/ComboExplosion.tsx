@@ -72,6 +72,7 @@ export function ComboExplosion({ trigger, tier, onComplete }: ComboExplosionProp
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [trigger, tier, onComplete]);
 
   return (

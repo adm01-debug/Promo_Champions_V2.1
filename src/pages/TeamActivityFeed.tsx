@@ -125,7 +125,7 @@ const TeamActivityFeed = () => {
                             {sp && (
                               <div className="flex items-center gap-1.5">
                                 <Avatar className="h-5 w-5">
-                                  <AvatarImage src={sp.avatar_url} />
+                                  <AvatarImage src={sp.avatar_url ?? undefined} />
                                   <AvatarFallback className="text-[8px]">
                                     {sp.name?.charAt(0)}
                                   </AvatarFallback>

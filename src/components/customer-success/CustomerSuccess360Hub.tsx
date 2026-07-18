@@ -319,7 +319,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   const exportCSV = () => {
     const sanitizedAccounts = accounts.map(acc => {
       const safe: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(acc as Record<string, unknown>)) {
+      for (const [k, v] of Object.entries(acc as unknown as Record<string, unknown>)) {
         safe[k] = typeof v === 'string' ? sanitizeCsvCell(v) : v;
       }
       return safe;

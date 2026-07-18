@@ -20,7 +20,7 @@ interface Detail {
   outcome: string;
   reason: string;
   created_at: string;
-  sales?: { client_name?: string; amount?: number } | null;
+  sales?: { client_name?: string | null; amount?: number | null } | null;
   salespeople?: { name?: string } | null;
 }
 

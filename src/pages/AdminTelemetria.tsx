@@ -69,7 +69,7 @@ export default function AdminTelemetriaPage() {
   };
 
   const handleExportCSV = () => {
-    if (rows.length === 0) return toast.error("Nenhum dado para exportar");
+    if (rows.length === 0) { toast.error("Nenhum dado para exportar"); return; }
     const headers = ["Data/Hora", "Operação", "Tabela/RPC", "Duração (ms)", "Severidade", "Registros", "Limit", "Offset", "Count Mode", "Erro"];
     const sc = (v: unknown) => `"${sanitizeCsvCell(String(v ?? '')).replace(/"/g, '""')}"`;
     const csvRows = rows.map(r => [
@@ -92,7 +92,7 @@ export default function AdminTelemetriaPage() {
   };
 
   const handleExportPDF = async () => {
-    if (rows.length === 0) return toast.error("Nenhum dado para exportar");
+    if (rows.length === 0) { toast.error("Nenhum dado para exportar"); return; }
     try {
       const { default: jsPDF } = await import("jspdf");
       const { default: autoTable } = await import("jspdf-autotable");

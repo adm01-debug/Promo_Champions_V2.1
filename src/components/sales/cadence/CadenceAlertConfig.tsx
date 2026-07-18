@@ -73,7 +73,7 @@ export function CadenceAlertConfig() {
     if (error) {
       toast.error('Erro ao carregar templates');
     } else {
-      setTemplates(data || []);
+      setTemplates((data || []) as unknown as AlertTemplate[]);
     }
     setLoading(false);
   };

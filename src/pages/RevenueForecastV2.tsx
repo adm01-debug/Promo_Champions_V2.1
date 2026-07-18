@@ -189,8 +189,8 @@ export default function RevenueForecastV2() {
                   <XAxis dataKey="period" />
                   <YAxis tickFormatter={(v) => brl.format(v)} width={100} />
                   <Tooltip
-                    formatter={(value: number | null) =>
-                      value == null ? "—" : brl.format(value)
+                    formatter={(value) =>
+                      typeof value === 'number' ? brl.format(value) : "—"
                     }
                   />
                   <Legend />

@@ -47,7 +47,7 @@ export function OrdersTable({ orders, onSelectOrder }: OrdersTableProps) {
                 className="border-border/10 group transition-colors hover:bg-white/5"
               >
                 <TableCell className="text-xs font-medium py-4">
-                  {new Date(order.created_at).toLocaleDateString('pt-BR')}
+                  {new Date(order.created_at ?? '').toLocaleDateString('pt-BR')}
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">

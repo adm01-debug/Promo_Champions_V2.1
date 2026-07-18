@@ -1,7 +1,7 @@
 import type { jsPDF } from 'jspdf';
 import type { UserOptions } from 'jspdf-autotable';
 
-export type ExportDataValue = string | number | boolean | null | undefined;
+export type ExportDataValue = string | number | boolean | null;
 
 export async function exportToPDF<T extends Record<string, unknown>>(
   data: T[],
@@ -22,7 +22,7 @@ export async function exportToPDF<T extends Record<string, unknown>>(
 
   const options: UserOptions = {
     head: [cols.map(c => c.header)],
-    body: data.map(row => cols.map(c => row[c.dataKey] as ExportDataValue)),
+    body: data.map(row => cols.map(c => row[c.dataKey])) as unknown as UserOptions['body'],
     startY: 30,
   };
 
