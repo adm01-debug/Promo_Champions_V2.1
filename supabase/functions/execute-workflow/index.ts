@@ -1,7 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
+import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface ActionDef {
   type: "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner";
@@ -29,6 +29,24 @@ const evaluateCondition = (payload: Record<string, unknown>, cond: ConditionDef)
 Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  // ── Authentication ────────────────────────────────────────────────────
+  // Require a valid user JWT so that workflow execution is scoped to an
+  // authenticated user. The caller's user_id is used to scope any created
+  // tasks/activities — trigger_payload.salesperson_id is NOT trusted.
+  let callerUserId: string;
+  try {
+    const ctx = await getUserClient(req);
+    callerUserId = ctx.userId;
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: " + e.message }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    throw e;
+  }
+
   try {
     const rawBody = await req.json();
     
@@ -44,10 +62,9 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
 
     const { workflow_id, trigger_payload } = validation.data;
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    // Service client for workflow reads and audit writes (RLS bypass legitimate
+    // for automation engine — user scoping enforced via callerUserId above).
+    const supabase = getServiceClient("automation workflow engine reads and run-log writes");
 
     const startedAt = Date.now();
     const { data: workflow, error: wErr } = await supabase
@@ -89,7 +106,9 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       try {
         if (act.type === "create_task") {
           const { error } = await supabase.from("agenda_events").insert({
-            salesperson_id: trigger_payload.salesperson_id,
+            // Use the authenticated caller's id — do not trust trigger_payload
+            // for the actor identity (IDOR prevention).
+            salesperson_id: callerUserId,
             sale_id: trigger_payload.sale_id ?? null,
             title: String(act.params.title ?? "Tarefa automatizada"),
             description: String(act.params.description ?? ""),
@@ -100,7 +119,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
           executed.push({ action: act.type, status: "success" });
         } else if (act.type === "log_activity") {
           const { error } = await supabase.from("activities").insert({
-            salesperson_id: trigger_payload.salesperson_id,
+            salesperson_id: callerUserId,
             sale_id: trigger_payload.sale_id ?? null,
             activity_type: String(act.params.activity_type ?? "note"),
             outcome: "completed",
