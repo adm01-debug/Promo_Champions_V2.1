@@ -2,7 +2,6 @@ import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 
-// Helper to generate random bytes as base64url
 function generateChallenge(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
@@ -13,7 +12,7 @@ function generateChallenge(): string {
 }
 
 const RP_NAME = 'PROMO CHAMPIONS';
-const RP_ID_HEADER = 'x-rp-id'; // Will be set from frontend
+const RP_ID_HEADER = 'x-rp-id';
 
 interface WebAuthnCredential {
   id: string;
@@ -26,6 +25,9 @@ interface WebAuthnCredential {
   response: {
     publicKey?: string;
     attestationObject?: string;
+    clientDataJSON?: string;
+    authenticatorData?: string;
+    signature?: string;
     transports?: string[];
     [key: string]: unknown;
   };
@@ -46,6 +48,20 @@ interface WebAuthnAction {
   rpId?: string;
 }
 
+/** Extract and verify the caller's JWT; return their sub (user id). */
+async function getAuthenticatedUserId(req: Request, supabaseUrl: string, anonKey: string): Promise<string | null> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7);
+  // Use user-scoped client so JWT is validated by Supabase
+  const userClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+  const { data: { user }, error } = await userClient.auth.getUser();
+  if (error || !user) return null;
+  return user.id;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -54,6 +70,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const body: WebAuthnAction = await req.json();
@@ -61,22 +78,41 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.info('WebAuthn action:', body.action, 'RP ID:', rpId);
 
+    // ── Actions that require an authenticated session ──────────────────────
+    const requiresAuth = ['register-options', 'register-verify', 'list-credentials', 'delete-credential'];
+    if (requiresAuth.includes(body.action)) {
+      const callerUserId = await getAuthenticatedUserId(req, supabaseUrl, supabaseAnonKey);
+      if (!callerUserId) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      // Ensure the userId in the body matches the authenticated caller
+      if (body.userId && body.userId !== callerUserId) {
+        return new Response(JSON.stringify({ error: 'Forbidden: userId mismatch' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      // Override body.userId with the verified caller identity
+      body.userId = callerUserId;
+    }
+
     switch (body.action) {
       case 'register-options': {
         if (!body.userId || !body.userEmail) {
           throw new Error('userId and userEmail are required');
         }
 
-        // Get existing credentials for the user
         const { data: existingCreds } = await supabase
           .from('webauthn_credentials')
           .select('credential_id')
           .eq('user_id', body.userId);
 
         const challenge = generateChallenge();
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-        // Store challenge
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
         await supabase.from('webauthn_challenges').insert({
           user_id: body.userId,
           user_email: body.userEmail,
@@ -85,7 +121,6 @@ const handler = async (req: Request): Promise<Response> => {
           expires_at: expiresAt.toISOString(),
         });
 
-        // Clean up old challenges
         await supabase
           .from('webauthn_challenges')
           .delete()
@@ -93,18 +128,15 @@ const handler = async (req: Request): Promise<Response> => {
 
         const options = {
           challenge,
-          rp: {
-            name: RP_NAME,
-            id: rpId,
-          },
+          rp: { name: RP_NAME, id: rpId },
           user: {
             id: body.userId,
             name: body.userEmail,
             displayName: body.userEmail.split('@')[0],
           },
           pubKeyCredParams: [
-            { alg: -7, type: 'public-key' }, // ES256
-            { alg: -257, type: 'public-key' }, // RS256
+            { alg: -7, type: 'public-key' },
+            { alg: -257, type: 'public-key' },
           ],
           timeout: 60000,
           attestation: 'none',
@@ -132,7 +164,6 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error('userId and credential are required');
         }
 
-        // Verify challenge exists and is valid
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
           .select('*')
@@ -147,13 +178,10 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error('Challenge expired or not found');
         }
 
-        // Delete the used challenge
         await supabase.from('webauthn_challenges').delete().eq('id', challengeData.id);
 
-        // Extract credential data
         const { id, response: credResponse, authenticatorAttachment } = body.credential;
 
-        // Store the credential
         const { error: insertError } = await supabase
           .from('webauthn_credentials')
           .insert({
@@ -180,16 +208,15 @@ const handler = async (req: Request): Promise<Response> => {
 
       case 'login-options': {
         const challenge = generateChallenge();
-
-        let credentials: Array<{ credential_id: string; transports?: string[] | null }> =
-          [];
+        let credentials: Array<{ credential_id: string; transports?: string[] | null }> = [];
+        let resolvedUserId: string | null = null;
 
         if (body.userEmail) {
-          // Get user by email first
           const { data: userData } = await supabase.auth.admin.listUsers();
           const user = userData?.users?.find(u => u.email === body.userEmail);
 
           if (user) {
+            resolvedUserId = user.id;
             const { data: userCreds } = await supabase
               .from('webauthn_credentials')
               .select('credential_id, transports')
@@ -197,7 +224,6 @@ const handler = async (req: Request): Promise<Response> => {
 
             credentials = userCreds || [];
 
-            // Store challenge with user info
             await supabase.from('webauthn_challenges').insert({
               user_id: user.id,
               user_email: body.userEmail,
@@ -207,7 +233,8 @@ const handler = async (req: Request): Promise<Response> => {
             });
           }
         } else {
-          // Discoverable credentials (passkey) - no email needed
+          // Discoverable credentials — no email, no user_id yet; challenge will be
+          // matched to the credential's user_id during login-verify
           await supabase.from('webauthn_challenges').insert({
             challenge,
             type: 'authentication',
@@ -240,7 +267,14 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error('credential is required');
         }
 
-        const { id } = body.credential;
+        const { id, response: credResponse } = body.credential;
+
+        // Require the authenticator to have returned clientDataJSON and signature
+        // (basic presence check; full CBOR/COSE signature verification would require
+        //  a dedicated library not yet available in this edge function)
+        if (!credResponse.clientDataJSON || !credResponse.signature || !credResponse.authenticatorData) {
+          throw new Error('Incomplete assertion response — missing required fields');
+        }
 
         // Find the credential
         const { data: credData, error: credError } = await supabase
@@ -253,10 +287,11 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error('Credential not found');
         }
 
-        // Verify challenge exists
+        // Verify challenge is bound to THIS user (not any user)
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
           .select('*')
+          .eq('user_id', credData.user_id)
           .eq('type', 'authentication')
           .gt('expires_at', new Date().toISOString())
           .order('created_at', { ascending: false })
@@ -264,11 +299,29 @@ const handler = async (req: Request): Promise<Response> => {
           .single();
 
         if (!challengeData) {
-          throw new Error('Challenge expired or not found');
+          throw new Error('Challenge expired or not found for this credential');
         }
 
-        // Delete used challenge
+        // Consume the challenge immediately (prevent replay)
         await supabase.from('webauthn_challenges').delete().eq('id', challengeData.id);
+
+        // Verify the clientDataJSON contains the expected challenge
+        let clientData: { challenge?: string; type?: string; origin?: string };
+        try {
+          const decoded = atob(credResponse.clientDataJSON as string);
+          clientData = JSON.parse(decoded);
+        } catch {
+          throw new Error('Invalid clientDataJSON');
+        }
+
+        if (clientData.type !== 'webauthn.get') {
+          throw new Error('Invalid clientData type');
+        }
+
+        const receivedChallenge = (clientData.challenge ?? '').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        if (receivedChallenge !== challengeData.challenge) {
+          throw new Error('Challenge mismatch — replay attack detected');
+        }
 
         // Update last used and counter
         await supabase
@@ -279,16 +332,13 @@ const handler = async (req: Request): Promise<Response> => {
           })
           .eq('id', credData.id);
 
-        // Get user email
-        const { data: userData } = await supabase.auth.admin.getUserById(
-          credData.user_id
-        );
-
+        // Get user
+        const { data: userData } = await supabase.auth.admin.getUserById(credData.user_id);
         if (!userData?.user) {
           throw new Error('User not found');
         }
 
-        // Generate a magic link or sign in token
+        // Generate a short-lived magic link for the verified user
         const { data: signInData, error: signInError } =
           await supabase.auth.admin.generateLink({
             type: 'magiclink',
@@ -308,9 +358,7 @@ const handler = async (req: Request): Promise<Response> => {
             token: signInData.properties?.hashed_token,
             actionLink: signInData.properties?.action_link,
           }),
-          {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
