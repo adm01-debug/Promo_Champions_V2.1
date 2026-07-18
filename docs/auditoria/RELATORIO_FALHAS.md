@@ -290,6 +290,7 @@ Um **sumário executivo com contagem consolidada** está no fim do documento (pr
 - **Descrição:** O script grava números fixos: "🏆 10/10 - Enterprise Perfection", "TOTAL 97.6%", "Edge Functions 100%", "1000 concurrent / 0% failure / P95 <220ms". Nada é lido de cobertura real (vitest), load-test ou Playwright.
 - **Impacto:** Métrica de qualidade totalmente ilusória; decisões de release ("blocked if coverage drops") baseadas num doc que sempre diz 97.6%/10/10.
 - **Evidência:** `content += \`| **TOTAL** | **97.6%** | … | **🏆 10/10** |\`;` literal.
+- **⚠️ Confirmação empírica (2026-07-18):** o workflow `CI` (`lint.yml`, job `quality` = `tsc --noEmit` + `lint` + `test`) está em **`failure` nos últimos ≥8 commits do `main`** — ou seja, o branch principal está vermelho continuamente enquanto o relatório fabricado afirma "Enterprise Perfection 10/10". As checks da PR de auditoria (docs-only) também falham por isso, não pelo diff.
 
 ### 🔴 CRÍTICO — Suíte E2E crítica (quote-to-sale) nunca executa no gate de PR — passa verde vazia
 - **Local:** `.github/workflows/pr-checks.yml` job `e2e`; `tests/e2e/helpers/auth.ts:32`
