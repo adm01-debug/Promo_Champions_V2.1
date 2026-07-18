@@ -20,8 +20,10 @@ export function buildRevenueForecastCsv(result: ForecastResult): string {
 }
 
 function escape(v: string): string {
-  if (/[",\n]/.test(v)) return `"${v.replace(/"/g, '""')}"`;
-  return v;
+  // Neutralize CSV formula injection (CWE-1236) before quoting.
+  const s = /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
 }
 
 function num(n: number | null | undefined): string {

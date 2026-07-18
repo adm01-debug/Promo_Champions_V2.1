@@ -19,7 +19,10 @@ function toCSV(rows: Record<string, unknown>[]): string {
   const headers = Object.keys(rows[0]);
   const escape = (v: unknown) => {
     if (v == null) return "";
-    const s = typeof v === "object" ? JSON.stringify(v) : String(v);
+    let s = typeof v === "object" ? JSON.stringify(v) : String(v);
+    // Neutralize CSV formula injection (CWE-1236): a cell starting with
+    // = + - @ TAB CR is executed as a formula by Excel/Sheets.
+    if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return [

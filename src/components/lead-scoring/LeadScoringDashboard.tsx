@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 
 const categoryConfig = {
   Hot: {
@@ -212,16 +213,19 @@ export function LeadScoringDashboard() {
         'Risk Score',
         'Factors',
       ];
+      const csvCell = (v: string | number) =>
+        typeof v === 'number' ? String(v) : `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
+
       const rankingRows = filteredLeads.map((l, i) => [
         i + 1,
-        `"${l.name}"`,
-        `"${l.company || 'N/A'}"`,
-        `"${l.email}"`,
+        csvCell(l.name),
+        csvCell(l.company || 'N/A'),
+        csvCell(l.email),
         l.score,
-        l.category,
-        l.churnRisk?.risk_level || 'low',
+        csvCell(l.category),
+        csvCell(l.churnRisk?.risk_level || 'low'),
         l.churnRisk?.risk_score || 0,
-        `"${l.churnRisk?.factors.join('; ') || ''}"`,
+        csvCell(l.churnRisk?.factors.join('; ') || ''),
       ]);
 
       const distSummary = [

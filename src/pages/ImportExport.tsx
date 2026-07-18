@@ -18,6 +18,7 @@ import {
 import { Upload, Download, Check, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLogAuditEvent } from '@/hooks/admin/useAuditLogs';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 
 type ImportStep = 'upload' | 'mapping' | 'preview' | 'complete';
 
@@ -155,7 +156,10 @@ const ImportExport = () => {
 
     const csvHeaders = Object.keys(data[0]);
     const csvRows = data.map(r =>
-      csvHeaders.map(h => `"${(r as Record<string, unknown>)[h] ?? ''}"`).join(',')
+      csvHeaders.map(h => {
+        const v = (r as Record<string, unknown>)[h] ?? '';
+        return `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
+      }).join(',')
     );
     const csv = [csvHeaders.join(','), ...csvRows].join('\n');
 

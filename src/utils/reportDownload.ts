@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { sanitizeCsvCell } from "@/utils/csvExport";
 
 interface SaleRecord {
   id: string;
@@ -74,11 +75,10 @@ const generateCSV = (data: Record<string, unknown>[], columns: { key: string; la
     columns
       .map((c) => {
         const value = item[c.key];
-        // Escape quotes and wrap in quotes if contains comma
-        if (typeof value === "string" && (value.includes(",") || value.includes('"'))) {
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value ?? "";
+        if (value === null || value === undefined) return "";
+        // Neutralize CSV formula injection (CWE-1236) then quote/escape.
+        const safe = sanitizeCsvCell(String(value));
+        return `"${safe.replace(/"/g, '""')}"`;
       })
       .join(",")
   );

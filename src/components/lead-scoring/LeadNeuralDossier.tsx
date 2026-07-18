@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { LeadScoreExplainCard } from './LeadScoreExplainCard';
 import { type ScoredLead } from '@/hooks/useLeadScoring';
@@ -34,14 +35,14 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
     try {
       const headers = ['Attribute', 'Value'];
       const rows = [
-        ['Lead Name', lead.name],
-        ['Company', lead.company || 'N/A'],
-        ['Email', lead.email],
+        ['Lead Name', sanitizeCsvCell(lead.name)],
+        ['Company', sanitizeCsvCell(lead.company || 'N/A')],
+        ['Email', sanitizeCsvCell(lead.email)],
         ['Neural Score', lead.score],
-        ['Category', lead.category],
+        ['Category', sanitizeCsvCell(lead.category)],
         ['Churn Risk Score', lead.churnRisk?.risk_score || 0],
-        ['Risk Level', lead.churnRisk?.risk_level || 'low'],
-        ['Risk Factors', (lead.churnRisk?.factors || []).join('; ')],
+        ['Risk Level', sanitizeCsvCell(lead.churnRisk?.risk_level || 'low')],
+        ['Risk Factors', sanitizeCsvCell((lead.churnRisk?.factors || []).join('; '))],
         ['Extraction Date', new Date().toISOString()],
       ];
 
@@ -49,7 +50,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
         'data:text/csv;charset=utf-8,' +
         headers.join(',') +
         '\n' +
-        rows.map(e => e.join(',')).join('\n');
+        rows.map(e => e.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
 
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement('a');

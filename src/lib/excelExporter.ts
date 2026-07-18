@@ -1,3 +1,5 @@
+import { sanitizeCsvCell } from '@/utils/csvExport';
+
 export async function exportToExcel<T extends Record<string, unknown>>(
   data: T[],
   filename: string,
@@ -13,7 +15,15 @@ export async function exportToExcel<T extends Record<string, unknown>>(
       key,
       width: 20,
     }));
-    data.forEach(row => worksheet.addRow(row));
+    // Neutralize formula injection (CWE-1236): ExcelJS treats a string cell
+    // starting with = + - @ as a live formula, so sanitize string values.
+    data.forEach(row => {
+      const safeRow: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(row)) {
+        safeRow[key] = typeof value === 'string' ? sanitizeCsvCell(value) : value;
+      }
+      worksheet.addRow(safeRow);
+    });
   }
 
   const buffer = await workbook.xlsx.writeBuffer();

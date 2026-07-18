@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ActivityRecord } from '@/hooks/activities/useActivities';
 import { activityLabels, outcomeLabels } from './activityConstants';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 
 export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
   const headers = ['Data', 'Tipo', 'Contato', 'Resultado', 'Duração (min)', 'Notas'];
@@ -19,7 +20,9 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
   const csvContent = [
     headers.join(','),
     ...rows.map(row =>
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      row
+        .map(cell => `"${sanitizeCsvCell(String(cell)).replace(/"/g, '""')}"`)
+        .join(',')
     ),
   ].join('\n');
 
