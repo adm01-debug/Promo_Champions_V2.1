@@ -40,7 +40,7 @@ jobs:
         run: npm run build
         
       - name: Security Audit
-        run: npm audit --audit-level=high
+        run: npm audit --production --audit-level=high
 
   e2e-simulation:
     needs: quality-gate

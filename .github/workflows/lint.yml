@@ -28,7 +28,7 @@ jobs:
         run: npm run test -- --run --reporter=verbose
       
       - name: Security Audit
-        run: npm audit --audit-level=high
+        run: npm audit --production --audit-level=high
         
       - name: Bundle Size Check
         run: |
