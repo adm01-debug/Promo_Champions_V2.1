@@ -6,7 +6,7 @@ type Permission = string;
 type Role = 'admin' | 'manager' | 'salesperson';
 
 interface UserPermissions {
-  role: Role;
+  role: Role | null;
   permissions: Permission[];
 }
 
@@ -40,13 +40,17 @@ export const usePermissions = () => {
         .limit(1)
         .maybeSingle();
 
-      const role = (roleData?.role || 'salesperson') as Role;
-      const perms = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.salesperson;
+      // Fail-closed: users with no assigned role get zero permissions.
+      // Never default to 'salesperson' — that silently grants access to users
+      // whose role has not been provisioned yet.
+      if (!roleData?.role) {
+        return { role: null, permissions: [] };
+      }
 
-      return {
-        role,
-        permissions: perms,
-      };
+      const role = roleData.role as Role;
+      const perms = ROLE_PERMISSIONS[role] ?? [];
+
+      return { role, permissions: perms };
     },
     ...CONFIG_QUERY_OPTIONS,
   });
@@ -70,8 +74,8 @@ export const usePermissions = () => {
   };
 
   return {
-    role: permissions?.role,
-    permissions: permissions?.permissions || [],
+    role: permissions?.role ?? null,
+    permissions: permissions?.permissions ?? [],
     isLoading,
     hasPermission,
     hasAnyPermission,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Search, Clock, Play } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -19,12 +19,29 @@ function formatDuration(seconds: number) {
 }
 
 function HighlightedSnippet({ html }: { html: string }) {
-  // ts_headline returns text with <b></b> by default
+  // ts_headline wraps matched terms in <b>…</b>. We parse those markers ourselves
+  // instead of using dangerouslySetInnerHTML to block stored XSS (CWE-79).
+  const parts = html.split(/(<b>|<\/b>)/i);
+  let bold = false;
+  const nodes: React.ReactNode[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    if (p.toLowerCase() === "<b>") { bold = true; continue; }
+    if (p.toLowerCase() === "</b>") { bold = false; continue; }
+    if (!p) continue;
+    const text = p
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"');
+    nodes.push(
+      bold
+        ? <b key={i} className="bg-primary/20 text-foreground font-semibold rounded px-1">{text}</b>
+        : text,
+    );
+  }
   return (
-    <p
-      className="text-sm text-muted-foreground leading-relaxed [&_b]:bg-primary/20 [&_b]:text-foreground [&_b]:font-semibold [&_b]:rounded [&_b]:px-1"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <p className="text-sm text-muted-foreground leading-relaxed">{nodes}</p>
   );
 }
 

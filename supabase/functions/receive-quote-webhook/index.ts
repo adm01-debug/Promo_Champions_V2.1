@@ -260,6 +260,32 @@ Deno.serve(async (req) => {
         console.info(`[receive-quote-webhook] created quote ${quoteId}`);
       }
 
+      // ── Sync quote_items (structured rows) ───────────────────
+      // The quotes.items JSONB column is kept for backwards compat, but
+      // quote_items must also be populated so downstream RPCs (quote→order
+      // conversion) can read normalized rows (HIGH #5 fix).
+      if (quote.items && quote.items.length > 0) {
+        // Replace all items for this quote atomically.
+        await supabase.from("quote_items").delete().eq("quote_id", quoteId);
+
+        const itemRows = quote.items.map((item) => ({
+          quote_id: quoteId,
+          product_id: item.product_id ?? null,
+          product_name: item.product_name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          discount_amount: 0,
+          total_price: item.subtotal ?? item.quantity * item.unit_price,
+        }));
+
+        const { error: itemsErr } = await supabase.from("quote_items").insert(itemRows);
+        if (itemsErr) {
+          console.error("[receive-quote-webhook] quote_items sync error:", itemsErr);
+        } else {
+          console.info(`[receive-quote-webhook] synced ${itemRows.length} item(s) to quote_items for ${quoteId}`);
+        }
+      }
+
       // ── Upload de PDF com limite ──────────────────────────────
       if (pdf_base64) {
         try {
