@@ -49,7 +49,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       .not("stage", "in", "(closed_won,closed_lost)");
     if (ownerFilter) dealsQuery = dealsQuery.eq("salesperson_id", ownerFilter);
 
-    const { data: deals, error: dealsErr } = await dealsQuery;
+    const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
     if (dealsErr) throw dealsErr;
 
     // Pull closed_won for quota proxy (last period)
@@ -61,7 +61,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       .eq("stage", "closed_won")
       .gte("created_at", histStart.toISOString());
     if (ownerFilter) wonQuery = wonQuery.eq("salesperson_id", ownerFilter);
-    const { data: won } = await wonQuery;
+    const { data: won } = await wonQuery.limit(10000);
 
     // Quota = 1.2x last period closed_won, min 50000 per owner
     const quotaByOwner = new Map<string, number>();

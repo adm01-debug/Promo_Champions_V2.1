@@ -201,9 +201,14 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
       }
     }
 
-    // Build conversion rows + insights
+    // Build conversion rows + insights — batch upserts + parallel AI calls
     let upsertedMetrics = 0;
     let upsertedInsights = 0;
+    const calcAt = new Date().toISOString();
+
+    type StageInput = { from: string; rate: number; topLoss: { reason: string; count: number }[] };
+    const metricsRows: Array<Record<string, unknown>> = [];
+    const stageInputs: StageInput[] = [];
 
     for (const [from, b] of buckets) {
       const to = nextStage(from);
@@ -212,11 +217,9 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
       const converted = b.converted.size;
       const lost = b.lost.size;
       const rate = entered ? (converted / entered) * 100 : 0;
-      const avgDays = b.days.length
-        ? b.days.reduce((s, n) => s + n, 0) / b.days.length
-        : 0;
+      const avgDays = b.days.length ? b.days.reduce((s, n) => s + n, 0) / b.days.length : 0;
 
-      const metric = {
+      metricsRows.push({
         from_stage: from,
         to_stage: to,
         owner_id: ownerId,
@@ -227,40 +230,54 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
         avg_transition_days: Number(avgDays.toFixed(2)),
         period_start: periodStart,
         period_end: periodEnd,
-        calculated_at: new Date().toISOString(),
-      };
-      const { error: mErr } = await admin
-        .from('stage_conversion_metrics')
-        .upsert(metric, { onConflict: 'from_stage,to_stage,owner_id,period_start' });
-      if (!mErr) upsertedMetrics++;
+        calculated_at: calcAt,
+      });
 
-      // Loss reasons aggregation for this stage
       const reasonCounts = new Map<string, number>();
       for (const sid of b.lost) {
         const r = lostReasonBySale.get(sid);
         if (r) reasonCounts.set(r, (reasonCounts.get(r) || 0) + 1);
       }
       const topLoss = [...reasonCounts.entries()]
-        .sort((a, b) => b[1] - a[1])
+        .sort((a, b2) => b2[1] - a[1])
         .slice(0, 5)
         .map(([reason, count]) => ({ reason, count }));
 
-      const sev = severityFor(rate);
-      const ai = await callAi(from, rate, topLoss);
-      const insight = {
-        stage: from,
+      stageInputs.push({ from, rate, topLoss });
+    }
+
+    // Batch upsert all metrics in one query
+    if (metricsRows.length > 0) {
+      const { error: mErr } = await admin
+        .from('stage_conversion_metrics')
+        .upsert(metricsRows, { onConflict: 'from_stage,to_stage,owner_id,period_start' });
+      if (!mErr) upsertedMetrics = metricsRows.length;
+    }
+
+    // Parallel AI calls — all stages simultaneously instead of sequential
+    const aiResults = await Promise.all(stageInputs.map(inp => callAi(inp.from, inp.rate, inp.topLoss)));
+
+    // Collect insight rows
+    const insightRows = stageInputs.map((inp, i) => {
+      const ai = aiResults[i];
+      return {
+        stage: inp.from,
         owner_id: ownerId,
-        severity: sev,
-        conversion_rate: Number(rate.toFixed(2)),
-        top_loss_reasons: topLoss,
+        severity: severityFor(inp.rate),
+        conversion_rate: Number(inp.rate.toFixed(2)),
+        top_loss_reasons: inp.topLoss,
         recommendations: ai?.recommendations ?? [],
-        ai_summary: ai?.ai_summary ?? `Conversão de ${rate.toFixed(0)}% em ${from}.`,
-        calculated_at: new Date().toISOString(),
+        ai_summary: ai?.ai_summary ?? `Conversão de ${inp.rate.toFixed(0)}% em ${inp.from}.`,
+        calculated_at: calcAt,
       };
+    });
+
+    // Batch upsert all insights in one query
+    if (insightRows.length > 0) {
       const { error: iErr } = await admin
         .from('stage_bottleneck_insights')
-        .upsert(insight, { onConflict: 'stage,owner_id' });
-      if (!iErr) upsertedInsights++;
+        .upsert(insightRows, { onConflict: 'stage,owner_id' });
+      if (!iErr) upsertedInsights = insightRows.length;
     }
 
     return new Response(

@@ -29,7 +29,8 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       .select("id, account_id, contract_value, renewal_date, status, auto_renew, owner_salesperson_id")
       .lte("renewal_date", horizon)
       .gte("renewal_date", today.toISOString().slice(0, 10))
-      .in("status", ["upcoming", "at_risk"]);
+      .in("status", ["upcoming", "at_risk"])
+      .limit(1000);
 
     const renewals = (rows ?? []) as RenewalRow[];
     const buckets = { d90: 0, d60: 0, d30: 0, d7: 0 };
@@ -56,8 +57,9 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       }).filter(Boolean) as string[]
     );
 
-    // Batch notifications
+    // Batch notifications and tasks — no N+1 inserts inside loop
     const notifRows: Array<Record<string, unknown>> = [];
+    const taskRows: Array<Record<string, unknown>> = [];
 
     for (const r of renewals) {
       const days = Math.floor((new Date(r.renewal_date).getTime() - today.getTime()) / 86400000);
@@ -73,7 +75,7 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       const taskKey = `${r.owner_salesperson_id}:${bucket}`;
 
       if (!existingTaskKeys.has(taskKey)) {
-        const { error: tErr } = await supabase.from("tasks").insert({
+        taskRows.push({
           salesperson_id: r.owner_salesperson_id,
           title,
           description: `Renovação automática (account: ${r.account_id}). Status: ${r.status}.`,
@@ -81,10 +83,7 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
           status: "pending",
           due_date: dueDate,
         });
-        if (!tErr) {
-          tasksCreated++;
-          existingTaskKeys.add(taskKey); // prevent duplicates within same run
-        }
+        existingTaskKeys.add(taskKey); // prevent duplicates within same run
       }
 
       notifRows.push({
@@ -94,6 +93,13 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
         type: bucket <= 30 ? "warning" : "info",
         link: `/customer-success-360`,
       });
+    }
+
+    // Single batch insert for tasks
+    if (taskRows.length > 0) {
+      const { error: tErr } = await supabase.from("tasks").insert(taskRows);
+      if (!tErr) tasksCreated = taskRows.length;
+      else console.error("tasks batch insert error:", tErr);
     }
 
     // Batch insert all notifications in one query
