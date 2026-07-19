@@ -121,7 +121,8 @@ export async function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
       0: { halign: 'right', fontStyle: 'normal', cellWidth: pageWidth - 80 },
       1: { halign: 'right', fontStyle: 'bold', cellWidth: 50 },
     },
-    didParseCell: data => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    didParseCell: (data: any) => {
       if (data.row.index === summaryData.length - 1) {
         data.cell.styles.fontSize = 12;
         data.cell.styles.fontStyle = 'bold';
