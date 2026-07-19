@@ -188,61 +188,67 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
     console.info(`[auto-reassign-inactive] Using strategy: ${rotationStrategy}`);
     console.info(`[auto-reassign-inactive] Available salespeople:`, sortedSalespeople.map(s => `${s.name}(${s.total_sales})`));
 
-    let reassignedCount = 0;
+    // Plan all assignments in memory first (no DB calls per iteration)
+    const nowIso = new Date().toISOString();
+    type Assignment = {
+      client: ClientPortfolioRow;
+      targetSp: SalespersonPerformance;
+    };
+    const assignments: Assignment[] = [];
     let spIndex = 0;
 
     for (const client of eligibleClients) {
-      // Skip if no salespeople available
       if (sortedSalespeople.length === 0) break;
 
-      // Get next salesperson (exclude current owner)
       let targetSp = sortedSalespeople[spIndex % sortedSalespeople.length];
-      
-      // If same as current, try next
       if (targetSp.id === client.salesperson_id && sortedSalespeople.length > 1) {
         spIndex++;
         targetSp = sortedSalespeople[spIndex % sortedSalespeople.length];
       }
-
-      // Skip if only one salesperson and they already own this client
       if (targetSp.id === client.salesperson_id) continue;
 
-      // Update client portfolio
-      const { error: updateError } = await supabase
-        .from('client_portfolio')
-        .update({
-          salesperson_id: targetSp.id,
-          assigned_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', client.id);
+      assignments.push({ client, targetSp });
+      spIndex++;
+    }
 
-      if (updateError) {
-        console.error(`[auto-reassign-inactive] Error updating client ${client.id}:`, updateError);
-        continue;
+    // Batch 1: run all portfolio updates in parallel (each row changes a different salesperson_id)
+    const updateResults = await Promise.all(
+      assignments.map(({ client, targetSp }) =>
+        supabase
+          .from('client_portfolio')
+          .update({ salesperson_id: targetSp.id, assigned_at: nowIso, updated_at: nowIso })
+          .eq('id', client.id)
+      )
+    );
+    const failedIds = new Set<string>();
+    updateResults.forEach(({ error }, i) => {
+      if (error) {
+        console.error(`[auto-reassign-inactive] Error updating client ${assignments[i].client.id}:`, error);
+        failedIds.add(assignments[i].client.id);
       }
+    });
 
-      // Log the routing
-      const { error: logError } = await supabase
-        .from('lead_routing_log')
-        .insert({
-          client_id: client.client_id,
-          from_salesperson_id: client.salesperson_id,
-          to_salesperson_id: targetSp.id,
-          routing_reason: `auto_reassign_inactive`,
-          notes: `Reatribuição automática por inatividade (${inactivityThresholdDays} dias). Estratégia: ${rotationStrategy}`,
-        });
+    // Batch 2: single insert for all routing log rows
+    const logRows = assignments
+      .filter(({ client }) => !failedIds.has(client.id))
+      .map(({ client, targetSp }) => ({
+        client_id: client.client_id,
+        from_salesperson_id: client.salesperson_id,
+        to_salesperson_id: targetSp.id,
+        routing_reason: 'auto_reassign_inactive',
+        notes: `Reatribuição automática por inatividade (${inactivityThresholdDays} dias). Estratégia: ${rotationStrategy}`,
+      }));
 
-      if (logError) {
-        console.error(`[auto-reassign-inactive] Error logging routing:`, logError);
-      }
+    if (logRows.length > 0) {
+      const { error: logError } = await supabase.from('lead_routing_log').insert(logRows);
+      if (logError) console.error('[auto-reassign-inactive] Error batch-logging routing:', logError);
+    }
 
+    const reassignedCount = logRows.length;
+    for (const { client, targetSp } of assignments.filter(a => !failedIds.has(a.client.id))) {
       const clientName = client.clients?.[0]?.name || client.client_id;
       const fromName = client.salespeople?.[0]?.name || 'Unknown';
       console.info(`[auto-reassign-inactive] Reassigned client ${clientName} from ${fromName} to ${targetSp.name}`);
-      
-      reassignedCount++;
-      spIndex++;
     }
 
     console.info(`[auto-reassign-inactive] Completed. Reassigned ${reassignedCount} clients.`);

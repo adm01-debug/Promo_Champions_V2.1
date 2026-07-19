@@ -116,6 +116,8 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     if (recipientsError) throw recipientsError;
 
     const results = [];
+    // Collect audit rows during the loop; batch-insert once at the end
+    const auditRows: Record<string, unknown>[] = [];
 
     for (const recipient of recipients || []) {
       const recipientRankInfo = ranking.find(r => r.id === recipient.id);
@@ -127,6 +129,17 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
         (recipientRank > 0
           ? `Seu rank: #${recipientRank}.`
           : 'Você ainda não pontuou este mês.');
+
+      const baseAudit = {
+        sale_id,
+        seller_id: salesperson_id,
+        seller_name: salesperson_name,
+        sale_amount: amount,
+        seller_rank_at_time: sellerRank,
+        recipient_id: recipient.id,
+        recipient_rank_at_time: recipientRank,
+        message_sent: message,
+      };
 
       // A. In-App Notification
       if (recipient.notify_sales_in_app && recipient.auth_user_id) {
@@ -147,22 +160,10 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
               amount,
             },
           });
-
-          await supabase.from('sale_notifications_audit').insert({
-            sale_id,
-            seller_id: salesperson_id,
-            seller_name: salesperson_name,
-            sale_amount: amount,
-            seller_rank_at_time: sellerRank,
-            recipient_id: recipient.id,
-            recipient_rank_at_time: recipientRank,
-            notification_type: 'in-app',
-            channel: 'in-app',
-            message_sent: message,
-            status: 'success',
-          });
+          auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'success' });
         } catch (e) {
           console.error(`In-app failed for ${recipient.id}:`, e);
+          auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'failed', error_log: String(e) });
         }
       }
 
@@ -186,26 +187,26 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
             html: emailHtml,
           });
 
-          await supabase.from('sale_notifications_audit').insert({
-            sale_id,
-            seller_id: salesperson_id,
-            seller_name: salesperson_name,
-            sale_amount: amount,
-            seller_rank_at_time: sellerRank,
-            recipient_id: recipient.id,
-            recipient_rank_at_time: recipientRank,
+          auditRows.push({
+            ...baseAudit,
             notification_type: 'email',
             channel: 'email',
-            message_sent: message,
             status: emailResponse.error ? 'failed' : 'success',
             error_log: emailResponse.error ? JSON.stringify(emailResponse.error) : null,
           });
         } catch (e) {
           console.error(`Email failed for ${recipient.id}:`, e);
+          auditRows.push({ ...baseAudit, notification_type: 'email', channel: 'email', status: 'failed', error_log: String(e) });
         }
       }
 
       results.push({ id: recipient.id, name: recipient.name });
+    }
+
+    // Single batch insert for all audit rows (replaces N individual inserts)
+    if (auditRows.length > 0) {
+      const { error: auditErr } = await supabase.from('sale_notifications_audit').insert(auditRows);
+      if (auditErr) console.error('[broadcast-sale-notification] Audit batch insert error:', auditErr);
     }
 
     ctx.log('info', 'broadcast_ok', { notified: results.length, sale_id });

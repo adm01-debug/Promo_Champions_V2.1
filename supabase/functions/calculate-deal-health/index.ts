@@ -417,10 +417,7 @@ Deno.serve(async req => {
         .neq('status', 'lost')
         .limit(50);
 
-      const results = [];
-      for (const s of sales || []) {
-        results.push(await processOne(supabase, s.id));
-      }
+      const results = await Promise.all((sales || []).map(s => processOne(supabase, s.id)));
       return new Response(JSON.stringify({ processed: results.length, results }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
