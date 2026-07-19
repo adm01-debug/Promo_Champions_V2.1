@@ -47,7 +47,8 @@ Deno.serve(withRequestId('calibrate-win-probability', async (req, _ctx) => {
     const { data: sales, error } = await supabase
       .from("sales")
       .select("id, status, amount, salesperson_id, category, created_at, updated_at")
-      .gte("updated_at", since);
+      .gte("updated_at", since)
+      .limit(50000);
     if (error) throw error;
 
     const all = (sales ?? []) as SaleRow[];
