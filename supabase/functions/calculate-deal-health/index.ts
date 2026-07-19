@@ -81,7 +81,8 @@ async function gatherContext(
   const { data: recordings } = await supabase
     .from('call_recordings')
     .select('id')
-    .eq('sale_id', saleId);
+    .eq('sale_id', saleId)
+    .limit(100);
   const recordingIds = (recordings || []).map((r: { id: string }) => r.id);
 
   let criticalMomentsHigh = 0;
