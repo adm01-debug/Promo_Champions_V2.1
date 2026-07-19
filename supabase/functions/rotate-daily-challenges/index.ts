@@ -35,6 +35,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
       .select('id')
       .eq('challenge_date', today)
       .eq('is_active', true)
+      .limit(100)
 
     if (existingChallenges && existingChallenges.length > 0) {
       console.info('Daily challenges already exist for today:', today)

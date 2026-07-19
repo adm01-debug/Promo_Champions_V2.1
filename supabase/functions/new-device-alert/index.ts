@@ -227,7 +227,8 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
       const { data: subscriptions } = await supabase
         .from("push_subscriptions")
         .select("id")
-        .eq("user_id", data.user_id);
+        .eq("user_id", data.user_id)
+        .limit(100);
       
       if (subscriptions && subscriptions.length > 0) {
         // Invoke push notification function

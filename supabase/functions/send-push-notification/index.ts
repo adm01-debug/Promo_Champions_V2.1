@@ -122,7 +122,8 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
       .select('id, user_id, endpoint, p256dh, auth')
-      .in('user_id', user_ids);
+      .in('user_id', user_ids)
+      .limit(1000);
 
     if (fetchError) throw fetchError;
 

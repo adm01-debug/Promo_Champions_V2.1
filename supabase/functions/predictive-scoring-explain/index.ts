@@ -152,7 +152,8 @@ async function explainOne(
     const { data: portfolio } = await supabase
       .from('lead_scores')
       .select('score, factors, sales!inner(salesperson_id)')
-      .eq('sales.salesperson_id', sale.salesperson_id);
+      .eq('sales.salesperson_id', sale.salesperson_id)
+      .limit(5000);
     if (portfolio && portfolio.length > 0) {
       baseline =
         portfolio.reduce(

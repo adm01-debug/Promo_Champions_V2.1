@@ -110,9 +110,10 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
       .from('salespeople')
       .select('id, role')
       .eq('is_active', true)
-      .in('role', [role_type, 'hybrid']);
+      .in('role', [role_type, 'hybrid'])
+      .limit(500);
 
-    const { data: existingCars } = await admin.from('race_cars').select('salesperson_id, car_number');
+    const { data: existingCars } = await admin.from('race_cars').select('salesperson_id, car_number').limit(1000);
     const existingIds = new Set((existingCars ?? []).map((c) => c.salesperson_id));
     const usedNumbers = new Set((existingCars ?? []).map((c) => c.car_number));
     const toCreate: Array<Record<string, unknown>> = [];
