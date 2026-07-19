@@ -21,7 +21,8 @@ Deno.serve(withRequestId('check-quote-expiration', async (_req, ctx) => {
     .select('*, salespeople:created_by(id, name)')
     .eq('status', 'sent')
     .lte('valid_until', threeDaysFromNow.toISOString().split('T')[0])
-    .gte('valid_until', now.toISOString().split('T')[0]);
+    .gte('valid_until', now.toISOString().split('T')[0])
+    .limit(1000);
 
   if (fetchError) {
     ctx.log('error', 'fetch_failed', { error: fetchError.message });
