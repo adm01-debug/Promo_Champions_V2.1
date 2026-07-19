@@ -1,9 +1,10 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -145,7 +146,7 @@ Deno.serve(async (req) => {
     console.error("transcribe-call-recording fatal:", e);
     return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
   }
-});
+}));
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

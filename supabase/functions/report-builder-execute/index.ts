@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface ReportFilter {
   field: string;
@@ -74,7 +75,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   return parts.join(',') || '*';
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -264,4 +265,4 @@ Deno.serve(async req => {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-});
+}));

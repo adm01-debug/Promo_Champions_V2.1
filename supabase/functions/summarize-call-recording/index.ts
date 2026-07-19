@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -93,7 +94,7 @@ const SUMMARY_TOOL = {
   },
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -207,7 +208,7 @@ Deno.serve(async (req) => {
     console.error("summarize-call-recording error:", e);
     return json({ error: e instanceof Error ? e.message : "Erro interno" }, 500);
   }
-});
+}));
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

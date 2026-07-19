@@ -1,8 +1,8 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 /** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
 function describeError(e: unknown): {
@@ -485,4 +485,4 @@ export const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId('winloss-webhook-replay', handler));

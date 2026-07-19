@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -10,7 +11,7 @@ interface SendQuoteRequest {
   custom_message?: string;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
@@ -169,4 +170,4 @@ Deno.serve(async (req) => {
     JSON.stringify({ success: anySuccess, channels: results, pdf_url: signedPdfUrl }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
-});
+}));

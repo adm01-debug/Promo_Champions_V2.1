@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
@@ -460,4 +461,4 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-Deno.serve(handler);
+Deno.serve(withRequestId('sdr-consecutive-alerts', handler));

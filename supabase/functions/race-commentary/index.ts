@@ -1,4 +1,5 @@
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface CommentaryRequest {
   seasonName?: string;
@@ -48,7 +49,7 @@ Crie narrações curtas (1-2 frases, máx 180 caracteres), empolgantes, com gír
 Use nomes próprios. Nunca invente números — use apenas os fornecidos. Português do Brasil.
 NUNCA inclua hashtags, emojis em excesso (máx 1), ou aspas. Tom: animado, jornalístico.`;
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -169,4 +170,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
-});
+}));

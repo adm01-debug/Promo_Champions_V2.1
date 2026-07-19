@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 async function validateToken(token: string) {
   const supabase = createClient(
@@ -19,7 +20,7 @@ function getServiceClient() {
   );
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -323,4 +324,4 @@ Deno.serve(async (req) => {
     console.error("Ranking API error:", err);
     return new Response(JSON.stringify({ error: (err as Error).message }), { status: 500, headers });
   }
-});
+}));

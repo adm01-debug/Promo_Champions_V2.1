@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const dispositionMap: Record<string, string> = {
   completed: "connected",
@@ -8,7 +9,7 @@ const dispositionMap: Record<string, string> = {
   canceled: "no_answer",
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("twilio-call-status", async (req, _ctx) => {
   try {
     const form = await req.formData();
     const callSid = form.get("CallSid") as string;
@@ -70,4 +71,4 @@ Deno.serve(async (req) => {
     console.error("twilio-call-status error:", e);
     return new Response((e as Error).message, { status: 500 });
   }
-});
+}));
