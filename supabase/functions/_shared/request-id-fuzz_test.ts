@@ -15,7 +15,7 @@
 //
 // Uso: deno test --allow-read supabase/functions/_shared/request-id-fuzz_test.ts
 
-import { assert, assertEquals, assertMatch, assertNotEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals, assertMatch, assertNotEquals } from "jsr:@std/assert";
 import { withRequestId } from "./request-id.ts";
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

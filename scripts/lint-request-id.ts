@@ -16,7 +16,7 @@
 //   1 drift detectado (violadores ou entradas stale)
 //   2 erro inesperado
 
-import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
+import { walk } from "jsr:@std/fs/walk";
 
 const FUNCTIONS_DIR = "supabase/functions";
 const ALLOWLIST_PATH = "scripts/request-id-lint-allowlist.txt";

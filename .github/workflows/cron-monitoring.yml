@@ -30,7 +30,7 @@ jobs:
       VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
