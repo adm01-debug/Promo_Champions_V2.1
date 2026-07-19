@@ -54,7 +54,7 @@ const actionIcons: Record<
 };
 
 interface AuditLog {
-  id: string;
+  id: string | null;
   created_at: string | null;
   lead_name?: string | null;
   action_type?: string | null;
@@ -269,7 +269,7 @@ const FollowUpAudit = () => {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      logs.map((log: AuditLog) => {
+                      (logs as AuditLog[]).map((log) => {
                         const actionKey = log.action_type || 'unknown';
                         const action = actionIcons[actionKey] || {
                           icon: History,
@@ -280,7 +280,7 @@ const FollowUpAudit = () => {
 
                         return (
                           <TableRow
-                            key={log.id}
+                            key={log.id ?? ''}
                             className="hover:bg-muted/30 transition-colors"
                           >
                             <TableCell className="text-xs font-medium">
@@ -340,7 +340,7 @@ const FollowUpAudit = () => {
                                         action_type: log.action_type ?? '',
                                         details: log.details as string | { message_preview?: string } | null,
                                         retry_count: log.retry_count ?? 0,
-                                        id: log.id,
+                                        id: log.id ?? '',
                                       })
                                     }
                                   >

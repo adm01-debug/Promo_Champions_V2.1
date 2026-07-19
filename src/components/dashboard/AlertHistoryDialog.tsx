@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface Alert {
   id: string;
   title: string;
-  message: string;
+  message: string | null;
   priority: 'high' | 'medium' | 'low';
   type: string;
   created_at: string;

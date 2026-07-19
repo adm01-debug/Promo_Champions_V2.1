@@ -1,5 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 
 interface PredictBody {
   sale_id?: string;
@@ -237,7 +239,7 @@ async function predictForSale(saleId: string) {
   return payload;
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const body: PredictBody = await req.json().catch(() => ({}));
@@ -263,13 +265,12 @@ Deno.serve(async req => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    if (!body.sale_id) {
-      return new Response(JSON.stringify({ error: 'sale_id required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    const result = await predictForSale(body.sale_id);
+    const errs = collectErrors([
+      validateUUID(body.sale_id, 'sale_id', true),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+
+    const result = await predictForSale(body.sale_id!);
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -280,4 +281,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

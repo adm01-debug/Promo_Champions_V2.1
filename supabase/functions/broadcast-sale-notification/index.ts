@@ -1,34 +1,74 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-
-interface Payload {
-  sale_id: string;
-  salesperson_id: string;
-  salesperson_name: string;
-  client_name: string;
-  amount: number;
-}
 
 Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // ── Authentication ────────────────────────────────────────────────────
+  // Require a valid user JWT. Content (salesperson_name, client_name, amount)
+  // is read from the DB — NOT the request body — to prevent content injection.
+  let callerUserId: string;
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, serviceKey);
-
-    const body = (await req.json()) as Payload;
-    const { sale_id, salesperson_id, salesperson_name, client_name, amount } = body;
-
-    if (!sale_id || !salesperson_id || typeof amount !== 'number') {
-      throw new Error('Missing required fields: sale_id, salesperson_id, amount');
+    const ctx2 = await getUserClient(req);
+    callerUserId = ctx2.userId;
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: ' + e.message }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+    throw e;
+  }
+
+  try {
+    const supabase = getServiceClient("broadcast-sale-notification reads sale/salespeople, writes audit log");
+
+    const body = await req.json() as { sale_id?: string };
+    const { sale_id } = body;
+
+    if (!sale_id || typeof sale_id !== 'string') {
+      throw new Error('Missing required field: sale_id');
+    }
+
+    // Read sale data from DB — never trust caller-supplied salesperson_name,
+    // client_name, or amount (content injection / social engineering prevention).
+    const { data: sale, error: saleErr } = await supabase
+      .from('sales')
+      .select('id, salesperson_id, client_name, amount, salespeople(name, auth_user_id)')
+      .eq('id', sale_id)
+      .maybeSingle();
+
+    if (saleErr || !sale) {
+      return new Response(JSON.stringify({ error: 'Sale not found' }), {
+        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Authorization: only the salesperson on the sale or an admin may trigger.
+    if (sale.salesperson_id !== callerUserId) {
+      const { data: roleRow } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', callerUserId)
+        .maybeSingle();
+      if (!roleRow || !['admin', 'manager'].includes(roleRow.role)) {
+        return new Response(JSON.stringify({ error: 'Forbidden: only the seller or an admin may broadcast this sale' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    const salesperson_id: string = sale.salesperson_id ?? '';
+    const salesperson_name: string = (sale.salespeople as { name?: string } | null)?.name ?? 'Vendedor';
+    const client_name: string = sale.client_name ?? 'Cliente';
+    const amount: number = Number(sale.amount ?? 0);
 
     const formattedAmount = new Intl.NumberFormat('pt-BR', {
       style: 'currency',

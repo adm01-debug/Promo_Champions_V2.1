@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { chunkedIn } from '@/lib/supabase/chunkedIn';
+import { chunkedIn, type PostgrestLike } from '@/lib/supabase/chunkedIn';
 import { CACHE_TIMES } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
@@ -20,7 +20,7 @@ interface DealSummary {
 
 function generateLocalSummary(deal: {
   client_name: string;
-  amount: number;
+  amount: number | null;
   status: string;
   created_at: string;
   updated_at: string;
@@ -32,7 +32,7 @@ function generateLocalSummary(deal: {
     (Date.now() - new Date(deal.created_at).getTime()) / 86400000
   );
 
-  const summary = `Deal com ${deal.client_name} de R$ ${deal.amount.toLocaleString('pt-BR')} está em "${deal.status}" há ${daysSince} dia(s). Total no funil: ${totalDays} dia(s).`;
+  const summary = `Deal com ${deal.client_name} de R$ ${(deal.amount ?? 0).toLocaleString('pt-BR')} está em "${deal.status}" há ${daysSince} dia(s). Total no funil: ${totalDays} dia(s).`;
 
   const next_steps: string[] = [];
   const risks: string[] = [];
@@ -52,7 +52,7 @@ function generateLocalSummary(deal: {
   }
 
   if (daysSince > 7) risks.push(`Sem atualização há ${daysSince} dias`);
-  if (deal.amount > 50000 && daysSince > 5) risks.push('Deal de alto valor estagnado');
+  if ((deal.amount ?? 0) > 50000 && daysSince > 5) risks.push('Deal de alto valor estagnado');
   if (totalDays > 60) risks.push('Ciclo de venda acima da média');
 
   return { summary, next_steps, risks };
@@ -69,19 +69,19 @@ export const useDealSummaries = (dealIds: string[]) => {
         (chunk) => supabase
           .from('sales')
           .select('id, client_name, amount, status, created_at, updated_at')
-          .in('id', chunk as string[]),
+          .in('id', chunk as string[]) as unknown as PostgrestLike<SaleRow>,
         { parallel: true, label: 'deal-summaries' },
       );
 
       return data.map(d => {
-        const { summary, next_steps, risks } = generateLocalSummary(d);
+        const { summary, next_steps, risks } = generateLocalSummary({ ...d, amount: d.amount ?? 0 });
         const daysSince = Math.floor(
           (Date.now() - new Date(d.updated_at).getTime()) / 86400000
         );
         return {
           deal_id: d.id,
           client_name: d.client_name,
-          amount: d.amount,
+          amount: d.amount ?? 0,
           status: d.status,
           summary,
           next_steps,

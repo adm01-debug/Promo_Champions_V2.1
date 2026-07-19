@@ -175,6 +175,7 @@ export function SDRAlertHistory() {
                 <Button
                   size="icon"
                   variant="ghost"
+                  aria-label="Salvar limite de rejeição"
                   className="h-6 w-6"
                   onClick={() => {
                     toast.success("Limite de rejeição atualizado");
@@ -186,6 +187,7 @@ export function SDRAlertHistory() {
                 <Button
                   size="icon"
                   variant="ghost"
+                  aria-label="Cancelar edição"
                   className="h-6 w-6"
                   onClick={() => setIsEditingRejection(false)}
                 >

@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
@@ -92,7 +93,7 @@ export function exportAuditLogsToCSV(logs: AuditLog[]): void {
     l.ip_address ?? '',
   ]);
   const csv = [headers, ...rows]
-    .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+    .map(r => r.map(c => `"${sanitizeCsvCell(String(c)).replace(/"/g, '""')}"`).join(','))
     .join('\n');
   const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);

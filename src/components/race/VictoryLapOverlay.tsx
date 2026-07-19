@@ -59,6 +59,7 @@ export function VictoryLapOverlay({ events, cars, onPlaySound }: VictoryLapOverl
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Fechar"
               className="absolute top-2 right-2 text-amber-900 hover:bg-amber-200"
               onClick={() => setOpen(false)}
             >

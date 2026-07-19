@@ -5,6 +5,7 @@
 // - Marca sucesso; em falha, agenda retry com backoff exponencial (via RPC).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface JobPayload {
   id: string;                 // recording_id (também PK em call_recordings)
@@ -32,7 +33,7 @@ interface JobRow {
 const WORKER_ID = `edge-${crypto.randomUUID().slice(0, 8)}`;
 const BATCH_SIZE = 20;
 
-Deno.serve(async (req: Request) => {
+Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
@@ -124,7 +125,7 @@ Deno.serve(async (req: Request) => {
   };
   console.log("[process-call-recording-ingest] batch done", summary);
   return json(summary, 200);
-});
+}));
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {

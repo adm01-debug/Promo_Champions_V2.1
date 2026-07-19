@@ -9,6 +9,7 @@ export default tseslint.config(
     // conflict with the Node/TS parser. They are linted independently via `deno lint`.
     ignores: [
       'dist',
+      'coverage',
       'node_modules',
       '.lovable',
       'bun.lock',

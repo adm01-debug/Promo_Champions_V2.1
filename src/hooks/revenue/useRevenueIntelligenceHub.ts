@@ -84,7 +84,7 @@ export interface BuyingCommitteeMember {
 }
 
 export function useBuyingCommittee(saleId?: string) {
-  return useQuery({
+  return useQuery<BuyingCommitteeMember[]>({
     queryKey: ["buying-committee", saleId],
     queryFn: async () => {
       if (!saleId) return [];
@@ -163,7 +163,7 @@ export interface QBRReport {
 }
 
 export function useQBRReports() {
-  return useQuery({
+  return useQuery<QBRReport[]>({
     queryKey: ["qbr-reports"],
     queryFn: async () => {
       const { data, error } = await supabase

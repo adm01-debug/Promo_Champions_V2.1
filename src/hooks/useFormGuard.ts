@@ -26,6 +26,7 @@ export function useFormGuard(
         e.returnValue = message;
         return message;
       }
+      return undefined;
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);

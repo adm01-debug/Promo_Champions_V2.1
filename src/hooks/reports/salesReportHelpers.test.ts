@@ -85,6 +85,16 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
   const start = new Date('2026-01-05T00:00:00Z');
   const end = new Date('2026-01-11T00:00:00Z');
 
+  it('weekly trata amount nulo como zero (linha 128)', () => {
+    const series = buildRevenueSeries(
+      [sale({ amount: null, status: 'completed', created_at: '2026-01-05T09:00:00Z' })],
+      'weekly',
+      start,
+      end,
+    );
+    expect(series[0].value).toBe(0);
+  });
+
   it('weekly retorna 1 ponto por dia com receita agregada', () => {
     const series = buildRevenueSeries(
       [
@@ -115,6 +125,17 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
     const total = series.reduce((a, p) => a + p.value, 0);
     expect(total).toBe(999);
   });
+
+  it('monthly trata amount nulo como zero (linha 138)', () => {
+    const series = buildRevenueSeries(
+      [sale({ amount: null, status: 'completed', created_at: '2026-01-05T09:00:00Z' })],
+      'monthly',
+      new Date('2026-01-01T00:00:00Z'),
+      new Date('2026-01-31T00:00:00Z'),
+    );
+    const total = series.reduce((a, p) => a + p.value, 0);
+    expect(total).toBe(0);
+  });
 });
 
 describe('salesReportHelpers.buildTopProducts', () => {
@@ -140,6 +161,13 @@ describe('salesReportHelpers.buildTopProducts', () => {
       sale({ product_name: 'X', amount: 999, status: 'lost' }),
     ]);
     expect(result).toEqual([{ name: '—', value: 100 }]);
+  });
+
+  it('trata amount nulo como zero em venda ganha (linha 149)', () => {
+    const result = buildTopProducts([
+      sale({ product_name: 'A', amount: null }),
+    ]);
+    expect(result).toEqual([{ name: 'A', value: 0 }]);
   });
 });
 
@@ -194,6 +222,11 @@ describe('salesReportHelpers.buildTeamRanking', () => {
     const r = buildTeamRanking([sale({ salesperson_id: null, amount: 100 })], people);
     expect(r).toEqual([]);
   });
+
+  it('trata amount nulo como zero (linha 180)', () => {
+    const r = buildTeamRanking([sale({ salesperson_id: 'sp-1', amount: null })], people);
+    expect(r).toEqual([{ name: 'Ana', value: 0 }]);
+  });
 });
 
 describe('salesReportHelpers.buildTopDeals', () => {
@@ -226,6 +259,20 @@ describe('salesReportHelpers.buildTopDeals', () => {
       amount: 0,
       status: '—',
     });
+  });
+
+  it('ordena corretamente com amounts nulos em múltiplos registros (linha 197)', () => {
+    const people: SalespersonRow[] = [];
+    const r = buildTopDeals(
+      [
+        sale({ client_name: 'C1', amount: null }),
+        sale({ client_name: 'C2', amount: null }),
+      ],
+      people,
+    );
+    expect(r).toHaveLength(2);
+    expect(r[0].amount).toBe(0);
+    expect(r[1].amount).toBe(0);
   });
 });
 

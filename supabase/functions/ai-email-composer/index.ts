@@ -1,6 +1,10 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+
+const MAX_CUSTOM_INSTRUCTIONS = 500;
 
 interface ContactContext {
   name?: string;
@@ -99,6 +103,19 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
   }
 
   try {
+    // All modes require a valid JWT — prevents anonymous AI credit abuse
+    let authHeader: string;
+    try {
+      const authCtx = await getUserClient(req);
+      authHeader = authCtx.authHeader;
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
       return new Response(
@@ -108,6 +125,13 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     }
 
     const body = (await req.json()) as RequestBody;
+
+    // Validate and length-cap custom_instructions to prevent prompt injection
+    const instrErr = validateString(body.custom_instructions, "custom_instructions", {
+      maxLength: MAX_CUSTOM_INSTRUCTIONS,
+    });
+    if (instrErr) return validationErrorResponse([instrErr], corsHeaders);
+
     const mode = body.mode ?? "sequence";
     const goal = body.goal ?? "follow_up";
     const tone = body.tone ?? "consultivo";
@@ -117,7 +141,6 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
 
     // Single mode: auto-resolve context with caller's JWT (RLS enforced)
     if (mode === "single" && body.recipient_id && body.recipient_type && body.recipient_type !== "manual") {
-      const authHeader = req.headers.get("Authorization") ?? "";
       const supabase = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
         Deno.env.get("SUPABASE_ANON_KEY") ?? "",

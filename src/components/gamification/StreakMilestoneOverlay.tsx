@@ -31,6 +31,7 @@ export function StreakMilestoneOverlay({
     } else {
       setShowContent(false);
     }
+    return undefined;
   }, [isVisible]);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function StreakMilestoneOverlay({
       const timer = setTimeout(() => onComplete(), 4500);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isVisible, onComplete]);
 
   return (

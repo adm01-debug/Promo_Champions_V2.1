@@ -16,6 +16,7 @@ import { TelemetryTopOffenders } from "@/components/admin/telemetry/TelemetryTop
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { sanitizeCsvCell } from "@/utils/csvExport";
 
 interface TelemetryRow {
   id: string; operation: string; table_name: string | null; rpc_name: string | null;
@@ -68,10 +69,22 @@ export default function AdminTelemetriaPage() {
   };
 
   const handleExportCSV = () => {
-    if (rows.length === 0) return toast.error("Nenhum dado para exportar");
+    if (rows.length === 0) { toast.error("Nenhum dado para exportar"); return; }
     const headers = ["Data/Hora", "Operação", "Tabela/RPC", "Duração (ms)", "Severidade", "Registros", "Limit", "Offset", "Count Mode", "Erro"];
-    const csvRows = rows.map(r => [new Date(r.created_at).toLocaleString("pt-BR"), r.operation, r.table_name || r.rpc_name || "-", r.duration_ms, r.severity, r.record_count ?? "-", r.query_limit ?? "-", r.query_offset ?? "-", r.count_mode ?? "-", `"${(r.error_message || "").replace(/"/g, '""')}"`]);
-    const blob = new Blob(["\uFEFF" + [headers.join(";"), ...csvRows.map(r => r.join(";"))].join("\n")], { type: "text/csv;charset=utf-8;" });
+    const sc = (v: unknown) => `"${sanitizeCsvCell(String(v ?? '')).replace(/"/g, '""')}"`;
+    const csvRows = rows.map(r => [
+      sc(new Date(r.created_at).toLocaleString("pt-BR")),
+      sc(r.operation),
+      sc(r.table_name || r.rpc_name || "-"),
+      r.duration_ms,
+      sc(r.severity),
+      r.record_count ?? "-",
+      r.query_limit ?? "-",
+      r.query_offset ?? "-",
+      sc(r.count_mode ?? "-"),
+      sc(r.error_message || ""),
+    ]);
+    const blob = new Blob(["\uFEFF" + [headers.map(h => `"${h}"`).join(";"), ...csvRows.map(r => r.join(";"))].join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `telemetria_${format(new Date(), "yyyy-MM-dd")}_${timeFilter}.csv`; a.click();
     URL.revokeObjectURL(url);
@@ -79,7 +92,7 @@ export default function AdminTelemetriaPage() {
   };
 
   const handleExportPDF = async () => {
-    if (rows.length === 0) return toast.error("Nenhum dado para exportar");
+    if (rows.length === 0) { toast.error("Nenhum dado para exportar"); return; }
     try {
       const { default: jsPDF } = await import("jspdf");
       const { default: autoTable } = await import("jspdf-autotable");

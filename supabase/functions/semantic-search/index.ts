@@ -1,5 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 interface SearchRequest {
   query: string;
@@ -21,7 +23,7 @@ interface ProductResult {
 const cache = new Map<string, { ts: number; data: unknown }>();
 const TTL_MS = 5 * 60 * 1000;
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -29,14 +31,13 @@ Deno.serve(async (req) => {
   try {
     const { query, limit = 20 } = (await req.json()) as SearchRequest;
 
-    if (!query || typeof query !== "string" || query.trim().length === 0) {
-      return new Response(JSON.stringify({ error: "query is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const errs = collectErrors([
+      validateString(query, "query", { required: true, maxLength: 500 }),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
-    const cacheKey = `${query.trim().toLowerCase()}::${limit}`;
+    const safeLimit = Math.min(Math.max(1, Number(limit) || 20), 50);
+    const cacheKey = `${query.trim().toLowerCase()}::${safeLimit}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < TTL_MS) {
       return new Response(JSON.stringify({ ...cached.data, cached: true }), {
@@ -143,7 +144,7 @@ Deno.serve(async (req) => {
     const { data: products, error } = await supabase.rpc("search_products_semantic", {
       _keywords: keywords,
       _query: query,
-      _limit: limit,
+      _limit: safeLimit,
     });
 
     if (error) {
@@ -171,4 +172,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

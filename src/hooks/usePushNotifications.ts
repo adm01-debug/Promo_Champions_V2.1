@@ -210,17 +210,21 @@ export function usePushNotifications() {
     toast.success('Notificação de teste enviada!');
   }, [state.permission]);
 
-  // Initialize on mount
+  // Initialize on mount — guard against setState-after-unmount
   useEffect(() => {
+    let cancelled = false;
+
     const init = async () => {
       const isSupported = checkSupport();
-      
+
       if (!isSupported) {
-        setState(prev => ({ 
-          ...prev, 
-          isSupported: false, 
-          isLoading: false 
-        }));
+        if (!cancelled) {
+          setState(prev => ({
+            ...prev,
+            isSupported: false,
+            isLoading: false
+          }));
+        }
         return;
       }
 
@@ -232,7 +236,7 @@ export function usePushNotifications() {
       if ('serviceWorker' in navigator) {
         try {
           registration = (await navigator.serviceWorker.getRegistration('/')) ?? null;
-          
+
           if (registration && permission === 'granted') {
             const subscription = await registration.pushManager.getSubscription();
             isSubscribed = !!subscription;
@@ -244,16 +248,19 @@ export function usePushNotifications() {
         }
       }
 
-      setState({
-        isSupported: true,
-        isSubscribed: isSubscribed || permission === 'granted',
-        isLoading: false,
-        permission,
-        serviceWorkerRegistration: registration
-      });
+      if (!cancelled) {
+        setState({
+          isSupported: true,
+          isSubscribed: isSubscribed || permission === 'granted',
+          isLoading: false,
+          permission,
+          serviceWorkerRegistration: registration
+        });
+      }
     };
 
     init();
+    return () => { cancelled = true; };
   }, [checkSupport]);
 
   return {

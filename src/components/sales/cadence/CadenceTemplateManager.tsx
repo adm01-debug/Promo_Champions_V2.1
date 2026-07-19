@@ -225,9 +225,10 @@ export function CadenceTemplateManager() {
                 {templates.map(t => (
                   <Card key={t.id} className="relative overflow-hidden hover:border-primary/50 transition-colors">
                     <div className="absolute top-2 right-2 flex gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Excluir template"
                         className="h-8 w-8 text-destructive"
                         onClick={() => setTemplates(prev => prev.filter(x => x.id !== t.id))}
                       >

@@ -126,7 +126,7 @@ export const BuyingCommitteeMap: FC<Props> = ({ saleId }) => {
                       </div>
                     </div>
                   </div>
-                  <Button size="icon" variant="ghost" onClick={() => del.mutate(m.id)}>
+                  <Button size="icon" variant="ghost" aria-label="Remover membro" onClick={() => del.mutate(m.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>

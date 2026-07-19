@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect, memo } from 'react';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import Papa from 'papaparse';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 import { format, startOfMonth, parseISO, startOfDay, endOfDay, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -316,7 +317,14 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   };
 
   const exportCSV = () => {
-    const csv = Papa.unparse(accounts);
+    const sanitizedAccounts = accounts.map(acc => {
+      const safe: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(acc as unknown as Record<string, unknown>)) {
+        safe[k] = typeof v === 'string' ? sanitizeCsvCell(v) : v;
+      }
+      return safe;
+    });
+    const csv = Papa.unparse(sanitizedAccounts);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);

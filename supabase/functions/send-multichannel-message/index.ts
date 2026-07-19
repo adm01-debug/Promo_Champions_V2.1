@@ -89,13 +89,35 @@ async function sendZapi(
   return { ok: true, providerMessageId: j?.messageId || j?.id, raw: j };
 }
 
+const unauthorized = (msg: string) =>
+  new Response(JSON.stringify({ ok: false, error: msg }), {
+    status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const forbidden = (msg: string) =>
+  new Response(JSON.stringify({ ok: false, error: msg }), {
+    status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const anonKey     = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+  // ── Authentication guard ───────────────────────────────────────────────
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return unauthorized("Missing Authorization header");
+
+  const callerClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authHeader } },
+  });
+  const { data: { user }, error: authErr } = await callerClient.auth.getUser();
+  if (authErr || !user) return unauthorized("Invalid or expired token");
+  // ──────────────────────────────────────────────────────────────────────
+
+  const supabase = createClient(supabaseUrl, serviceKey);
 
   try {
     const payload = (await req.json()) as Payload;
@@ -103,6 +125,16 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ ok: false, error: "Missing required fields" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // ── Authorization: caller may only send as themselves unless they are admin
+    if (payload.ownerId !== user.id) {
+      // Check if caller has admin role
+      const { data: hasAdmin } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      if (!hasAdmin) return forbidden("Cannot send messages on behalf of another user");
     }
 
     const isMock = req.headers.get("x-mock-provider") === "true";

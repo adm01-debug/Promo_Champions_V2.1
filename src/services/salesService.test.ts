@@ -196,3 +196,42 @@ describe('salesService.createSale', () => {
     await expect(salesService.createSale({} as never)).rejects.toThrow('rls');
   });
 });
+
+describe('salesService.getSales — branch gaps', () => {
+  beforeEach(() => {
+    selectMock.mockReturnValue({ order: orderMock });
+    orderMock.mockReturnValue({ limit: limitMock });
+    fromMock.mockImplementation(() => ({ select: selectMock }));
+  });
+
+  it('retorna cliente vazio quando client e client_name são nulos', async () => {
+    const row = {
+      id: 'aaaaaaaa-uuid',
+      amount: 0,
+      status: 'pending',
+      created_at: '2026-03-01T00:00:00Z',
+      client: null,
+      product: null,
+      client_name: null,
+      product_name: null,
+    };
+    limitMock.mockResolvedValue({ data: [row], error: null });
+    const result = await salesService.getSales();
+    expect(result[0].cliente).toBe('');
+    expect(result[0].produto).toBe('');
+  });
+
+  it('usa sale.status como statusLabel quando status não está no mapa', async () => {
+    const row = {
+      id: 'bbbbbbbb-uuid',
+      amount: 500,
+      status: 'custom_unknown_status',
+      created_at: '2026-03-01T00:00:00Z',
+      client: { name: 'X' },
+      product: { name: 'Y', sku: null },
+    };
+    limitMock.mockResolvedValue({ data: [row], error: null });
+    const result = await salesService.getSales();
+    expect(result[0].statusLabel).toBe('custom_unknown_status');
+  });
+});

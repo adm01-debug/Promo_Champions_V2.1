@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useRef, memo } from 'react';
+import { sanitizeCsvCell } from '@/utils/csvExport';
 import { motion } from 'framer-motion';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -151,7 +152,7 @@ export const Speedometer = memo(
     const handleExportCSV = () => {
       if (!displayData.length) return;
       const headers = ['Period', 'Value'];
-      const rows = displayData.map(d => [d.name, d.value]);
+      const rows = displayData.map(d => [sanitizeCsvCell(String(d.name)), d.value]);
       const csvContent = [headers, ...rows].map(e => e.join(',')).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');

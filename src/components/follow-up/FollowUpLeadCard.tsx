@@ -154,6 +154,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
                       <Button
                         size="icon"
                         variant="ghost"
+                        aria-label="Ver histórico de ações"
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
                         onClick={() => onOpenAudit(lead)}
                       >
@@ -170,6 +171,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
                       <Button
                         size="icon"
                         variant="ghost"
+                        aria-label="Enviar WhatsApp sugerido"
                         className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
                         onClick={() => onWhatsAppClick(lead)}
                       >

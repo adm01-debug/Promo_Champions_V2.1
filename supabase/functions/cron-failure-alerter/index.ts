@@ -2,6 +2,7 @@
 // Runs periodically (via pg_cron), scans cron.job_run_details for failures in the
 // last N minutes and creates admin notifications (deduped by (jobid, start_time)).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,12 +18,10 @@ interface CronFailure {
   end_time: string | null;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const requestId = crypto.randomUUID();
-  const log = (level: string, msg: string, extra: Record<string, unknown> = {}) =>
-    console.log(JSON.stringify({ level, requestId, fn: "cron-failure-alerter", msg, ...extra }));
+  const { requestId, log } = ctx;
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -144,4 +143,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

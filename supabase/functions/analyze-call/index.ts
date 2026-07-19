@@ -1,6 +1,10 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { validateString, validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+
+const MAX_TRANSCRIPT_LENGTH = 20_000;
 
 interface AnalyzePayload {
   recording_id: string;
@@ -11,6 +15,17 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Verify caller identity before consuming AI credits
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
@@ -19,12 +34,15 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
     const supabase = createClient(SUPABASE_URL, SERVICE_ROLE);
 
     const body = (await req.json()) as AnalyzePayload;
-    if (!body.recording_id || !body.transcript_text) {
-      return new Response(JSON.stringify({ error: "recording_id e transcript_text obrigatórios" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+
+    const errs = collectErrors([
+      validateUUID(body.recording_id, "recording_id", true),
+      validateString(body.transcript_text, "transcript_text", {
+        required: true,
+        maxLength: MAX_TRANSCRIPT_LENGTH,
+      }),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
     await supabase.from("call_recordings").update({ status: "analyzing" }).eq("id", body.recording_id);
 

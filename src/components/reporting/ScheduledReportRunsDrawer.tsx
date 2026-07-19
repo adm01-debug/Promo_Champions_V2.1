@@ -65,7 +65,7 @@ export const ScheduledReportRunsDrawer = ({ scheduleId, scheduleName, onClose }:
                 )}
               </div>
               {r.file_path && (
-                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleDownload(r.file_path!)}>
+                <Button variant="ghost" size="icon" aria-label="Baixar relatório" className="h-8 w-8 shrink-0" onClick={() => handleDownload(r.file_path!)}>
                   <Download className="h-4 w-4" />
                 </Button>
               )}

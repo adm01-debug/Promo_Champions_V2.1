@@ -26,7 +26,7 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    mutationFn: (input: TableInsert<'clients'>) => clientService.createClient(input),
+    mutationFn: (input: TableInsert<'clients'>) => clientService.createClient(input as unknown as Partial<Client> & Record<string, unknown>),
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       if (data?.id) index('client', data.id);
@@ -42,7 +42,7 @@ export const useUpdateClient = () => {
 
   return useMutation({
     mutationFn: ({ id, ...updates }: { id: string } & TableUpdate<'clients'>) =>
-      clientService.updateClient(id, updates),
+      clientService.updateClient(id, updates as unknown as Partial<Client> & Record<string, unknown>),
     onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
       const previous = queryClient.getQueryData(['clients']);

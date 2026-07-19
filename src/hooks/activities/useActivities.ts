@@ -61,6 +61,10 @@ export interface ActivityStats {
 interface UseActivitiesOptions {
   userId?: string;
   clientId?: string;
+  /** ISO date string (YYYY-MM-DD or full ISO) — only return activities on or after this date */
+  since?: string;
+  /** Row cap to prevent unbounded queries (default: 1000) */
+  limit?: number;
 }
 
 export const useActivities = (filters?: UseActivitiesOptions) => {
@@ -70,10 +74,15 @@ export const useActivities = (filters?: UseActivitiesOptions) => {
       let query = supabase
         .from('activities')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(filters?.limit ?? 1000);
 
       if (filters?.userId) {
         query = query.eq('salesperson_id', filters.userId);
+      }
+
+      if (filters?.since) {
+        query = query.gte('created_at', filters.since);
       }
 
       const { data, error } = await query;

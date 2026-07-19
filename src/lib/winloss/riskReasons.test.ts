@@ -56,6 +56,11 @@ describe('inferReasonCode', () => {
     expect(inferReasonCode('mensagem qualquer')).toBe('CROSSED_SIGNALS');
     expect(inferReasonCode('')).toBe('CROSSED_SIGNALS');
   });
+
+  it('trata null/undefined via fallback ?? "" (linha 92)', () => {
+    expect(inferReasonCode(null as unknown as string)).toBe('CROSSED_SIGNALS');
+    expect(inferReasonCode(undefined as unknown as string)).toBe('CROSSED_SIGNALS');
+  });
 });
 
 describe('isRiskReasonCode', () => {

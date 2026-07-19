@@ -1,5 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -76,16 +78,19 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
   return emb;
 }
 
-Deno.serve(async (req) => {
+const VALID_ENTITY_TYPES = Object.keys(TABLE_BY_TYPE) as EntityType[];
+
+Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
     const { entity_type, entity_id, force = false } = (await req.json()) as IndexRequest;
-    if (!entity_type || !entity_id || !TABLE_BY_TYPE[entity_type]) {
-      return new Response(JSON.stringify({ error: "invalid entity_type or entity_id" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+
+    const errs = collectErrors([
+      validateEnum(entity_type, "entity_type", VALID_ENTITY_TYPES, true),
+      validateUUID(entity_id, "entity_id", true),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
@@ -164,4 +169,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

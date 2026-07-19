@@ -92,6 +92,7 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({
         size="icon"
         className="fixed bottom-20 right-4 z-50 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm border shadow-sm opacity-40 hover:opacity-100 transition-opacity"
         onClick={() => setVisible(true)}
+        aria-label="Abrir monitor de performance"
         title="Performance Monitor"
       >
         <Activity className="h-3.5 w-3.5" />
@@ -116,6 +117,7 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({
             <Button
               variant="ghost"
               size="icon"
+              aria-label={expanded ? "Recolher" : "Expandir"}
               className="h-5 w-5"
               onClick={() => setExpanded(e => !e)}
             >
@@ -128,6 +130,7 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Fechar monitor"
               className="h-5 w-5"
               onClick={() => setVisible(false)}
             >

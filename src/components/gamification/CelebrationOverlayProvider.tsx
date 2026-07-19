@@ -149,15 +149,15 @@ export function CelebrationOverlayProvider() {
         const newRecord = payload.new as { total_xp?: number; salesperson_id?: string } | null;
         const oldRecord = payload.old as { total_xp?: number; salesperson_id?: string } | null;
         if (!newRecord || !oldRecord) return;
-        const oldLevel = calculateLevelFromXP(oldRecord.total_xp);
-        const newLevel = calculateLevelFromXP(newRecord.total_xp);
+        const oldLevel = calculateLevelFromXP(oldRecord.total_xp ?? 0);
+        const newLevel = calculateLevelFromXP(newRecord.total_xp ?? 0);
         if (newLevel.level > oldLevel.level) {
           const levelInfo = getLevelInfo(newLevel.level);
           celebrationQueueRef.current.push({
             type: 'levelUp',
             data: {
-              salespersonId: newRecord.salesperson_id,
-              salespersonName: salespersonNamesRef.current.get(newRecord.salesperson_id) || 'Vendedor',
+              salespersonId: newRecord.salesperson_id ?? '',
+              salespersonName: salespersonNamesRef.current.get(newRecord.salesperson_id ?? '') || 'Vendedor',
               level: newLevel.level,
               levelTitle: levelInfo.title,
               levelEmoji: levelInfo.emoji,

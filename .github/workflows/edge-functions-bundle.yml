@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -35,7 +35,7 @@ jobs:
       # Cache the Deno module download directory so repeat runs are fast and
       # network blips don't masquerade as bundle failures.
       - name: Cache Deno dependencies
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ~/.cache/deno
           key: deno-${{ runner.os }}-${{ hashFiles('supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: Upload bundle report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: edge-functions-bundle-report
           path: bundle-report.txt

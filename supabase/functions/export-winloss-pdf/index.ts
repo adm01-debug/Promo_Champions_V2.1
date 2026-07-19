@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 interface AnalysisRow {
   outcome: string;
@@ -13,11 +13,25 @@ interface AnalysisRow {
 Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  // ── Authentication ────────────────────────────────────────────────────
+  // Require a valid user JWT — prevents unauthenticated callers from
+  // exfiltrating win/loss competitive intelligence.
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    await getUserClient(req);
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: ' + e.message }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    throw e;
+  }
+
+  try {
+    // Service client needed to read win_loss_analyses regardless of RLS row
+    // ownership (report aggregates across all accessible analyses).
+    const supabase = getServiceClient("export-winloss-pdf aggregates win_loss_analyses for report");
 
     const { data: analyses } = await supabase
       .from('win_loss_analyses')

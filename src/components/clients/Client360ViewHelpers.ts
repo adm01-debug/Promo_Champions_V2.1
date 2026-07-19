@@ -6,7 +6,7 @@ import type { Client360Data } from '@/hooks/crm/useClient360';
 
 export interface SelectedOrder {
   id?: string | number;
-  status?: string;
+  status?: string | null;
   sdr?: { name?: string };
   salesperson?: { name?: string };
   closer?: { name?: string };

@@ -236,6 +236,7 @@ export function SDRActivityTrend({ period }: SDRActivityTrendProps) {
             <Button
               variant="outline"
               size="icon"
+              aria-label="Exportar CSV"
               className="h-8 w-8 border-white/10 bg-black/40 hover:bg-primary/10 hover:text-primary transition-all"
               onClick={handleExportCSV}
             >

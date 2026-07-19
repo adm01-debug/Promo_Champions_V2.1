@@ -74,8 +74,8 @@ export const HistoryTab = memo(function HistoryTab({ monthlyHistory, formatCurre
                 </tr>
               </thead>
               <tbody>
-                {monthlyHistory.map((month, index) => (
-                  <tr key={index} className="border-b border-border/30 hover:bg-muted/30">
+                {monthlyHistory.map((month) => (
+                  <tr key={month.fullMonth} className="border-b border-border/30 hover:bg-muted/30">
                     <td className="py-3 px-4 capitalize">{month.fullMonth}</td>
                     <td className="py-3 px-4 text-right font-medium">{formatCurrency(month.totalSales)}</td>
                     <td className="py-3 px-4 text-right">{month.dealsCount}</td>

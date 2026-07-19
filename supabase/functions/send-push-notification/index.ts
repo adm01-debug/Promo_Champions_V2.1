@@ -2,6 +2,14 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
+// Constant-time string compare to avoid timing side-channels.
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
@@ -33,9 +41,46 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+  // ── Authentication ────────────────────────────────────────────────────
+  // Service-to-service calls (e.g. new-device-alert) arrive with the
+  // service-role key as the Bearer token. User-originated calls carry a
+  // regular JWT and are restricted to pushing only to their own user_id.
+  // Unauthenticated callers are rejected to prevent push-phishing.
+  const authHeader = req.headers.get('Authorization') ?? '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: missing bearer token' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const token = authHeader.slice(7); // strip "Bearer "
+
+  // Check if this is an internal service-to-service call.
+  const isServiceCall = safeEqual(token, supabaseServiceKey);
+
+  let callerUserId: string | null = null;
+  if (!isServiceCall) {
+    // Validate as a user JWT.
+    const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: { user }, error: authErr } = await anonClient.auth.getUser();
+    if (authErr || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    callerUserId = user.id;
+  }
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const body = await req.json();
@@ -61,11 +106,21 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       );
     }
 
+    // Scope check: non-service callers may only push to their own user_id.
+    if (!isServiceCall && callerUserId) {
+      const unauthorized = user_ids.some((id: string) => id !== callerUserId);
+      if (unauthorized) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden: users may only push to their own user_id' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     // Já validado acima: user_ids.length <= 100 → seguro para .in() direto.
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
       .select('*')
-      // chunked-in-lint-ignore-next-line
       .in('user_id', user_ids);
 
     if (fetchError) throw fetchError;

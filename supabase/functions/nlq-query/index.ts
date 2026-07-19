@@ -1,8 +1,11 @@
-import { corsHeaders } from '../_shared/cors.ts';
 // NLQ — Natural Language Queries against CRM data via Lovable AI tool calling.
 // Auth required (verify_jwt = true). Uses caller JWT so RLS applies.
 // deno-lint-ignore-file no-explicit-any
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { validateString, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import {
   querySalesMetric,
   queryPipelineSnapshot,
@@ -10,6 +13,8 @@ import {
   queryTopClients,
   type ResolverArgs,
 } from './queryResolvers.ts';
+
+const MAX_QUESTION_LENGTH = 1000;
 
 interface ToolCall {
   id: string;
@@ -142,16 +147,20 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
   }
 }
 
-Deno.serve(async (req: Request) => {
+Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let authHeader: string;
+    try {
+      const ctx = await getUserClient(req);
+      authHeader = ctx.authHeader;
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? (authErr as UnauthorizedError).message : 'unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
 
     const supabase = createClient(
@@ -159,26 +168,14 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('SUPABASE_ANON_KEY')!,
       { global: { headers: { Authorization: authHeader } } }
     );
-    const { data: userData, error: userErr } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-    if (userErr || !userData?.user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
-    const { question, conversation } = await req.json();
-    if (!question || typeof question !== 'string' || question.length > 1000) {
-      return new Response(
-        JSON.stringify({ error: 'Pergunta inválida (máx 1000 caracteres).' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    const body = await req.json();
+    const { question, conversation } = body as { question: string; conversation?: unknown[] };
+
+    const errs = collectErrors([
+      validateString(question, 'question', { required: true, maxLength: MAX_QUESTION_LENGTH }),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
     const apiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
@@ -328,4 +325,4 @@ Deno.serve(async (req: Request) => {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-});
+}));

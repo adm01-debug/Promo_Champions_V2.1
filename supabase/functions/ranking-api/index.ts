@@ -124,12 +124,27 @@ Deno.serve(async (req) => {
       if (!tokenData.team_id) {
         return new Response(JSON.stringify({ error: "Token não vinculado a um time" }), { status: 400, headers });
       }
+      // First resolve which salesperson_ids belong to this team, then filter
+      // logs to those members — prevents cross-team data leakage.
+      const { data: members, error: membersErr } = await supabase
+        .from("team_members")
+        .select("salesperson_id")
+        .eq("team_id", tokenData.team_id);
+
+      if (membersErr) return new Response(JSON.stringify({ error: membersErr.message }), { status: 400, headers });
+
+      const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
+      if (memberIds.length === 0) {
+        return new Response(JSON.stringify({ data: [] }), { status: 200, headers });
+      }
+
       const { data, error } = await supabase
         .from("score_change_logs")
         .select("id, salesperson_id, changed_by, operation, field_name, old_value, new_value, change_value, created_at")
+        .in("salesperson_id", memberIds)
         .order("created_at", { ascending: false })
         .limit(100);
-      
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -276,11 +291,28 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === "GET" && route === "company/users") {
-      const { data, error } = await supabase
+      // Scope to team members when the token is team-scoped, falling back to
+      // all active salespeople only when the token has company-wide scope.
+      let query = supabase
         .from("salespeople")
         .select("id, name, email, avatar_url, role, score_total, is_active")
         .order("name");
-      
+
+      if (tokenData.team_id) {
+        const { data: members } = await supabase
+          .from("team_members")
+          .select("salesperson_id")
+          .eq("team_id", tokenData.team_id);
+        const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
+        if (memberIds.length > 0) {
+          query = query.in("id", memberIds);
+        }
+      } else {
+        // Company-wide token: still only return active users.
+        query = query.eq("is_active", true);
+      }
+
+      const { data, error } = await query;
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }

@@ -75,7 +75,7 @@ export function CS360OrdersDialog({
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div
-              className={`h-3 w-3 rounded-full ${currentStatusInfo?.color.replace('text-', 'bg-')}`}
+              className={`h-3 w-3 rounded-full ${(currentStatusInfo?.color ?? '').replace('text-', 'bg-')}`}
             />
             <DialogTitle className="text-section-title font-black uppercase">
               Pedidos: {statusName}

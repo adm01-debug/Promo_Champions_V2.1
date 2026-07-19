@@ -109,7 +109,7 @@ export const IntegrationStatusPanel = () => {
       } else {
         const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log) => ({
           id: log.id,
-          timestamp: log.timestamp,
+          timestamp: log.timestamp ?? '',
           type: log.integration_type as LogEntry['type'],
           event:
             log.event_type === 'config_check'
@@ -119,7 +119,7 @@ export const IntegrationStatusPanel = () => {
           details:
             log.error_message ||
             (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
-          recipient: log.recipient,
+          recipient: log.recipient ?? undefined,
         }));
         setLogs(formattedLogs);
       }

@@ -9,15 +9,17 @@ on:
 jobs:
   quality-gate:
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
     steps:
-      - uses: actions/checkout@v7
-      
+      - uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci
         
@@ -40,19 +42,32 @@ jobs:
         run: npm run build
         
       - name: Security Audit
-        run: npm audit --audit-level=high
+        run: npm audit --production --audit-level=high
 
   e2e-simulation:
     needs: quality-gate
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
+      # tests/e2e/ contains Playwright specs — must use Playwright, NOT vitest.
+      # Running `vitest run tests/e2e` collected 0 tests and exited 0 (false green).
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
       - name: Run E2E Journeys
-        run: npx vitest run tests/e2e
+        run: npm run test:e2e
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-enterprise
+          path: playwright-report/
+          retention-days: 14

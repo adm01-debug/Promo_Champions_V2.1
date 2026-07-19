@@ -8,14 +8,16 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
     steps:
-      - uses: actions/checkout@v7
-      
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          
+
       - run: npm ci
       
       - name: Type Check
@@ -28,7 +30,7 @@ jobs:
         run: npm run test -- --run --reporter=verbose
       
       - name: Security Audit
-        run: npm audit --audit-level=high || true
+        run: npm audit --production --audit-level=high
         
       - name: Bundle Size Check
         run: |

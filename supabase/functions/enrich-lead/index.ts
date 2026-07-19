@@ -1,15 +1,38 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
+  // ── Authentication ────────────────────────────────────────────────────
+  // Require a valid user JWT. The authenticated user's RLS context is used
+  // to scope the clients update — preventing IDOR writes to arbitrary lead IDs.
+  let callerUserId: string;
+  try {
+    const ctx = await getUserClient(req);
+    callerUserId = ctx.userId;
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: " + e.message }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    throw e;
+  }
+
   try {
     const { leadId, companyName, contactEmail } = await req.json()
+
+    if (!leadId || typeof leadId !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'leadId is required and must be a string' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // 1. Simular enriquecimento de empresa (Company Intelligence)
     const companyEnrichment = {
@@ -35,10 +58,37 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
       last_verified_at: new Date().toISOString()
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    // Service client needed for enriched_company_intelligence and buying_signals
+    // tables that RLS may not allow the user to write directly.
+    const supabase = getServiceClient("enrichment writes to company/person intelligence tables and buying_signals");
+
+    // ── Verify caller can access this lead before enriching it ────────
+    // Read the client row using service client but check salesperson ownership.
+    // This ensures the caller can only enrich leads they're associated with.
+    const { data: leadRow, error: leadReadErr } = await supabase
+      .from('clients')
+      .select('id, salesperson_id, created_by')
+      .eq('id', leadId)
+      .maybeSingle();
+
+    if (leadReadErr || !leadRow) {
+      return new Response(
+        JSON.stringify({ error: 'Lead not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Access check: caller must be the assigned salesperson or creator.
+    // Admin/manager bypass via RLS is NOT applied here to keep it conservative.
+    if (
+      leadRow.salesperson_id !== callerUserId &&
+      leadRow.created_by !== callerUserId
+    ) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden: you do not have access to this lead' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Inserir ou atualizar inteligência de empresa
     const { data: companyData, error: companyError } = await supabase
@@ -82,8 +132,9 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })

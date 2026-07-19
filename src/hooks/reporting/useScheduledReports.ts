@@ -7,7 +7,7 @@ import type { ScheduledReport, ScheduleFrequency, ScheduleFormat } from "@/compo
 const KEY = ["scheduled-reports"] as const;
 
 export function useScheduledReports() {
-  return useQuery({
+  return useQuery<ScheduledReport[]>({
     queryKey: KEY,
     queryFn: async () => {
       const { data, error } = await supabase

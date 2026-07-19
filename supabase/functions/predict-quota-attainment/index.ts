@@ -1,5 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
+import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 
 
@@ -107,7 +109,7 @@ async function generateAdvancedActions(supabase: ReturnType<typeof createClient>
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -117,6 +119,13 @@ Deno.serve(async (req) => {
     );
 
     const body = await req.json().catch(() => ({}));
+
+    const errs = collectErrors([
+      validateEnum(body.period, "period", ["month", "quarter"], false),
+      validateUUID(body.salesperson_id, "salesperson_id", false),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+
     const period: "month" | "quarter" = body.period === "quarter" ? "quarter" : "month";
     const filterSp: string | null = body.salesperson_id ?? null;
 
@@ -287,4 +296,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

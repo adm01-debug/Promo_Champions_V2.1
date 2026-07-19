@@ -1,10 +1,13 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { validateUUID, validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
+
+const MAX_LIMIT = 10;
 
 interface AISuggestion {
   title: string;
@@ -34,17 +37,19 @@ const fallback = (msg: string): AIResult => ({
   suggestions: [],
 });
 
-serve(async (req) => {
+Deno.serve(withRequestId("next-best-action", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { salespersonId, limit = 5 } = await req.json();
-    if (!salespersonId) {
-      return new Response(JSON.stringify({ error: "salespersonId required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const body = await req.json();
+    const { salespersonId, limit = 5 } = body as { salespersonId: string; limit?: number };
+
+    const errs = collectErrors([
+      validateUUID(salespersonId, "salespersonId", true),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+
+    const safeLimit = Math.min(Math.max(1, Number(limit) || 5), MAX_LIMIT);
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const now = Date.now();
@@ -177,7 +182,7 @@ REGRAS DE OURO:
 4. Categorize: urgent / growth / retention / prospecting / admin
 5. Use português brasileiro, seja específico (cite nomes, valores, dias)
 6. Datas sugeridas: ISO YYYY-MM-DD a partir de ${todayIso.slice(0, 10)}
-7. Gere ${limit} sugestões priorizadas`;
+7. Gere ${safeLimit} sugestões priorizadas`;
 
     const userPrompt = `VENDEDOR: ${salesperson.name} (${salesperson.role || "vendedor"})
 
@@ -212,7 +217,7 @@ ${leadScores
   .map((l) => `- score ${l.score} (${l.temperature})`)
   .join("\n") || "(nenhum)"}
 
-Gere ${limit} próximas melhores ações usando a tool generate_next_best_actions.`;
+Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_actions.`;
 
     const tools = [
       {
@@ -395,4 +400,4 @@ Gere ${limit} próximas melhores ações usando a tool generate_next_best_action
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

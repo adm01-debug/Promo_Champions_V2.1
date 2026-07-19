@@ -18,7 +18,7 @@ export interface CustomReport {
 }
 
 export function useCustomReports() {
-  return useQuery({
+  return useQuery<CustomReport[]>({
     queryKey: ["custom-reports"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -33,7 +33,7 @@ export function useCustomReports() {
 }
 
 export function useCustomReport(id: string | undefined) {
-  return useQuery({
+  return useQuery<CustomReport | null>({
     queryKey: ["custom-report", id],
     queryFn: async () => {
       if (!id) return null;

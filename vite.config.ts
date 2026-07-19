@@ -45,6 +45,17 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      // zustand@4.5.7 exports map declares .mjs files (import condition) but ships
+      // only .js files — Rollup fails to resolve during production build. Point all
+      // sub-path imports at the actual ESM files that exist on disk.
+      'zustand/traditional': resolve(__dirname, 'node_modules/zustand/esm/traditional.js'),
+      'zustand/shallow': resolve(__dirname, 'node_modules/zustand/esm/shallow.js'),
+      'zustand/vanilla': resolve(__dirname, 'node_modules/zustand/esm/vanilla.js'),
+      'zustand/middleware': resolve(__dirname, 'node_modules/zustand/esm/middleware.js'),
+      'zustand/middleware/immer': resolve(__dirname, 'node_modules/zustand/esm/middleware/immer.js'),
+      'zustand/vanilla/shallow': resolve(__dirname, 'node_modules/zustand/esm/vanilla/shallow.js'),
+      'zustand/react/shallow': resolve(__dirname, 'node_modules/zustand/esm/react/shallow.js'),
+      'zustand/context': resolve(__dirname, 'node_modules/zustand/esm/context.js'),
     },
   },
   optimizeDeps: {
