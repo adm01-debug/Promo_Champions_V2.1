@@ -164,6 +164,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
+    console.error('send-push-notification error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

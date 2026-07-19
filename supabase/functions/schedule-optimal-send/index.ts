@@ -77,6 +77,7 @@ Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
       source, confidence,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
+    console.error('schedule-optimal-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -114,6 +114,7 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (e) {
+    console.error('auto-enroll-cadence error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },

@@ -77,6 +77,7 @@ Deno.serve(withRequestId("onboarding-launcher", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error('onboarding-launcher error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

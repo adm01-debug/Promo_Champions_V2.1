@@ -45,6 +45,7 @@ Deno.serve(withRequestId("notify-critical-pattern", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('notify-critical-pattern error:', e);
     return new Response(JSON.stringify({ ok: false, error: (e as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

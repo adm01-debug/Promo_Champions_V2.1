@@ -161,6 +161,7 @@ Deno.serve(withRequestId('run-retry-tests', async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
+    console.error('run-retry-tests error:', e);
     const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,

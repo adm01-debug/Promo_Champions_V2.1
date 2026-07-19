@@ -124,6 +124,7 @@ Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error('scheduled-reports-runner error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Erro" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },

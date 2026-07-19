@@ -142,8 +142,8 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     // Single mode: auto-resolve context with caller's JWT (RLS enforced)
     if (mode === "single" && body.recipient_id && body.recipient_type && body.recipient_type !== "manual") {
       const supabase = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
         { global: { headers: { Authorization: authHeader } } },
       );
       const resolved = await resolveContext(supabase, body.recipient_id, body.recipient_type);

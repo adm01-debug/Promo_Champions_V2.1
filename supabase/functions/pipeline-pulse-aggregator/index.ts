@@ -167,6 +167,7 @@ Deno.serve(withRequestId("pipeline-pulse-aggregator", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('pipeline-pulse-aggregator error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

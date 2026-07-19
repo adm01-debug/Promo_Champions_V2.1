@@ -6,6 +6,8 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const callbackUrl = Deno.env.get("V4_CALLBACK_URL") ?? "";
 const callbackApiKey = Deno.env.get("V4_CALLBACK_API_KEY") ?? "";
+if (!callbackUrl) throw new Error("V4_CALLBACK_URL is not configured");
+if (!callbackApiKey) throw new Error("V4_CALLBACK_API_KEY is not configured");
 
 const MAX_ATTEMPTS = 5;
 const BASE_BACKOFF_MS = 30_000;

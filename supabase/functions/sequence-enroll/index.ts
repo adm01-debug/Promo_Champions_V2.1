@@ -100,6 +100,7 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
+    console.error('sequence-enroll error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
       status: 500,

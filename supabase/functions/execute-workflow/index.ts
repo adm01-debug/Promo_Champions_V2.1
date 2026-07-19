@@ -163,6 +163,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('execute-workflow error:', e);
     return new Response(JSON.stringify({ error: String((e as Error).message) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -254,6 +254,7 @@ Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
       { headers: { ...baseCors, "Access-Control-Allow-Origin": corsOrigin, "Content-Type": "application/json" } },
     );
   } catch (err) {
+    console.error('report-embed-public error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Erro desconhecido" }),
       { status: 500, headers: { ...baseCors, "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } },

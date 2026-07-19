@@ -32,6 +32,7 @@ Deno.serve(withRequestId("engagement-score-recompute", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('engagement-score-recompute error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
       status: 500,

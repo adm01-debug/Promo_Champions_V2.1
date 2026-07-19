@@ -3,7 +3,9 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+const resend = new Resend(RESEND_API_KEY);
 
 Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   if (req.method === 'OPTIONS') {

@@ -133,6 +133,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('customer-success-hub error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {

@@ -162,6 +162,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       }
     );
   } catch (error: unknown) {
+    console.error('send-password-reset error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

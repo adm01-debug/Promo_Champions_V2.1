@@ -106,6 +106,7 @@ Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('coaching-impact-summary error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

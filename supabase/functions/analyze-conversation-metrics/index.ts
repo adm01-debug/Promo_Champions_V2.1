@@ -153,6 +153,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
       engagement_score: engagement,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
+    console.error('analyze-conversation-metrics error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

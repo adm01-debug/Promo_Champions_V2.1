@@ -260,6 +260,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (err) {
+    console.error('report-builder-execute error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : 'Erro desconhecido' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -228,6 +228,7 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
+    console.error('analyze-objection-handling error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

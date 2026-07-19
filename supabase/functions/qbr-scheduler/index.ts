@@ -94,6 +94,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
+    console.error('qbr-scheduler error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

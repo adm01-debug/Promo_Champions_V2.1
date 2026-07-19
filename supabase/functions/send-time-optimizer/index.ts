@@ -112,6 +112,7 @@ Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('send-time-optimizer error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

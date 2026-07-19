@@ -344,6 +344,7 @@ Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
+    console.error('sequence-runner error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),

@@ -150,6 +150,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {
+    console.error('process-cadence-tasks error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),

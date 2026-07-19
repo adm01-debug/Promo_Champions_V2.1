@@ -66,8 +66,8 @@ Deno.serve(withRequestId('pricing-intelligence', async (req, _ctx) => {
     const discountThreshold = parseFloat(url.searchParams.get('threshold') || '0.20');
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     const startDate = new Date(Date.now() - days * 86400000).toISOString();

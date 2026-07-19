@@ -136,6 +136,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('cron-failure-alerter error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     log("error", "unhandled", { error: msg });
     return new Response(JSON.stringify({ error: msg, requestId }), {

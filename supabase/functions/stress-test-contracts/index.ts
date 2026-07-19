@@ -65,6 +65,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    console.error('stress-test-contracts error:', e);
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

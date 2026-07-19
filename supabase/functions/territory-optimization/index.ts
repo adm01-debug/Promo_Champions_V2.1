@@ -88,8 +88,8 @@ Deno.serve(withRequestId('territory-optimization', async (req, _ctx) => {
     );
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     const startDate = new Date(Date.now() - days * 86400000).toISOString();

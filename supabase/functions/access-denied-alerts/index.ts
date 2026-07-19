@@ -4,7 +4,9 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+const resend = new Resend(RESEND_API_KEY);
 
 // Default configuration (used if DB fetch fails)
 const DEFAULT_SPIKE_THRESHOLD = 5;
