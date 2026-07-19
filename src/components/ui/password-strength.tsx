@@ -53,12 +53,19 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
       setLeakCheck({ checking: false, leaked: false, count: 0 });
       return;
     }
+    let cancelled = false;
     const timeoutId = setTimeout(async () => {
+      if (cancelled) return;
       setLeakCheck(prev => ({ ...prev, checking: true }));
       const result = await checkLeakedPassword(password);
-      setLeakCheck({ checking: false, leaked: result.leaked, count: result.count });
+      if (!cancelled) {
+        setLeakCheck({ checking: false, leaked: result.leaked, count: result.count });
+      }
     }, 500);
-    return () => clearTimeout(timeoutId);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, [password]);
 
   const requirements = useMemo((): PasswordRequirement[] => [

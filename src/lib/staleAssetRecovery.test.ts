@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isRecoverableAssetError, recoverFromStaleAssetError } from './staleAssetRecovery';
+import { isRecoverableAssetError, recoverFromStaleAssetError, installStaleAssetRecovery } from './staleAssetRecovery';
 
 const RECOVERY_ATTEMPT_KEY = 'promo-champions:asset-recovery-attempts';
 
@@ -176,5 +176,59 @@ describe('recoverFromStaleAssetError', () => {
     await expect(
       recoverFromStaleAssetError(new Error('Loading chunk 5 failed'))
     ).resolves.toBeUndefined();
+  });
+
+  it('handles malformed sessionStorage JSON gracefully (catch branch)', async () => {
+    fakeSS.setItem(RECOVERY_ATTEMPT_KEY, 'not-valid-json{{{');
+
+    // Should reset count to 0 (catch branch returns { count: 0 }) → recovery proceeds
+    await recoverFromStaleAssetError(new Error('Loading chunk 5 failed'));
+    expect(locationReplaceSpy).toHaveBeenCalledOnce();
+  });
+});
+
+// ---- installStaleAssetRecovery ----
+
+describe('installStaleAssetRecovery', () => {
+  let fakeSS: Storage;
+  let locationReplaceSpy: ReturnType<typeof vi.fn>;
+  let addEventListenerSpy: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    fakeSS = makeSessionStorage();
+    vi.stubGlobal('sessionStorage', fakeSS);
+
+    locationReplaceSpy = vi.fn();
+    vi.stubGlobal('location', {
+      href: 'http://localhost:5173/',
+      replace: locationReplaceSpy,
+    });
+
+    vi.stubGlobal('caches', {
+      keys: vi.fn().mockResolvedValue([]),
+      delete: vi.fn().mockResolvedValue(true),
+    });
+
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      serviceWorker: { getRegistrations: vi.fn().mockResolvedValue([]) },
+    });
+
+    addEventListenerSpy = vi.fn();
+    vi.stubGlobal('window', {
+      ...window,
+      addEventListener: addEventListenerSpy,
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('registers error and unhandledrejection listeners', () => {
+    installStaleAssetRecovery();
+    const eventNames = addEventListenerSpy.mock.calls.map((c: unknown[]) => c[0]);
+    expect(eventNames).toContain('error');
+    expect(eventNames).toContain('unhandledrejection');
   });
 });

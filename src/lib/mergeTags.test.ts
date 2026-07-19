@@ -45,6 +45,28 @@ describe('applyMergeTags', () => {
     expect(applyMergeTags('{{singu.primeira_frase}}', ctx)).toBe('Vi que vocês cresceram 30%');
   });
 
+  it('retorna placeholder [estágio] quando stage ausente', () => {
+    expect(applyMergeTags('{{negocio.estagio}}', { sale: {} })).toBe('[estágio]');
+  });
+
+  it('retorna placeholder [categoria] quando category ausente', () => {
+    expect(applyMergeTags('{{negocio.categoria}}', { sale: {} })).toBe('[categoria]');
+  });
+
+  it('retorna placeholder [fonte] quando source ausente', () => {
+    expect(applyMergeTags('{{negocio.fonte}}', { sale: {} })).toBe('[fonte]');
+  });
+
+  it('retorna placeholder singu.noticia_empresa quando custom ausente', () => {
+    const out = applyMergeTags('{{singu.noticia_empresa}}', {});
+    expect(out).toContain('[Notícia recente da empresa]');
+  });
+
+  it('retorna placeholder singu.tecnologias quando custom ausente', () => {
+    const out = applyMergeTags('{{singu.tecnologias}}', {});
+    expect(out).toContain('[Tecnologias do stack]');
+  });
+
   it('mantém tag desconhecida intacta', () => {
     expect(applyMergeTags('{{tag.inexistente}}', {})).toBe('{{tag.inexistente}}');
   });
