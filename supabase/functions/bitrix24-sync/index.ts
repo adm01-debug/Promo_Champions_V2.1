@@ -155,19 +155,22 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
 
     const now = new Date().toISOString();
 
-    // Process existing companies: individual client updates + batch icp_data upsert
-    const icpUpdates = [];
+    // Process existing companies: parallel client updates + batch icp_data upsert
+    const icpUpdates: Array<Record<string, unknown>> = [];
+    const clientUpdateOps: Array<Promise<unknown>> = [];
     for (const company of companies.filter(c => icpByBitrixId.has(c.ID))) {
       const clientId = icpByBitrixId.get(company.ID)!;
-      await supabase
-        .from('clients')
-        .update({
-          name: company.TITLE,
-          phone: company.PHONE?.[0]?.VALUE || null,
-          email: company.EMAIL?.[0]?.VALUE || null,
-          updated_at: now,
-        })
-        .eq('id', clientId);
+      clientUpdateOps.push(
+        supabase
+          .from('clients')
+          .update({
+            name: company.TITLE,
+            phone: company.PHONE?.[0]?.VALUE || null,
+            email: company.EMAIL?.[0]?.VALUE || null,
+            updated_at: now,
+          })
+          .eq('id', clientId)
+      );
 
       const ramoAtividade = (company[BITRIX_FIELD_RAMO_ATIVIDADE] as string) || null;
       const grupoNicho = (company[BITRIX_FIELD_NICHO_SEGMENTO] as string) || null;
@@ -186,9 +189,12 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
         updated_at: now,
       });
     }
-    if (icpUpdates.length > 0) {
-      await supabase.from('icp_data').upsert(icpUpdates, { onConflict: 'bitrix_id' });
-    }
+    await Promise.all([
+      ...clientUpdateOps,
+      icpUpdates.length > 0
+        ? supabase.from('icp_data').upsert(icpUpdates, { onConflict: 'bitrix_id' })
+        : Promise.resolve(),
+    ]);
 
     // Process new companies: bulk insert clients, then bulk insert icp_data
     const newCompanies = companies.filter(c => !icpByBitrixId.has(c.ID));
@@ -286,30 +292,42 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
       });
     }
 
+    // Batch lookup: pre-fetch all existing sales matching client names in this sync
+    const allClientNames = [...new Set(deals.map(d =>
+      (d.COMPANY_ID && clientNameByBitrixId.get(d.COMPANY_ID)) || d.TITLE
+    ))];
+    const existingSalesRows = allClientNames.length > 0
+      ? await chunkedIn<{ id: string; client_name: string; product_name: string }>(
+          allClientNames,
+          (chunk) =>
+            supabase.from('sales').select('id, client_name, product_name').in('client_name', chunk),
+          { parallel: true, label: 'bitrix24-sync.existing_deals_by_client' }
+        )
+      : [];
+
+    const existingSaleMap = new Map<string, string>();
+    existingSalesRows.forEach(s => {
+      existingSaleMap.set(`${s.client_name}::${s.product_name}`, s.id);
+    });
+
+    const insertRows: Array<Record<string, unknown>> = [];
+    const updateOps: Array<Promise<unknown>> = [];
+    const syncNow = new Date().toISOString();
+
     for (const deal of deals) {
       const clientName =
         (deal.COMPANY_ID && clientNameByBitrixId.get(deal.COMPANY_ID)) || deal.TITLE;
       const status = stageMapping[deal.STAGE_ID || 'NEW'] || 'lead';
       const amount = deal.OPPORTUNITY ? parseFloat(deal.OPPORTUNITY) : 0;
+      const key = `${clientName}::${deal.TITLE}`;
+      const existingId = existingSaleMap.get(key);
 
-      const { data: existingSale } = await supabase
-        .from('sales')
-        .select('id')
-        .eq('client_name', clientName)
-        .eq('product_name', deal.TITLE)
-        .single();
-
-      if (existingSale?.id) {
-        await supabase
-          .from('sales')
-          .update({
-            amount,
-            status,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existingSale.id);
+      if (existingId) {
+        updateOps.push(
+          supabase.from('sales').update({ amount, status, updated_at: syncNow }).eq('id', existingId)
+        );
       } else {
-        await supabase.from('sales').insert({
+        insertRows.push({
           client_name: clientName,
           product_name: deal.TITLE,
           amount,
@@ -318,6 +336,11 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
         });
       }
     }
+
+    await Promise.all([
+      insertRows.length > 0 ? supabase.from('sales').insert(insertRows) : Promise.resolve(),
+      ...updateOps,
+    ]);
 
     console.info(`Synced ${deals.length} deals from Bitrix24`);
     return deals.length;
@@ -333,7 +356,8 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
   try {
     const { data: clientsWithoutBitrix } = await supabase
       .from('clients')
-      .select('id, name, email, phone, company');
+      .select('id, name, email, phone, company')
+      .limit(1000);
 
     if (!clientsWithoutBitrix) return 0;
 
