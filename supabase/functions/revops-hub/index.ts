@@ -27,9 +27,9 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
 
     const [salesRes, activitiesRes, commissionsRes] = await Promise.all([
-      supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id"),
-      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since),
-      supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since),
+      supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
+      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
+      supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
     ]);
 
     const sales = salesRes.data ?? [];
