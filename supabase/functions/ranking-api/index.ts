@@ -50,8 +50,9 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
       const { data, error } = await supabase
         .from("salespeople")
         .select("id, name, email, avatar_url, role, score_total, is_active")
-        .eq("is_active", true);
-      
+        .eq("is_active", true)
+        .limit(500);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -115,8 +116,9 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
       const { data, error } = await supabase
         .from("team_members")
         .select("salesperson_id, role, salespeople(id, name, email, avatar_url, score_total)")
-        .eq("team_id", tokenData.team_id);
-      
+        .eq("team_id", tokenData.team_id)
+        .limit(200);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -130,7 +132,8 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
       const { data: members, error: membersErr } = await supabase
         .from("team_members")
         .select("salesperson_id")
-        .eq("team_id", tokenData.team_id);
+        .eq("team_id", tokenData.team_id)
+        .limit(200);
 
       if (membersErr) return new Response(JSON.stringify({ error: membersErr.message }), { status: 400, headers });
 
@@ -158,8 +161,9 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .from("team_custom_fields")
         .select("id, field_key, field_label, field_type, is_active")
         .eq("team_id", tokenData.team_id)
-        .eq("is_active", true);
-      
+        .eq("is_active", true)
+        .limit(100);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -303,7 +307,8 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         const { data: members } = await supabase
           .from("team_members")
           .select("salesperson_id")
-          .eq("team_id", tokenData.team_id);
+          .eq("team_id", tokenData.team_id)
+          .limit(200);
         const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
         if (memberIds.length > 0) {
           query = query.in("id", memberIds);
@@ -313,7 +318,7 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         query = query.eq("is_active", true);
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query.limit(500);
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
