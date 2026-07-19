@@ -129,7 +129,10 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
       .limit(500);
     if (error) throw error;
 
-    let processed = 0;
+    const analysisRows: Record<string, unknown>[] = [];
+    const analyzedAt = new Date().toISOString();
+
+    // AI calls are inherently sequential per-sale; DB writes are collected and batched after
     for (const s of (sales as SaleRow[] | null) ?? []) {
       const outcome = s.status === "completed" ? "won" : "lost";
       const closedAt = s.closed_at ?? s.updated_at;
@@ -146,7 +149,7 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
         if (!competitor) competitor = ai.competitor;
       }
 
-      await admin.from("win_loss_analyses").upsert({
+      analysisRows.push({
         sale_id: s.id,
         outcome,
         primary_reason: primary || (outcome === "won" ? "Não classificado" : "Não informado"),
@@ -156,10 +159,18 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
         cycle_days: cycleDays,
         amount: s.amount,
         segment: s.segment ?? inferSegment(s.amount),
-        analyzed_at: new Date().toISOString(),
-      }, { onConflict: "sale_id" });
-      processed++;
+        analyzed_at: analyzedAt,
+      });
     }
+
+    // Single batch upsert — replaces N individual upserts inside the loop
+    if (analysisRows.length > 0) {
+      const { error: upsertErr } = await admin
+        .from("win_loss_analyses")
+        .upsert(analysisRows, { onConflict: "sale_id" });
+      if (upsertErr) console.error("win_loss_analyses upsert error:", upsertErr);
+    }
+    const processed = analysisRows.length;
 
     return new Response(JSON.stringify({ ok: true, processed }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
