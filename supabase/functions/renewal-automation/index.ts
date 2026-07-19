@@ -36,6 +36,29 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
     let tasksCreated = 0;
     let notificationsCreated = 0;
 
+    // Batch-load recent renewal tasks to avoid N+1 per renewal
+    const cutoff5d = new Date(today.getTime() - 5 * 86400000).toISOString();
+    const ownerIds = [...new Set(renewals.map(r => r.owner_salesperson_id).filter(Boolean))] as string[];
+    const { data: recentTasks } = ownerIds.length
+      ? await supabase
+          .from("tasks")
+          .select("salesperson_id, title")
+          .in("salesperson_id", ownerIds)
+          .ilike("title", "Renovação em%")
+          .gte("created_at", cutoff5d)
+      : { data: [] };
+
+    // Index: "salesperson_id:bucket" → true if task already exists
+    const existingTaskKeys = new Set(
+      (recentTasks ?? []).map((t: { salesperson_id: string; title: string }) => {
+        const m = t.title?.match(/^Renovação em (\d+)d/);
+        return m ? `${t.salesperson_id}:${m[1]}` : null;
+      }).filter(Boolean) as string[]
+    );
+
+    // Batch notifications
+    const notifRows: Array<Record<string, unknown>> = [];
+
     for (const r of renewals) {
       const days = Math.floor((new Date(r.renewal_date).getTime() - today.getTime()) / 86400000);
       let bucket: 7 | 30 | 60 | 90 | null = null;
@@ -47,16 +70,9 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
 
       const dueDate = new Date(today.getTime() + Math.min(bucket, 7) * 86400000).toISOString().slice(0, 10);
       const title = `Renovação em ${bucket}d — ${r.contract_value > 0 ? `R$ ${Number(r.contract_value).toLocaleString("pt-BR")}` : "contrato"}`;
+      const taskKey = `${r.owner_salesperson_id}:${bucket}`;
 
-      const { data: existing } = await supabase
-        .from("tasks")
-        .select("id")
-        .eq("salesperson_id", r.owner_salesperson_id)
-        .ilike("title", `Renovação em ${bucket}d%`)
-        .gte("created_at", new Date(today.getTime() - 5 * 86400000).toISOString())
-        .limit(1);
-
-      if (!existing || existing.length === 0) {
+      if (!existingTaskKeys.has(taskKey)) {
         const { error: tErr } = await supabase.from("tasks").insert({
           salesperson_id: r.owner_salesperson_id,
           title,
@@ -65,18 +81,25 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
           status: "pending",
           due_date: dueDate,
         });
-        if (!tErr) tasksCreated++;
+        if (!tErr) {
+          tasksCreated++;
+          existingTaskKeys.add(taskKey); // prevent duplicates within same run
+        }
       }
 
-      // Notificação
-      const { error: nErr } = await supabase.from("notifications").insert({
+      notifRows.push({
         user_id: r.owner_salesperson_id,
         title: `Renovação ${bucket}d`,
         message: `Conta tem renovação em ${days} dias. Valor: R$ ${Number(r.contract_value).toLocaleString("pt-BR")}`,
         type: bucket <= 30 ? "warning" : "info",
         link: `/customer-success-360`,
       });
-      if (!nErr) notificationsCreated++;
+    }
+
+    // Batch insert all notifications in one query
+    if (notifRows.length > 0) {
+      const { error: nErr } = await supabase.from("notifications").insert(notifRows);
+      if (!nErr) notificationsCreated = notifRows.length;
     }
 
     return new Response(

@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { escapeHtml } from "../_shared/html-escape.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -111,11 +112,11 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
       const emailPayload = {
         to: quote.client_email,
         subject: `Sua proposta ${quote.quote_number}`,
-        html: `<p>Olá ${quote.client_name || "cliente"},</p>
+        html: `<p>Olá ${escapeHtml(quote.client_name) || "cliente"},</p>
                <p>Segue sua proposta no valor de <strong>R$ ${Number(quote.total_value).toFixed(2)}</strong>.</p>
                ${quote.valid_until ? `<p>Válida até ${new Date(quote.valid_until).toLocaleDateString("pt-BR")}.</p>` : ""}
-               ${signedPdfUrl ? `<p><a href="${signedPdfUrl}">Acessar proposta em PDF</a></p>` : ""}
-               ${body.custom_message ? `<p>${body.custom_message}</p>` : ""}`,
+               ${signedPdfUrl ? `<p><a href="${escapeHtml(signedPdfUrl)}">Acessar proposta em PDF</a></p>` : ""}
+               ${body.custom_message ? `<p>${escapeHtml(body.custom_message)}</p>` : ""}`,
       };
 
       const { data, error } = await svcSupabase.functions.invoke("send-transactional-email", {

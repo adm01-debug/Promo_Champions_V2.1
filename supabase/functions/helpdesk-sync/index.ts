@@ -103,22 +103,22 @@ Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
     }
     if (!targetAccountId) throw new Error("Nenhuma conta disponível para vincular tickets");
 
-    let upserted = 0;
-    for (const t of tickets) {
-      const { error } = await supabase.from("support_tickets").upsert({
-        account_id: targetAccountId,
-        external_id: t.external_id,
-        source: provider,
-        subject: t.subject,
-        description: t.description,
-        status: t.status,
-        priority: t.priority,
-        requester_email: t.requester_email,
-        created_at: t.created_at,
-        resolved_at: t.resolved_at,
-      }, { onConflict: "source,external_id" });
-      if (!error) upserted++;
-    }
+    const rows = tickets.map(t => ({
+      account_id: targetAccountId,
+      external_id: t.external_id,
+      source: provider,
+      subject: t.subject,
+      description: t.description,
+      status: t.status,
+      priority: t.priority,
+      requester_email: t.requester_email,
+      created_at: t.created_at,
+      resolved_at: t.resolved_at,
+    }));
+    const { error: upsertError } = await supabase
+      .from("support_tickets")
+      .upsert(rows, { onConflict: "source,external_id" });
+    const upserted = upsertError ? 0 : tickets.length;
 
     return new Response(JSON.stringify({ ok: true, provider, fetched: tickets.length, upserted }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

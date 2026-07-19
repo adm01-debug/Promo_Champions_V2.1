@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { escapeHtml } from "../_shared/html-escape.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
@@ -55,19 +56,19 @@ const generateEmailHTML = (data: NewDeviceAlertRequest) => `
         <table>
           <tr>
             <td>📱 Navegador</td>
-            <td>${data.browser}</td>
+            <td>${escapeHtml(data.browser)}</td>
           </tr>
           <tr>
             <td>💻 Sistema</td>
-            <td>${data.os}</td>
+            <td>${escapeHtml(data.os)}</td>
           </tr>
           <tr>
             <td>🌐 Endereço IP</td>
-            <td>${data.ip_address}</td>
+            <td>${escapeHtml(data.ip_address)}</td>
           </tr>
           <tr>
             <td>📍 Localização</td>
-            <td>${data.location || 'Não disponível'}</td>
+            <td>${escapeHtml(data.location) || 'Não disponível'}</td>
           </tr>
           <tr>
             <td>🕐 Data/Hora</td>
