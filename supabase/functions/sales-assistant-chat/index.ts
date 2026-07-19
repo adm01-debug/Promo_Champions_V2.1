@@ -92,7 +92,8 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
           'id, amount, status, client_name, product_name, category, source, created_at, updated_at'
         )
         .eq('salesperson_id', salespersonId)
-        .gte('created_at', startOfMonth.toISOString());
+        .gte('created_at', startOfMonth.toISOString())
+        .limit(10000);
 
       const totalSales =
         sales
@@ -123,7 +124,8 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
         .from('activities')
         .select('activity_type, outcome')
         .eq('salesperson_id', salespersonId)
-        .gte('created_at', today);
+        .gte('created_at', today)
+        .limit(500);
 
       const { data: activityGoals } = await supabase
         .from('activity_goals')
