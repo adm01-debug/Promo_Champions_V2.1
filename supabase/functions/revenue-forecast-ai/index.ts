@@ -1,5 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
 interface ForecastRow {
   salesperson_id: string | null;
@@ -18,7 +20,7 @@ interface ForecastRow {
   optimistic_30d: number;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("revenue-forecast-ai", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -30,7 +32,13 @@ Deno.serve(async (req) => {
     );
 
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
-    const horizonDays = Number(body.horizon_days ?? 30);
+
+    const errs = collectErrors([
+      validateUUID(body.owner_id, "owner_id", false),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+
+    const horizonDays = Math.min(Math.max(1, Number(body.horizon_days ?? 30)), 365);
     const ownerId: string | null = body.owner_id ?? null;
     const includeAI: boolean = body.include_ai !== false;
     const factor = horizonDays / 30;
@@ -192,4 +200,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));
