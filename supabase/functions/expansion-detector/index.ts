@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface Playbook {
   id: string;
@@ -65,30 +66,43 @@ Deno.serve(withRequestId("expansion-detector", async (req, _ctx) => {
       });
     }
 
-    const { data: accs } = await supabase.from("accounts").select("id, tier, account_score, annual_revenue, owner_id");
-    const accounts = (accs ?? []) as Account[];
+    // Add limits to prevent full table scans
+    const [accsRes, usageRes] = await Promise.all([
+      supabase.from("accounts").select("id, tier, account_score, annual_revenue, owner_id").limit(2000),
+      supabase.from("product_usage_summary").select("account_id, adoption_score").limit(5000),
+    ]);
+    const accounts = (accsRes.data ?? []) as Account[];
+    const usageMap = new Map((usageRes.data ?? []).map((u) => [u.account_id as string, { adoption_score: Number(u.adoption_score ?? 0) }]));
 
-    const { data: usage } = await supabase.from("product_usage_summary").select("account_id, adoption_score");
-    const usageMap = new Map((usage ?? []).map((u) => [u.account_id as string, { adoption_score: Number(u.adoption_score ?? 0) }]));
+    // Pre-fetch ALL active opportunities for all accounts in one batch (was N×M per-pair queries)
+    const accountIds = accounts.map((a) => a.id);
+    const existingOpps = await chunkedIn<{ account_id: string; playbook_id: string }>(
+      accountIds,
+      (chunk) =>
+        supabase
+          .from("expansion_opportunities")
+          .select("account_id, playbook_id")
+          .in("account_id", chunk)
+          .in("status", ["identified", "qualified", "proposed"]),
+      { parallel: true, label: "expansion-detector.existing" },
+    );
+    const existingSet = new Set<string>();
+    for (const opp of existingOpps) existingSet.add(`${opp.account_id}:${opp.playbook_id}`);
 
-    let created = 0;
+    // Evaluate all (playbook × account) combos in memory — zero DB calls
     let skipped = 0;
+    const newOppRows: Array<{
+      account_id: string; playbook_id: string; type: string;
+      estimated_value: number; status: string; confidence_score: number;
+      owner_salesperson_id: string | null; notes: string;
+    }> = [];
+
     for (const pb of playbooks) {
       for (const acc of accounts) {
         const r = evalAccount(pb, acc, usageMap.get(acc.id));
         if (!r.match) continue;
-
-        // Dedup: já existe oportunidade ativa deste playbook para esta conta?
-        const { data: existing } = await supabase
-          .from("expansion_opportunities")
-          .select("id")
-          .eq("account_id", acc.id)
-          .eq("playbook_id", pb.id)
-          .in("status", ["identified", "qualified", "proposed"])
-          .limit(1);
-        if (existing && existing.length > 0) { skipped++; continue; }
-
-        const { error } = await supabase.from("expansion_opportunities").insert({
+        if (existingSet.has(`${acc.id}:${pb.id}`)) { skipped++; continue; }
+        newOppRows.push({
           account_id: acc.id,
           playbook_id: pb.id,
           type: pb.expansion_type,
@@ -98,8 +112,15 @@ Deno.serve(withRequestId("expansion-detector", async (req, _ctx) => {
           owner_salesperson_id: acc.owner_id,
           notes: pb.recommended_action ?? `Gerado automaticamente pelo playbook "${pb.name}"`,
         });
-        if (!error) created++;
       }
+    }
+
+    // Single batch insert for all new opportunities (was N×M individual inserts)
+    let created = 0;
+    if (newOppRows.length > 0) {
+      const { error } = await supabase.from("expansion_opportunities").insert(newOppRows);
+      if (!error) created = newOppRows.length;
+      else console.error("expansion-detector insert error:", error);
     }
 
     return new Response(JSON.stringify({ ok: true, playbooks: playbooks.length, accounts: accounts.length, opportunities_created: created, skipped_existing: skipped }), {
