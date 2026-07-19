@@ -37,13 +37,14 @@ Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
     const periodStart = monthStart.toISOString().slice(0, 10);
 
     const [{ data: salespeople, error: spErr }, { data: sales, error: sErr }] = await Promise.all([
-      supabase.from("salespeople").select("id, name").eq("is_active", true),
+      supabase.from("salespeople").select("id, name").eq("is_active", true).limit(500),
       supabase
         .from("sales")
         .select("salesperson_id, amount")
         .eq("status", "completed")
         .gte("created_at", monthStart.toISOString())
-        .lte("created_at", monthEnd.toISOString()),
+        .lte("created_at", monthEnd.toISOString())
+        .limit(50000),
     ]);
 
     if (spErr) throw spErr;
