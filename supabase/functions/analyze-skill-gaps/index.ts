@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -25,7 +26,7 @@ interface OppRow { salesperson_id: string; skill_focus: string; severity: string
 
 async function aiPlan(apiKey: string, sellerName: string, skill: string, score: number, gaps: number): Promise<{ plan: string; milestones: { week: number; title: string }[]; weeks: number }> {
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -86,7 +87,7 @@ Deno.serve(withRequestId('analyze-skill-gaps', async (req, _ctx) => {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
 
-    const { data: salespeople } = await supabase.from("salespeople").select("id, name").eq("active", true);
+    const { data: salespeople } = await supabase.from("salespeople").select("id, name").eq("active", true).limit(500);
     if (!salespeople?.length) {
       return new Response(JSON.stringify({ assessments: 0, tracks: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -98,7 +99,8 @@ Deno.serve(withRequestId('analyze-skill-gaps', async (req, _ctx) => {
     const { data: opps180 } = await supabase
       .from("coaching_opportunities")
       .select("salesperson_id, skill_focus, severity, detected_at")
-      .gte("detected_at", since180);
+      .gte("detected_at", since180)
+      .limit(50000);
 
     const opps = (opps180 ?? []) as OppRow[];
 

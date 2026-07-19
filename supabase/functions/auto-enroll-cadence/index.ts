@@ -40,72 +40,105 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
       saleIds = (recentSales ?? []).map((s) => s.id);
     }
 
-    const results: EnrollResult[] = [];
+    // Phase 1: run all rule-match RPCs in parallel (was sequential per saleId)
+    const ruleMatchResults = await Promise.all(
+      saleIds.map((saleId) =>
+        supabase
+          .rpc("find_matching_cadence_rule", { _sale_id: saleId })
+          .then((r) => ({ saleId, data: r.data, error: r.error }))
+      ),
+    );
 
-    for (const saleId of saleIds) {
-      // Avalia regra
-      const { data: ruleMatch, error: matchErr } = await supabase
-        .rpc("find_matching_cadence_rule", { _sale_id: saleId });
-
-      if (matchErr || !ruleMatch || ruleMatch.length === 0) {
-        results.push({ sale_id: saleId, enrolled: false, reason: "no_match" });
-        continue;
+    const matched: Array<{ saleId: string; rule_id: string; cadence_id: string; rule_name: string }> = [];
+    const noMatchIds: string[] = [];
+    for (const r of ruleMatchResults) {
+      if (r.error || !r.data || r.data.length === 0) {
+        noMatchIds.push(r.saleId);
+      } else {
+        matched.push({ saleId: r.saleId, ...r.data[0] });
       }
-
-      const { rule_id, cadence_id, rule_name } = ruleMatch[0];
-
-      // Pega salesperson da venda
-      const { data: sale } = await supabase
-        .from("sales")
-        .select("salesperson_id")
-        .eq("id", saleId)
-        .single();
-
-      // Pega steps da cadência
-      const { data: steps } = await supabase
-        .from("cadence_steps")
-        .select("*")
-        .eq("cadence_id", cadence_id)
-        .order("step_order", { ascending: true });
-
-      const today = new Date();
-      const firstDay = steps?.[0]?.day_number ?? 1;
-      const firstDate = new Date(today);
-      firstDate.setDate(firstDate.getDate() + firstDay - 1);
-
-      const { data: enrollment, error: enrollErr } = await supabase
-        .from("prospect_cadences")
-        .insert({
-          sale_id: saleId,
-          cadence_id,
-          salesperson_id: sale?.salesperson_id ?? null,
-          enrolled_via_rule_id: rule_id,
-          enrollment_source: "auto",
-          next_action_date: firstDate.toISOString().split("T")[0],
-        })
-        .select()
-        .single();
-
-      if (enrollErr || !enrollment) {
-        results.push({ sale_id: saleId, enrolled: false, reason: enrollErr?.message ?? "insert_failed" });
-        continue;
-      }
-
-      if (steps && steps.length > 0) {
-        const tasks = steps.map((step) => {
-          const d = new Date(today);
-          d.setDate(d.getDate() + step.day_number - 1);
-          return {
-            prospect_cadence_id: enrollment.id,
-            cadence_step_id: step.id,
-            scheduled_date: d.toISOString().split("T")[0],
-          };
-        });
-        await supabase.from("cadence_tasks").insert(tasks);
-      }
-
-      results.push({ sale_id: saleId, enrolled: true, rule_id, cadence_id, rule_name });
     }
+
+    // Phase 2: batch-fetch salesperson_ids for all matched sales (was N queries)
+    const matchedSaleIds = matched.map((m) => m.saleId);
+    const salespersonBySaleId = new Map<string, string | null>();
+    if (matchedSaleIds.length > 0) {
+      const { data: salesData } = await supabase
+        .from("sales")
+        .select("id, salesperson_id")
+        .in("id", matchedSaleIds);
+      for (const s of salesData ?? []) salespersonBySaleId.set(s.id, s.salesperson_id);
+    }
+
+    // Phase 3: batch-fetch steps for all unique cadence_ids (was N queries)
+    const uniqueCadenceIds = [...new Set(matched.map((m) => m.cadence_id))];
+    const stepsByCadenceId = new Map<string, Array<{ id: string; day_number: number }>>();
+    if (uniqueCadenceIds.length > 0) {
+      const { data: allSteps } = await supabase
+        .from("cadence_steps")
+        .select("id, day_number, cadence_id")
+        .in("cadence_id", uniqueCadenceIds)
+        .order("day_number", { ascending: true });
+      for (const step of allSteps ?? []) {
+        const bucket = stepsByCadenceId.get(step.cadence_id) ?? [];
+        bucket.push({ id: step.id, day_number: step.day_number });
+        stepsByCadenceId.set(step.cadence_id, bucket);
+      }
+    }
+
+    // Phase 4: insert enrollments in parallel — each row needs its own id back
+    const today = new Date();
+    const enrollmentInserts = await Promise.all(
+      matched.map((m) => {
+        const steps = stepsByCadenceId.get(m.cadence_id) ?? [];
+        const firstDay = steps[0]?.day_number ?? 1;
+        const firstDate = new Date(today);
+        firstDate.setDate(firstDate.getDate() + firstDay - 1);
+        return supabase
+          .from("prospect_cadences")
+          .insert({
+            sale_id: m.saleId,
+            cadence_id: m.cadence_id,
+            salesperson_id: salespersonBySaleId.get(m.saleId) ?? null,
+            enrolled_via_rule_id: m.rule_id,
+            enrollment_source: "auto",
+            next_action_date: firstDate.toISOString().split("T")[0],
+          })
+          .select("id, sale_id, cadence_id")
+          .single()
+          .then((r) => ({ m, data: r.data, error: r.error }));
+      }),
+    );
+
+    // Phase 5: batch insert ALL cadence tasks in one call (was N inserts)
+    const allTasks: Array<{ prospect_cadence_id: string; cadence_step_id: string; scheduled_date: string }> = [];
+    for (const ins of enrollmentInserts) {
+      if (!ins.data) continue;
+      const steps = stepsByCadenceId.get(ins.data.cadence_id) ?? [];
+      for (const step of steps) {
+        const d = new Date(today);
+        d.setDate(d.getDate() + step.day_number - 1);
+        allTasks.push({
+          prospect_cadence_id: ins.data.id,
+          cadence_step_id: step.id,
+          scheduled_date: d.toISOString().split("T")[0],
+        });
+      }
+    }
+    if (allTasks.length > 0) {
+      await supabase.from("cadence_tasks").insert(allTasks);
+    }
+
+    // Build consolidated results
+    const results: EnrollResult[] = [
+      ...noMatchIds.map((saleId) => ({ sale_id: saleId, enrolled: false, reason: "no_match" })),
+      ...enrollmentInserts.map((ins) => {
+        if (ins.error || !ins.data) {
+          return { sale_id: ins.m.saleId, enrolled: false, reason: ins.error?.message ?? "insert_failed" };
+        }
+        return { sale_id: ins.m.saleId, enrolled: true, rule_id: ins.m.rule_id, cadence_id: ins.m.cadence_id, rule_name: ins.m.rule_name };
+      }),
+    ];
 
     const enrolledCount = results.filter((r) => r.enrolled).length;
 
@@ -114,6 +147,7 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (e) {
+    console.error('auto-enroll-cadence error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },

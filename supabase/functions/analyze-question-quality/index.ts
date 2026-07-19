@@ -185,6 +185,7 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
+    console.error('analyze-question-quality error:', e);
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,

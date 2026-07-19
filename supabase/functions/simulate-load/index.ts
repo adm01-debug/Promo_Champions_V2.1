@@ -1,6 +1,7 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const PRIVATE_IP_RE =
   /^(localhost|127\.|0\.0\.0\.0|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|fd[0-9a-f]{2}:|169\.254\.)/i;
@@ -14,7 +15,7 @@ function isPrivateUrl(raw: string): boolean {
   }
 }
 
-serve(async req => {
+Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   // Require valid JWT — this endpoint can generate significant outbound traffic
@@ -76,7 +77,7 @@ serve(async req => {
       const promises = Array.from({ length: batchSize }).map(async () => {
         const start = performance.now();
         try {
-          const res = await fetch(targetUrl, {
+          const res = await fetchWithTimeout(targetUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ event: 'load_test', ts: Date.now() }),
@@ -116,9 +117,10 @@ serve(async req => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
+    console.error('simulate-load error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

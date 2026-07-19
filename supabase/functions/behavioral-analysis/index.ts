@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface AnalysisRequest {
   interactionId?: string;
@@ -45,7 +46,7 @@ Retorne APENAS JSON válido, sem markdown.`;
 
     const userPrompt = `Contato: ${contactName ?? "N/A"} | Canal: ${channel ?? "N/A"}\n\nInteração:\n"""${text}"""`;
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

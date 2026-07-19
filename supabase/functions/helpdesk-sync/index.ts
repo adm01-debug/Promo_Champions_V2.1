@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 type Provider = "zendesk" | "intercom" | "freshdesk";
 
@@ -13,7 +14,7 @@ interface SyncRequest {
 async function fetchZendesk(domain: string, email: string, token: string) {
   const auth = btoa(`${email}/token:${token}`);
   const url = `https://${domain}.zendesk.com/api/v2/tickets/recent.json?per_page=50`;
-  const r = await fetch(url, { headers: { Authorization: `Basic ${auth}` } });
+  const r = await fetchWithTimeout(url, { headers: { Authorization: `Basic ${auth}` } });
   if (!r.ok) throw new Error(`Zendesk ${r.status}`);
   const j = await r.json();
   return (j.tickets ?? []).map((t: Record<string, unknown>) => ({
@@ -29,7 +30,7 @@ async function fetchZendesk(domain: string, email: string, token: string) {
 }
 
 async function fetchIntercom(token: string) {
-  const r = await fetch("https://api.intercom.io/conversations?per_page=50", {
+  const r = await fetchWithTimeout("https://api.intercom.io/conversations?per_page=50", {
     headers: { Authorization: `Bearer ${token}`, Accept: "application/json", "Intercom-Version": "2.11" },
   });
   if (!r.ok) throw new Error(`Intercom ${r.status}`);
@@ -48,7 +49,7 @@ async function fetchIntercom(token: string) {
 
 async function fetchFreshdesk(domain: string, apiKey: string) {
   const auth = btoa(`${apiKey}:X`);
-  const r = await fetch(`https://${domain}.freshdesk.com/api/v2/tickets?per_page=50&order_by=updated_at&order_type=desc`, {
+  const r = await fetchWithTimeout(`https://${domain}.freshdesk.com/api/v2/tickets?per_page=50&order_by=updated_at&order_type=desc`, {
     headers: { Authorization: `Basic ${auth}` },
   });
   if (!r.ok) throw new Error(`Freshdesk ${r.status}`);
@@ -102,27 +103,28 @@ Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
     }
     if (!targetAccountId) throw new Error("Nenhuma conta disponível para vincular tickets");
 
-    let upserted = 0;
-    for (const t of tickets) {
-      const { error } = await supabase.from("support_tickets").upsert({
-        account_id: targetAccountId,
-        external_id: t.external_id,
-        source: provider,
-        subject: t.subject,
-        description: t.description,
-        status: t.status,
-        priority: t.priority,
-        requester_email: t.requester_email,
-        created_at: t.created_at,
-        resolved_at: t.resolved_at,
-      }, { onConflict: "source,external_id" });
-      if (!error) upserted++;
-    }
+    const rows = tickets.map(t => ({
+      account_id: targetAccountId,
+      external_id: t.external_id,
+      source: provider,
+      subject: t.subject,
+      description: t.description,
+      status: t.status,
+      priority: t.priority,
+      requester_email: t.requester_email,
+      created_at: t.created_at,
+      resolved_at: t.resolved_at,
+    }));
+    const { error: upsertError } = await supabase
+      .from("support_tickets")
+      .upsert(rows, { onConflict: "source,external_id" });
+    const upserted = upsertError ? 0 : tickets.length;
 
     return new Response(JSON.stringify({ ok: true, provider, fetched: tickets.length, upserted }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error('helpdesk-sync error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

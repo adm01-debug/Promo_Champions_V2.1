@@ -36,7 +36,8 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
       .select('id, client_name, product_name, amount, status, salesperson_id, updated_at')
       .lt('updated_at', stagnantDate.toISOString())
       .neq('status', 'completed')
-      .order('updated_at', { ascending: true });
+      .order('updated_at', { ascending: true })
+      .limit(5000);
     
     if (dealsError) {
       console.error('Error fetching stagnant deals:', dealsError);

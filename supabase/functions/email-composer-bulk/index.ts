@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -73,7 +74,7 @@ async function generateOne(
   const sys = `Você é um copywriter B2B de elite. Gere um e-mail individual e personalizado em ${language}, com tom ${toneHint}. NUNCA use placeholders genéricos como {{nome}} — sempre escreva o nome real do destinatário. Sempre retorne JSON válido.`;
   const userPrompt = `Briefing do remetente:\n${prompt}\n\nContexto do destinatário:\n${JSON.stringify(ctx, null, 2)}\n\nTarefa: gere um e-mail único, com gancho específico baseado no contexto acima. Forneça também uma frase explicando qual gancho de personalização foi usado.`;
 
-  const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${LOVABLE_API_KEY}`,

@@ -1,5 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 interface LeaderboardRow {
   car_id: string;
@@ -10,13 +12,15 @@ interface LeaderboardRow {
 
 const CHECKPOINTS = [0.25, 0.5, 0.75];
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
+      return new Response(JSON.stringify({ error: msg }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -26,19 +30,6 @@ Deno.serve(async req => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
-    const userClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authError } = await userClient.auth.getClaims(token);
-    if (authError || !claims?.claims) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
     const body = await req.json().catch(() => ({}));
     const sale_id: string | undefined = body.sale_id;
@@ -46,7 +37,7 @@ Deno.serve(async req => {
     // 1. season ativa
     const { data: season } = await supabase
       .from('race_seasons')
-      .select('*')
+      .select('id, winner_id')
       .eq('status', 'active')
       .order('start_date', { ascending: false })
       .limit(1)
@@ -294,4 +285,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

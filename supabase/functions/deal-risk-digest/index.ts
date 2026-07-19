@@ -7,6 +7,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
@@ -29,7 +30,7 @@ async function postSlack(text: string, requestId?: string | null): Promise<Slack
   try {
     await withEdgeCircuitBreaker(SLACK_CIRCUIT, async () => {
       await withRetry(async (_attempt, signal) => {
-        const res = await fetch(url, {
+        const res = await fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text }),

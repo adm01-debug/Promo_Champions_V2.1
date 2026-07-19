@@ -1,7 +1,8 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -20,6 +21,7 @@ Deno.serve(async (req) => {
     }
 
     // 2) Find QBRs scheduled within the next 30 days that don't have an agenda event yet
+    const today = new Date().toISOString().split("T")[0];
     const horizon = new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0];
     const { data: schedules } = await supabase
       .from("qbr_schedule")
@@ -28,32 +30,60 @@ Deno.serve(async (req) => {
       .eq("auto_generate", true)
       .not("next_qbr_at", "is", null)
       .lte("next_qbr_at", horizon)
-      .gte("next_qbr_at", new Date().toISOString().split("T")[0]);
+      .gte("next_qbr_at", today)
+      .limit(200);
 
     let eventsCreated = 0;
     let notificationsCreated = 0;
 
-    for (const s of schedules ?? []) {
-      if (!s.owner_salesperson_id) continue;
+    const active = (schedules ?? []).filter((s) => s.owner_salesperson_id);
+    if (active.length === 0) {
+      return new Response(
+        JSON.stringify({ ok: true, schedules_updated: rolled, upcoming_qbrs: 0, events_created: 0, notifications_created: 0 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
-      const { data: acc } = await supabase
-        .from("accounts").select("name").eq("id", s.account_id).single();
-      const accountName = acc?.name ?? "Conta";
-
-      // dedup: existe agenda_event QBR para esta conta nesse mês?
-      const monthStart = new Date(s.next_qbr_at as string);
-      monthStart.setDate(1);
-      const { data: existing } = await supabase
+    // Pre-fetch accounts and salespeople in parallel — eliminates 2 DB calls per schedule row
+    const accountIds = [...new Set(active.map((s) => s.account_id))];
+    const spIds = [...new Set(active.map((s) => s.owner_salesperson_id))];
+    const [{ data: accountRows }, { data: spRows }, { data: existingEvents }] = await Promise.all([
+      supabase.from("accounts").select("id, name").in("id", accountIds),
+      supabase.from("salespeople").select("id, auth_user_id").in("id", spIds),
+      // Batch dedup: fetch all existing QBR events in the 30-day window for all salespersons
+      supabase
         .from("agenda_events")
-        .select("id")
-        .eq("salesperson_id", s.owner_salesperson_id)
+        .select("salesperson_id, scheduled_at")
+        .in("salesperson_id", spIds)
         .eq("event_type", "qbr")
-        .gte("scheduled_at", monthStart.toISOString())
-        .limit(1);
-      if (existing && existing.length > 0) continue;
+        .gte("scheduled_at", `${today}T00:00:00Z`)
+        .lte("scheduled_at", `${horizon}T23:59:59Z`)
+        .limit(active.length * 3),
+    ]);
+
+    const accountNameById = new Map((accountRows ?? []).map((a) => [a.id, a.name as string]));
+    const authUserById = new Map((spRows ?? []).map((sp) => [sp.id, sp.auth_user_id as string | null]));
+
+    // Build dedup set: "salesperson_id:YYYY-MM" — one QBR per salesperson per calendar month
+    const existingQbrKeys = new Set(
+      (existingEvents ?? []).map((e) => {
+        const month = (e.scheduled_at as string).slice(0, 7); // "YYYY-MM"
+        return `${e.salesperson_id}:${month}`;
+      })
+    );
+
+    const eventRows: Array<Record<string, unknown>> = [];
+    const notifRows: Array<Record<string, unknown>> = [];
+
+    for (const s of active) {
+      const accountName = accountNameById.get(s.account_id) ?? "Conta";
+      const month = (s.next_qbr_at as string).slice(0, 7);
+      const dedupKey = `${s.owner_salesperson_id}:${month}`;
+      if (existingQbrKeys.has(dedupKey)) continue;
+      existingQbrKeys.add(dedupKey); // prevent duplicates within same run
 
       const scheduledAt = new Date(`${s.next_qbr_at}T14:00:00Z`).toISOString();
-      const { error: evErr } = await supabase.from("agenda_events").insert({
+      eventRows.push({
         salesperson_id: s.owner_salesperson_id,
         event_type: "qbr",
         title: `QBR ${s.frequency} — ${accountName}`,
@@ -63,14 +93,11 @@ Deno.serve(async (req) => {
         status: "scheduled",
         reminder_minutes_before: 1440,
       });
-      if (!evErr) eventsCreated++;
 
-      // Get auth_user_id of owner to send notification
-      const { data: sp } = await supabase
-        .from("salespeople").select("auth_user_id").eq("id", s.owner_salesperson_id).single();
-      if (sp?.auth_user_id) {
-        const { error: nErr } = await supabase.from("notifications").insert({
-          user_id: sp.auth_user_id,
+      const authUserId = authUserById.get(s.owner_salesperson_id);
+      if (authUserId) {
+        notifRows.push({
+          user_id: authUserId,
           type: "qbr_scheduled",
           title: `QBR agendada: ${accountName}`,
           message: `Próxima revisão executiva em ${s.next_qbr_at}. Prepare deck e métricas.`,
@@ -78,9 +105,16 @@ Deno.serve(async (req) => {
           priority: "medium",
           metadata: { account_id: s.account_id, qbr_date: s.next_qbr_at },
         });
-        if (!nErr) notificationsCreated++;
       }
     }
+
+    // Batch insert events and notifications in parallel — 2 DB calls regardless of schedule count
+    const [evResult, notifResult] = await Promise.all([
+      eventRows.length > 0 ? supabase.from("agenda_events").insert(eventRows) : Promise.resolve({ error: null }),
+      notifRows.length > 0 ? supabase.from("notifications").insert(notifRows) : Promise.resolve({ error: null }),
+    ]);
+    if (!evResult.error) eventsCreated = eventRows.length;
+    if (!notifResult.error) notificationsCreated = notifRows.length;
 
     return new Response(
       JSON.stringify({
@@ -93,8 +127,9 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
+    console.error('qbr-scheduler error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

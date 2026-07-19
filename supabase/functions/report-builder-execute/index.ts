@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface ReportFilter {
   field: string;
@@ -74,7 +75,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   return parts.join(',') || '*';
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -113,7 +114,7 @@ Deno.serve(async req => {
 
     const { data: report, error: rErr } = await supabase
       .from('custom_reports')
-      .select('*')
+      .select('id, entity, config')
       .eq('id', report_id)
       .single();
 
@@ -259,9 +260,10 @@ Deno.serve(async req => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (err) {
+    console.error('report-builder-execute error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : 'Erro desconhecido' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-});
+}));

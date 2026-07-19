@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface PredictBody {
   sale_id?: string;
@@ -48,6 +49,66 @@ async function getBaseline(stage: string, ownerId?: string | null) {
   return global ?? { avg_days: 14, median_days: 10, p75_days: 21, sample_size: 0 };
 }
 
+async function aiRefine(
+  stage: string, amount: number | null, daysInStage: number,
+  expectedDays: number, baseline: Record<string, unknown>,
+  health: { health_score?: number; tier?: string } | null,
+  coverage: { coverage_score?: number; tier?: string } | null,
+): Promise<{ predictedDays?: number; confidence?: number; drivers?: string[]; brakes?: string[] }> {
+  if (!LOVABLE_API_KEY) return {};
+  try {
+    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: 'Você é um analista de previsão de vendas B2B. Estime dias até fechamento (won/lost) com base nos dados.' },
+          { role: 'user', content: JSON.stringify({ stage, amount, daysInStage, expectedDays, baseline, health, coverage }) },
+        ],
+        tools: [{
+          type: 'function',
+          function: {
+            name: 'set_prediction',
+            description: 'Define a previsão',
+            parameters: {
+              type: 'object',
+              properties: {
+                predicted_days_remaining: { type: 'integer', minimum: 1, maximum: 365 },
+                confidence_score: { type: 'integer', minimum: 0, maximum: 100 },
+                factors: {
+                  type: 'object',
+                  properties: {
+                    drivers: { type: 'array', items: { type: 'string' } },
+                    brakes: { type: 'array', items: { type: 'string' } },
+                  },
+                  required: ['drivers', 'brakes'],
+                },
+              },
+              required: ['predicted_days_remaining', 'confidence_score', 'factors'],
+            },
+          },
+        }],
+        tool_choice: { type: 'function', function: { name: 'set_prediction' } },
+      }),
+    });
+    if (!aiResp.ok) return {};
+    const aiJson = await aiResp.json();
+    const args = aiJson?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+    if (!args) return {};
+    const parsed = JSON.parse(args);
+    return {
+      predictedDays: parsed.predicted_days_remaining,
+      confidence: parsed.confidence_score,
+      drivers: parsed.factors?.drivers,
+      brakes: parsed.factors?.brakes,
+    };
+  } catch (e) {
+    console.warn('AI refinement failed, using heuristic', e);
+    return {};
+  }
+}
+
 async function predictForSale(saleId: string) {
   const { data: sale, error } = await admin
     .from('sales')
@@ -70,10 +131,7 @@ async function predictForSale(saleId: string) {
     .order('entered_at', { ascending: false })
     .limit(1);
   const enteredAt = stageHistory?.[0]?.entered_at ?? sale.updated_at ?? sale.created_at;
-  const daysInStage = Math.max(
-    0,
-    Math.floor((Date.now() - new Date(enteredAt).getTime()) / 86400000)
-  );
+  const daysInStage = Math.max(0, Math.floor((Date.now() - new Date(enteredAt).getTime()) / 86400000));
 
   const { data: health } = await admin
     .from('deal_health_scores')
@@ -90,124 +148,30 @@ async function predictForSale(saleId: string) {
   const ratio = expectedDays > 0 ? daysInStage / expectedDays : 1;
   const remaining = Math.max(1, Math.round(expectedDays - daysInStage));
 
-  // Heuristic baseline
   let predictedDays = Math.max(remaining, 3);
   let confidence = 50;
   const drivers: string[] = [];
   const brakes: string[] = [];
 
   if (health?.health_score) {
-    if (health.health_score >= 70) {
-      confidence += 15;
-      drivers.push(`Saúde alta (${health.health_score})`);
-    } else if (health.health_score < 40) {
-      confidence -= 15;
-      brakes.push(`Saúde baixa (${health.health_score})`);
-      predictedDays = Math.round(predictedDays * 1.5);
-    }
+    if (health.health_score >= 70) { confidence += 15; drivers.push(`Saúde alta (${health.health_score})`); }
+    else if (health.health_score < 40) { confidence -= 15; brakes.push(`Saúde baixa (${health.health_score})`); predictedDays = Math.round(predictedDays * 1.5); }
   }
   if (coverage?.coverage_score) {
-    if (coverage.coverage_score >= 70) {
-      confidence += 10;
-      drivers.push(`Comitê forte (${coverage.coverage_score})`);
-    } else if (coverage.coverage_score < 40) {
-      confidence -= 10;
-      brakes.push(`Comitê fraco (${coverage.coverage_score})`);
-      predictedDays = Math.round(predictedDays * 1.3);
-    }
+    if (coverage.coverage_score >= 70) { confidence += 10; drivers.push(`Comitê forte (${coverage.coverage_score})`); }
+    else if (coverage.coverage_score < 40) { confidence -= 10; brakes.push(`Comitê fraco (${coverage.coverage_score})`); predictedDays = Math.round(predictedDays * 1.3); }
   }
-  if (ratio > 2) {
-    brakes.push(`Parado há ${daysInStage}d (esperado ${expectedDays.toFixed(0)}d)`);
-    predictedDays = Math.round(predictedDays * 1.4);
-    confidence -= 10;
-  }
-  if (ratio < 0.5) {
-    drivers.push('Avançando rápido no estágio');
-    confidence += 5;
-  }
+  if (ratio > 2) { brakes.push(`Parado há ${daysInStage}d (esperado ${expectedDays.toFixed(0)}d)`); predictedDays = Math.round(predictedDays * 1.4); confidence -= 10; }
+  if (ratio < 0.5) { drivers.push('Avançando rápido no estágio'); confidence += 5; }
 
-  // Try AI refinement (best-effort)
-  if (LOVABLE_API_KEY) {
-    try {
-      const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content:
-                'Você é um analista de previsão de vendas B2B. Estime dias até fechamento (won/lost) com base nos dados.',
-            },
-            {
-              role: 'user',
-              content: JSON.stringify({
-                stage,
-                amount: sale.amount,
-                daysInStage,
-                expectedDays,
-                baseline,
-                health,
-                coverage,
-              }),
-            },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'set_prediction',
-                description: 'Define a previsão',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    predicted_days_remaining: {
-                      type: 'integer',
-                      minimum: 1,
-                      maximum: 365,
-                    },
-                    confidence_score: { type: 'integer', minimum: 0, maximum: 100 },
-                    factors: {
-                      type: 'object',
-                      properties: {
-                        drivers: { type: 'array', items: { type: 'string' } },
-                        brakes: { type: 'array', items: { type: 'string' } },
-                      },
-                      required: ['drivers', 'brakes'],
-                    },
-                  },
-                  required: ['predicted_days_remaining', 'confidence_score', 'factors'],
-                },
-              },
-            },
-          ],
-          tool_choice: { type: 'function', function: { name: 'set_prediction' } },
-        }),
-      });
-      if (aiResp.ok) {
-        const aiJson = await aiResp.json();
-        const args = aiJson?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
-        if (args) {
-          const parsed = JSON.parse(args);
-          predictedDays = parsed.predicted_days_remaining ?? predictedDays;
-          confidence = parsed.confidence_score ?? confidence;
-          if (parsed.factors?.drivers) drivers.push(...parsed.factors.drivers);
-          if (parsed.factors?.brakes) brakes.push(...parsed.factors.brakes);
-        }
-      }
-    } catch (e) {
-      console.warn('AI refinement failed, using heuristic', e);
-    }
-  }
+  const aiResult = await aiRefine(stage, sale.amount, daysInStage, expectedDays, baseline, health, coverage);
+  if (aiResult.predictedDays) predictedDays = aiResult.predictedDays;
+  if (aiResult.confidence !== undefined) confidence = aiResult.confidence;
+  if (aiResult.drivers) drivers.push(...aiResult.drivers);
+  if (aiResult.brakes) brakes.push(...aiResult.brakes);
 
   confidence = Math.max(0, Math.min(100, confidence));
-  const closeDate = new Date(Date.now() + predictedDays * 86400000)
-    .toISOString()
-    .slice(0, 10);
+  const closeDate = new Date(Date.now() + predictedDays * 86400000).toISOString().slice(0, 10);
 
   const { data: ownerRow } = await admin
     .from('salespeople')
@@ -239,31 +203,165 @@ async function predictForSale(saleId: string) {
   return payload;
 }
 
+type SaleRow = { id: string; status: string; stage: string | null; amount: number | null; salesperson_id: string | null; created_at: string; updated_at: string };
+type BaselineRow = { stage: string; owner_id?: string | null; avg_days: number; median_days: number; p75_days: number; sample_size: number };
+
+async function batchPredict(limit: number): Promise<Response> {
+  const { data: salesData } = await admin
+    .from('sales')
+    .select('id, status, stage, amount, salesperson_id, created_at, updated_at')
+    .not('status', 'in', '("completed","lost")')
+    .order('updated_at', { ascending: false })
+    .limit(limit);
+
+  if (!salesData?.length) {
+    return new Response(JSON.stringify({ count: 0, results: [] }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const sales = salesData as SaleRow[];
+  const saleIds = sales.map(s => s.id);
+  const uniqueStages = [...new Set(sales.map(s => s.stage ?? 'unknown'))];
+  const uniqueOwners = [...new Set(sales.map(s => s.salesperson_id).filter(Boolean) as string[])];
+
+  // Parallel pre-fetch of all supplementary data
+  const [
+    { data: historyData },
+    { data: healthData },
+    { data: coverageData },
+    { data: ownerBaselineData },
+    { data: globalBaselineData },
+    { data: salespeopleData },
+  ] = await Promise.all([
+    admin.from('deal_stage_history').select('sale_id, entered_at').in('sale_id', saleIds).order('entered_at', { ascending: false }),
+    admin.from('deal_health_scores').select('sale_id, health_score, tier').in('sale_id', saleIds),
+    admin.from('deal_committee_coverage').select('sale_id, coverage_score, tier').in('sale_id', saleIds),
+    uniqueStages.length > 0 && uniqueOwners.length > 0
+      ? admin.from('stage_velocity_baselines').select('stage, owner_id, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).in('owner_id', uniqueOwners)
+      : Promise.resolve({ data: [] as BaselineRow[], error: null }),
+    uniqueStages.length > 0
+      ? admin.from('stage_velocity_baselines').select('stage, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).is('owner_id', null)
+      : Promise.resolve({ data: [] as BaselineRow[], error: null }),
+    uniqueOwners.length > 0
+      ? admin.from('salespeople').select('id, auth_user_id').in('id', uniqueOwners)
+      : Promise.resolve({ data: [] as { id: string; auth_user_id: string | null }[], error: null }),
+  ]);
+
+  // Build O(1) lookup maps
+  const latestHistoryBySaleId = new Map<string, { entered_at: string }>();
+  for (const h of (historyData ?? []) as { sale_id: string; entered_at: string }[]) {
+    if (!latestHistoryBySaleId.has(h.sale_id)) latestHistoryBySaleId.set(h.sale_id, h);
+  }
+  const healthMap = new Map((healthData ?? []).map((h: { sale_id: string; health_score: number; tier: string }) => [h.sale_id, h]));
+  const coverageMap = new Map((coverageData ?? []).map((c: { sale_id: string; coverage_score: number; tier: string }) => [c.sale_id, c]));
+  const ownerBaselineMap = new Map<string, BaselineRow>();
+  for (const b of (ownerBaselineData ?? []) as BaselineRow[]) {
+    ownerBaselineMap.set(`${b.owner_id}|${b.stage}`, b);
+  }
+  const globalBaselineMap = new Map<string, BaselineRow>();
+  for (const b of (globalBaselineData ?? []) as BaselineRow[]) {
+    globalBaselineMap.set(b.stage, b);
+  }
+  const salespersonMap = new Map((salespeopleData ?? []).map((sp: { id: string; auth_user_id: string | null }) => [sp.id, sp]));
+
+  const fallbackBaseline: BaselineRow = { stage: '', avg_days: 14, median_days: 10, p75_days: 21, sample_size: 0 };
+
+  const results: unknown[] = [];
+  const payloads: Record<string, unknown>[] = [];
+
+  for (const sale of sales) {
+    if (sale.status === 'completed' || sale.status === 'lost') {
+      results.push({ skipped: true, reason: 'deal closed' });
+      continue;
+    }
+
+    const stage = sale.stage ?? 'unknown';
+
+    // Baseline lookup from maps (no DB call)
+    const ownerBaseline = sale.salesperson_id ? ownerBaselineMap.get(`${sale.salesperson_id}|${stage}`) : undefined;
+    const baseline = (ownerBaseline && ownerBaseline.sample_size >= 3)
+      ? ownerBaseline
+      : (globalBaselineMap.get(stage) ?? fallbackBaseline);
+
+    const expectedDays = Number(baseline.median_days || baseline.avg_days || 14);
+    const history = latestHistoryBySaleId.get(sale.id);
+    const enteredAt = history?.entered_at ?? sale.updated_at ?? sale.created_at;
+    const daysInStage = Math.max(0, Math.floor((Date.now() - new Date(enteredAt).getTime()) / 86400000));
+
+    const health = healthMap.get(sale.id) ?? null;
+    const coverage = coverageMap.get(sale.id) ?? null;
+
+    const ratio = expectedDays > 0 ? daysInStage / expectedDays : 1;
+    const remaining = Math.max(1, Math.round(expectedDays - daysInStage));
+
+    let predictedDays = Math.max(remaining, 3);
+    let confidence = 50;
+    const drivers: string[] = [];
+    const brakes: string[] = [];
+
+    if (health?.health_score) {
+      if (health.health_score >= 70) { confidence += 15; drivers.push(`Saúde alta (${health.health_score})`); }
+      else if (health.health_score < 40) { confidence -= 15; brakes.push(`Saúde baixa (${health.health_score})`); predictedDays = Math.round(predictedDays * 1.5); }
+    }
+    if (coverage?.coverage_score) {
+      if (coverage.coverage_score >= 70) { confidence += 10; drivers.push(`Comitê forte (${coverage.coverage_score})`); }
+      else if (coverage.coverage_score < 40) { confidence -= 10; brakes.push(`Comitê fraco (${coverage.coverage_score})`); predictedDays = Math.round(predictedDays * 1.3); }
+    }
+    if (ratio > 2) { brakes.push(`Parado há ${daysInStage}d (esperado ${expectedDays.toFixed(0)}d)`); predictedDays = Math.round(predictedDays * 1.4); confidence -= 10; }
+    if (ratio < 0.5) { drivers.push('Avançando rápido no estágio'); confidence += 5; }
+
+    // AI refinement (inherently sequential per sale)
+    const aiResult = await aiRefine(stage, sale.amount, daysInStage, expectedDays, baseline as Record<string, unknown>, health, coverage);
+    if (aiResult.predictedDays) predictedDays = aiResult.predictedDays;
+    if (aiResult.confidence !== undefined) confidence = aiResult.confidence;
+    if (aiResult.drivers) drivers.push(...aiResult.drivers);
+    if (aiResult.brakes) brakes.push(...aiResult.brakes);
+
+    confidence = Math.max(0, Math.min(100, confidence));
+    const closeDate = new Date(Date.now() + predictedDays * 86400000).toISOString().slice(0, 10);
+    const spRow = sale.salesperson_id ? salespersonMap.get(sale.salesperson_id) : null;
+
+    const payload = {
+      sale_id: sale.id,
+      owner_id: spRow?.auth_user_id ?? null,
+      predicted_close_date: closeDate,
+      predicted_days_remaining: predictedDays,
+      confidence_score: confidence,
+      confidence_tier: tierFromConfidence(confidence),
+      velocity_status: statusFromRatio(ratio, daysInStage),
+      current_stage: stage,
+      days_in_stage: daysInStage,
+      expected_days_in_stage: expectedDays,
+      stage_velocity_ratio: Number(ratio.toFixed(2)),
+      factors: { drivers: [...new Set(drivers)], brakes: [...new Set(brakes)] },
+      model_version: 'v1',
+      calculated_at: new Date().toISOString(),
+    };
+    payloads.push(payload);
+    results.push(payload);
+  }
+
+  // Phase 2: single batch upsert for all predictions
+  if (payloads.length > 0) {
+    const { error: upErr } = await admin
+      .from('deal_velocity_predictions')
+      .upsert(payloads, { onConflict: 'sale_id' });
+    if (upErr) console.error('deal_velocity_predictions batch upsert error:', upErr);
+  }
+
+  return new Response(JSON.stringify({ count: results.length, results }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
 Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const body: PredictBody = await req.json().catch(() => ({}));
     if (body.batch) {
       const limit = Math.min(body.limit ?? 25, 50);
-      const { data: sales } = await admin
-        .from('sales')
-        .select('id')
-        .not('status', 'in', '("completed","lost")')
-        .order('updated_at', { ascending: false })
-        .limit(limit);
-      const results: Array<
-        Awaited<ReturnType<typeof predictForSale>> | { sale_id: string; error: string }
-      > = [];
-      for (const s of sales ?? []) {
-        try {
-          results.push(await predictForSale(s.id));
-        } catch (e) {
-          results.push({ sale_id: s.id, error: String(e) });
-        }
-      }
-      return new Response(JSON.stringify({ count: results.length, results }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return await batchPredict(limit);
     }
     const errs = collectErrors([
       validateUUID(body.sale_id, 'sale_id', true),

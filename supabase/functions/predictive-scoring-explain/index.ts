@@ -1,6 +1,7 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Driver {
   factor: string;
@@ -98,7 +99,7 @@ Recomendação principal: ${recommendations[0]?.action ?? 'n/d'}.
 
 Em 2-3 frases curtas em português do Brasil, explique o porquê desse score e qual a próxima ação prioritária. Tom direto, profissional, sem jargão.`;
 
-    const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -151,7 +152,8 @@ async function explainOne(
     const { data: portfolio } = await supabase
       .from('lead_scores')
       .select('score, factors, sales!inner(salesperson_id)')
-      .eq('sales.salesperson_id', sale.salesperson_id);
+      .eq('sales.salesperson_id', sale.salesperson_id)
+      .limit(5000);
     if (portfolio && portfolio.length > 0) {
       baseline =
         portfolio.reduce(
@@ -220,11 +222,11 @@ async function explainOne(
   return { sale_id: saleId, score: ls.score, ok: true };
 }
 
-serve(async req => {
+Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const ids: string[] = body.sale_id
       ? [body.sale_id]
       : Array.isArray(body.sale_ids)
@@ -269,4 +271,4 @@ serve(async req => {
       }
     );
   }
-});
+}));

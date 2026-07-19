@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 async function validateToken(token: string) {
   const supabase = createClient(
@@ -19,7 +20,7 @@ function getServiceClient() {
   );
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -49,8 +50,9 @@ Deno.serve(async (req) => {
       const { data, error } = await supabase
         .from("salespeople")
         .select("id, name, email, avatar_url, role, score_total, is_active")
-        .eq("is_active", true);
-      
+        .eq("is_active", true)
+        .limit(500);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -114,8 +116,9 @@ Deno.serve(async (req) => {
       const { data, error } = await supabase
         .from("team_members")
         .select("salesperson_id, role, salespeople(id, name, email, avatar_url, score_total)")
-        .eq("team_id", tokenData.team_id);
-      
+        .eq("team_id", tokenData.team_id)
+        .limit(200);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -129,7 +132,8 @@ Deno.serve(async (req) => {
       const { data: members, error: membersErr } = await supabase
         .from("team_members")
         .select("salesperson_id")
-        .eq("team_id", tokenData.team_id);
+        .eq("team_id", tokenData.team_id)
+        .limit(200);
 
       if (membersErr) return new Response(JSON.stringify({ error: membersErr.message }), { status: 400, headers });
 
@@ -157,8 +161,9 @@ Deno.serve(async (req) => {
         .from("team_custom_fields")
         .select("id, field_key, field_label, field_type, is_active")
         .eq("team_id", tokenData.team_id)
-        .eq("is_active", true);
-      
+        .eq("is_active", true)
+        .limit(100);
+
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -302,7 +307,8 @@ Deno.serve(async (req) => {
         const { data: members } = await supabase
           .from("team_members")
           .select("salesperson_id")
-          .eq("team_id", tokenData.team_id);
+          .eq("team_id", tokenData.team_id)
+          .limit(200);
         const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
         if (memberIds.length > 0) {
           query = query.in("id", memberIds);
@@ -312,7 +318,7 @@ Deno.serve(async (req) => {
         query = query.eq("is_active", true);
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query.limit(500);
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -323,4 +329,4 @@ Deno.serve(async (req) => {
     console.error("Ranking API error:", err);
     return new Response(JSON.stringify({ error: (err as Error).message }), { status: 500, headers });
   }
-});
+}));

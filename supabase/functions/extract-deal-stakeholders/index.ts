@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface ExtractedStakeholder {
   name: string;
@@ -97,7 +98,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     const ownerId = sp?.user_id || user.id;
 
     // Call Lovable AI with tool calling
-    const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
@@ -191,18 +192,26 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
       : { stakeholders: [] };
     const stakeholders: ExtractedStakeholder[] = args.stakeholders || [];
 
-    // Upsert stakeholders, preserving manual entries
-    const upserted: Record<string, unknown>[] = [];
+    // Pre-fetch all existing stakeholders for this sale in one query
+    const { data: existingRows } = await supabase
+      .from('deal_stakeholders')
+      .select('id, name, source')
+      .eq('sale_id', saleId)
+      .limit(500);
+
+    const existingByName = new Map<string, { id: string; source: string }>();
+    for (const sh of existingRows ?? []) {
+      existingByName.set(sh.name.toLowerCase(), { id: sh.id, source: sh.source });
+    }
+
+    const now = new Date().toISOString();
+    const insertRows: Array<Record<string, unknown>> = [];
+    const updateOps: Array<{ id: string; payload: Record<string, unknown> }> = [];
+
     for (const s of stakeholders) {
       if (!s.name?.trim()) continue;
-      const { data: existing } = await supabase
-        .from('deal_stakeholders')
-        .select('id, source')
-        .eq('sale_id', saleId)
-        .ilike('name', s.name)
-        .maybeSingle();
-
-      if (existing && existing.source === 'manual') continue; // preserve manual
+      const existing = existingByName.get(s.name.trim().toLowerCase());
+      if (existing?.source === 'manual') continue; // preserve manual
 
       const payload = {
         sale_id: saleId,
@@ -213,30 +222,35 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
         influence_level: s.influence_level,
         sentiment: s.sentiment,
         signals: s.signals || [],
-        source: 'ai_extracted' as const,
-        last_interaction_at: new Date().toISOString(),
+        source: 'ai_extracted',
+        last_interaction_at: now,
       };
 
       if (existing) {
-        const { data } = await supabase
-          .from('deal_stakeholders')
-          .update(payload)
-          .eq('id', existing.id)
-          .select()
-          .single();
-        if (data) upserted.push(data);
+        updateOps.push({ id: existing.id, payload });
       } else {
-        const { data } = await supabase
-          .from('deal_stakeholders')
-          .insert(payload)
-          .select()
-          .single();
-        if (data) upserted.push(data);
+        insertRows.push(payload);
       }
     }
 
+    // Batch all writes in parallel
+    const [insertRes] = await Promise.all([
+      insertRows.length > 0
+        ? supabase.from('deal_stakeholders').insert(insertRows).select()
+        : Promise.resolve({ data: [] as Record<string, unknown>[], error: null }),
+      ...updateOps.map(op =>
+        supabase.from('deal_stakeholders').update(op.payload).eq('id', op.id)
+      ),
+    ]);
+
+    const upserted: Record<string, unknown>[] = [];
+    if (insertRes.data) upserted.push(...insertRes.data);
+    for (const op of updateOps) {
+      upserted.push({ id: op.id, ...op.payload });
+    }
+
     // Auto-chain: recalc coverage
-    await fetch(
+    await fetchWithTimeout(
       `${Deno.env.get('SUPABASE_URL')}/functions/v1/calculate-committee-coverage`,
       {
         method: 'POST',

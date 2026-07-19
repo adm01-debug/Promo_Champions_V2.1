@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const SYSTEM_PROMPT = `Você é um analista B2B sênior. Extraia stakeholders mencionados na transcrição de uma call de vendas.
 Retorne APENAS via tool call. Para cada pessoa identificada com nome próprio, classifique:
@@ -60,7 +61,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       });
     }
 
-    const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -158,8 +159,6 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       ? args.stakeholders
       : [];
 
-    let createdCount = 0;
-    let updatedCount = 0;
     const avgConfidence = stakeholders.length
       ? stakeholders.reduce((s, x) => s + (Number(x.confidence) || 0), 0) /
         stakeholders.length
@@ -177,14 +176,24 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
         (sale as { salesperson_id?: string | null } | null)?.salesperson_id ?? null;
     }
 
+    // Pre-fetch all existing stakeholders for this sale — eliminates per-stakeholder N+1
+    const { data: existingRows } = await supabase
+      .from('deal_stakeholders')
+      .select('id, name')
+      .eq('sale_id', rec.sale_id)
+      .limit(500);
+
+    const existingByName = new Map<string, string>(); // lowercase name → id
+    for (const sh of existingRows ?? []) {
+      existingByName.set(sh.name.toLowerCase(), sh.id);
+    }
+
+    const insertRows: Array<Record<string, unknown>> = [];
+    const updateOps: Array<Promise<unknown>> = [];
+
     for (const st of stakeholders) {
       if (!st.name?.trim()) continue;
-      const { data: existing } = await supabase
-        .from('deal_stakeholders')
-        .select('id')
-        .eq('sale_id', rec.sale_id)
-        .ilike('name', st.name.trim())
-        .maybeSingle();
+      const existingId = existingByName.get(st.name.trim().toLowerCase());
 
       const payload: Record<string, unknown> = {
         sale_id: rec.sale_id,
@@ -199,14 +208,20 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       };
       if (ownerId) payload.owner_id = ownerId;
 
-      if (existing?.id) {
-        await supabase.from('deal_stakeholders').update(payload).eq('id', existing.id);
-        updatedCount++;
+      if (existingId) {
+        updateOps.push(supabase.from('deal_stakeholders').update(payload).eq('id', existingId));
       } else {
-        await supabase.from('deal_stakeholders').insert(payload);
-        createdCount++;
+        insertRows.push(payload);
       }
     }
+
+    await Promise.all([
+      insertRows.length > 0 ? supabase.from('deal_stakeholders').insert(insertRows) : Promise.resolve(),
+      ...updateOps,
+    ]);
+
+    const createdCount = insertRows.length;
+    const updatedCount = updateOps.length;
 
     await supabase.from('committee_extraction_runs').insert({
       recording_id: rec.id,

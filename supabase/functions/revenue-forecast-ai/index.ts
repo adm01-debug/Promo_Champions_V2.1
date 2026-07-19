@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface ForecastRow {
   salesperson_id: string | null;
@@ -43,9 +44,9 @@ Deno.serve(withRequestId("revenue-forecast-ai", async (req, _ctx) => {
     const includeAI: boolean = body.include_ai !== false;
     const factor = horizonDays / 30;
 
-    let q = supabase.from("revenue_forecast_view").select("*");
+    let q = supabase.from("revenue_forecast_view").select("salesperson_id, total_open_pipeline, weighted_forecast, open_deals_count, avg_cycle_days, won_amount_90d, won_count_90d, monthly_goal, commit_amount, best_case_amount, pipeline_amount, pessimistic_30d, realistic_30d, optimistic_30d");
     if (ownerId) q = q.eq("salesperson_id", ownerId);
-    const { data: rows, error } = await q;
+    const { data: rows, error } = await q.limit(500);
     if (error) throw error;
 
     const list = (rows ?? []) as ForecastRow[];
@@ -121,7 +122,7 @@ Deno.serve(withRequestId("revenue-forecast-ai", async (req, _ctx) => {
 - Categorias: Commit R$ ${categories.commit} | Best Case R$ ${categories.best_case} | Pipeline R$ ${categories.pipeline}
 - Gap vs meta: R$ ${gapToGoal.toFixed(0)}`;
 
-        const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`,

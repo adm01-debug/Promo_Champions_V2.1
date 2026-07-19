@@ -1,6 +1,10 @@
 import { corsHeaders } from "../_shared/cors.ts";
 // Purchase Intelligence Forecast - AI prediction layer for client purchase patterns
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -8,13 +12,17 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Missing Authorization" }), {
+    let authHeader: string;
+    try {
+      const ctx = await getUserClient(req);
+      authHeader = ctx.authHeader;
+    } catch (authErr) {
+      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
+      return new Response(JSON.stringify({ error: msg }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -26,12 +34,9 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const clientId = body?.client_id as string | undefined;
-    if (!clientId) {
-      return new Response(JSON.stringify({ error: "client_id required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+
+    const errs = collectErrors([validateUUID(clientId, "client_id", true)]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
     // Pull summary + heatmap
     const [summaryRes, heatmapRes] = await Promise.all([
@@ -70,7 +75,7 @@ Deno.serve(async (req) => {
       monthly_revenue: monthly,
     };
 
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -162,4 +167,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

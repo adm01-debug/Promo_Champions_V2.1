@@ -69,7 +69,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
     const startedAt = Date.now();
     const { data: workflow, error: wErr } = await supabase
       .from("automation_workflows")
-      .select("*")
+      .select("id, conditions, actions, run_count")
       .eq("id", workflow_id)
       .eq("is_active", true)
       .maybeSingle();
@@ -102,45 +102,62 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
     const actions = (workflow.actions as ActionDef[]) || [];
     let hasFailure = false;
 
-    for (const act of actions) {
-      try {
-        if (act.type === "create_task") {
-          const { error } = await supabase.from("agenda_events").insert({
-            // Use the authenticated caller's id — do not trust trigger_payload
-            // for the actor identity (IDOR prevention).
-            salesperson_id: callerUserId,
-            sale_id: trigger_payload.sale_id ?? null,
-            title: String(act.params.title ?? "Tarefa automatizada"),
-            description: String(act.params.description ?? ""),
-            event_type: "task",
-            scheduled_at: new Date(Date.now() + Number(act.params.delay_hours ?? 24) * 3600_000).toISOString(),
-          });
-          if (error) throw error;
-          executed.push({ action: act.type, status: "success" });
-        } else if (act.type === "log_activity") {
-          const { error } = await supabase.from("activities").insert({
-            salesperson_id: callerUserId,
-            sale_id: trigger_payload.sale_id ?? null,
-            activity_type: String(act.params.activity_type ?? "note"),
-            outcome: "completed",
-            notes: String(act.params.notes ?? "Automação executada"),
-          });
-          if (error) throw error;
-          executed.push({ action: act.type, status: "success" });
-        } else if (act.type === "update_stage" && trigger_payload.sale_id) {
-          const { error } = await supabase
-            .from("sales")
-            .update({ stage: String(act.params.stage) })
-            .eq("id", trigger_payload.sale_id);
-          if (error) throw error;
-          executed.push({ action: act.type, status: "success" });
-        } else {
-          executed.push({ action: act.type, status: "skipped", error: "unsupported" });
-        }
-      } catch (e) {
-        hasFailure = true;
-        executed.push({ action: act.type, status: "failed", error: String((e as Error).message) });
+    // Collect same-type action rows to batch insert, then execute all types in parallel
+    const taskRows: Array<Record<string, unknown>> = [];
+    const activityRows: Array<Record<string, unknown>> = [];
+    const stageUpdates: Array<{ stage: string }> = [];
+    const executedMap: Array<{ index: number; action: string; status: string; error?: string }> = [];
+
+    for (let i = 0; i < actions.length; i++) {
+      const act = actions[i];
+      if (act.type === "create_task") {
+        taskRows.push({
+          // Use authenticated caller's id — IDOR prevention
+          salesperson_id: callerUserId,
+          sale_id: trigger_payload.sale_id ?? null,
+          title: String(act.params.title ?? "Tarefa automatizada"),
+          description: String(act.params.description ?? ""),
+          event_type: "task",
+          scheduled_at: new Date(Date.now() + Number(act.params.delay_hours ?? 24) * 3600_000).toISOString(),
+        });
+        executedMap.push({ index: i, action: act.type, status: "pending" });
+      } else if (act.type === "log_activity") {
+        activityRows.push({
+          salesperson_id: callerUserId,
+          sale_id: trigger_payload.sale_id ?? null,
+          activity_type: String(act.params.activity_type ?? "note"),
+          outcome: "completed",
+          notes: String(act.params.notes ?? "Automação executada"),
+        });
+        executedMap.push({ index: i, action: act.type, status: "pending" });
+      } else if (act.type === "update_stage" && trigger_payload.sale_id) {
+        stageUpdates.push({ stage: String(act.params.stage) });
+        executedMap.push({ index: i, action: act.type, status: "pending" });
+      } else {
+        executed.push({ action: act.type, status: "skipped", error: "unsupported" });
       }
+    }
+
+    // Batch inserts + parallel execution across all action types
+    const [taskRes, activityRes, ...stageResults] = await Promise.all([
+      taskRows.length > 0 ? supabase.from("agenda_events").insert(taskRows) : Promise.resolve({ error: null }),
+      activityRows.length > 0 ? supabase.from("activities").insert(activityRows) : Promise.resolve({ error: null }),
+      ...stageUpdates.map((u) =>
+        trigger_payload.sale_id
+          ? supabase.from("sales").update({ stage: u.stage }).eq("id", trigger_payload.sale_id)
+          : Promise.resolve({ error: null })
+      ),
+    ]);
+
+    // Resolve execution results
+    let taskIdx = 0, actIdx = 0, stageIdx = 0;
+    for (const em of executedMap) {
+      let err: string | undefined;
+      if (em.action === "create_task") { err = taskRes.error?.message; taskIdx++; }
+      else if (em.action === "log_activity") { err = activityRes.error?.message; actIdx++; }
+      else if (em.action === "update_stage") { err = stageResults[stageIdx]?.error?.message; stageIdx++; }
+      if (err) { hasFailure = true; executed.push({ action: em.action, status: "failed", error: err }); }
+      else executed.push({ action: em.action, status: "success" });
     }
 
     const finalStatus = hasFailure ? "partial" : "success";
@@ -163,6 +180,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('execute-workflow error:', e);
     return new Response(JSON.stringify({ error: String((e as Error).message) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -1,5 +1,6 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import {
   validateString,
   validateUUID,
@@ -9,39 +10,27 @@ import {
 } from '../_shared/validation.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
-serve(async req => {
+Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Authenticate the request
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
+      return new Response(JSON.stringify({ error: msg }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const {
-      data: { user },
-      error: authError,
-    } = await authClient.auth.getUser();
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const {
       message,
       salespersonId,
@@ -79,7 +68,7 @@ serve(async req => {
       // Get salesperson info
       const { data: salesperson } = await supabase
         .from('salespeople')
-        .select('*')
+        .select('id, name, role, commission_rate')
         .eq('id', salespersonId)
         .single();
 
@@ -87,7 +76,7 @@ serve(async req => {
       const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
       const { data: goals } = await supabase
         .from('sales_goals')
-        .select('*')
+        .select('salesperson_id, goal_amount')
         .eq('salesperson_id', salespersonId)
         .eq('month', currentMonth)
         .single();
@@ -103,7 +92,8 @@ serve(async req => {
           'id, amount, status, client_name, product_name, category, source, created_at, updated_at'
         )
         .eq('salesperson_id', salespersonId)
-        .gte('created_at', startOfMonth.toISOString());
+        .gte('created_at', startOfMonth.toISOString())
+        .limit(10000);
 
       const totalSales =
         sales
@@ -134,11 +124,12 @@ serve(async req => {
         .from('activities')
         .select('activity_type, outcome')
         .eq('salesperson_id', salespersonId)
-        .gte('created_at', today);
+        .gte('created_at', today)
+        .limit(500);
 
       const { data: activityGoals } = await supabase
         .from('activity_goals')
-        .select('*')
+        .select('calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
         .eq('salesperson_id', salespersonId)
         .single();
 
@@ -273,7 +264,7 @@ ${performanceSuggestions}
       if (dealContext?.dealId) {
         const { data: deal } = await supabase
           .from('sales')
-          .select('*')
+          .select('id, client_name, product_name, amount, status, category, source, created_at')
           .eq('id', dealContext.dealId)
           .single();
 
@@ -382,7 +373,7 @@ DIRETRIZES:
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -434,4 +425,4 @@ DIRETRIZES:
       }
     );
   }
-});
+}));

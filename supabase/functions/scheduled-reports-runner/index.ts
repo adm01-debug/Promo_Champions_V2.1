@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -32,7 +33,7 @@ function toCSV(rows: Record<string, unknown>[]): string {
 }
 
 async function executeReport(admin: ReturnType<typeof createClient>, reportId: string) {
-  const { data: report, error } = await admin.from("custom_reports").select("*").eq("id", reportId).single();
+  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config").eq("id", reportId).single();
   if (error || !report) throw new Error(`Report ${reportId} não encontrado`);
 
   const cfg = (report.config ?? {}) as Record<string, unknown>;
@@ -96,7 +97,7 @@ async function processSchedule(admin: ReturnType<typeof createClient>, s: Schedu
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -104,7 +105,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const forceId: string | undefined = body.schedule_id;
 
-    let query = admin.from("scheduled_reports").select("*").eq("enabled", true);
+    let query = admin.from("scheduled_reports").select("id, report_id, name, frequency, format, recipients, created_by").eq("enabled", true);
     if (forceId) {
       query = query.eq("id", forceId);
     } else {
@@ -114,18 +115,18 @@ Deno.serve(async (req) => {
     const { data: schedules, error } = await query.limit(50);
     if (error) throw error;
 
-    const results = [];
-    for (const s of (schedules ?? []) as unknown as Schedule[]) {
-      results.push(await processSchedule(admin, s));
-    }
+    const results = await Promise.all(
+      ((schedules ?? []) as unknown as Schedule[]).map((s) => processSchedule(admin, s))
+    );
 
     return new Response(JSON.stringify({ ok: true, processed: results.length, results }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error('scheduled-reports-runner error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Erro" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

@@ -11,9 +11,9 @@ import { corsHeaders } from "../_shared/cors.ts";
 // Auth: admin only (via has_role check, same pattern as winloss-webhook-replay).
 // Response shape: { requestId, filters, count, items: TimelineItem[] }
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { z } from "npm:zod@3";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -295,4 +295,4 @@ export const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId("winloss-webhook-timeline", handler));

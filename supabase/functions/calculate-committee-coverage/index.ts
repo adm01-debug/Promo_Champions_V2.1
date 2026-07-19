@@ -51,7 +51,8 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
     const { data: stakeholders } = await supabase
       .from("deal_stakeholders")
       .select("dmu_role, influence_level, sentiment")
-      .eq("sale_id", sale_id);
+      .eq("sale_id", sale_id)
+      .limit(200);
 
     const list = stakeholders || [];
     const roles = new Set(list.map((s) => s.dmu_role));

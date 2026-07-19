@@ -48,7 +48,7 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
     const maxItems = Math.min(body.max_items ?? 50, 200);
 
     const { data: queue, error: qErr } = await supabase
-      .from("dialer_queues").select("*").eq("id", body.queue_id).single();
+      .from("dialer_queues").select("id, filter, owner_id, priority_strategy").eq("id", body.queue_id).single();
     if (qErr || !queue) {
       return new Response(JSON.stringify({ error: "Queue not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -138,6 +138,7 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error('dialer-queue-builder error:', err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },

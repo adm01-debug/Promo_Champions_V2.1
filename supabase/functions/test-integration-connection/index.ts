@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface Body {
   connection_id: string;
@@ -82,7 +83,7 @@ async function probeBitrix(_cfg: Record<string, unknown>) {
   if (!r.ok || !data?.connected) throw new Error("Bitrix24 not connected");
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("test-integration-connection", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -154,9 +155,10 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('test-integration-connection error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

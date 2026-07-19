@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface PrepRequest {
   salesperson_id: string;
@@ -57,7 +58,8 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
         .select("overall_score, talk_score, question_score, objection_score, sentiment_score, moments_score, calculated_at")
         .eq("salesperson_id", salesperson_id)
         .gte("calculated_at", sixMonthsAgo)
-        .order("calculated_at", { ascending: false }),
+        .order("calculated_at", { ascending: false })
+        .limit(500),
       supabase
         .from("sales")
         .select("id, client_name, amount, status, created_at")
@@ -70,6 +72,7 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
         .select("activity_type, created_at")
         .eq("salesperson_id", salesperson_id)
         .gte("created_at", sixMonthsAgo)
+        .limit(5000),
     ]);
 
     const scorecards = scorecardsResp.data ?? [];
@@ -137,7 +140,7 @@ Considere a relação entre as atividades e os gaps de skill (ex: se o gap é ob
 Retorne apenas a lista de frases diretas.`;
 
       try {
-        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({

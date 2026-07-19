@@ -1,7 +1,7 @@
-import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const MAX_TEXT_LENGTH = 2000;
 
@@ -57,7 +57,7 @@ Deno.serve(withRequestId("elevenlabs-tts", async (req, _ctx) => {
 
     console.info(`Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`);
 
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
       {
         method: 'POST',
@@ -102,7 +102,10 @@ Deno.serve(withRequestId("elevenlabs-tts", async (req, _ctx) => {
     }
 
     const audioBuffer = await response.arrayBuffer();
-    const base64Audio = base64Encode(audioBuffer);
+    const bytes = new Uint8Array(audioBuffer);
+    let binary = '';
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    const base64Audio = btoa(binary);
     console.info(`TTS generated successfully, audio size: ${audioBuffer.byteLength} bytes`);
 
     return new Response(

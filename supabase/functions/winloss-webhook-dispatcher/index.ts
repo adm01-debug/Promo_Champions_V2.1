@@ -1,8 +1,8 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -176,7 +176,8 @@ export const handler = async (req: Request): Promise<Response> => {
       const { data: subs, error: subsError } = await supabase
         .from("winloss_webhook_subscriptions")
         .select("id, url, events, secret")
-        .eq("active", true);
+        .eq("active", true)
+        .limit(500);
       if (subsError) {
         structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
         throw subsError;
@@ -314,4 +315,4 @@ export const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId("winloss-webhook-dispatcher", handler));

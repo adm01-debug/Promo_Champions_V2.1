@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const BITRIX24_DOMAIN = Deno.env.get("BITRIX24_DOMAIN");
 const BITRIX24_CLIENT_ID = Deno.env.get("BITRIX24_CLIENT_ID");
@@ -37,7 +38,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
     if (code) {
       const redirectUri = `${SUPABASE_URL}/functions/v1/bitrix24-oauth`;
       
-      const tokenResponse = await fetch(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
+      const tokenResponse = await fetchWithTimeout(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
@@ -118,7 +119,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
         throw new Error("No refresh token available");
       }
 
-      const tokenResponse = await fetch(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
+      const tokenResponse = await fetchWithTimeout(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({

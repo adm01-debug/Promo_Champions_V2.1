@@ -35,7 +35,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     // Fetch deals (chunked to avoid PostgREST URL overflow on large arrays)
     const deals = await chunkedIn<Record<string, unknown>>(
       dealIds,
-      (chunk) => supabase.from('sales').select('*').in('id', chunk),
+      (chunk) => supabase.from('sales').select('id, status, amount, category').in('id', chunk),
       { label: 'sales fetch' },
     );
 
@@ -52,13 +52,22 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       (chunk) =>
         supabase
           .from('deal_stage_history')
-          .select('*')
+          .select('sale_id, entered_at, exited_at')
           .in('sale_id', chunk)
           .order('entered_at', { ascending: false }),
       { label: 'deal_stage_history fetch' },
     );
 
 
+
+    // Build O(1) lookup map for stage history
+    const stageHistoryByDealId = new Map<string, typeof stageHistory>();
+    for (const h of stageHistory ?? []) {
+      const saleId = h.sale_id as string;
+      const bucket = stageHistoryByDealId.get(saleId) ?? [];
+      bucket.push(h);
+      stageHistoryByDealId.set(saleId, bucket);
+    }
 
     // Calculate probability for each deal
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
@@ -70,7 +79,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       let probability = stageProbabilities[deal.status] || 10;
 
       // Factor 1: Time in current stage (deals stuck too long have lower probability)
-      const dealHistory = (stageHistory || []).filter(h => h.sale_id === deal.id);
+      const dealHistory = stageHistoryByDealId.get(deal.id) ?? [];
       const currentStageEntry = dealHistory.find(h => !h.exited_at);
 
       if (currentStageEntry) {

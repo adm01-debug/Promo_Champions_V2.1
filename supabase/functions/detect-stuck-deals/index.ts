@@ -51,7 +51,8 @@ Deno.serve(withRequestId("detect-stuck-deals", async (req, _ctx) => {
     const { data: openTransitions, error: trErr } = await supabase
       .from("deal_stage_transitions")
       .select("sale_id, to_stage, entered_at")
-      .is("exited_at", null);
+      .is("exited_at", null)
+      .limit(5000);
     if (trErr) throw trErr;
 
     const now = Date.now();

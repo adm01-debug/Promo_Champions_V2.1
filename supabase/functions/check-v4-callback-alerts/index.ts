@@ -21,7 +21,7 @@ Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
 
   const { data: settings } = await supabase
     .from("v4_callback_alert_settings")
-    .select("*")
+    .select("is_active, window_minutes, min_events, failure_rate_threshold, exhausted_threshold_24h, pending_threshold, suppress_minutes")
     .eq("singleton", true)
     .maybeSingle();
 
@@ -64,18 +64,31 @@ Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
   const suppressStart = new Date(now - settings.suppress_minutes * 60_000).toISOString();
 
   const fired: string[] = [];
-  for (const c of candidates) {
-    const { data: recent } = await supabase
+  if (candidates.length > 0) {
+    // Batch-check suppression for all candidates in one query — eliminates N+1
+    const candidateKinds = candidates.map(c => c.kind);
+    const { data: recentlyFired } = await supabase
       .from("v4_callback_alerts")
-      .select("id")
-      .eq("kind", c.kind)
+      .select("kind")
+      .in("kind", candidateKinds)
       .gte("fired_at", suppressStart)
-      .limit(1)
-      .maybeSingle();
-    if (recent) continue;
-    const { error: insErr } = await supabase.from("v4_callback_alerts").insert({ kind: c.kind, details: c.details });
-    if (insErr) log("error", "v4_alert_insert_failed", { kind: c.kind, message: insErr.message });
-    else { fired.push(c.kind); log("warn", "v4_alert_fired", { kind: c.kind, ...c.details }); }
+      .limit(candidateKinds.length);
+
+    const suppressedKinds = new Set((recentlyFired ?? []).map(r => r.kind));
+    const toFire = candidates.filter(c => !suppressedKinds.has(c.kind));
+
+    if (toFire.length > 0) {
+      const alertRows = toFire.map(c => ({ kind: c.kind, details: c.details }));
+      const { error: insErr } = await supabase.from("v4_callback_alerts").insert(alertRows);
+      if (insErr) {
+        log("error", "v4_alert_insert_failed", { message: insErr.message });
+      } else {
+        for (const c of toFire) {
+          fired.push(c.kind);
+          log("warn", "v4_alert_fired", { kind: c.kind, ...c.details });
+        }
+      }
+    }
   }
 
   return new Response(JSON.stringify({ success: true, evaluated: ctx, fired }), {

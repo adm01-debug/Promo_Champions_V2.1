@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId("detect-at-risk-deals", async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
@@ -46,16 +47,18 @@ Deno.serve(withRequestId("detect-at-risk-deals", async (req, _ctx) => {
     // Fetch activities for this deal
     const { data: activities } = await supabase
       .from('activities')
-      .select('*')
+      .select('id, created_at, activity_type, outcome')
       .eq('sale_id', dealId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(500);
 
     // Fetch deal stage history
     const { data: stageHistory } = await supabase
       .from('deal_stage_history')
-      .select('*')
+      .select('stage, entered_at, exited_at')
       .eq('sale_id', dealId)
-      .order('entered_at', { ascending: true });
+      .order('entered_at', { ascending: true })
+      .limit(100);
 
     // Calculate metrics
     const now = new Date();
@@ -134,7 +137,7 @@ Responda em JSON com exatamente esta estrutura:
 ${JSON.stringify(context, null, 2)}`;
 
     // Call AI for analysis
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResponse = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${lovableApiKey}`,

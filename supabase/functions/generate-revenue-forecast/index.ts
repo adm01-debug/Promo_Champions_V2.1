@@ -2,6 +2,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -77,7 +78,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .gte("expected_close_date", period_start)
       .lte("expected_close_date", period_end_str);
     if (owner_id) dealsQ = dealsQ.eq("salesperson_id", owner_id);
-    const { data: deals, error: dealsErr } = await dealsQ;
+    const { data: deals, error: dealsErr } = await dealsQ.limit(10000);
     if (dealsErr) throw dealsErr;
 
     const dealList = (deals ?? []) as DealRow[];
@@ -117,7 +118,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .gte("month", period_start)
       .lte("month", period_end_str);
     if (owner_id) goalQ = goalQ.eq("salesperson_id", owner_id);
-    const { data: goals } = await goalQ;
+    const { data: goals } = await goalQ.limit(5000);
     const goal_amount = (goals ?? []).reduce((s, g: { goal_amount: number }) => s + Number(g.goal_amount ?? 0), 0);
 
     // Classify and aggregate
@@ -166,7 +167,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (apiKey && dealList.length > 0) {
       try {
-        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({

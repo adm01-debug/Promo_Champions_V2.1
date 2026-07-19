@@ -43,7 +43,8 @@ Deno.serve(withRequestId('check-lead-sla', async (req, ctx) => {
       id, client_name, product_name, amount, status, created_at, salesperson_id,
       salespeople ( id, name, email )
     `)
-    .not('status', 'in', '(completed,lost)');
+    .not('status', 'in', '(completed,lost)')
+    .limit(10000);
 
   if (leadsError) {
     ctx.log('error', 'fetch_leads_failed', { error: leadsError.message });
@@ -53,7 +54,8 @@ Deno.serve(withRequestId('check-lead-sla', async (req, ctx) => {
   const { data: activities, error: actError } = await supabase
     .from('activities')
     .select('sale_id, created_at')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(50000);
 
   if (actError) {
     ctx.log('error', 'fetch_activities_failed', { error: actError.message });

@@ -3,6 +3,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const MAX_QUERY_LENGTH = 500;
 const MAX_RESULT_LIMIT = 50;
@@ -18,7 +19,7 @@ const cache = new Map<string, { ts: number; data: unknown }>();
 const TTL_MS = 2 * 60 * 1000;
 
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+  const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: "google/text-embedding-004", input: text.slice(0, 4000) }),
@@ -36,7 +37,7 @@ async function generateAnswer(query: string, results: Array<{ entity_type: strin
   if (!results.length) return null;
   const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join("\n");
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -3,6 +3,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const MAX_CUSTOM_INSTRUCTIONS = 500;
 
@@ -142,8 +143,8 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     // Single mode: auto-resolve context with caller's JWT (RLS enforced)
     if (mode === "single" && body.recipient_id && body.recipient_type && body.recipient_type !== "manual") {
       const supabase = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
         { global: { headers: { Authorization: authHeader } } },
       );
       const resolved = await resolveContext(supabase, body.recipient_id, body.recipient_type);
@@ -181,7 +182,7 @@ ${body.custom_instructions ? `Instruções extras do vendedor: ${body.custom_ins
 
 Gere o e-mail agora chamando a tool emit_email.`;
 
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

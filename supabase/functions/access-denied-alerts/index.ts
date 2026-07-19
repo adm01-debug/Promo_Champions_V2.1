@@ -4,7 +4,9 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+const resend = new Resend(RESEND_API_KEY);
 
 // Default configuration (used if DB fetch fails)
 const DEFAULT_SPIKE_THRESHOLD = 5;
@@ -156,9 +158,10 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     // Fetch access denied logs from the time window
     const { data: logs, error: logsError } = await supabase
       .from('access_denied_logs')
-      .select('*')
+      .select('id, user_id, user_email, attempted_path, user_role, required_role, created_at')
       .gte('created_at', timeWindowStart.toISOString())
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(10000);
 
     if (logsError) {
       throw new Error(`Failed to fetch access denied logs: ${logsError.message}`);
@@ -222,7 +225,8 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     const { data: adminRoles, error: rolesError } = await supabase
       .from('user_roles')
       .select('user_id')
-      .eq('role', 'admin');
+      .eq('role', 'admin')
+      .limit(100);
 
     if (rolesError) {
       throw new Error(`Failed to fetch admin roles: ${rolesError.message}`);
@@ -258,7 +262,8 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     const { data: notifPrefs } = await supabase
       .from('notification_preferences')
       .select('email')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .limit(100);
 
     const notifEmails = notifPrefs?.map(p => p.email).filter(Boolean) || [];
 
@@ -300,24 +305,25 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       console.error('Error sending email:', emailError);
     }
 
-    // Log email to email_logs table for each recipient
-    for (const email of allEmails) {
-      await supabase.from('email_logs').insert({
-        function_name: 'access-denied-alerts',
-        recipient_email: email,
-        subject,
-        status: emailStatus,
-        error_message: errorMessage,
-        metadata: {
-          spikes_count: spikes.length,
-          total_attempts: logs.length,
-          settings,
-          spikes: spikes.map(s => ({
-            user_email: s.userEmail,
-            attempt_count: s.attemptCount,
-          })),
-        },
-      });
+    // Batch-insert email_logs for all recipients in one query
+    const emailLogRows = allEmails.map(email => ({
+      function_name: 'access-denied-alerts',
+      recipient_email: email,
+      subject,
+      status: emailStatus,
+      error_message: errorMessage,
+      metadata: {
+        spikes_count: spikes.length,
+        total_attempts: logs.length,
+        settings,
+        spikes: spikes.map(s => ({
+          user_email: s.userEmail,
+          attempt_count: s.attemptCount,
+        })),
+      },
+    }));
+    if (emailLogRows.length > 0) {
+      await supabase.from('email_logs').insert(emailLogRows);
     }
 
     // Log alert to history

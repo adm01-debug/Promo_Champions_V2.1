@@ -193,27 +193,40 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
       }
     }
 
-    for (const [, v] of grouped) {
-      const { data: existing } = await admin
-        .from("objection_library")
-        .select("id, frequency_count, best_response_text")
-        .eq("objection_type", v.type)
-        .eq("pattern_text", v.pattern)
-        .maybeSingle();
+    // Batch-fetch all existing library entries for all grouped patterns in one query
+    const allTypes = [...new Set([...grouped.values()].map((v) => v.type))];
+    const allPatterns = [...new Set([...grouped.values()].map((v) => v.pattern))];
+    const { data: libraryRows } = await admin
+      .from("objection_library")
+      .select("id, frequency_count, best_response_text, objection_type, pattern_text")
+      .in("objection_type", allTypes)
+      .in("pattern_text", allPatterns)
+      .limit(grouped.size * 2);
 
+    const libraryByKey = new Map(
+      (libraryRows ?? []).map((r) => [`${r.objection_type}::${r.pattern_text}`, r])
+    );
+
+    const insertRows: Array<Record<string, unknown>> = [];
+    const updateOps: Array<() => Promise<unknown>> = [];
+    const nowStr = new Date().toISOString();
+
+    for (const [, v] of grouped) {
+      const key = `${v.type}::${v.pattern}`;
+      const existing = libraryByKey.get(key);
       if (existing) {
         const update: Record<string, unknown> = {
           frequency_count: (existing.frequency_count ?? 0) + 1,
-          last_seen_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          last_seen_at: nowStr,
+          updated_at: nowStr,
         };
         if (v.bestQ === "resolved" && v.bestText) {
           update.best_response_text = v.bestText;
           update.best_response_recording_id = recording_id;
         }
-        await admin.from("objection_library").update(update).eq("id", existing.id);
+        updateOps.push(() => admin.from("objection_library").update(update).eq("id", existing.id));
       } else {
-        await admin.from("objection_library").insert({
+        insertRows.push({
           objection_type: v.type,
           pattern_text: v.pattern,
           frequency_count: 1,
@@ -223,11 +236,18 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
       }
     }
 
+    // Batch insert new entries + parallelize updates — replaces 2N serial queries
+    await Promise.all([
+      insertRows.length > 0 ? admin.from("objection_library").insert(insertRows) : Promise.resolve(),
+      ...updateOps.map((fn) => fn()),
+    ]);
+
     return new Response(
       JSON.stringify({ recording_id, total, resolved, partial, unresolved, handling_score: score, health }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
+    console.error('analyze-objection-handling error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

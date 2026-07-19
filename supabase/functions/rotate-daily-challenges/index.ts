@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 // Pool of daily challenge templates with smaller targets
@@ -16,7 +17,7 @@ const DAILY_CHALLENGE_TEMPLATES = [
   { title: 'Persistência Paga', description: 'Faça 3 follow-ups hoje', challenge_type: 'follow_up', target_value: 3, xp_reward: 30 },
 ]
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -34,6 +35,7 @@ Deno.serve(async (req) => {
       .select('id')
       .eq('challenge_date', today)
       .eq('is_active', true)
+      .limit(100)
 
     if (existingChallenges && existingChallenges.length > 0) {
       console.info('Daily challenges already exist for today:', today)
@@ -91,4 +93,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
-})
+}))

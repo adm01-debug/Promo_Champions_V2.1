@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 import {
   BatchBodySchema,
   DEFAULT_CHUNK_SIZE,
@@ -53,7 +54,7 @@ interface BatchSummary {
   results: PerItemResult[];
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const inboundReqId =
@@ -295,4 +296,4 @@ Deno.serve(async (req) => {
     200,
     inboundReqId,
   );
-});
+}));

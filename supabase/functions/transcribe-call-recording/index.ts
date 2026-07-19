@@ -1,9 +1,11 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -61,7 +63,7 @@ Deno.serve(async (req) => {
     }
 
     // Baixa áudio e converte para base64
-    const audioResp = await fetch(signed.signedUrl);
+    const audioResp = await fetchWithTimeout(signed.signedUrl);
     if (!audioResp.ok) {
       const msg = `Failed to download audio (${audioResp.status})`;
       await admin.rpc("update_call_recording_transcript", {
@@ -82,7 +84,7 @@ Deno.serve(async (req) => {
     const base64Audio = btoa(binary);
 
     // Lovable AI Gateway — Gemini multimodal
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -145,7 +147,7 @@ Deno.serve(async (req) => {
     console.error("transcribe-call-recording fatal:", e);
     return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
   }
-});
+}));
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

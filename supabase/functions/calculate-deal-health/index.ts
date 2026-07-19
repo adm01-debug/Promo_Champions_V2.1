@@ -2,6 +2,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Sale {
   id: string;
@@ -51,7 +52,7 @@ async function gatherContext(
 ): Promise<DealContext | null> {
   const { data: sale, error } = await supabase
     .from('sales')
-    .select('*')
+    .select('id, salesperson_id, client_name, product_name, amount, status, next_action, updated_at')
     .eq('id', saleId)
     .maybeSingle();
   if (error || !sale) return null;
@@ -80,7 +81,8 @@ async function gatherContext(
   const { data: recordings } = await supabase
     .from('call_recordings')
     .select('id')
-    .eq('sale_id', saleId);
+    .eq('sale_id', saleId)
+    .limit(100);
   const recordingIds = (recordings || []).map((r: { id: string }) => r.id);
 
   let criticalMomentsHigh = 0;
@@ -260,7 +262,7 @@ Ações de coaching pendentes: ${ctx.pendingCoachingActions}
 Menções a concorrentes: ${ctx.competitorMentions}
 Próximo passo definido: ${ctx.hasNextStep ? 'sim' : 'não'}`;
 
-    const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -416,10 +418,7 @@ Deno.serve(async req => {
         .neq('status', 'lost')
         .limit(50);
 
-      const results = [];
-      for (const s of sales || []) {
-        results.push(await processOne(supabase, s.id));
-      }
+      const results = await Promise.all((sales || []).map(s => processOne(supabase, s.id)));
       return new Response(JSON.stringify({ processed: results.length, results }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

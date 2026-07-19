@@ -68,7 +68,7 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
         (chunk) =>
           admin
             .from("call_insights")
-            .select("*")
+            .select("recording_id, sentiment_score, sentiment_label, talk_ratio_salesperson, talk_ratio_client, questions_asked, summary, topics, objections, next_steps, coaching_tips")
             .in("recording_id", chunk),
         { parallel: true, label: "conversational-intelligence.insights" }
       );
@@ -159,6 +159,7 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
+    console.error('conversational-intelligence error:', e);
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,

@@ -4,6 +4,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface AiAction {
   category: 'opening' | 'discovery' | 'objection' | 'closing' | 'talk_ratio' | 'pace' | 'empathy' | 'other';
@@ -126,7 +127,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
 
   const userPrompt = `Título: ${rec.title ?? '(sem título)'}\n\nTranscrição/resumo:\n${excerpt}\n\nGere as 3 ações agora.`;
 
-  const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const aiRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({

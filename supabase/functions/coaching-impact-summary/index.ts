@@ -32,7 +32,7 @@ Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
 
     const { data, error } = await supabase
       .from("coaching_impact_metrics")
-      .select("*")
+      .select("session_id, salesperson_id, coach_id, completed_at, focus_skills, outcome_rating, pre_avg_overall, post_avg_overall, delta_overall, pre_conversion, post_conversion, delta_conversion, pre_ticket, post_ticket, delta_ticket")
       .order("completed_at", { ascending: false })
       .limit(200);
 
@@ -106,6 +106,7 @@ Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('coaching-impact-summary error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

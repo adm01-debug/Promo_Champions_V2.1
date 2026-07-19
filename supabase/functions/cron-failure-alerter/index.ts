@@ -56,11 +56,12 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       );
     }
 
-    // Load admin user_ids
+    // Load admin user_ids (bounded — admins are a small set)
     const { data: admins, error: aErr } = await admin
       .from("user_roles")
       .select("user_id")
-      .eq("role", "admin");
+      .eq("role", "admin")
+      .limit(100);
 
     if (aErr) {
       log("error", "failed loading admins", { error: aErr.message });
@@ -71,13 +72,14 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
     }
 
     const adminIds = (admins ?? []).map((r) => r.user_id as string);
-    let notifiedTotal = 0;
 
+    // Build ALL notification rows across ALL failures in one pass — no DB calls inside loop
+    const allNotifRows: Array<Record<string, unknown>> = [];
     for (const f of rows) {
-      // Build one notification per admin per failure.
-      if (adminIds.length > 0) {
-        const jobLabel = f.jobname ?? `job#${f.jobid}`;
-        const payload = adminIds.map((uid) => ({
+      if (adminIds.length === 0) continue;
+      const jobLabel = f.jobname ?? `job#${f.jobid}`;
+      for (const uid of adminIds) {
+        allNotifRows.push({
           user_id: uid,
           type: "system",
           category: "system",
@@ -95,28 +97,41 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
             end_time: f.end_time,
             source: "cron-failure-alerter",
           },
-        }));
-
-        const { error: nErr } = await admin.from("notifications").insert(payload);
-        if (nErr) {
-          log("error", "insert notifications failed", { error: nErr.message, jobid: f.jobid });
-          continue; // don't mark alerted so it retries next tick
-        }
-        notifiedTotal += payload.length;
+        });
       }
+    }
 
-      // Mark this (jobid, start_time) as alerted so we don't spam next tick.
-      const { error: mErr } = await admin.rpc("fn_admin_mark_cron_failure_alerted", {
-        _jobid: f.jobid,
-        _jobname: f.jobname,
-        _start_time: f.start_time,
-        _status: f.status,
-        _return_message: f.return_message,
-        _notified_admin_count: adminIds.length,
-      });
-      if (mErr) {
-        log("error", "mark alerted failed", { error: mErr.message, jobid: f.jobid });
+    // Single batch insert for all notifications
+    let notifiedTotal = 0;
+    if (allNotifRows.length > 0) {
+      const { error: nErr } = await admin.from("notifications").insert(allNotifRows);
+      if (nErr) {
+        log("error", "batch insert notifications failed", { error: nErr.message });
+        // Don't mark alerted — let next tick retry
+        return new Response(JSON.stringify({ error: nErr.message, requestId }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
+      notifiedTotal = allNotifRows.length;
+    }
+
+    // Mark all failures as alerted in parallel — N parallel RPCs instead of sequential
+    const markResults = await Promise.all(
+      rows.map((f) =>
+        admin.rpc("fn_admin_mark_cron_failure_alerted", {
+          _jobid: f.jobid,
+          _jobname: f.jobname,
+          _start_time: f.start_time,
+          _status: f.status,
+          _return_message: f.return_message,
+          _notified_admin_count: adminIds.length,
+        })
+      )
+    );
+    for (let i = 0; i < rows.length; i++) {
+      const mErr = markResults[i].error;
+      if (mErr) log("error", "mark alerted failed", { error: mErr.message, jobid: rows[i].jobid });
     }
 
     log("info", "processed cron failures", {
@@ -136,6 +151,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('cron-failure-alerter error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     log("error", "unhandled", { error: msg });
     return new Response(JSON.stringify({ error: msg, requestId }), {

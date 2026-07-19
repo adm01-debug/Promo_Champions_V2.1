@@ -13,6 +13,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry, RetryError } from "../_shared/retry.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface ExhaustedRow {
   function_name: string;
@@ -26,7 +27,7 @@ async function postSlack(webhook: string, text: string, requestId: string | null
     "slack:edge-retry-threshold-alert",
     async () => {
       await withRetry(async (_a, signal) => {
-        const res = await fetch(webhook, {
+        const res = await fetchWithTimeout(webhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text }),
@@ -89,7 +90,8 @@ Deno.serve(withRequestId(async (req, ctx) => {
     .from("edge_retry_events")
     .select("function_name, operation, status_code, error_name")
     .eq("outcome", "exhausted")
-    .gte("created_at", since);
+    .gte("created_at", since)
+    .limit(5000);
 
   if (error) {
     ctx.log("error", "query_failed", { error: error.message });

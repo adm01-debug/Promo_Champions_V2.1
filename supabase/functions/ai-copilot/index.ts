@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
   validateWebhookPayload,
   WebhookContracts,
 } from '../_shared/webhook-validator.ts';
@@ -72,7 +73,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      const skillResp = await fetch(`${supabaseUrl}/functions/v1/forecast-narrative`, {
+      const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/forecast-narrative`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      const skillResp = await fetch(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
+      const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,7 +198,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       userMessage = context.question || 'O que devo fazer agora?';
     }
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

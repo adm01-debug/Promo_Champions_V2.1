@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -48,7 +49,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       .not("stage", "in", "(closed_won,closed_lost)");
     if (ownerFilter) dealsQuery = dealsQuery.eq("salesperson_id", ownerFilter);
 
-    const { data: deals, error: dealsErr } = await dealsQuery;
+    const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
     if (dealsErr) throw dealsErr;
 
     // Pull closed_won for quota proxy (last period)
@@ -60,7 +61,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       .eq("stage", "closed_won")
       .gte("created_at", histStart.toISOString());
     if (ownerFilter) wonQuery = wonQuery.eq("salesperson_id", ownerFilter);
-    const { data: won } = await wonQuery;
+    const { data: won } = await wonQuery.limit(10000);
 
     // Quota = 1.2x last period closed_won, min 50000 per owner
     const quotaByOwner = new Map<string, number>();
@@ -129,7 +130,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (LOVABLE_API_KEY && worst.length > 0) {
       try {
-        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,

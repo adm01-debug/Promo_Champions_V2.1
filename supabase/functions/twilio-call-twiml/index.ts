@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('twilio-call-twiml', async (req, _ctx) => {
   const url = new URL(req.url);
   const ownerId = url.searchParams.get("owner_id");
 
@@ -30,4 +31,4 @@ Deno.serve(async (req) => {
     status: 200,
     headers: { "Content-Type": "text/xml" },
   });
-});
+}));

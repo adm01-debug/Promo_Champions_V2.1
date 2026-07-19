@@ -1,8 +1,8 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 /** Normalize unknown errors for structured logs. Mirrors dispatcher/retry.ts. */
 function describeError(e: unknown): {
@@ -92,47 +92,34 @@ async function assertAdmin(
   return null;
 }
 
-async function persistDlqOutcome(
-  supabase: SupabaseClient,
+function buildDlqUpdate(
   row: SourceRow,
   result: { succeeded: boolean; status: number; error: string | null },
   requestId: string
-): Promise<void> {
-  const update: Record<string, unknown> = {
-    status: result.succeeded ? 'replayed' : 'pending',
-    replay_count: row.replay_count + 1,
-    last_replay_at: new Date().toISOString(),
-    last_replay_status: result.status,
-    last_replay_error: result.succeeded ? null : result.error,
-    last_replay_request_id: requestId,
+): { id: string; update: Record<string, unknown> } {
+  return {
+    id: row.id,
+    update: {
+      status: result.succeeded ? 'replayed' : 'pending',
+      replay_count: row.replay_count + 1,
+      last_replay_at: new Date().toISOString(),
+      last_replay_status: result.status,
+      last_replay_error: result.succeeded ? null : result.error,
+      last_replay_request_id: requestId,
+    },
   };
-  const { error } = await supabase
-    .from('winloss_webhook_dead_letters')
-    .update(update)
-    .eq('id', row.id);
-  if (error) {
-    jlog('error', {
-      msg: 'dlq_outcome_persist_failed',
-      id: row.id,
-      requestId,
-      ...describeError(error),
-    });
-  }
 }
 
-async function persistAuditEntry(
-  supabase: SupabaseClient,
-  params: {
-    source: 'dlq' | 'delivery';
-    row: SourceRow;
-    outcome: ReplayResult;
-    requestId: string;
-    userId: string;
-    userEmail: string | null;
-  }
-): Promise<void> {
+function buildAuditEntry(params: {
+  source: 'dlq' | 'delivery';
+  row: SourceRow;
+  outcome: ReplayResult;
+  requestId: string;
+  userId: string;
+  userEmail: string | null;
+}): Record<string, unknown> {
   const { source, row, outcome, requestId, userId, userEmail } = params;
-  const { error } = await supabase.from('winloss_webhook_replay_audit').insert({
+  return {
     dead_letter_id: source === 'dlq' ? row.id : null,
     delivery_id: source === 'delivery' ? row.id : null,
     source,
@@ -144,15 +131,7 @@ async function persistAuditEntry(
     http_status: outcome.status,
     error: outcome.error,
     attempts: outcome.attempts ?? null,
-  });
-  if (error) {
-    jlog('error', {
-      msg: 'audit_persist_failed',
-      id: row.id,
-      requestId,
-      ...describeError(error),
-    });
-  }
+  };
 }
 
 async function persistInvocationAudit(
@@ -332,8 +311,11 @@ export const handler = async (req: Request): Promise<Response> => {
     jlog('info', { msg: 'replay_start', requestId, source, count: rows.length, ids });
 
     const results: ReplayResult[] = [];
+    // Collected during loop; batch-written after — eliminates per-row N+1
+    const auditEntries: Record<string, unknown>[] = [];
+    const dlqOutcomes: Array<{ id: string; update: Record<string, unknown> }> = [];
 
-    // --- Process each id ---
+    // --- Process each id (external calls are sequential; DB writes collected) ---
     for (const row of rows) {
       // Skip already-succeeded deliveries (no-op for DLQ source)
       if (source === 'delivery' && row.succeeded) {
@@ -346,14 +328,7 @@ export const handler = async (req: Request): Promise<Response> => {
           skipped: true,
         };
         results.push(skipped);
-        await persistAuditEntry(supabase, {
-          source,
-          row,
-          outcome: skipped,
-          requestId,
-          userId,
-          userEmail,
-        });
+        auditEntries.push(buildAuditEntry({ source, row, outcome: skipped, requestId, userId, userEmail }));
         continue;
       }
 
@@ -396,41 +371,16 @@ export const handler = async (req: Request): Promise<Response> => {
         results.push(outcome);
 
         if (source === 'dlq') {
-          await persistDlqOutcome(
-            supabase,
-            row,
-            {
-              succeeded,
-              status: outcome.status,
-              error: outcome.error,
-            },
-            requestId
-          );
+          dlqOutcomes.push(buildDlqUpdate(row, { succeeded, status: outcome.status, error: outcome.error }, requestId));
         }
-        await persistAuditEntry(supabase, {
-          source,
-          row,
-          outcome,
-          requestId,
-          userId,
-          userEmail,
-        });
+        auditEntries.push(buildAuditEntry({ source, row, outcome, requestId, userId, userEmail }));
       } catch (e) {
         const d = describeError(e);
         const errMsg = `${d.error_name}: ${d.error}`;
         jlog('error', { msg: 'replay_item_failed', requestId, id: row.id, source, ...d });
 
         if (source === 'dlq') {
-          await persistDlqOutcome(
-            supabase,
-            row,
-            {
-              succeeded: false,
-              status: 0,
-              error: errMsg,
-            },
-            requestId
-          );
+          dlqOutcomes.push(buildDlqUpdate(row, { succeeded: false, status: 0, error: errMsg }, requestId));
         }
 
         const failed: ReplayResult = {
@@ -441,16 +391,23 @@ export const handler = async (req: Request): Promise<Response> => {
           error: errMsg,
         };
         results.push(failed);
-        await persistAuditEntry(supabase, {
-          source,
-          row,
-          outcome: failed,
-          requestId,
-          userId,
-          userEmail,
-        });
+        auditEntries.push(buildAuditEntry({ source, row, outcome: failed, requestId, userId, userEmail }));
       }
     }
+
+    // Phase 2: batch all DB writes in parallel
+    await Promise.all([
+      auditEntries.length > 0
+        ? supabase.from('winloss_webhook_replay_audit').insert(auditEntries).then(({ error }) => {
+            if (error) jlog('error', { msg: 'audit_batch_persist_failed', requestId, ...describeError(error) });
+          })
+        : Promise.resolve(),
+      ...dlqOutcomes.map(({ id, update }) =>
+        supabase.from('winloss_webhook_dead_letters').update(update).eq('id', id).then(({ error }) => {
+          if (error) jlog('error', { msg: 'dlq_outcome_persist_failed', id, requestId, ...describeError(error) });
+        })
+      ),
+    ]);
 
     const summary = {
       total: results.length,
@@ -485,4 +442,4 @@ export const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId('winloss-webhook-replay', handler));

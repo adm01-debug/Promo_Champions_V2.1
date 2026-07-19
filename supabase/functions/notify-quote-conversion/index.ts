@@ -24,6 +24,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry, RetryError } from "../_shared/retry.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -101,7 +105,7 @@ async function postSlack(webhookUrl: string, p: Payload, requestId: string) {
       "slack:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetch(webhookUrl, {
+          const res = await fetchWithTimeout(webhookUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
@@ -145,7 +149,7 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
       "webhook:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetch(url, {
+          const res = await fetchWithTimeout(url, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -187,7 +191,7 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
   const requestId =
     req.headers.get("x-request-id") ?? crypto.randomUUID();
 
@@ -200,9 +204,13 @@ Deno.serve(async (req) => {
   }
 
   // Requer JWT do usuário; usamos para gravar auditoria com actor_user_id correto.
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return json(401, { error: "unauthorized" }, requestId);
+  let authHeader: string;
+  try {
+    const ctx = await getUserClient(req);
+    authHeader = ctx.authHeader;
+  } catch (authErr) {
+    const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "unauthorized";
+    return json(401, { error: msg }, requestId);
   }
 
   let payload: Payload;
@@ -211,8 +219,10 @@ Deno.serve(async (req) => {
   } catch {
     return json(400, { error: "invalid_json" }, requestId);
   }
-  if (!payload?.quote_id || typeof payload.success !== "boolean") {
-    return json(400, { error: "invalid_payload", detail: "quote_id e success são obrigatórios" }, requestId);
+  const errs = collectErrors([validateUUID(payload?.quote_id, "quote_id", true)]);
+  if (errs.length) return validationErrorResponse(errs, corsHeaders);
+  if (typeof payload.success !== "boolean") {
+    return json(400, { error: "invalid_payload", detail: "success é obrigatório" }, requestId);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -267,4 +277,4 @@ Deno.serve(async (req) => {
     },
     requestId,
   );
-});
+}));

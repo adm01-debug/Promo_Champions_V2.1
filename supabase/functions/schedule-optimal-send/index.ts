@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -21,7 +22,7 @@ function nextOccurrence(dow: number, hour: number, tz = "America/Sao_Paulo"): Da
   return target;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const auth = req.headers.get("Authorization");
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
     if (force_now) {
       scheduledFor = new Date();
     } else {
-      const { data: profile } = await admin.from("send_time_profiles").select("*").eq("sale_id", sale_id).maybeSingle();
+      const { data: profile } = await admin.from("send_time_profiles").select("confidence, best_dow, best_hour").eq("sale_id", sale_id).maybeSingle();
       if (profile && profile.confidence > 0) {
         scheduledFor = nextOccurrence(profile.best_dow, profile.best_hour);
         source = "profile";
@@ -76,8 +77,9 @@ Deno.serve(async (req) => {
       source, confidence,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
+    console.error('schedule-optimal-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

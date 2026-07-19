@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -12,7 +13,7 @@ const STAGE_WEIGHTS: Record<string, number> = {
   closed: 0.95,
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -26,9 +27,9 @@ Deno.serve(async (req) => {
     const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
 
     const [salesRes, activitiesRes, commissionsRes] = await Promise.all([
-      supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id"),
-      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since),
-      supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since),
+      supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
+      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
+      supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
     ]);
 
     const sales = salesRes.data ?? [];
@@ -134,9 +135,10 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('revops-hub error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

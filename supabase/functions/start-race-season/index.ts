@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -33,7 +34,7 @@ const DEFAULT_RULES: Record<'closer' | 'sdr', ScoringRule[]> = {
   ],
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -109,9 +110,10 @@ Deno.serve(async (req) => {
       .from('salespeople')
       .select('id, role')
       .eq('is_active', true)
-      .in('role', [role_type, 'hybrid']);
+      .in('role', [role_type, 'hybrid'])
+      .limit(500);
 
-    const { data: existingCars } = await admin.from('race_cars').select('salesperson_id, car_number');
+    const { data: existingCars } = await admin.from('race_cars').select('salesperson_id, car_number').limit(1000);
     const existingIds = new Set((existingCars ?? []).map((c) => c.salesperson_id));
     const usedNumbers = new Set((existingCars ?? []).map((c) => c.car_number));
     const toCreate: Array<Record<string, unknown>> = [];
@@ -167,4 +169,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

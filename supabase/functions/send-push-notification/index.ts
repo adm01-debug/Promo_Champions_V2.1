@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 // Constant-time string compare to avoid timing side-channels.
 function safeEqual(a: string, b: string): boolean {
@@ -15,7 +16,7 @@ async function sendWebPushNotification(
   payload: string,
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    const response = await fetch(subscription.endpoint, {
+    const response = await fetchWithTimeout(subscription.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,8 +121,9 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     // Já validado acima: user_ids.length <= 100 → seguro para .in() direto.
     const { data: subscriptions, error: fetchError } = await supabase
       .from('push_subscriptions')
-      .select('*')
-      .in('user_id', user_ids);
+      .select('id, user_id, endpoint, p256dh, auth')
+      .in('user_id', user_ids)
+      .limit(1000);
 
     if (fetchError) throw fetchError;
 
@@ -164,6 +166,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
+    console.error('send-push-notification error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

@@ -4,7 +4,9 @@ import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+const resend = new Resend(RESEND_API_KEY);
 
 interface Alert {
   type: string;
@@ -76,8 +78,9 @@ const generateAlerts = async (
   if (pref.notify_stagnant_deals) {
     const { data: pendingDeals } = await supabase
       .from('sales')
-      .select('*')
-      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
+      .select('updated_at, client_name, product_name, amount')
+      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal'])
+      .limit(500);
 
     pendingDeals?.forEach(
       (deal: {
@@ -108,7 +111,8 @@ const generateAlerts = async (
       .from('sales')
       .select('client_name, created_at')
       .eq('status', 'completed')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(2000);
 
     const clientLastSale: Record<string, Date> = {};
     allSales?.forEach((sale: { client_name: string; created_at: string }) => {
@@ -135,38 +139,53 @@ const generateAlerts = async (
     const { data: salespeople } = await supabase
       .from('salespeople')
       .select('id, name')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .limit(500);
 
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
     const { data: goals } = await supabase
       .from('sales_goals')
-      .select('*')
-      .eq('month', currentMonth);
+      .select('salesperson_id, goal_amount')
+      .eq('month', currentMonth)
+      .limit(500);
 
     const dayOfMonth = now.getDate();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const expectedProgress = (dayOfMonth / daysInMonth) * 100;
 
-    for (const person of salespeople || []) {
-      const goal = goals?.find(
-        (g: { salesperson_id: string; goal_amount: number | string }) =>
-          g.salesperson_id === person.id
+    // Batch-load all completed sales for the month once (avoids N+1 per salesperson)
+    const spIds = (salespeople ?? []).map((p: { id: string }) => p.id);
+    const { data: monthSales } = spIds.length
+      ? await supabase
+          .from('sales')
+          .select('salesperson_id, amount')
+          .in('salesperson_id', spIds)
+          .eq('status', 'completed')
+          .gte('created_at', currentMonth)
+          .limit(50000)
+      : { data: [] };
+
+    const salesByPerson = new Map<string, number>();
+    for (const s of monthSales ?? []) {
+      const prev = salesByPerson.get(s.salesperson_id) ?? 0;
+      salesByPerson.set(s.salesperson_id, prev + Number(s.amount));
+    }
+
+    // Build goals Map for O(1) per-person lookup instead of O(N) .find()
+    const goalsMap = new Map<string, number>();
+    for (const g of goals ?? []) {
+      goalsMap.set(
+        (g as { salesperson_id: string; goal_amount: number | string }).salesperson_id,
+        Number((g as { salesperson_id: string; goal_amount: number | string }).goal_amount)
       );
-      if (!goal) continue;
+    }
 
-      const { data: sales } = await supabase
-        .from('sales')
-        .select('amount')
-        .eq('salesperson_id', person.id)
-        .eq('status', 'completed')
-        .gte('created_at', currentMonth);
+    for (const person of salespeople || []) {
+      const goalAmount = goalsMap.get(person.id);
+      if (goalAmount === undefined) continue;
 
-      const totalSales =
-        sales?.reduce(
-          (sum: number, s: { amount: number | string }) => sum + Number(s.amount),
-          0
-        ) || 0;
-      const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
+      const totalSales = salesByPerson.get(person.id) ?? 0;
+      const actualProgress = (totalSales / goalAmount) * 100;
 
       if (actualProgress < expectedProgress - 40) {
         alerts.push({
@@ -246,8 +265,9 @@ const handler = async (req: Request): Promise<Response> => {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
-        .select('*')
-        .eq('is_active', true);
+        .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
+        .eq('is_active', true)
+        .limit(200);
 
       if (prefError) {
         throw new Error(`Failed to fetch preferences: ${prefError.message}`);

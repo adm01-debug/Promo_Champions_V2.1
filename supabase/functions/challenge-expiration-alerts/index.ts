@@ -37,22 +37,31 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   const { data: salespeople, error: spError } = await supabase
     .from("salespeople")
     .select("id, name, email")
-    .eq("is_active", true);
+    .eq("is_active", true)
+    .limit(500);
 
   if (spError) {
     ctx.log("error", "fetch_salespeople_failed", { error: spError.message });
     return errorEnvelope("INTERNAL_ERROR", spError.message, { requestId: ctx.requestId });
   }
 
+  // Batch-fetch all challenge_progress in one query — eliminates N+1 (one per challenge)
+  const challengeIds = expiringChallenges.map(c => c.id);
+  const { data: allProgressData } = await supabase
+    .from("challenge_progress")
+    .select("challenge_id, salesperson_id, current_value, xp_claimed")
+    .in("challenge_id", challengeIds);
+
+  const progressByChallenge = new Map<string, Map<string, { current_value: number; xp_claimed: boolean }>>();
+  for (const p of allProgressData ?? []) {
+    if (!progressByChallenge.has(p.challenge_id)) progressByChallenge.set(p.challenge_id, new Map());
+    progressByChallenge.get(p.challenge_id)!.set(p.salesperson_id, { current_value: p.current_value, xp_claimed: p.xp_claimed });
+  }
+
   const notifications: Array<Record<string, unknown>> = [];
 
   for (const challenge of expiringChallenges) {
-    const { data: progressData } = await supabase
-      .from("challenge_progress")
-      .select("salesperson_id, current_value, xp_claimed")
-      .eq("challenge_id", challenge.id);
-
-    const progressMap = new Map((progressData || []).map(p => [p.salesperson_id, p]));
+    const progressMap = progressByChallenge.get(challenge.id) ?? new Map();
 
     for (const sp of salespeople || []) {
       const progress = progressMap.get(sp.id);
@@ -82,8 +91,8 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
 
   ctx.log("info", "notifications_generated", { count: notifications.length });
 
-  for (const notif of notifications) {
-    await supabase.from("achievements").insert({
+  if (notifications.length > 0) {
+    const achievementRows = notifications.map(notif => ({
       salesperson_id: notif.salesperson_id,
       achievement_type: "challenge_expiring",
       achievement_date: today,
@@ -100,7 +109,8 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
           ? `⏰ Último dia para resgatar ${notif.xp_reward} XP do desafio "${notif.challenge_title}"!`
           : `⏰ Último dia! Faltam ${notif.remaining} para completar "${notif.challenge_title}" (+${notif.xp_reward} XP)`,
       },
-    });
+    }));
+    await supabase.from("achievements").insert(achievementRows);
   }
 
   return jsonResponse({

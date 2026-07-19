@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -13,7 +14,7 @@ function percentile(sorted: number[], p: number): number {
   return sorted[idx];
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('refresh-stage-baselines', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
@@ -80,14 +81,14 @@ Deno.serve(async req => {
       };
     });
 
-    // Upsert one by one (small N)
+    // Batch upsert all baselines in a single round-trip
     let inserted = 0;
-    for (const u of upserts) {
+    if (upserts.length > 0) {
       const { error: upErr } = await admin
         .from('stage_velocity_baselines')
-        .upsert(u, { onConflict: 'stage,owner_id' })
-        .select();
-      if (!upErr) inserted++;
+        .upsert(upserts, { onConflict: 'stage,owner_id' });
+      if (!upErr) inserted = upserts.length;
+      else console.error('stage_velocity_baselines upsert error:', upErr);
     }
     return new Response(JSON.stringify({ buckets: upserts.length, upserted: inserted }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -99,4 +100,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

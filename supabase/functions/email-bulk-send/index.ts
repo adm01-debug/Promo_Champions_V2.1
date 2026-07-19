@@ -50,10 +50,11 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
 
     const { data: drafts } = await admin
       .from('email_bulk_drafts')
-      .select('*')
+      .select('id, recipient_email, recipient_name, subject, body, client_id')
       .eq('job_id', job_id)
       .eq('approved', true)
-      .is('sent_at', null);
+      .is('sent_at', null)
+      .limit(10000);
 
     let sent = 0;
     let failed = 0;

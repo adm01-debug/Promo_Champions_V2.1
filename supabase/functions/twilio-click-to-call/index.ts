@@ -1,5 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Payload {
   to_number: string;
@@ -8,7 +10,7 @@ interface Payload {
   from_number?: string;
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -47,7 +49,7 @@ Deno.serve(async req => {
     // Load Twilio credentials for owner
     const { data: cred } = await admin
       .from('channel_credentials')
-      .select('*')
+      .select('credentials, from_number')
       .eq('owner_id', ownerId)
       .eq('provider', 'twilio')
       .eq('enabled', true)
@@ -93,7 +95,7 @@ Deno.serve(async req => {
       Record: 'true',
     });
 
-    const twilioRes = await fetch(
+    const twilioRes = await fetchWithTimeout(
       `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`,
       {
         method: 'POST',
@@ -148,4 +150,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

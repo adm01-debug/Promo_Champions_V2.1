@@ -1,6 +1,6 @@
-import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 function generateChallenge(): string {
   const array = new Uint8Array(32);
@@ -166,7 +166,7 @@ const handler = async (req: Request): Promise<Response> => {
 
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
-          .select('*')
+          .select('id, challenge')
           .eq('user_id', body.userId)
           .eq('type', 'registration')
           .gt('expires_at', new Date().toISOString())
@@ -212,7 +212,7 @@ const handler = async (req: Request): Promise<Response> => {
         let resolvedUserId: string | null = null;
 
         if (body.userEmail) {
-          const { data: userData } = await supabase.auth.admin.listUsers();
+          const { data: userData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
           const user = userData?.users?.find(u => u.email === body.userEmail);
 
           if (user) {
@@ -290,7 +290,7 @@ const handler = async (req: Request): Promise<Response> => {
         // Verify challenge is bound to THIS user (not any user)
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
-          .select('*')
+          .select('id, challenge')
           .eq('user_id', credData.user_id)
           .eq('type', 'authentication')
           .gt('expires_at', new Date().toISOString())
@@ -411,4 +411,4 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(withRequestId('webauthn', handler));

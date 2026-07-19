@@ -61,7 +61,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
     // Verify the request exists and is approved
     const { data: resetRequest, error: requestError } = await supabaseAdmin
       .from("password_reset_requests")
-      .select("*")
+      .select("id")
       .eq("id", requestId)
       .eq("status", "approved")
       .single();
@@ -162,6 +162,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       }
     );
   } catch (error: unknown) {
+    console.error('send-password-reset error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

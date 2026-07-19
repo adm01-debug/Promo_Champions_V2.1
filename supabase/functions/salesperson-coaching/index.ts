@@ -1,8 +1,9 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
-serve(async req => {
+Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -24,7 +25,7 @@ serve(async req => {
     // Fetch salesperson info
     const { data: salesperson } = await supabase
       .from('salespeople')
-      .select('*')
+      .select('id, name')
       .eq('id', salespersonId)
       .single();
 
@@ -48,13 +49,15 @@ serve(async req => {
       `
       )
       .eq('salesperson_id', salespersonId)
-      .gte('created_at', ninetyDaysAgo.toISOString());
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .limit(5000);
 
     // Fetch team average for comparison
     const { data: teamOutcomes } = await supabase
       .from('deal_outcomes')
       .select('outcome, reason')
-      .gte('created_at', ninetyDaysAgo.toISOString());
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .limit(10000);
 
     // Calculate metrics
     const wins = outcomes?.filter(o => o.outcome === 'won') || [];
@@ -161,7 +164,7 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResponse = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -281,4 +284,4 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

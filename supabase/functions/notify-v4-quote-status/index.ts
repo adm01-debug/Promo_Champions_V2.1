@@ -1,10 +1,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const callbackUrl = Deno.env.get("V4_CALLBACK_URL") ?? "";
 const callbackApiKey = Deno.env.get("V4_CALLBACK_API_KEY") ?? "";
+if (!callbackUrl) throw new Error("V4_CALLBACK_URL is not configured");
+if (!callbackApiKey) throw new Error("V4_CALLBACK_API_KEY is not configured");
 
 const MAX_ATTEMPTS = 5;
 const BASE_BACKOFF_MS = 30_000;
@@ -48,7 +51,7 @@ async function postWithTimeout(url: string, payload: unknown, apiKey: string): P
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -94,6 +97,20 @@ Deno.serve(async (req) => {
 
   const results: Array<Record<string, unknown>> = [];
 
+  // Phase 1: fire HTTP callbacks sequentially (webhook ordering matters per receiver)
+  type ItemOutcome = {
+    id: string;
+    ok: boolean;
+    statusCode: number;
+    responseText: string;
+    attempts: number;
+    latency: number;
+    exhausted: boolean;
+    nextRetry: string;
+    item: typeof (items ?? [])[number];
+  };
+  const outcomes: ItemOutcome[] = [];
+
   for (const item of items ?? []) {
     let ok = false;
     let statusCode = 0;
@@ -108,40 +125,49 @@ Deno.serve(async (req) => {
       responseText = e instanceof Error ? e.message : String(e);
     }
     const latency = Date.now() - t0;
-
     const attempts = (item.attempts ?? 0) + 1;
-    if (ok) {
-      await supabase.from("v4_callback_dead_letters").update({
-        resolved_at: new Date().toISOString(),
-        attempts,
-        last_error: null,
-      }).eq("id", item.id);
-      await supabase.rpc("increment_v4_callback_metric", { _column: "sent_ok", _delta: 1 });
-      log("info", "v4_callback_sent", { id: item.id, external_quote_id: item.external_quote_id, event: item.event_type, status: statusCode, latency_ms: latency });
-      results.push({ id: item.id, ok: true, status: statusCode });
+    const exhausted = !ok && attempts >= MAX_ATTEMPTS;
+    const nextRetry = new Date(Date.now() + backoffMs(attempts)).toISOString();
+    outcomes.push({ id: item.id, ok, statusCode, responseText, attempts, latency, exhausted, nextRetry, item });
+  }
+
+  // Phase 2: batch all dead_letter updates in parallel — zero serial DB calls inside loop
+  const resolvedAt = new Date().toISOString();
+  await Promise.all(
+    outcomes.map(({ id, ok, statusCode, responseText, attempts, exhausted, nextRetry }) =>
+      ok
+        ? supabase.from("v4_callback_dead_letters").update({ resolved_at: resolvedAt, attempts, last_error: null }).eq("id", id)
+        : supabase.from("v4_callback_dead_letters").update({
+            attempts,
+            last_error: `[${statusCode}] ${responseText.slice(0, 500)}`,
+            next_retry_at: exhausted ? null : nextRetry,
+          }).eq("id", id)
+    )
+  );
+
+  // Phase 3: accumulate metric counters — 3 RPC calls max regardless of batch size
+  const sentOk = outcomes.filter((o) => o.ok).length;
+  const failed = outcomes.filter((o) => !o.ok).length;
+  const exhaustedCount = outcomes.filter((o) => o.exhausted).length;
+
+  await Promise.all([
+    sentOk > 0 ? supabase.rpc("increment_v4_callback_metric", { _column: "sent_ok", _delta: sentOk }) : Promise.resolve(),
+    failed > 0 ? supabase.rpc("increment_v4_callback_metric", { _column: "failed", _delta: failed }) : Promise.resolve(),
+    exhaustedCount > 0 ? supabase.rpc("increment_v4_callback_metric", { _column: "exhausted", _delta: exhaustedCount }) : Promise.resolve(),
+  ]);
+
+  // Phase 4: structured logs + result array
+  for (const o of outcomes) {
+    if (o.ok) {
+      log("info", "v4_callback_sent", { id: o.id, external_quote_id: o.item.external_quote_id, event: o.item.event_type, status: o.statusCode, latency_ms: o.latency });
+      results.push({ id: o.id, ok: true, status: o.statusCode });
     } else {
-      const exhausted = attempts >= MAX_ATTEMPTS;
-      const nextRetry = new Date(Date.now() + backoffMs(attempts)).toISOString();
-      await supabase.from("v4_callback_dead_letters").update({
-        attempts,
-        last_error: `[${statusCode}] ${responseText.slice(0, 500)}`,
-        next_retry_at: exhausted ? null : nextRetry,
-      }).eq("id", item.id);
-      await supabase.rpc("increment_v4_callback_metric", { _column: "failed", _delta: 1 });
-      if (exhausted) {
-        await supabase.rpc("increment_v4_callback_metric", { _column: "exhausted", _delta: 1 });
-        log("error", "v4_callback_exhausted", {
-          id: item.id,
-          external_quote_id: item.external_quote_id,
-          event: item.event_type,
-          attempts,
-          status: statusCode,
-          last_error: responseText.slice(0, 300),
-        });
+      if (o.exhausted) {
+        log("error", "v4_callback_exhausted", { id: o.id, external_quote_id: o.item.external_quote_id, event: o.item.event_type, attempts: o.attempts, status: o.statusCode, last_error: o.responseText.slice(0, 300) });
       } else {
-        log("warn", "v4_callback_failed", { id: item.id, attempts, status: statusCode, next_retry_at: nextRetry, latency_ms: latency });
+        log("warn", "v4_callback_failed", { id: o.id, attempts: o.attempts, status: o.statusCode, next_retry_at: o.nextRetry, latency_ms: o.latency });
       }
-      results.push({ id: item.id, ok: false, status: statusCode, attempts, exhausted });
+      results.push({ id: o.id, ok: false, status: o.statusCode, attempts: o.attempts, exhausted: o.exhausted });
     }
   }
 
@@ -149,4 +175,4 @@ Deno.serve(async (req) => {
     JSON.stringify({ success: true, processed: results.length, results }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
-});
+}));

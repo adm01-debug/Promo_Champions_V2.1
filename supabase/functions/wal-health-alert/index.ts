@@ -21,6 +21,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
@@ -41,7 +42,7 @@ async function postSlack(webhook: string, text: string, blocks?: unknown, reques
     "slack:wal-health-alert",
     async () => {
       await withRetry(async (_attempt, signal) => {
-        const res = await fetch(webhook, {
+        const res = await fetchWithTimeout(webhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(blocks ? { text, blocks } : { text }),
@@ -107,7 +108,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     // Lê a view (service_role tem SELECT total).
     const { data, error } = await supabase
       .from("v_platform_wal_health")
-      .select("*")
+      .select("max_slot_lag_bytes, wal_size_bytes, long_running_tx")
       .maybeSingle();
 
     if (error) throw error;

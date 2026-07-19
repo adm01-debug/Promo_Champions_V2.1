@@ -88,6 +88,7 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('detect-winloss-at-risk error:', e);
     const message = e instanceof Error ? e.message : "unknown";
     log("error", { message, duration_ms: Date.now() - startedAt });
     return new Response(JSON.stringify({ error: message, deals: [] }), {

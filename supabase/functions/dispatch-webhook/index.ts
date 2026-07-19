@@ -67,20 +67,26 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
     );
 
     // Find matching webhooks
-    let q = supabase.from('webhooks').select('*').eq('is_active', true);
+    let q = supabase.from('webhooks').select('id, url, headers, secret, failure_count').eq('is_active', true);
     if (webhook_id) q = q.eq('id', webhook_id);
     else q = q.contains('events', [event_type]);
+    q = q.limit(100);
 
     const { data: webhooks, error } = await q;
     if (error) throw error;
 
     const results = [];
+    const deliveryRows: Record<string, unknown>[] = [];
+    const webhookUpdateOps: Array<Promise<unknown>> = [];
+    const nowIso = new Date().toISOString();
+
+    // Phase 1: sequential HTTP dispatch (each endpoint is independent but ordering is preserved)
     for (const wh of webhooks ?? []) {
       const start = Date.now();
       const body = JSON.stringify({
         event: event_type,
         data: payload,
-        timestamp: new Date().toISOString(),
+        timestamp: nowIso,
       });
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -122,7 +128,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
 
       const duration = Date.now() - start;
 
-      await supabase.from('webhook_deliveries').insert({
+      deliveryRows.push({
         webhook_id: wh.id,
         event_type,
         payload,
@@ -133,26 +139,37 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
         duration_ms: duration,
       });
 
-      await supabase
-        .from('webhooks')
-        .update({
-          last_triggered_at: new Date().toISOString(),
-          ...(success
-            ? { last_success_at: new Date().toISOString(), failure_count: 0 }
-            : {
-                last_failure_at: new Date().toISOString(),
-                failure_count: (wh.failure_count ?? 0) + 1,
-              }),
-        })
-        .eq('id', wh.id);
+      webhookUpdateOps.push(
+        supabase
+          .from('webhooks')
+          .update({
+            last_triggered_at: nowIso,
+            ...(success
+              ? { last_success_at: nowIso, failure_count: 0 }
+              : {
+                  last_failure_at: nowIso,
+                  failure_count: ((wh as { failure_count?: number }).failure_count ?? 0) + 1,
+                }),
+          })
+          .eq('id', wh.id)
+      );
 
       results.push({ webhook_id: wh.id, success, status, duration });
     }
+
+    // Phase 2: batch all DB writes in parallel
+    await Promise.all([
+      deliveryRows.length > 0
+        ? supabase.from('webhook_deliveries').insert(deliveryRows)
+        : Promise.resolve(),
+      ...webhookUpdateOps,
+    ]);
 
     return new Response(JSON.stringify({ dispatched: results.length, results }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    console.error("dispatch-webhook error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

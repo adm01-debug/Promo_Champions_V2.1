@@ -1,5 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -41,7 +43,7 @@ function aggregate(events: OpenEvent[]) {
   return { hourBuckets, dowBuckets, bestHour, bestDow };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const auth = req.headers.get("Authorization");
@@ -64,19 +66,36 @@ Deno.serve(async (req) => {
     const { data: globalStats } = await admin.rpc("get_global_send_time_stats");
     const fallback = Array.isArray(globalStats) && globalStats[0] ? globalStats[0] : { best_hour: 10, best_dow: 2, sample_size: 0 };
 
-    let updated = 0, fallbacks = 0;
+    let fallbacks = 0;
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
+    const nowIso = new Date().toISOString();
 
+    // Batch-fetch ALL open events for ALL targets in one round-trip (was N queries)
+    const allEvents = await chunkedIn<OpenEvent>(
+      targets,
+      (chunk) =>
+        admin
+          .from("email_tracking_events")
+          .select("tracked_at, sale_id")
+          .in("sale_id", chunk)
+          .in("event_type", ["open", "opened"])
+          .gte("tracked_at", since),
+      { parallel: true, label: "send-time-optimizer.events" },
+    );
+
+    // Group by sale_id in memory
+    const eventsBySaleId = new Map<string, OpenEvent[]>();
+    for (const ev of allEvents) {
+      if (!ev.sale_id) continue;
+      const bucket = eventsBySaleId.get(ev.sale_id) ?? [];
+      bucket.push(ev);
+      eventsBySaleId.set(ev.sale_id, bucket);
+    }
+
+    // Compute profiles in memory — no DB calls
+    const upsertRows = [];
     for (const saleId of targets) {
-      const { data: events } = await admin
-        .from("email_tracking_events")
-        .select("tracked_at, sale_id")
-        .eq("sale_id", saleId)
-        .in("event_type", ["open", "opened"])
-        .gte("tracked_at", since)
-        .limit(2000);
-
-      const list = (events ?? []) as OpenEvent[];
+      const list = eventsBySaleId.get(saleId) ?? [];
       const sample = list.length;
 
       let bestHour: number, bestDow: number, hourBuckets: number[], dowBuckets: number[], confidence: number;
@@ -93,7 +112,7 @@ Deno.serve(async (req) => {
         confidence = wilsonLowerBound(peak, sample);
       }
 
-      const { error } = await admin.from("send_time_profiles").upsert({
+      upsertRows.push({
         sale_id: saleId,
         best_hour: bestHour,
         best_dow: bestDow,
@@ -101,18 +120,27 @@ Deno.serve(async (req) => {
         sample_size: sample,
         hour_distribution: hourBuckets,
         dow_distribution: dowBuckets,
-        last_calculated_at: new Date().toISOString(),
-      }, { onConflict: "sale_id" });
+        last_calculated_at: nowIso,
+      });
+    }
 
-      if (!error) updated++;
+    // Single batch upsert for all profiles (was N upserts)
+    let updated = 0;
+    if (upsertRows.length > 0) {
+      const { error } = await admin
+        .from("send_time_profiles")
+        .upsert(upsertRows, { onConflict: "sale_id" });
+      if (error) console.error("send-time-optimizer upsert error:", error);
+      else updated = upsertRows.length;
     }
 
     return new Response(JSON.stringify({ updated, fallbacks, total: targets.length }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error('send-time-optimizer error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

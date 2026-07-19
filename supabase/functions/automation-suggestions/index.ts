@@ -30,9 +30,9 @@ Deno.serve(withRequestId('automation-suggestions', async (req, _ctx) => {
 
     // Gather signals
     const [{ data: workflows }, { data: stagnantDeals }, { data: recentRuns }] = await Promise.all([
-      supabase.from("automation_workflows").select("trigger_type, is_active, run_count"),
+      supabase.from("automation_workflows").select("trigger_type, is_active, run_count").limit(1000),
       supabase.from("sales").select("id, stage, updated_at").not("status", "in", "(completed,lost,cancelled)").lt("updated_at", new Date(Date.now() - 7 * 86400000).toISOString()).limit(50),
-      supabase.from("automation_runs").select("status, duration_ms").gte("started_at", new Date(Date.now() - 30 * 86400000).toISOString()),
+      supabase.from("automation_runs").select("status, duration_ms").gte("started_at", new Date(Date.now() - 30 * 86400000).toISOString()).limit(10000),
     ]);
 
     const activeTriggers = new Set((workflows ?? []).filter((w) => w.is_active).map((w) => w.trigger_type));

@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -14,7 +15,7 @@ const STAGE_WEIGHTS: Record<string, number> = {
   lost: 0,
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -47,7 +48,8 @@ Deno.serve(async (req) => {
     const { data: sales, error: salesErr } = await supabase
       .from("sales")
       .select("id, amount, stage, salesperson_id, status")
-      .in("status", ["pending", "in_progress", "negotiation"]);
+      .in("status", ["pending", "in_progress", "negotiation"])
+      .limit(10000);
     if (salesErr) throw salesErr;
 
     const grouped = new Map<
@@ -106,9 +108,10 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    console.error('snapshot-forecast error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

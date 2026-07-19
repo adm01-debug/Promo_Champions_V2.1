@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface TerritoryRow {
   id: string;
@@ -76,7 +77,7 @@ function healthFromBalance(
   return 'critical';
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('territory-optimization', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -87,8 +88,8 @@ Deno.serve(async req => {
     );
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     const startDate = new Date(Date.now() - days * 86400000).toISOString();
@@ -337,4 +338,4 @@ Deno.serve(async req => {
       }
     );
   }
-});
+}));

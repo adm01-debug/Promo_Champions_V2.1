@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface HealthFactor {
   label: string;
@@ -48,19 +49,24 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
       });
     }
 
-    const now = Date.now();
-    const enriched: AccountHealth[] = await Promise.all(
-      accounts.map(async acc => {
-        const { data: lastActivity } = await supabase
-          .from('account_activities')
-          .select('occurred_at')
-          .eq('account_id', acc.id)
-          .order('occurred_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+    // Batch-fetch latest activity date per account — replaces N serial queries
+    const accountIds = accounts.map(a => a.id);
+    const allActivities = await chunkedIn<{ account_id: string; occurred_at: string }>(
+      accountIds,
+      (chunk) => supabase.from('account_activities').select('account_id, occurred_at').in('account_id', chunk).order('occurred_at', { ascending: false }).limit(chunk.length * 50),
+      { parallel: true, label: 'customer-success-hub.activities' },
+    );
+    const lastActivityByAccount = new Map<string, string>();
+    for (const act of allActivities) {
+      const cur = lastActivityByAccount.get(act.account_id);
+      if (!cur || act.occurred_at > cur) lastActivityByAccount.set(act.account_id, act.occurred_at);
+    }
 
-        const lastDate = lastActivity?.occurred_at
-          ? new Date(lastActivity.occurred_at).getTime()
+    const now = Date.now();
+    const enriched: AccountHealth[] = accounts.map(acc => {
+        const lastOccurredAt = lastActivityByAccount.get(acc.id);
+        const lastDate = lastOccurredAt
+          ? new Date(lastOccurredAt).getTime()
           : new Date(acc.updated_at).getTime();
         const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
 
@@ -111,8 +117,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
           health_factors: factors,
           engagement_radar: radar,
         };
-      })
-    );
+      });
 
     const summary = {
       total_accounts: enriched.length,
@@ -133,6 +138,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('customer-success-hub error:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {

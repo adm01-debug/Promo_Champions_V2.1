@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -51,7 +52,7 @@ interface PredictiveSnapshot {
   generated_at: string;
 }
 
-serve(async (req) => {
+Deno.serve(withRequestId("predictive-intelligence", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -176,7 +177,7 @@ serve(async (req) => {
       const aiKey = Deno.env.get("LOVABLE_API_KEY");
       if (aiKey) {
         try {
-          const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
             headers: { Authorization: `Bearer ${aiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -226,4 +227,4 @@ serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));

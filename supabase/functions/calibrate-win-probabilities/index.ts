@@ -139,7 +139,8 @@ Deno.serve(async req => {
 
     const { data: allBuckets } = await supabase
       .from('win_calibration_buckets')
-      .select('*');
+      .select('stage, segment, bucket_min, actual_win_rate, sample_size')
+      .limit(1000);
     const bucketMap = new Map<string, CalibrationBucket>();
     for (const b of allBuckets ?? []) {
       bucketMap.set(`${b.stage}::${b.segment}::${b.bucket_min}`, b);
@@ -194,6 +195,7 @@ Deno.serve(async req => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (err) {
+    console.error('calibrate-win-probabilities error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
