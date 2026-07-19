@@ -33,39 +33,46 @@ Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
       });
     }
 
-    let updated = 0;
     const tierCounts: Record<string, number> = { tier1: 0, tier2: 0, tier3: 0 };
 
+    // Batch-fetch ALL account_contacts for all accounts (was N individual queries)
+    const allContacts = await chunkedIn<{ account_id: string; sale_id: string | null; seniority: string | null; buying_role: string | null }>(
+      ids,
+      (chunk) => supabase.from("account_contacts").select("account_id, sale_id, seniority, buying_role").in("account_id", chunk),
+      { parallel: true, label: "account-engagement-aggregator.contacts" },
+    );
+
+    // Collect all unique sale_ids then batch-fetch all engagement scores in one call
+    const allSaleIds = [...new Set(allContacts.map((c) => c.sale_id).filter(Boolean) as string[])];
+    const allScores = allSaleIds.length > 0
+      ? await chunkedIn<{ sale_id: string; score: number; tier: string }>(
+          allSaleIds,
+          (chunk) => supabase.from("email_engagement_scores").select("sale_id, score, tier").in("sale_id", chunk),
+          { parallel: true, label: "account-engagement-aggregator.scores" },
+        )
+      : [];
+
+    // Build lookup maps in memory
+    const contactsByAccount = new Map<string, Array<{ sale_id: string | null; seniority: string | null; buying_role: string | null }>>();
+    for (const c of allContacts) {
+      const bucket = contactsByAccount.get(c.account_id) ?? [];
+      bucket.push(c);
+      contactsByAccount.set(c.account_id, bucket);
+    }
+    const scoreMap = new Map(allScores.map((s) => [s.sale_id, s]));
+
+    // Compute all metrics in memory — zero DB calls
+    const nowIso = new Date().toISOString();
+    const updateRows: Array<{
+      id: string; account_score: number; coverage: number;
+      engaged_contacts: number; champion_count: number; decision_maker_count: number; last_aggregated_at: string;
+    }> = [];
+
     for (const accountId of ids) {
-      const { data: contacts } = await supabase
-        .from("account_contacts")
-        .select("sale_id, seniority, buying_role")
-        .eq("account_id", accountId);
+      const list = contactsByAccount.get(accountId) ?? [];
+      let weightedSum = 0, weightTotal = 0, engaged = 0, championCount = 0, dmCount = 0;
 
-      const list = contacts ?? [];
-      const saleIds = list.map((c: { sale_id: string | null }) => c.sale_id).filter(Boolean) as string[];
-
-      let scores: { sale_id: string; score: number; tier: string }[] = [];
-      if (saleIds.length > 0) {
-        scores = await chunkedIn<{ sale_id: string; score: number; tier: string }>(
-          saleIds,
-          (chunk) =>
-            supabase
-              .from("email_engagement_scores")
-              .select("sale_id, score, tier")
-              .in("sale_id", chunk),
-          { parallel: true, label: "account-engagement-aggregator.scores" }
-        );
-      }
-
-      const scoreMap = new Map(scores.map((s) => [s.sale_id, s]));
-      let weightedSum = 0;
-      let weightTotal = 0;
-      let engaged = 0;
-      let championCount = 0;
-      let dmCount = 0;
-
-      for (const c of list as Array<{ sale_id: string | null; seniority: string | null; buying_role: string | null }>) {
+      for (const c of list) {
         const w = SENIORITY_WEIGHT[c.seniority ?? "ic"] ?? 1.0;
         if (c.buying_role === "champion") championCount++;
         if (c.buying_role === "decision_maker") dmCount++;
@@ -81,16 +88,15 @@ Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
       const coverage = list.length > 0 ? Math.round((engaged / list.length) * 1000) / 10 : 0;
       const tier = accountScore >= 70 ? "tier1" : accountScore >= 40 ? "tier2" : "tier3";
       tierCounts[tier]++;
+      updateRows.push({ id: accountId, account_score: accountScore, coverage, engaged_contacts: engaged, champion_count: championCount, decision_maker_count: dmCount, last_aggregated_at: nowIso });
+    }
 
-      await supabase.from("accounts").update({
-        account_score: accountScore,
-        coverage,
-        engaged_contacts: engaged,
-        champion_count: championCount,
-        decision_maker_count: dmCount,
-        last_aggregated_at: new Date().toISOString(),
-      }).eq("id", accountId);
-      updated++;
+    // Single batch upsert for all accounts (was N individual updates)
+    let updated = 0;
+    if (updateRows.length > 0) {
+      const { error } = await supabase.from("accounts").upsert(updateRows, { onConflict: "id" });
+      if (error) console.error("account-engagement-aggregator upsert error:", error);
+      else updated = updateRows.length;
     }
 
     return new Response(JSON.stringify({ ok: true, updated, by_tier: tierCounts }), {
