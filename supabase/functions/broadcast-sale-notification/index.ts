@@ -86,7 +86,8 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
       .from('sales')
       .select('salesperson_id, amount')
       .eq('status', 'completed')
-      .gte('created_at', startOfMonth.toISOString());
+      .gte('created_at', startOfMonth.toISOString())
+      .limit(50000);
 
     if (statsError) throw statsError;
 
@@ -98,20 +99,24 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
       }
     });
 
-    // Create sorted ranking list
+    // Create sorted ranking list + O(1) lookup Map
     const ranking = Object.entries(totals)
       .map(([id, total]) => ({ id, total }))
       .sort((a, b) => b.total - a.total)
       .map((item, index) => ({ ...item, rank: index + 1 }));
 
-    const sellerRank = ranking.find(r => r.id === salesperson_id)?.rank || 1;
+    const rankingMap = new Map<string, number>();
+    for (const { id, rank } of ranking) rankingMap.set(id, rank);
+
+    const sellerRank = rankingMap.get(salesperson_id) ?? 1;
 
     // 2. Fetch all active salespeople with their preferences
     const { data: recipients, error: recipientsError } = await supabase
       .from('salespeople')
       .select('id, auth_user_id, name, email, notify_sales_in_app, notify_sales_email')
       .eq('is_active', true)
-      .neq('id', salesperson_id);
+      .neq('id', salesperson_id)
+      .limit(500);
 
     if (recipientsError) throw recipientsError;
 
@@ -120,8 +125,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     const auditRows: Record<string, unknown>[] = [];
 
     for (const recipient of recipients || []) {
-      const recipientRankInfo = ranking.find(r => r.id === recipient.id);
-      const recipientRank = recipientRankInfo?.rank || 0;
+      const recipientRank = rankingMap.get(recipient.id) ?? 0;
 
       const title = `🚀 ${salesperson_name} vendeu!`;
       const message =
