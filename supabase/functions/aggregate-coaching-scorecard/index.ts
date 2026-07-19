@@ -72,8 +72,8 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
       supabase.from("call_conversation_metrics").select("engagement_score, pace_score, health").eq("recording_id", recording_id).maybeSingle(),
       supabase.from("call_question_analysis").select("quality_score, health").eq("recording_id", recording_id).maybeSingle(),
       supabase.from("call_objection_analysis").select("handling_score, health").eq("recording_id", recording_id).maybeSingle(),
-      supabase.from("call_sentiment_timeline").select("sentiment_score").eq("recording_id", recording_id),
-      supabase.from("call_critical_moments").select("severity").eq("recording_id", recording_id),
+      supabase.from("call_sentiment_timeline").select("sentiment_score").eq("recording_id", recording_id).limit(2000),
+      supabase.from("call_critical_moments").select("severity").eq("recording_id", recording_id).limit(500),
     ]);
 
     const rec = recRes.data;
@@ -149,7 +149,8 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
         .from("call_coaching_scorecards")
         .select("overall_score, talk_score, question_score, objection_score, sentiment_score, top_gaps, calculated_at")
         .eq("salesperson_id", rec.salesperson_id)
-        .gte("calculated_at", prevStart.toISOString());
+        .gte("calculated_at", prevStart.toISOString())
+        .limit(1000);
 
       const all = scores ?? [];
       const recent = all.filter((s) => new Date(s.calculated_at) >= start);
