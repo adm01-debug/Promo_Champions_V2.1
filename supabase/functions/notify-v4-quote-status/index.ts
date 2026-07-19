@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -48,7 +49,7 @@ async function postWithTimeout(url: string, payload: unknown, apiKey: string): P
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -149,4 +150,4 @@ Deno.serve(async (req) => {
     JSON.stringify({ success: true, processed: results.length, results }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
-});
+}));

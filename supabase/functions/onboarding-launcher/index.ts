@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface StepTemplate {
   title: string;
@@ -33,7 +34,7 @@ const TEMPLATES: Record<string, StepTemplate[]> = {
   ],
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("onboarding-launcher", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -80,7 +81,7 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
 
 async function launchJourney(supabase: ReturnType<typeof createClient>, accountId: string, templateKey: string, ownerId?: string) {
   const steps = TEMPLATES[templateKey] ?? TEMPLATES.standard;
