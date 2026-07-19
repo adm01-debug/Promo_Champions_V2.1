@@ -49,13 +49,15 @@ Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
       `
       )
       .eq('salesperson_id', salespersonId)
-      .gte('created_at', ninetyDaysAgo.toISOString());
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .limit(5000);
 
     // Fetch team average for comparison
     const { data: teamOutcomes } = await supabase
       .from('deal_outcomes')
       .select('outcome, reason')
-      .gte('created_at', ninetyDaysAgo.toISOString());
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .limit(10000);
 
     // Calculate metrics
     const wins = outcomes?.filter(o => o.outcome === 'won') || [];
