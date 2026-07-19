@@ -9,6 +9,8 @@ jobs:
     name: Lint & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -34,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: lint-and-typecheck
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -56,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: lint-and-typecheck
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -89,6 +95,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: lint-and-typecheck
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -116,6 +124,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -144,6 +154,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
