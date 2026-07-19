@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const baseCors: Record<string, string> = {
   "Access-Control-Allow-Headers":
@@ -76,7 +77,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   return parts.join(",") || "*";
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
   const reqOrigin = req.headers.get("origin");
 
   if (req.method === "OPTIONS") {
@@ -258,4 +259,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...baseCors, "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } },
     );
   }
-});
+}));

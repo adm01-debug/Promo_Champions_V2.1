@@ -1,13 +1,25 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization") ?? "";
+    let authHeader: string;
+    try {
+      const ctx = await getUserClient(req);
+      authHeader = ctx.authHeader;
+    } catch (authErr) {
+      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
+      return new Response(JSON.stringify({ error: msg }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -100,4 +112,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

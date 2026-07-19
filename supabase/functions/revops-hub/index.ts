@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -12,7 +13,7 @@ const STAGE_WEIGHTS: Record<string, number> = {
   closed: 0.95,
 };
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -139,4 +140,4 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));
