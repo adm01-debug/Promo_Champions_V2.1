@@ -88,6 +88,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
               className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 group-hover:scale-110 transition-all"
               onClick={() => setShowAIEmail(true)}
               title="Hyper-Personalização Email"
+              aria-label="Hyper-Personalização Email"
             >
               <Mail className="h-4 w-4 text-blue-500" />
             </Button>
@@ -97,6 +98,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
               className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 group-hover:scale-110 transition-all"
               onClick={() => setShowWhatsApp(true)}
               title="Integrar WhatsApp"
+              aria-label="Integrar WhatsApp"
             >
               <MessageCircle className="h-4 w-4 text-emerald-500" />
             </Button>
@@ -106,6 +108,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
               className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 group-hover:scale-110 transition-all"
               onClick={() => setShowAIInsights(true)}
               title="Predição de IA"
+              aria-label="Predição de IA"
             >
               <BrainCircuit className="h-4 w-4 text-purple-500" />
             </Button>
@@ -115,6 +118,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
               className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
               onClick={() => setShowLog(true)}
               title="Registrar Atividade"
+              aria-label="Registrar Atividade"
             >
               <History className="h-4 w-4 text-primary" />
             </Button>

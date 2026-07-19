@@ -46,13 +46,26 @@ export const CloserSelector = React.memo(function CloserSelector({ allClosers, s
 
       <ScrollArea className="h-[180px] border rounded-lg p-2">
         <div className="space-y-2">
-          {allClosers.map((closer) => (
-            <div key={closer.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer" onClick={() => onToggle(closer.id)}>
-              <Checkbox checked={selectedClosers.includes(closer.id)} disabled={!selectedClosers.includes(closer.id) && selectedClosers.length >= 2} />
-              <Avatar className="h-8 w-8"><AvatarImage src={closer.avatar_url || undefined} /><AvatarFallback className="text-xs">{closer.name.substring(0, 2).toUpperCase()}</AvatarFallback></Avatar>
-              <div className="flex-1"><p className="text-sm font-medium">{closer.name}</p></div>
-            </div>
-          ))}
+          {allClosers.map((closer) => {
+            const isSelected = selectedClosers.includes(closer.id);
+            const isDisabled = !isSelected && selectedClosers.length >= 2;
+            return (
+              <label
+                key={closer.id}
+                className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
+                aria-disabled={isDisabled}
+              >
+                <Checkbox
+                  checked={isSelected}
+                  disabled={isDisabled}
+                  onCheckedChange={() => onToggle(closer.id)}
+                  aria-label={closer.name}
+                />
+                <Avatar className="h-8 w-8"><AvatarImage src={closer.avatar_url || undefined} /><AvatarFallback className="text-xs">{closer.name.substring(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+                <div className="flex-1"><p className="text-sm font-medium">{closer.name}</p></div>
+              </label>
+            );
+          })}
           {allClosers.length === 0 && <p className="text-sm text-muted-foreground text-center py-4">Nenhum closer disponível</p>}
         </div>
       </ScrollArea>

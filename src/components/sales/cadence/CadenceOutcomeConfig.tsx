@@ -278,7 +278,7 @@ export function CadenceOutcomeConfig() {
                   </>
                 )}
               </div>
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteRule(rule.id)}>
+              <Button variant="ghost" size="icon" aria-label="Excluir regra" className="h-7 w-7 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteRule(rule.id)}>
                 <Trash2 className="h-3 w-3" />
               </Button>
             </div>

@@ -157,8 +157,8 @@ export function TaskCatalogManager() {
                     {item.active ? <Badge variant="secondary">Ativa</Badge> : <Badge variant="outline">Inativa</Badge>}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button size="icon" variant="ghost" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove.mutate(item.id)}>
+                    <Button size="icon" variant="ghost" aria-label="Editar tarefa" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label="Excluir tarefa" onClick={() => remove.mutate(item.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>

@@ -36,7 +36,14 @@ export const DealRow = React.memo(function DealRow({ deal, onAnalyze, isAnalyzin
 
   return (
     <div className="border border-border/50 rounded-lg overflow-hidden hover:border-primary/40 transition-all duration-300 group/deal animate-fade-in">
-      <div className="p-3 flex items-center justify-between cursor-pointer hover:bg-muted/40 transition-all duration-200" onClick={() => setExpanded(!expanded)}>
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        className="p-3 flex items-center justify-between cursor-pointer hover:bg-muted/40 transition-all duration-200"
+        onClick={() => setExpanded(!expanded)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded); } }}
+      >
         <div className="flex items-center gap-3 flex-1">
           <Badge className={`${RISK_COLORS[deal.riskLevel]} border shadow-sm transition-all duration-200 group-hover/deal:scale-105`}>
             {deal.riskLevel === "critical" && <Flame className="h-3 w-3 mr-1 animate-pulse" />}

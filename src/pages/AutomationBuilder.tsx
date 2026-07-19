@@ -158,7 +158,7 @@ export default function AutomationBuilder() {
                     {form.actions.map((a, i) => (
                       <div key={i} className="flex items-center justify-between bg-muted/50 rounded p-2 text-sm">
                         <span><Badge variant="outline" className="mr-2">{actionLabel[a.type]}</Badge>{String(a.params.title)}</span>
-                        <Button size="icon" variant="ghost" onClick={() => removeAction(i)}><Trash2 className="h-3 w-3" /></Button>
+                        <Button size="icon" variant="ghost" aria-label="Remover ação" onClick={() => removeAction(i)}><Trash2 className="h-3 w-3" /></Button>
                       </div>
                     ))}
                   </div>

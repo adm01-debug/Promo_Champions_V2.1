@@ -85,7 +85,7 @@ export function SquadManager() {
                           </p>
                         </div>
                       </div>
-                      <Button size="icon" variant="ghost" onClick={(e) => { e.stopPropagation(); remove.mutate(s.id); }}>
+                      <Button size="icon" variant="ghost" aria-label="Excluir squad" onClick={(e) => { e.stopPropagation(); remove.mutate(s.id); }}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>

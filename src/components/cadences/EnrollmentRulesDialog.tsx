@@ -178,7 +178,7 @@ export function EnrollmentRulesDialog() {
                         checked={rule.is_active}
                         onCheckedChange={(v) => updateRule.mutate({ id: rule.id, is_active: v })}
                       />
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => deleteRule.mutate(rule.id)}>
+                      <Button size="icon" variant="ghost" aria-label="Excluir regra" className="h-8 w-8" onClick={() => deleteRule.mutate(rule.id)}>
                         <Trash2 className="h-3.5 w-3.5 text-destructive" />
                       </Button>
                     </div>

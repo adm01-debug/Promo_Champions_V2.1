@@ -69,7 +69,7 @@ export const ReportFilterBuilder = memo(({ entity, filters, onChange, base, join
             value={String(f.value ?? "")}
             onChange={(e) => updateFilter(i, { value: e.target.value })}
           />
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeFilter(i)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Remover filtro" onClick={() => removeFilter(i)}>
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
