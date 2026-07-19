@@ -27,10 +27,33 @@ Deno.serve(
         return json({ error: 'Invalid action. Must be subscribe, unsubscribe, or get-vapid-key' }, 400);
       }
 
+      // get-vapid-key is public — no auth required
+      if (action === 'get-vapid-key') {
+        const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
+        return json({ vapidPublicKey: vapidPublicKey || null });
+      }
+
+      // subscribe / unsubscribe: caller must be authenticated and can only
+      // manage their own subscription (user_id in body must match JWT sub)
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+        return json({ error: 'Unauthorized' }, 401);
+      }
+      const token = authHeader.replace('Bearer ', '');
+      const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(token);
+      if (claimsErr || !claimsData?.claims) {
+        return json({ error: 'Unauthorized' }, 401);
+      }
+      const callerUserId = claimsData.claims.sub as string;
+
+      if (!user_id || typeof user_id !== 'string') {
+        return json({ error: 'user_id is required' }, 400);
+      }
+      if (user_id !== callerUserId) {
+        return json({ error: 'Forbidden: cannot manage another user\'s subscription' }, 403);
+      }
+
       if (action === 'subscribe') {
-        if (!user_id || typeof user_id !== 'string') {
-          return json({ error: 'user_id is required for subscribe' }, 400);
-        }
         if (!subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
           return json({ error: 'Valid subscription with endpoint and keys is required' }, 400);
         }
@@ -54,21 +77,13 @@ Deno.serve(
         return json({ success: true, message: 'Subscription saved' });
       }
 
-      if (action === 'unsubscribe') {
-        if (!user_id || typeof user_id !== 'string') {
-          return json({ error: 'user_id is required for unsubscribe' }, 400);
-        }
-        const { error } = await supabase
-          .from('push_subscriptions')
-          .delete()
-          .eq('user_id', user_id);
-        if (error) throw error;
-        return json({ success: true, message: 'Subscription removed' });
-      }
-
-      // get-vapid-key
-      const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
-      return json({ vapidPublicKey: vapidPublicKey || null });
+      // unsubscribe
+      const { error } = await supabase
+        .from('push_subscriptions')
+        .delete()
+        .eq('user_id', user_id);
+      if (error) throw error;
+      return json({ success: true, message: 'Subscription removed' });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       ctx.log('error', 'push_subscribe_failed', { error: message });

@@ -404,29 +404,28 @@ const handler = async (req: Request): Promise<Response> => {
         });
         console.info('Summary email sent to admins/managers');
 
-        // Log successful emails for each admin
-        for (const email of adminEmails) {
-          await supabase.from('email_logs').insert({
+        await supabase.from('email_logs').insert(
+          adminEmails.map(email => ({
             function_name: 'sdr-consecutive-alerts',
             recipient_email: email,
             subject: summarySubject,
             status: 'sent',
             metadata: { type: 'admin_summary', sdrs_count: underperformingSDRs.length },
-          });
-        }
+          }))
+        );
       } catch (error: unknown) {
         console.error('Error sending summary email:', error);
         const errorMessage = error instanceof Error ? error.message : String(error);
-        for (const email of adminEmails) {
-          await supabase.from('email_logs').insert({
+        await supabase.from('email_logs').insert(
+          adminEmails.map(email => ({
             function_name: 'sdr-consecutive-alerts',
             recipient_email: email,
             subject: summarySubject,
             status: 'failed',
             error_message: errorMessage,
             metadata: { type: 'admin_summary', sdrs_count: underperformingSDRs.length },
-          });
-        }
+          }))
+        );
       }
     }
 

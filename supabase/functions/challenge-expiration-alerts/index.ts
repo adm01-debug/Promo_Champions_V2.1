@@ -82,8 +82,8 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
 
   ctx.log("info", "notifications_generated", { count: notifications.length });
 
-  for (const notif of notifications) {
-    await supabase.from("achievements").insert({
+  if (notifications.length > 0) {
+    const achievementRows = notifications.map(notif => ({
       salesperson_id: notif.salesperson_id,
       achievement_type: "challenge_expiring",
       achievement_date: today,
@@ -100,7 +100,8 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
           ? `⏰ Último dia para resgatar ${notif.xp_reward} XP do desafio "${notif.challenge_title}"!`
           : `⏰ Último dia! Faltam ${notif.remaining} para completar "${notif.challenge_title}" (+${notif.xp_reward} XP)`,
       },
-    });
+    }));
+    await supabase.from("achievements").insert(achievementRows);
   }
 
   return jsonResponse({

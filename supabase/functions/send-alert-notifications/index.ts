@@ -78,8 +78,9 @@ const generateAlerts = async (
   if (pref.notify_stagnant_deals) {
     const { data: pendingDeals } = await supabase
       .from('sales')
-      .select('*')
-      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
+      .select('updated_at, client_name, product_name, amount')
+      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal'])
+      .limit(500);
 
     pendingDeals?.forEach(
       (deal: {
@@ -110,7 +111,8 @@ const generateAlerts = async (
       .from('sales')
       .select('client_name, created_at')
       .eq('status', 'completed')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(2000);
 
     const clientLastSale: Record<string, Date> = {};
     allSales?.forEach((sale: { client_name: string; created_at: string }) => {
@@ -149,6 +151,23 @@ const generateAlerts = async (
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const expectedProgress = (dayOfMonth / daysInMonth) * 100;
 
+    // Batch-load all completed sales for the month once (avoids N+1 per salesperson)
+    const spIds = (salespeople ?? []).map((p: { id: string }) => p.id);
+    const { data: monthSales } = spIds.length
+      ? await supabase
+          .from('sales')
+          .select('salesperson_id, amount')
+          .in('salesperson_id', spIds)
+          .eq('status', 'completed')
+          .gte('created_at', currentMonth)
+      : { data: [] };
+
+    const salesByPerson = new Map<string, number>();
+    for (const s of monthSales ?? []) {
+      const prev = salesByPerson.get(s.salesperson_id) ?? 0;
+      salesByPerson.set(s.salesperson_id, prev + Number(s.amount));
+    }
+
     for (const person of salespeople || []) {
       const goal = goals?.find(
         (g: { salesperson_id: string; goal_amount: number | string }) =>
@@ -156,18 +175,7 @@ const generateAlerts = async (
       );
       if (!goal) continue;
 
-      const { data: sales } = await supabase
-        .from('sales')
-        .select('amount')
-        .eq('salesperson_id', person.id)
-        .eq('status', 'completed')
-        .gte('created_at', currentMonth);
-
-      const totalSales =
-        sales?.reduce(
-          (sum: number, s: { amount: number | string }) => sum + Number(s.amount),
-          0
-        ) || 0;
+      const totalSales = salesByPerson.get(person.id) ?? 0;
       const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
 
       if (actualProgress < expectedProgress - 40) {
