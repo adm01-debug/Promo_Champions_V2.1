@@ -30,6 +30,7 @@ export default defineConfig({
         'src/components/reporting/funnelReportHelpers.ts',
         'src/hooks/reports/salesReportHelpers.ts',
         'src/services/salesService.ts',
+        'src/lib/staleAssetRecovery.ts',
       ],
       exclude: [
         'src/**/*.test.{ts,tsx}',
@@ -49,7 +50,6 @@ export default defineConfig({
         'src/lib/haptics.ts',
         'src/lib/webVitals.ts',
         'src/lib/swUpdater.ts',
-        'src/lib/staleAssetRecovery.ts',
       ],
       thresholds: {
         lines: 85,
