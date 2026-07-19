@@ -36,35 +36,26 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
     if (action === 'generate-forecasts') {
       console.info('[Demand Forecast] Generating forecasts for all products...');
 
-      // Get all products
-      const { data: products, error: productsError } = await supabase
-        .from('products')
-        .select('id, name, price, sales_count')
-        .eq('status', 'active');
-
-      if (productsError) throw productsError;
-
-      // Get historical sales data (last 6 months)
+      // Get all active products, sales history, and inventory in parallel
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-      const { data: sales, error: salesError } = await supabase
-        .from('sales')
-        .select('product_name, amount, created_at, status')
-        .gte('created_at', sixMonthsAgo.toISOString())
-        .eq('status', 'fechado');
+      const [
+        { data: products, error: productsError },
+        { data: sales, error: salesError },
+        { data: inventory, error: inventoryError },
+      ] = await Promise.all([
+        supabase.from('products').select('id, name, price, sales_count').eq('status', 'active').limit(2000),
+        supabase.from('sales').select('product_name, amount, created_at, status').gte('created_at', sixMonthsAgo.toISOString()).eq('status', 'fechado').limit(50000),
+        supabase.from('inventory_levels').select('product_id, current_stock, reorder_point').limit(2000),
+      ]);
 
+      if (productsError) throw productsError;
       if (salesError) throw salesError;
-
-      // Get inventory levels
-      const { data: inventory, error: inventoryError } = await supabase
-        .from('inventory_levels')
-        .select('product_id, current_stock, reorder_point');
 
       if (inventoryError && inventoryError.code !== 'PGRST116') {
         console.info('[Demand Forecast] No inventory data yet');
       }
-
       const inventoryMap = new Map(
         (inventory || []).map((inv: InventoryLevel) => [inv.product_id, inv])
       );
@@ -156,31 +147,39 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
           trend,
           risk_level: riskLevel,
         });
+      }
 
-        // Save forecast to database
+      // Batch upsert all forecasts in one query — was N individual upserts inside the loop
+      if (forecasts.length > 0) {
         const forecastDate = new Date();
         forecastDate.setDate(forecastDate.getDate() + 30);
+        const forecastDateStr = forecastDate.toISOString().split('T')[0];
+        const updatedAt = new Date().toISOString();
 
-        await supabase.from('demand_forecasts').upsert(
-          {
-            product_id: product.id,
-            forecast_date: forecastDate.toISOString().split('T')[0],
-            predicted_quantity: predicted30d,
-            predicted_revenue: predicted30d * product.price,
-            confidence_score: confidence,
+        // Need per-product data; rebuild from products map
+        const productById = new Map((products || []).map((p) => [p.id, p]));
+        // salesByProduct is still in scope from the computation loop above
+        const upsertRows = forecasts.map((f) => {
+          const p = productById.get(f.product_id)!;
+          const pSales = salesByProduct.get(p.name) || { count: 0, revenue: 0, dates: [] };
+          const avgMonthlyForProduct = pSales.count / Math.max(1, 6);
+          const trendMult = f.trend === 'increasing' ? 1.15 : f.trend === 'decreasing' ? 0.85 : 1;
+          return {
+            product_id: f.product_id,
+            forecast_date: forecastDateStr,
+            predicted_quantity: f.predicted_demand_30d,
+            predicted_revenue: f.predicted_demand_30d * (p.price ?? 0),
+            confidence_score: f.confidence,
             factors: {
-              trend,
-              avg_monthly: avgMonthly,
-              total_historical_sales: productSales.count,
-              trend_multiplier: trendMultiplier,
+              trend: f.trend,
+              avg_monthly: avgMonthlyForProduct,
+              total_historical_sales: pSales.count,
+              trend_multiplier: trendMult,
             },
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: 'product_id',
-            ignoreDuplicates: false,
-          }
-        );
+            updated_at: updatedAt,
+          };
+        });
+        await supabase.from('demand_forecasts').upsert(upsertRows, { onConflict: 'product_id', ignoreDuplicates: false });
       }
 
       // Sort by risk level
