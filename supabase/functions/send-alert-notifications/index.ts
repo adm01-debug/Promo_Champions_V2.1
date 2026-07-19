@@ -139,13 +139,15 @@ const generateAlerts = async (
     const { data: salespeople } = await supabase
       .from('salespeople')
       .select('id, name')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .limit(500);
 
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
     const { data: goals } = await supabase
       .from('sales_goals')
       .select('salesperson_id, goal_amount')
-      .eq('month', currentMonth);
+      .eq('month', currentMonth)
+      .limit(500);
 
     const dayOfMonth = now.getDate();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
@@ -160,6 +162,7 @@ const generateAlerts = async (
           .in('salesperson_id', spIds)
           .eq('status', 'completed')
           .gte('created_at', currentMonth)
+          .limit(50000)
       : { data: [] };
 
     const salesByPerson = new Map<string, number>();
@@ -168,15 +171,21 @@ const generateAlerts = async (
       salesByPerson.set(s.salesperson_id, prev + Number(s.amount));
     }
 
-    for (const person of salespeople || []) {
-      const goal = goals?.find(
-        (g: { salesperson_id: string; goal_amount: number | string }) =>
-          g.salesperson_id === person.id
+    // Build goals Map for O(1) per-person lookup instead of O(N) .find()
+    const goalsMap = new Map<string, number>();
+    for (const g of goals ?? []) {
+      goalsMap.set(
+        (g as { salesperson_id: string; goal_amount: number | string }).salesperson_id,
+        Number((g as { salesperson_id: string; goal_amount: number | string }).goal_amount)
       );
-      if (!goal) continue;
+    }
+
+    for (const person of salespeople || []) {
+      const goalAmount = goalsMap.get(person.id);
+      if (goalAmount === undefined) continue;
 
       const totalSales = salesByPerson.get(person.id) ?? 0;
-      const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
+      const actualProgress = (totalSales / goalAmount) * 100;
 
       if (actualProgress < expectedProgress - 40) {
         alerts.push({
@@ -257,7 +266,8 @@ const handler = async (req: Request): Promise<Response> => {
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
         .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .limit(200);
 
       if (prefError) {
         throw new Error(`Failed to fetch preferences: ${prefError.message}`);
