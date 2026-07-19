@@ -37,7 +37,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     // 1. season ativa
     const { data: season } = await supabase
       .from('race_seasons')
-      .select('*')
+      .select('id, winner_id')
       .eq('status', 'active')
       .order('start_date', { ascending: false })
       .limit(1)

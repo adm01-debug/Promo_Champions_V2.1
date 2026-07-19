@@ -52,7 +52,7 @@ async function gatherContext(
 ): Promise<DealContext | null> {
   const { data: sale, error } = await supabase
     .from('sales')
-    .select('*')
+    .select('id, salesperson_id, client_name, product_name, amount, status, next_action, updated_at')
     .eq('id', saleId)
     .maybeSingle();
   if (error || !sale) return null;

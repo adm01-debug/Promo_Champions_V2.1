@@ -71,7 +71,7 @@ Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: wf, error: wfErr } = await admin
       .from("workflows")
-      .select("*")
+      .select("id, is_active, nodes, edges")
       .eq("id", workflow_id)
       .single();
 

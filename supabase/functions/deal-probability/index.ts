@@ -35,7 +35,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     // Fetch deals (chunked to avoid PostgREST URL overflow on large arrays)
     const deals = await chunkedIn<Record<string, unknown>>(
       dealIds,
-      (chunk) => supabase.from('sales').select('*').in('id', chunk),
+      (chunk) => supabase.from('sales').select('id, status, amount, category').in('id', chunk),
       { label: 'sales fetch' },
     );
 
@@ -52,7 +52,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       (chunk) =>
         supabase
           .from('deal_stage_history')
-          .select('*')
+          .select('sale_id, entered_at, exited_at')
           .in('sale_id', chunk)
           .order('entered_at', { ascending: false }),
       { label: 'deal_stage_history fetch' },

@@ -57,7 +57,7 @@ Deno.serve(withRequestId("expansion-detector", async (req, _ctx) => {
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    const { data: pbs } = await supabase.from("expansion_playbooks").select("*").eq("is_active", true);
+    const { data: pbs } = await supabase.from("expansion_playbooks").select("id, name, trigger_type, trigger_config, expansion_type, recommended_action, is_active").eq("is_active", true);
     const playbooks = (pbs ?? []) as Playbook[];
     if (playbooks.length === 0) {
       return new Response(JSON.stringify({ ok: true, playbooks: 0, opportunities_created: 0 }), {

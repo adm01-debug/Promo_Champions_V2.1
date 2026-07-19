@@ -226,7 +226,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
       // Get user's push subscriptions
       const { data: subscriptions } = await supabase
         .from("push_subscriptions")
-        .select("*")
+        .select("id")
         .eq("user_id", data.user_id);
       
       if (subscriptions && subscriptions.length > 0) {

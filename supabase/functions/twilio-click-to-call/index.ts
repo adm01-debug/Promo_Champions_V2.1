@@ -49,7 +49,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     // Load Twilio credentials for owner
     const { data: cred } = await admin
       .from('channel_credentials')
-      .select('*')
+      .select('credentials, from_number')
       .eq('owner_id', ownerId)
       .eq('provider', 'twilio')
       .eq('enabled', true)

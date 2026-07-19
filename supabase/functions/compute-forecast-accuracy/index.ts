@@ -33,7 +33,7 @@ Deno.serve(withRequestId("compute-forecast-accuracy", async (req, _ctx) => {
 
     const { data: snapshots, error: snapErr } = await supabase
       .from("forecast_snapshots")
-      .select("*")
+      .select("id, period_start, period_end, owner_id, weighted_amount, forecast_amount")
       .lte("period_end", today)
       .order("period_end", { ascending: false })
       .limit(500);

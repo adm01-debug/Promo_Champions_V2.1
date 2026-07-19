@@ -67,7 +67,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
     );
 
     // Find matching webhooks
-    let q = supabase.from('webhooks').select('*').eq('is_active', true);
+    let q = supabase.from('webhooks').select('id, url, headers, secret').eq('is_active', true);
     if (webhook_id) q = q.eq('id', webhook_id);
     else q = q.contains('events', [event_type]);
 

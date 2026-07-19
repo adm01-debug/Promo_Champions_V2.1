@@ -64,9 +64,9 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
       // Pega steps da cadência
       const { data: steps } = await supabase
         .from("cadence_steps")
-        .select("*")
+        .select("id, day_number")
         .eq("cadence_id", cadence_id)
-        .order("step_order", { ascending: true });
+        .order("day_number", { ascending: true });
 
       const today = new Date();
       const firstDay = steps?.[0]?.day_number ?? 1;

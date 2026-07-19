@@ -108,7 +108,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     // Lê a view (service_role tem SELECT total).
     const { data, error } = await supabase
       .from("v_platform_wal_health")
-      .select("*")
+      .select("max_slot_lag_bytes, wal_size_bytes, long_running_tx")
       .maybeSingle();
 
     if (error) throw error;

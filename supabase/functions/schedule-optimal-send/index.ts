@@ -49,7 +49,7 @@ Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
     if (force_now) {
       scheduledFor = new Date();
     } else {
-      const { data: profile } = await admin.from("send_time_profiles").select("*").eq("sale_id", sale_id).maybeSingle();
+      const { data: profile } = await admin.from("send_time_profiles").select("confidence, best_dow, best_hour").eq("sale_id", sale_id).maybeSingle();
       if (profile && profile.confidence > 0) {
         scheduledFor = nextOccurrence(profile.best_dow, profile.best_hour);
         source = "profile";

@@ -25,7 +25,7 @@ Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
     // Fetch salesperson info
     const { data: salesperson } = await supabase
       .from('salespeople')
-      .select('*')
+      .select('id, name')
       .eq('id', salespersonId)
       .single();
 

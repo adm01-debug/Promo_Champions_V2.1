@@ -48,9 +48,9 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
 
     for (const chunk of chunks) {
       const [dealsRes, historyRes, tasksRes] = await Promise.all([
-        supabase.from('sales').select('*').in('id', chunk),
-        supabase.from('deal_stage_history').select('*').in('sale_id', chunk).order('entered_at', { ascending: false }),
-        supabase.from('tasks').select('*').in('sale_id', chunk).gte('created_at', tasksSince),
+        supabase.from('sales').select('id, amount, status, category').in('id', chunk),
+        supabase.from('deal_stage_history').select('sale_id, entered_at').in('sale_id', chunk).order('entered_at', { ascending: false }),
+        supabase.from('tasks').select('sale_id').in('sale_id', chunk).gte('created_at', tasksSince),
       ]);
 
       if (dealsRes.error) {

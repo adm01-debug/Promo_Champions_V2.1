@@ -116,7 +116,7 @@ Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
       try {
         const { data: steps, error: stepsErr } = await supabase
           .from("sequence_steps")
-          .select("*")
+          .select("id, sequence_id, step_order, channel, delay_days, delay_hours, subject, body, whatsapp_template_id")
           .eq("sequence_id", enr.sequence_id)
           .order("step_order", { ascending: true });
 
