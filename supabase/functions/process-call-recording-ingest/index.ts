@@ -58,10 +58,13 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
   }
 
   const rows = (jobs ?? []) as JobRow[];
-  for (const job of rows) {
-    processed++;
+  processed = rows.length;
+
+  type JobOutcome = { ok: true; dedupe: boolean } | { ok: false };
+
+  const outcomes = await Promise.allSettled(rows.map(async (job): Promise<JobOutcome> => {
+    const p = job.payload ?? ({} as JobPayload);
     try {
-      const p = job.payload ?? ({} as JobPayload);
       // Validação mínima defensiva — dados vêm de cliente autenticado, mas nunca confiar.
       if (!p.id || !p.salesperson_id || !p.title || !p.audio_url) {
         throw new Error("payload_incomplete: id/salesperson_id/title/audio_url obrigatórios");
@@ -92,30 +95,37 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
           { onConflict: "id", ignoreDuplicates: true, count: "exact" },
         );
 
+      let isDedupe = false;
       if (insErr) {
         // Se a UNIQUE (salesperson_id,audio_url) explodir, tratamos como dedup e concluímos.
         if (insErr.code === "23505") {
-          dedup++;
+          isDedupe = true;
         } else {
           throw new Error(`db_insert: ${insErr.code ?? ""} ${insErr.message}`);
         }
       } else if ((count ?? 0) === 0) {
-        dedup++;
+        isDedupe = true;
       }
 
       await admin.rpc("complete_call_recording_ingest_job", {
         _job_id: job.id, _success: true, _error: null,
       });
-      succeeded++;
+      return { ok: true, dedupe: isDedupe };
     } catch (err) {
-      failed++;
       const msg = err instanceof Error ? err.message : String(err);
       console.error(`[process-call-recording-ingest] job=${job.id} attempt=${job.attempts} failed:`, msg);
       const { error: cErr } = await admin.rpc("complete_call_recording_ingest_job", {
         _job_id: job.id, _success: false, _error: msg.slice(0, 500),
       });
       if (cErr) console.error("[process-call-recording-ingest] complete failure error:", cErr);
+      return { ok: false };
     }
+  }));
+
+  for (const r of outcomes) {
+    const val = r.status === "fulfilled" ? r.value : { ok: false as const };
+    if (val.ok) { succeeded++; if (val.dedupe) dedup++; }
+    else failed++;
   }
 
   const summary = {
