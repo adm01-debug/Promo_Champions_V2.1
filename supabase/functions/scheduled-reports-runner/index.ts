@@ -115,10 +115,9 @@ Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
     const { data: schedules, error } = await query.limit(50);
     if (error) throw error;
 
-    const results = [];
-    for (const s of (schedules ?? []) as unknown as Schedule[]) {
-      results.push(await processSchedule(admin, s));
-    }
+    const results = await Promise.all(
+      ((schedules ?? []) as unknown as Schedule[]).map((s) => processSchedule(admin, s))
+    );
 
     return new Response(JSON.stringify({ ok: true, processed: results.length, results }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
