@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 
@@ -54,7 +55,7 @@ async function generateAnswer(query: string, results: Array<{ entity_type: strin
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -140,4 +141,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
