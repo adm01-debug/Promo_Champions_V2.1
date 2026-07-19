@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -275,7 +275,7 @@ async function sendAlertEmail(
   }
 }
 
-serve(async req => {
+Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   const requestId = crypto.randomUUID();
@@ -614,4 +614,4 @@ serve(async req => {
       }
     );
   }
-});
+}));
