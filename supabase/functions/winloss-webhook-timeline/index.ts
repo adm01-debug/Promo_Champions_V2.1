@@ -13,7 +13,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { z } from "npm:zod@3";
 
 
 
