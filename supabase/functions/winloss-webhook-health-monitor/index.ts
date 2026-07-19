@@ -307,7 +307,8 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     const { data: subs, error: subsError } = await supabase
       .from('winloss_webhook_subscriptions')
       .select('id, url')
-      .eq('active', true);
+      .eq('active', true)
+      .limit(200);
 
     if (subsError) {
       structuredLog(
@@ -330,31 +331,66 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     let firedCount = 0;
     let suppressedCount = 0;
 
-    for (const sub of subscriptions) {
-      const { data: rows, error: rowsError } = await supabase
+    if (subscriptions.length === 0) {
+      return new Response(
+        JSON.stringify({ requestId, checked: 0, fired: 0, suppressed: 0, evaluations: [] }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+      );
+    }
+
+    const subIds = subscriptions.map(s => s.id);
+
+    // Pre-fetch ALL deliveries and recent alerts for every subscription in parallel —
+    // eliminates 2 per-subscription DB round-trips inside the loop.
+    const [deliveriesRes, recentAlertsRes] = await Promise.all([
+      supabase
         .from('winloss_webhook_deliveries')
-        .select(
-          'attempt, succeeded, status, error_message, created_at, request_id, event'
-        )
-        .eq('subscription_id', sub.id)
+        .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
+        .in('subscription_id', subIds)
         .gte('created_at', sinceIso)
         .order('created_at', { ascending: false })
-        .limit(500);
+        .limit(5000),
+      supabase
+        .from('winloss_webhook_alerts')
+        .select('subscription_id, kind, details, fired_at')
+        .in('subscription_id', subIds)
+        .gte('fired_at', suppressIso)
+        .limit(1000),
+    ]);
 
-      if (rowsError) {
-        structuredLog(
-          'warn',
-          {
-            msg: 'fetch_deliveries_failed',
-            subscriptionId: sub.id,
-            error: rowsError.message,
-          },
-          requestId
-        );
-        continue;
-      }
+    if (deliveriesRes.error) {
+      structuredLog('warn', { msg: 'fetch_deliveries_failed', error: deliveriesRes.error.message }, requestId);
+    }
+    if (recentAlertsRes.error) {
+      structuredLog('warn', { msg: 'fetch_recent_alerts_failed', error: recentAlertsRes.error.message }, requestId);
+    }
 
-      const deliveries = (rows as DeliveryRow[] | null) ?? [];
+    // Group deliveries by subscription_id — already DESC ordered globally so
+    // each per-sub slice is also DESC, which evaluate() requires.
+    type DeliveryRowWithSubId = DeliveryRow & { subscription_id: string };
+    const deliveriesBySubId = new Map<string, DeliveryRow[]>();
+    for (const row of (deliveriesRes.data ?? []) as DeliveryRowWithSubId[]) {
+      const arr = deliveriesBySubId.get(row.subscription_id) ?? [];
+      arr.push(row);
+      deliveriesBySubId.set(row.subscription_id, arr);
+    }
+
+    // Group recent alerts by subscription_id
+    type RecentAlertRow = { subscription_id: string; kind: string; details: Record<string, unknown> | null };
+    const recentAlertsBySubId = new Map<string, Array<{ kind: string; details: Record<string, unknown> | null }>>();
+    for (const row of (recentAlertsRes.data ?? []) as RecentAlertRow[]) {
+      const arr = recentAlertsBySubId.get(row.subscription_id) ?? [];
+      arr.push({ kind: row.kind, details: row.details });
+      recentAlertsBySubId.set(row.subscription_id, arr);
+    }
+
+    // Collect all alert insert rows to batch after the evaluation loop
+    const alertInsertRows: Array<Record<string, unknown>> = [];
+    // Track which subscriptions need email alerts (fired triggers only)
+    const emailQueue: Array<{ sub: SubscriptionRow; firedTriggers: Array<{ kind: AlertKind; details: Record<string, unknown> }> }> = [];
+
+    for (const sub of subscriptions) {
+      const deliveries = deliveriesBySubId.get(sub.id) ?? [];
       const result = evaluate(deliveries, settings);
 
       const evalEntry: EvaluationResult = {
@@ -389,32 +425,8 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
         continue;
       }
 
-      // Anti-spam: check recent alerts of the same kind. For
-      // `attempts_exhausted` we suppress per-request_id (each failed request
-      // is a distinct incident); other kinds are suppressed per-kind globally
-      // for this subscription.
-      const { data: recent, error: recentError } = await supabase
-        .from('winloss_webhook_alerts')
-        .select('kind, details, fired_at')
-        .eq('subscription_id', sub.id)
-        .gte('fired_at', suppressIso);
-
-      if (recentError) {
-        structuredLog(
-          'warn',
-          {
-            msg: 'fetch_recent_alerts_failed',
-            subscriptionId: sub.id,
-            error: recentError.message,
-          },
-          requestId
-        );
-      }
-
-      const recentRows = (recent ?? []) as Array<{
-        kind: string;
-        details: Record<string, unknown> | null;
-      }>;
+      // Anti-spam: use pre-fetched recent alerts (no DB call here)
+      const recentRows = recentAlertsBySubId.get(sub.id) ?? [];
       const recentKinds = new Set(recentRows.map(r => r.kind));
       const recentExhaustedRequestIds = new Set(
         recentRows
@@ -451,9 +463,6 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
             requestId
           );
 
-          // Persist the suppressed event so the alert history page can show
-          // *every* time a trigger matched, including the ones we silenced
-          // due to the anti-spam window.
           const suppressedRequestId =
             trigger.kind === 'attempts_exhausted' && triggerRequestId
               ? triggerRequestId
@@ -462,77 +471,45 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
             trigger.kind === 'attempts_exhausted'
               ? 'duplicate_request_within_suppress_window'
               : 'duplicate_kind_within_suppress_window';
-          const { error: suppInsertError } = await supabase
-            .from('winloss_webhook_alerts')
-            .insert({
+
+          alertInsertRows.push({
+            subscription_id: sub.id,
+            kind: trigger.kind,
+            request_id: suppressedRequestId,
+            suppressed: true,
+            suppress_reason: reason,
+            details: {
+              ...trigger.details,
               subscription_id: sub.id,
-              kind: trigger.kind,
               request_id: suppressedRequestId,
+              monitor_request_id: requestId,
               suppressed: true,
               suppress_reason: reason,
-              details: {
-                ...trigger.details,
-                subscription_id: sub.id,
-                request_id: suppressedRequestId,
-                monitor_request_id: requestId,
-                suppressed: true,
-                suppress_reason: reason,
-                suppress_minutes: settings.suppress_minutes,
-              },
-            });
-          if (suppInsertError) {
-            structuredLog(
-              'warn',
-              {
-                msg: 'alert_suppressed_insert_failed',
-                subscriptionId: sub.id,
-                kind: trigger.kind,
-                error: suppInsertError.message,
-              },
-              requestId
-            );
-          }
+              suppress_minutes: settings.suppress_minutes,
+            },
+          });
 
           evalEntry.suppressed.push(trigger.kind);
           suppressedCount += 1;
           continue;
         }
 
-        // For attempts_exhausted, persist the offending request_id at the
-        // top level so timeline filtering by request_id surfaces this alert
-        // alongside the failed delivery rows for the same request.
         const persistRequestId =
           trigger.kind === 'attempts_exhausted' && triggerRequestId
             ? triggerRequestId
             : requestId;
 
-        const { error: insertError } = await supabase
-          .from('winloss_webhook_alerts')
-          .insert({
+        alertInsertRows.push({
+          subscription_id: sub.id,
+          kind: trigger.kind,
+          request_id: persistRequestId,
+          details: {
+            ...trigger.details,
             subscription_id: sub.id,
-            kind: trigger.kind,
             request_id: persistRequestId,
-            details: {
-              ...trigger.details,
-              subscription_id: sub.id,
-              request_id: persistRequestId,
-              monitor_request_id: requestId,
-            },
-          });
-
-        if (insertError) {
-          structuredLog(
-            'error',
-            {
-              msg: 'alert_insert_failed',
-              subscriptionId: sub.id,
-              kind: trigger.kind,
-              error: insertError.message,
-            },
-            requestId
-          );
-          continue;
-        }
+            monitor_request_id: requestId,
+          },
+        });
 
         structuredLog(
           'warn',
@@ -550,17 +527,28 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
         firedCount += 1;
       }
 
-      // One email per subscription summarizing newly fired triggers
       if (evalEntry.fired.length > 0) {
-        await sendAlertEmail(
-          sub.url,
-          sub.id,
-          result.triggers.filter(t => evalEntry.fired.includes(t.kind)),
-          requestId
-        );
+        emailQueue.push({
+          sub,
+          firedTriggers: result.triggers.filter(t => evalEntry.fired.includes(t.kind)),
+        });
       }
 
       evaluations.push(evalEntry);
+    }
+
+    // Phase 2: batch insert all alert rows, then send emails sequentially
+    if (alertInsertRows.length > 0) {
+      const { error: batchInsertErr } = await supabase
+        .from('winloss_webhook_alerts')
+        .insert(alertInsertRows);
+      if (batchInsertErr) {
+        structuredLog('warn', { msg: 'alert_batch_insert_failed', error: batchInsertErr.message }, requestId);
+      }
+    }
+
+    for (const { sub, firedTriggers } of emailQueue) {
+      await sendAlertEmail(sub.url, sub.id, firedTriggers, requestId);
     }
 
     const totalLatency = Date.now() - requestStart;
