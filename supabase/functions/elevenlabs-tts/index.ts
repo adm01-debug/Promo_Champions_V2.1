@@ -1,8 +1,9 @@
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
-
+const MAX_TEXT_LENGTH = 2000;
 
 Deno.serve(withRequestId("elevenlabs-tts", async (req, _ctx) => {
   // Handle CORS preflight requests
@@ -11,7 +12,25 @@ Deno.serve(withRequestId("elevenlabs-tts", async (req, _ctx) => {
   }
 
   try {
+    // Require a valid Supabase JWT — prevents anonymous billing abuse
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const { text, voiceId } = await req.json();
+
+    if (typeof text === "string" && text.length > MAX_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: "text_too_long", message: `text must be ≤ ${MAX_TEXT_LENGTH} chars` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     if (!text) {
       throw new Error('Text is required');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Info, Flame, Zap } from 'lucide-react';
 import {
@@ -13,37 +13,45 @@ import { cn } from '@/lib/utils';
 import { useActivities } from '@/hooks/activities/useActivities';
 import { format, subDays, isSameDay } from 'date-fns';
 
+const HEATMAP_DAYS = 35;
+
 export const ActivityHeatmap: React.FC = () => {
-  const { data: activities } = useActivities();
+  const since = useMemo(() => {
+    return subDays(new Date(), HEATMAP_DAYS - 1).toISOString().slice(0, 10);
+  }, []);
 
-  // Generate last 35 days
-  const last35Days = Array.from({ length: 35 }, (_, i) => {
-    const date = subDays(new Date(), 34 - i);
-    const dayActivities =
-      activities?.filter(a => isSameDay(new Date(a.created_at), date)) || [];
+  const { data: activities } = useActivities({ since, limit: 5000 });
 
-    // Intensity logic: 0: 0, 1: 1-2, 2: 3-5, 3: 6-10, 4: >10
-    const count = dayActivities.length;
-    let intensity = 0;
-    if (count > 0 && count <= 2) intensity = 1;
-    else if (count > 2 && count <= 5) intensity = 2;
-    else if (count > 5 && count <= 10) intensity = 3;
-    else if (count > 10) intensity = 4;
+  // Memoised: only recomputes when the activities list reference changes
+  const last35Days = useMemo(() => {
+    return Array.from({ length: HEATMAP_DAYS }, (_, i) => {
+      const date = subDays(new Date(), HEATMAP_DAYS - 1 - i);
+      const dayActivities =
+        activities?.filter(a => isSameDay(new Date(a.created_at), date)) || [];
 
-    return {
-      day: i + 1,
-      intensity,
-      count,
-      date: format(date, 'dd/MM/yyyy'),
-      fullDate: date,
-      connections: dayActivities.filter(a =>
-        ['connected', 'scheduled', 'qualified'].includes(a.outcome)
-      ).length,
-      deals: dayActivities.filter(
-        a => a.outcome === 'scheduled' || a.outcome === 'qualified'
-      ).length,
-    };
-  });
+      // Intensity logic: 0: 0, 1: 1-2, 2: 3-5, 3: 6-10, 4: >10
+      const count = dayActivities.length;
+      let intensity = 0;
+      if (count > 0 && count <= 2) intensity = 1;
+      else if (count > 2 && count <= 5) intensity = 2;
+      else if (count > 5 && count <= 10) intensity = 3;
+      else if (count > 10) intensity = 4;
+
+      return {
+        day: i + 1,
+        intensity,
+        count,
+        date: format(date, 'dd/MM/yyyy'),
+        fullDate: date,
+        connections: dayActivities.filter(a =>
+          ['connected', 'scheduled', 'qualified'].includes(a.outcome)
+        ).length,
+        deals: dayActivities.filter(
+          a => a.outcome === 'scheduled' || a.outcome === 'qualified'
+        ).length,
+      };
+    });
+  }, [activities]);
 
   const getIntensityColor = (intensity: number) => {
     switch (intensity) {

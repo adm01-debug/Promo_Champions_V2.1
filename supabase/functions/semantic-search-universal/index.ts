@@ -1,5 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+
+const MAX_QUERY_LENGTH = 500;
+const MAX_RESULT_LIMIT = 50;
 
 interface SearchRequest {
   query: string;
@@ -53,24 +58,33 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { query, entity_types, limit = 20, with_answer = true } = (await req.json()) as SearchRequest;
-    if (!query?.trim()) {
-      return new Response(JSON.stringify({ error: "query required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Validate JWT — presence check alone is insufficient
+    let authHeader: string;
+    try {
+      const ctx = await getUserClient(req);
+      authHeader = ctx.authHeader;
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
-    const auth = req.headers.get("Authorization");
-    if (!auth) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const { query, entity_types, limit = 20, with_answer = true } = (await req.json()) as SearchRequest;
+
+    const errs = collectErrors([
+      validateString(query, "query", { required: true, maxLength: MAX_QUERY_LENGTH }),
+      validateArray(entity_types, "entity_types", { maxLength: 5 }),
+    ]);
+    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+
+    const safeLimit = Math.min(Math.max(1, Number(limit) || 20), MAX_RESULT_LIMIT);
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
 
-    const cacheKey = `${query}::${(entity_types ?? []).join(",")}::${limit}`;
+    const cacheKey = `${query}::${(entity_types ?? []).join(",")}::${safeLimit}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < TTL_MS) {
       return new Response(JSON.stringify({ ...cached.data, cached: true }), {
@@ -84,12 +98,12 @@ Deno.serve(async (req) => {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: auth } } },
+      { global: { headers: { Authorization: authHeader } } },
     );
 
     const { data: matches, error } = await supabase.rpc("match_semantic", {
       _query_embedding: embedding as unknown as string,
-      _match_count: limit,
+      _match_count: safeLimit,
       _entity_types: entity_types ?? null,
     });
     if (error) throw error;

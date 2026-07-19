@@ -1,7 +1,8 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
-
+const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 
 Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
   // Handle CORS preflight requests
@@ -10,7 +11,25 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
   }
 
   try {
+    // Require a valid Supabase JWT — prevents anonymous billing abuse
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const { audio } = await req.json();
+
+    if (typeof audio === "string" && audio.length > MAX_AUDIO_BASE64_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: "audio_too_large", message: "Audio payload exceeds maximum allowed size" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     if (!audio) {
       throw new Error('Audio data is required');

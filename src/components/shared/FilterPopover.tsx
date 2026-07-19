@@ -79,8 +79,8 @@ export const FilterPopover = ({
           </div>
 
           {/* Filter Sections */}
-          {filterOptions?.map((filter, index) => (
-            <div key={index}>
+          {filterOptions?.map((filter) => (
+            <div key={filter.label}>
               <Separator className="my-3" />
               <div className="mb-3">
                 <span className="text-sm font-medium">{filter.label}</span>

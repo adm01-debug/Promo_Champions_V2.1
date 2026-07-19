@@ -175,7 +175,7 @@ export function NextBestAction() {
                 :
               </h4>
 
-              {nextBestAction.data.suggestions.map((suggestion, index) => {
+              {nextBestAction.data.suggestions.map((suggestion) => {
                 const actionType =
                   actionTypeConfig[suggestion.actionType as keyof typeof actionTypeConfig] ||
                   actionTypeConfig.other;
@@ -184,7 +184,7 @@ export function NextBestAction() {
 
                 return (
                   <div
-                    key={index}
+                    key={`${suggestion.actionType}-${suggestion.title}`}
                     className={cn(
                       'glass rounded-xl p-4 border border-border/40 hover-lift transition-all',
                       suggestion.actionType === 'call_now' &&

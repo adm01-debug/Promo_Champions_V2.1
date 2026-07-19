@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Phone, ArrowRight, Save, Plus, Trash2, GitBranch, Zap, Bell } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RuleAuditLogs } from "./RuleAuditLogs";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,26 +54,26 @@ export function CadenceOutcomeConfig() {
   });
   const [alertTemplates, setAlertTemplates] = useState<AlertTemplateOption[]>([]);
 
-  useEffect(() => {
-    fetchRules();
-    fetchAlertTemplates();
-  }, []);
-
-  const fetchAlertTemplates = async () => {
+  const fetchAlertTemplates = useCallback(async () => {
     const { data } = await supabase.from("cadence_alert_templates").select("id, name, type");
     setAlertTemplates(data || []);
-  };
+  }, []);
 
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     const { data, error } = await supabase
       .from("cadence_outcome_rules")
       .select("*")
       .order("created_at", { ascending: true });
-    
+
     if (error) toast.error("Erro ao carregar regras");
     else setRules((data || []) as unknown as OutcomeRule[]);
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchRules();
+    fetchAlertTemplates();
+  }, [fetchRules, fetchAlertTemplates]);
 
   const handleSave = async () => {
     try {

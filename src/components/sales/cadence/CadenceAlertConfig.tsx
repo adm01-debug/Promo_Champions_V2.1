@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Bell, Mail, Save, Plus, Trash2, Info, Eye, Clock } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -60,11 +60,7 @@ export function CadenceAlertConfig() {
     days_of_week: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
   });
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     const { data, error } = await supabase
       .from('cadence_alert_templates')
       .select('*')
@@ -76,7 +72,11 @@ export function CadenceAlertConfig() {
       setTemplates((data || []) as unknown as AlertTemplate[]);
     }
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
   const handleSave = async () => {
     if (!formData.name || !formData.content) {
