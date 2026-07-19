@@ -24,6 +24,16 @@ describe('applyMergeTags', () => {
       .toBe('[telefone]');
   });
 
+  it('mostra placeholder [email] quando cliente.email ausente', () => {
+    expect(applyMergeTags('{{cliente.email}}', { client: {}, sale: {} }))
+      .toBe('[email]');
+  });
+
+  it('mostra placeholder [email-vendedor] quando vendedor.email ausente', () => {
+    expect(applyMergeTags('{{vendedor.email}}', { salesperson: {} }))
+      .toBe('[email-vendedor]');
+  });
+
   it('formata valor como BRL', () => {
     const out = applyMergeTags('Total: {{negocio.valor}}', ctx);
     expect(out).toMatch(/Total: R\$\s?12\.500,50/);

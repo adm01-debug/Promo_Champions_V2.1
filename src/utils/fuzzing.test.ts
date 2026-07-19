@@ -56,4 +56,14 @@ describe('runFuzzTest', () => {
     const results = await runFuzzTest((n: number) => n * 2, 'number');
     expect(results.every((r) => r.status === 'passed')).toBe(true);
   });
+
+  it('captura erro não-Error (string thrown) via String(error)', async () => {
+    const fn = async (s: string) => {
+      if (s.includes('script')) throw 'string-error-value';
+      return s;
+    };
+    const results = await runFuzzTest(fn, 'string');
+    const failed = results.find((r) => r.status === 'failed');
+    expect(failed?.error).toBe('string-error-value');
+  });
 });
