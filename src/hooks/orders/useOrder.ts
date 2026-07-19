@@ -43,15 +43,28 @@ export function useOrder(orderId: string | undefined) {
     enabled: !!orderId,
     queryFn: async (): Promise<OrderDetail | null> => {
       if (!orderId) return null;
-      const [{ data: order, error: orderErr }, { data: items, error: itemsErr }, { data: events, error: eventsErr }] = await Promise.all([
-        supabase.from("orders").select("*").eq("id", orderId).maybeSingle(),
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: order, error: orderErr } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (orderErr) throw orderErr;
+      if (!order) return null;
+
+      const [{ data: items, error: itemsErr }, { data: events, error: eventsErr }] = await Promise.all([
         supabase.from("order_items").select("*").eq("order_id", orderId).order("created_at"),
         supabase.from("order_status_events").select("*").eq("order_id", orderId).order("created_at"),
       ]);
-      if (orderErr) throw orderErr;
+
       if (itemsErr) throw itemsErr;
       if (eventsErr) throw eventsErr;
-      if (!order) return null;
+
       return {
         order: order as OrderRow,
         items: (items ?? []) as OrderItemRow[],
