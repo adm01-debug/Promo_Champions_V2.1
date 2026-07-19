@@ -144,7 +144,9 @@ Deno.serve(withRequestId("mine-win-loss-patterns", async (req, _ctx) => {
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const { data: rows, error } = await admin
       .from("win_loss_analyses")
-      .select("outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment");
+      .select("outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment")
+      .order("created_at", { ascending: false })
+      .limit(5000);
     if (error) throw error;
 
     const analyses = (rows as Analysis[] | null) ?? [];

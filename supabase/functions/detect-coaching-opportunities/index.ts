@@ -53,9 +53,9 @@ Deno.serve(withRequestId("detect-coaching-opportunities", async (req, _ctx) => {
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
 
     const [{ data: salespeople }, { data: sales }, { data: activities }] = await Promise.all([
-      supabase.from("salespeople").select("id, name, is_active").eq("is_active", true),
-      supabase.from("sales").select("id, salesperson_id, status, amount, created_at, updated_at").gte("created_at", since),
-      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since),
+      supabase.from("salespeople").select("id, name, is_active").eq("is_active", true).limit(500),
+      supabase.from("sales").select("id, salesperson_id, status, amount, created_at, updated_at").gte("created_at", since).limit(10000),
+      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since).limit(50000),
     ]);
 
     const reps = salespeople ?? [];

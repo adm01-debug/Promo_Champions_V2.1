@@ -29,9 +29,9 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
     const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
 
     const [{ data: salespeople }, { data: sales }, { data: activities }] = await Promise.all([
-      supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true),
-      supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30),
-      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30),
+      supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true).limit(500),
+      supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30).limit(10000),
+      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30).limit(50000),
     ]);
 
     const targets: CoachingTarget[] = (salespeople ?? []).map((sp) => {
