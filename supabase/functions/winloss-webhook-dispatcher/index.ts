@@ -176,7 +176,8 @@ export const handler = async (req: Request): Promise<Response> => {
       const { data: subs, error: subsError } = await supabase
         .from("winloss_webhook_subscriptions")
         .select("id, url, events, secret")
-        .eq("active", true);
+        .eq("active", true)
+        .limit(500);
       if (subsError) {
         structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
         throw subsError;
