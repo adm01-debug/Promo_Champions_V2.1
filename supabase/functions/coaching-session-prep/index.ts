@@ -58,7 +58,8 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
         .select("overall_score, talk_score, question_score, objection_score, sentiment_score, moments_score, calculated_at")
         .eq("salesperson_id", salesperson_id)
         .gte("calculated_at", sixMonthsAgo)
-        .order("calculated_at", { ascending: false }),
+        .order("calculated_at", { ascending: false })
+        .limit(500),
       supabase
         .from("sales")
         .select("id, client_name, amount, status, created_at")
@@ -71,6 +72,7 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
         .select("activity_type, created_at")
         .eq("salesperson_id", salesperson_id)
         .gte("created_at", sixMonthsAgo)
+        .limit(5000),
     ]);
 
     const scorecards = scorecardsResp.data ?? [];
