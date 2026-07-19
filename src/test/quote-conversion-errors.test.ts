@@ -3,7 +3,7 @@ import {
   parseConvertQuoteError,
   CONVERT_QUOTE_ERROR_MESSAGES,
   type ConvertQuoteErrorCode,
-} from '@/hooks/useQuotes';
+} from '@/hooks/quoteErrorMessages';
 
 describe('parseConvertQuoteError', () => {
   it.each([

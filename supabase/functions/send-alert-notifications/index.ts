@@ -1,6 +1,6 @@
-import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { differenceInDays } from 'https://esm.sh/date-fns@3.6.0';
+import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 

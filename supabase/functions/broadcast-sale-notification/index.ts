@@ -1,4 +1,4 @@
-import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
