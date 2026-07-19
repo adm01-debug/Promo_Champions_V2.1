@@ -27,7 +27,8 @@ async function getUnderperformingSDRs(
     .from('salespeople')
     .select('id, name, email, role')
     .in('role', ['sdr', 'hybrid'])
-    .eq('is_active', true);
+    .eq('is_active', true)
+    .limit(500);
 
   if (sdrsError) {
     console.error('Error fetching SDRs:', sdrsError);
@@ -41,7 +42,8 @@ async function getUnderperformingSDRs(
     .from('activity_goals')
     .select(
       'salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal'
-    );
+    )
+    .limit(500);
 
   if (goalsError) {
     console.error('Error fetching goals:', goalsError);
@@ -74,7 +76,8 @@ async function getUnderperformingSDRs(
   const { data: activities, error: activitiesError } = await supabase
     .from('activities')
     .select('salesperson_id, created_at')
-    .gte('created_at', sevenDaysAgo.toISOString());
+    .gte('created_at', sevenDaysAgo.toISOString())
+    .limit(50000);
 
   if (activitiesError) {
     console.error('Error fetching activities:', activitiesError);
@@ -213,15 +216,23 @@ function buildEmailHtml(sdrs: UnderperformingSDR[]): string {
   `;
 }
 
+interface EmailLogRow {
+  function_name: string;
+  recipient_email: string;
+  subject: string;
+  status: string;
+  error_message?: string;
+  metadata: Record<string, unknown>;
+}
+
 async function sendNotificationToSDR(
-  sdr: UnderperformingSDR,
-  supabase: SupabaseClient
-): Promise<void> {
+  sdr: UnderperformingSDR
+): Promise<EmailLogRow | null> {
   if (!sdr.email) {
     console.info(
       `SDR ${sdr.name} has no email configured, skipping personal notification`
     );
-    return;
+    return null;
   }
 
   const html = `
@@ -236,15 +247,15 @@ async function sendNotificationToSDR(
         <div style="background: linear-gradient(135deg, #f59e0b, #ea580c); padding: 24px; text-align: center;">
           <h1 style="color: white; margin: 0; font-size: 22px;">📊 Alerta de Atividades</h1>
         </div>
-        
+
         <div style="padding: 24px;">
           <p style="color: #374151; margin-bottom: 16px;">Olá <strong>${sdr.name}</strong>,</p>
-          
+
           <p style="color: #374151; margin-bottom: 20px;">
-            Notamos que você está abaixo da sua meta de atividades por 
+            Notamos que você está abaixo da sua meta de atividades por
             <strong style="color: #dc2626;">${sdr.consecutiveDays} dias consecutivos</strong>.
           </p>
-          
+
           <div style="background-color: #fef2f2; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span style="color: #6b7280;">Meta diária:</span>
@@ -255,12 +266,12 @@ async function sendNotificationToSDR(
               <strong style="color: #dc2626;">-${sdr.avgDeficit} atividades/dia</strong>
             </div>
           </div>
-          
+
           <p style="color: #374151; margin-bottom: 0;">
             💪 Você consegue! Se precisar de ajuda ou tiver algum obstáculo, converse com seu gestor.
           </p>
         </div>
-        
+
         <div style="background-color: #f9fafb; padding: 16px; text-align: center;">
           <p style="color: #6b7280; font-size: 12px; margin: 0;">
             Este é um alerta automático do sistema.
@@ -281,28 +292,23 @@ async function sendNotificationToSDR(
       html,
     });
     console.info(`Personal notification sent to ${sdr.name} (${sdr.email})`);
-
-    // Log successful email
-    await supabase.from('email_logs').insert({
+    return {
       function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
       subject,
       status: 'sent',
       metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays },
-    });
+    };
   } catch (error: unknown) {
     console.error(`Error sending email to ${sdr.email}:`, error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
-
-    // Log failed email
-    await supabase.from('email_logs').insert({
+    return {
       function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
       subject,
       status: 'failed',
-      error_message: errorMessage,
+      error_message: error instanceof Error ? error.message : String(error),
       metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays },
-    });
+    };
   }
 }
 
@@ -372,7 +378,8 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: adminUsers, error: adminError } = await supabase
       .from('user_roles')
       .select('user_id')
-      .in('role', ['admin', 'manager']);
+      .in('role', ['admin', 'manager'])
+      .limit(100);
 
     if (adminError) {
       console.error('Error fetching admin users:', adminError);
@@ -380,8 +387,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     const adminEmails: string[] = [];
     if (adminUsers?.length) {
-      for (const admin of adminUsers) {
-        const { data: authUser } = await supabase.auth.admin.getUserById(admin.user_id);
+      // Parallelize auth lookups — eliminates sequential per-admin round-trips
+      const authResults = await Promise.all(
+        adminUsers.map(admin => supabase.auth.admin.getUserById(admin.user_id))
+      );
+      for (const { data: authUser } of authResults) {
         if (authUser?.user?.email) {
           adminEmails.push(authUser.user.email);
         }
@@ -429,9 +439,14 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    // Send individual notifications to each underperforming SDR
+    // Send individual notifications to each underperforming SDR (sequential — external rate limits)
+    const sdrEmailLogs: EmailLogRow[] = [];
     for (const sdr of underperformingSDRs) {
-      await sendNotificationToSDR(sdr, supabase);
+      const logRow = await sendNotificationToSDR(sdr);
+      if (logRow) sdrEmailLogs.push(logRow);
+    }
+    if (sdrEmailLogs.length > 0) {
+      await supabase.from('email_logs').insert(sdrEmailLogs);
     }
 
     // Log the alert to history
