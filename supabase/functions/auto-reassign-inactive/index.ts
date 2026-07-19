@@ -42,7 +42,8 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
     // Fetch portfolio settings
     const { data: settings, error: settingsError } = await supabase
       .from('portfolio_settings')
-      .select('setting_key, setting_value');
+      .select('setting_key, setting_value')
+      .limit(100);
 
     if (settingsError) {
       console.error('[auto-reassign-inactive] Error fetching settings:', settingsError);
@@ -93,7 +94,8 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
         salespeople (name)
       `)
       .eq('status', 'inactive')
-      .lt('updated_at', reassignCutoff.toISOString());
+      .lt('updated_at', reassignCutoff.toISOString())
+      .limit(2000);
 
     if (clientsError) {
       console.error('[auto-reassign-inactive] Error fetching inactive clients:', clientsError);
@@ -117,33 +119,22 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
       });
     }
 
-    // Get salespeople performance data for routing decisions
-    const { data: salespeople, error: spError } = await supabase
-      .from('salespeople')
-      .select('id, name, role, is_active')
-      .eq('is_active', true)
-      .in('role', ['closer', 'hybrid']);
-
-    if (spError) throw spError;
-
-    // Get sales data for performance ranking
+    // Fetch salespeople, recent sales, and active portfolios in parallel
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data: recentSales, error: salesError } = await supabase
-      .from('sales')
-      .select('salesperson_id, amount')
-      .eq('status', 'completed')
-      .gte('created_at', thirtyDaysAgo.toISOString());
+    const [
+      { data: salespeople, error: spError },
+      { data: recentSales, error: salesError },
+      { data: activePortfolios, error: portfolioError },
+    ] = await Promise.all([
+      supabase.from('salespeople').select('id, name, role, is_active').eq('is_active', true).in('role', ['closer', 'hybrid']).limit(500),
+      supabase.from('sales').select('salesperson_id, amount').eq('status', 'completed').gte('created_at', thirtyDaysAgo.toISOString()).limit(10000),
+      supabase.from('client_portfolio').select('salesperson_id').eq('status', 'active').limit(5000),
+    ]);
 
+    if (spError) throw spError;
     if (salesError) throw salesError;
-
-    // Get active client counts
-    const { data: activePortfolios, error: portfolioError } = await supabase
-      .from('client_portfolio')
-      .select('salesperson_id')
-      .eq('status', 'active');
-
     if (portfolioError) throw portfolioError;
 
     // Calculate performance metrics
