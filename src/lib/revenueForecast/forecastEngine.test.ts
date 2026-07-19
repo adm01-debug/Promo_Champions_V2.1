@@ -4,6 +4,7 @@ import {
   applyWhatIf,
   incrementPeriod,
   type HistoricalPoint,
+  type ForecastResult,
 } from './forecastEngine';
 
 const history: HistoricalPoint[] = [
@@ -145,6 +146,42 @@ describe('applyWhatIf', () => {
     const r = applyWhatIf(base, { winRateDelta: 0.5 });
     const sum = r.forecast.reduce((s, f) => s + f.p50, 0);
     expect(r.summary.horizonTotalP50).toBeCloseTo(sum, 6);
+  });
+});
+
+describe('defensive branch guards', () => {
+  it('totalInv || 1 fallback: NaN revenues produzem totalInv=NaN que cai no || 1', () => {
+    const nanHistory: HistoricalPoint[] = [
+      { period: '2026-01', revenue: NaN },
+      { period: '2026-02', revenue: NaN },
+    ];
+    expect(() => computeRevenueForecast(nanHistory, { horizon: 1, rng: seededRng(0) })).not.toThrow();
+    const r = computeRevenueForecast(nanHistory, { horizon: 1, rng: seededRng(0) });
+    // MAPE → NaN → invHw/Lin/Mc = NaN → totalInv = NaN || 1 = 1 (branch hit)
+    // weights = NaN / 1 = NaN (expected side-effect)
+    expect(Number.isNaN(r.ensemble.weights.holtWinters)).toBe(true);
+    expect(r.forecast).toHaveLength(1);
+  });
+
+  it('applyWhatIf com forecast vazio: forecast[0]?.p50 ?? 0 retorna 0', () => {
+    const emptyBase: ForecastResult = {
+      history: [],
+      forecast: [],
+      ensemble: {
+        weights: { holtWinters: 1 / 3, linear: 1 / 3, monteCarlo: 1 / 3 },
+        mape: { holtWinters: 0, linear: 0, monteCarlo: 0 },
+      },
+      summary: {
+        nextPeriodP50: 0,
+        horizonTotalP50: 0,
+        horizonTotalP10: 0,
+        horizonTotalP90: 0,
+        trend: 'flat',
+      },
+    };
+    const r = applyWhatIf(emptyBase, { winRateDelta: 0.5 });
+    expect(r.summary.nextPeriodP50).toBe(0);
+    expect(r.forecast).toHaveLength(0);
   });
 });
 

@@ -8,7 +8,7 @@ interface Props {
 
 export function RaceSoundToggle({ muted, onToggle }: Props) {
   return (
-    <Button variant="outline" size="icon" onClick={onToggle} title={muted ? 'Ativar som' : 'Mutar'}>
+    <Button variant="outline" size="icon" onClick={onToggle} aria-label={muted ? 'Ativar som' : 'Mutar'} title={muted ? 'Ativar som' : 'Mutar'}>
       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
     </Button>
   );

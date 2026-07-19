@@ -54,7 +54,7 @@ export function PredictiveIntelligenceDashboard() {
               <SelectItem value="180">180 dias</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon" onClick={() => refetch()} disabled={isFetching}>
+          <Button variant="outline" size="icon" aria-label="Atualizar dados" onClick={() => refetch()} disabled={isFetching}>
             <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
           </Button>
         </div>

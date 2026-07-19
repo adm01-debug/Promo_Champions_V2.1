@@ -108,7 +108,7 @@ export function RecentClosedDeals() {
                 
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors">
+                    <Button variant="ghost" size="icon" aria-label="Ver detalhes do negócio" className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors">
                       <Info className="h-4 w-4" />
                     </Button>
                   </SheetTrigger>

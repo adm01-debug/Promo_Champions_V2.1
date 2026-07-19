@@ -179,6 +179,7 @@ export function RecentProspects({
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                aria-label="Enriquecer dados do prospect"
                                 className="h-7 w-7 rounded-full hover:bg-primary/10"
                                 onClick={(e) => {
                                   e.stopPropagation();

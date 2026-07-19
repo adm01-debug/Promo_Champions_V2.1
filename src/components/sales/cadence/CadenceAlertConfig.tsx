@@ -335,6 +335,7 @@ export function CadenceAlertConfig() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Editar template"
                         className="h-7 w-7"
                         onClick={() => {
                           setEditingId(t.id);
@@ -346,6 +347,7 @@ export function CadenceAlertConfig() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Excluir template"
                         className="h-7 w-7 text-destructive"
                         onClick={() => deleteTemplate(t.id)}
                       >

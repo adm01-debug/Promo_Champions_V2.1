@@ -29,7 +29,7 @@ export function BulkActionBar({ count, onApprove, onReject, onClear, loading }: 
             <Button size="sm" variant="outline" onClick={onReject} disabled={loading}>
               <X className="mr-1 h-4 w-4" />Rejeitar
             </Button>
-            <Button size="icon" variant="ghost" onClick={onClear}>
+            <Button size="icon" variant="ghost" aria-label="Limpar seleção" onClick={onClear}>
               <MinusCircle className="h-4 w-4" />
             </Button>
           </div>

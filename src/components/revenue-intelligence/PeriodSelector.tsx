@@ -34,6 +34,7 @@ export const PeriodSelector: FC<Props> = ({ periodType, periodStart, onChangeTyp
         <Button
           variant="outline"
           size="icon"
+          aria-label="Período anterior"
           onClick={() => onChangeStart(shiftPeriod(periodStart, periodType, -1))}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -42,6 +43,7 @@ export const PeriodSelector: FC<Props> = ({ periodType, periodStart, onChangeTyp
         <Button
           variant="outline"
           size="icon"
+          aria-label="Próximo período"
           onClick={() => onChangeStart(shiftPeriod(periodStart, periodType, 1))}
         >
           <ChevronRight className="h-4 w-4" />

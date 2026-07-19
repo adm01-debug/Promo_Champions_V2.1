@@ -74,7 +74,7 @@ export function SDRIntelligenceHighlights() {
                   {rec.reason}
                 </p>
               </div>
-              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full group-hover:bg-primary group-hover:text-primary-foreground">
+              <Button size="icon" variant="ghost" aria-label={`Ver lead ${rec.lead}`} className="h-8 w-8 rounded-full group-hover:bg-primary group-hover:text-primary-foreground">
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>

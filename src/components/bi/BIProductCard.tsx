@@ -64,9 +64,10 @@ export const BIProductCard = ({
           </Badge>
         )}
         {productId && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Ver produto"
             className="size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20 text-primary hover:bg-primary hover:text-white"
           >
             <ArrowUpRight className="size-4" />
