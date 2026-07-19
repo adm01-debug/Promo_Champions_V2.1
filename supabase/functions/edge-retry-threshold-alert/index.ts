@@ -90,7 +90,8 @@ Deno.serve(withRequestId(async (req, ctx) => {
     .from("edge_retry_events")
     .select("function_name, operation, status_code, error_name")
     .eq("outcome", "exhausted")
-    .gte("created_at", since);
+    .gte("created_at", since)
+    .limit(5000);
 
   if (error) {
     ctx.log("error", "query_failed", { error: error.message });
