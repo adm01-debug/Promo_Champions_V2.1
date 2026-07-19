@@ -60,6 +60,15 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
 
 
 
+    // Build O(1) lookup map for stage history
+    const stageHistoryByDealId = new Map<string, typeof stageHistory>();
+    for (const h of stageHistory ?? []) {
+      const saleId = h.sale_id as string;
+      const bucket = stageHistoryByDealId.get(saleId) ?? [];
+      bucket.push(h);
+      stageHistoryByDealId.set(saleId, bucket);
+    }
+
     // Calculate probability for each deal
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
 
@@ -70,7 +79,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       let probability = stageProbabilities[deal.status] || 10;
 
       // Factor 1: Time in current stage (deals stuck too long have lower probability)
-      const dealHistory = (stageHistory || []).filter(h => h.sale_id === deal.id);
+      const dealHistory = stageHistoryByDealId.get(deal.id) ?? [];
       const currentStageEntry = dealHistory.find(h => !h.exited_at);
 
       if (currentStageEntry) {
