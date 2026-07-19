@@ -78,7 +78,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .gte("expected_close_date", period_start)
       .lte("expected_close_date", period_end_str);
     if (owner_id) dealsQ = dealsQ.eq("salesperson_id", owner_id);
-    const { data: deals, error: dealsErr } = await dealsQ;
+    const { data: deals, error: dealsErr } = await dealsQ.limit(10000);
     if (dealsErr) throw dealsErr;
 
     const dealList = (deals ?? []) as DealRow[];
@@ -118,7 +118,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .gte("month", period_start)
       .lte("month", period_end_str);
     if (owner_id) goalQ = goalQ.eq("salesperson_id", owner_id);
-    const { data: goals } = await goalQ;
+    const { data: goals } = await goalQ.limit(5000);
     const goal_amount = (goals ?? []).reduce((s, g: { goal_amount: number }) => s + Number(g.goal_amount ?? 0), 0);
 
     // Classify and aggregate
