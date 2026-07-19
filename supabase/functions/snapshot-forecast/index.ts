@@ -48,7 +48,8 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
     const { data: sales, error: salesErr } = await supabase
       .from("sales")
       .select("id, amount, stage, salesperson_id, status")
-      .in("status", ["pending", "in_progress", "negotiation"]);
+      .in("status", ["pending", "in_progress", "negotiation"])
+      .limit(10000);
     if (salesErr) throw salesErr;
 
     const grouped = new Map<
