@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface SaleRow {
   id: string;
@@ -53,7 +54,7 @@ function pricingHealth(avgDiscount: number, alertRatio: number): string {
   return 'critical';
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('pricing-intelligence', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -248,4 +249,4 @@ Deno.serve(async req => {
       }
     );
   }
-});
+}));

@@ -1,6 +1,6 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface Driver {
   factor: string;
@@ -220,11 +220,11 @@ async function explainOne(
   return { sale_id: saleId, score: ls.score, ok: true };
 }
 
-serve(async req => {
+Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const ids: string[] = body.sale_id
       ? [body.sale_id]
       : Array.isArray(body.sale_ids)
@@ -269,4 +269,4 @@ serve(async req => {
       }
     );
   }
-});
+}));
