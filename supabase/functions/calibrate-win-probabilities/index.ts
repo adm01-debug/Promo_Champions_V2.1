@@ -139,7 +139,8 @@ Deno.serve(async req => {
 
     const { data: allBuckets } = await supabase
       .from('win_calibration_buckets')
-      .select('stage, segment, bucket_min, actual_win_rate, sample_size');
+      .select('stage, segment, bucket_min, actual_win_rate, sample_size')
+      .limit(1000);
     const bucketMap = new Map<string, CalibrationBucket>();
     for (const b of allBuckets ?? []) {
       bucketMap.set(`${b.stage}::${b.segment}::${b.bucket_min}`, b);
