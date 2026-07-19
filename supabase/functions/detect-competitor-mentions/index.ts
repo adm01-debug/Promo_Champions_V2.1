@@ -80,7 +80,8 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     const { data: registry } = await admin
       .from("competitors_registry")
       .select("id, name, aliases, default_battle_card_id")
-      .eq("is_active", true);
+      .eq("is_active", true)
+      .limit(200);
 
     if (!registry?.length) {
       return new Response(

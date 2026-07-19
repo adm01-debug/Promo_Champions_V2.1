@@ -49,14 +49,16 @@ Deno.serve(withRequestId("detect-at-risk-deals", async (req, _ctx) => {
       .from('activities')
       .select('id, created_at, activity_type, outcome')
       .eq('sale_id', dealId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(500);
 
     // Fetch deal stage history
     const { data: stageHistory } = await supabase
       .from('deal_stage_history')
       .select('stage, entered_at, exited_at')
       .eq('sale_id', dealId)
-      .order('entered_at', { ascending: true });
+      .order('entered_at', { ascending: true })
+      .limit(100);
 
     // Calculate metrics
     const now = new Date();
