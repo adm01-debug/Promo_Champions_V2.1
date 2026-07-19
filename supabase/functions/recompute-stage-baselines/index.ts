@@ -32,7 +32,8 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
       .from("deal_stage_transitions")
       .select("to_stage, duration_hours")
       .not("duration_hours", "is", null)
-      .gte("entered_at", since);
+      .gte("entered_at", since)
+      .limit(50000);
 
     if (error) throw error;
 
