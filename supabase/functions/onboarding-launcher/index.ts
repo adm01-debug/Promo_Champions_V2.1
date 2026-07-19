@@ -47,14 +47,25 @@ Deno.serve(withRequestId("onboarding-launcher", async (req, _ctx) => {
       const { data: accs } = await supabase
         .from("accounts")
         .select("id, tier, owner_id, created_at")
-        .gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString());
+        .gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString())
+        .limit(1000);
+
+      const accIds = (accs ?? []).map(a => a.id);
+
+      // Batch-check existing journeys in one query — eliminates N+1 per account
+      const { data: existingJourneys } = accIds.length > 0
+        ? await supabase
+            .from("onboarding_journeys")
+            .select("account_id")
+            .in("account_id", accIds)
+            .limit(1000)
+        : { data: [] as { account_id: string }[] };
+
+      const accountsWithJourney = new Set((existingJourneys ?? []).map(j => j.account_id));
 
       let launched = 0;
       for (const a of accs ?? []) {
-        const { data: existing } = await supabase
-          .from("onboarding_journeys")
-          .select("id").eq("account_id", a.id).limit(1);
-        if (existing && existing.length > 0) continue;
+        if (accountsWithJourney.has(a.id)) continue;
 
         const tpl = a.tier === "enterprise" || a.tier === "strategic" ? "enterprise" : "standard";
         const result = await launchJourney(supabase, a.id, tpl, a.owner_id);
