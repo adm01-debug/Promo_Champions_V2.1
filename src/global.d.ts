@@ -14,7 +14,7 @@ declare module 'jspdf' {
 
 declare module 'jspdf-autotable' {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export interface UserOptions extends Record<string, any> {}
+  export type UserOptions = Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const autoTable: (doc: any, options?: any) => void;
   export default autoTable;

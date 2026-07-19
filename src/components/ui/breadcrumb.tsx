@@ -1,26 +1,11 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 
-const breadcrumbVariants = cva(
-  'flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5',
-  {
-    variants: {
-      variant: {
-        default: '',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
-
 const Breadcrumb = React.forwardRef<
   HTMLElement,
-  React.ComponentPropsWithoutRef<'nav'> & VariantProps<typeof breadcrumbVariants>
+  React.ComponentPropsWithoutRef<'nav'>
 >(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
 Breadcrumb.displayName = 'Breadcrumb';
 
