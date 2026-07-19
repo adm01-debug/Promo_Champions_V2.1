@@ -49,7 +49,16 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     if (tasksErr) throw tasksErr;
 
     const results = [];
+    const now = new Date().toISOString();
 
+    interface TaskOutcome {
+      id: string;
+      status: "completed" | "failed" | "skipped";
+      notes: string;
+    }
+    const taskOutcomes: TaskOutcome[] = [];
+
+    // Phase 1: sequential external calls (email/whatsapp ordering + rate limits)
     for (const task of tasks || []) {
       const step = task.cadence_step;
       const prospectCadence = task.prospect_cadence;
@@ -59,19 +68,13 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
       // Guard: only proceed if the cadence is still active
       // (status could have changed between claim and fetch)
       if (prospectCadence?.status !== "active") {
-        await supabase
-          .from("cadence_tasks")
-          .update({ status: "skipped", notes: "Cadence is not active." })
-          .eq("id", task.id);
+        taskOutcomes.push({ id: task.id, status: "skipped", notes: "Cadence is not active." });
         results.push({ task_id: task.id, status: "skipped", reason: "cadence_inactive" });
         continue;
       }
 
       if (!client || !step) {
-        await supabase
-          .from("cadence_tasks")
-          .update({ status: "failed", notes: "Missing client or step info." })
-          .eq("id", task.id);
+        taskOutcomes.push({ id: task.id, status: "failed", notes: "Missing client or step info." });
         results.push({ task_id: task.id, status: "error", error: "Missing client or step info" });
         continue;
       }
@@ -105,30 +108,16 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
           else sendError = waErr;
         } else {
           // No action for this step type / missing phone — mark as skipped
-          await supabase
-            .from("cadence_tasks")
-            .update({ status: "skipped", notes: "No eligible action for step type." })
-            .eq("id", task.id);
+          taskOutcomes.push({ id: task.id, status: "skipped", notes: "No eligible action for step type." });
           results.push({ task_id: task.id, status: "skipped" });
           continue;
         }
 
         if (sent) {
-          await supabase
-            .from("cadence_tasks")
-            .update({
-              status: "completed",
-              completed_at: new Date().toISOString(),
-              notes: "Executado automaticamente pelo motor de cadência.",
-            })
-            .eq("id", task.id);
-
+          taskOutcomes.push({ id: task.id, status: "completed", notes: "Executado automaticamente pelo motor de cadência." });
           results.push({ task_id: task.id, status: "success" });
         } else {
-          await supabase
-            .from("cadence_tasks")
-            .update({ status: "failed", notes: String(sendError) })
-            .eq("id", task.id);
+          taskOutcomes.push({ id: task.id, status: "failed", notes: String(sendError) });
           results.push({
             task_id: task.id,
             status: "failed",
@@ -137,13 +126,26 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
         }
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        await supabase
-          .from("cadence_tasks")
-          .update({ status: "failed", notes: msg })
-          .eq("id", task.id);
+        taskOutcomes.push({ id: task.id, status: "failed", notes: msg });
         results.push({ task_id: task.id, status: "error", error: msg });
       }
     }
+
+    // Phase 2: batch DB updates — parallelize all task status writes
+    const completedIds = taskOutcomes.filter(o => o.status === "completed").map(o => o.id);
+    const nonCompletedOps = taskOutcomes.filter(o => o.status !== "completed");
+    await Promise.all([
+      completedIds.length > 0
+        ? supabase.from("cadence_tasks").update({
+            status: "completed",
+            completed_at: now,
+            notes: "Executado automaticamente pelo motor de cadência.",
+          }).in("id", completedIds)
+        : Promise.resolve(),
+      ...nonCompletedOps.map(o =>
+        supabase.from("cadence_tasks").update({ status: o.status, notes: o.notes }).eq("id", o.id)
+      ),
+    ]);
 
     return new Response(
       JSON.stringify({ ok: true, processed: tasks?.length || 0, results }),
