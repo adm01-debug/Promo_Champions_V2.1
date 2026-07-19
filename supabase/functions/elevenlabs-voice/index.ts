@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
@@ -25,7 +26,7 @@ Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
         });
       }
 
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      const response = await fetchWithTimeout(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

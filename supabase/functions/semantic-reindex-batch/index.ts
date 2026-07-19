@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -119,7 +120,7 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
       }
 
       const results = await pMap(targetIds, concurrency, async (id) => {
-        const r = await fetch(fnUrl, {
+        const r = await fetchWithTimeout(fnUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${serviceKey}` },
           body: JSON.stringify({ entity_type: t, entity_id: id }),

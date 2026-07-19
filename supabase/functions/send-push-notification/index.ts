@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 // Constant-time string compare to avoid timing side-channels.
 function safeEqual(a: string, b: string): boolean {
@@ -15,7 +16,7 @@ async function sendWebPushNotification(
   payload: string,
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    const response = await fetch(subscription.endpoint, {
+    const response = await fetchWithTimeout(subscription.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -240,7 +241,7 @@ async function sendAlertEmail(
   `;
 
   try {
-    const r = await fetch('https://api.resend.com/emails', {
+    const r = await fetchWithTimeout('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

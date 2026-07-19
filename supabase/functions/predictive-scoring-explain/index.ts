@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Driver {
   factor: string;
@@ -98,7 +99,7 @@ Recomendação principal: ${recommendations[0]?.action ?? 'n/d'}.
 
 Em 2-3 frases curtas em português do Brasil, explique o porquê desse score e qual a próxima ação prioritária. Tom direto, profissional, sem jargão.`;
 
-    const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

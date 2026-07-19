@@ -2,6 +2,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
 import { corsHeaders } from "../_shared/cors.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
@@ -243,7 +244,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
         };
         
         // Call the send-push-notification function
-        const pushResponse = await fetch(
+        const pushResponse = await fetchWithTimeout(
           `${supabaseUrl}/functions/v1/send-push-notification`,
           {
             method: "POST",

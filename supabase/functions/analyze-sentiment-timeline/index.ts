@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -97,7 +98,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       )
       .join("\n")}`;
 
-    const aiRes = await fetch(
+    const aiRes = await fetchWithTimeout(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",

@@ -7,6 +7,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { validateString, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import {
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
   querySalesMetric,
   queryPipelineSnapshot,
   queryActivities,
@@ -187,7 +188,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     ];
 
     // First call: model decides which tool to invoke
-    const firstRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const firstRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -284,7 +285,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     }
 
     // Second call: model writes the final natural-language answer
-    const secondRes = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const secondRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

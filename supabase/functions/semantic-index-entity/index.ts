@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -66,7 +67,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+  const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: "google/text-embedding-004", input: text.slice(0, 8000) }),

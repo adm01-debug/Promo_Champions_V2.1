@@ -10,6 +10,7 @@ import {
 } from '../_shared/validation.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
@@ -370,7 +371,7 @@ DIRETRIZES:
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

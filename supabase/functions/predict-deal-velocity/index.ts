@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface PredictBody {
   sale_id?: string;
@@ -129,7 +130,7 @@ async function predictForSale(saleId: string) {
   // Try AI refinement (best-effort)
   if (LOVABLE_API_KEY) {
     try {
-      const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,

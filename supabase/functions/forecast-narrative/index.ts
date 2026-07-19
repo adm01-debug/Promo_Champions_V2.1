@@ -5,6 +5,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Factor { label: string; impact: 'positive' | 'negative' | 'neutral'; detail: string }
 interface ForecastRow {
@@ -169,7 +170,7 @@ Gere a narrativa executiva.`;
   let aiRes: Response;
   try {
     aiRes = await withRetry(async (_attempt, signal) => {
-      const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${lovableApiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({

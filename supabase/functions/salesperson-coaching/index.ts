@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
@@ -161,7 +162,7 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResponse = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

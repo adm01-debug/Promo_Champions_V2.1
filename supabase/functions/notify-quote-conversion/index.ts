@@ -27,6 +27,7 @@ import { withRetry, RetryError } from "../_shared/retry.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -104,7 +105,7 @@ async function postSlack(webhookUrl: string, p: Payload, requestId: string) {
       "slack:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetch(webhookUrl, {
+          const res = await fetchWithTimeout(webhookUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
@@ -148,7 +149,7 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
       "webhook:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetch(url, {
+          const res = await fetchWithTimeout(url, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

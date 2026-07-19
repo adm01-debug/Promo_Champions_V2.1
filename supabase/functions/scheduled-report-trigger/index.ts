@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -55,7 +56,7 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
 
     // Invoca runner com service role
     const runnerUrl = `${SUPABASE_URL}/functions/v1/scheduled-reports-runner`;
-    const r = await fetch(runnerUrl, {
+    const r = await fetchWithTimeout(runnerUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${SERVICE_KEY}` },
       body: JSON.stringify({ schedule_id }),

@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface Payload {
   ownerId: string;
@@ -35,7 +36,7 @@ async function sendTwilio(
 
   const form = new URLSearchParams({ From: fromAddr, To: toAddr, Body: body });
   const auth = btoa(`${sid}:${token}`);
-  const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+  const r = await fetchWithTimeout(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
     method: "POST",
     headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/x-www-form-urlencoded" },
     body: form.toString(),
@@ -59,7 +60,7 @@ async function sendMetaCloud(
     ? { messaging_product: "whatsapp", to, type: "template", template: { name: templateId, language: { code: "pt_BR" } } }
     : { messaging_product: "whatsapp", to, type: "text", text: { body } };
 
-  const r = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+  const r = await fetchWithTimeout(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -80,7 +81,7 @@ async function sendZapi(
   if (!instance || !token) return { ok: false, error: "Z-API: missing instance_id/token" };
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (clientToken) headers["Client-Token"] = clientToken;
-  const r = await fetch(`https://api.z-api.io/instances/${instance}/token/${token}/send-text`, {
+  const r = await fetchWithTimeout(`https://api.z-api.io/instances/${instance}/token/${token}/send-text`, {
     method: "POST",
     headers,
     body: JSON.stringify({ phone: to, message: body }),

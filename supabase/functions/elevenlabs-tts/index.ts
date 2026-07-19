@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const MAX_TEXT_LENGTH = 2000;
 
@@ -56,7 +57,7 @@ Deno.serve(withRequestId("elevenlabs-tts", async (req, _ctx) => {
 
     console.info(`Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`);
 
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
       {
         method: 'POST',

@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 
@@ -62,7 +63,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
 
     console.info(`Processing STT for audio (${audioBytes.length} bytes)`);
 
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       'https://api.elevenlabs.io/v1/speech-to-text',
       {
         method: 'POST',

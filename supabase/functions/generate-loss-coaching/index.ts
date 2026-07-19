@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
 
@@ -40,7 +41,7 @@ Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
 Contexto: motivo=${a.primary_reason ?? "—"}; estágio=${a.lost_stage ?? "—"}; concorrente=${a.competitor ?? "—"}; segmento=${a.segment ?? "—"}; valor=R$${a.amount ?? 0}.
 Gere EXATAMENTE 3 lições acionáveis e curtíssimas (máx 18 palavras cada), focadas em evitar repetir o erro. Retorne JSON: {"lessons": ["...", "...", "..."]}.`;
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({

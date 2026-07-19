@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface SaleRow {
   id: string;
@@ -23,7 +24,7 @@ async function classifyWithAI(notes: string, outcome: string): Promise<{ primary
     return { primary: outcome === "won" ? "Não classificado" : "Não informado", secondary: [], competitor: null };
   }
   try {
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -98,7 +99,7 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
         return new Response(JSON.stringify({ explanation: "IA indisponível no momento." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       try {
-        const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const r = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({

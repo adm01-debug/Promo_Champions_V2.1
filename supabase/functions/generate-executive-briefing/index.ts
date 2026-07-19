@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 interface BriefingPayload {
   headline: string;
@@ -50,7 +51,7 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
     }
 
     // Snapshot do Pulse
-    const pulseRes = await fetch(`${SUPABASE_URL}/functions/v1/pipeline-pulse-aggregator`, {
+    const pulseRes = await fetchWithTimeout(`${SUPABASE_URL}/functions/v1/pipeline-pulse-aggregator`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +70,7 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
       .limit(7);
 
     // Lovable AI com tool calling
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
