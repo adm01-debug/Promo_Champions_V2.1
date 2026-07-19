@@ -41,7 +41,8 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     const { data: salespeople, error: spError } = await supabase
       .from('salespeople')
       .select('id, name, email')
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .limit(500);
 
     if (spError) {
       console.error('Error fetching salespeople:', spError);
@@ -51,7 +52,8 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     // Fetch activity goals
     const { data: goals, error: goalsError } = await supabase
       .from('activity_goals')
-      .select('salesperson_id, calls_goal, emails_goal, meetings_goal');
+      .select('salesperson_id, calls_goal, emails_goal, meetings_goal')
+      .limit(500);
 
     if (goalsError) {
       console.error('Error fetching goals:', goalsError);
@@ -63,26 +65,36 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       .from('activities')
       .select('salesperson_id, activity_type')
       .gte('created_at', dayStart.toISOString())
-      .lte('created_at', dayEnd.toISOString());
+      .lte('created_at', dayEnd.toISOString())
+      .limit(50000);
 
     if (actError) {
       console.error('Error fetching activities:', actError);
       throw actError;
     }
 
+    // Build O(1) lookup maps
+    const goalsMap = new Map((goals ?? []).map(g => [g.salesperson_id, g]));
+    const activitiesBySp = new Map<string, { activity_type: string }[]>();
+    for (const a of activities ?? []) {
+      const bucket = activitiesBySp.get(a.salesperson_id) ?? [];
+      bucket.push(a);
+      activitiesBySp.set(a.salesperson_id, bucket);
+    }
+
     // Calculate progress and identify those below 50%
     const alertList: SalespersonAlert[] = [];
 
     for (const sp of salespeople || []) {
-      const spGoals = (goals || []).find(g => g.salesperson_id === sp.id);
-      
+      const spGoals = goalsMap.get(sp.id);
+
       // Skip if no goals configured
       if (!spGoals) {
         console.info(`${sp.name}: No goals configured, skipping`);
         continue;
       }
 
-      const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
+      const spActivities = activitiesBySp.get(sp.id) ?? [];
 
       const currentCalls = spActivities.filter(a => a.activity_type === 'call').length;
       const currentEmails = spActivities.filter(a => a.activity_type === 'email').length;
