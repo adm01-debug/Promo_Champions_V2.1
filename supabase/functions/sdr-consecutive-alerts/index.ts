@@ -3,7 +3,9 @@ import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+const resend = new Resend(RESEND_API_KEY);
 
 interface UnderperformingSDR {
   id: string;
@@ -326,8 +328,8 @@ const handler = async (req: Request): Promise<Response> => {
     console.info(`Triggered by: ${triggeredBy}`);
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     // Get the minimum consecutive threshold from notification preferences

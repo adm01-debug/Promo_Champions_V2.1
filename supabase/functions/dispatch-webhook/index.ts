@@ -153,6 +153,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    console.error("dispatch-webhook error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -295,6 +295,7 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown";
     const status = msg === "RATE_LIMIT" ? 429 : msg === "PAYMENT_REQUIRED" ? 402 : 500;
+    console.error("ai-agent-orchestrator error:", e);
     return new Response(JSON.stringify({ error: msg }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

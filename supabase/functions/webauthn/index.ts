@@ -212,7 +212,7 @@ const handler = async (req: Request): Promise<Response> => {
         let resolvedUserId: string | null = null;
 
         if (body.userEmail) {
-          const { data: userData } = await supabase.auth.admin.listUsers();
+          const { data: userData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
           const user = userData?.users?.find(u => u.email === body.userEmail);
 
           if (user) {
