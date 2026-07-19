@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -13,7 +14,7 @@ function percentile(sorted: number[], p: number): number {
   return sorted[idx];
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('refresh-stage-baselines', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
@@ -99,4 +100,4 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

@@ -19,6 +19,7 @@
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const encoder = new TextEncoder();
 
@@ -350,7 +351,7 @@ async function handlePromoGifts(
 }
 
 // ─── Handler principal ─────────────────────────────────────────────────────
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('receive-quote-sync', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   // S1: rate-limit por IP — 300 req / 60s (webhook legítimo raramente ultrapassa; HMAC valida acima)
@@ -394,4 +395,4 @@ Deno.serve(async (req) => {
     return json({ error: "missing_signature" }, 401);
   }
   return handleV4(supabase, rawBody, signatureHeader);
-});
+}));

@@ -1,7 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-
-
+import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 function percentile(sorted: number[], p: number): number {
   if (!sorted.length) return 0;
@@ -9,13 +9,15 @@ function percentile(sorted: number[], p: number): number {
   return sorted[idx];
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
+      return new Response(JSON.stringify({ error: msg }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -72,4 +74,4 @@ Deno.serve(async (req) => {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-});
+}));
