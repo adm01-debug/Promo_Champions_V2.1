@@ -53,6 +53,16 @@ describe("classifyPasswordError", () => {
     });
     expect(r.kind).toBe("leaked");
   });
+
+  it("trata message undefined como string vazia (linha 43)", () => {
+    const r = classifyPasswordError({ message: undefined as unknown as string });
+    expect(r.kind).toBe("unknown");
+  });
+
+  it("trata code undefined como string vazia", () => {
+    const r = classifyPasswordError({ message: "weak_password", code: undefined as unknown as string });
+    expect(r.kind).toBe("unknown");
+  });
 });
 
 // typo guard: force compile-time reference so we catch accidental symbol drift

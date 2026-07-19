@@ -97,6 +97,33 @@ describe('applyMergeTags', () => {
     expect(applyMergeTags('{{vendedor.nome}} — {{vendedor.nome}}', ctx))
       .toBe('Maria — Maria');
   });
+
+  it('retorna [cliente] quando client.name e sale.client_name ausentes (linha 63)', () => {
+    expect(applyMergeTags('{{cliente.nome}}', { client: {}, sale: {} })).toBe('[cliente]');
+  });
+
+  it('retorna [empresa] quando client.company ausente (linha 65)', () => {
+    expect(applyMergeTags('{{cliente.empresa}}', { client: {}, sale: {} })).toBe('[empresa]');
+  });
+
+  it('retorna [vendedor] quando salesperson.name ausente (linha 71)', () => {
+    expect(applyMergeTags('{{vendedor.nome}}', { salesperson: {} })).toBe('[vendedor]');
+  });
+
+  it('retorna placeholder singu.primeira_frase quando custom ausente (linha 90)', () => {
+    const out = applyMergeTags('{{singu.primeira_frase}}', {});
+    expect(out).toContain('[IA Personalizada');
+  });
+
+  it('resolve singu.noticia_empresa via custom (linha 92 true branch)', () => {
+    const out = applyMergeTags('{{singu.noticia_empresa}}', { custom: { 'singu.noticia_empresa': 'Tech cresce 20%' } });
+    expect(out).toBe('Tech cresce 20%');
+  });
+
+  it('resolve singu.tecnologias via custom (linha 94 true branch)', () => {
+    const out = applyMergeTags('{{singu.tecnologias}}', { custom: { 'singu.tecnologias': 'React, Node' } });
+    expect(out).toBe('React, Node');
+  });
 });
 
 describe('extractMergeTags', () => {

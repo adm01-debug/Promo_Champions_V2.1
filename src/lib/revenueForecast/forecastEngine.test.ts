@@ -37,6 +37,11 @@ describe('computeRevenueForecast', () => {
     expect(computeRevenueForecast(history, { horizon: 100 }).forecast).toHaveLength(24);
   });
 
+  it('usa defaults quando opts não fornecido (cobre horizon ?? 3 e simulations ?? 1000)', () => {
+    const r = computeRevenueForecast(history);
+    expect(r.forecast).toHaveLength(3);
+  });
+
   it('pesos do ensemble somam ~1', () => {
     const r = computeRevenueForecast(history, { horizon: 3, rng: seededRng(1) });
     const { holtWinters, linear, monteCarlo } = r.ensemble.weights;

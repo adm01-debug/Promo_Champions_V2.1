@@ -231,4 +231,27 @@ describe('installStaleAssetRecovery', () => {
     expect(eventNames).toContain('error');
     expect(eventNames).toContain('unhandledrejection');
   });
+
+  it('error callback invokes recoverFromStaleAssetError (linha 103)', async () => {
+    installStaleAssetRecovery();
+    const [, errorHandler] = addEventListenerSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === 'error',
+    ) as [string, (e: { error: Error; message: string }) => void];
+
+    errorHandler({ error: new Error('chunkloaderror'), message: '' });
+    // Allow async recovery promise to settle
+    await new Promise((r) => setTimeout(r, 0));
+    expect(locationReplaceSpy).toHaveBeenCalled();
+  });
+
+  it('unhandledrejection callback invokes recoverFromStaleAssetError (linha 107)', async () => {
+    installStaleAssetRecovery();
+    const [, rejectionHandler] = addEventListenerSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === 'unhandledrejection',
+    ) as [string, (e: { reason: Error }) => void];
+
+    rejectionHandler({ reason: new Error('Loading chunk 7 failed') });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(locationReplaceSpy).toHaveBeenCalled();
+  });
 });

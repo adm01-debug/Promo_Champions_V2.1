@@ -40,6 +40,16 @@ describe("buildRevenueForecastCsv", () => {
     expect(csv).toContain('"Q1,2025",history,10.00');
   });
 
+  it("adiciona prefixo ' em campo que começa com = para neutralizar injeção CSV (linha 24)", () => {
+    const csv = buildRevenueForecastCsv({
+      ...fixture,
+      history: [{ period: "=CMD", revenue: 100, isForecast: false }],
+      forecast: [],
+    });
+    // The period "=CMD" should be escaped to "'=CMD" to prevent formula injection
+    expect(csv).toContain("'=CMD");
+  });
+
   it("deixa em branco valores não-finitos", () => {
     const csv = buildRevenueForecastCsv({
       ...fixture,

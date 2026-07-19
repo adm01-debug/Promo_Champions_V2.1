@@ -59,6 +59,11 @@ describe('buildScenarioChartKey', () => {
     expect(k).toContain('z1.00');
   });
 
+  it('sanitiza confidenceLevel não-finito para 0.95 (linha 86)', () => {
+    const k = buildScenarioChartKey({ ...base, confidenceLevel: NaN, data: [point(1), point(2), point(3)] });
+    expect(k).toContain('l0.95');
+  });
+
   it('inclui confidenceLevel quando fornecido', () => {
     const k = buildScenarioChartKey({ ...base, confidenceLevel: 0.99, data: [point(1), point(2), point(3)] });
     expect(k).toContain('l0.99');
