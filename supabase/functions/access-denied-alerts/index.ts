@@ -158,7 +158,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     // Fetch access denied logs from the time window
     const { data: logs, error: logsError } = await supabase
       .from('access_denied_logs')
-      .select('*')
+      .select('id, user_id, user_email, attempted_path, user_role, required_role, created_at')
       .gte('created_at', timeWindowStart.toISOString())
       .order('created_at', { ascending: false });
 

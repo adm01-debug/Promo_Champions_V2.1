@@ -68,7 +68,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       // Get salesperson info
       const { data: salesperson } = await supabase
         .from('salespeople')
-        .select('*')
+        .select('id, name, role, commission_rate')
         .eq('id', salespersonId)
         .single();
 
@@ -76,7 +76,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
       const { data: goals } = await supabase
         .from('sales_goals')
-        .select('*')
+        .select('salesperson_id, goal_amount')
         .eq('salesperson_id', salespersonId)
         .eq('month', currentMonth)
         .single();
@@ -127,7 +127,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
 
       const { data: activityGoals } = await supabase
         .from('activity_goals')
-        .select('*')
+        .select('calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
         .eq('salesperson_id', salespersonId)
         .single();
 
@@ -262,7 +262,7 @@ ${performanceSuggestions}
       if (dealContext?.dealId) {
         const { data: deal } = await supabase
           .from('sales')
-          .select('*')
+          .select('id, client_name, product_name, amount, status, category, source, created_at')
           .eq('id', dealContext.dealId)
           .single();
 

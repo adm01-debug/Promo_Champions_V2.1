@@ -33,7 +33,7 @@ function toCSV(rows: Record<string, unknown>[]): string {
 }
 
 async function executeReport(admin: ReturnType<typeof createClient>, reportId: string) {
-  const { data: report, error } = await admin.from("custom_reports").select("*").eq("id", reportId).single();
+  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config").eq("id", reportId).single();
   if (error || !report) throw new Error(`Report ${reportId} não encontrado`);
 
   const cfg = (report.config ?? {}) as Record<string, unknown>;
@@ -105,7 +105,7 @@ Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
     const body = await req.json().catch(() => ({}));
     const forceId: string | undefined = body.schedule_id;
 
-    let query = admin.from("scheduled_reports").select("*").eq("enabled", true);
+    let query = admin.from("scheduled_reports").select("id, report_id, name, frequency, format, recipients, created_by").eq("enabled", true);
     if (forceId) {
       query = query.eq("id", forceId);
     } else {

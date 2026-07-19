@@ -69,7 +69,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
     const startedAt = Date.now();
     const { data: workflow, error: wErr } = await supabase
       .from("automation_workflows")
-      .select("*")
+      .select("id, conditions, actions, run_count")
       .eq("id", workflow_id)
       .eq("is_active", true)
       .maybeSingle();

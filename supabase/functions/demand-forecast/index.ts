@@ -59,7 +59,7 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
       // Get inventory levels
       const { data: inventory, error: inventoryError } = await supabase
         .from('inventory_levels')
-        .select('*');
+        .select('product_id, current_stock, reorder_point');
 
       if (inventoryError && inventoryError.code !== 'PGRST116') {
         console.info('[Demand Forecast] No inventory data yet');

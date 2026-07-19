@@ -21,7 +21,7 @@ Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
 
   const { data: settings } = await supabase
     .from("v4_callback_alert_settings")
-    .select("*")
+    .select("is_active, window_minutes, min_events, failure_rate_threshold, exhausted_threshold_24h, pending_threshold, suppress_minutes")
     .eq("singleton", true)
     .maybeSingle();
 

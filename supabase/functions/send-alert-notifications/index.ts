@@ -144,7 +144,7 @@ const generateAlerts = async (
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
     const { data: goals } = await supabase
       .from('sales_goals')
-      .select('*')
+      .select('salesperson_id, goal_amount')
       .eq('month', currentMonth);
 
     const dayOfMonth = now.getDate();
@@ -256,7 +256,7 @@ const handler = async (req: Request): Promise<Response> => {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
-        .select('*')
+        .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
         .eq('is_active', true);
 
       if (prefError) {

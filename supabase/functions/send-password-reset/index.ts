@@ -61,7 +61,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
     // Verify the request exists and is approved
     const { data: resetRequest, error: requestError } = await supabaseAdmin
       .from("password_reset_requests")
-      .select("*")
+      .select("id")
       .eq("id", requestId)
       .eq("status", "approved")
       .single();

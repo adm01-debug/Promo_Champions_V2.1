@@ -51,7 +51,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     // Fetch activity goals
     const { data: goals, error: goalsError } = await supabase
       .from('activity_goals')
-      .select('*');
+      .select('salesperson_id, calls_goal, emails_goal, meetings_goal');
 
     if (goalsError) {
       console.error('Error fetching goals:', goalsError);

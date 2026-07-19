@@ -68,7 +68,7 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
         (chunk) =>
           admin
             .from("call_insights")
-            .select("*")
+            .select("recording_id, sentiment_score, sentiment_label, talk_ratio_salesperson, talk_ratio_client, questions_asked, summary, topics, objections, next_steps, coaching_tips")
             .in("recording_id", chunk),
         { parallel: true, label: "conversational-intelligence.insights" }
       );

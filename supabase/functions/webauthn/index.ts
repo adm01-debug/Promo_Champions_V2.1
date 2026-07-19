@@ -166,7 +166,7 @@ const handler = async (req: Request): Promise<Response> => {
 
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
-          .select('*')
+          .select('id, challenge')
           .eq('user_id', body.userId)
           .eq('type', 'registration')
           .gt('expires_at', new Date().toISOString())
@@ -290,7 +290,7 @@ const handler = async (req: Request): Promise<Response> => {
         // Verify challenge is bound to THIS user (not any user)
         const { data: challengeData } = await supabase
           .from('webauthn_challenges')
-          .select('*')
+          .select('id, challenge')
           .eq('user_id', credData.user_id)
           .eq('type', 'authentication')
           .gt('expires_at', new Date().toISOString())

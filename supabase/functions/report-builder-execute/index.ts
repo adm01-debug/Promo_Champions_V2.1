@@ -114,7 +114,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
 
     const { data: report, error: rErr } = await supabase
       .from('custom_reports')
-      .select('*')
+      .select('id, entity, config')
       .eq('id', report_id)
       .single();
 
