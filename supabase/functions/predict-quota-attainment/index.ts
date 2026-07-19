@@ -140,45 +140,80 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     const elapsedDays = Math.max(1, Math.ceil((now.getTime() - periodStart.getTime()) / 86400000));
     const remainingDays = Math.max(1, totalDays - elapsedDays);
 
-    let spQuery = supabase.from("salespeople").select("id, name, monthly_goal");
+    let spQuery = supabase.from("salespeople").select("id, name, monthly_goal").limit(500);
     if (filterSp) spQuery = spQuery.eq("id", filterSp);
     const { data: salespeople, error: spErr } = await spQuery;
     if (spErr) throw spErr;
 
-    const { data: scores } = await supabase
-      .from("deal_probability_scores")
-      .select("sale_id, calibrated_probability")
-      .order("calculated_at", { ascending: false });
+    const spIds = (salespeople ?? []).map((sp) => sp.id);
 
+    // Batch-fetch probability scores + closed/open sales in parallel (was N+N queries)
+    const [scoresRes, closedRes, openRes] = await Promise.all([
+      supabase
+        .from("deal_probability_scores")
+        .select("sale_id, calibrated_probability")
+        .order("calculated_at", { ascending: false })
+        .limit(10000),
+      supabase
+        .from("sales")
+        .select("id, amount, salesperson_id")
+        .in("salesperson_id", spIds)
+        .eq("status", "closed_won")
+        .gte("created_at", periodStart.toISOString())
+        .lte("created_at", periodEnd.toISOString())
+        .limit(10000),
+      supabase
+        .from("sales")
+        .select("id, amount, stage, salesperson_id")
+        .in("salesperson_id", spIds)
+        .not("status", "in", "(closed_won,closed_lost)")
+        .limit(10000),
+    ]);
+
+    // Build lookup maps in memory
     const latestScore = new Map<string, number>();
-    for (const s of scores ?? []) {
+    for (const s of scoresRes.data ?? []) {
       if (!latestScore.has(s.sale_id)) latestScore.set(s.sale_id, Number(s.calibrated_probability));
     }
 
-    const predictions = [];
-    const alerts = [];
+    const closedBySp = new Map<string, Array<{ id: string; amount: number }>>();
+    for (const s of closedRes.data ?? []) {
+      const bucket = closedBySp.get(s.salesperson_id) ?? [];
+      bucket.push(s);
+      closedBySp.set(s.salesperson_id, bucket);
+    }
+
+    const openBySp = new Map<string, Array<{ id: string; amount: number; stage: string | null }>>();
+    for (const s of openRes.data ?? []) {
+      const bucket = openBySp.get(s.salesperson_id) ?? [];
+      bucket.push(s);
+      openBySp.set(s.salesperson_id, bucket);
+    }
+
+    // Compute all metrics in memory — zero DB calls inside this loop
+    type SpMetrics = {
+      sp: { id: string; name: string; monthly_goal: number | null };
+      quotaAmount: number;
+      closedAmount: number;
+      weightedPipeline: number;
+      openDeals: OpenDeal[];
+      p10: number; p50: number; p90: number; samples: number[];
+      totalProjected: number;
+      probAttainment: number;
+      currentPace: number;
+      paceRequired: number;
+      riskLevel: ReturnType<typeof classifyRisk>;
+      factors: Record<string, number>;
+    };
+    const metricsPerSp: SpMetrics[] = [];
 
     for (const sp of salespeople ?? []) {
       const quotaMonthly = Number(sp.monthly_goal ?? 0);
       const quotaAmount = period === "quarter" ? quotaMonthly * 3 : quotaMonthly;
 
-      const { data: closedSales } = await supabase
-        .from("sales")
-        .select("id, amount")
-        .eq("salesperson_id", sp.id)
-        .eq("status", "closed_won")
-        .gte("created_at", periodStart.toISOString())
-        .lte("created_at", periodEnd.toISOString());
+      const closedAmount = (closedBySp.get(sp.id) ?? []).reduce((sum, s) => sum + Number(s.amount ?? 0), 0);
 
-      const closedAmount = (closedSales ?? []).reduce((sum, s) => sum + Number(s.amount ?? 0), 0);
-
-      const { data: openSales } = await supabase
-        .from("sales")
-        .select("id, amount, stage")
-        .eq("salesperson_id", sp.id)
-        .not("status", "in", "(closed_won,closed_lost)");
-
-      const openDeals: OpenDeal[] = (openSales ?? []).map((d) => {
+      const openDeals: OpenDeal[] = (openBySp.get(sp.id) ?? []).map((d) => {
         const stage = String(d.stage ?? "lead").toLowerCase();
         const probability = latestScore.get(d.id) ?? STAGE_PROBABILITY[stage] ?? 0.1;
         return { amount: Number(d.amount ?? 0), probability };
@@ -186,16 +221,13 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
       const weightedPipeline = openDeals.reduce((s, d) => s + d.amount * d.probability, 0);
       const { p10, p50, p90, samples } = monteCarlo(openDeals);
-
       const totalProjected = closedAmount + p50;
       const probAttainment = quotaAmount > 0
         ? samples.filter((v) => v + closedAmount >= quotaAmount).length / samples.length
         : 1;
-
       const currentPace = closedAmount / elapsedDays;
       const paceRequired = Math.max(0, (quotaAmount - closedAmount) / remainingDays);
       const riskLevel = classifyRisk(probAttainment);
-
       const factors = {
         elapsed_days: elapsedDays,
         remaining_days: remainingDays,
@@ -203,87 +235,112 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
         avg_probability: openDeals.length > 0 ? openDeals.reduce((s, d) => s + d.probability, 0) / openDeals.length : 0,
       };
 
-      const { data: pred, error: predErr } = await supabase
-        .from("quota_attainment_predictions")
-        .insert({
-          salesperson_id: sp.id,
-          period_start: periodStart.toISOString().slice(0, 10),
-          period_end: periodEnd.toISOString().slice(0, 10),
-          quota_amount: quotaAmount,
-          closed_amount: closedAmount,
-          weighted_pipeline: weightedPipeline,
-          predicted_amount: totalProjected,
-          attainment_probability: probAttainment,
-          scenario_pessimistic: closedAmount + p10,
-          scenario_realistic: closedAmount + p50,
-          scenario_optimistic: closedAmount + p90,
-          pace_required_per_day: paceRequired,
-          current_pace_per_day: currentPace,
-          risk_level: riskLevel,
-          factors,
-        })
-        .select()
-        .single();
-      if (predErr) throw predErr;
-      predictions.push(pred);
+      metricsPerSp.push({ sp, quotaAmount, closedAmount, weightedPipeline, openDeals, p10, p50, p90, samples, totalProjected, probAttainment, currentPace, paceRequired, riskLevel, factors });
+    }
 
-      if (riskLevel === "at_risk" || riskLevel === "critical") {
-        const gap = Math.max(0, quotaAmount - totalProjected);
-        const negotiationCount = openDeals.filter((d) => d.probability >= 0.5).length;
-        const message = `${sp.name}: ${(probAttainment * 100).toFixed(0)}% chance de atingir quota.`;
+    // Batch insert all predictions (was N individual inserts)
+    const predRows = metricsPerSp.map((m) => ({
+      salesperson_id: m.sp.id,
+      period_start: periodStart.toISOString().slice(0, 10),
+      period_end: periodEnd.toISOString().slice(0, 10),
+      quota_amount: m.quotaAmount,
+      closed_amount: m.closedAmount,
+      weighted_pipeline: m.weightedPipeline,
+      predicted_amount: m.totalProjected,
+      attainment_probability: m.probAttainment,
+      scenario_pessimistic: m.closedAmount + m.p10,
+      scenario_realistic: m.closedAmount + m.p50,
+      scenario_optimistic: m.closedAmount + m.p90,
+      pace_required_per_day: m.paceRequired,
+      current_pace_per_day: m.currentPace,
+      risk_level: m.riskLevel,
+      factors: m.factors,
+    }));
+
+    const { data: predsData, error: predErr } = await supabase
+      .from("quota_attainment_predictions")
+      .insert(predRows)
+      .select("id, salesperson_id");
+    if (predErr) throw predErr;
+    const predictions = predsData ?? [];
+
+    const predIdBySp = new Map<string, string>();
+    for (const p of predictions) predIdBySp.set(p.salesperson_id, p.id);
+
+    // Batch insert alerts for at-risk salespeople (was N conditional inserts)
+    const alertRows = metricsPerSp
+      .filter((m) => m.riskLevel === "at_risk" || m.riskLevel === "critical")
+      .map((m) => {
+        const gap = Math.max(0, m.quotaAmount - m.totalProjected);
+        const negotiationCount = m.openDeals.filter((d) => d.probability >= 0.5).length;
+        const message = `${m.sp.name}: ${(m.probAttainment * 100).toFixed(0)}% chance de atingir quota.`;
         const action = `Fechar R$ ${gap.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} em ${remainingDays} dias — focar em ${negotiationCount} deals avançados.`;
-        const { data: alert } = await supabase
-          .from("quota_attainment_alerts")
-          .insert({
-            prediction_id: pred.id,
-            salesperson_id: sp.id,
-            severity: riskLevel === "critical" ? "critical" : "warning",
-            message,
-            recommended_action: action,
-          })
-          .select()
-          .single();
-        if (alert) alerts.push(alert);
-      }
+        return {
+          prediction_id: predIdBySp.get(m.sp.id) ?? null,
+          salesperson_id: m.sp.id,
+          severity: m.riskLevel === "critical" ? "critical" : "warning",
+          message,
+          recommended_action: action,
+        };
+      });
 
-      // Advanced forecast (Monte Carlo with new band tables)
-      const totalP10 = closedAmount + p10;
-      const totalP50 = closedAmount + p50;
-      const totalP90 = closedAmount + p90;
-      const { data: fc, error: fcErr } = await supabase
-        .from("quota_attainment_forecasts")
-        .upsert({
-          salesperson_id: sp.id,
-          period_start: periodStart.toISOString().slice(0, 10),
-          period_end: periodEnd.toISOString().slice(0, 10),
-          quota: quotaAmount,
-          closed: closedAmount,
-          weighted_open: weightedPipeline,
-          pace_per_day: currentPace,
-          days_remaining: remainingDays,
-          p10: totalP10,
-          p50: totalP50,
-          p90: totalP90,
-          attainment_probability: probAttainment,
-          risk_level: riskLevel,
-          simulations: 1000,
-          computed_at: new Date().toISOString(),
-        }, { onConflict: "salesperson_id,period_start" })
-        .select("id")
-        .single();
-      if (fcErr) {
-        console.error("forecast upsert error", fcErr);
-      } else if (fc) {
-        await supabase.from("quota_attainment_actions").delete().eq("forecast_id", fc.id);
-        await generateAdvancedActions(supabase, {
-          forecastId: fc.id,
-          salespersonName: sp.name,
-          quota: quotaAmount,
-          p50: totalP50,
-          prob: probAttainment,
-          risk: riskLevel,
-        });
-      }
+    const alerts: Array<{ id: string; salesperson_id: string }> = [];
+    if (alertRows.length > 0) {
+      const { data: alertsData } = await supabase
+        .from("quota_attainment_alerts")
+        .insert(alertRows)
+        .select("id, salesperson_id");
+      if (alertsData) alerts.push(...alertsData);
+    }
+
+    // Batch upsert all forecasts (was N individual upserts)
+    const fcRows = metricsPerSp.map((m) => ({
+      salesperson_id: m.sp.id,
+      period_start: periodStart.toISOString().slice(0, 10),
+      period_end: periodEnd.toISOString().slice(0, 10),
+      quota: m.quotaAmount,
+      closed: m.closedAmount,
+      weighted_open: m.weightedPipeline,
+      pace_per_day: m.currentPace,
+      days_remaining: remainingDays,
+      p10: m.closedAmount + m.p10,
+      p50: m.closedAmount + m.p50,
+      p90: m.closedAmount + m.p90,
+      attainment_probability: m.probAttainment,
+      risk_level: m.riskLevel,
+      simulations: 1000,
+      computed_at: new Date().toISOString(),
+    }));
+
+    const { data: fcsData, error: fcErr } = await supabase
+      .from("quota_attainment_forecasts")
+      .upsert(fcRows, { onConflict: "salesperson_id,period_start" })
+      .select("id, salesperson_id");
+    if (fcErr) console.error("forecast upsert error", fcErr);
+
+    if (fcsData && fcsData.length > 0) {
+      const fcIds = fcsData.map((fc) => fc.id);
+      const fcIdBySp = new Map<string, string>();
+      for (const fc of fcsData) fcIdBySp.set(fc.salesperson_id, fc.id);
+
+      // Batch delete old actions for ALL forecast IDs (was N individual deletes)
+      await supabase.from("quota_attainment_actions").delete().in("forecast_id", fcIds);
+
+      // AI action generation in parallel (was sequential)
+      await Promise.all(
+        metricsPerSp.map((m) => {
+          const fcId = fcIdBySp.get(m.sp.id);
+          if (!fcId) return Promise.resolve();
+          return generateAdvancedActions(supabase, {
+            forecastId: fcId,
+            salespersonName: m.sp.name,
+            quota: m.quotaAmount,
+            p50: m.closedAmount + m.p50,
+            prob: m.probAttainment,
+            risk: m.riskLevel,
+          });
+        }),
+      );
     }
 
     return new Response(
