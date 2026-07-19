@@ -29,7 +29,7 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
       .lte("created_at", periodEnd + "T23:59:59");
     if (salespersonId) salesQ = salesQ.eq("salesperson_id", salespersonId);
 
-    const { data: sales, error: sErr } = await salesQ;
+    const { data: sales, error: sErr } = await salesQ.limit(10000);
     if (sErr) throw sErr;
 
     const total = sales?.length ?? 0;
