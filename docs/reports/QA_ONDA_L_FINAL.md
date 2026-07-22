@@ -104,3 +104,37 @@ Adicionado `.github/workflows/qa-exhaustive.yml`:
 - Sinaliza qualquer regressão dos padrões consolidados nas ondas I/J/K/L (chunkedIn, notification categories, request-id propagation).
 
 **Baseline reconfirmado nesta execução:** 293 Vitest + 37 Deno = **330 testes verdes**, mantendo score **10/10**.
+
+---
+
+## Onda Q — Sweep de Acessibilidade Multi-Rota (2026-07-22)
+
+Adicionado sweep automatizado com `@axe-core/playwright` sobre rotas críticas.
+
+**Cobertura (10 rotas):**
+
+| Rota                           | Auth  | Allowlist justificada                        |
+|--------------------------------|-------|----------------------------------------------|
+| `/auth`                        | ❌    | `region` (layout minimalista de auth)        |
+| `/404-inexistente-para-a11y`   | ❌    | `region` (página de erro standalone)         |
+| `/`                            | ✅    | `color-contrast` (skeletons), `svg-img-alt` (Recharts) |
+| `/pipeline`                    | ✅    | `color-contrast`, `svg-img-alt`              |
+| `/clientes`                    | ✅    | `color-contrast`                             |
+| `/playbooks`                   | ✅    | `color-contrast`                             |
+| `/win-loss-intelligence`       | ✅    | `color-contrast`, `svg-img-alt`              |
+| `/bi-gestor`                   | ✅    | `color-contrast`, `svg-img-alt`              |
+| `/admin/conexoes`              | ✅    | `color-contrast`                             |
+| `/configuracoes`               | ✅    | `color-contrast`                             |
+
+**Contrato:**
+- Tags avaliadas: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`.
+- Falha o CI em qualquer violação `serious` ou `critical` fora da allowlist.
+- Rotas autenticadas são skipadas graciosamente quando `LOVABLE_BROWSER_AUTH_STATUS !== 'injected'`.
+- Report artifact: `a11y-report.json` + `a11y-report-html/` (retenção 30d).
+
+**Arquivos entregues:**
+- `tests/a11y/routes.ts` — curadoria + allowlist inline documentada.
+- `tests/a11y/axe-sweep.spec.ts` — fixture de sessão Supabase, waitFor por rota, agrupamento serious/critical.
+- `playwright.a11y.config.ts` — config isolada (1 worker, JSON+HTML reporter).
+- `.github/workflows/qa-exhaustive.yml` — step "A11y sweep" após Lighthouse, com polling de preview 60s.
+- Scripts npm: `a11y:sweep` (bloqueante) e `a11y:report` (report-only para triagem local).

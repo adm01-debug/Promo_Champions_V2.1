@@ -103,6 +103,31 @@ jobs:
           kill $PREVIEW_PID || true
         continue-on-error: true
 
+      - name: A11y sweep — Playwright + axe-core (Onda Q)
+        run: |
+          npx playwright install --with-deps chromium
+          npx vite preview --port 5173 --strictPort &
+          PREVIEW_PID=$!
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:5173 > /dev/null; then break; fi
+            sleep 1
+          done
+          npx playwright test -c playwright.a11y.config.ts
+          A11Y_EXIT=$?
+          kill $PREVIEW_PID || true
+          exit $A11Y_EXIT
+
+      - name: Upload a11y report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report
+          path: |
+            a11y-report.json
+            a11y-report-html/
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Summary
         if: always()
         run: |
@@ -112,3 +137,8 @@ jobs:
           echo "- Guards: chunkedIn, notification-inserters, request-id" >> $GITHUB_STEP_SUMMARY
           echo "- Bundle budget: scripts/check-bundle-budget.mjs (gzip por chunk)" >> $GITHUB_STEP_SUMMARY
           echo "- Lighthouse CI: perf/a11y/best-practices/SEO + Web Vitals" >> $GITHUB_STEP_SUMMARY
+          echo "- A11y sweep (Onda Q): Playwright + axe-core, WCAG 2.1 A/AA, serious+critical bloqueantes" >> $GITHUB_STEP_SUMMARY
+          if [ -f a11y-report.json ]; then
+            TOTAL=$(node -e "const r=require('./a11y-report.json');console.log((r.suites||[]).reduce((a,s)=>a+(s.specs||[]).length,0))" 2>/dev/null || echo "n/a")
+            echo "  - Specs a11y executadas: $TOTAL" >> $GITHUB_STEP_SUMMARY
+          fi
