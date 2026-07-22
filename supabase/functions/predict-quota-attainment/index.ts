@@ -332,8 +332,12 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
       const fcIdBySp = new Map<string, string>();
       for (const fc of fcsData) fcIdBySp.set(fc.salesperson_id, fc.id);
 
-      // Batch delete old actions for ALL forecast IDs (was N individual deletes)
-      await supabase.from("quota_attainment_actions").delete().in("forecast_id", fcIds);
+      // Batch delete old actions for ALL forecast IDs (chunked p/ evitar overflow)
+      await chunkedIn<{ id: string }>(
+        fcIds,
+        (chunk) => supabase.from("quota_attainment_actions").delete().in("forecast_id", chunk).select("id"),
+        { parallel: false, label: "predict-quota-attainment.delete-actions" },
+      );
 
       // AI action generation in parallel (was sequential)
       await Promise.all(
