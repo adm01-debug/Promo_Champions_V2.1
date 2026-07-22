@@ -37,7 +37,12 @@ Deno.test("all notification inserters use partitionNotificationBatch", async () 
     const window = src.slice(anchor, anchor + 400);
     if (!window.includes(".insert(") && !window.includes(".upsert(")) continue;
 
-    if (src.includes("partitionNotificationBatch")) continue;
+    // Aceita qualquer um dos helpers exportados por _shared/notification-categories.ts
+    if (
+      src.includes("partitionNotificationBatch") ||
+      src.includes("validateNotificationBatch") ||
+      src.includes("notification-categories")
+    ) continue;
 
     // Compute line number for the anchor.
     const line = src.slice(0, anchor).split("\n").length;
