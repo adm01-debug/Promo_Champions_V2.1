@@ -121,46 +121,68 @@ Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
     const clientIds = dueRows.filter((r) => r.contact_type === "client").map((r) => r.contact_id);
     const leadIds = dueRows.filter((r) => r.contact_type === "lead").map((r) => r.contact_id);
 
-    const [stepsRes, assignmentsRes, clientsRes, leadsRes, salespeopleRes] = await Promise.all([
-      supabase.from("sequence_steps")
-        .select("id, sequence_id, step_order, channel, delay_days, delay_hours, subject, body, whatsapp_template_id")
-        .in("sequence_id", uniqueSeqIds)
-        .order("step_order", { ascending: true }),
-      allEnrIds.length > 0
-        ? supabase.from("sequence_step_assignments")
-            .select("enrollment_id, step_id, variant_id, variant_label")
-            .in("enrollment_id", allEnrIds)
-        : Promise.resolve({ data: [] as Array<{ enrollment_id: string; step_id: string; variant_id: string; variant_label: string | null }>, error: null }),
-      clientIds.length > 0
-        ? supabase.from("clients").select("id, name, company, phone").in("id", clientIds)
-        : Promise.resolve({ data: [] as Array<{ id: string; name?: string; company?: string; phone?: string }>, error: null }),
-      leadIds.length > 0
-        ? supabase.from("leads").select("id, name, company, position, phone").in("id", leadIds)
-        : Promise.resolve({ data: [] as Array<{ id: string; name?: string; company?: string; position?: string; phone?: string }>, error: null }),
-      uniqueOwnerIds.length > 0
-        ? supabase.from("salespeople").select("id, user_id").in("user_id", uniqueOwnerIds)
-        : Promise.resolve({ data: [] as Array<{ id: string; user_id: string }>, error: null }),
+    type StepRow = { id: string; sequence_id: string; step_order: number; channel: string; delay_days: number; delay_hours: number; subject: string | null; body: string | null; whatsapp_template_id?: string | null };
+    type AssignmentRow = { enrollment_id: string; step_id: string; variant_id: string; variant_label: string | null };
+    type ClientRow = { id: string; name?: string; company?: string; phone?: string };
+    type LeadRow = { id: string; name?: string; company?: string; position?: string; phone?: string };
+    type SalespersonRow = { id: string; user_id: string };
+
+    const [stepsData, assignmentsData, clientsData, leadsData, salespeopleData] = await Promise.all([
+      chunkedIn<StepRow>(
+        uniqueSeqIds,
+        (chunk) => supabase.from("sequence_steps")
+          .select("id, sequence_id, step_order, channel, delay_days, delay_hours, subject, body, whatsapp_template_id")
+          .in("sequence_id", chunk)
+          .order("step_order", { ascending: true }),
+        { parallel: true, label: "sequence-runner.steps" },
+      ),
+      chunkedIn<AssignmentRow>(
+        allEnrIds,
+        (chunk) => supabase.from("sequence_step_assignments")
+          .select("enrollment_id, step_id, variant_id, variant_label")
+          .in("enrollment_id", chunk),
+        { parallel: true, label: "sequence-runner.assignments" },
+      ),
+      chunkedIn<ClientRow>(
+        clientIds,
+        (chunk) => supabase.from("clients").select("id, name, company, phone").in("id", chunk),
+        { parallel: true, label: "sequence-runner.clients" },
+      ),
+      chunkedIn<LeadRow>(
+        leadIds,
+        (chunk) => supabase.from("leads").select("id, name, company, position, phone").in("id", chunk),
+        { parallel: true, label: "sequence-runner.leads" },
+      ),
+      chunkedIn<SalespersonRow>(
+        uniqueOwnerIds,
+        (chunk) => supabase.from("salespeople").select("id, user_id").in("user_id", chunk),
+        { parallel: true, label: "sequence-runner.salespeople" },
+      ),
     ]);
 
     // Build lookup maps
     const stepsBySeqId = new Map<string, Step[]>();
-    for (const s of stepsRes.data ?? []) {
+    for (const s of stepsData) {
       const bucket = stepsBySeqId.get(s.sequence_id) ?? [];
       bucket.push(s as Step);
       stepsBySeqId.set(s.sequence_id, bucket);
     }
 
     const assignmentByKey = new Map<string, { variant_id: string; variant_label: string | null }>();
-    for (const a of assignmentsRes.data ?? []) {
+    for (const a of assignmentsData) {
       assignmentByKey.set(`${a.enrollment_id}:${a.step_id}`, { variant_id: a.variant_id, variant_label: a.variant_label });
     }
 
     // Pre-fetch all variant content for known variant_ids (was N queries inside loop)
-    const knownVariantIds = [...new Set((assignmentsRes.data ?? []).map((a) => a.variant_id).filter(Boolean))];
+    const knownVariantIds = [...new Set(assignmentsData.map((a) => a.variant_id).filter(Boolean))];
     const variantById = new Map<string, { subject?: string | null; body?: string | null }>();
     if (knownVariantIds.length > 0) {
-      const { data: variants } = await supabase.from("sequence_step_variants").select("id, subject, body").in("id", knownVariantIds);
-      for (const v of variants ?? []) variantById.set(v.id, { subject: v.subject, body: v.body });
+      const variants = await chunkedIn<{ id: string; subject: string | null; body: string | null }>(
+        knownVariantIds,
+        (chunk) => supabase.from("sequence_step_variants").select("id, subject, body").in("id", chunk),
+        { parallel: true, label: "sequence-runner.variants" },
+      );
+      for (const v of variants) variantById.set(v.id, { subject: v.subject, body: v.body });
     }
 
     const contactCtxById = new Map<string, { nome?: string; empresa?: string; cargo?: string; phone?: string }>();
