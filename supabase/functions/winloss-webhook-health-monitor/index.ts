@@ -343,20 +343,28 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
 
     // Pre-fetch ALL deliveries and recent alerts for every subscription in parallel —
     // eliminates 2 per-subscription DB round-trips inside the loop.
-    const [deliveriesRes, recentAlertsRes] = await Promise.all([
-      supabase
-        .from('winloss_webhook_deliveries')
-        .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
-        .in('subscription_id', subIds)
-        .gte('created_at', sinceIso)
-        .order('created_at', { ascending: false })
-        .limit(5000),
-      supabase
-        .from('winloss_webhook_alerts')
-        .select('subscription_id, kind, details, fired_at')
-        .in('subscription_id', subIds)
-        .gte('fired_at', suppressIso)
-        .limit(1000),
+    const [deliveriesData, recentAlertsData] = await Promise.all([
+      chunkedIn<{ subscription_id: string; attempt: number; succeeded: boolean; status: string; error_message: string | null; created_at: string; request_id: string | null; event: string }>(
+        subIds,
+        (chunk) => supabase
+          .from('winloss_webhook_deliveries')
+          .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
+          .in('subscription_id', chunk)
+          .gte('created_at', sinceIso)
+          .order('created_at', { ascending: false })
+          .limit(5000),
+        { parallel: true, label: 'winloss-health.deliveries' },
+      ),
+      chunkedIn<{ subscription_id: string; kind: string; details: unknown; fired_at: string }>(
+        subIds,
+        (chunk) => supabase
+          .from('winloss_webhook_alerts')
+          .select('subscription_id, kind, details, fired_at')
+          .in('subscription_id', chunk)
+          .gte('fired_at', suppressIso)
+          .limit(1000),
+        { parallel: true, label: 'winloss-health.recent-alerts' },
+      ),
     ]);
 
     if (deliveriesRes.error) {
