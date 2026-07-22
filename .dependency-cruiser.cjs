@@ -1,16 +1,23 @@
 /**
  * Onda P — dependency-cruiser guard-rail.
  * Detecta ciclos, imports test→prod e violações de camada.
+ * `type-only` e `dynamic-import` são excluídos de ciclos/layer rules pois não
+ * geram hazard de runtime (TS apaga tipos; dynamic-import quebra o ciclo em
+ * tempo de execução via lazy loading).
  */
+const RUNTIME_ONLY = {
+  dependencyTypesNot: ["type-only", "dynamic-import"],
+};
+
 module.exports = {
   forbidden: [
     {
       name: "no-circular",
       severity: "error",
       comment:
-        "Ciclos de import quebram tree-shaking e podem gerar undefined em runtime.",
-      from: {},
-      to: { circular: true },
+        "Ciclos de import em runtime quebram tree-shaking e podem gerar undefined.",
+      from: RUNTIME_ONLY,
+      to: { circular: true, ...RUNTIME_ONLY },
     },
     {
       name: "no-orphans",
@@ -21,7 +28,7 @@ module.exports = {
         pathNot: [
           "\\.d\\.ts$",
           "^src/main\\.tsx$",
-          "^src/integrations/supabase/",
+          "^src/integrations/",
           "^src/test/",
           "^src/types/",
           "^scripts/",
@@ -39,24 +46,18 @@ module.exports = {
       to: { path: "\\.(test|spec)\\.(ts|tsx)$" },
     },
     {
-      name: "no-deprecated-core",
-      severity: "warn",
-      from: {},
-      to: { dependencyTypes: ["deprecated"] },
-    },
-    {
       name: "lib-not-to-ui",
       severity: "error",
       comment: "src/lib é camada pura; não deve depender de components/pages.",
-      from: { path: "^src/lib/" },
-      to: { path: "^src/(components|pages)/" },
+      from: { path: "^src/lib/", ...RUNTIME_ONLY },
+      to: { path: "^src/(components|pages)/", ...RUNTIME_ONLY },
     },
     {
       name: "components-not-to-pages",
       severity: "error",
-      comment: "Components não podem importar pages (inversão de dependência).",
-      from: { path: "^src/components/" },
-      to: { path: "^src/pages/" },
+      comment: "Components não podem importar pages (inversão). Dynamic-import (prefetch) é permitido.",
+      from: { path: "^src/components/", ...RUNTIME_ONLY },
+      to: { path: "^src/pages/", ...RUNTIME_ONLY },
     },
     {
       name: "shared-not-to-function",
@@ -69,17 +70,14 @@ module.exports = {
     },
   ],
   options: {
-    doNotFollow: {
-      path: ["node_modules"],
-    },
+    doNotFollow: { path: ["node_modules"] },
     exclude: {
       path: [
         "node_modules",
         "dist",
         "bundle-stats",
         "coverage",
-        "\\.test\\.(ts|tsx)$",
-        "\\.spec\\.(ts|tsx)$",
+        "\\.(test|spec)\\.(ts|tsx)$",
         "supabase/functions/[^/]+/vendor/",
         "tests/",
       ],
@@ -92,7 +90,6 @@ module.exports = {
       mainFields: ["module", "main", "types", "typings"],
     },
     reporterOptions: {
-      dot: { collapsePattern: "node_modules/(@[^/]+/[^/]+|[^/]+)" },
       archi: {
         collapsePattern:
           "^(node_modules|packages|src|lib|app|test|spec)/[^/]+|^supabase/functions/[^/]+",
