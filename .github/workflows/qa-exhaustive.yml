@@ -103,6 +103,31 @@ jobs:
           kill $PREVIEW_PID || true
         continue-on-error: true
 
+      - name: A11y sweep — Playwright + axe-core (Onda Q)
+        run: |
+          npx playwright install --with-deps chromium
+          npx vite preview --port 5173 --strictPort &
+          PREVIEW_PID=$!
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:5173 > /dev/null; then break; fi
+            sleep 1
+          done
+          npx playwright test -c playwright.a11y.config.ts
+          A11Y_EXIT=$?
+          kill $PREVIEW_PID || true
+          exit $A11Y_EXIT
+
+      - name: Upload a11y report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report
+          path: |
+            a11y-report.json
+            a11y-report-html/
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Summary
         if: always()
         run: |
