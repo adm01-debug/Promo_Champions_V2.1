@@ -1,11 +1,11 @@
 // Testes para notification-categories guard.
-// Cobrem: (a) toda categoria válida aceita, (b) rejeição de categoria inválida,
-// (c) prioridade inválida, (d) batch parcialmente inválido lista índices.
+// Cobrem: categorias/prioridades válidas, rejeição, batch parcial e split-based helper.
 import { assertEquals, assertThrows } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   NOTIFICATION_CATEGORIES,
   NOTIFICATION_PRIORITIES,
   notificationCategorySchema,
+  partitionNotificationBatch,
   validateNotificationBatch,
 } from "./notification-categories.ts";
 
@@ -30,7 +30,6 @@ Deno.test("all allowed categories parse", () => {
 });
 
 Deno.test("all allowed priorities appear in schema", () => {
-  // sanity: contract exports the same list the DB constraint enforces
   assertEquals(NOTIFICATION_PRIORITIES.length, 4);
 });
 
@@ -57,4 +56,34 @@ Deno.test("validateNotificationBatch rejects invalid priority", () => {
 Deno.test("validateNotificationBatch rejects invalid uuid", () => {
   const rows = [baseRow({ user_id: "not-a-uuid" })];
   assertThrows(() => validateNotificationBatch(rows), Error, "user_id");
+});
+
+Deno.test("schema tolerates omitted category/priority (DB defaults apply)", () => {
+  const { valid, invalid } = partitionNotificationBatch([
+    { user_id: uuid, type: "info", title: "sem cat/prio" },
+  ]);
+  assertEquals(invalid.length, 0);
+  assertEquals(valid.length, 1);
+});
+
+Deno.test("partitionNotificationBatch separates valid from invalid rows", () => {
+  const rows = [
+    baseRow(),
+    baseRow({ category: "customer_success" }), // inválida
+    baseRow({ user_id: "nope" }),               // inválida
+    baseRow({ category: "team", priority: "critical" }),
+  ];
+  const { valid, invalid } = partitionNotificationBatch(rows);
+  assertEquals(valid.length, 2);
+  assertEquals(invalid.length, 2);
+  assertEquals(invalid[0].index, 1);
+  assertEquals(invalid[1].index, 2);
+  if (!invalid[0].reason.includes("category")) throw new Error(invalid[0].reason);
+  if (!invalid[1].reason.includes("user_id")) throw new Error(invalid[1].reason);
+});
+
+Deno.test("partitionNotificationBatch returns empty for empty input", () => {
+  const { valid, invalid } = partitionNotificationBatch([]);
+  assertEquals(valid.length, 0);
+  assertEquals(invalid.length, 0);
 });
