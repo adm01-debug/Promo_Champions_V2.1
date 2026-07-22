@@ -367,18 +367,11 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
       ),
     ]);
 
-    if (deliveriesRes.error) {
-      structuredLog('warn', { msg: 'fetch_deliveries_failed', error: deliveriesRes.error.message }, requestId);
-    }
-    if (recentAlertsRes.error) {
-      structuredLog('warn', { msg: 'fetch_recent_alerts_failed', error: recentAlertsRes.error.message }, requestId);
-    }
-
     // Group deliveries by subscription_id — already DESC ordered globally so
     // each per-sub slice is also DESC, which evaluate() requires.
     type DeliveryRowWithSubId = DeliveryRow & { subscription_id: string };
     const deliveriesBySubId = new Map<string, DeliveryRow[]>();
-    for (const row of (deliveriesRes.data ?? []) as DeliveryRowWithSubId[]) {
+    for (const row of deliveriesData as DeliveryRowWithSubId[]) {
       const arr = deliveriesBySubId.get(row.subscription_id) ?? [];
       arr.push(row);
       deliveriesBySubId.set(row.subscription_id, arr);
@@ -387,7 +380,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     // Group recent alerts by subscription_id
     type RecentAlertRow = { subscription_id: string; kind: string; details: Record<string, unknown> | null };
     const recentAlertsBySubId = new Map<string, Array<{ kind: string; details: Record<string, unknown> | null }>>();
-    for (const row of (recentAlertsRes.data ?? []) as RecentAlertRow[]) {
+    for (const row of recentAlertsData as RecentAlertRow[]) {
       const arr = recentAlertsBySubId.get(row.subscription_id) ?? [];
       arr.push({ kind: row.kind, details: row.details });
       recentAlertsBySubId.set(row.subscription_id, arr);
