@@ -143,15 +143,17 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         return new Response(JSON.stringify({ data: [] }), { status: 200, headers });
       }
 
-      const { data, error } = await supabase
-        .from("score_change_logs")
-        .select("id, salesperson_id, changed_by, operation, field_name, old_value, new_value, change_value, created_at")
-        .in("salesperson_id", memberIds)
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
-      return new Response(JSON.stringify({ data }), { status: 200, headers });
+      const data = await chunkedIn<Record<string, unknown>>(
+        memberIds,
+        (chunk) => supabase
+          .from("score_change_logs")
+          .select("id, salesperson_id, changed_by, operation, field_name, old_value, new_value, change_value, created_at")
+          .in("salesperson_id", chunk)
+          .order("created_at", { ascending: false })
+          .limit(100),
+        { parallel: true, label: "ranking-api.score-changes" },
+      );
+      return new Response(JSON.stringify({ data: data.slice(0, 100) }), { status: 200, headers });
     }
 
     if (req.method === "GET" && route === "team/addfields") {
