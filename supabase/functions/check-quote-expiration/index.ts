@@ -32,26 +32,37 @@ Deno.serve(withRequestId('check-quote-expiration', async (_req, ctx) => {
 
   ctx.log('info', 'expiring_quotes_found', { count: expiringQuotes?.length ?? 0 });
 
-  // 2. Create notifications for each expiring quote
-  const notifications =
+  // 2. Create notifications for each expiring quote — guarded pela partition
+  // helper: categoria/prioridade/UUID inválidos são logados e pulados sem
+  // derrubar o batch inteiro.
+  const rawNotifications =
     expiringQuotes?.map(quote => ({
       user_id: quote.created_by,
+      type: 'quote_expiring',
+      category: 'sales' as const,
+      priority: 'medium' as const,
       title: 'Orçamento Expirando',
       message: `O orçamento ${quote.quote_number || quote.title} para ${quote.client_name} expira em breve (${quote.valid_until}).`,
-      type: 'warning',
-      link: `/orcamentos`,
+      action_url: '/orcamentos',
+      action_label: 'Ver orçamentos',
       metadata: { quote_id: quote.id },
     })) || [];
 
-  if (notifications.length > 0) {
-    const { error: notifyError } = await supabase
-      .from('notifications')
-      .insert(notifications);
+  if (rawNotifications.length > 0) {
+    const { valid, invalid } = partitionNotificationBatch(rawNotifications);
+    if (invalid.length > 0) {
+      ctx.log('warn', 'notifications_invalid', { count: invalid.length, samples: invalid.slice(0, 3).map(i => i.reason) });
+    }
+    if (valid.length > 0) {
+      const { error: notifyError } = await supabase
+        .from('notifications')
+        .insert(valid);
 
-    if (notifyError) {
-      ctx.log('error', 'notify_failed', { error: notifyError.message });
-    } else {
-      ctx.log('info', 'notifications_created', { count: notifications.length });
+      if (notifyError) {
+        ctx.log('error', 'notify_failed', { error: notifyError.message });
+      } else {
+        ctx.log('info', 'notifications_created', { count: valid.length, skipped: invalid.length });
+      }
     }
   }
 
