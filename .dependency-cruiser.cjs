@@ -5,7 +5,7 @@
  * geram hazard de runtime (TS apaga tipos; dynamic-import quebra o ciclo em
  * tempo de execução via lazy loading).
  */
-const RUNTIME_ONLY = {
+const RUNTIME_ONLY_TO = {
   dependencyTypesNot: ["type-only", "dynamic-import"],
 };
 
@@ -16,8 +16,8 @@ module.exports = {
       severity: "error",
       comment:
         "Ciclos de import em runtime quebram tree-shaking e podem gerar undefined.",
-      from: RUNTIME_ONLY,
-      to: { circular: true, ...RUNTIME_ONLY },
+      from: {},
+      to: { circular: true, ...RUNTIME_ONLY_TO },
     },
     {
       name: "no-orphans",
@@ -49,15 +49,15 @@ module.exports = {
       name: "lib-not-to-ui",
       severity: "error",
       comment: "src/lib é camada pura; não deve depender de components/pages.",
-      from: { path: "^src/lib/", ...RUNTIME_ONLY },
-      to: { path: "^src/(components|pages)/", ...RUNTIME_ONLY },
+      from: { path: "^src/lib/" },
+      to: { path: "^src/(components|pages)/", ...RUNTIME_ONLY_TO },
     },
     {
       name: "components-not-to-pages",
       severity: "error",
       comment: "Components não podem importar pages (inversão). Dynamic-import (prefetch) é permitido.",
-      from: { path: "^src/components/", ...RUNTIME_ONLY },
-      to: { path: "^src/pages/", ...RUNTIME_ONLY },
+      from: { path: "^src/components/" },
+      to: { path: "^src/pages/", ...RUNTIME_ONLY_TO },
     },
     {
       name: "shared-not-to-function",
