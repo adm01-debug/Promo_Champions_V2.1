@@ -42,7 +42,25 @@ export default defineConfig({
         ],
       },
     }),
-  ],
+    // Onda O — bundle-size budget: gera dist/stats.html + dist/stats.json
+    // (consumido por scripts/check-bundle-budget.mjs no CI).
+    process.env.ANALYZE_BUNDLE === '1' && visualizer({
+      filename: 'dist/stats.html',
+      template: 'treemap',
+      gzipSize: true,
+      brotliSize: true,
+      sourcemap: false,
+      emitFile: false,
+    }),
+    process.env.ANALYZE_BUNDLE === '1' && visualizer({
+      filename: 'dist/stats.json',
+      template: 'raw-data',
+      gzipSize: true,
+      brotliSize: true,
+      sourcemap: false,
+      emitFile: false,
+    }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
