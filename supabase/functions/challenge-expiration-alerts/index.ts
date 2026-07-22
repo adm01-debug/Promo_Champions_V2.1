@@ -58,7 +58,7 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   );
 
   const progressByChallenge = new Map<string, Map<string, { current_value: number; xp_claimed: boolean }>>();
-  for (const p of allProgressData ?? []) {
+  for (const p of allProgressData) {
     if (!progressByChallenge.has(p.challenge_id)) progressByChallenge.set(p.challenge_id, new Map());
     progressByChallenge.get(p.challenge_id)!.set(p.salesperson_id, { current_value: p.current_value, xp_claimed: p.xp_claimed });
   }
