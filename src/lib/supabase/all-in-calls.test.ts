@@ -58,9 +58,11 @@ describe("chunkedInClient guard-rail", () => {
         while (prev >= 0 && lines[prev].trim() === "") prev--;
         const safetyComment = prev >= 0 && /chunked-in-safe:/i.test(lines[prev]);
         if (safetyComment) continue;
-        // 2. file already imports/uses chunkedInClient
-        if (/chunkedInClient/.test(src)) continue;
-        // 3. literal array of length <= 3 on the same line, e.g. .in('id', ['a','b'])
+        // 2. file already imports/uses chunkedIn or chunkedInClient
+        if (/\bchunkedIn(Client)?\b/.test(src)) continue;
+        // 3. this file IS the helper itself (contains docstring examples)
+        if (f.endsWith("chunkedIn.ts")) continue;
+        // 4. literal array of length <= 3 on the same line, e.g. .in('id', ['a','b'])
         const literalArrShort = /\.in\(\s*['"][^'"]+['"]\s*,\s*\[[^[\]]{0,80}\]\s*\)/.test(line);
         if (literalArrShort) continue;
         offenders.push(`${f}:${i + 1}  →  ${line.trim().slice(0, 140)}`);
