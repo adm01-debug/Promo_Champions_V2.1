@@ -24,7 +24,7 @@ vi.mock('@/integrations/supabase/client', () => {
         inCalls.push({ column, values });
         return thenable;
       },
-      then: (resolve: (v: { data: unknown[]; error: null }) => unknown) =>
+      then: (resolve: (v: { data: unknown[]; error: { message: string } | null }) => unknown) =>
         Promise.resolve({ data: thenable.data, error: thenable.error }).then(resolve),
     };
     return thenable;
