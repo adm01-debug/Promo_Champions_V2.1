@@ -10,12 +10,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-request-id",
-};
+import { corsHeaders } from "../_shared/cors.ts";
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
