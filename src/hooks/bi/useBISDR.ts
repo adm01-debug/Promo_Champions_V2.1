@@ -83,6 +83,7 @@ export function useBISDR({ dateRange, salespersonId }: UseBISDROptions) {
       const allSDRs = allSDRsRes.data || [];
       const { data: allSDRSales } = await supabase.from("sales").select("salesperson_id")
         .gte("created_at", dateRange.start.toISOString()).lte("created_at", dateRange.end.toISOString())
+        // chunked-in-safe: allSDRs derivado de is_active (~50)
         .in("salesperson_id", allSDRs.map(s => s.id));
 
       const sdrSalesCounts: Record<string, number> = {};

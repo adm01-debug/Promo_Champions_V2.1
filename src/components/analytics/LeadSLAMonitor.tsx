@@ -31,6 +31,7 @@ export const LeadSLAMonitor: FC = () => {
       const { data: activities } = await supabase
         .from('activities')
         .select('sale_id, created_at')
+        // chunked-in-safe: leadIds já capados por .limit() upstream
         .in('sale_id', leadIds.length > 0 ? leadIds : ['none'])
         .order('created_at', { ascending: true });
 

@@ -56,6 +56,7 @@ export function RecentProspects({
       const { data: scores } = await supabase
         .from("lead_scores")
         .select("sale_id, score")
+        // chunked-in-safe: número de SDRs por conta é finito (~50)
         .in("sale_id", saleIds);
 
       const scoreMap = new Map(scores?.map(s => [s.sale_id, s.score]));

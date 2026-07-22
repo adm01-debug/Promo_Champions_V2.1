@@ -356,6 +356,7 @@ export const useSalesAssistant = (
         .from('chat_conversations')
         .select('*')
         .eq('salesperson_id', salespersonId)
+        // chunked-in-safe: convIds vem de list bounded por page size
         .in('id', convIds)
         .order('updated_at', { ascending: false });
       if (convError) {

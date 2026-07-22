@@ -70,6 +70,7 @@ function useSDRConversionRanking(period: PeriodFilter) {
         supabase
           .from('activities')
           .select('salesperson_id, activity_type, outcome')
+          // chunked-in-safe: sdrIds vem de agregação por período (~50)
           .in('salesperson_id', sdrIds)
           .eq('activity_type', 'meeting')
           .eq('outcome', 'scheduled')
@@ -78,6 +79,7 @@ function useSDRConversionRanking(period: PeriodFilter) {
         supabase
           .from('sales')
           .select('salesperson_id, status')
+          // chunked-in-safe: sdrIds vem de agregação por período (~50)
           .in('salesperson_id', sdrIds)
           .gte('created_at', range.start.toISOString())
           .lte('created_at', range.end.toISOString()),
