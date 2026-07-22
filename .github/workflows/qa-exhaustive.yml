@@ -92,4 +92,5 @@ jobs:
           echo "- Vitest: 293+ cenários" >> $GITHUB_STEP_SUMMARY
           echo "- Deno: 37+ cenários (inclui 917 request-id fuzz)" >> $GITHUB_STEP_SUMMARY
           echo "- Guards: chunkedIn, notification-inserters, request-id" >> $GITHUB_STEP_SUMMARY
+          echo "- Bundle budget: scripts/check-bundle-budget.mjs (gzip por chunk)" >> $GITHUB_STEP_SUMMARY
           echo "- Lighthouse CI: perf/a11y/best-practices/SEO + Web Vitals" >> $GITHUB_STEP_SUMMARY
