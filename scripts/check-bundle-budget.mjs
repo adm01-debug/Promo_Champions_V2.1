@@ -57,9 +57,9 @@ function gzipKB(path) {
 }
 
 function bucketFor(file) {
-  // Vite hash suffix: `-<8+ chars base64url>`. Strip only the trailing hash segment
-  // (a single `-` + [A-Za-z0-9_-]{8,}), preservando prefixos como `vendor-motion`.
-  const base = file.replace(/-[A-Za-z0-9_-]{8,}\.js$/, '');
+  // Vite hash: exatamente 8 chars base64url (`-XXXXXXXX.js`). Strip só esse
+  // sufixo para preservar prefixos multipart como `vendor-motion`.
+  const base = file.replace(/-[A-Za-z0-9_-]{8}\.js$/, '');
   if (BUDGETS_KB[base] !== undefined) return base;
   // entry chunk (e.g. index-abc123.js)
   if (/^index-/.test(file) || /^main-/.test(file)) return '__entry__';
