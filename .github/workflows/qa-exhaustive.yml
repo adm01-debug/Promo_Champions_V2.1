@@ -57,6 +57,23 @@ jobs:
       - name: Static guard — chunkedInClient enforcement
         run: npx vitest run src/lib/supabase/all-in-calls.test.ts --reporter=verbose
 
+      - name: Build (para Lighthouse CI)
+        run: npm run build
+
+      - name: Lighthouse CI — Web Vitals & a11y/SEO
+        run: |
+          npm install -g @lhci/cli@0.14.x
+          npx vite preview --port 5173 --strictPort &
+          PREVIEW_PID=$!
+          # Poll até o preview responder (máx 30s)
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5173 > /dev/null; then break; fi
+            sleep 1
+          done
+          lhci autorun --config=.lighthouserc.json || echo "::warning::Lighthouse CI reportou regressões"
+          kill $PREVIEW_PID || true
+        continue-on-error: true
+
       - name: Summary
         if: always()
         run: |
@@ -64,3 +81,4 @@ jobs:
           echo "- Vitest: 293+ cenários" >> $GITHUB_STEP_SUMMARY
           echo "- Deno: 37+ cenários (inclui 917 request-id fuzz)" >> $GITHUB_STEP_SUMMARY
           echo "- Guards: chunkedIn, notification-inserters, request-id" >> $GITHUB_STEP_SUMMARY
+          echo "- Lighthouse CI: perf/a11y/best-practices/SEO + Web Vitals" >> $GITHUB_STEP_SUMMARY
