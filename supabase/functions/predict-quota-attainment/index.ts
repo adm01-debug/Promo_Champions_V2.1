@@ -193,7 +193,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     }
 
     const openBySp = new Map<string, Array<{ id: string; amount: number; stage: string | null }>>();
-    for (const s of openRes.data ?? []) {
+    for (const s of openData) {
       const bucket = openBySp.get(s.salesperson_id) ?? [];
       bucket.push(s);
       openBySp.set(s.salesperson_id, bucket);
