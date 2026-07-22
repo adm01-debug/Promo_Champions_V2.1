@@ -78,8 +78,8 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
 
     // Build dedup set: "salesperson_id:YYYY-MM" — one QBR per salesperson per calendar month
     const existingQbrKeys = new Set(
-      (existingEvents ?? []).map((e) => {
-        const month = (e.scheduled_at as string).slice(0, 7); // "YYYY-MM"
+      existingEvents.map((e) => {
+        const month = e.scheduled_at.slice(0, 7); // "YYYY-MM"
         return `${e.salesperson_id}:${month}`;
       })
     );
