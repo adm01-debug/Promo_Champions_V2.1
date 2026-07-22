@@ -197,15 +197,19 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
     // Batch-fetch all existing library entries for all grouped patterns in one query
     const allTypes = [...new Set([...grouped.values()].map((v) => v.type))];
     const allPatterns = [...new Set([...grouped.values()].map((v) => v.pattern))];
-    const { data: libraryRows } = await admin
-      .from("objection_library")
-      .select("id, frequency_count, best_response_text, objection_type, pattern_text")
-      .in("objection_type", allTypes)
-      .in("pattern_text", allPatterns)
-      .limit(grouped.size * 2);
+    const libraryRows = await chunkedIn<{ id: string; frequency_count: number; best_response_text: string | null; objection_type: string; pattern_text: string }>(
+      allPatterns,
+      (chunk) => admin
+        .from("objection_library")
+        .select("id, frequency_count, best_response_text, objection_type, pattern_text")
+        .in("objection_type", allTypes)
+        .in("pattern_text", chunk)
+        .limit(grouped.size * 2),
+      { parallel: true, label: "analyze-objection-handling.library" },
+    );
 
     const libraryByKey = new Map(
-      (libraryRows ?? []).map((r) => [`${r.objection_type}::${r.pattern_text}`, r])
+      libraryRows.map((r) => [`${r.objection_type}::${r.pattern_text}`, r])
     );
 
     const insertRows: Array<Record<string, unknown>> = [];
