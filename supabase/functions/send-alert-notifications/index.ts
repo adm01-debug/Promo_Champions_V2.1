@@ -156,18 +156,22 @@ const generateAlerts = async (
 
     // Batch-load all completed sales for the month once (avoids N+1 per salesperson)
     const spIds = (salespeople ?? []).map((p: { id: string }) => p.id);
-    const { data: monthSales } = spIds.length
-      ? await supabase
-          .from('sales')
-          .select('salesperson_id, amount')
-          .in('salesperson_id', spIds)
-          .eq('status', 'completed')
-          .gte('created_at', currentMonth)
-          .limit(50000)
-      : { data: [] };
+    const monthSales = spIds.length
+      ? await chunkedIn<{ salesperson_id: string; amount: number }>(
+          spIds,
+          (chunk) => supabase
+            .from('sales')
+            .select('salesperson_id, amount')
+            .in('salesperson_id', chunk)
+            .eq('status', 'completed')
+            .gte('created_at', currentMonth)
+            .limit(50000),
+          { parallel: true, label: 'send-alert-notifications.month-sales' },
+        )
+      : [];
 
     const salesByPerson = new Map<string, number>();
-    for (const s of monthSales ?? []) {
+    for (const s of monthSales) {
       const prev = salesByPerson.get(s.salesperson_id) ?? 0;
       salesByPerson.set(s.salesperson_id, prev + Number(s.amount));
     }
