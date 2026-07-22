@@ -42,3 +42,4 @@ tests/e2e/.auth/
 
 # Onda O — bundle analyzer output
 bundle-stats/
+dependency-graph.svg
