@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface StepTemplate {
   title: string;
@@ -52,16 +53,19 @@ Deno.serve(withRequestId("onboarding-launcher", async (req, _ctx) => {
 
       const accIds = (accs ?? []).map(a => a.id);
 
-      // Batch-check existing journeys in one query — eliminates N+1 per account
-      const { data: existingJourneys } = accIds.length > 0
-        ? await supabase
-            .from("onboarding_journeys")
-            .select("account_id")
-            .in("account_id", accIds)
-            .limit(1000)
-        : { data: [] as { account_id: string }[] };
+      // Batch-check existing journeys via chunkedIn — accIds pode chegar a 1000 (>200 = risco de URL overflow em PostgREST).
+      const existingJourneys = accIds.length > 0
+        ? await chunkedIn<{ account_id: string }>(
+            accIds,
+            (chunk) => supabase
+              .from("onboarding_journeys")
+              .select("account_id")
+              .in("account_id", chunk),
+            { parallel: true, label: "onboarding-launcher/existing-journeys" },
+          )
+        : [];
 
-      const accountsWithJourney = new Set((existingJourneys ?? []).map(j => j.account_id));
+      const accountsWithJourney = new Set(existingJourneys.map(j => j.account_id));
 
       let launched = 0;
       for (const a of accs ?? []) {
