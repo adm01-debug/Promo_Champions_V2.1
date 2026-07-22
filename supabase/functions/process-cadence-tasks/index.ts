@@ -35,19 +35,21 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     }
 
     // Fetch full task data for the claimed IDs only
-    const { data: tasks, error: tasksErr } = await supabase
-      .from("cadence_tasks")
-      .select(`
-        *,
-        cadence_step:cadence_steps(*),
-        prospect_cadence:prospect_cadences(
+    const tasks = await chunkedIn<Record<string, unknown>>(
+      claimedIds,
+      (chunk) => supabase
+        .from("cadence_tasks")
+        .select(`
           *,
-          sale:sales(*, client:clients(*))
-        )
-      `)
-      .in("id", claimedIds);
-
-    if (tasksErr) throw tasksErr;
+          cadence_step:cadence_steps(*),
+          prospect_cadence:prospect_cadences(
+            *,
+            sale:sales(*, client:clients(*))
+          )
+        `)
+        .in("id", chunk),
+      { parallel: true, label: "process-cadence-tasks.tasks" },
+    );
 
     const results = [];
     const now = new Date().toISOString();
