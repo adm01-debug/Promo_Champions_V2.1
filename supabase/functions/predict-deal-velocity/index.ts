@@ -3,6 +3,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface PredictBody {
   sale_id?: string;
@@ -227,43 +228,61 @@ async function batchPredict(limit: number): Promise<Response> {
 
   // Parallel pre-fetch of all supplementary data
   const [
-    { data: historyData },
-    { data: healthData },
-    { data: coverageData },
-    { data: ownerBaselineData },
-    { data: globalBaselineData },
-    { data: salespeopleData },
+    historyData,
+    healthData,
+    coverageData,
+    ownerBaselineData,
+    globalBaselineData,
+    salespeopleData,
   ] = await Promise.all([
-    admin.from('deal_stage_history').select('sale_id, entered_at').in('sale_id', saleIds).order('entered_at', { ascending: false }),
-    admin.from('deal_health_scores').select('sale_id, health_score, tier').in('sale_id', saleIds),
-    admin.from('deal_committee_coverage').select('sale_id, coverage_score, tier').in('sale_id', saleIds),
+    chunkedIn<{ sale_id: string; entered_at: string }>(
+      saleIds,
+      (chunk) => admin.from('deal_stage_history').select('sale_id, entered_at').in('sale_id', chunk).order('entered_at', { ascending: false }),
+      { parallel: true, label: 'predict-deal-velocity.history' },
+    ),
+    chunkedIn<{ sale_id: string; health_score: number; tier: string }>(
+      saleIds,
+      (chunk) => admin.from('deal_health_scores').select('sale_id, health_score, tier').in('sale_id', chunk),
+      { parallel: true, label: 'predict-deal-velocity.health' },
+    ),
+    chunkedIn<{ sale_id: string; coverage_score: number; tier: string }>(
+      saleIds,
+      (chunk) => admin.from('deal_committee_coverage').select('sale_id, coverage_score, tier').in('sale_id', chunk),
+      { parallel: true, label: 'predict-deal-velocity.coverage' },
+    ),
     uniqueStages.length > 0 && uniqueOwners.length > 0
-      ? admin.from('stage_velocity_baselines').select('stage, owner_id, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).in('owner_id', uniqueOwners)
-      : Promise.resolve({ data: [] as BaselineRow[], error: null }),
+      ? chunkedIn<BaselineRow>(
+          uniqueOwners,
+          (chunk) => admin.from('stage_velocity_baselines').select('stage, owner_id, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).in('owner_id', chunk),
+          { parallel: true, label: 'predict-deal-velocity.owner-baseline' },
+        )
+      : Promise.resolve([] as BaselineRow[]),
     uniqueStages.length > 0
-      ? admin.from('stage_velocity_baselines').select('stage, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).is('owner_id', null)
-      : Promise.resolve({ data: [] as BaselineRow[], error: null }),
-    uniqueOwners.length > 0
-      ? admin.from('salespeople').select('id, auth_user_id').in('id', uniqueOwners)
-      : Promise.resolve({ data: [] as { id: string; auth_user_id: string | null }[], error: null }),
+      ? admin.from('stage_velocity_baselines').select('stage, avg_days, median_days, p75_days, sample_size').in('stage', uniqueStages).is('owner_id', null).then((r) => (r.data ?? []) as BaselineRow[])
+      : Promise.resolve([] as BaselineRow[]),
+    chunkedIn<{ id: string; auth_user_id: string | null }>(
+      uniqueOwners,
+      (chunk) => admin.from('salespeople').select('id, auth_user_id').in('id', chunk),
+      { parallel: true, label: 'predict-deal-velocity.salespeople' },
+    ),
   ]);
 
   // Build O(1) lookup maps
   const latestHistoryBySaleId = new Map<string, { entered_at: string }>();
-  for (const h of (historyData ?? []) as { sale_id: string; entered_at: string }[]) {
+  for (const h of historyData) {
     if (!latestHistoryBySaleId.has(h.sale_id)) latestHistoryBySaleId.set(h.sale_id, h);
   }
-  const healthMap = new Map((healthData ?? []).map((h: { sale_id: string; health_score: number; tier: string }) => [h.sale_id, h]));
-  const coverageMap = new Map((coverageData ?? []).map((c: { sale_id: string; coverage_score: number; tier: string }) => [c.sale_id, c]));
+  const healthMap = new Map(healthData.map((h) => [h.sale_id, h]));
+  const coverageMap = new Map(coverageData.map((c) => [c.sale_id, c]));
   const ownerBaselineMap = new Map<string, BaselineRow>();
-  for (const b of (ownerBaselineData ?? []) as BaselineRow[]) {
+  for (const b of ownerBaselineData) {
     ownerBaselineMap.set(`${b.owner_id}|${b.stage}`, b);
   }
   const globalBaselineMap = new Map<string, BaselineRow>();
-  for (const b of (globalBaselineData ?? []) as BaselineRow[]) {
+  for (const b of globalBaselineData) {
     globalBaselineMap.set(b.stage, b);
   }
-  const salespersonMap = new Map((salespeopleData ?? []).map((sp: { id: string; auth_user_id: string | null }) => [sp.id, sp]));
+  const salespersonMap = new Map(salespeopleData.map((sp) => [sp.id, sp]));
 
   const fallbackBaseline: BaselineRow = { stage: '', avg_days: 14, median_days: 10, p75_days: 21, sample_size: 0 };
 

@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 
 
@@ -63,23 +64,28 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
     const matchedSaleIds = matched.map((m) => m.saleId);
     const salespersonBySaleId = new Map<string, string | null>();
     if (matchedSaleIds.length > 0) {
-      const { data: salesData } = await supabase
-        .from("sales")
-        .select("id, salesperson_id")
-        .in("id", matchedSaleIds);
-      for (const s of salesData ?? []) salespersonBySaleId.set(s.id, s.salesperson_id);
+      const salesData = await chunkedIn<{ id: string; salesperson_id: string | null }>(
+        matchedSaleIds,
+        (chunk) => supabase.from("sales").select("id, salesperson_id").in("id", chunk),
+        { parallel: true, label: "auto-enroll-cadence.sales" },
+      );
+      for (const s of salesData) salespersonBySaleId.set(s.id, s.salesperson_id);
     }
 
     // Phase 3: batch-fetch steps for all unique cadence_ids (was N queries)
     const uniqueCadenceIds = [...new Set(matched.map((m) => m.cadence_id))];
     const stepsByCadenceId = new Map<string, Array<{ id: string; day_number: number }>>();
     if (uniqueCadenceIds.length > 0) {
-      const { data: allSteps } = await supabase
-        .from("cadence_steps")
-        .select("id, day_number, cadence_id")
-        .in("cadence_id", uniqueCadenceIds)
-        .order("day_number", { ascending: true });
-      for (const step of allSteps ?? []) {
+      const allSteps = await chunkedIn<{ id: string; day_number: number; cadence_id: string }>(
+        uniqueCadenceIds,
+        (chunk) => supabase
+          .from("cadence_steps")
+          .select("id, day_number, cadence_id")
+          .in("cadence_id", chunk)
+          .order("day_number", { ascending: true }),
+        { parallel: true, label: "auto-enroll-cadence.steps" },
+      );
+      for (const step of allSteps) {
         const bucket = stepsByCadenceId.get(step.cadence_id) ?? [];
         bucket.push({ id: step.id, day_number: step.day_number });
         stepsByCadenceId.set(step.cadence_id, bucket);

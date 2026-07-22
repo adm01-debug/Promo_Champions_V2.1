@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface RenewalRow {
   id: string;
@@ -40,18 +41,22 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
     // Batch-load recent renewal tasks to avoid N+1 per renewal
     const cutoff5d = new Date(today.getTime() - 5 * 86400000).toISOString();
     const ownerIds = [...new Set(renewals.map(r => r.owner_salesperson_id).filter(Boolean))] as string[];
-    const { data: recentTasks } = ownerIds.length
-      ? await supabase
-          .from("tasks")
-          .select("salesperson_id, title")
-          .in("salesperson_id", ownerIds)
-          .ilike("title", "Renovação em%")
-          .gte("created_at", cutoff5d)
-      : { data: [] };
+    const recentTasks = ownerIds.length
+      ? await chunkedIn<{ salesperson_id: string; title: string }>(
+          ownerIds,
+          (chunk) => supabase
+            .from("tasks")
+            .select("salesperson_id, title")
+            .in("salesperson_id", chunk)
+            .ilike("title", "Renovação em%")
+            .gte("created_at", cutoff5d),
+          { parallel: true, label: "renewal-automation.recent-tasks" },
+        )
+      : [];
 
     // Index: "salesperson_id:bucket" → true if task already exists
     const existingTaskKeys = new Set(
-      (recentTasks ?? []).map((t: { salesperson_id: string; title: string }) => {
+      recentTasks.map((t) => {
         const m = t.title?.match(/^Renovação em (\d+)d/);
         return m ? `${t.salesperson_id}:${m[1]}` : null;
       }).filter(Boolean) as string[]

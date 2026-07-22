@@ -2,6 +2,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -342,34 +343,35 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
 
     // Pre-fetch ALL deliveries and recent alerts for every subscription in parallel —
     // eliminates 2 per-subscription DB round-trips inside the loop.
-    const [deliveriesRes, recentAlertsRes] = await Promise.all([
-      supabase
-        .from('winloss_webhook_deliveries')
-        .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
-        .in('subscription_id', subIds)
-        .gte('created_at', sinceIso)
-        .order('created_at', { ascending: false })
-        .limit(5000),
-      supabase
-        .from('winloss_webhook_alerts')
-        .select('subscription_id, kind, details, fired_at')
-        .in('subscription_id', subIds)
-        .gte('fired_at', suppressIso)
-        .limit(1000),
+    const [deliveriesData, recentAlertsData] = await Promise.all([
+      chunkedIn<{ subscription_id: string; attempt: number; succeeded: boolean; status: string; error_message: string | null; created_at: string; request_id: string | null; event: string }>(
+        subIds,
+        (chunk) => supabase
+          .from('winloss_webhook_deliveries')
+          .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
+          .in('subscription_id', chunk)
+          .gte('created_at', sinceIso)
+          .order('created_at', { ascending: false })
+          .limit(5000),
+        { parallel: true, label: 'winloss-health.deliveries' },
+      ),
+      chunkedIn<{ subscription_id: string; kind: string; details: unknown; fired_at: string }>(
+        subIds,
+        (chunk) => supabase
+          .from('winloss_webhook_alerts')
+          .select('subscription_id, kind, details, fired_at')
+          .in('subscription_id', chunk)
+          .gte('fired_at', suppressIso)
+          .limit(1000),
+        { parallel: true, label: 'winloss-health.recent-alerts' },
+      ),
     ]);
-
-    if (deliveriesRes.error) {
-      structuredLog('warn', { msg: 'fetch_deliveries_failed', error: deliveriesRes.error.message }, requestId);
-    }
-    if (recentAlertsRes.error) {
-      structuredLog('warn', { msg: 'fetch_recent_alerts_failed', error: recentAlertsRes.error.message }, requestId);
-    }
 
     // Group deliveries by subscription_id — already DESC ordered globally so
     // each per-sub slice is also DESC, which evaluate() requires.
     type DeliveryRowWithSubId = DeliveryRow & { subscription_id: string };
     const deliveriesBySubId = new Map<string, DeliveryRow[]>();
-    for (const row of (deliveriesRes.data ?? []) as DeliveryRowWithSubId[]) {
+    for (const row of deliveriesData as DeliveryRowWithSubId[]) {
       const arr = deliveriesBySubId.get(row.subscription_id) ?? [];
       arr.push(row);
       deliveriesBySubId.set(row.subscription_id, arr);
@@ -378,7 +380,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     // Group recent alerts by subscription_id
     type RecentAlertRow = { subscription_id: string; kind: string; details: Record<string, unknown> | null };
     const recentAlertsBySubId = new Map<string, Array<{ kind: string; details: Record<string, unknown> | null }>>();
-    for (const row of (recentAlertsRes.data ?? []) as RecentAlertRow[]) {
+    for (const row of recentAlertsData as RecentAlertRow[]) {
       const arr = recentAlertsBySubId.get(row.subscription_id) ?? [];
       arr.push({ kind: row.kind, details: row.details });
       recentAlertsBySubId.set(row.subscription_id, arr);

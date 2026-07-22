@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 // Constant-time string compare to avoid timing side-channels.
 function safeEqual(a: string, b: string): boolean {
@@ -118,14 +119,16 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       }
     }
 
-    // Já validado acima: user_ids.length <= 100 → seguro para .in() direto.
-    const { data: subscriptions, error: fetchError } = await supabase
-      .from('push_subscriptions')
-      .select('id, user_id, endpoint, p256dh, auth')
-      .in('user_id', user_ids)
-      .limit(1000);
-
-    if (fetchError) throw fetchError;
+    // Chunked p/ evitar overflow de URL (mesmo com limite de 100, tokens longos podem passar de 4KB).
+    const subscriptions = await chunkedIn<{ id: string; user_id: string; endpoint: string; p256dh: string; auth: string }>(
+      user_ids,
+      (chunk) => supabase
+        .from('push_subscriptions')
+        .select('id, user_id, endpoint, p256dh, auth')
+        .in('user_id', chunk)
+        .limit(1000),
+      { parallel: true, label: 'send-push-notification.subscriptions' },
+    );
 
     if (!subscriptions || subscriptions.length === 0) {
       return new Response(

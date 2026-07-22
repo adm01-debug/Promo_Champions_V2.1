@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 
 
@@ -148,26 +149,34 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     const spIds = (salespeople ?? []).map((sp) => sp.id);
 
     // Batch-fetch probability scores + closed/open sales in parallel (was N+N queries)
-    const [scoresRes, closedRes, openRes] = await Promise.all([
+    const [scoresRes, closedData, openData] = await Promise.all([
       supabase
         .from("deal_probability_scores")
         .select("sale_id, calibrated_probability")
         .order("calculated_at", { ascending: false })
         .limit(10000),
-      supabase
-        .from("sales")
-        .select("id, amount, salesperson_id")
-        .in("salesperson_id", spIds)
-        .eq("status", "closed_won")
-        .gte("created_at", periodStart.toISOString())
-        .lte("created_at", periodEnd.toISOString())
-        .limit(10000),
-      supabase
-        .from("sales")
-        .select("id, amount, stage, salesperson_id")
-        .in("salesperson_id", spIds)
-        .not("status", "in", "(closed_won,closed_lost)")
-        .limit(10000),
+      chunkedIn<{ id: string; amount: number; salesperson_id: string }>(
+        spIds,
+        (chunk) => supabase
+          .from("sales")
+          .select("id, amount, salesperson_id")
+          .in("salesperson_id", chunk)
+          .eq("status", "closed_won")
+          .gte("created_at", periodStart.toISOString())
+          .lte("created_at", periodEnd.toISOString())
+          .limit(10000),
+        { parallel: true, label: "predict-quota-attainment.closed" },
+      ),
+      chunkedIn<{ id: string; amount: number; stage: string; salesperson_id: string }>(
+        spIds,
+        (chunk) => supabase
+          .from("sales")
+          .select("id, amount, stage, salesperson_id")
+          .in("salesperson_id", chunk)
+          .not("status", "in", "(closed_won,closed_lost)")
+          .limit(10000),
+        { parallel: true, label: "predict-quota-attainment.open" },
+      ),
     ]);
 
     // Build lookup maps in memory
@@ -177,14 +186,14 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     }
 
     const closedBySp = new Map<string, Array<{ id: string; amount: number }>>();
-    for (const s of closedRes.data ?? []) {
+    for (const s of closedData) {
       const bucket = closedBySp.get(s.salesperson_id) ?? [];
       bucket.push(s);
       closedBySp.set(s.salesperson_id, bucket);
     }
 
     const openBySp = new Map<string, Array<{ id: string; amount: number; stage: string | null }>>();
-    for (const s of openRes.data ?? []) {
+    for (const s of openData) {
       const bucket = openBySp.get(s.salesperson_id) ?? [];
       bucket.push(s);
       openBySp.set(s.salesperson_id, bucket);
@@ -323,8 +332,12 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
       const fcIdBySp = new Map<string, string>();
       for (const fc of fcsData) fcIdBySp.set(fc.salesperson_id, fc.id);
 
-      // Batch delete old actions for ALL forecast IDs (was N individual deletes)
-      await supabase.from("quota_attainment_actions").delete().in("forecast_id", fcIds);
+      // Batch delete old actions for ALL forecast IDs (chunked p/ evitar overflow)
+      await chunkedIn<{ id: string }>(
+        fcIds,
+        (chunk) => supabase.from("quota_attainment_actions").delete().in("forecast_id", chunk).select("id"),
+        { parallel: false, label: "predict-quota-attainment.delete-actions" },
+      );
 
       // AI action generation in parallel (was sequential)
       await Promise.all(

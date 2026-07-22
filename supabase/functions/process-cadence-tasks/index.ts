@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
@@ -34,19 +35,21 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     }
 
     // Fetch full task data for the claimed IDs only
-    const { data: tasks, error: tasksErr } = await supabase
-      .from("cadence_tasks")
-      .select(`
-        *,
-        cadence_step:cadence_steps(*),
-        prospect_cadence:prospect_cadences(
+    const tasks = await chunkedIn<Record<string, unknown>>(
+      claimedIds,
+      (chunk) => supabase
+        .from("cadence_tasks")
+        .select(`
           *,
-          sale:sales(*, client:clients(*))
-        )
-      `)
-      .in("id", claimedIds);
-
-    if (tasksErr) throw tasksErr;
+          cadence_step:cadence_steps(*),
+          prospect_cadence:prospect_cadences(
+            *,
+            sale:sales(*, client:clients(*))
+          )
+        `)
+        .in("id", chunk),
+      { parallel: true, label: "process-cadence-tasks.tasks" },
+    );
 
     const results = [];
     const now = new Date().toISOString();
@@ -136,19 +139,23 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     const nonCompletedOps = taskOutcomes.filter(o => o.status !== "completed");
     await Promise.all([
       completedIds.length > 0
-        ? supabase.from("cadence_tasks").update({
-            status: "completed",
-            completed_at: now,
-            notes: "Executado automaticamente pelo motor de cadência.",
-          }).in("id", completedIds)
-        : Promise.resolve(),
+        ? chunkedIn<{ id: string }>(
+            completedIds,
+            (chunk) => supabase.from("cadence_tasks").update({
+              status: "completed",
+              completed_at: now,
+              notes: "Executado automaticamente pelo motor de cadência.",
+            }).in("id", chunk).select("id"),
+            { parallel: false, label: "process-cadence-tasks.update-completed" },
+          )
+        : Promise.resolve([]),
       ...nonCompletedOps.map(o =>
         supabase.from("cadence_tasks").update({ status: o.status, notes: o.notes }).eq("id", o.id)
       ),
     ]);
 
     return new Response(
-      JSON.stringify({ ok: true, processed: tasks?.length || 0, results }),
+      JSON.stringify({ ok: true, processed: tasks.length, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {

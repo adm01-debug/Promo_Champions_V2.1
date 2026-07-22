@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   if (req.method === "OPTIONS") {
@@ -47,13 +48,17 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
 
   // Batch-fetch all challenge_progress in one query — eliminates N+1 (one per challenge)
   const challengeIds = expiringChallenges.map(c => c.id);
-  const { data: allProgressData } = await supabase
-    .from("challenge_progress")
-    .select("challenge_id, salesperson_id, current_value, xp_claimed")
-    .in("challenge_id", challengeIds);
+  const allProgressData = await chunkedIn<{ challenge_id: string; salesperson_id: string; current_value: number; xp_claimed: boolean }>(
+    challengeIds,
+    (chunk) => supabase
+      .from("challenge_progress")
+      .select("challenge_id, salesperson_id, current_value, xp_claimed")
+      .in("challenge_id", chunk),
+    { parallel: true, label: "challenge-expiration-alerts.progress" },
+  );
 
   const progressByChallenge = new Map<string, Map<string, { current_value: number; xp_claimed: boolean }>>();
-  for (const p of allProgressData ?? []) {
+  for (const p of allProgressData) {
     if (!progressByChallenge.has(p.challenge_id)) progressByChallenge.set(p.challenge_id, new Map());
     progressByChallenge.get(p.challenge_id)!.set(p.salesperson_id, { current_value: p.current_value, xp_claimed: p.xp_claimed });
   }
