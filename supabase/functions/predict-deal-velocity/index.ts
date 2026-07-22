@@ -3,6 +3,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 interface PredictBody {
   sale_id?: string;
