@@ -13,30 +13,30 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
-// Teto em KB gzip por chunk. Ajuste conservador: valores atuais + margem
-// de ~15% para absorver crescimento orgânico sem esconder regressões reais.
+// Teto em KB gzip por chunk. Baseline medido em 2026-07-22 + ~15% de margem
+// para absorver crescimento orgânico sem esconder regressões reais.
 const BUDGETS_KB = {
-  'vendor-core': 220,      // React + Radix
-  'vendor-data': 180,      // supabase-js + react-query
-  'vendor-charts': 260,    // recharts + d3
-  'vendor-motion': 140,    // framer-motion
-  'vendor-pdf': 320,       // jspdf + html-to-image
-  'vendor-excel': 400,     // exceljs
-  'vendor-maps': 200,      // leaflet + react-leaflet
-  'vendor-flow': 200,      // @xyflow
-  'vendor-dnd': 60,
-  'vendor-date': 60,
-  'vendor-icons': 80,
-  'vendor-forms': 80,
-  'vendor-markdown': 180,
-  'vendor-data-utils': 60,
+  'vendor-core': 165,      // React + Radix + router (baseline 139)
+  'vendor-data': 70,       // supabase-js + react-query (baseline 54)
+  'vendor-charts': 130,    // recharts + d3 (baseline 109)
+  'vendor-motion': 60,     // framer-motion
+  'vendor-pdf': 210,       // jspdf + html-to-image (baseline 174)
+  'vendor-excel': 400,     // exceljs (lazy)
+  'vendor-maps': 65,       // leaflet (baseline 53)
+  'vendor-flow': 50,       // @xyflow (baseline 40)
+  'vendor-dnd': 40,
+  'vendor-date': 40,
+  'vendor-icons': 35,      // lucide-react (baseline 25)
+  'vendor-forms': 40,
+  'vendor-markdown': 80,
+  'vendor-data-utils': 40,
   'vendor-confetti': 20,
-  'vendor-ui-extras': 100,
-  'vendor-ui-utils': 40,
-  'vendor-platform': 40,
-  'vendor': 120,
+  'vendor-ui-extras': 60,
+  'vendor-ui-utils': 30,
+  'vendor-platform': 20,
+  'vendor': 190,           // catch-all (baseline 163)
   // Entry principal (não-vendor)
-  '__entry__': 220,
+  '__entry__': 90,
 };
 
 const DIST_ASSETS = join(process.cwd(), 'dist', 'assets');
