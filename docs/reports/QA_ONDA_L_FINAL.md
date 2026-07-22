@@ -10,13 +10,13 @@
 
 | Dimensão                     | Cenários  | Verde | Vermelho | Observação                                       |
 | ---------------------------- | --------: | ----: | -------: | ------------------------------------------------ |
-| Vitest (unit + integration)  |       292 |   292 |        0 | 30 arquivos, 0 flakes                            |
-| Deno `_shared` (edge shared) |        36 |    36 |        0 | inclui 917 sub-cenários X-Request-Id            |
+| Vitest (unit + integration)  |       293 |   293 |        0 | 31 arquivos, 0 flakes, inclui novo guard `.in()` |
+| Deno `_shared` (edge shared) |        37 |    37 |        0 | inclui 917 sub-cenários X-Request-Id + novo guard notifications |
 | Playwright runtime smoke     |        16 |    16 |        0 | públicas + protegidas (redirect esperado)       |
 | Rotas mapeadas (inventário)  |       166 |     — |        — | `src/routes/AppRoutes.tsx`                       |
 | Edge functions inventariadas |       162 |     — |        — | `supabase/functions/*`                           |
 | RPCs referenciados no front  |       103 |     — |        — | `supabase.rpc(...)` em `src/`                    |
-| **TOTAL executado**          | **1 261** | **1 261** | **0** | **100% verde**                               |
+| **TOTAL executado**          | **1 263** | **1 263** | **0** | **100% verde**                               |
 
 ---
 
