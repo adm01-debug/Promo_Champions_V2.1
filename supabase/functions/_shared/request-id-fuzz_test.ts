@@ -45,18 +45,16 @@ const INVALID_TRANSPORTABLE_IDS = [
   "id\\backslash",
   "id.with.dots",
   "id/with/slashes",
-  "🔥🔥🔥🔥🔥🔥🔥🔥", // emoji: bytes 0x80+ are valid per WHATWG Fetch spec in Deno v2.x
 ];
 
 // IDs que o próprio runtime Deno/Fetch rejeita ANTES de chegar à edge
-// function (CRLF injection, null byte). Documentam a camada extra de defesa
-// da plataforma — Request precisa lançar TypeError.
-// Note: emoji (bytes 0x80-0xFF) are allowed by WHATWG Fetch spec in Deno v2.x;
-// they are handled by our SAFE_ID regex in INVALID_TRANSPORTABLE_IDS above.
+// function (CRLF injection, null byte, bytes 0x80+ que não formam ByteString).
+// Documentam a camada extra de defesa da plataforma — Request precisa lançar TypeError.
 const RUNTIME_BLOCKED_IDS = [
   "id\r\nX-Injected: 1",
   "id\x00null",
   "id\nnewline",
+  "🔥🔥🔥🔥🔥🔥🔥🔥", // Deno v2.6+ rejeita bytes 0x80+ em header value (ByteString)
 ];
 
 const okHandler = () => Promise.resolve(new Response(JSON.stringify({ ok: true }), { status: 200 }));
