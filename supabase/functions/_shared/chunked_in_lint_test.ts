@@ -33,10 +33,11 @@ const WHITELIST_COLUMNS = new Set([
   "type",
   "event_type",
   "kind",
-  "stage",         // pipeline stages: cardinalidade ≤ ~10
-  "channel",       // canais fixos: whatsapp/email/sms/call/linkedin
-  "tier",          // tiers enumeráveis: cold/warm/hot/champion
-  "contact_type",  // client/lead
+  "stage",           // pipeline stages: cardinalidade ≤ ~10
+  "channel",         // canais fixos: whatsapp/email/sms/call/linkedin
+  "tier",            // tiers enumeráveis: cold/warm/hot/champion
+  "contact_type",    // client/lead
+  "objection_type",  // 7 tipos fixos (price/timing/authority/need/competition/trust/other)
 ]);
 
 // Matches `.in('col', argument)` capturando coluna e argumento (até vírgula/paren).
