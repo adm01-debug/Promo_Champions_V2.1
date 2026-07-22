@@ -93,3 +93,14 @@ Este documento.
 ---
 
 *Auditoria conduzida em conformidade com o Lovable Multi-Agent System v2.1.*
+
+---
+
+## Onda M — Guard-rail semanal (2026-07-22)
+
+Adicionado `.github/workflows/qa-exhaustive.yml`:
+- Cron: toda segunda 03:00 UTC.
+- Executa `tsgo --noEmit`, ESLint, Vitest completo (293), Deno `_shared/` (37) e o guard estático `chunkedInClient`.
+- Sinaliza qualquer regressão dos padrões consolidados nas ondas I/J/K/L (chunkedIn, notification categories, request-id propagation).
+
+**Baseline reconfirmado nesta execução:** 293 Vitest + 37 Deno = **330 testes verdes**, mantendo score **10/10**.
