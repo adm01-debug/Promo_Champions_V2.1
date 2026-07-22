@@ -42,10 +42,10 @@ export default defineConfig({
         ],
       },
     }),
-    // Onda O — bundle-size budget: gera dist/stats.html + dist/stats.json
-    // (consumido por scripts/check-bundle-budget.mjs no CI).
+    // Onda O — bundle-size budget: gera bundle-stats/stats.html + stats.json
+    // FORA de dist/ para não estourar o precache do vite-plugin-pwa.
     process.env.ANALYZE_BUNDLE === '1' && visualizer({
-      filename: 'dist/stats.html',
+      filename: 'bundle-stats/stats.html',
       template: 'treemap',
       gzipSize: true,
       brotliSize: true,
@@ -53,7 +53,7 @@ export default defineConfig({
       emitFile: false,
     }),
     process.env.ANALYZE_BUNDLE === '1' && visualizer({
-      filename: 'dist/stats.json',
+      filename: 'bundle-stats/stats.json',
       template: 'raw-data',
       gzipSize: true,
       brotliSize: true,
