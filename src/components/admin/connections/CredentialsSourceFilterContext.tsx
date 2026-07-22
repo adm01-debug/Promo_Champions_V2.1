@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { CredentialsSourceContext } from "./CredentialsSourceContext";
+import {
+  CredentialsSourceContext,
+  type CredentialsSource,
+  type HealthStatusFilter,
+} from "./CredentialsSourceContext";
 
-export type CredentialsSource = "all" | "db" | "env" | "secret";
-export type HealthStatusFilter = "all" | "healthy" | "warning" | "failing";
+export type { CredentialsSource, HealthStatusFilter };
 
 const SOURCE_KEY = "integration-health:source-filter";
 const STATUS_KEY = "integration-health:status-filter";
