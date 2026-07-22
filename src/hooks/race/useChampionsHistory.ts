@@ -41,6 +41,7 @@ export function useChampionsHistory(roleType?: RoleType, limit = 12) {
         .from('race_leaderboard_view')
         .select('season_id, salesperson_id, salesperson_name, avatar_url, total_sales, car_number, primary_color, secondary_color')
         .in('season_id', seasonIds)
+        // chunked-in-safe: winnerIds do histórico (bounded por temporadas)
         .in('salesperson_id', winnerIds);
 
       const lbMap = new Map<string, NonNullable<typeof lb>[number]>();

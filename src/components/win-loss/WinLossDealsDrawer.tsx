@@ -65,6 +65,7 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
       const { data: sales } = await supabase
         .from('sales')
         .select('id, account_id, client_name')
+        // chunked-in-safe: saleIds já limitado por paginação do drawer
         .in('id', saleIds);
       const map: Record<string, SaleMeta> = {};
       (

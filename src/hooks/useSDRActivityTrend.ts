@@ -87,6 +87,7 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
       const { data: goals } = await supabase
         .from('activity_goals')
         .select('salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
+        // chunked-in-safe: sdrs.map derivado de is_active (~50)
         .in('salesperson_id', sdrs.map(s => s.id));
 
       const sdrGoals: Record<string, number> = {};
@@ -109,6 +110,7 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         .from('activities')
         .select('salesperson_id, created_at, activity_type')
         .gte('created_at', startDate.toISOString())
+        // chunked-in-safe: sdrs.map derivado de is_active (~50)
         .in('salesperson_id', sdrs.map(s => s.id));
 
       if (viewMode === 'activity' && selectedSDR !== 'all') {

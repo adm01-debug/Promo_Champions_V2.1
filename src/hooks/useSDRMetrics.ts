@@ -86,6 +86,7 @@ export function useSDRMetrics(
           let query = supabase
             .from('sales')
             .select('id, status, salesperson_id, amount')
+            // chunked-in-safe: sdrIds derivado do time (~50)
             .in('salesperson_id', sdrIds)
             .gte('created_at', range.start.toISOString())
             .lte('created_at', range.end.toISOString());
@@ -107,6 +108,7 @@ export function useSDRMetrics(
             .from('tasks')
             .select('id, salesperson_id')
             .eq('task_type', 'meeting')
+            // chunked-in-safe: sdrIds derivado do time (~50)
             .in('salesperson_id', sdrIds)
             .gte('created_at', range.start.toISOString())
             .lte('created_at', range.end.toISOString());

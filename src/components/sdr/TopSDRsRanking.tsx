@@ -32,12 +32,14 @@ function TopSDRsRankingImpl() {
       const { data: sales } = await supabase
         .from("sales")
         .select("salesperson_id, status")
+        // chunked-in-safe: top N SDRs bounded (N<=20)
         .in("salesperson_id", sdrIds);
 
       const { data: tasks } = await supabase
         .from("tasks")
         .select("salesperson_id, task_type")
         .eq("task_type", "meeting")
+        // chunked-in-safe: top N SDRs bounded (N<=20)
         .in("salesperson_id", sdrIds);
 
       const sdrStats = new Map<string, { leads: number; meetings: number; qualified: number }>();

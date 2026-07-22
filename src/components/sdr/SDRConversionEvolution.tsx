@@ -47,7 +47,9 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
       const { data: sdrs } = await supabase.from('salespeople').select('id, name').eq('is_active', true).in('role', ['sdr', 'hybrid']);
       if (!sdrs?.length) return { chartData: [], sdrs: [], overallAverage: 0 };
 
+      // chunked-in-safe: salesperson_id agregado; not .in on high-card (falso-positivo do regex — filtro por data)
       const { data: activities } = await supabase.from('activities').select('salesperson_id, created_at, outcome').gte('created_at', startDate.toISOString()).in('salesperson_id', sdrs.map(s => s.id));
+      // chunked-in-safe: salesperson_id agregado; not .in on high-card
       const { data: sales } = await supabase.from('sales').select('salesperson_id, created_at').gte('created_at', startDate.toISOString()).in('salesperson_id', sdrs.map(s => s.id));
 
       const useWeekly = period === 'quarter';

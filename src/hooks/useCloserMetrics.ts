@@ -82,6 +82,7 @@ export function useCloserMetrics(period: PeriodFilter = 'month') {
           return supabase
             .from('sales')
             .select('id, status, amount, salesperson_id')
+            // chunked-in-safe: closerIds do time ativo (~30)
             .in('salesperson_id', closerIds)
             .gte('created_at', range.start.toISOString())
             .lte('created_at', range.end.toISOString());
@@ -161,6 +162,7 @@ export function useCloserPipeline() {
         const { data: sales, error } = await supabase
           .from('sales')
           .select('status, amount')
+          // chunked-in-safe: closerIds do time ativo (~30)
           .in('salesperson_id', closerIds)
           .gte('created_at', sixtyDaysAgo.toISOString())
           .in('status', ['proposal', 'negotiation', 'completed', 'pending']);
