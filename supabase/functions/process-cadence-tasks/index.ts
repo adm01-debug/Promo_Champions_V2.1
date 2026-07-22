@@ -139,19 +139,23 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     const nonCompletedOps = taskOutcomes.filter(o => o.status !== "completed");
     await Promise.all([
       completedIds.length > 0
-        ? supabase.from("cadence_tasks").update({
-            status: "completed",
-            completed_at: now,
-            notes: "Executado automaticamente pelo motor de cadência.",
-          }).in("id", completedIds)
-        : Promise.resolve(),
+        ? chunkedIn<{ id: string }>(
+            completedIds,
+            (chunk) => supabase.from("cadence_tasks").update({
+              status: "completed",
+              completed_at: now,
+              notes: "Executado automaticamente pelo motor de cadência.",
+            }).in("id", chunk).select("id"),
+            { parallel: false, label: "process-cadence-tasks.update-completed" },
+          )
+        : Promise.resolve([]),
       ...nonCompletedOps.map(o =>
         supabase.from("cadence_tasks").update({ status: o.status, notes: o.notes }).eq("id", o.id)
       ),
     ]);
 
     return new Response(
-      JSON.stringify({ ok: true, processed: tasks?.length || 0, results }),
+      JSON.stringify({ ok: true, processed: tasks.length, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {
