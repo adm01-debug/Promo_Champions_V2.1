@@ -132,7 +132,6 @@ test.describe('Onda Q — a11y sweep (axe-core)', () => {
       if (blocking.length > 0) {
         const msg = formatViolations(route.name, blocking);
         if (REPORT_ONLY) {
-          // eslint-disable-next-line no-console
           console.warn(`[report-only] ${msg}`);
           return;
         }
