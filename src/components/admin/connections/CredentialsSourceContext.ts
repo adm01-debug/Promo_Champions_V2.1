@@ -1,5 +1,7 @@
 import { createContext } from "react";
-import { type CredentialsSource, type HealthStatusFilter } from "./CredentialsSourceFilterContext";
+
+export type CredentialsSource = "all" | "db" | "env" | "secret";
+export type HealthStatusFilter = "all" | "healthy" | "warning" | "failing";
 
 interface Ctx {
   source: CredentialsSource;
