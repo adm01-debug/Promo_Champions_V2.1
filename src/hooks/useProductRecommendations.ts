@@ -27,15 +27,26 @@ export const useProductRecommendations = (productId?: string) => {
 
       const clientIds = [...new Set(clientSales.map(s => s.client_id))];
 
-      // 2. Get other products bought by these clients
-      const { data: otherSales, error: salesError } = await supabase
-        .from('sales')
-        .select('product_id, product_name, amount')
-        .in('client_id', clientIds)
-        .neq('product_id', productId)
-        .not('product_id', 'is', null);
+      // 2. Get other products bought by these clients — usa chunkedIn para
+      // evitar overflow de URL PostgREST quando o portfolio ultrapassa ~200 clientes.
+      type OtherSaleRow = { product_id: string | null; product_name: string | null; amount: number | null };
+      let otherSales: OtherSaleRow[] = [];
+      try {
+        otherSales = await chunkedIn<OtherSaleRow>(
+          clientIds.filter((c): c is string => !!c),
+          (chunk) => supabase
+            .from('sales')
+            .select('product_id, product_name, amount')
+            .in('client_id', chunk as string[])
+            .neq('product_id', productId)
+            .not('product_id', 'is', null),
+          { parallel: true, label: 'useProductRecommendations' },
+        );
+      } catch {
+        otherSales = [];
+      }
 
-      if (salesError || !otherSales || otherSales.length === 0) {
+      if (otherSales.length === 0) {
         // Fallback: Just return top products in the same category or overall top products
         const { data: productInfo } = await supabase
           .from('products')
