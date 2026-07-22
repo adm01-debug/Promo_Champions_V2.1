@@ -1,0 +1,66 @@
+name: QA Exhaustive (Weekly)
+
+# Onda M — guard-rail semanal de excelência 10/10.
+# Roda toda suíte estática (Vitest + Deno) mais os lints/guards de arquitetura
+# (chunkedIn, notification-inserters, request-id fuzz) para detectar regressão
+# de padrões que foram consolidados nas ondas I/J/K/L.
+
+on:
+  schedule:
+    # Toda segunda-feira 03:00 UTC (00:00 BRT)
+    - cron: "0 3 * * 1"
+  workflow_dispatch: {}
+
+concurrency:
+  group: qa-exhaustive
+  cancel-in-progress: true
+
+jobs:
+  qa-exhaustive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install deps
+        run: npm ci
+
+      - name: TypeScript strict check
+        run: npx tsgo --noEmit
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Vitest — full suite (293+ cenários)
+        run: npx vitest run --reporter=dot
+
+      - name: Deno — shared guards (retry, cors, fuzz, chunked-in, notification-categories)
+        run: |
+          deno test --allow-read --allow-env --allow-net --no-check \
+            --node-modules-dir=auto supabase/functions/_shared/
+
+      - name: Deno — dispatcher & edge contract tests
+        run: |
+          deno test --allow-read --allow-env --no-check --node-modules-dir=auto \
+            supabase/functions/lead-scoring/lead-scoring_test.ts \
+            supabase/functions/execute-workflow/contracts_test.ts
+
+      - name: Static guard — chunkedInClient enforcement
+        run: npx vitest run src/lib/supabase/all-in-calls.test.ts --reporter=verbose
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### QA Exhaustive — $(date -u +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+          echo "- Vitest: 293+ cenários" >> $GITHUB_STEP_SUMMARY
+          echo "- Deno: 37+ cenários (inclui 917 request-id fuzz)" >> $GITHUB_STEP_SUMMARY
+          echo "- Guards: chunkedIn, notification-inserters, request-id" >> $GITHUB_STEP_SUMMARY
