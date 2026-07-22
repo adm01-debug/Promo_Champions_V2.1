@@ -1,6 +1,6 @@
 import { test, expect, type BrowserContext, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { A11Y_ROUTES, type A11yRoute } from './routes';
+import { A11Y_ROUTES } from './routes';
 
 const AUTH_INJECTED = process.env.LOVABLE_BROWSER_AUTH_STATUS === 'injected';
 const REPORT_ONLY = process.env.A11Y_REPORT_ONLY === '1';
