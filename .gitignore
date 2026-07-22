@@ -39,3 +39,6 @@ bun.lockb
 
 # E2E session cache
 tests/e2e/.auth/
+
+# Onda O — bundle analyzer output
+bundle-stats/
