@@ -77,10 +77,11 @@ export const useProductRecommendations = (productId?: string) => {
       // 3. Count occurrences
       const counts: Record<string, { count: number; name: string; price: number }> = {};
       otherSales.forEach(s => {
-        if (!counts[s.product_id!]) {
-          counts[s.product_id!] = { count: 0, name: s.product_name, price: Number(s.amount) };
+        if (!s.product_id) return;
+        if (!counts[s.product_id]) {
+          counts[s.product_id] = { count: 0, name: s.product_name ?? '', price: Number(s.amount ?? 0) };
         }
-        counts[s.product_id!].count++;
+        counts[s.product_id].count++;
       });
 
       // 4. Return top 3 recommendations
