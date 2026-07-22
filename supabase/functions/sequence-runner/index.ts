@@ -186,11 +186,11 @@ Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
     }
 
     const contactCtxById = new Map<string, { nome?: string; empresa?: string; cargo?: string; phone?: string }>();
-    for (const c of clientsRes.data ?? []) contactCtxById.set(c.id, { nome: c.name, empresa: c.company, phone: c.phone });
-    for (const l of leadsRes.data ?? []) contactCtxById.set(l.id, { nome: l.name, empresa: l.company, cargo: l.position, phone: l.phone });
+    for (const c of clientsData) contactCtxById.set(c.id, { nome: c.name, empresa: c.company, phone: c.phone });
+    for (const l of leadsData) contactCtxById.set(l.id, { nome: l.name, empresa: l.company, cargo: l.position, phone: l.phone });
 
     const spIdByUserId = new Map<string, string>();
-    for (const sp of salespeopleRes.data ?? []) spIdByUserId.set(sp.user_id, sp.id);
+    for (const sp of salespeopleData) spIdByUserId.set(sp.user_id, sp.id);
     // ────────────────────────────────────────────────────────────────────────
 
     // Phase 1: collect writes during loop — eliminates write N+1
