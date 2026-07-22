@@ -48,10 +48,14 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
 
   // Batch-fetch all challenge_progress in one query — eliminates N+1 (one per challenge)
   const challengeIds = expiringChallenges.map(c => c.id);
-  const { data: allProgressData } = await supabase
-    .from("challenge_progress")
-    .select("challenge_id, salesperson_id, current_value, xp_claimed")
-    .in("challenge_id", challengeIds);
+  const allProgressData = await chunkedIn<{ challenge_id: string; salesperson_id: string; current_value: number; xp_claimed: boolean }>(
+    challengeIds,
+    (chunk) => supabase
+      .from("challenge_progress")
+      .select("challenge_id, salesperson_id, current_value, xp_claimed")
+      .in("challenge_id", chunk),
+    { parallel: true, label: "challenge-expiration-alerts.progress" },
+  );
 
   const progressByChallenge = new Map<string, Map<string, { current_value: number; xp_claimed: boolean }>>();
   for (const p of allProgressData ?? []) {
