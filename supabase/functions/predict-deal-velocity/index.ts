@@ -269,20 +269,20 @@ async function batchPredict(limit: number): Promise<Response> {
 
   // Build O(1) lookup maps
   const latestHistoryBySaleId = new Map<string, { entered_at: string }>();
-  for (const h of (historyData ?? []) as { sale_id: string; entered_at: string }[]) {
+  for (const h of historyData) {
     if (!latestHistoryBySaleId.has(h.sale_id)) latestHistoryBySaleId.set(h.sale_id, h);
   }
-  const healthMap = new Map((healthData ?? []).map((h: { sale_id: string; health_score: number; tier: string }) => [h.sale_id, h]));
-  const coverageMap = new Map((coverageData ?? []).map((c: { sale_id: string; coverage_score: number; tier: string }) => [c.sale_id, c]));
+  const healthMap = new Map(healthData.map((h) => [h.sale_id, h]));
+  const coverageMap = new Map(coverageData.map((c) => [c.sale_id, c]));
   const ownerBaselineMap = new Map<string, BaselineRow>();
-  for (const b of (ownerBaselineData ?? []) as BaselineRow[]) {
+  for (const b of ownerBaselineData) {
     ownerBaselineMap.set(`${b.owner_id}|${b.stage}`, b);
   }
   const globalBaselineMap = new Map<string, BaselineRow>();
-  for (const b of (globalBaselineData ?? []) as BaselineRow[]) {
+  for (const b of globalBaselineData) {
     globalBaselineMap.set(b.stage, b);
   }
-  const salespersonMap = new Map((salespeopleData ?? []).map((sp: { id: string; auth_user_id: string | null }) => [sp.id, sp]));
+  const salespersonMap = new Map(salespeopleData.map((sp) => [sp.id, sp]));
 
   const fallbackBaseline: BaselineRow = { stage: '', avg_days: 14, median_days: 10, p75_days: 21, sample_size: 0 };
 
