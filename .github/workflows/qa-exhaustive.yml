@@ -57,8 +57,19 @@ jobs:
       - name: Static guard — chunkedInClient enforcement
         run: npx vitest run src/lib/supabase/all-in-calls.test.ts --reporter=verbose
 
-      - name: Build (para Lighthouse CI)
-        run: npm run build
+      - name: Build (para Lighthouse CI + bundle budget)
+        run: ANALYZE_BUNDLE=1 npm run build
+
+      - name: Bundle-size budget (Onda O)
+        run: node scripts/check-bundle-budget.mjs
+
+      - name: Upload bundle stats
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-stats
+          path: bundle-stats/
+          retention-days: 30
 
       - name: Lighthouse CI — Web Vitals & a11y/SEO
         run: |
