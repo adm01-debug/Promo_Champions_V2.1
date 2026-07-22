@@ -2,6 +2,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
 
 interface RenewalRow {
   id: string;
@@ -93,10 +94,14 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
 
       notifRows.push({
         user_id: r.owner_salesperson_id,
+        type: bucket <= 30 ? "renewal_urgent" : "renewal_upcoming",
+        category: "sales",
+        priority: bucket <= 30 ? "high" : "medium",
         title: `Renovação ${bucket}d`,
         message: `Conta tem renovação em ${days} dias. Valor: R$ ${Number(r.contract_value).toLocaleString("pt-BR")}`,
-        type: bucket <= 30 ? "warning" : "info",
-        link: `/customer-success-360`,
+        action_url: `/customer-success-360`,
+        action_label: "Abrir CS 360",
+        metadata: { renewal_id: r.id, account_id: r.account_id, bucket },
       });
     }
 
@@ -107,10 +112,16 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       else console.error("tasks batch insert error:", tErr);
     }
 
-    // Batch insert all notifications in one query
+    // Batch insert all notifications in one query — com partition guard
     if (notifRows.length > 0) {
-      const { error: nErr } = await supabase.from("notifications").insert(notifRows);
-      if (!nErr) notificationsCreated = notifRows.length;
+      const { valid, invalid } = partitionNotificationBatch(notifRows);
+      if (invalid.length > 0) {
+        console.warn("[renewal-automation] notifications_invalid", { count: invalid.length, samples: invalid.slice(0, 3).map(i => i.reason) });
+      }
+      if (valid.length > 0) {
+        const { error: nErr } = await supabase.from("notifications").insert(valid);
+        if (!nErr) notificationsCreated = valid.length;
+      }
     }
 
     return new Response(

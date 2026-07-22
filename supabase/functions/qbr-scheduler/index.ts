@@ -2,6 +2,8 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
+
 
 Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -113,20 +115,26 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
           type: "qbr_scheduled",
           title: `QBR agendada: ${accountName}`,
           message: `Próxima revisão executiva em ${s.next_qbr_at}. Prepare deck e métricas.`,
-          category: "customer_success",
+          category: "team",
           priority: "medium",
           metadata: { account_id: s.account_id, qbr_date: s.next_qbr_at },
         });
       }
     }
 
+    // Guard: separa linhas com category/priority/UUID inválidos (não derruba o batch).
+    const { valid: safeNotifRows, invalid: invalidNotifRows } = partitionNotificationBatch(notifRows);
+    if (invalidNotifRows.length > 0) {
+      console.warn("[qbr-scheduler] notifications_invalid", { count: invalidNotifRows.length, samples: invalidNotifRows.slice(0, 3).map(i => i.reason) });
+    }
+
     // Batch insert events and notifications in parallel — 2 DB calls regardless of schedule count
     const [evResult, notifResult] = await Promise.all([
       eventRows.length > 0 ? supabase.from("agenda_events").insert(eventRows) : Promise.resolve({ error: null }),
-      notifRows.length > 0 ? supabase.from("notifications").insert(notifRows) : Promise.resolve({ error: null }),
+      safeNotifRows.length > 0 ? supabase.from("notifications").insert(safeNotifRows) : Promise.resolve({ error: null }),
     ]);
     if (!evResult.error) eventsCreated = eventRows.length;
-    if (!notifResult.error) notificationsCreated = notifRows.length;
+    if (!notifResult.error) notificationsCreated = safeNotifRows.length;
 
     return new Response(
       JSON.stringify({

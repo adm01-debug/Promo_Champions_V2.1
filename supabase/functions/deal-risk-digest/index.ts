@@ -9,6 +9,7 @@ import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circ
 import { withRetry, RetryError } from '../_shared/retry.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
@@ -179,7 +180,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     toInsert.push({
       user_id: seller.user_id,
       type: DIGEST_TYPE,
-      category: 'risk',
+      category: 'sales',
       priority: 'high',
       title: `${deals.length} deals em risco — ${BRL(totalAmount)}`,
       message: `Health médio ${avgScore}/100. Revise agora para não perder receita.`,
@@ -198,20 +199,26 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
 
   let inserted = 0;
   if (toInsert.length > 0) {
-    const { error: insErr, count } = await admin
-      .from('notifications')
-      .insert(toInsert, { count: 'exact' });
-    if (insErr) {
-      console.error('[deal-risk-digest] insert failed', insErr);
-      await postSlack(
-        `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
-        ctx.requestId,
-      );
-      return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
-        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const { valid, invalid } = partitionNotificationBatch(toInsert);
+    if (invalid.length > 0) {
+      console.warn('[deal-risk-digest] notifications_invalid', { count: invalid.length, samples: invalid.slice(0, 3).map(i => i.reason) });
     }
-    inserted = count ?? toInsert.length;
+    if (valid.length > 0) {
+      const { error: insErr, count } = await admin
+        .from('notifications')
+        .insert(valid, { count: 'exact' });
+      if (insErr) {
+        console.error('[deal-risk-digest] insert failed', insErr);
+        await postSlack(
+          `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+          ctx.requestId,
+        );
+        return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      inserted = count ?? valid.length;
+    }
   }
 
   let slack: SlackResult = { attempted: false, ok: false };
