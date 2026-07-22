@@ -9,6 +9,7 @@ import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circ
 import { withRetry, RetryError } from '../_shared/retry.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
