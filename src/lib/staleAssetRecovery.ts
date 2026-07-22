@@ -1,6 +1,6 @@
 const RECOVERY_ATTEMPT_KEY = 'promo-champions:asset-recovery-attempts';
 const RECOVERY_WINDOW_MS = 30_000;
-const MAX_RECOVERY_ATTEMPTS = 2;
+const MAX_RECOVERY_ATTEMPTS = 1;
 
 const RECOVERABLE_ERROR_PATTERNS = [
   'failed to fetch dynamically imported module',
