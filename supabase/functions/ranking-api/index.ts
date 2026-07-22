@@ -301,10 +301,7 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
     if (req.method === "GET" && route === "company/users") {
       // Scope to team members when the token is team-scoped, falling back to
       // all active salespeople only when the token has company-wide scope.
-      let query = supabase
-        .from("salespeople")
-        .select("id, name, email, avatar_url, role, score_total, is_active")
-        .order("name");
+      type UserRow = { id: string; name: string; email: string | null; avatar_url: string | null; role: string | null; score_total: number | null; is_active: boolean };
 
       if (tokenData.team_id) {
         const { data: members } = await supabase
@@ -313,15 +310,28 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
           .eq("team_id", tokenData.team_id)
           .limit(200);
         const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
-        if (memberIds.length > 0) {
-          query = query.in("id", memberIds);
+        if (memberIds.length === 0) {
+          return new Response(JSON.stringify({ data: [] }), { status: 200, headers });
         }
-      } else {
-        // Company-wide token: still only return active users.
-        query = query.eq("is_active", true);
+        const data = await chunkedIn<UserRow>(
+          memberIds,
+          (chunk) => supabase
+            .from("salespeople")
+            .select("id, name, email, avatar_url, role, score_total, is_active")
+            .in("id", chunk)
+            .order("name"),
+          { parallel: true, label: "ranking-api.company-users" },
+        );
+        return new Response(JSON.stringify({ data: data.slice(0, 500) }), { status: 200, headers });
       }
 
-      const { data, error } = await query.limit(500);
+      // Company-wide token: still only return active users.
+      const { data, error } = await supabase
+        .from("salespeople")
+        .select("id, name, email, avatar_url, role, score_total, is_active")
+        .eq("is_active", true)
+        .order("name")
+        .limit(500);
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
