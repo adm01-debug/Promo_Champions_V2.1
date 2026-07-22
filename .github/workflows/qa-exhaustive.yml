@@ -137,3 +137,8 @@ jobs:
           echo "- Guards: chunkedIn, notification-inserters, request-id" >> $GITHUB_STEP_SUMMARY
           echo "- Bundle budget: scripts/check-bundle-budget.mjs (gzip por chunk)" >> $GITHUB_STEP_SUMMARY
           echo "- Lighthouse CI: perf/a11y/best-practices/SEO + Web Vitals" >> $GITHUB_STEP_SUMMARY
+          echo "- A11y sweep (Onda Q): Playwright + axe-core, WCAG 2.1 A/AA, serious+critical bloqueantes" >> $GITHUB_STEP_SUMMARY
+          if [ -f a11y-report.json ]; then
+            TOTAL=$(node -e "const r=require('./a11y-report.json');console.log((r.suites||[]).reduce((a,s)=>a+(s.specs||[]).length,0))" 2>/dev/null || echo "n/a")
+            echo "  - Specs a11y executadas: $TOTAL" >> $GITHUB_STEP_SUMMARY
+          fi
