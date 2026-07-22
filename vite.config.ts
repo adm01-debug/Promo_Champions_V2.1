@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -41,7 +42,25 @@ export default defineConfig({
         ],
       },
     }),
-  ],
+    // Onda O — bundle-size budget: gera bundle-stats/stats.html + stats.json
+    // FORA de dist/ para não estourar o precache do vite-plugin-pwa.
+    process.env.ANALYZE_BUNDLE === '1' && visualizer({
+      filename: 'bundle-stats/stats.html',
+      template: 'treemap',
+      gzipSize: true,
+      brotliSize: true,
+      sourcemap: false,
+      emitFile: false,
+    }),
+    process.env.ANALYZE_BUNDLE === '1' && visualizer({
+      filename: 'bundle-stats/stats.json',
+      template: 'raw-data',
+      gzipSize: true,
+      brotliSize: true,
+      sourcemap: false,
+      emitFile: false,
+    }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
