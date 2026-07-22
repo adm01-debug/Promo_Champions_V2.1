@@ -56,7 +56,7 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
 
     // Index: "salesperson_id:bucket" → true if task already exists
     const existingTaskKeys = new Set(
-      (recentTasks ?? []).map((t: { salesperson_id: string; title: string }) => {
+      recentTasks.map((t) => {
         const m = t.title?.match(/^Renovação em (\d+)d/);
         return m ? `${t.salesperson_id}:${m[1]}` : null;
       }).filter(Boolean) as string[]
