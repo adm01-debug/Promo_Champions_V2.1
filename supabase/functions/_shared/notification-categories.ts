@@ -11,7 +11,7 @@
 //
 // Mantenha em sincronia com a migration que define a constraint.
 
-import { z } from "npm:zod@3.23.8";
+import { z } from "npm:zod@3";
 
 export const NOTIFICATION_CATEGORIES = [
   "general",
