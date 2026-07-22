@@ -130,13 +130,14 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
 
   // 3. Map salesperson_id → user_id (auth uid) via salespeople table.
   const sellerIds = Array.from(bySeller.keys());
-  const { data: sellers } = await admin
-    .from('salespeople')
-    .select('id, user_id, name')
-    .in('id', sellerIds);
+  const sellers = await chunkedIn<{ id: string; user_id: string | null; name: string | null }>(
+    sellerIds,
+    (chunk) => admin.from('salespeople').select('id, user_id, name').in('id', chunk),
+    { parallel: true, label: 'deal-risk-digest.sellers' },
+  );
 
   const sellerMap = new Map<string, { user_id: string | null; name: string | null }>();
-  for (const s of (sellers ?? []) as Array<{ id: string; user_id: string | null; name: string | null }>) {
+  for (const s of sellers) {
     sellerMap.set(s.id, { user_id: s.user_id, name: s.name });
   }
 
@@ -146,14 +147,18 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     .map((s) => s.user_id)
     .filter((u): u is string => !!u);
 
-  const { data: existing } = await admin
-    .from('notifications')
-    .select('user_id')
-    .eq('type', DIGEST_TYPE)
-    .in('user_id', userIds)
-    .gte('created_at', `${todayIso}T00:00:00Z`);
+  const existing = await chunkedIn<{ user_id: string }>(
+    userIds,
+    (chunk) => admin
+      .from('notifications')
+      .select('user_id')
+      .eq('type', DIGEST_TYPE)
+      .in('user_id', chunk)
+      .gte('created_at', `${todayIso}T00:00:00Z`),
+    { parallel: true, label: 'deal-risk-digest.existing' },
+  );
 
-  const alreadySent = new Set((existing ?? []).map((r) => r.user_id));
+  const alreadySent = new Set(existing.map((r) => r.user_id));
 
   // 5. Build & insert notifications.
   const BRL = (v: number) =>
