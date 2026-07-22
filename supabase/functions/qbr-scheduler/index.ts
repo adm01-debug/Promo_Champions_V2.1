@@ -48,22 +48,33 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
     // Pre-fetch accounts and salespeople in parallel — eliminates 2 DB calls per schedule row
     const accountIds = [...new Set(active.map((s) => s.account_id))];
     const spIds = [...new Set(active.map((s) => s.owner_salesperson_id))];
-    const [{ data: accountRows }, { data: spRows }, { data: existingEvents }] = await Promise.all([
-      supabase.from("accounts").select("id, name").in("id", accountIds),
-      supabase.from("salespeople").select("id, auth_user_id").in("id", spIds),
-      // Batch dedup: fetch all existing QBR events in the 30-day window for all salespersons
-      supabase
-        .from("agenda_events")
-        .select("salesperson_id, scheduled_at")
-        .in("salesperson_id", spIds)
-        .eq("event_type", "qbr")
-        .gte("scheduled_at", `${today}T00:00:00Z`)
-        .lte("scheduled_at", `${horizon}T23:59:59Z`)
-        .limit(active.length * 3),
+    const [accountRows, spRows, existingEvents] = await Promise.all([
+      chunkedIn<{ id: string; name: string }>(
+        accountIds,
+        (chunk) => supabase.from("accounts").select("id, name").in("id", chunk),
+        { parallel: true, label: "qbr-scheduler.accounts" },
+      ),
+      chunkedIn<{ id: string; auth_user_id: string | null }>(
+        spIds,
+        (chunk) => supabase.from("salespeople").select("id, auth_user_id").in("id", chunk),
+        { parallel: true, label: "qbr-scheduler.salespeople" },
+      ),
+      chunkedIn<{ salesperson_id: string; scheduled_at: string }>(
+        spIds,
+        (chunk) => supabase
+          .from("agenda_events")
+          .select("salesperson_id, scheduled_at")
+          .in("salesperson_id", chunk)
+          .eq("event_type", "qbr")
+          .gte("scheduled_at", `${today}T00:00:00Z`)
+          .lte("scheduled_at", `${horizon}T23:59:59Z`)
+          .limit(active.length * 3),
+        { parallel: true, label: "qbr-scheduler.existing-events" },
+      ),
     ]);
 
-    const accountNameById = new Map((accountRows ?? []).map((a) => [a.id, a.name as string]));
-    const authUserById = new Map((spRows ?? []).map((sp) => [sp.id, sp.auth_user_id as string | null]));
+    const accountNameById = new Map(accountRows.map((a) => [a.id, a.name]));
+    const authUserById = new Map(spRows.map((sp) => [sp.id, sp.auth_user_id]));
 
     // Build dedup set: "salesperson_id:YYYY-MM" — one QBR per salesperson per calendar month
     const existingQbrKeys = new Set(
