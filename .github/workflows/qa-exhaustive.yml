@@ -40,6 +40,24 @@ jobs:
       - name: ESLint
         run: npm run lint
 
+      - name: Dependency Cruiser — ciclos, layer boundaries e imports test→prod
+        run: npm run deps:check
+
+      - name: Dependency graph (SVG artifact)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends graphviz
+          npm run deps:graph || echo "::warning::Falha ao gerar SVG (não bloqueia)"
+        continue-on-error: true
+
+      - name: Upload dependency graph
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-graph
+          path: dependency-graph.svg
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Vitest — full suite (293+ cenários)
         run: npx vitest run --reporter=dot
 
