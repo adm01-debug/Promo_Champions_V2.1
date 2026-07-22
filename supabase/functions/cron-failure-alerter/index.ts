@@ -98,10 +98,12 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       }
     }
 
-    // Single batch insert for all notifications
+    // Single batch insert for all notifications — valida antes para pegar
+    // categoria/prioridade inválida em runtime com mensagem clara.
     let notifiedTotal = 0;
     if (allNotifRows.length > 0) {
-      const { error: nErr } = await admin.from("notifications").insert(allNotifRows);
+      const validated = validateNotificationBatch(allNotifRows);
+      const { error: nErr } = await admin.from("notifications").insert(validated);
       if (nErr) {
         log("error", "batch insert notifications failed", { error: nErr.message });
         // Don't mark alerted — let next tick retry
@@ -110,7 +112,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      notifiedTotal = allNotifRows.length;
+      notifiedTotal = validated.length;
     }
 
     // Mark all failures as alerted in parallel — N parallel RPCs instead of sequential
