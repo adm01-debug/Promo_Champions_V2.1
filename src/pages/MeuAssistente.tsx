@@ -13,6 +13,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePersonalAssistant } from "@/hooks/assistant/usePersonalAssistant";
 import { RunRateProjectionCard } from "@/components/vendedor/RunRateProjectionCard";
+import { BriefingHistoryTimeline } from "@/components/assistant/BriefingHistoryTimeline";
 import { cn } from "@/lib/utils";
 
 const SUGGESTED = [
@@ -112,7 +113,9 @@ const HubInner: FC = () => {
             </Card>
 
             {salespersonId && <RunRateProjectionCard salespersonId={salespersonId} />}
+            <BriefingHistoryTimeline salespersonId={salespersonId} />
           </div>
+
 
           {/* Coluna central — Sugestões / prioridades derivadas do briefing */}
           <div className="lg:col-span-3">
