@@ -5,6 +5,8 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
+const RATIO_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 1.3, high: 2, critical: 3 };
+const ABSOLUTE_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 30, high: 60, critical: 120 };
 
 interface AlertRow {
   salesperson_id: string;
@@ -12,6 +14,7 @@ interface AlertRow {
   days_since: number;
   level: Level;
   expected_interval_days: number;
+  threshold_days: number;
 }
 
 function dayDiff(from: Date, to: Date): number {
@@ -20,16 +23,24 @@ function dayDiff(from: Date, to: Date): number {
 
 function computeLevel(daysSince: number, expectedInterval: number | null): Level {
   if (!expectedInterval || expectedInterval <= 0) {
-    if (daysSince >= 120) return 'critical';
-    if (daysSince >= 60) return 'high';
-    if (daysSince >= 30) return 'medium';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.critical) return 'critical';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.high) return 'high';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.medium) return 'medium';
     return 'low';
   }
   const ratio = daysSince / expectedInterval;
-  if (ratio >= 3) return 'critical';
-  if (ratio >= 2) return 'high';
-  if (ratio >= 1.3) return 'medium';
+  if (ratio >= RATIO_THRESHOLDS.critical) return 'critical';
+  if (ratio >= RATIO_THRESHOLDS.high) return 'high';
+  if (ratio >= RATIO_THRESHOLDS.medium) return 'medium';
   return 'low';
+}
+
+function thresholdDaysFor(level: Level, expectedInterval: number | null): number {
+  if (level === 'low') return 0;
+  if (expectedInterval && expectedInterval > 0) {
+    return Math.round(expectedInterval * RATIO_THRESHOLDS[level]);
+  }
+  return ABSOLUTE_THRESHOLDS[level];
 }
 
 Deno.serve(async (req) => {
