@@ -322,3 +322,29 @@ function MarkupChip({ sale }: { sale: Sale }) {
     </TooltipProvider>
   );
 }
+
+function RentabilidadeRow({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-border/30 bg-muted/10 px-3 py-2">
+      <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/70">
+        {label}
+      </span>
+      <span
+        className={cn(
+          "text-sm font-bold",
+          highlight ? "text-primary" : "text-foreground",
+        )}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
