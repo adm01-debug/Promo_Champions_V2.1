@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from('churn_alert_settings')
-      .select('enabled, min_level, cooldown_hours')
+      .select('enabled, min_level, cooldown_hours, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days')
       .maybeSingle();
 
     if (!settings?.enabled) {
@@ -65,6 +65,11 @@ Deno.serve(async (req) => {
 
     const minLevel = (settings.min_level ?? 'high') as Level;
     const cooldownMs = (settings.cooldown_hours ?? 24) * 3600 * 1000;
+    const autoTaskEnabled = Boolean(settings.auto_task_enabled);
+    const autoTaskMinLevel = (settings.auto_task_min_level ?? 'high') as Level;
+    const autoTaskCooldownMs = (settings.auto_task_cooldown_hours ?? 48) * 3600 * 1000;
+    const autoTaskPriority = (settings.auto_task_priority ?? 'high') as 'low' | 'medium' | 'high' | 'urgent';
+    const autoTaskDueInDays = Math.max(0, Number(settings.auto_task_due_in_days ?? 1));
 
     // Pull recent sales (limit to last 3 years to keep memory bounded)
     const cutoff = new Date();
