@@ -207,7 +207,7 @@ function MarkupChip({ sale }: { sale: Sale }) {
     <Badge
       variant="outline"
       className={cn(
-        "mt-2 gap-1 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest",
+        "gap-1 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest",
         info.className,
       )}
     >
