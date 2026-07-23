@@ -453,7 +453,11 @@ const BIGestor = () => {
                 formatCurrency={formatCurrency}
               />
 
-              <ChurnTaskCompletionCard className="animate-slide-up" />
+              <div className="grid gap-4 md:grid-cols-2 animate-slide-up">
+                <ChurnTaskCompletionCard />
+                <ChurnOverdueRankingCard />
+              </div>
+
 
               <BITopClientsSection className="animate-slide-up" />
               <BISalesInsights className="animate-slide-up" />
