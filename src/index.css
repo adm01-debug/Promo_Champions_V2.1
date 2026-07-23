@@ -2269,3 +2269,29 @@ a[href*="lovable.dev"][target="_blank"] {
     display: grid !important;
   }
 }
+
+/* Elementos exclusivos de impressão — invisíveis em tela */
+.print-only {
+  display: none;
+}
+@media print {
+  .print-only {
+    display: block !important;
+  }
+  /* Quando exportando o histórico de briefings, isolar apenas esse bloco */
+  body.printing-briefings *:not(.print-only):not(.print-only *) {
+    visibility: hidden !important;
+  }
+  body.printing-briefings .print-only,
+  body.printing-briefings .print-only * {
+    visibility: visible !important;
+  }
+  body.printing-briefings .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 24px;
+  }
+}
+
