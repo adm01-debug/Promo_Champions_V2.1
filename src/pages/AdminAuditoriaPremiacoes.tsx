@@ -81,7 +81,9 @@ function downloadCsv(filename: string, header: string[], rows: (string | number 
 export default function AdminAuditoriaPremiacoes() {
   const [statusFilter, setStatusFilter] = useState<AwardStatus | 'all'>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('detailed');
-  const { data: awards = [], isLoading } = useCommissionBonusAwards({
+  const [periodFilter, setPeriodFilter] = useState<string>('all'); // 'all' | 'YYYY-MM'
+  const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
+  const { data: rawAwards = [], isLoading } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
   const updateStatus = useUpdateAwardStatus();
@@ -111,6 +113,35 @@ export default function AdminAuditoriaPremiacoes() {
       supabase.removeChannel(channel);
     };
   }, [qc]);
+
+  // Períodos únicos existentes (YYYY-MM) para o filtro
+  const periodOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const a of rawAwards) set.add(a.period_month.slice(0, 7));
+    return Array.from(set).sort().reverse();
+  }, [rawAwards]);
+
+  // Vendedores únicos para o filtro
+  const salespersonOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const a of rawAwards) {
+      if (!map.has(a.salesperson_id)) {
+        map.set(a.salesperson_id, a.salesperson_name ?? '—');
+      }
+    }
+    return Array.from(map.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  }, [rawAwards]);
+
+  // Aplica filtros de período e vendedor localmente
+  const awards = useMemo(() => {
+    return rawAwards.filter((a) => {
+      if (periodFilter !== 'all' && a.period_month.slice(0, 7) !== periodFilter) return false;
+      if (salespersonFilter !== 'all' && a.salesperson_id !== salespersonFilter) return false;
+      return true;
+    });
+  }, [rawAwards, periodFilter, salespersonFilter]);
 
   const kpis = useMemo(() => {
     const total = awards.reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
@@ -147,6 +178,11 @@ export default function AdminAuditoriaPremiacoes() {
     }
     return Array.from(map.values()).sort((a, b) => b.totalSum - a.totalSum);
   }, [awards]);
+
+  const drillDownToSalesperson = (id: string) => {
+    setSalespersonFilter(id);
+    setViewMode('detailed');
+  };
 
   const handleExport = () => {
     if (awards.length === 0) {
