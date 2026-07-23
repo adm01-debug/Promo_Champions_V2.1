@@ -197,6 +197,61 @@ Deno.serve(async (req) => {
         continue;
       }
       created++;
+
+      // Auto-create follow-up task with dedup + cooldown per client/salesperson
+      let newTaskId: string | null = null;
+      let newTaskAt: string | null = null;
+      const prevState = stateMap.get(key);
+      const taskCooldownOk = !prevState?.lastTaskAt || now.getTime() - prevState.lastTaskAt > autoTaskCooldownMs;
+      const levelMeetsMin = LEVEL_RANK[a.level] >= LEVEL_RANK[autoTaskMinLevel];
+      if (autoTaskEnabled && levelMeetsMin && taskCooldownOk) {
+        // Extra dedup: ensure there isn't already an open task for this client+salesperson
+        // referencing a churn alert in the description.
+        const { data: existingOpen } = await supabase
+          .from('tasks')
+          .select('id')
+          .eq('salesperson_id', a.salesperson_id)
+          .in('status', ['pending', 'in_progress'])
+          .ilike('description', '%[auto:churn]%')
+          .ilike('title', `%${a.client_name}%`)
+          .limit(1)
+          .maybeSingle();
+
+        if (!existingOpen) {
+          const dueDate = new Date(now.getTime() + autoTaskDueInDays * 86400000)
+            .toISOString()
+            .slice(0, 10);
+          const taskTitle = `Follow-up de retenção · ${a.client_name}`;
+          const taskDesc =
+            `[auto:churn] Nível ${a.level.toUpperCase()} — ${a.days_since} dias sem comprar` +
+            (a.expected_interval_days > 0 ? ` (média ${a.expected_interval_days}d)` : '') +
+            (a.threshold_days > 0 ? ` · limite ${a.threshold_days}d` : '') +
+            `. Entrar em contato para reengajar e diagnosticar motivo da inatividade.`;
+
+          const { data: taskRow, error: taskErr } = await supabase
+            .from('tasks')
+            .insert({
+              title: taskTitle,
+              description: taskDesc,
+              salesperson_id: a.salesperson_id,
+              priority: autoTaskPriority,
+              status: 'pending',
+              task_type: 'follow_up',
+              due_date: dueDate,
+            })
+            .select('id, created_at')
+            .maybeSingle();
+
+          if (taskErr) {
+            console.error('auto task insert failed', taskErr);
+          } else if (taskRow) {
+            tasksCreated++;
+            newTaskId = taskRow.id;
+            newTaskAt = taskRow.created_at ?? now.toISOString();
+          }
+        }
+      }
+
       upserts.push({
         salesperson_id: a.salesperson_id,
         client_name: a.client_name,
@@ -205,6 +260,8 @@ Deno.serve(async (req) => {
         last_expected_interval_days: a.expected_interval_days || null,
         last_threshold_days: a.threshold_days || null,
         last_alerted_at: now.toISOString(),
+        last_task_id: newTaskId ?? prevState?.lastTaskId ?? null,
+        last_task_created_at: newTaskAt ?? (prevState?.lastTaskAt ? new Date(prevState.lastTaskAt).toISOString() : null),
         updated_at: now.toISOString(),
       });
     }
@@ -217,7 +274,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ ok: true, evaluated: alerts.length, created, skipped }),
+      JSON.stringify({ ok: true, evaluated: alerts.length, created, skipped, tasks_created: tasksCreated }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   } catch (e) {
