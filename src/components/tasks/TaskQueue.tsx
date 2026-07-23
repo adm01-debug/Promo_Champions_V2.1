@@ -23,6 +23,7 @@ export function TaskQueue() {
   const [activeTask, setActiveTask] = useState<TaskRecord | null>(null);
   const [rescheduleTask, setRescheduleTask] = useState<TaskRecord | null>(null);
   const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
+  const [onlyChurn, setOnlyChurn] = useState(false);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
   const { data: tasks, isLoading: loadingTasks } = useTodayTasks(selectedSalesperson === 'all' ? undefined : selectedSalesperson);
