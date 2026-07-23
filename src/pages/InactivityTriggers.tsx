@@ -192,7 +192,7 @@ const InactivityTriggers = () => {
                                   : 'text-foreground'
                               )}
                             >
-                              {deal.daysInactive}d / {deal.maxDays}d
+                              {deal.daysInactive}d / {deal.criticalDays}d
                             </p>
                           </div>
                           <div className="flex gap-1 shrink-0">
