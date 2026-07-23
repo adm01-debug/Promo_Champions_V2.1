@@ -109,7 +109,7 @@ const InactivityTriggers = () => {
               <div className="flex flex-wrap gap-2">
                 {INACTIVITY_RULES.map(rule => (
                   <Badge key={rule.stage} variant="outline" className="text-[10px] gap-1">
-                    {rule.label}: máx. {rule.maxDaysInactive} dias
+                    {rule.label}: {rule.mildDays}/{rule.moderateDays}/{rule.criticalDays}d
                   </Badge>
                 ))}
               </div>
