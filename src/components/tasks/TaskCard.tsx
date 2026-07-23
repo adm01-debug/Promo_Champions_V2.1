@@ -49,6 +49,14 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
   const type = typeConfig[task.task_type] || typeConfig.other;
   const TypeIcon = type.icon;
 
+  const churnMeta = useMemo(() => {
+    const desc = task.description || '';
+    if (!desc.includes('[auto:churn]')) return null;
+    const match = task.title.match(/Follow-up de retenção · (.+)$/);
+    const clientName = match?.[1]?.trim() || task.sale?.client_name || null;
+    return { clientName };
+  }, [task.description, task.title, task.sale?.client_name]);
+
   const handleComplete = () => {
     completeTask.mutate(task.id);
   };
@@ -56,6 +64,7 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
   return (
     <Card variant="elevated" className="p-4 glass border border-border/40 dark:border-glow hover-lift group cursor-pointer card-elevated transition-all duration-300 animate-fade-in">
       <div className="flex items-start gap-3">
+
         <Button
           variant="outline"
           size="icon" aria-label="Confirmar"
