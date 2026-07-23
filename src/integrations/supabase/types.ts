@@ -3509,6 +3509,11 @@ export type Database = {
       }
       churn_alert_settings: {
         Row: {
+          auto_task_cooldown_hours: number
+          auto_task_due_in_days: number
+          auto_task_enabled: boolean
+          auto_task_min_level: string
+          auto_task_priority: string
           cooldown_hours: number
           email_enabled: boolean
           email_from: string | null
@@ -3522,6 +3527,11 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_task_cooldown_hours?: number
+          auto_task_due_in_days?: number
+          auto_task_enabled?: boolean
+          auto_task_min_level?: string
+          auto_task_priority?: string
           cooldown_hours?: number
           email_enabled?: boolean
           email_from?: string | null
@@ -3535,6 +3545,11 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_task_cooldown_hours?: number
+          auto_task_due_in_days?: number
+          auto_task_enabled?: boolean
+          auto_task_min_level?: string
+          auto_task_priority?: string
           cooldown_hours?: number
           email_enabled?: boolean
           email_from?: string | null
@@ -3591,6 +3606,8 @@ export type Database = {
           last_days_since: number
           last_expected_interval_days: number | null
           last_level: string
+          last_task_created_at: string | null
+          last_task_id: string | null
           last_threshold_days: number | null
           salesperson_id: string
           updated_at: string
@@ -3603,6 +3620,8 @@ export type Database = {
           last_days_since: number
           last_expected_interval_days?: number | null
           last_level: string
+          last_task_created_at?: string | null
+          last_task_id?: string | null
           last_threshold_days?: number | null
           salesperson_id: string
           updated_at?: string
@@ -3615,11 +3634,21 @@ export type Database = {
           last_days_since?: number
           last_expected_interval_days?: number | null
           last_level?: string
+          last_task_created_at?: string | null
+          last_task_id?: string | null
           last_threshold_days?: number | null
           salesperson_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_churn_alerts_state_last_task_id_fkey"
+            columns: ["last_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       client_interactions: {
         Row: {
