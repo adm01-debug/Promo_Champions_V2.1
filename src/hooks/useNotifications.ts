@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export type NotificationCategory =
   | "general" | "sales" | "goals" | "gamification"
-  | "security" | "system" | "team" | "ai" | "approval";
+  | "security" | "system" | "team" | "ai" | "approval" | "commission";
 export type NotificationPriority = "low" | "medium" | "high" | "critical";
 
 export interface AppNotification {
