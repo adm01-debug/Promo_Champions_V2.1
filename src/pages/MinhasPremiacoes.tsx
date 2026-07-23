@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Trophy, ChevronLeft, ChevronRight, CalendarDays, Filter, X } from 'lucide-react';
+import { Trophy, ChevronLeft, ChevronRight, CalendarDays, Filter, X, Download, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,8 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useMyBonusAwards, useMyBonusAwardsRealtime } from '@/hooks/useMyBonusAwards';
+import { useMyBonusAwards, useMyBonusAwardsRealtime, fetchAllMyBonusAwards } from '@/hooks/useMyBonusAwards';
 import type { AwardStatus } from '@/hooks/useCommissionBonusAwards';
+import { buildCsv, downloadCsv } from '@/lib/csv';
 
 const PAGE_SIZE = 10;
 
@@ -55,6 +57,7 @@ export default function MinhasPremiacoes() {
   const [status, setStatus] = useState<AwardStatus | 'all'>('all');
   const [period, setPeriod] = useState<string>('all');
   const [page, setPage] = useState(0);
+  const [exporting, setExporting] = useState(false);
 
   useMyBonusAwardsRealtime();
 
@@ -88,6 +91,33 @@ export default function MinhasPremiacoes() {
 
   const hasFilters = status !== 'all' || period !== 'all';
 
+  const handleExport = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const rows = await fetchAllMyBonusAwards({ status, period });
+      if (rows.length === 0) {
+        toast.info('Nenhuma premiação para exportar com os filtros atuais.');
+        return;
+      }
+      const csv = buildCsv(rows, [
+        { header: 'Premiação', value: (r) => r.bonus_name ?? '' },
+        { header: 'Período', value: (r) => format(new Date(r.period_month), 'MM/yyyy') },
+        { header: 'Valor (BRL)', value: (r) => Number(r.computed_amount || 0).toFixed(2).replace('.', ',') },
+        { header: 'Status', value: (r) => statusConfig[r.status]?.label ?? r.status },
+        { header: 'Conquistada em', value: (r) => format(new Date(r.awarded_at), 'dd/MM/yyyy HH:mm') },
+        { header: 'Paga em', value: (r) => (r.paid_at ? format(new Date(r.paid_at), 'dd/MM/yyyy HH:mm') : '') },
+      ]);
+      const stamp = format(new Date(), 'yyyy-MM-dd_HH-mm');
+      downloadCsv(`minhas-premiacoes_${stamp}.csv`, csv);
+      toast.success(`Exportadas ${rows.length} premiação(ões).`);
+    } catch (err) {
+      toast.error(`Falha ao exportar: ${err instanceof Error ? err.message : 'erro desconhecido'}`);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -104,12 +134,27 @@ export default function MinhasPremiacoes() {
           <div className="rounded-lg bg-primary/10 p-2">
             <Trophy className="h-6 w-6 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-page-title">Minhas Premiações</h1>
             <p className="text-sm text-muted-foreground">
               Histórico de conquistas e pagamentos com filtros e atualização em tempo real.
             </p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={exporting}
+            className="gap-2"
+            aria-label="Exportar premiações em CSV"
+          >
+            {exporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            Exportar CSV
+          </Button>
         </header>
 
         {/* KPIs (baseados na página atual) */}
