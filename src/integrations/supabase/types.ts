@@ -10395,6 +10395,42 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_assistant_briefings: {
+        Row: {
+          briefing_date: string
+          content: string
+          context_snapshot: Json | null
+          created_at: string
+          id: string
+          model: string | null
+          salesperson_id: string
+          token_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          briefing_date?: string
+          content: string
+          context_snapshot?: Json | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          salesperson_id: string
+          token_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          briefing_date?: string
+          content?: string
+          context_snapshot?: Json | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          salesperson_id?: string
+          token_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pipeline_coverage_recommendations: {
         Row: {
           acted_on: boolean
