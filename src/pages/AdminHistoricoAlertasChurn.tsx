@@ -266,6 +266,8 @@ const AdminHistoricoAlertasChurn = () => {
           </div>
         </Card>
 
+        <ChurnHistoryChart from={from} to={to} level={level} salespersonId={salespersonId} />
+
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
