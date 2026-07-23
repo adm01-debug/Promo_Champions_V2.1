@@ -401,6 +401,8 @@ const VendedorDashboard = () => {
               <NextBestActionCard salespersonId={id} />
             </div>
 
+            <ClientContactAlertsWidget salespersonId={id} />
+
             <VendedorBottomRow recentDeals={recentDeals} staleTasks={staleTasks} />
           </div>
         </div>
