@@ -14,6 +14,7 @@ import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";
 import { BIVendedorCharts } from "@/components/bi/BIVendedorCharts";
+import { RunRateProjectionCard } from "@/components/vendedor/RunRateProjectionCard";
 
 const BIVendedor = () => {
   const { salesperson } = useAuth();
