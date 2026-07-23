@@ -14,6 +14,7 @@ import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { PageTransition, StaggeredContainer } from "@/components/transitions/PageTransition";
 import { BIVendedorCharts } from "@/components/bi/BIVendedorCharts";
+import { RunRateProjectionCard } from "@/components/vendedor/RunRateProjectionCard";
 
 const BIVendedor = () => {
   const { salesperson } = useAuth();
@@ -67,6 +68,8 @@ const BIVendedor = () => {
                 </div>
               </div>
             </motion.div>
+
+            <RunRateProjectionCard salespersonId={salesperson?.id} />
 
             {/* KPI Stats */}
             <StaggeredContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" delay={0.2}>

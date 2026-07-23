@@ -31,6 +31,7 @@ import { VendedorBottomRow } from '@/components/vendedor/VendedorBottomRow';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
+import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
 
 interface Sale {
   id: string;
@@ -297,6 +298,8 @@ const VendedorDashboard = () => {
               goalProgress={goalProgress}
               salespersonId={id}
             />
+
+            <RunRateProjectionCard salespersonId={id} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
