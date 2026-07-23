@@ -3507,6 +3507,30 @@ export type Database = {
           },
         ]
       }
+      churn_alert_settings: {
+        Row: {
+          cooldown_hours: number
+          enabled: boolean
+          id: boolean
+          min_level: string
+          updated_at: string
+        }
+        Insert: {
+          cooldown_hours?: number
+          enabled?: boolean
+          id?: boolean
+          min_level?: string
+          updated_at?: string
+        }
+        Update: {
+          cooldown_hours?: number
+          enabled?: boolean
+          id?: boolean
+          min_level?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       circuit_breaker_events: {
         Row: {
           circuit_name: string
@@ -3537,6 +3561,39 @@ export type Database = {
           id?: string
           new_state?: string | null
           previous_state?: string | null
+        }
+        Relationships: []
+      }
+      client_churn_alerts_state: {
+        Row: {
+          client_name: string
+          created_at: string
+          id: string
+          last_alerted_at: string
+          last_days_since: number
+          last_level: string
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          client_name: string
+          created_at?: string
+          id?: string
+          last_alerted_at?: string
+          last_days_since: number
+          last_level: string
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string
+          created_at?: string
+          id?: string
+          last_alerted_at?: string
+          last_days_since?: number
+          last_level?: string
+          salesperson_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
