@@ -25,6 +25,8 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
   const [showAIInsights, setShowAIInsights] = useState(false);
   const [showAIEmail, setShowAIEmail] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showRentabilidade, setShowRentabilidade] = useState(false);
+  const markupInfo = classifyMarkup(sale.markup_pct);
 
   const getPredictionColor = (score: number) => {
     if (score >= 80) return "text-emerald-500";
