@@ -109,6 +109,7 @@ Deno.serve(async (req) => {
           days_since: daysSince,
           level,
           expected_interval_days: Math.round(expected ?? 0),
+          threshold_days: thresholdDaysFor(level, expected),
         });
       }
     }
@@ -132,6 +133,8 @@ Deno.serve(async (req) => {
       client_name: string;
       last_level: Level;
       last_days_since: number;
+      last_expected_interval_days: number | null;
+      last_threshold_days: number | null;
       last_alerted_at: string;
       updated_at: string;
     }> = [];
@@ -152,8 +155,13 @@ Deno.serve(async (req) => {
         : a.level === 'high'
         ? `⚠️ Cliente com alto risco de churn`
         : `Cliente inativo`;
-      const message = `${a.client_name} está há ${a.days_since} dias sem comprar` +
-        (a.expected_interval_days > 0 ? ` (intervalo médio: ${a.expected_interval_days}d).` : '.');
+      const avgPart = a.expected_interval_days > 0
+        ? ` · média do cliente: ${a.expected_interval_days}d`
+        : '';
+      const limitPart = a.threshold_days > 0
+        ? ` · limite ${a.level}: ${a.threshold_days}d`
+        : '';
+      const message = `${a.client_name} está há ${a.days_since} dias sem comprar${avgPart}${limitPart}.`;
 
       const { error: insErr } = await supabase.from('notifications').insert({
         user_id: a.salesperson_id,
@@ -170,6 +178,7 @@ Deno.serve(async (req) => {
           days_since: a.days_since,
           level: a.level,
           expected_interval_days: a.expected_interval_days,
+          threshold_days: a.threshold_days,
         },
         expires_at: new Date(now.getTime() + 7 * 86400000).toISOString(),
       });
@@ -183,6 +192,8 @@ Deno.serve(async (req) => {
         client_name: a.client_name,
         last_level: a.level,
         last_days_since: a.days_since,
+        last_expected_interval_days: a.expected_interval_days || null,
+        last_threshold_days: a.threshold_days || null,
         last_alerted_at: now.toISOString(),
         updated_at: now.toISOString(),
       });
