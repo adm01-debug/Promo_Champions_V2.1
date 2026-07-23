@@ -65,8 +65,33 @@ function csvEscape(v: unknown): string {
 const AdminHistoricoAlertasChurn = () => {
   const { days: sharedDays, setDays: setSharedDays, options: periodOptions } =
     useChurnPeriodPreference();
-  const [level, setLevel] = React.useState<Level>('all');
-  const [salespersonId, setSalespersonId] = React.useState<string>('all');
+  const [level, setLevel] = React.useState<Level>(() => {
+    if (typeof window === 'undefined') return 'all';
+    const v = window.localStorage.getItem('churnHistory.level');
+    return v === 'low' || v === 'medium' || v === 'high' || v === 'critical' || v === 'all'
+      ? v
+      : 'all';
+  });
+  const [salespersonId, setSalespersonId] = React.useState<string>(() => {
+    if (typeof window === 'undefined') return 'all';
+    return window.localStorage.getItem('churnHistory.salespersonId') ?? 'all';
+  });
+
+  React.useEffect(() => {
+    try {
+      window.localStorage.setItem('churnHistory.level', level);
+    } catch {
+      /* ignore */
+    }
+  }, [level]);
+
+  React.useEffect(() => {
+    try {
+      window.localStorage.setItem('churnHistory.salespersonId', salespersonId);
+    } catch {
+      /* ignore */
+    }
+  }, [salespersonId]);
   const [from, setFrom] = React.useState<string>(
     format(subDays(new Date(), sharedDays), 'yyyy-MM-dd'),
   );
