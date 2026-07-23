@@ -69,7 +69,7 @@ const BIVendedor = () => {
               </div>
             </motion.div>
 
-            <RunRateProjectionCard salespersonId={salesperson?.id} />
+            <RunRateProjectionCard salespersonId={salesperson?.id} commissionRate={salesperson?.commission_rate} />
 
             {/* KPI Stats */}
             <StaggeredContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" delay={0.2}>

@@ -4268,6 +4268,80 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_bonuses: {
+        Row: {
+          bonus_amount: number
+          bonus_kind: string
+          bonus_type: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          priority: number
+          salesperson_id: string | null
+          trigger_condition: Json
+          updated_at: string
+        }
+        Insert: {
+          bonus_amount?: number
+          bonus_kind?: string
+          bonus_type: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          priority?: number
+          salesperson_id?: string | null
+          trigger_condition?: Json
+          updated_at?: string
+        }
+        Update: {
+          bonus_amount?: number
+          bonus_kind?: string
+          bonus_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          priority?: number
+          salesperson_id?: string | null
+          trigger_condition?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_bonuses_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonuses_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonuses_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonuses_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commission_rules: {
         Row: {
           category: string | null

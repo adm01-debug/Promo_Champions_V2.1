@@ -20,6 +20,13 @@ export interface RunRateProjection {
   confidence: ProjectionConfidence;
   monthEnd: string;
   hasGoal: boolean;
+  // Comissão pessoal (opcional — só populado quando commissionRate > 0)
+  commissionRate: number;
+  hasCommissionRate: boolean;
+  mtdCommission: number;
+  projectedCommission: number;
+  goalCommission: number;
+  commissionGap: number;
 }
 
 /**
@@ -32,10 +39,12 @@ export function computeRunRateProjection(params: {
   mtdRevenue: number;
   goal: number;
   now?: Date;
+  commissionRate?: number;
 }): RunRateProjection {
   const now = params.now ?? new Date();
   const mtdRevenue = Math.max(0, params.mtdRevenue || 0);
   const goal = Math.max(0, params.goal || 0);
+  const commissionRate = Math.max(0, params.commissionRate || 0);
 
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
@@ -79,11 +88,19 @@ export function computeRunRateProjection(params: {
     confidence,
     monthEnd: format(monthEnd, 'yyyy-MM-dd'),
     hasGoal,
+    commissionRate,
+    hasCommissionRate: commissionRate > 0,
+    mtdCommission: mtdRevenue * commissionRate,
+    projectedCommission: projectedEOM * commissionRate,
+    goalCommission: goal * commissionRate,
+    commissionGap: Math.max(0, (goal - projectedEOM) * commissionRate),
   };
 }
 
 interface UseRunRateProjectionOptions {
   now?: Date;
+  /** Comissão como fração (0.05 = 5%). Se omitido, campos de comissão vêm zerados. */
+  commissionRate?: number;
 }
 
 /**
@@ -97,9 +114,10 @@ export function useRunRateProjection(
 ) {
   const now = options.now ?? new Date();
   const monthKey = format(now, 'yyyy-MM');
+  const commissionRate = options.commissionRate;
 
   return useQuery({
-    queryKey: ['run-rate-projection', salespersonId, monthKey],
+    queryKey: ['run-rate-projection', salespersonId, monthKey, commissionRate ?? 0],
     enabled: !!salespersonId,
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<RunRateProjection> => {
@@ -134,7 +152,8 @@ export function useRunRateProjection(
       );
       const goal = Number(goalRes.data?.goal_amount ?? 0);
 
-      return computeRunRateProjection({ mtdRevenue, goal, now });
+      return computeRunRateProjection({ mtdRevenue, goal, now, commissionRate });
     },
   });
 }
+

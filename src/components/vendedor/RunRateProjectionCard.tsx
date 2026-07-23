@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Sparkles, Target, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Sparkles, Target, AlertTriangle, CheckCircle2, Wallet } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,6 +11,8 @@ import { ptBR } from 'date-fns/locale';
 
 interface RunRateProjectionCardProps {
   salespersonId: string | null | undefined;
+  /** Percentual de comissão do vendedor (ex.: 5 para 5%). */
+  commissionRate?: number | null;
   className?: string;
 }
 
@@ -29,9 +31,15 @@ const confidenceMeta = {
 
 export const RunRateProjectionCard = memo(function RunRateProjectionCard({
   salespersonId,
+  commissionRate,
   className,
 }: RunRateProjectionCardProps) {
-  const { data, isLoading } = useRunRateProjection(salespersonId);
+  // commission_rate no banco vem como percentual (5 = 5%). Hook trabalha com fração.
+  const rateFraction =
+    commissionRate != null && commissionRate > 0 ? commissionRate / 100 : undefined;
+  const { data, isLoading } = useRunRateProjection(salespersonId, {
+    commissionRate: rateFraction,
+  });
 
   if (isLoading || !data) {
     return (
@@ -59,6 +67,10 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
     confidence,
     monthEnd,
     hasGoal,
+    hasCommissionRate,
+    mtdCommission,
+    projectedCommission,
+    commissionGap,
   } = data;
 
   // Status color por atingimento projetado
@@ -161,6 +173,30 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
               </span>
             )}
           </div>
+
+          {/* Comissão projetada no bolso do vendedor */}
+          {hasCommissionRate && (
+            <div className="rounded-lg border border-primary/25 bg-primary/5 p-3 flex items-center gap-3">
+              <div className="p-1.5 rounded-md bg-primary/15 text-primary">
+                <Wallet className="h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Comissão projetada ({(commissionRate ?? 0).toFixed(1)}%)
+                </p>
+                <p className="text-xl font-black tabular-nums text-primary">
+                  {formatBRL(projectedCommission)}
+                </p>
+              </div>
+              <div className="text-right text-[11px] text-muted-foreground tabular-nums">
+                <p>Já acumulado: <span className="font-semibold text-foreground">{formatBRL(mtdCommission)}</span></p>
+                {hasGoal && commissionGap > 0 && (
+                  <p>Falta p/ meta: <span className="font-semibold text-amber-600 dark:text-amber-400">{formatBRL(commissionGap)}</span></p>
+                )}
+              </div>
+            </div>
+          )}
+
 
           {/* Insight secundário */}
           <p className="text-sm text-foreground/90">
