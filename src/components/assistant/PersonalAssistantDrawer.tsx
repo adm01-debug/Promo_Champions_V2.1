@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, Loader2, X, Bot } from "lucide-react";
+import { Sparkles, Send, Loader2, X, Bot, ThumbsUp, ThumbsDown } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -35,6 +35,7 @@ export const PersonalAssistantDrawer: FC = () => {
     sendMessage,
     checkProactiveNudge,
     dismissNudge,
+    submitNudgeFeedback,
   } = usePersonalAssistant(salespersonId);
 
   const [open, setOpen] = useState(false);
@@ -107,12 +108,31 @@ export const PersonalAssistantDrawer: FC = () => {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mx-3 mt-3 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-sm flex items-start gap-2"
+              className="mx-3 mt-3 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-sm space-y-2"
             >
-              <span className="flex-1">{proactiveNudge}</span>
-              <button aria-label="Dispensar" onClick={dismissNudge} className="text-muted-foreground hover:text-foreground">
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex items-start gap-2">
+                <span className="flex-1">{proactiveNudge}</span>
+                <button aria-label="Dispensar" onClick={dismissNudge} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2 pt-1 border-t border-destructive/20">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Foi útil?</span>
+                <button
+                  onClick={() => void submitNudgeFeedback("accepted")}
+                  className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  aria-label="Nudge foi útil"
+                >
+                  <ThumbsUp className="h-3 w-3" /> Sim
+                </button>
+                <button
+                  onClick={() => void submitNudgeFeedback("dismissed")}
+                  className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-muted hover:bg-muted/70 text-muted-foreground transition-colors"
+                  aria-label="Nudge não foi útil"
+                >
+                  <ThumbsDown className="h-3 w-3" /> Não
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

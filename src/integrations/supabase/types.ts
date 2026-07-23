@@ -10431,6 +10431,71 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_assistant_nudges: {
+        Row: {
+          content: string
+          context_snapshot: Json | null
+          created_at: string
+          feedback: string
+          feedback_at: string | null
+          id: string
+          model: string | null
+          salesperson_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          context_snapshot?: Json | null
+          created_at?: string
+          feedback?: string
+          feedback_at?: string | null
+          id?: string
+          model?: string | null
+          salesperson_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          context_snapshot?: Json | null
+          created_at?: string
+          feedback?: string
+          feedback_at?: string | null
+          id?: string
+          model?: string | null
+          salesperson_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_assistant_nudges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_assistant_nudges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_assistant_nudges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_assistant_nudges_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_coverage_recommendations: {
         Row: {
           acted_on: boolean

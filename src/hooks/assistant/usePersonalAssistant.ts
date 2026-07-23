@@ -71,10 +71,12 @@ export interface UsePersonalAssistantResult {
   isBriefingLoading: boolean;
   error: string | null;
   proactiveNudge: string | null;
+  nudgeId: string | null;
   refreshBriefing: () => Promise<void>;
   sendMessage: (msg: string) => Promise<void>;
   checkProactiveNudge: () => Promise<void>;
   dismissNudge: () => void;
+  submitNudgeFeedback: (feedback: "accepted" | "dismissed") => Promise<void>;
 }
 
 export function usePersonalAssistant(
@@ -86,6 +88,7 @@ export function usePersonalAssistant(
   const [isBriefingLoading, setIsBriefingLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [proactiveNudge, setProactiveNudge] = useState<string | null>(null);
+  const [nudgeId, setNudgeId] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -172,10 +175,51 @@ export function usePersonalAssistant(
       return;
     }
     const cleaned = acc.trim();
-    setProactiveNudge(cleaned && cleaned !== "NO_NUDGE" ? cleaned : null);
+    if (cleaned && cleaned !== "NO_NUDGE") {
+      setProactiveNudge(cleaned);
+      // Persiste nudge para permitir feedback e métricas agregadas.
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data, error: insErr } = await supabase
+          .from("personal_assistant_nudges")
+          .insert({ salesperson_id: salespersonId, content: cleaned, feedback: "pending" })
+          .select("id")
+          .single();
+        if (!insErr && data?.id) setNudgeId(data.id);
+      } catch {
+        // silencioso — nudge segue exibido mesmo sem persistência
+      }
+    } else {
+      setProactiveNudge(null);
+      setNudgeId(null);
+    }
   }, [salespersonId]);
 
-  const dismissNudge = useCallback(() => setProactiveNudge(null), []);
+  const submitNudgeFeedback = useCallback(
+    async (feedback: "accepted" | "dismissed") => {
+      if (!nudgeId) {
+        setProactiveNudge(null);
+        return;
+      }
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        await supabase
+          .from("personal_assistant_nudges")
+          .update({ feedback })
+          .eq("id", nudgeId);
+      } catch {
+        // no-op
+      } finally {
+        setProactiveNudge(null);
+        setNudgeId(null);
+      }
+    },
+    [nudgeId],
+  );
+
+  const dismissNudge = useCallback(() => {
+    void submitNudgeFeedback("dismissed");
+  }, [submitNudgeFeedback]);
 
   return {
     briefing,
@@ -184,9 +228,11 @@ export function usePersonalAssistant(
     isBriefingLoading,
     error,
     proactiveNudge,
+    nudgeId,
     refreshBriefing,
     sendMessage,
     checkProactiveNudge,
     dismissNudge,
+    submitNudgeFeedback,
   };
 }
