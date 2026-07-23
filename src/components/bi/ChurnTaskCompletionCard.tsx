@@ -60,6 +60,34 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
     navigate(`/tarefas?${params.toString()}`);
   };
 
+  const exportOverdueCsv = () => {
+    if (!data?.overdueTasks?.length) return;
+    const sellerMap = new Map((sellers ?? []).map((s) => [s.id, s.name]));
+    const header = ['ID', 'Descrição', 'Vencimento', 'Criada em', 'Vendedor'];
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const lines = [
+      header.join(';'),
+      ...data.overdueTasks.map((t) =>
+        [
+          t.id,
+          (t.description ?? '').replace(/\s+/g, ' ').trim(),
+          t.due_date ? new Date(t.due_date).toLocaleString('pt-BR') : '',
+          new Date(t.created_at).toLocaleString('pt-BR'),
+          t.salesperson_id ? sellerMap.get(t.salesperson_id) ?? t.salesperson_id : '',
+        ]
+          .map((v) => escape(String(v)))
+          .join(';'),
+      ),
+    ];
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tarefas-churn-atrasadas-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Card className={cn('border-border/60', className)}>
       <CardHeader className="pb-3">
