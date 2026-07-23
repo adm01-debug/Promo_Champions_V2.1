@@ -21,6 +21,7 @@ import { Download, History, ChevronLeft, ChevronRight, Filter } from 'lucide-rea
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChurnHistoryChart } from '@/components/admin/churn/ChurnHistoryChart';
+import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 
 type Level = 'low' | 'medium' | 'high' | 'critical' | 'all';
 
