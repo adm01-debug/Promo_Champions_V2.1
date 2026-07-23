@@ -159,15 +159,13 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
   });
 }
 
-/** Agrupa por tipo p/ UI. */
-export function groupBonusesByType(bonuses: EligibleBonus[]) {
-  return useMemo(() => {
-    const map = new Map<BonusType, EligibleBonus[]>();
-    for (const b of bonuses) {
-      const arr = map.get(b.bonus_type) ?? [];
-      arr.push(b);
-      map.set(b.bonus_type, arr);
-    }
-    return map;
-  }, [bonuses]);
+/** Agrupa por tipo p/ UI. Função pura — memoize no call-site via useMemo se necessário. */
+export function groupBonusesByType(bonuses: EligibleBonus[]): Map<BonusType, EligibleBonus[]> {
+  const map = new Map<BonusType, EligibleBonus[]>();
+  for (const b of bonuses) {
+    const arr = map.get(b.bonus_type) ?? [];
+    arr.push(b);
+    map.set(b.bonus_type, arr);
+  }
+  return map;
 }
