@@ -21,6 +21,8 @@ const sortOptions: SortOption[] = [
   { label: 'Maior valor', value: 'value_desc', direction: 'desc' },
   { label: 'Menor valor', value: 'value_asc', direction: 'asc' },
   { label: 'Cliente (A-Z)', value: 'client_asc', direction: 'asc' },
+  { label: 'Maior markup %', value: 'markup_desc', direction: 'desc' },
+  { label: 'Menor markup %', value: 'markup_asc', direction: 'asc' },
 ];
 
 const statusOptions = [
@@ -82,6 +84,16 @@ const Vendas = () => {
           return a.valor - b.valor;
         case 'client_asc':
           return a.cliente.localeCompare(b.cliente);
+        case 'markup_desc': {
+          const av = a.markup_pct ?? Number.NEGATIVE_INFINITY;
+          const bv = b.markup_pct ?? Number.NEGATIVE_INFINITY;
+          return bv - av;
+        }
+        case 'markup_asc': {
+          const av = a.markup_pct ?? Number.POSITIVE_INFINITY;
+          const bv = b.markup_pct ?? Number.POSITIVE_INFINITY;
+          return av - bv;
+        }
         default:
           return 0;
       }
