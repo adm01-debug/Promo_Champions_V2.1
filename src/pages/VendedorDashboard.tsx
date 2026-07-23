@@ -34,6 +34,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
 import { EligibleBonusesCard } from '@/components/vendedor/EligibleBonusesCard';
 import { PersonalAssistantSummaryCard } from '@/components/dashboard/PersonalAssistantSummaryCard';
+import { ClientContactAlertsWidget } from '@/components/vendedor/ClientContactAlertsWidget';
 import { useNavigate } from 'react-router-dom';
 
 interface Sale {
@@ -399,6 +400,8 @@ const VendedorDashboard = () => {
             >
               <NextBestActionCard salespersonId={id} />
             </div>
+
+            <ClientContactAlertsWidget salespersonId={id} />
 
             <VendedorBottomRow recentDeals={recentDeals} staleTasks={staleTasks} />
           </div>
