@@ -134,12 +134,27 @@ export default function MinhasPremiacoes() {
           <div className="rounded-lg bg-primary/10 p-2">
             <Trophy className="h-6 w-6 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-page-title">Minhas Premiações</h1>
             <p className="text-sm text-muted-foreground">
               Histórico de conquistas e pagamentos com filtros e atualização em tempo real.
             </p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={exporting}
+            className="gap-2"
+            aria-label="Exportar premiações em CSV"
+          >
+            {exporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            Exportar CSV
+          </Button>
         </header>
 
         {/* KPIs (baseados na página atual) */}
