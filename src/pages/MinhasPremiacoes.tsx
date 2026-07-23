@@ -91,6 +91,33 @@ export default function MinhasPremiacoes() {
 
   const hasFilters = status !== 'all' || period !== 'all';
 
+  const handleExport = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const rows = await fetchAllMyBonusAwards({ status, period });
+      if (rows.length === 0) {
+        toast.info('Nenhuma premiação para exportar com os filtros atuais.');
+        return;
+      }
+      const csv = buildCsv(rows, [
+        { header: 'Premiação', value: (r) => r.bonus_name ?? '' },
+        { header: 'Período', value: (r) => format(new Date(r.period_month), 'MM/yyyy') },
+        { header: 'Valor (BRL)', value: (r) => Number(r.computed_amount || 0).toFixed(2).replace('.', ',') },
+        { header: 'Status', value: (r) => statusConfig[r.status]?.label ?? r.status },
+        { header: 'Conquistada em', value: (r) => format(new Date(r.awarded_at), 'dd/MM/yyyy HH:mm') },
+        { header: 'Paga em', value: (r) => (r.paid_at ? format(new Date(r.paid_at), 'dd/MM/yyyy HH:mm') : '') },
+      ]);
+      const stamp = format(new Date(), 'yyyy-MM-dd_HH-mm');
+      downloadCsv(`minhas-premiacoes_${stamp}.csv`, csv);
+      toast.success(`Exportadas ${rows.length} premiação(ões).`);
+    } catch (err) {
+      toast.error(`Falha ao exportar: ${err instanceof Error ? err.message : 'erro desconhecido'}`);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <>
       <Helmet>
