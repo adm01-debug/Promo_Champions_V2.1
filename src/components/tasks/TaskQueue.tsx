@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, Calendar, Columns3 } from 'lucide-react';
+import { CheckCircle, Calendar, Columns3, AlertOctagon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PRIORITIES: TaskPriority[] = ['urgent', 'high', 'medium', 'low'];
