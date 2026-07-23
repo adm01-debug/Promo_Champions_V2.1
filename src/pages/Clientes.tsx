@@ -66,6 +66,23 @@ const Clientes = () => {
   const [timelineClient, setTimelineClient] = useState<Client | null>(null);
   const [view360Client, setView360Client] = useState<Client | null>(null);
   const { data: clients = [], isLoading } = useClients();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Auto-abre Client 360 quando URL contém ?client360=<nome>
+  useEffect(() => {
+    const target = searchParams.get('client360');
+    if (!target || !clients.length) return;
+    const found = clients.find(
+      (c) => c.name.trim().toLowerCase() === target.trim().toLowerCase(),
+    );
+    if (found) {
+      setView360Client(found);
+      const next = new URLSearchParams(searchParams);
+      next.delete('client360');
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, clients, setSearchParams]);
+
   const { data: predictions = {} } = useClientPredictions();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
