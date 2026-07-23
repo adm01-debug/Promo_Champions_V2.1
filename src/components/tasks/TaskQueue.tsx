@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, Calendar, Columns3 } from 'lucide-react';
+import { CheckCircle, Calendar, Columns3, AlertOctagon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PRIORITIES: TaskPriority[] = ['urgent', 'high', 'medium', 'low'];
@@ -23,6 +23,7 @@ export function TaskQueue() {
   const [activeTask, setActiveTask] = useState<TaskRecord | null>(null);
   const [rescheduleTask, setRescheduleTask] = useState<TaskRecord | null>(null);
   const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
+  const [onlyChurn, setOnlyChurn] = useState(false);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
   const { data: tasks, isLoading: loadingTasks } = useTodayTasks(selectedSalesperson === 'all' ? undefined : selectedSalesperson);
@@ -34,7 +35,9 @@ export function TaskQueue() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const groupedTasks = tasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
+  const churnCount = tasks?.filter(t => (t.description || '').includes('[auto:churn]')).length || 0;
+  const visibleTasks = onlyChurn ? tasks?.filter(t => (t.description || '').includes('[auto:churn]')) : tasks;
+  const groupedTasks = visibleTasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
 
   const findTaskById = (id: string) => tasks?.find(task => task.id === id);
   const getPriorityLabel = (p: TaskPriority) => ({ urgent: 'urgente', high: 'alta', medium: 'média', low: 'baixa' }[p]);
@@ -65,7 +68,7 @@ export function TaskQueue() {
     );
   }
 
-  const totalTasks = tasks?.length || 0;
+  const totalTasks = visibleTasks?.length || 0;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -78,6 +81,7 @@ export function TaskQueue() {
               {salespeople?.map((sp) => (<SelectItem key={sp.id} value={sp.id}><div className="flex items-center gap-2"><Avatar className="h-5 w-5 border border-background"><AvatarImage src={sp.avatar_url || undefined} /><AvatarFallback className="text-[9px] bg-gradient-to-br from-primary to-accent text-primary-foreground">{sp.name.charAt(0)}</AvatarFallback></Avatar>{sp.name}</div></SelectItem>))}
             </SelectContent>
           </Select>
+          <Button variant={onlyChurn ? 'default' : 'outline'} size="sm" onClick={() => setOnlyChurn(v => !v)} disabled={!onlyChurn && churnCount === 0} className={onlyChurn ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25 transition-all duration-200' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyChurn ? 'Mostrar todas as tarefas' : 'Mostrar apenas tarefas geradas por churn'}><AlertOctagon className="h-4 w-4 mr-2" />{onlyChurn ? `Somente churn (${churnCount})` : `Churn${churnCount ? ` (${churnCount})` : ''}`}</Button>
           <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')} className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"><Columns3 className="h-4 w-4 mr-2" />{viewMode === 'columns' ? 'Lista' : 'Colunas'}</Button>
         </div>
         <div className="flex items-center gap-2">
