@@ -21,6 +21,12 @@ interface Settings {
   enabled: boolean;
   min_level: Level;
   cooldown_hours: number;
+  email_enabled: boolean;
+  email_from: string | null;
+  email_reply_to: string | null;
+  email_recipients: string[];
+  email_subject_template: string;
+  email_provider: string;
 }
 
 interface StateRow {
