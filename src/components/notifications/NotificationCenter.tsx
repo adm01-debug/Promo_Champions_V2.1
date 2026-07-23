@@ -72,6 +72,7 @@ const CATEGORY_ICONS: Record<
   team: Users,
   ai: Sparkles,
   approval: FileCheck,
+  commission: Trophy,
 };
 
 const PRIORITY_STYLES: Record<NotificationPriority, string> = {
@@ -91,6 +92,7 @@ const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   team: 'Time',
   ai: 'IA',
   approval: 'Aprovação',
+  commission: 'Premiação',
 };
 
 interface NotificationItemProps {
