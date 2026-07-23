@@ -1,11 +1,12 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Sparkles, Target, AlertTriangle, CheckCircle2, Wallet } from 'lucide-react';
+import { TrendingUp, Sparkles, Target, AlertTriangle, CheckCircle2, Wallet, Trophy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useRunRateProjection } from '@/hooks/useRunRateProjection';
+import { useEligibleBonuses } from '@/hooks/useEligibleBonuses';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -40,6 +41,22 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
   const { data, isLoading } = useRunRateProjection(salespersonId, {
     commissionRate: rateFraction,
   });
+  const { data: bonuses = [] } = useEligibleBonuses(salespersonId ?? undefined);
+
+  const { achievedFixedTotal, achievedCount, inProgressCount } = useMemo(() => {
+    let sum = 0;
+    let ac = 0;
+    let ip = 0;
+    for (const b of bonuses) {
+      if (b.achieved) {
+        ac++;
+        if (b.bonus_kind === 'fixed') sum += Number(b.bonus_amount) || 0;
+      } else {
+        ip++;
+      }
+    }
+    return { achievedFixedTotal: sum, achievedCount: ac, inProgressCount: ip };
+  }, [bonuses]);
 
   if (isLoading || !data) {
     return (
@@ -196,6 +213,29 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
               </div>
             </div>
           )}
+
+          {/* Bônus & premiações conquistados no ciclo */}
+          {(achievedCount > 0 || inProgressCount > 0) && (
+            <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 flex items-center gap-3">
+              <div className="p-1.5 rounded-md bg-amber-500/15 text-amber-500">
+                <Trophy className="h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Bônus conquistados este ciclo
+                </p>
+                <p className="text-xl font-black tabular-nums text-amber-600 dark:text-amber-400">
+                  {achievedFixedTotal > 0 ? `+ ${formatBRL(achievedFixedTotal)}` : `${achievedCount} ativo(s)`}
+                </p>
+              </div>
+              <div className="text-right text-[11px] text-muted-foreground tabular-nums">
+                {achievedCount > 0 && <p>Conquistados: <span className="font-semibold text-foreground">{achievedCount}</span></p>}
+                {inProgressCount > 0 && <p>Em progresso: <span className="font-semibold text-foreground">{inProgressCount}</span></p>}
+              </div>
+            </div>
+          )}
+
+
 
 
           {/* Insight secundário */}

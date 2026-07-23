@@ -5,7 +5,9 @@ import type { CommissionBonus, BonusType } from './useCommissionBonuses';
 
 export interface EligibleBonus extends CommissionBonus {
   reason: string;
-  progress?: number; // 0..1
+  progress: number; // 0..1
+  achieved: boolean;
+  remainingLabel?: string;
 }
 
 interface EvaluationContext {
@@ -16,14 +18,13 @@ interface EvaluationContext {
   monthlyRank: number | null;
 }
 
+const BRL0 = (n: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
+
 /**
  * Pure evaluator — no I/O. Testable in isolation.
- * Supported triggers:
- *  - { milestone_amount: number }   → mtdRevenue >= milestone_amount
- *  - { rank_top: number }           → monthlyRank <= rank_top
- *  - { streak_days: number }        → currentStreak >= streak_days
- *  - { first_sale: true }           → totalSalesCount >= 1
- *  - {} / invalid                   → always eligible if active (informational)
+ * Retorna sempre um EligibleBonus (com `achieved` indicando se já foi conquistado)
+ * ou null quando não se aplica ao vendedor / está inativo.
  */
 export function evaluateBonus(
   bonus: CommissionBonus,
@@ -33,45 +34,69 @@ export function evaluateBonus(
   if (bonus.salesperson_id && bonus.salesperson_id !== ctx.salespersonId) return null;
 
   const trigger = (bonus.trigger_condition ?? {}) as Record<string, unknown>;
-
   const num = (k: string): number | null => {
     const v = trigger[k];
     return typeof v === 'number' && Number.isFinite(v) ? v : null;
   };
+  const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
   const milestone = num('milestone_amount');
   if (milestone !== null) {
-    if (ctx.mtdRevenue >= milestone) {
-      return { ...bonus, reason: `Marco de R$ ${milestone.toLocaleString('pt-BR')} atingido`, progress: 1 };
-    }
-    return null;
+    const progress = milestone > 0 ? clamp01(ctx.mtdRevenue / milestone) : 0;
+    const achieved = ctx.mtdRevenue >= milestone;
+    return {
+      ...bonus,
+      achieved,
+      progress,
+      reason: achieved
+        ? `Marco de ${BRL0(milestone)} atingido`
+        : `${BRL0(ctx.mtdRevenue)} de ${BRL0(milestone)} · faltam ${BRL0(Math.max(0, milestone - ctx.mtdRevenue))}`,
+      remainingLabel: achieved ? undefined : BRL0(Math.max(0, milestone - ctx.mtdRevenue)),
+    };
   }
 
   const rankTop = num('rank_top');
   if (rankTop !== null) {
-    if (ctx.monthlyRank !== null && ctx.monthlyRank <= rankTop) {
-      return { ...bonus, reason: `Top ${rankTop} do mês (posição atual: ${ctx.monthlyRank})`, progress: 1 };
-    }
-    return null;
+    const rank = ctx.monthlyRank;
+    const achieved = rank !== null && rank <= rankTop;
+    return {
+      ...bonus,
+      achieved,
+      progress: achieved ? 1 : 0,
+      reason: achieved
+        ? `Top ${rankTop} do mês (posição atual: ${rank})`
+        : rank !== null
+          ? `Posição atual: ${rank}º · precisa alcançar Top ${rankTop}`
+          : `Alcance o Top ${rankTop} do mês`,
+    };
   }
 
   const streakDays = num('streak_days');
   if (streakDays !== null) {
-    if (ctx.currentStreak >= streakDays) {
-      return { ...bonus, reason: `Sequência de ${streakDays} dias atingida`, progress: 1 };
-    }
-    return null;
+    const progress = streakDays > 0 ? clamp01(ctx.currentStreak / streakDays) : 0;
+    const achieved = ctx.currentStreak >= streakDays;
+    return {
+      ...bonus,
+      achieved,
+      progress,
+      reason: achieved
+        ? `Sequência de ${streakDays} dias atingida`
+        : `Sequência atual: ${ctx.currentStreak} · faltam ${Math.max(0, streakDays - ctx.currentStreak)} dia(s)`,
+    };
   }
 
   if (trigger.first_sale === true) {
-    if (ctx.totalSalesCount >= 1) {
-      return { ...bonus, reason: 'Primeira venda registrada', progress: 1 };
-    }
-    return null;
+    const achieved = ctx.totalSalesCount >= 1;
+    return {
+      ...bonus,
+      achieved,
+      progress: achieved ? 1 : 0,
+      reason: achieved ? 'Primeira venda registrada' : 'Registre sua primeira venda',
+    };
   }
 
-  // Trigger vazio/desconhecido → informativo (não bloqueia listagem)
-  return { ...bonus, reason: 'Premiação ativa', progress: 1 };
+  // Trigger vazio/desconhecido → informativo
+  return { ...bonus, achieved: true, progress: 1, reason: 'Premiação ativa' };
 }
 
 export function useEligibleBonuses(salespersonId: string | undefined) {

@@ -31,43 +31,45 @@ describe('evaluateBonus', () => {
   });
 
   it('rejects individual bonus for other salesperson', () => {
-    expect(
-      evaluateBonus({ ...base, salesperson_id: 'other' }, ctx),
-    ).toBeNull();
+    expect(evaluateBonus({ ...base, salesperson_id: 'other' }, ctx)).toBeNull();
   });
 
-  it('milestone: eligible when mtdRevenue >= threshold', () => {
+  it('milestone: achieved when mtdRevenue >= threshold', () => {
     const b = { ...base, trigger_condition: { milestone_amount: 10000 } };
-    expect(evaluateBonus(b, { ...ctx, mtdRevenue: 15000 })).not.toBeNull();
-    expect(evaluateBonus(b, { ...ctx, mtdRevenue: 5000 })).toBeNull();
+    expect(evaluateBonus(b, { ...ctx, mtdRevenue: 15000 })?.achieved).toBe(true);
+    const inProgress = evaluateBonus(b, { ...ctx, mtdRevenue: 5000 });
+    expect(inProgress?.achieved).toBe(false);
+    expect(inProgress?.progress).toBeCloseTo(0.5);
   });
 
-  it('rank_top: requires monthlyRank present', () => {
+  it('rank_top: not achieved when rank unavailable', () => {
     const b = { ...base, trigger_condition: { rank_top: 3 } };
-    expect(evaluateBonus(b, ctx)).toBeNull();
-    expect(evaluateBonus(b, { ...ctx, monthlyRank: 2 })).not.toBeNull();
-    expect(evaluateBonus(b, { ...ctx, monthlyRank: 5 })).toBeNull();
+    expect(evaluateBonus(b, ctx)?.achieved).toBe(false);
+    expect(evaluateBonus(b, { ...ctx, monthlyRank: 2 })?.achieved).toBe(true);
+    expect(evaluateBonus(b, { ...ctx, monthlyRank: 5 })?.achieved).toBe(false);
   });
 
-  it('streak_days: needs current streak', () => {
+  it('streak_days: progress scales with current streak', () => {
     const b = { ...base, trigger_condition: { streak_days: 7 } };
-    expect(evaluateBonus(b, { ...ctx, currentStreak: 7 })).not.toBeNull();
-    expect(evaluateBonus(b, { ...ctx, currentStreak: 6 })).toBeNull();
+    expect(evaluateBonus(b, { ...ctx, currentStreak: 7 })?.achieved).toBe(true);
+    const p = evaluateBonus(b, { ...ctx, currentStreak: 3 });
+    expect(p?.achieved).toBe(false);
+    expect(p?.progress).toBeCloseTo(3 / 7);
   });
 
-  it('first_sale: requires at least 1 sale', () => {
+  it('first_sale: achieved with >=1 sale', () => {
     const b = { ...base, trigger_condition: { first_sale: true } };
-    expect(evaluateBonus(b, { ...ctx, totalSalesCount: 1 })).not.toBeNull();
-    expect(evaluateBonus(b, ctx)).toBeNull();
+    expect(evaluateBonus(b, { ...ctx, totalSalesCount: 1 })?.achieved).toBe(true);
+    expect(evaluateBonus(b, ctx)?.achieved).toBe(false);
   });
 
-  it('empty trigger: still eligible (informational)', () => {
-    expect(evaluateBonus(base, ctx)).not.toBeNull();
+  it('empty trigger: informational, achieved=true', () => {
+    expect(evaluateBonus(base, ctx)?.achieved).toBe(true);
   });
 
   it('malformed trigger: does not throw', () => {
     const b = { ...base, trigger_condition: { milestone_amount: 'x' as unknown as number } };
     expect(() => evaluateBonus(b, ctx)).not.toThrow();
-    expect(evaluateBonus(b, ctx)).not.toBeNull(); // cai no fallback informativo
+    expect(evaluateBonus(b, ctx)?.achieved).toBe(true);
   });
 });
