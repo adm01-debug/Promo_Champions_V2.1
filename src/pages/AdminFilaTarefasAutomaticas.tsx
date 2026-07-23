@@ -55,7 +55,7 @@ export default function AdminFilaTarefasAutomaticas() {
       })
       .eq('id', s.id);
     setSaving(false);
-    if (error) return toast.error('Não foi possível salvar');
+    if (error) { toast.error('Não foi possível salvar'); return; }
     toast.success('Configurações salvas');
   };
 
