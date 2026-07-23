@@ -1335,6 +1335,48 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_task_queue_settings: {
+        Row: {
+          created_at: string
+          cutoff_time: string
+          enabled: boolean
+          id: string
+          last_run_created_count: number | null
+          last_run_date: string | null
+          max_tasks_per_salesperson: number
+          min_urgency: string
+          singleton: boolean
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cutoff_time?: string
+          enabled?: boolean
+          id?: string
+          last_run_created_count?: number | null
+          last_run_date?: string | null
+          max_tasks_per_salesperson?: number
+          min_urgency?: string
+          singleton?: boolean
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cutoff_time?: string
+          enabled?: boolean
+          id?: string
+          last_run_created_count?: number | null
+          last_run_date?: string | null
+          max_tasks_per_salesperson?: number
+          min_urgency?: string
+          singleton?: boolean
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       automation_runs: {
         Row: {
           actions_executed: Json | null
