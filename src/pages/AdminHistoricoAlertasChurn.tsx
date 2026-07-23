@@ -76,8 +76,13 @@ const AdminHistoricoAlertasChurn = () => {
   const applyPreset = React.useCallback(
     (nDays: number) => {
       setSharedDays(nDays);
-      setFrom(format(subDays(new Date(), nDays), 'yyyy-MM-dd'));
-      setTo(format(new Date(), 'yyyy-MM-dd'));
+      const newFrom = format(subDays(new Date(), nDays), 'yyyy-MM-dd');
+      const newTo = format(new Date(), 'yyyy-MM-dd');
+      setFrom(newFrom);
+      setTo(newTo);
+      toast.success(`Período aplicado: últimos ${nDays} dias`, {
+        description: `${newFrom} → ${newTo}`,
+      });
     },
     [setSharedDays],
   );
