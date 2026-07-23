@@ -120,6 +120,25 @@ const AdminAlertasChurn = () => {
     }
   };
 
+  const [sendingTest, setSendingTest] = React.useState(false);
+  const sendTestEmail = async () => {
+    if (!draft) return;
+    setSendingTest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-churn-alert-email', {
+        body: { test: true },
+      });
+      if (error) throw error;
+      const res = data as { ok: boolean; error?: string; recipients?: number };
+      if (!res.ok) throw new Error(res.error ?? 'Falha desconhecida');
+      toast.success(`E-mail de teste enviado para ${res.recipients} destinatário(s).`);
+    } catch (e) {
+      toast.error(`Falha no teste: ${(e as Error).message}`);
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
   const levelBadge = (l: Level) => {
     const cls =
       l === 'critical'
