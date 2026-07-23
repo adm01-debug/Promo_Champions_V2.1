@@ -122,17 +122,20 @@ Deno.serve(async (req) => {
     // Load current state
     const { data: state } = await supabase
       .from('client_churn_alerts_state')
-      .select('salesperson_id, client_name, last_level, last_alerted_at');
-    const stateMap = new Map<string, { level: Level; at: number }>();
+      .select('salesperson_id, client_name, last_level, last_alerted_at, last_task_id, last_task_created_at');
+    const stateMap = new Map<string, { level: Level; at: number; lastTaskAt: number | null; lastTaskId: string | null }>();
     for (const r of state ?? []) {
       stateMap.set(`${r.salesperson_id}::${r.client_name.trim().toLowerCase()}`, {
         level: r.last_level as Level,
         at: new Date(r.last_alerted_at).getTime(),
+        lastTaskAt: r.last_task_created_at ? new Date(r.last_task_created_at).getTime() : null,
+        lastTaskId: r.last_task_id ?? null,
       });
     }
 
     let created = 0;
     let skipped = 0;
+    let tasksCreated = 0;
     const upserts: Array<{
       salesperson_id: string;
       client_name: string;
@@ -141,6 +144,8 @@ Deno.serve(async (req) => {
       last_expected_interval_days: number | null;
       last_threshold_days: number | null;
       last_alerted_at: string;
+      last_task_id?: string | null;
+      last_task_created_at?: string | null;
       updated_at: string;
     }> = [];
 
