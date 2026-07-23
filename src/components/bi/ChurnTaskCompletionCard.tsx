@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight } from 'lucide-react';
+import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,6 +58,34 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
     const params = new URLSearchParams({ churn: '1', status: 'overdue' });
     if (salespersonId !== 'all') params.set('salesperson_id', salespersonId);
     navigate(`/tarefas?${params.toString()}`);
+  };
+
+  const exportOverdueCsv = () => {
+    if (!data?.overdueTasks?.length) return;
+    const sellerMap = new Map((sellers ?? []).map((s) => [s.id, s.name]));
+    const header = ['ID', 'Descrição', 'Vencimento', 'Criada em', 'Vendedor'];
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const lines = [
+      header.join(';'),
+      ...data.overdueTasks.map((t) =>
+        [
+          t.id,
+          (t.description ?? '').replace(/\s+/g, ' ').trim(),
+          t.due_date ? new Date(t.due_date).toLocaleString('pt-BR') : '',
+          new Date(t.created_at).toLocaleString('pt-BR'),
+          t.salesperson_id ? sellerMap.get(t.salesperson_id) ?? t.salesperson_id : '',
+        ]
+          .map((v) => escape(String(v)))
+          .join(';'),
+      ),
+    ];
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tarefas-churn-atrasadas-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -124,16 +152,28 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
               />
             </div>
             {data.overdue > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToOverdue}
-                className="w-full border-destructive/40 text-destructive hover:bg-destructive/10"
-              >
-                Ver {data.overdue} tarefa{data.overdue > 1 ? 's' : ''} atrasada
-                {data.overdue > 1 ? 's' : ''}
-                <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToOverdue}
+                  className="flex-1 border-destructive/40 text-destructive hover:bg-destructive/10"
+                >
+                  Ver {data.overdue} tarefa{data.overdue > 1 ? 's' : ''} atrasada
+                  {data.overdue > 1 ? 's' : ''}
+                  <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportOverdueCsv}
+                  className="sm:w-auto"
+                  aria-label="Exportar tarefas de churn atrasadas em CSV"
+                >
+                  <Download className="mr-1 h-3.5 w-3.5" />
+                  CSV
+                </Button>
+              </div>
             )}
           </>
         )}

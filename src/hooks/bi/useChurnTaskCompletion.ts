@@ -2,6 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { subDays } from 'date-fns';
 
+export interface ChurnOverdueTask {
+  id: string;
+  description: string | null;
+  due_date: string | null;
+  created_at: string;
+  salesperson_id: string | null;
+}
+
 export interface ChurnTaskCompletionStats {
   total: number;
   completed: number;
@@ -9,6 +17,7 @@ export interface ChurnTaskCompletionStats {
   overdue: number;
   completionRate: number;
   overdueIds: string[];
+  overdueTasks: ChurnOverdueTask[];
 }
 
 /**
@@ -45,6 +54,13 @@ export function useChurnTaskCompletion(days = 30, salespersonId?: string | null)
         overdue: overdueRows.length,
         completionRate,
         overdueIds: overdueRows.map((r) => r.id),
+        overdueTasks: overdueRows.map((r) => ({
+          id: r.id,
+          description: r.description ?? null,
+          due_date: r.due_date ?? null,
+          created_at: r.created_at,
+          salesperson_id: r.salesperson_id ?? null,
+        })),
       };
     },
     staleTime: 60_000,
