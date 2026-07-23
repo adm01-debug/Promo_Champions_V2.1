@@ -61,7 +61,7 @@ const AdminAlertasChurn = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('churn_alert_settings')
-        .select('enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider')
+        .select('enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days')
         .maybeSingle();
       if (error) throw error;
       return (data ?? {
@@ -74,6 +74,11 @@ const AdminAlertasChurn = () => {
         email_recipients: [],
         email_subject_template: '[Churn] Cliente {{client_name}} em risco {{level}}',
         email_provider: 'lovable',
+        auto_task_enabled: false,
+        auto_task_min_level: 'high',
+        auto_task_cooldown_hours: 48,
+        auto_task_priority: 'high',
+        auto_task_due_in_days: 1,
       }) as Settings;
     },
   });
