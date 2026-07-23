@@ -15,12 +15,12 @@ import {
 import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
+import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 interface Props {
   className?: string;
-  days?: number;
 }
 
 interface SalespersonOption {
@@ -28,9 +28,17 @@ interface SalespersonOption {
   name: string;
 }
 
-export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) => {
+const PERIOD_LABEL: Record<number, string> = {
+  7: '7 dias',
+  30: '30 dias',
+  60: '60 dias',
+  90: '90 dias',
+};
+
+export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
   const [salespersonId, setSalespersonId] = useState<string>('all');
   const navigate = useNavigate();
+  const { days, setDays, options } = useChurnPeriodPreference();
   const { data, isLoading } = useChurnTaskCompletion(
     days,
     salespersonId === 'all' ? null : salespersonId,
@@ -96,19 +104,36 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
             <AlertOctagon className="h-4 w-4 text-destructive" />
             Tarefas de Churn — últimos {days} dias
           </CardTitle>
-          <Select value={salespersonId} onValueChange={setSalespersonId}>
-            <SelectTrigger className="h-8 w-[180px] text-xs">
-              <SelectValue placeholder="Vendedor" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os vendedores</SelectItem>
-              {sellers?.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select
+              value={String(days)}
+              onValueChange={(v) => setDays(Number(v))}
+            >
+              <SelectTrigger className="h-8 w-[110px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    {PERIOD_LABEL[d]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={salespersonId} onValueChange={setSalespersonId}>
+              <SelectTrigger className="h-8 w-[180px] text-xs">
+                <SelectValue placeholder="Vendedor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os vendedores</SelectItem>
+                {sellers?.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

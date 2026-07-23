@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -12,30 +12,30 @@ import {
 import { Trophy, ArrowRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChurnOverdueBySeller } from '@/hooks/bi/useChurnOverdueBySeller';
+import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 import { cn } from '@/lib/utils';
 
 interface Props {
   className?: string;
-  days?: number;
   limit?: number;
 }
 
-const PERIOD_OPTIONS = [
-  { value: '7', label: '7 dias' },
-  { value: '30', label: '30 dias' },
-  { value: '60', label: '60 dias' },
-  { value: '90', label: '90 dias' },
-];
+const PERIOD_LABEL: Record<number, string> = {
+  7: '7 dias',
+  30: '30 dias',
+  60: '60 dias',
+  90: '90 dias',
+};
 
 export const ChurnOverdueRankingCard = memo(
-  ({ className, days = 30, limit = 5 }: Props) => {
+  ({ className, limit = 5 }: Props) => {
     const navigate = useNavigate();
-    const [period, setPeriod] = useState<string>(String(days));
-    const periodDays = Number(period);
+    const { days: periodDays, setDays, options } = useChurnPeriodPreference();
     const { data, isLoading } = useChurnOverdueBySeller(periodDays, limit);
     // Ranking completo para exportação (sem limite)
     const { data: fullData } = useChurnOverdueBySeller(periodDays, 1000);
     const max = data?.[0]?.overdue ?? 0;
+
 
     const exportCsv = () => {
       if (!fullData?.length) return;
@@ -83,14 +83,17 @@ export const ChurnOverdueRankingCard = memo(
               Ranking — Churn atrasado por vendedor
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Select value={period} onValueChange={setPeriod}>
+              <Select
+                value={String(periodDays)}
+                onValueChange={(v) => setDays(Number(v))}
+              >
                 <SelectTrigger className="h-8 w-[110px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PERIOD_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
+                  {options.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      {PERIOD_LABEL[d]}
                     </SelectItem>
                   ))}
                 </SelectContent>
