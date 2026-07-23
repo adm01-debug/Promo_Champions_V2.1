@@ -83,14 +83,17 @@ export const ChurnOverdueRankingCard = memo(
               Ranking — Churn atrasado por vendedor
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Select value={period} onValueChange={setPeriod}>
+              <Select
+                value={String(periodDays)}
+                onValueChange={(v) => setDays(Number(v))}
+              >
                 <SelectTrigger className="h-8 w-[110px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PERIOD_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
+                  {options.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      {PERIOD_LABEL[d]}
                     </SelectItem>
                   ))}
                 </SelectContent>
