@@ -57,6 +57,7 @@ export default function MinhasPremiacoes() {
   const [status, setStatus] = useState<AwardStatus | 'all'>('all');
   const [period, setPeriod] = useState<string>('all');
   const [page, setPage] = useState(0);
+  const [exporting, setExporting] = useState(false);
 
   useMyBonusAwardsRealtime();
 
