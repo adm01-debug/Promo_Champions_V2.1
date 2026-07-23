@@ -70,6 +70,50 @@ export function useMyBonusAwards(opts: UseMyBonusAwardsOptions) {
   });
 }
 
+/**
+ * Busca TODAS as linhas do filtro atual (sem paginação) para exportação.
+ * Faz paginação interna em blocos de 1000 para respeitar limites do PostgREST.
+ */
+export async function fetchAllMyBonusAwards(opts: {
+  status?: AwardStatus | 'all';
+  period?: string;
+}): Promise<MyAwardRow[]> {
+  const { status = 'all', period = 'all' } = opts;
+  const CHUNK = 1000;
+  const out: MyAwardRow[] = [];
+  let from = 0;
+
+  while (true) {
+    let q = supabase
+      .from('commission_bonus_awards')
+      .select('*, commission_bonuses(name)')
+      .order('awarded_at', { ascending: false })
+      .range(from, from + CHUNK - 1);
+
+    if (status !== 'all') q = q.eq('status', status);
+    if (period !== 'all' && /^\d{4}-\d{2}$/.test(period)) {
+      const [y, m] = period.split('-').map(Number);
+      const nextMonth =
+        m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
+      q = q.gte('period_month', `${period}-01`).lt('period_month', nextMonth);
+    }
+
+    const { data, error } = await q;
+    if (error) throw error;
+    const batch = (data ?? []).map((r) => {
+      const rel = (r as { commission_bonuses?: { name?: string } | null }).commission_bonuses;
+      return {
+        ...(r as unknown as CommissionBonusAward),
+        bonus_name: rel?.name ?? null,
+      };
+    });
+    out.push(...batch);
+    if (batch.length < CHUNK) break;
+    from += CHUNK;
+  }
+  return out;
+}
+
 /** Assina realtime das próprias premiações e invalida a query. */
 export function useMyBonusAwardsRealtime() {
   const qc = useQueryClient();
