@@ -99,6 +99,9 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
     return { achieved: a, inProgress: p };
   }, [bonuses]);
 
+  useAutoAwardBonuses(achieved, salespersonId);
+
+
   if (isLoading) {
     return (
       <Card className="p-4">
