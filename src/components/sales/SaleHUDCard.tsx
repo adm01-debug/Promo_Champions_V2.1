@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp } from "lucide-react";
+import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp, DollarSign } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
