@@ -270,11 +270,71 @@ export default function AdminAuditoriaPremiacoes() {
               <SelectItem value="cancelled">Cancelados</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={periodFilter} onValueChange={setPeriodFilter}>
+            <SelectTrigger className="w-40 h-8">
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os períodos</SelectItem>
+              {periodOptions.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {format(parseISO(`${p}-01`), "MMM/yy", { locale: ptBR })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={salespersonFilter} onValueChange={setSalespersonFilter}>
+            <SelectTrigger className="w-52 h-8">
+              <SelectValue placeholder="Vendedor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os vendedores</SelectItem>
+              {salespersonOptions.map((s) => (
+                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" variant="outline" className="h-8" onClick={handleExport}>
             <Download className="h-3.5 w-3.5 mr-1" /> Exportar CSV
           </Button>
         </div>
       </header>
+
+      {(salespersonFilter !== 'all' || periodFilter !== 'all') && (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-muted-foreground">Filtros ativos:</span>
+          {periodFilter !== 'all' && (
+            <Badge variant="outline" className="gap-1">
+              Período: {format(parseISO(`${periodFilter}-01`), "MMM/yy", { locale: ptBR })}
+              <button
+                type="button"
+                className="ml-1 opacity-60 hover:opacity-100"
+                onClick={() => setPeriodFilter('all')}
+                aria-label="Remover filtro de período"
+              >×</button>
+            </Badge>
+          )}
+          {salespersonFilter !== 'all' && (
+            <Badge variant="outline" className="gap-1">
+              Vendedor: {salespersonOptions.find((s) => s.id === salespersonFilter)?.name ?? '—'}
+              <button
+                type="button"
+                className="ml-1 opacity-60 hover:opacity-100"
+                onClick={() => setSalespersonFilter('all')}
+                aria-label="Remover filtro de vendedor"
+              >×</button>
+            </Badge>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-6 px-2 text-xs"
+            onClick={() => { setPeriodFilter('all'); setSalespersonFilter('all'); }}
+          >
+            Limpar tudo
+          </Button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
