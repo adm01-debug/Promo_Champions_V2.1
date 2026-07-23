@@ -12,7 +12,8 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { AlertTriangle, Bell, Play, Save, Mail, Send } from 'lucide-react';
+import { AlertTriangle, Bell, Play, Save, Mail, Send, History } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
@@ -169,10 +170,18 @@ const AdminAlertasChurn = () => {
               Notifica automaticamente o vendedor quando um cliente ultrapassa o limite de risco.
             </p>
           </div>
-          <Button onClick={runNow} disabled={running} variant="outline">
-            <Play className="h-4 w-4 mr-2" />
-            {running ? 'Executando...' : 'Executar agora'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <Link to="/admin/alertas-churn/historico">
+                <History className="h-4 w-4 mr-2" />
+                Histórico
+              </Link>
+            </Button>
+            <Button onClick={runNow} disabled={running} variant="outline">
+              <Play className="h-4 w-4 mr-2" />
+              {running ? 'Executando...' : 'Executar agora'}
+            </Button>
+          </div>
         </motion.div>
 
         <motion.div variants={itemVariants}>
