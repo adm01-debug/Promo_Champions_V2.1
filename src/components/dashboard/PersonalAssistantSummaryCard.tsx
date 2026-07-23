@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/atoms/skeleton";
 import { usePersonalAssistant } from "@/hooks/assistant/usePersonalAssistant";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
+import { AssistantTodayTasks } from "@/components/assistant/AssistantTodayTasks";
 
 interface Props {
   onOpenChat?: () => void;
@@ -82,6 +83,10 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
               </span>
             )}
           </div>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-border/50">
+          <AssistantTodayTasks salespersonId={salespersonId} limit={4} />
         </div>
       </Card>
     </motion.div>
