@@ -273,6 +273,7 @@ export const adminOnlyItems: MenuItem[] = [
   { title: "Admin Race Circuito 🏎️", url: "/admin/race-arena", icon: Flag },
   { title: "Comissões (Admin)", url: "/admin/comissoes", icon: Wallet },
   { title: "Premiações & Bônus", url: "/admin/premiacoes", icon: Trophy },
+  { title: "Auditoria de Premiações", url: "/admin/premiacoes/auditoria", icon: ScrollText },
   { title: "Telemetria", url: "/admin/telemetria", icon: Activity },
   { title: "Audit Trail", url: "/audit-logs", icon: ScrollText },
   { title: "SLA Tracking", url: "/sla-tracking", icon: Timer },
