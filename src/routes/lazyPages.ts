@@ -109,6 +109,7 @@ export const ApprovalWorkflows = lazyWithPrefetch(
 );
 export const CommissionRules = lazyWithPrefetch(() => import('@/pages/CommissionRules'));
 export const AdminPremiacoes = lazyWithPrefetch(() => import('@/pages/AdminPremiacoes'));
+export const AdminAuditoriaPremiacoes = lazyWithPrefetch(() => import('@/pages/AdminAuditoriaPremiacoes'));
 export const Webhooks = lazyWithPrefetch(() => import('@/pages/WebhooksPage'));
 export const AuditLogs = lazyWithPrefetch(() => import('@/pages/AuditLogsPage'));
 export const SLATracking = lazyWithPrefetch(() => import('@/pages/SLATrackingPage'));
