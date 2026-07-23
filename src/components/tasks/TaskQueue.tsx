@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors, DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useTodayTasks, TaskRecord, TaskPriority, useUpdateTask } from '@/hooks/useTasks';
@@ -13,23 +14,37 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, Calendar, Columns3, AlertOctagon } from 'lucide-react';
+import { CheckCircle, Calendar, Columns3, AlertOctagon, TimerOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PRIORITIES: TaskPriority[] = ['urgent', 'high', 'medium', 'low'];
 
 export function TaskQueue() {
-  const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlSalesperson = searchParams.get('salesperson_id');
+  const urlChurn = searchParams.get('churn') === '1';
+  const urlOverdue = searchParams.get('status') === 'overdue';
+
+  const [selectedSalesperson, setSelectedSalesperson] = useState<string>(urlSalesperson ?? 'all');
   const [activeTask, setActiveTask] = useState<TaskRecord | null>(null);
   const [rescheduleTask, setRescheduleTask] = useState<TaskRecord | null>(null);
   const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
   const [onlyChurn, setOnlyChurn] = useState(() => {
+    if (urlChurn) return true;
     if (typeof window === 'undefined') return false;
     try { return window.localStorage.getItem('taskQueue.onlyChurn') === '1'; } catch { return false; }
   });
+  const [onlyOverdue, setOnlyOverdue] = useState<boolean>(urlOverdue);
   useEffect(() => {
     try { window.localStorage.setItem('taskQueue.onlyChurn', onlyChurn ? '1' : '0'); } catch { /* noop */ }
   }, [onlyChurn]);
+
+  // Reactively sync when URL params change (deep-link from BI drill-down)
+  useEffect(() => {
+    if (urlSalesperson) setSelectedSalesperson(urlSalesperson);
+    if (urlChurn) setOnlyChurn(true);
+    setOnlyOverdue(urlOverdue);
+  }, [urlSalesperson, urlChurn, urlOverdue]);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
   const { data: tasks, isLoading: loadingTasks } = useTodayTasks(selectedSalesperson === 'all' ? undefined : selectedSalesperson);
@@ -41,9 +56,29 @@ export function TaskQueue() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const now = Date.now();
   const churnCount = tasks?.filter(t => (t.description || '').includes('[auto:churn]')).length || 0;
-  const visibleTasks = onlyChurn ? tasks?.filter(t => (t.description || '').includes('[auto:churn]')) : tasks;
-  const groupedTasks = visibleTasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
+  const overdueCount = useMemo(
+    () => (tasks || []).filter(t => t.status !== 'completed' && t.due_date && new Date(t.due_date).getTime() < now).length,
+    [tasks, now],
+  );
+  const visibleTasks = useMemo(() => {
+    let list = tasks || [];
+    if (onlyChurn) list = list.filter(t => (t.description || '').includes('[auto:churn]'));
+    if (onlyOverdue) list = list.filter(t => t.status !== 'completed' && t.due_date && new Date(t.due_date).getTime() < now);
+    return list;
+  }, [tasks, onlyChurn, onlyOverdue, now]);
+  const groupedTasks = visibleTasks.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>);
+
+  const clearDrilldown = () => {
+    setOnlyOverdue(false);
+    setOnlyChurn(false);
+    setSelectedSalesperson('all');
+    const next = new URLSearchParams(searchParams);
+    ['churn', 'status', 'salesperson_id'].forEach(k => next.delete(k));
+    setSearchParams(next, { replace: true });
+  };
+
 
   const findTaskById = (id: string) => tasks?.find(task => task.id === id);
   const getPriorityLabel = (p: TaskPriority) => ({ urgent: 'urgente', high: 'alta', medium: 'média', low: 'baixa' }[p]);
@@ -88,6 +123,10 @@ export function TaskQueue() {
             </SelectContent>
           </Select>
           <Button variant={onlyChurn ? 'default' : 'outline'} size="sm" onClick={() => setOnlyChurn(v => !v)} disabled={!onlyChurn && churnCount === 0} className={onlyChurn ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25 transition-all duration-200' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyChurn ? 'Mostrar todas as tarefas' : 'Mostrar apenas tarefas geradas por churn'}><AlertOctagon className="h-4 w-4 mr-2" />{onlyChurn ? `Somente churn (${churnCount})` : `Churn${churnCount ? ` (${churnCount})` : ''}`}</Button>
+          <Button variant={onlyOverdue ? 'default' : 'outline'} size="sm" onClick={() => setOnlyOverdue(v => !v)} disabled={!onlyOverdue && overdueCount === 0} className={onlyOverdue ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyOverdue ? 'Mostrar todas' : 'Mostrar apenas tarefas atrasadas'}><TimerOff className="h-4 w-4 mr-2" />{onlyOverdue ? `Atrasadas (${overdueCount})` : `Atrasadas${overdueCount ? ` (${overdueCount})` : ''}`}</Button>
+          {(onlyChurn || onlyOverdue || selectedSalesperson !== 'all') && (urlChurn || urlOverdue || urlSalesperson) && (
+            <Button variant="ghost" size="sm" onClick={clearDrilldown} className="text-xs text-muted-foreground hover:text-foreground">Limpar drill-down</Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')} className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"><Columns3 className="h-4 w-4 mr-2" />{viewMode === 'columns' ? 'Lista' : 'Colunas'}</Button>
         </div>
         <div className="flex items-center gap-2">
