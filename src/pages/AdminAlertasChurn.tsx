@@ -368,6 +368,98 @@ const AdminAlertasChurn = () => {
         </motion.div>
 
         <motion.div variants={itemVariants}>
+          <Card className="p-6 space-y-5">
+            <div className="flex items-center gap-2">
+              <ListChecks className="h-4 w-4 text-primary" />
+              <h2 className="text-lg font-semibold">Tarefa automática de follow-up</h2>
+            </div>
+            {isLoading || !draft ? (
+              <Skeleton className="h-32 w-full" />
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-label">Criar tarefa quando um alerta for disparado</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Deduplica por cliente/vendedor e respeita o cooldown abaixo. Não cria tarefa se já houver uma pendente para o mesmo cliente.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={draft.auto_task_enabled}
+                    onCheckedChange={(v) => setDraft({ ...draft, auto_task_enabled: v })}
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label className="text-label">Nível mínimo para gerar tarefa</Label>
+                    <select
+                      className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      value={draft.auto_task_min_level}
+                      onChange={(e) => setDraft({ ...draft, auto_task_min_level: e.target.value as Exclude<Level,'low'> })}
+                    >
+                      <option value="medium">Médio</option>
+                      <option value="high">Alto</option>
+                      <option value="critical">Crítico</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label className="text-label">Prioridade da tarefa</Label>
+                    <select
+                      className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      value={draft.auto_task_priority}
+                      onChange={(e) => setDraft({ ...draft, auto_task_priority: e.target.value as TaskPriority })}
+                    >
+                      <option value="low">Baixa</option>
+                      <option value="medium">Média</option>
+                      <option value="high">Alta</option>
+                      <option value="urgent">Urgente</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label className="text-label">Cooldown de tarefas (horas)</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={720}
+                      value={draft.auto_task_cooldown_hours}
+                      onChange={(e) =>
+                        setDraft({ ...draft, auto_task_cooldown_hours: Math.max(1, Number(e.target.value) || 1) })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Intervalo mínimo antes de gerar nova tarefa para o mesmo cliente.
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-label">Prazo da tarefa (dias)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={30}
+                      value={draft.auto_task_due_in_days}
+                      onChange={(e) =>
+                        setDraft({ ...draft, auto_task_due_in_days: Math.max(0, Number(e.target.value) || 0) })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      0 = para hoje. Define <code>due_date</code> da tarefa criada.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button onClick={() => saveMutation.mutate(draft)} disabled={saveMutation.isPending}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </Button>
+                </div>
+              </>
+            )}
+          </Card>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Bell className="h-4 w-4 text-primary" />
