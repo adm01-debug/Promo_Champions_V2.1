@@ -112,7 +112,11 @@ export function useUpdateAwardStatus() {
       status: AwardStatus;
       admin_notes?: string | null;
     }) => {
-      const patch: Record<string, unknown> = {
+      const patch: {
+        status: AwardStatus;
+        paid_at: string | null;
+        admin_notes?: string | null;
+      } = {
         status: input.status,
         paid_at: input.status === 'paid' ? new Date().toISOString() : null,
       };
