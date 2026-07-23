@@ -21,6 +21,7 @@ import { Download, History, ChevronLeft, ChevronRight, Filter } from 'lucide-rea
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChurnHistoryChart } from '@/components/admin/churn/ChurnHistoryChart';
+import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 
 type Level = 'low' | 'medium' | 'high' | 'critical' | 'all';
 
@@ -62,13 +63,24 @@ function csvEscape(v: unknown): string {
 }
 
 const AdminHistoricoAlertasChurn = () => {
+  const { days: sharedDays, setDays: setSharedDays, options: periodOptions } =
+    useChurnPeriodPreference();
   const [level, setLevel] = React.useState<Level>('all');
   const [salespersonId, setSalespersonId] = React.useState<string>('all');
   const [from, setFrom] = React.useState<string>(
-    format(subDays(new Date(), 30), 'yyyy-MM-dd'),
+    format(subDays(new Date(), sharedDays), 'yyyy-MM-dd'),
   );
   const [to, setTo] = React.useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const [page, setPage] = React.useState(0);
+
+  const applyPreset = React.useCallback(
+    (nDays: number) => {
+      setSharedDays(nDays);
+      setFrom(format(subDays(new Date(), nDays), 'yyyy-MM-dd'));
+      setTo(format(new Date(), 'yyyy-MM-dd'));
+    },
+    [setSharedDays],
+  );
 
   React.useEffect(() => {
     setPage(0);
@@ -238,6 +250,24 @@ const AdminHistoricoAlertasChurn = () => {
                   {(salespeople ?? []).map((s) => (
                     <SelectItem key={s.id} value={s.id}>
                       {s.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="filter-preset" className="text-xs">Período rápido</Label>
+              <Select
+                value={String(sharedDays)}
+                onValueChange={(v) => applyPreset(Number(v))}
+              >
+                <SelectTrigger id="filter-preset" className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {periodOptions.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      Últimos {d} dias
                     </SelectItem>
                   ))}
                 </SelectContent>
