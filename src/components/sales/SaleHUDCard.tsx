@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail } from "lucide-react";
+import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
 import { WhatsAppDialog } from "@/components/sales/WhatsAppDialog";
+import { classifyMarkup, formatMarkupPct, formatBRL, COST_SOURCE_LABELS } from "@/lib/markupHelpers";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
@@ -80,6 +82,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             <span className="text-2xl font-display font-black tracking-tighter text-primary">
               R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </span>
+            <MarkupChip sale={sale} />
           </div>
           <div className="flex gap-2">
             <Button
@@ -190,3 +193,58 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
 });
 
 SaleHUDCard.displayName = "SaleHUDCard";
+
+function MarkupChip({ sale }: { sale: Sale }) {
+  const info = classifyMarkup(sale.markup_pct);
+  const hasCostDetail =
+    sale.unit_cost !== null && sale.unit_cost !== undefined ||
+    sale.total_cost !== null && sale.total_cost !== undefined;
+
+  const chip = (
+    <Badge
+      variant="outline"
+      className={cn(
+        "mt-2 gap-1 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest",
+        info.className,
+      )}
+    >
+      <TrendingUp className="h-3 w-3" />
+      <span>Markup {formatMarkupPct(info.value)}</span>
+    </Badge>
+  );
+
+  if (!hasCostDetail && info.tier === 'unknown') {
+    return chip;
+  }
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">{chip}</span>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="text-xs space-y-1">
+          <div className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground">
+            Rentabilidade
+          </div>
+          <div>Preço: <span className="font-semibold">{formatBRL(sale.valor)}</span></div>
+          {sale.total_cost != null && (
+            <div>Custo total: <span className="font-semibold">{formatBRL(sale.total_cost)}</span></div>
+          )}
+          {sale.margin_amount != null && (
+            <div>Margem: <span className="font-semibold">{formatBRL(sale.margin_amount)}</span></div>
+          )}
+          <div>Markup: <span className="font-semibold">{formatMarkupPct(info.value)}</span></div>
+          {sale.cost_source && (
+            <div className="text-muted-foreground">
+              Fonte: {COST_SOURCE_LABELS[sale.cost_source] ?? sale.cost_source}
+            </div>
+          )}
+          {info.tier === 'unknown' && (
+            <div className="text-muted-foreground italic">Custo ainda não sincronizado com o Promo Gifts.</div>
+          )}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}

@@ -226,6 +226,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "account_contacts_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       account_plans: {
@@ -636,6 +643,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "activities_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "activities_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -837,6 +851,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_events_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -1045,6 +1066,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ai_sales_insights_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       api_tokens: {
@@ -1190,6 +1218,13 @@ export type Database = {
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -1705,6 +1740,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "buying_committee_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       buying_committee_members: {
@@ -1759,6 +1801,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "buying_committee_members_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -2658,6 +2707,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "call_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       call_metric_benchmarks: {
@@ -3079,6 +3135,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "call_recordings_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "call_recordings_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -3383,6 +3446,13 @@ export type Database = {
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_interactions_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -4726,6 +4796,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "commissions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "commissions_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -4791,6 +4868,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "committee_coverage_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       committee_extraction_runs: {
@@ -4840,6 +4924,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "committee_extraction_runs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -5245,6 +5336,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_analyses_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -5810,6 +5908,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "deal_chat_history_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "deal_chat_history_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -5887,6 +5992,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "deal_committee_coverage_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       deal_health_history: {
@@ -5923,6 +6035,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_health_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -5990,6 +6109,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "deal_health_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       deal_outcomes: {
@@ -6026,6 +6152,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_outcomes_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -6092,6 +6225,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_probability_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6166,6 +6306,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "deal_risk_signals_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       deal_stage_history: {
@@ -6196,6 +6343,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_stage_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6240,6 +6394,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_stage_transitions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6319,6 +6480,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "deal_stakeholders_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       deal_velocity_alerts: {
@@ -6361,6 +6529,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_velocity_alerts_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6429,6 +6604,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_velocity_predictions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6527,6 +6709,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dialer_queue_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -6885,6 +7074,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "email_engagement_score_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       email_engagement_scores: {
@@ -6945,6 +7141,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_engagement_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -7022,6 +7225,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_tracking_events_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -7647,6 +7857,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "follow_up_audit_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       follow_up_notifications: {
@@ -7700,6 +7917,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follow_up_notifications_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -7940,6 +8164,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forecast_deal_contributions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -8702,6 +8933,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "lead_assignments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "lead_assignments_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -8765,6 +9003,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_churn_risk_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -9047,6 +9292,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "lead_score_explanations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       lead_score_history: {
@@ -9077,6 +9329,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_score_history_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -9136,6 +9395,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_scores_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -9739,6 +10005,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mql_qualifications_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       notification_preferences: {
@@ -9895,6 +10168,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nps_surveys_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -10952,6 +11232,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "pipeline_inspection_snapshots_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       pipeline_inspections: {
@@ -11003,6 +11290,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pipeline_inspections_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -11201,6 +11495,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "playbook_progress_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -11662,7 +11963,9 @@ export type Database = {
       products: {
         Row: {
           category: string
+          cost_synced_at: string | null
           created_at: string
+          default_cost: number | null
           description: string | null
           id: string
           min_stock_level: number | null
@@ -11677,7 +11980,9 @@ export type Database = {
         }
         Insert: {
           category?: string
+          cost_synced_at?: string | null
           created_at?: string
+          default_cost?: number | null
           description?: string | null
           id?: string
           min_stock_level?: number | null
@@ -11692,7 +11997,9 @@ export type Database = {
         }
         Update: {
           category?: string
+          cost_synced_at?: string | null
           created_at?: string
+          default_cost?: number | null
           description?: string | null
           id?: string
           min_stock_level?: number | null
@@ -11863,6 +12170,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospect_cadences_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
           {
@@ -12768,6 +13082,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -14403,6 +14724,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sale_notifications_audit_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sale_notifications_audit_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
@@ -14444,6 +14772,8 @@ export type Database = {
           client_name: string
           closer_id: string | null
           competitor_price_at_deal: number | null
+          cost_source: string | null
+          cost_synced_at: string | null
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data: Json | null
@@ -14454,6 +14784,8 @@ export type Database = {
           id: string
           is_first_sale: boolean | null
           lost_to_competitor_id: string | null
+          margin_amount: number | null
+          markup_pct: number | null
           pipeline_id: string | null
           product_id: string | null
           product_name: string
@@ -14465,6 +14797,8 @@ export type Database = {
           status: string
           stock_reduced: boolean | null
           territory_id: string | null
+          total_cost: number | null
+          unit_cost: number | null
           updated_at: string
           whatsapp_last_interaction: string | null
           whatsapp_status: string | null
@@ -14480,6 +14814,8 @@ export type Database = {
           client_name: string
           closer_id?: string | null
           competitor_price_at_deal?: number | null
+          cost_source?: string | null
+          cost_synced_at?: string | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data?: Json | null
@@ -14490,6 +14826,8 @@ export type Database = {
           id?: string
           is_first_sale?: boolean | null
           lost_to_competitor_id?: string | null
+          margin_amount?: number | null
+          markup_pct?: number | null
           pipeline_id?: string | null
           product_id?: string | null
           product_name: string
@@ -14501,6 +14839,8 @@ export type Database = {
           status?: string
           stock_reduced?: boolean | null
           territory_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
           updated_at?: string
           whatsapp_last_interaction?: string | null
           whatsapp_status?: string | null
@@ -14516,6 +14856,8 @@ export type Database = {
           client_name?: string
           closer_id?: string | null
           competitor_price_at_deal?: number | null
+          cost_source?: string | null
+          cost_synced_at?: string | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
           enrichment_data?: Json | null
@@ -14526,6 +14868,8 @@ export type Database = {
           id?: string
           is_first_sale?: boolean | null
           lost_to_competitor_id?: string | null
+          margin_amount?: number | null
+          markup_pct?: number | null
           pipeline_id?: string | null
           product_id?: string | null
           product_name?: string
@@ -14537,6 +14881,8 @@ export type Database = {
           status?: string
           stock_reduced?: boolean | null
           territory_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
           updated_at?: string
           whatsapp_last_interaction?: string | null
           whatsapp_status?: string | null
@@ -15699,6 +16045,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "scheduled_sends_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       score_change_logs: {
@@ -16005,6 +16358,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "send_time_profiles_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -16580,6 +16940,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -17464,6 +17831,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "tasks_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "tasks_salesperson_id_fkey"
             columns: ["salesperson_id"]
             isOneToOne: false
@@ -18139,6 +18513,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "twilio_call_sessions_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -19002,6 +19383,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "whatsapp_conversations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       whatsapp_template_versions: {
@@ -19113,6 +19501,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "win_loss_analyses_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -19321,6 +19716,13 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: true
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "win_probability_deal_calibrations_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: true
+            referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
         ]
@@ -20156,6 +20558,13 @@ export type Database = {
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "follow_up_audit_logs_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
         ]
       }
       latest_briefing_view: {
@@ -20338,6 +20747,178 @@ export type Database = {
           won_count_90d: number | null
         }
         Relationships: []
+      }
+      sales_with_markup: {
+        Row: {
+          amount: number | null
+          client_id: string | null
+          client_name: string | null
+          closer_id: string | null
+          cost_source: string | null
+          cost_synced_at: string | null
+          created_at: string | null
+          id: string | null
+          margin_amount: number | null
+          markup_pct: number | null
+          product_id: string | null
+          product_name: string | null
+          salesperson_id: string | null
+          sdr_id: string | null
+          sku: string | null
+          status: string | null
+          total_cost: number | null
+          unit_cost: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number | null
+          client_id?: string | null
+          client_name?: string | null
+          closer_id?: string | null
+          cost_source?: string | null
+          cost_synced_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          margin_amount?: never
+          markup_pct?: number | null
+          product_id?: string | null
+          product_name?: string | null
+          salesperson_id?: string | null
+          sdr_id?: string | null
+          sku?: string | null
+          status?: string | null
+          total_cost?: never
+          unit_cost?: never
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number | null
+          client_id?: string | null
+          client_name?: string | null
+          closer_id?: string | null
+          cost_source?: string | null
+          cost_synced_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          margin_amount?: never
+          markup_pct?: number | null
+          product_id?: string | null
+          product_name?: string | null
+          salesperson_id?: string | null
+          sdr_id?: string | null
+          sku?: string | null
+          status?: string | null
+          total_cost?: never
+          unit_cost?: never
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_purchase_seasonality"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_closer_id_fkey"
+            columns: ["closer_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_sdr_id_fkey"
+            columns: ["sdr_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salespeople_public: {
         Row: {

@@ -50,6 +50,13 @@ export interface Sale {
   ai_prediction_reasoning?: string | null;
   whatsapp_status?: string | null;
   whatsapp_last_interaction?: string | null;
+  // Rentabilidade (Promo Gifts)
+  markup_pct?: number | null;
+  margin_amount?: number | null; // mascarado como null para vendedor
+  unit_cost?: number | null; // mascarado como null para vendedor
+  total_cost?: number | null; // mascarado como null para vendedor
+  cost_source?: string | null;
+  cost_synced_at?: string | null;
 }
 
 export interface CreateSaleInput {
