@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Trophy, ChevronLeft, ChevronRight, CalendarDays, Filter, X } from 'lucide-react';
+import { Trophy, ChevronLeft, ChevronRight, CalendarDays, Filter, X, Download, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,8 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useMyBonusAwards, useMyBonusAwardsRealtime } from '@/hooks/useMyBonusAwards';
+import { useMyBonusAwards, useMyBonusAwardsRealtime, fetchAllMyBonusAwards } from '@/hooks/useMyBonusAwards';
 import type { AwardStatus } from '@/hooks/useCommissionBonusAwards';
+import { buildCsv, downloadCsv } from '@/lib/csv';
 
 const PAGE_SIZE = 10;
 
