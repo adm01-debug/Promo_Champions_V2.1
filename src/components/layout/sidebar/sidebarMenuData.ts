@@ -98,6 +98,7 @@ export const sdrGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Meu Assistente", url: "/meu-assistente", icon: Bot },
+      { title: "Minhas Premiações", url: "/minhas-premiacoes", icon: Trophy },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
       { title: "Perguntar à IA", url: "/perguntar", icon: Sparkles },
       { title: "Busca Inteligente", url: "/busca-inteligente", icon: Sparkles },
