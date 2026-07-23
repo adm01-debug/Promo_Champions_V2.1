@@ -1,19 +1,22 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
+import { Link } from 'react-router-dom';
 import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Check, 
-  Phone, 
-  Users, 
-  Mail, 
-  FileText, 
+import {
+  Check,
+  Phone,
+  Users,
+  Mail,
+  FileText,
   Clock,
   MoreHorizontal,
   Linkedin,
-  MessageCircle
+  MessageCircle,
+  ShieldAlert,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
