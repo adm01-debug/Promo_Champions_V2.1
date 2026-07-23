@@ -16707,6 +16707,42 @@ export type Database = {
         }
         Relationships: []
       }
+      stage_inactivity_rules: {
+        Row: {
+          created_at: string
+          critical_days: number
+          enabled: boolean
+          id: string
+          label: string
+          mild_days: number
+          moderate_days: number
+          stage: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          critical_days: number
+          enabled?: boolean
+          id?: string
+          label: string
+          mild_days: number
+          moderate_days: number
+          stage: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          critical_days?: number
+          enabled?: boolean
+          id?: string
+          label?: string
+          mild_days?: number
+          moderate_days?: number
+          stage?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stage_velocity_baselines: {
         Row: {
           avg_days: number
