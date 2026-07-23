@@ -346,7 +346,6 @@ const AdminAlertasChurn = () => {
             )}
           </Card>
         </motion.div>
-        </motion.div>
 
         <motion.div variants={itemVariants}>
           <Card className="p-6">
