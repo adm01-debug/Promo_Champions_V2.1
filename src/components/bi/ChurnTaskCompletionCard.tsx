@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight } from 'lucide-react';
+import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
 import { supabase } from '@/integrations/supabase/client';
