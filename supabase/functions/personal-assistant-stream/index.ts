@@ -153,7 +153,7 @@ function fmtBRL(v: number): string {
   return `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
 
-function buildSystemPrompt(mode: Mode, ctx: PersonalContext): string {
+function buildSystemPrompt(mode: Mode, ctx: PersonalContext, previousBriefing?: string | null): string {
   const dealsBlock = ctx.criticalDeals.length
     ? ctx.criticalDeals
         .map((d) => `  - ${d.client_name} · ${d.product_name} · ${fmtBRL(d.amount)} · ${d.days_stagnant}d parado · ${d.status}`)
@@ -252,7 +252,25 @@ Deno.serve(
       if (errors.length) return validationErrorResponse(errors, corsHeaders);
 
       const context = await buildContext(auth.client, salespersonId!);
-      const systemPrompt = buildSystemPrompt(mode, context);
+
+      // Busca briefing anterior (não o de hoje) para permitir análise de delta no nudge proativo.
+      let previousBriefing: string | null = null;
+      if (mode === "proactive_nudge") {
+        const todayISO = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }))
+          .toISOString()
+          .slice(0, 10);
+        const { data: prev } = await auth.client
+          .from("personal_assistant_briefings")
+          .select("content, briefing_date")
+          .eq("salesperson_id", salespersonId!)
+          .lt("briefing_date", todayISO)
+          .order("briefing_date", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        previousBriefing = prev?.content ?? null;
+      }
+
+      const systemPrompt = buildSystemPrompt(mode, context, previousBriefing);
 
       // ── Cache do briefing do dia (idempotência por vendedor/dia) ────────────
       // Fuso America/Sao_Paulo → chave do dia estável.
