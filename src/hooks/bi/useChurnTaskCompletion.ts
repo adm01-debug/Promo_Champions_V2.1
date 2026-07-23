@@ -2,6 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { subDays } from 'date-fns';
 
+export interface ChurnOverdueTask {
+  id: string;
+  description: string | null;
+  due_date: string | null;
+  created_at: string;
+  salesperson_id: string | null;
+}
+
 export interface ChurnTaskCompletionStats {
   total: number;
   completed: number;
@@ -9,6 +17,7 @@ export interface ChurnTaskCompletionStats {
   overdue: number;
   completionRate: number;
   overdueIds: string[];
+  overdueTasks: ChurnOverdueTask[];
 }
 
 /**
