@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail } from "lucide-react";
+import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { ActivityLogForm } from "@/components/activities/ActivityLogForm";
 import { AIEmailDialog } from "@/components/sales/AIEmailDialog";
 import { WhatsAppDialog } from "@/components/sales/WhatsAppDialog";
+import { classifyMarkup, formatMarkupPct, formatBRL, COST_SOURCE_LABELS } from "@/lib/markupHelpers";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const statusColors: Record<string, string> = {
   completed: "bg-status-success/20 text-status-success border-status-success/30",
