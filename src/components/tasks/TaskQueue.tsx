@@ -23,7 +23,13 @@ export function TaskQueue() {
   const [activeTask, setActiveTask] = useState<TaskRecord | null>(null);
   const [rescheduleTask, setRescheduleTask] = useState<TaskRecord | null>(null);
   const [viewMode, setViewMode] = useState<'columns' | 'list'>('columns');
-  const [onlyChurn, setOnlyChurn] = useState(false);
+  const [onlyChurn, setOnlyChurn] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    try { return window.localStorage.getItem('taskQueue.onlyChurn') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem('taskQueue.onlyChurn', onlyChurn ? '1' : '0'); } catch { /* noop */ }
+  }, [onlyChurn]);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
   const { data: tasks, isLoading: loadingTasks } = useTodayTasks(selectedSalesperson === 'all' ? undefined : selectedSalesperson);
