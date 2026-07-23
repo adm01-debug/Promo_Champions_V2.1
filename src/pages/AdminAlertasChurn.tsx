@@ -12,11 +12,12 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { AlertTriangle, Bell, Play, Save, Mail, Send, History } from 'lucide-react';
+import { AlertTriangle, Bell, Play, Save, Mail, Send, History, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
+type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 interface Settings {
   enabled: boolean;
@@ -28,6 +29,11 @@ interface Settings {
   email_recipients: string[];
   email_subject_template: string;
   email_provider: string;
+  auto_task_enabled: boolean;
+  auto_task_min_level: Exclude<Level, 'low'>;
+  auto_task_cooldown_hours: number;
+  auto_task_priority: TaskPriority;
+  auto_task_due_in_days: number;
 }
 
 interface StateRow {
