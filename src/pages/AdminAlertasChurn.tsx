@@ -170,10 +170,18 @@ const AdminAlertasChurn = () => {
               Notifica automaticamente o vendedor quando um cliente ultrapassa o limite de risco.
             </p>
           </div>
-          <Button onClick={runNow} disabled={running} variant="outline">
-            <Play className="h-4 w-4 mr-2" />
-            {running ? 'Executando...' : 'Executar agora'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <Link to="/admin/alertas-churn/historico">
+                <History className="h-4 w-4 mr-2" />
+                Histórico
+              </Link>
+            </Button>
+            <Button onClick={runNow} disabled={running} variant="outline">
+              <Play className="h-4 w-4 mr-2" />
+              {running ? 'Executando...' : 'Executar agora'}
+            </Button>
+          </div>
         </motion.div>
 
         <motion.div variants={itemVariants}>
