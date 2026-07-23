@@ -31,6 +31,7 @@ import { BISalesInsights } from '@/components/bi/BISalesInsights';
 import { BIVendasMacro } from '@/components/bi/BIVendasMacro';
 import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
 import { ChurnTaskCompletionCard } from '@/components/bi/ChurnTaskCompletionCard';
+import { ChurnOverdueRankingCard } from '@/components/bi/ChurnOverdueRankingCard';
 import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
