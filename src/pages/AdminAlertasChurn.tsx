@@ -54,10 +54,20 @@ const AdminAlertasChurn = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('churn_alert_settings')
-        .select('enabled, min_level, cooldown_hours')
+        .select('enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider')
         .maybeSingle();
       if (error) throw error;
-      return (data ?? { enabled: true, min_level: 'high', cooldown_hours: 24 }) as Settings;
+      return (data ?? {
+        enabled: true,
+        min_level: 'high',
+        cooldown_hours: 24,
+        email_enabled: false,
+        email_from: null,
+        email_reply_to: null,
+        email_recipients: [],
+        email_subject_template: '[Churn] Cliente {{client_name}} em risco {{level}}',
+        email_provider: 'lovable',
+      }) as Settings;
     },
   });
 
