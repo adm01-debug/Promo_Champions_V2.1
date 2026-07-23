@@ -212,6 +212,7 @@ const StatCard = ({
 
 const VendedorDashboard = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data, isLoading, error } = useVendedorData(id || '');
 
   const { salesperson, goal, currentSales, previousSales, allSales } = data || {
