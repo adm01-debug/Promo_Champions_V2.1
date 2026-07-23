@@ -123,6 +123,16 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             <Button
               variant="ghost"
               size="icon"
+              className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowRentabilidade(true)}
+              title="Rentabilidade"
+              aria-label="Rentabilidade"
+            >
+              <DollarSign className="h-4 w-4 text-amber-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
               onClick={() => setShowLog(true)}
               title="Registrar Atividade"
