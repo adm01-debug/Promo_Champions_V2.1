@@ -32,6 +32,7 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
 import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
+import { EligibleBonusesCard } from '@/components/vendedor/EligibleBonusesCard';
 import { PersonalAssistantSummaryCard } from '@/components/dashboard/PersonalAssistantSummaryCard';
 import { useNavigate } from 'react-router-dom';
 
