@@ -35,7 +35,9 @@ export function TaskQueue() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const groupedTasks = tasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
+  const churnCount = tasks?.filter(t => (t.description || '').includes('[auto:churn]')).length || 0;
+  const visibleTasks = onlyChurn ? tasks?.filter(t => (t.description || '').includes('[auto:churn]')) : tasks;
+  const groupedTasks = visibleTasks?.reduce((acc, task) => { acc[task.priority] = acc[task.priority] || []; acc[task.priority].push(task); return acc; }, {} as Record<TaskPriority, TaskRecord[]>) || {} as Record<TaskPriority, TaskRecord[]>;
 
   const findTaskById = (id: string) => tasks?.find(task => task.id === id);
   const getPriorityLabel = (p: TaskPriority) => ({ urgent: 'urgente', high: 'alta', medium: 'média', low: 'baixa' }[p]);
