@@ -81,6 +81,7 @@ export function TaskQueue() {
               {salespeople?.map((sp) => (<SelectItem key={sp.id} value={sp.id}><div className="flex items-center gap-2"><Avatar className="h-5 w-5 border border-background"><AvatarImage src={sp.avatar_url || undefined} /><AvatarFallback className="text-[9px] bg-gradient-to-br from-primary to-accent text-primary-foreground">{sp.name.charAt(0)}</AvatarFallback></Avatar>{sp.name}</div></SelectItem>))}
             </SelectContent>
           </Select>
+          <Button variant={onlyChurn ? 'default' : 'outline'} size="sm" onClick={() => setOnlyChurn(v => !v)} disabled={!onlyChurn && churnCount === 0} className={onlyChurn ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25 transition-all duration-200' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyChurn ? 'Mostrar todas as tarefas' : 'Mostrar apenas tarefas geradas por churn'}><AlertOctagon className="h-4 w-4 mr-2" />{onlyChurn ? `Somente churn (${churnCount})` : `Churn${churnCount ? ` (${churnCount})` : ''}`}</Button>
           <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')} className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"><Columns3 className="h-4 w-4 mr-2" />{viewMode === 'columns' ? 'Lista' : 'Colunas'}</Button>
         </div>
         <div className="flex items-center gap-2">
