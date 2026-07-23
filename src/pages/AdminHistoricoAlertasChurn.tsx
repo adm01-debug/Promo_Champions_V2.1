@@ -63,13 +63,24 @@ function csvEscape(v: unknown): string {
 }
 
 const AdminHistoricoAlertasChurn = () => {
+  const { days: sharedDays, setDays: setSharedDays, options: periodOptions } =
+    useChurnPeriodPreference();
   const [level, setLevel] = React.useState<Level>('all');
   const [salespersonId, setSalespersonId] = React.useState<string>('all');
   const [from, setFrom] = React.useState<string>(
-    format(subDays(new Date(), 30), 'yyyy-MM-dd'),
+    format(subDays(new Date(), sharedDays), 'yyyy-MM-dd'),
   );
   const [to, setTo] = React.useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const [page, setPage] = React.useState(0);
+
+  const applyPreset = React.useCallback(
+    (nDays: number) => {
+      setSharedDays(nDays);
+      setFrom(format(subDays(new Date(), nDays), 'yyyy-MM-dd'));
+      setTo(format(new Date(), 'yyyy-MM-dd'));
+    },
+    [setSharedDays],
+  );
 
   React.useEffect(() => {
     setPage(0);
