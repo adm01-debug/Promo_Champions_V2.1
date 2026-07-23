@@ -7,7 +7,7 @@ import { SALE_STATUS_LABELS } from '@/constants';
 export const salesService = {
   async getSales(searchTerm?: string): Promise<Sale[]> {
     let query = supabase
-      .from('sales')
+      .from('sales_with_markup')
       .select(
         `
         *,
