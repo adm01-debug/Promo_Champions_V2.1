@@ -214,6 +214,29 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
             </div>
           )}
 
+          {/* Bônus & premiações conquistados no ciclo */}
+          {(achievedCount > 0 || inProgressCount > 0) && (
+            <div className="rounded-lg border border-amber-500/25 bg-amber-500/5 p-3 flex items-center gap-3">
+              <div className="p-1.5 rounded-md bg-amber-500/15 text-amber-500">
+                <Trophy className="h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Bônus conquistados este ciclo
+                </p>
+                <p className="text-xl font-black tabular-nums text-amber-600 dark:text-amber-400">
+                  {achievedFixedTotal > 0 ? `+ ${formatBRL(achievedFixedTotal)}` : `${achievedCount} ativo(s)`}
+                </p>
+              </div>
+              <div className="text-right text-[11px] text-muted-foreground tabular-nums">
+                {achievedCount > 0 && <p>Conquistados: <span className="font-semibold text-foreground">{achievedCount}</span></p>}
+                {inProgressCount > 0 && <p>Em progresso: <span className="font-semibold text-foreground">{inProgressCount}</span></p>}
+              </div>
+            </div>
+          )}
+
+
+
 
           {/* Insight secundário */}
           <p className="text-sm text-foreground/90">
