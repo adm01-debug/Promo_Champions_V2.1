@@ -104,19 +104,36 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
             <AlertOctagon className="h-4 w-4 text-destructive" />
             Tarefas de Churn — últimos {days} dias
           </CardTitle>
-          <Select value={salespersonId} onValueChange={setSalespersonId}>
-            <SelectTrigger className="h-8 w-[180px] text-xs">
-              <SelectValue placeholder="Vendedor" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os vendedores</SelectItem>
-              {sellers?.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select
+              value={String(days)}
+              onValueChange={(v) => setDays(Number(v))}
+            >
+              <SelectTrigger className="h-8 w-[110px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    {PERIOD_LABEL[d]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={salespersonId} onValueChange={setSalespersonId}>
+              <SelectTrigger className="h-8 w-[180px] text-xs">
+                <SelectValue placeholder="Vendedor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os vendedores</SelectItem>
+                {sellers?.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
