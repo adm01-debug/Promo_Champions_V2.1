@@ -283,7 +283,9 @@ function MarkupChip({ sale }: { sale: Sale }) {
       )}
     >
       <TrendingUp className="h-3 w-3" />
-      <span>Markup {formatMarkupPct(info.value)}</span>
+      <span>
+        {info.tier === 'unknown' ? 'Sem custo' : `Markup ${formatMarkupPct(info.value)}`}
+      </span>
     </Badge>
   );
 
