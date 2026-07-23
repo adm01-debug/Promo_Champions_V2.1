@@ -256,6 +256,24 @@ const AdminHistoricoAlertasChurn = () => {
               </Select>
             </div>
             <div>
+              <Label htmlFor="filter-preset" className="text-xs">Período rápido</Label>
+              <Select
+                value={String(sharedDays)}
+                onValueChange={(v) => applyPreset(Number(v))}
+              >
+                <SelectTrigger id="filter-preset" className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {periodOptions.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      Últimos {d} dias
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label htmlFor="filter-from" className="text-xs">De</Label>
               <Input
                 id="filter-from"
