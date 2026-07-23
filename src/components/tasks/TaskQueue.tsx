@@ -68,7 +68,7 @@ export function TaskQueue() {
     );
   }
 
-  const totalTasks = tasks?.length || 0;
+  const totalTasks = visibleTasks?.length || 0;
 
   return (
     <div className="space-y-6 animate-fade-in">
