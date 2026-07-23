@@ -1,10 +1,21 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { AlertOctagon, CheckCircle2, Clock, TimerOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -12,24 +23,65 @@ interface Props {
   days?: number;
 }
 
+interface SalespersonOption {
+  id: string;
+  name: string;
+}
+
 export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) => {
-  const { data, isLoading } = useChurnTaskCompletion(days);
+  const [salespersonId, setSalespersonId] = useState<string>('all');
+  const navigate = useNavigate();
+  const { data, isLoading } = useChurnTaskCompletion(
+    days,
+    salespersonId === 'all' ? null : salespersonId,
+  );
+
+  const { data: sellers } = useQuery<SalespersonOption[]>({
+    queryKey: ['bi', 'salespeople-for-churn-widget'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('salespeople')
+        .select('id,name')
+        .eq('is_active', true)
+        .order('name');
+      if (error) throw error;
+      return (data ?? []) as SalespersonOption[];
+    },
+    staleTime: 5 * 60_000,
+  });
 
   const rate = data?.completionRate ?? 0;
   const rateTone =
-    rate >= 80
-      ? 'text-emerald-500'
-      : rate >= 50
-      ? 'text-amber-500'
-      : 'text-destructive';
+    rate >= 80 ? 'text-emerald-500' : rate >= 50 ? 'text-amber-500' : 'text-destructive';
+
+  const goToOverdue = () => {
+    const params = new URLSearchParams({ churn: '1', status: 'overdue' });
+    if (salespersonId !== 'all') params.set('salesperson_id', salespersonId);
+    navigate(`/tarefas?${params.toString()}`);
+  };
 
   return (
     <Card className={cn('border-border/60', className)}>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <AlertOctagon className="h-4 w-4 text-destructive" />
-          Tarefas de Churn — últimos {days} dias
-        </CardTitle>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <AlertOctagon className="h-4 w-4 text-destructive" />
+            Tarefas de Churn — últimos {days} dias
+          </CardTitle>
+          <Select value={salespersonId} onValueChange={setSalespersonId}>
+            <SelectTrigger className="h-8 w-[180px] text-xs">
+              <SelectValue placeholder="Vendedor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os vendedores</SelectItem>
+              {sellers?.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoading ? (
@@ -71,6 +123,18 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
                 value={data.overdue}
               />
             </div>
+            {data.overdue > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToOverdue}
+                className="w-full border-destructive/40 text-destructive hover:bg-destructive/10"
+              >
+                Ver {data.overdue} tarefa{data.overdue > 1 ? 's' : ''} atrasada
+                {data.overdue > 1 ? 's' : ''}
+                <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Button>
+            )}
           </>
         )}
       </CardContent>
