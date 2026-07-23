@@ -12,7 +12,8 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { AlertTriangle, Bell, Play, Save } from 'lucide-react';
+import { AlertTriangle, Bell, Play, Save, Mail, Send } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 
@@ -20,6 +21,12 @@ interface Settings {
   enabled: boolean;
   min_level: Level;
   cooldown_hours: number;
+  email_enabled: boolean;
+  email_from: string | null;
+  email_reply_to: string | null;
+  email_recipients: string[];
+  email_subject_template: string;
+  email_provider: string;
 }
 
 interface StateRow {
@@ -47,10 +54,20 @@ const AdminAlertasChurn = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('churn_alert_settings')
-        .select('enabled, min_level, cooldown_hours')
+        .select('enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider')
         .maybeSingle();
       if (error) throw error;
-      return (data ?? { enabled: true, min_level: 'high', cooldown_hours: 24 }) as Settings;
+      return (data ?? {
+        enabled: true,
+        min_level: 'high',
+        cooldown_hours: 24,
+        email_enabled: false,
+        email_from: null,
+        email_reply_to: null,
+        email_recipients: [],
+        email_subject_template: '[Churn] Cliente {{client_name}} em risco {{level}}',
+        email_provider: 'lovable',
+      }) as Settings;
     },
   });
 
@@ -100,6 +117,25 @@ const AdminAlertasChurn = () => {
       toast.error(`Falha: ${(e as Error).message}`);
     } finally {
       setRunning(false);
+    }
+  };
+
+  const [sendingTest, setSendingTest] = React.useState(false);
+  const sendTestEmail = async () => {
+    if (!draft) return;
+    setSendingTest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-churn-alert-email', {
+        body: { test: true },
+      });
+      if (error) throw error;
+      const res = data as { ok: boolean; error?: string; recipients?: number };
+      if (!res.ok) throw new Error(res.error ?? 'Falha desconhecida');
+      toast.success(`E-mail de teste enviado para ${res.recipients} destinatário(s).`);
+    } catch (e) {
+      toast.error(`Falha no teste: ${(e as Error).message}`);
+    } finally {
+      setSendingTest(false);
     }
   };
 
@@ -195,6 +231,113 @@ const AdminAlertasChurn = () => {
                     onClick={() => saveMutation.mutate(draft)}
                     disabled={saveMutation.isPending}
                   >
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </Button>
+                </div>
+              </>
+            )}
+          </Card>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <Card className="p-6 space-y-5">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-primary" />
+              <h2 className="text-lg font-semibold">Envio por e-mail</h2>
+            </div>
+            {isLoading || !draft ? (
+              <Skeleton className="h-32 w-full" />
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-label">Ativar envio por e-mail</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Envia um e-mail toda vez que um alerta for disparado. Requer domínio verificado.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={draft.email_enabled}
+                    onCheckedChange={(v) => setDraft({ ...draft, email_enabled: v })}
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label className="text-label">Provedor</Label>
+                    <select
+                      className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      value={draft.email_provider}
+                      onChange={(e) => setDraft({ ...draft, email_provider: e.target.value })}
+                    >
+                      <option value="lovable">Lovable Emails (domínio próprio)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Configure o domínio verificado em Cloud → E-mails antes de habilitar.
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-label">Remetente (From)</Label>
+                    <Input
+                      type="email"
+                      placeholder="alertas@seudominio.com"
+                      value={draft.email_from ?? ''}
+                      onChange={(e) => setDraft({ ...draft, email_from: e.target.value || null })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-label">Responder para (Reply-To)</Label>
+                    <Input
+                      type="email"
+                      placeholder="opcional"
+                      value={draft.email_reply_to ?? ''}
+                      onChange={(e) => setDraft({ ...draft, email_reply_to: e.target.value || null })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-label">Assunto (template)</Label>
+                    <Input
+                      value={draft.email_subject_template}
+                      onChange={(e) => setDraft({ ...draft, email_subject_template: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Variáveis: <code>{'{{client_name}}'}</code>, <code>{'{{level}}'}</code>, <code>{'{{days}}'}</code>.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-label">Destinatários</Label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Um e-mail por linha ou separados por vírgula"
+                    value={draft.email_recipients.join('\n')}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        email_recipients: e.target.value
+                          .split(/[\n,;]+/)
+                          .map((s) => s.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {draft.email_recipients.length} destinatário(s) configurado(s).
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={sendTestEmail}
+                    disabled={sendingTest || !draft.email_enabled || !draft.email_from || draft.email_recipients.length === 0}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {sendingTest ? 'Enviando...' : 'Enviar e-mail de teste'}
+                  </Button>
+                  <Button onClick={() => saveMutation.mutate(draft)} disabled={saveMutation.isPending}>
                     <Save className="h-4 w-4 mr-2" />
                     Salvar
                   </Button>

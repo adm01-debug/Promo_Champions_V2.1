@@ -3510,6 +3510,12 @@ export type Database = {
       churn_alert_settings: {
         Row: {
           cooldown_hours: number
+          email_enabled: boolean
+          email_from: string | null
+          email_provider: string
+          email_recipients: string[]
+          email_reply_to: string | null
+          email_subject_template: string
           enabled: boolean
           id: boolean
           min_level: string
@@ -3517,6 +3523,12 @@ export type Database = {
         }
         Insert: {
           cooldown_hours?: number
+          email_enabled?: boolean
+          email_from?: string | null
+          email_provider?: string
+          email_recipients?: string[]
+          email_reply_to?: string | null
+          email_subject_template?: string
           enabled?: boolean
           id?: boolean
           min_level?: string
@@ -3524,6 +3536,12 @@ export type Database = {
         }
         Update: {
           cooldown_hours?: number
+          email_enabled?: boolean
+          email_from?: string | null
+          email_provider?: string
+          email_recipients?: string[]
+          email_reply_to?: string | null
+          email_subject_template?: string
           enabled?: boolean
           id?: boolean
           min_level?: string
