@@ -67,7 +67,7 @@ export default function AdminFilaTarefasAutomaticas() {
       method: 'POST',
     });
     setRunning(false);
-    if (error) return toast.error('Falha ao executar');
+    if (error) { toast.error('Falha ao executar'); return; }
     toast.success(`Fila executada: ${JSON.stringify(data)}`);
   };
 
