@@ -12,7 +12,8 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { AlertTriangle, Bell, Play, Save } from 'lucide-react';
+import { AlertTriangle, Bell, Play, Save, Mail, Send } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 
