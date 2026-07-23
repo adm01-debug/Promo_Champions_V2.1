@@ -1,4 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -44,6 +47,31 @@ export default function AdminAuditoriaPremiacoes() {
   });
   const updateStatus = useUpdateAwardStatus();
   const remove = useDeleteAward();
+  const qc = useQueryClient();
+
+  // Realtime — mantém a lista sincronizada e notifica novas conquistas
+  useEffect(() => {
+    const channel = supabase
+      .channel('commission_bonus_awards_admin')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'commission_bonus_awards' },
+        (payload) => {
+          qc.invalidateQueries({ queryKey: ['commission-bonus-awards'] });
+          if (payload.eventType === 'INSERT') {
+            const row = payload.new as { computed_amount?: number } | null;
+            const amount = Number(row?.computed_amount ?? 0);
+            toast.success('Nova premiação conquistada', {
+              description: amount ? brl(amount) : undefined,
+            });
+          }
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
 
   const kpis = useMemo(() => {
     const total = awards.reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
