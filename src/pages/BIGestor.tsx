@@ -31,6 +31,7 @@ import { BISalesInsights } from '@/components/bi/BISalesInsights';
 import { BIVendasMacro } from '@/components/bi/BIVendasMacro';
 import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
 import { ChurnTaskCompletionCard } from '@/components/bi/ChurnTaskCompletionCard';
+import { ChurnOverdueRankingCard } from '@/components/bi/ChurnOverdueRankingCard';
 import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
@@ -452,7 +453,11 @@ const BIGestor = () => {
                 formatCurrency={formatCurrency}
               />
 
-              <ChurnTaskCompletionCard className="animate-slide-up" />
+              <div className="grid gap-4 md:grid-cols-2 animate-slide-up">
+                <ChurnTaskCompletionCard />
+                <ChurnOverdueRankingCard />
+              </div>
+
 
               <BITopClientsSection className="animate-slide-up" />
               <BISalesInsights className="animate-slide-up" />
