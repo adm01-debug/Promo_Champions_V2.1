@@ -172,6 +172,9 @@ export function Client360View({ clientName }: Client360ViewProps) {
       {/* Smart Insight Banner */}
       <InsightBanner data={data} />
 
+      {/* Justificativa do alerta de churn */}
+      <ClientChurnJustificationCard clientName={clientName} />
+
       {/* KPIs Estratégicos com Comparativo de Segmento */}
       <Client360KpiCards data={data} />
 
