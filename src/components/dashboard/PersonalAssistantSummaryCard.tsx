@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import { Bot, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { Bot, Loader2, MessageSquare, Sparkles, Volume2, Square } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { usePersonalAssistant } from "@/hooks/assistant/usePersonalAssistant";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 import { AssistantTodayTasks } from "@/components/assistant/AssistantTodayTasks";
+import { useSpeechSynthesis } from "@/hooks/assistant/useSpeechSynthesis";
 
 interface Props {
   onOpenChat?: () => void;
@@ -24,6 +25,7 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
   const { salesperson } = useAuth();
   const salespersonId = salesperson?.id ?? null;
   const { briefing, isBriefingLoading, error, refreshBriefing } = usePersonalAssistant(salespersonId);
+  const tts = useSpeechSynthesis(briefing);
 
   useEffect(() => {
     if (salespersonId) void refreshBriefing();
@@ -67,6 +69,18 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
           </div>
 
           <div className="flex flex-col gap-2 shrink-0">
+            {tts.supported && briefing && !isBriefingLoading && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => (tts.isSpeaking ? tts.stop() : tts.speak())}
+                className="gap-1.5"
+                aria-label={tts.isSpeaking ? "Parar leitura" : "Ouvir briefing"}
+              >
+                {tts.isSpeaking ? <Square className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                {tts.isSpeaking ? "Parar" : "Ouvir"}
+              </Button>
+            )}
             {onOpenChat && (
               <Button size="sm" variant="outline" onClick={onOpenChat} className="gap-1.5">
                 <MessageSquare className="h-3.5 w-3.5" /> Chat
