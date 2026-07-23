@@ -161,6 +161,7 @@ export const closerGroupedItems: MenuGroup[] = [
       { title: "Meu Dashboard", url: "/dashboard-custom", icon: LayoutGrid },
       { title: "Desafios", url: "/desafios", icon: Sparkles },
       { title: "Meu Assistente", url: "/meu-assistente", icon: Bot },
+      { title: "Minhas Premiações", url: "/minhas-premiacoes", icon: Trophy },
       { title: "Assistente IA", url: "/assistente", icon: Bot },
       { title: "Business Intelligence", url: "/ferramentas/bi", icon: Sparkles },
       { title: "Agentes IA", url: "/agentes", icon: Bot },
