@@ -20433,6 +20433,14 @@ export type Database = {
           strategy: string
         }[]
       }
+      award_bonus_if_eligible: {
+        Args: {
+          _bonus_id: string
+          _bonus_kind: string
+          _computed_amount: number
+        }
+        Returns: string
+      }
       award_salesperson_xp: {
         Args: {
           p_description: string
