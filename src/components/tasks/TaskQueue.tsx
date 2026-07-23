@@ -123,6 +123,10 @@ export function TaskQueue() {
             </SelectContent>
           </Select>
           <Button variant={onlyChurn ? 'default' : 'outline'} size="sm" onClick={() => setOnlyChurn(v => !v)} disabled={!onlyChurn && churnCount === 0} className={onlyChurn ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25 transition-all duration-200' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyChurn ? 'Mostrar todas as tarefas' : 'Mostrar apenas tarefas geradas por churn'}><AlertOctagon className="h-4 w-4 mr-2" />{onlyChurn ? `Somente churn (${churnCount})` : `Churn${churnCount ? ` (${churnCount})` : ''}`}</Button>
+          <Button variant={onlyOverdue ? 'default' : 'outline'} size="sm" onClick={() => setOnlyOverdue(v => !v)} disabled={!onlyOverdue && overdueCount === 0} className={onlyOverdue ? 'border-destructive/60 bg-destructive/15 text-destructive hover:bg-destructive/25' : 'border-border/50 hover:border-destructive/50 hover:bg-destructive/10 hover:scale-105 transition-all duration-200'} title={onlyOverdue ? 'Mostrar todas' : 'Mostrar apenas tarefas atrasadas'}><TimerOff className="h-4 w-4 mr-2" />{onlyOverdue ? `Atrasadas (${overdueCount})` : `Atrasadas${overdueCount ? ` (${overdueCount})` : ''}`}</Button>
+          {(onlyChurn || onlyOverdue || selectedSalesperson !== 'all') && (urlChurn || urlOverdue || urlSalesperson) && (
+            <Button variant="ghost" size="sm" onClick={clearDrilldown} className="text-xs text-muted-foreground hover:text-foreground">Limpar drill-down</Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'columns' ? 'list' : 'columns')} className="border-border/50 hover:border-primary/50 hover:bg-primary/10 hover:scale-105 transition-all duration-200"><Columns3 className="h-4 w-4 mr-2" />{viewMode === 'columns' ? 'Lista' : 'Colunas'}</Button>
         </div>
         <div className="flex items-center gap-2">
