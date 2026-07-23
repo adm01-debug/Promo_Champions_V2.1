@@ -84,9 +84,34 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
             <Badge variant="outline" className={cn("text-[10px] px-1.5 shadow-sm transition-all duration-200 group-hover:scale-105", priority.className)}>
               {priority.label}
             </Badge>
+            {churnMeta && (
+              <Badge
+                variant="outline"
+                className="text-[10px] px-1.5 gap-1 border-destructive/40 bg-destructive/10 text-destructive"
+                title="Tarefa criada automaticamente por alerta de churn"
+              >
+                <ShieldAlert className="h-3 w-3" />
+                Gerada por churn
+              </Badge>
+            )}
+            {churnMeta?.clientName && (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="ml-auto h-6 px-2 text-[10px] text-primary hover:text-primary"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link to={`/clientes?client360=${encodeURIComponent(churnMeta.clientName)}`}>
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Ver cliente
+                </Link>
+              </Button>
+            )}
           </div>
 
           <h4 className="font-display font-medium text-foreground truncate group-hover:text-primary transition-colors duration-200">{task.title}</h4>
+
           
           {task.description && (
             <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1 border border-border/20">
