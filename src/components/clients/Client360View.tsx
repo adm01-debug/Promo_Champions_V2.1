@@ -75,6 +75,7 @@ import { CategoryPie } from './CategoryPie';
 import { OrdersTable } from './OrdersTable';
 import { OrdersTimeline } from './OrdersTimeline';
 import { InsightBanner } from './InsightBanner';
+import { ClientChurnJustificationCard } from './ClientChurnJustificationCard';
 
 interface Client360ViewProps {
   clientName: string;
