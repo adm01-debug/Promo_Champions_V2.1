@@ -4268,6 +4268,87 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_bonus_awards: {
+        Row: {
+          admin_notes: string | null
+          awarded_at: string
+          bonus_id: string
+          bonus_kind: string
+          computed_amount: number
+          created_at: string
+          id: string
+          paid_at: string | null
+          period_month: string
+          salesperson_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          awarded_at?: string
+          bonus_id: string
+          bonus_kind: string
+          computed_amount?: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          period_month: string
+          salesperson_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          awarded_at?: string
+          bonus_id?: string
+          bonus_kind?: string
+          computed_amount?: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          period_month?: string
+          salesperson_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_bonus_awards_bonus_id_fkey"
+            columns: ["bonus_id"]
+            isOneToOne: false
+            referencedRelation: "commission_bonuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonus_awards_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonus_awards_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "mv_competitive_ranking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonus_awards_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_bonus_awards_salesperson_id_fkey"
+            columns: ["salesperson_id"]
+            isOneToOne: false
+            referencedRelation: "salespeople_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commission_bonuses: {
         Row: {
           bonus_amount: number
