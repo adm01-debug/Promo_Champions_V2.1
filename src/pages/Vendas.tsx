@@ -21,6 +21,8 @@ const sortOptions: SortOption[] = [
   { label: 'Maior valor', value: 'value_desc', direction: 'desc' },
   { label: 'Menor valor', value: 'value_asc', direction: 'asc' },
   { label: 'Cliente (A-Z)', value: 'client_asc', direction: 'asc' },
+  { label: 'Maior markup %', value: 'markup_desc', direction: 'desc' },
+  { label: 'Menor markup %', value: 'markup_asc', direction: 'asc' },
 ];
 
 const statusOptions = [
