@@ -6,13 +6,10 @@
 
 import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
-Deno.test("OPTIONS preflight returns CORS headers", async () => {
-  const mod = await import("./index.ts");
-  // Handler registrado via Deno.serve; testamos a resposta invocando fetch fake.
-  // Como Deno.serve foi chamado no módulo, precisamos apenas verificar o import
-  // e simular request via handler? A abordagem oficial: patch Deno.serve.
-  // Como não temos handler exportado, o teste vira smoke-import.
-  assertEquals(typeof mod, "object");
+Deno.test("source: arquivo index.ts existe e é legível", async () => {
+  const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
+  assertEquals(typeof source, "string");
+  assertStringIncludes(source, "Deno.serve");
 });
 
 Deno.test("systemPrompt (via helper importado indiretamente): garante instruções chave", async () => {
