@@ -27,7 +27,7 @@ const RoleAwareSidebar = lazy(() => import("@/components/organisms/RoleAwareSide
 const LayoutRealtimeEffects = lazy(() => import("@/components/organisms/LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
 const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
 const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
-const AICopilotFab = lazy(() => import("@/components/copilot/AICopilotFab").then(m => ({ default: m.AICopilotFab })));
+const PersonalAssistantDrawer = lazy(() => import("@/components/assistant/PersonalAssistantDrawer").then(m => ({ default: m.PersonalAssistantDrawer })));
 
 const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
 
@@ -170,7 +170,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         </Suspense>
         
         <Suspense fallback={null}>
-          <AICopilotFab />
+          <PersonalAssistantDrawer />
         </Suspense>
         
         <ScrollToTop />

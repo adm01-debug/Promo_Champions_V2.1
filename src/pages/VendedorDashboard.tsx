@@ -32,6 +32,8 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
 import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
+import { PersonalAssistantSummaryCard } from '@/components/dashboard/PersonalAssistantSummaryCard';
+import { useNavigate } from 'react-router-dom';
 
 interface Sale {
   id: string;
@@ -210,6 +212,7 @@ const StatCard = ({
 
 const VendedorDashboard = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data, isLoading, error } = useVendedorData(id || '');
 
   const { salesperson, goal, currentSales, previousSales, allSales } = data || {
@@ -298,6 +301,8 @@ const VendedorDashboard = () => {
               goalProgress={goalProgress}
               salespersonId={id}
             />
+
+            <PersonalAssistantSummaryCard onOpenHub={() => navigate('/meu-assistente')} />
 
             <RunRateProjectionCard salespersonId={id} />
 

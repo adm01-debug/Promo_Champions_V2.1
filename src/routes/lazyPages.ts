@@ -246,6 +246,7 @@ export const Bitrix24 = lazyWithPrefetch(() => import('@/pages/Bitrix24'));
 
 // ─── Ferramentas & IA ───────────────────────────────────────────────
 export const Assistente = lazyWithPrefetch(() => import('@/pages/Assistente'));
+export const MeuAssistente = lazyWithPrefetch(() => import('@/pages/MeuAssistente'));
 export const SmartSearch = lazyWithPrefetch(() => import('@/pages/SmartSearch'));
 export const AskAnything = lazyWithPrefetch(() => import('@/pages/AskAnything'));
 export const SemanticSearch = lazyWithPrefetch(() => import('@/pages/SemanticSearch'));

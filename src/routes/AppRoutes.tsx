@@ -31,7 +31,7 @@ import {
   Vendedores, Metas, MetasAtividades, Times, Territorios, Estoque,
   NPSDashboard, Deduplication, ImportExport, OnboardingTracking, InactivityTriggers, Bitrix24,
   // Ferramentas & IA
-  Assistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
+  Assistente, MeuAssistente, Notificacoes, Configuracoes, SmartSearch, AskAnything, SemanticSearch, AIAgents,
   // Admin
   AdminDashboard, AdminTasksPage, AdminTelemetria, UsageAnalytics, FeatureFlagsAdmin, SecurityDashboard, WebhooksDeadLettersAdmin, WebhookTimelinePage, WebhookAlertHistoryPage, WebhookAlertSettingsPage, AdminConexoesPage, AdminV4CallbacksPage, AdminQuoteSyncInboundPage, AdminQuoteConversionsPage, AdminPlatformSLOPage, AdminWebVitalsPage,
   AdminComercial, Competencias,
@@ -252,6 +252,7 @@ export function AppRoutes() {
 
                       {/* ─── Ferramentas & IA ──────────────────────── */}
                       <Route path="/assistente" element={<Assistente />} />
+                      <Route path="/meu-assistente" element={<MeuAssistente />} />
                       <Route path="/perguntar" element={<AskAnything />} />
                       <Route path="/busca-inteligente" element={<SmartSearch />} />
                       <Route path="/busca" element={<SemanticSearch />} />
