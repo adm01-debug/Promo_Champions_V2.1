@@ -403,7 +403,12 @@ export default function AdminAuditoriaPremiacoes() {
                 </TableHeader>
                 <TableBody>
                   {consolidated.map((r) => (
-                    <TableRow key={r.salesperson_id}>
+                    <TableRow
+                      key={r.salesperson_id}
+                      className="cursor-pointer hover:bg-muted/40"
+                      onClick={() => drillDownToSalesperson(r.salesperson_id)}
+                      title="Clique para ver detalhes deste vendedor"
+                    >
                       <TableCell className="font-medium">{r.salesperson_name}</TableCell>
                       <TableCell className="text-right tabular-nums">{r.totalCount}</TableCell>
                       <TableCell className="text-right tabular-nums text-amber-600 dark:text-amber-400">{brl(r.pendingSum)}</TableCell>
