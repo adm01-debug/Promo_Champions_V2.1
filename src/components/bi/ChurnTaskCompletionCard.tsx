@@ -152,16 +152,28 @@ export const ChurnTaskCompletionCard = memo(({ className, days = 30 }: Props) =>
               />
             </div>
             {data.overdue > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToOverdue}
-                className="w-full border-destructive/40 text-destructive hover:bg-destructive/10"
-              >
-                Ver {data.overdue} tarefa{data.overdue > 1 ? 's' : ''} atrasada
-                {data.overdue > 1 ? 's' : ''}
-                <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToOverdue}
+                  className="flex-1 border-destructive/40 text-destructive hover:bg-destructive/10"
+                >
+                  Ver {data.overdue} tarefa{data.overdue > 1 ? 's' : ''} atrasada
+                  {data.overdue > 1 ? 's' : ''}
+                  <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportOverdueCsv}
+                  className="sm:w-auto"
+                  aria-label="Exportar tarefas de churn atrasadas em CSV"
+                >
+                  <Download className="mr-1 h-3.5 w-3.5" />
+                  CSV
+                </Button>
+              </div>
             )}
           </>
         )}
