@@ -30,6 +30,7 @@ import { BITopClientsSection } from '@/components/bi/BITopClientsSection';
 import { BISalesInsights } from '@/components/bi/BISalesInsights';
 import { BIVendasMacro } from '@/components/bi/BIVendasMacro';
 import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
+import { ChurnTaskCompletionCard } from '@/components/bi/ChurnTaskCompletionCard';
 import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
@@ -450,6 +451,8 @@ const BIGestor = () => {
                 salespeoplePerformance={data?.salespeoplePerformance || []}
                 formatCurrency={formatCurrency}
               />
+
+              <ChurnTaskCompletionCard className="animate-slide-up" />
 
               <BITopClientsSection className="animate-slide-up" />
               <BISalesInsights className="animate-slide-up" />
