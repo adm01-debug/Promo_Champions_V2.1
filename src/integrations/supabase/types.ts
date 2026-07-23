@@ -3589,7 +3589,9 @@ export type Database = {
           id: string
           last_alerted_at: string
           last_days_since: number
+          last_expected_interval_days: number | null
           last_level: string
+          last_threshold_days: number | null
           salesperson_id: string
           updated_at: string
         }
@@ -3599,7 +3601,9 @@ export type Database = {
           id?: string
           last_alerted_at?: string
           last_days_since: number
+          last_expected_interval_days?: number | null
           last_level: string
+          last_threshold_days?: number | null
           salesperson_id: string
           updated_at?: string
         }
@@ -3609,7 +3613,9 @@ export type Database = {
           id?: string
           last_alerted_at?: string
           last_days_since?: number
+          last_expected_interval_days?: number | null
           last_level?: string
+          last_threshold_days?: number | null
           salesperson_id?: string
           updated_at?: string
         }
