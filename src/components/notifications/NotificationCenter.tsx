@@ -92,6 +92,7 @@ const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   team: 'Time',
   ai: 'IA',
   approval: 'Aprovação',
+  commission: 'Premiação',
 };
 
 interface NotificationItemProps {
