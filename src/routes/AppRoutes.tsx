@@ -166,6 +166,8 @@ export function AppRoutes() {
                       <Route path="/agenda" element={<Agenda />} />
                       <Route path="/admin/comissoes" element={<Manager><AdminComissoes /></Manager>} />
                       <Route path="/admin/regras-comissao" element={<Manager><CommissionRules /></Manager>} />
+                      <Route path="/admin/premiacoes" element={<Manager><AdminPremiacoes /></Manager>} />
+
                       <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
                       <Route path="/webhooks" element={<Manager><Webhooks /></Manager>} />
                       <Route path="/audit-logs" element={<Manager><AuditLogs /></Manager>} />
