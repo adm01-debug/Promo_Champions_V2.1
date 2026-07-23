@@ -54,6 +54,13 @@ export function useChurnTaskCompletion(days = 30, salespersonId?: string | null)
         overdue: overdueRows.length,
         completionRate,
         overdueIds: overdueRows.map((r) => r.id),
+        overdueTasks: overdueRows.map((r) => ({
+          id: r.id,
+          description: r.description ?? null,
+          due_date: r.due_date ?? null,
+          created_at: r.created_at,
+          salesperson_id: r.salesperson_id ?? null,
+        })),
       };
     },
     staleTime: 60_000,
