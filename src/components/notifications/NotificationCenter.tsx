@@ -72,6 +72,7 @@ const CATEGORY_ICONS: Record<
   team: Users,
   ai: Sparkles,
   approval: FileCheck,
+  commission: Trophy,
 };
 
 const PRIORITY_STYLES: Record<NotificationPriority, string> = {
