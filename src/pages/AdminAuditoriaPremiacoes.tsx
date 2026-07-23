@@ -81,7 +81,9 @@ function downloadCsv(filename: string, header: string[], rows: (string | number 
 export default function AdminAuditoriaPremiacoes() {
   const [statusFilter, setStatusFilter] = useState<AwardStatus | 'all'>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('detailed');
-  const { data: awards = [], isLoading } = useCommissionBonusAwards({
+  const [periodFilter, setPeriodFilter] = useState<string>('all'); // 'all' | 'YYYY-MM'
+  const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
+  const { data: rawAwards = [], isLoading } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
   const updateStatus = useUpdateAwardStatus();
@@ -111,6 +113,35 @@ export default function AdminAuditoriaPremiacoes() {
       supabase.removeChannel(channel);
     };
   }, [qc]);
+
+  // Períodos únicos existentes (YYYY-MM) para o filtro
+  const periodOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const a of rawAwards) set.add(a.period_month.slice(0, 7));
+    return Array.from(set).sort().reverse();
+  }, [rawAwards]);
+
+  // Vendedores únicos para o filtro
+  const salespersonOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const a of rawAwards) {
+      if (!map.has(a.salesperson_id)) {
+        map.set(a.salesperson_id, a.salesperson_name ?? '—');
+      }
+    }
+    return Array.from(map.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  }, [rawAwards]);
+
+  // Aplica filtros de período e vendedor localmente
+  const awards = useMemo(() => {
+    return rawAwards.filter((a) => {
+      if (periodFilter !== 'all' && a.period_month.slice(0, 7) !== periodFilter) return false;
+      if (salespersonFilter !== 'all' && a.salesperson_id !== salespersonFilter) return false;
+      return true;
+    });
+  }, [rawAwards, periodFilter, salespersonFilter]);
 
   const kpis = useMemo(() => {
     const total = awards.reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
@@ -147,6 +178,11 @@ export default function AdminAuditoriaPremiacoes() {
     }
     return Array.from(map.values()).sort((a, b) => b.totalSum - a.totalSum);
   }, [awards]);
+
+  const drillDownToSalesperson = (id: string) => {
+    setSalespersonFilter(id);
+    setViewMode('detailed');
+  };
 
   const handleExport = () => {
     if (awards.length === 0) {
@@ -234,11 +270,71 @@ export default function AdminAuditoriaPremiacoes() {
               <SelectItem value="cancelled">Cancelados</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={periodFilter} onValueChange={setPeriodFilter}>
+            <SelectTrigger className="w-40 h-8">
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os períodos</SelectItem>
+              {periodOptions.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {format(parseISO(`${p}-01`), "MMM/yy", { locale: ptBR })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={salespersonFilter} onValueChange={setSalespersonFilter}>
+            <SelectTrigger className="w-52 h-8">
+              <SelectValue placeholder="Vendedor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os vendedores</SelectItem>
+              {salespersonOptions.map((s) => (
+                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" variant="outline" className="h-8" onClick={handleExport}>
             <Download className="h-3.5 w-3.5 mr-1" /> Exportar CSV
           </Button>
         </div>
       </header>
+
+      {(salespersonFilter !== 'all' || periodFilter !== 'all') && (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-muted-foreground">Filtros ativos:</span>
+          {periodFilter !== 'all' && (
+            <Badge variant="outline" className="gap-1">
+              Período: {format(parseISO(`${periodFilter}-01`), "MMM/yy", { locale: ptBR })}
+              <button
+                type="button"
+                className="ml-1 opacity-60 hover:opacity-100"
+                onClick={() => setPeriodFilter('all')}
+                aria-label="Remover filtro de período"
+              >×</button>
+            </Badge>
+          )}
+          {salespersonFilter !== 'all' && (
+            <Badge variant="outline" className="gap-1">
+              Vendedor: {salespersonOptions.find((s) => s.id === salespersonFilter)?.name ?? '—'}
+              <button
+                type="button"
+                className="ml-1 opacity-60 hover:opacity-100"
+                onClick={() => setSalespersonFilter('all')}
+                aria-label="Remover filtro de vendedor"
+              >×</button>
+            </Badge>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-6 px-2 text-xs"
+            onClick={() => { setPeriodFilter('all'); setSalespersonFilter('all'); }}
+          >
+            Limpar tudo
+          </Button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -307,7 +403,12 @@ export default function AdminAuditoriaPremiacoes() {
                 </TableHeader>
                 <TableBody>
                   {consolidated.map((r) => (
-                    <TableRow key={r.salesperson_id}>
+                    <TableRow
+                      key={r.salesperson_id}
+                      className="cursor-pointer hover:bg-muted/40"
+                      onClick={() => drillDownToSalesperson(r.salesperson_id)}
+                      title="Clique para ver detalhes deste vendedor"
+                    >
                       <TableCell className="font-medium">{r.salesperson_name}</TableCell>
                       <TableCell className="text-right tabular-nums">{r.totalCount}</TableCell>
                       <TableCell className="text-right tabular-nums text-amber-600 dark:text-amber-400">{brl(r.pendingSum)}</TableCell>
