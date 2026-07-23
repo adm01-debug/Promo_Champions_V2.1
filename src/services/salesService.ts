@@ -91,16 +91,3 @@ export const salesService = {
     return data;
   },
 };
-  },
-
-  async createSale(input: CreateSaleInput) {
-    const { data, error } = await supabase
-      .from('sales')
-      .insert([input])
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-};
