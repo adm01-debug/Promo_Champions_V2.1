@@ -5,6 +5,8 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
+const RATIO_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 1.3, high: 2, critical: 3 };
+const ABSOLUTE_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 30, high: 60, critical: 120 };
 
 interface AlertRow {
   salesperson_id: string;
@@ -12,6 +14,7 @@ interface AlertRow {
   days_since: number;
   level: Level;
   expected_interval_days: number;
+  threshold_days: number;
 }
 
 function dayDiff(from: Date, to: Date): number {
@@ -20,16 +23,24 @@ function dayDiff(from: Date, to: Date): number {
 
 function computeLevel(daysSince: number, expectedInterval: number | null): Level {
   if (!expectedInterval || expectedInterval <= 0) {
-    if (daysSince >= 120) return 'critical';
-    if (daysSince >= 60) return 'high';
-    if (daysSince >= 30) return 'medium';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.critical) return 'critical';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.high) return 'high';
+    if (daysSince >= ABSOLUTE_THRESHOLDS.medium) return 'medium';
     return 'low';
   }
   const ratio = daysSince / expectedInterval;
-  if (ratio >= 3) return 'critical';
-  if (ratio >= 2) return 'high';
-  if (ratio >= 1.3) return 'medium';
+  if (ratio >= RATIO_THRESHOLDS.critical) return 'critical';
+  if (ratio >= RATIO_THRESHOLDS.high) return 'high';
+  if (ratio >= RATIO_THRESHOLDS.medium) return 'medium';
   return 'low';
+}
+
+function thresholdDaysFor(level: Level, expectedInterval: number | null): number {
+  if (level === 'low') return 0;
+  if (expectedInterval && expectedInterval > 0) {
+    return Math.round(expectedInterval * RATIO_THRESHOLDS[level]);
+  }
+  return ABSOLUTE_THRESHOLDS[level];
 }
 
 Deno.serve(async (req) => {
@@ -98,6 +109,7 @@ Deno.serve(async (req) => {
           days_since: daysSince,
           level,
           expected_interval_days: Math.round(expected ?? 0),
+          threshold_days: thresholdDaysFor(level, expected),
         });
       }
     }
@@ -121,6 +133,8 @@ Deno.serve(async (req) => {
       client_name: string;
       last_level: Level;
       last_days_since: number;
+      last_expected_interval_days: number | null;
+      last_threshold_days: number | null;
       last_alerted_at: string;
       updated_at: string;
     }> = [];
@@ -141,8 +155,13 @@ Deno.serve(async (req) => {
         : a.level === 'high'
         ? `⚠️ Cliente com alto risco de churn`
         : `Cliente inativo`;
-      const message = `${a.client_name} está há ${a.days_since} dias sem comprar` +
-        (a.expected_interval_days > 0 ? ` (intervalo médio: ${a.expected_interval_days}d).` : '.');
+      const avgPart = a.expected_interval_days > 0
+        ? ` · média do cliente: ${a.expected_interval_days}d`
+        : '';
+      const limitPart = a.threshold_days > 0
+        ? ` · limite ${a.level}: ${a.threshold_days}d`
+        : '';
+      const message = `${a.client_name} está há ${a.days_since} dias sem comprar${avgPart}${limitPart}.`;
 
       const { error: insErr } = await supabase.from('notifications').insert({
         user_id: a.salesperson_id,
@@ -159,6 +178,7 @@ Deno.serve(async (req) => {
           days_since: a.days_since,
           level: a.level,
           expected_interval_days: a.expected_interval_days,
+          threshold_days: a.threshold_days,
         },
         expires_at: new Date(now.getTime() + 7 * 86400000).toISOString(),
       });
@@ -172,6 +192,8 @@ Deno.serve(async (req) => {
         client_name: a.client_name,
         last_level: a.level,
         last_days_since: a.days_since,
+        last_expected_interval_days: a.expected_interval_days || null,
+        last_threshold_days: a.threshold_days || null,
         last_alerted_at: now.toISOString(),
         updated_at: now.toISOString(),
       });

@@ -75,6 +75,7 @@ import { CategoryPie } from './CategoryPie';
 import { OrdersTable } from './OrdersTable';
 import { OrdersTimeline } from './OrdersTimeline';
 import { InsightBanner } from './InsightBanner';
+import { ClientChurnJustificationCard } from './ClientChurnJustificationCard';
 
 interface Client360ViewProps {
   clientName: string;
@@ -170,6 +171,9 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
       {/* Smart Insight Banner */}
       <InsightBanner data={data} />
+
+      {/* Justificativa do alerta de churn */}
+      <ClientChurnJustificationCard clientName={clientName} />
 
       {/* KPIs Estratégicos com Comparativo de Segmento */}
       <Client360KpiCards data={data} />
