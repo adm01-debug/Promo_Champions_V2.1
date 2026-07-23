@@ -74,6 +74,10 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Criado em</span>
             <span className="text-sm font-bold text-muted-foreground">{sale.data}</span>
           </div>
+          <div className="flex flex-col items-end min-w-[110px]">
+            <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Markup %</span>
+            <MarkupChip sale={sale} />
+          </div>
         </div>
 
         <div className="flex items-center justify-end min-w-[180px] gap-4">
@@ -82,7 +86,6 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             <span className="text-2xl font-display font-black tracking-tighter text-primary">
               R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </span>
-            <MarkupChip sale={sale} />
           </div>
           <div className="flex gap-2">
             <Button
