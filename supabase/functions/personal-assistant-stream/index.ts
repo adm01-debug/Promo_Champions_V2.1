@@ -250,6 +250,42 @@ Deno.serve(
       const context = await buildContext(auth.client, salespersonId!);
       const systemPrompt = buildSystemPrompt(mode, context);
 
+      // ── Cache do briefing do dia (idempotência por vendedor/dia) ────────────
+      // Fuso America/Sao_Paulo → chave do dia estável.
+      const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+      const todayKey = today.toISOString().slice(0, 10);
+
+      if (mode === "briefing") {
+        const { data: cached } = await auth.client
+          .from("personal_assistant_briefings")
+          .select("content")
+          .eq("salesperson_id", salespersonId!)
+          .eq("briefing_date", todayKey)
+          .maybeSingle();
+
+        if (cached?.content) {
+          // Reproduz o formato SSE OpenAI-like para o cliente não precisar de branch novo.
+          const enc = new TextEncoder();
+          const stream = new ReadableStream({
+            start(controller) {
+              const chunk = { choices: [{ delta: { content: cached.content } }] };
+              controller.enqueue(enc.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+              controller.enqueue(enc.encode("data: [DONE]\n\n"));
+              controller.close();
+            },
+          });
+          return new Response(stream, {
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "text/event-stream",
+              "Cache-Control": "no-cache",
+              Connection: "keep-alive",
+              "X-Briefing-Cache": "hit",
+            },
+          });
+        }
+      }
+
       const messages = [
         { role: "system", content: systemPrompt },
         ...history.map((m) => ({ role: m.role, content: String(m.content ?? "") })),
@@ -264,10 +300,11 @@ Deno.serve(
         });
       }
 
+      const MODEL = "google/gemini-2.5-flash";
       const upstream = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "google/gemini-2.5-flash", messages, stream: true }),
+        body: JSON.stringify({ model: MODEL, messages, stream: true }),
       });
 
       if (!upstream.ok) {
@@ -279,7 +316,58 @@ Deno.serve(
         });
       }
 
-      return new Response(upstream.body, {
+      // Se for briefing, interceptamos o stream para persistir o conteúdo final.
+      let responseBody: ReadableStream<Uint8Array> | null = upstream.body;
+      if (mode === "briefing" && upstream.body) {
+        const dec = new TextDecoder();
+        let full = "";
+        const tee = new TransformStream<Uint8Array, Uint8Array>({
+          transform(chunk, controller) {
+            const text = dec.decode(chunk, { stream: true });
+            // Extrai delta.content dos frames SSE OpenAI-like.
+            for (const line of text.split("\n")) {
+              const m = line.match(/^data:\s*(\{.*\})\s*$/);
+              if (!m) continue;
+              try {
+                const j = JSON.parse(m[1]);
+                const delta = j?.choices?.[0]?.delta?.content;
+                if (typeof delta === "string") full += delta;
+              } catch { /* ignora frames não-JSON */ }
+            }
+            controller.enqueue(chunk);
+          },
+          async flush() {
+            const content = full.trim();
+            if (content.length > 0 && content.length < 60_000) {
+              await auth.client
+                .from("personal_assistant_briefings")
+                .upsert(
+                  {
+                    salesperson_id: salespersonId!,
+                    briefing_date: todayKey,
+                    content,
+                    model: MODEL,
+                    token_count: content.length,
+                    context_snapshot: {
+                      goal: context.goal,
+                      mtd: context.mtdRevenue,
+                      progress: context.progressPercent,
+                      critical_deals: context.criticalDeals.length,
+                      overdue_tasks: context.overdueTasks.length,
+                    },
+                  },
+                  { onConflict: "salesperson_id,briefing_date" },
+                )
+                .then(({ error }) => {
+                  if (error) console.error("[personal-assistant] persist briefing failed:", error.message);
+                });
+            }
+          },
+        });
+        responseBody = upstream.body.pipeThrough(tee);
+      }
+
+      return new Response(responseBody, {
         headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
       });
     } catch (err) {
