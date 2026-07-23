@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Sparkles, Award, Target } from 'lucide-react';
 import { useEligibleBonuses, type EligibleBonus } from '@/hooks/useEligibleBonuses';
+import { useAutoAwardBonuses } from '@/hooks/useAutoAwardBonuses';
 import type { BonusType } from '@/hooks/useCommissionBonuses';
 import { cn } from '@/lib/utils';
 
