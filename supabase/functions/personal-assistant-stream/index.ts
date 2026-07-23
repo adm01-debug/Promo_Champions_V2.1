@@ -208,11 +208,15 @@ Termine sempre com uma pergunta convidando a ação. Sem introduções tipo "Aqu
     );
   }
   if (mode === "proactive_nudge") {
+    const deltaBlock = previousBriefing
+      ? `\nBRIEFING ANTERIOR (para comparar o que mudou desde então):\n"""\n${previousBriefing.slice(0, 1200)}\n"""\n`
+      : "";
     return (
       base +
-      `\nTAREFA: se houver algo genuinamente urgente (tarefa atrasada de alto valor, deal crítico > 10d parado, ritmo < 50% na segunda metade do mês), emita UM nudge curto (máx 2 frases) no formato:
-"🔔 <mensagem específica e acionável>"
-Se não houver nada realmente urgente, responda EXATAMENTE a string: NO_NUDGE`
+      deltaBlock +
+      `\nTAREFA: se houver algo genuinamente urgente OU uma MUDANÇA relevante desde o briefing anterior (deal que ficou parado mais um dia, tarefa atrasada nova, ritmo caiu), emita UM nudge curto (máx 2 frases) no formato:
+"🔔 <mensagem específica e acionável, mencionando a MUDANÇA quando aplicável>"
+Se não houver nada realmente urgente nem mudança relevante, responda EXATAMENTE a string: NO_NUDGE`
     );
   }
   return (
