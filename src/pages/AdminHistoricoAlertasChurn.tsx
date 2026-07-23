@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { Download, History, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ChurnHistoryChart } from '@/components/admin/churn/ChurnHistoryChart';
 
 type Level = 'low' | 'medium' | 'high' | 'critical' | 'all';
 
@@ -264,6 +265,8 @@ const AdminHistoricoAlertasChurn = () => {
             </div>
           </div>
         </Card>
+
+        <ChurnHistoryChart from={from} to={to} level={level} salespersonId={salespersonId} />
 
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
