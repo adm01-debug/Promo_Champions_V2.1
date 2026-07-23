@@ -1,19 +1,22 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
+import { Link } from 'react-router-dom';
 import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Check, 
-  Phone, 
-  Users, 
-  Mail, 
-  FileText, 
+import {
+  Check,
+  Phone,
+  Users,
+  Mail,
+  FileText,
   Clock,
   MoreHorizontal,
   Linkedin,
-  MessageCircle
+  MessageCircle,
+  ShieldAlert,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -46,6 +49,14 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
   const type = typeConfig[task.task_type] || typeConfig.other;
   const TypeIcon = type.icon;
 
+  const churnMeta = useMemo(() => {
+    const desc = task.description || '';
+    if (!desc.includes('[auto:churn]')) return null;
+    const match = task.title.match(/Follow-up de retenção · (.+)$/);
+    const clientName = match?.[1]?.trim() || task.sale?.client_name || null;
+    return { clientName };
+  }, [task.description, task.title, task.sale?.client_name]);
+
   const handleComplete = () => {
     completeTask.mutate(task.id);
   };
@@ -53,6 +64,7 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
   return (
     <Card variant="elevated" className="p-4 glass border border-border/40 dark:border-glow hover-lift group cursor-pointer card-elevated transition-all duration-300 animate-fade-in">
       <div className="flex items-start gap-3">
+
         <Button
           variant="outline"
           size="icon" aria-label="Confirmar"
@@ -72,9 +84,34 @@ const TaskCardInner = function TaskCard({ task }: TaskCardProps) {
             <Badge variant="outline" className={cn("text-[10px] px-1.5 shadow-sm transition-all duration-200 group-hover:scale-105", priority.className)}>
               {priority.label}
             </Badge>
+            {churnMeta && (
+              <Badge
+                variant="outline"
+                className="text-[10px] px-1.5 gap-1 border-destructive/40 bg-destructive/10 text-destructive"
+                title="Tarefa criada automaticamente por alerta de churn"
+              >
+                <ShieldAlert className="h-3 w-3" />
+                Gerada por churn
+              </Badge>
+            )}
+            {churnMeta?.clientName && (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="ml-auto h-6 px-2 text-[10px] text-primary hover:text-primary"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link to={`/clientes?client360=${encodeURIComponent(churnMeta.clientName)}`}>
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Ver cliente
+                </Link>
+              </Button>
+            )}
           </div>
 
           <h4 className="font-display font-medium text-foreground truncate group-hover:text-primary transition-colors duration-200">{task.title}</h4>
+
           
           {task.description && (
             <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2 bg-muted/30 rounded-md px-2 py-1 border border-border/20">
