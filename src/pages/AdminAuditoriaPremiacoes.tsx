@@ -21,12 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Trophy, CheckCircle2, XCircle, Clock, Wallet } from 'lucide-react';
+import { Trophy, CheckCircle2, XCircle, Clock, Wallet, Download, LayoutList, Layers } from 'lucide-react';
 import {
   useCommissionBonusAwards,
   useUpdateAwardStatus,
   useDeleteAward,
   type AwardStatus,
+  type AwardWithRefs,
 } from '@/hooks/useCommissionBonusAwards';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -40,8 +41,46 @@ const statusMeta: Record<AwardStatus, { label: string; className: string }> = {
   cancelled: { label: 'Cancelado', className: 'bg-muted text-muted-foreground border-border' },
 };
 
+type ViewMode = 'detailed' | 'consolidated';
+
+interface ConsolidatedRow {
+  salesperson_id: string;
+  salesperson_name: string;
+  totalCount: number;
+  pendingSum: number;
+  paidSum: number;
+  cancelledSum: number;
+  totalSum: number;
+  lastAt: string;
+}
+
+function csvEscape(v: string | number | null | undefined): string {
+  const s = v === null || v === undefined ? '' : String(v);
+  if (/[";,\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function downloadCsv(filename: string, header: string[], rows: (string | number | null)[][]) {
+  const bom = '\uFEFF';
+  const csv =
+    bom +
+    [header, ...rows]
+      .map((r) => r.map(csvEscape).join(';'))
+      .join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminAuditoriaPremiacoes() {
   const [statusFilter, setStatusFilter] = useState<AwardStatus | 'all'>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('detailed');
   const { data: awards = [], isLoading } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
@@ -83,6 +122,71 @@ export default function AdminAuditoriaPremiacoes() {
     return { total, pendingCount: pending.length, pendingSum, paidSum };
   }, [awards]);
 
+  const consolidated = useMemo<ConsolidatedRow[]>(() => {
+    const map = new Map<string, ConsolidatedRow>();
+    for (const a of awards) {
+      const key = a.salesperson_id;
+      const amount = Number(a.computed_amount || 0);
+      const current = map.get(key) ?? {
+        salesperson_id: key,
+        salesperson_name: a.salesperson_name ?? '—',
+        totalCount: 0,
+        pendingSum: 0,
+        paidSum: 0,
+        cancelledSum: 0,
+        totalSum: 0,
+        lastAt: a.awarded_at,
+      };
+      current.totalCount += 1;
+      current.totalSum += amount;
+      if (a.status === 'pending') current.pendingSum += amount;
+      else if (a.status === 'paid') current.paidSum += amount;
+      else if (a.status === 'cancelled') current.cancelledSum += amount;
+      if (a.awarded_at > current.lastAt) current.lastAt = a.awarded_at;
+      map.set(key, current);
+    }
+    return Array.from(map.values()).sort((a, b) => b.totalSum - a.totalSum);
+  }, [awards]);
+
+  const handleExport = () => {
+    if (awards.length === 0) {
+      toast.info('Nenhum registro para exportar');
+      return;
+    }
+    const stamp = format(new Date(), 'yyyyMMdd-HHmm');
+    if (viewMode === 'consolidated') {
+      downloadCsv(
+        `premiacoes-consolidado-${stamp}.csv`,
+        ['Vendedor', 'Registros', 'Pendente (R$)', 'Pago (R$)', 'Cancelado (R$)', 'Total (R$)', 'Ultima conquista'],
+        consolidated.map((r) => [
+          r.salesperson_name,
+          r.totalCount,
+          r.pendingSum.toFixed(2),
+          r.paidSum.toFixed(2),
+          r.cancelledSum.toFixed(2),
+          r.totalSum.toFixed(2),
+          format(parseISO(r.lastAt), 'yyyy-MM-dd HH:mm'),
+        ]),
+      );
+    } else {
+      downloadCsv(
+        `premiacoes-detalhado-${stamp}.csv`,
+        ['Vendedor', 'Bonus', 'Periodo', 'Tipo', 'Valor', 'Status', 'Concedido em', 'Pago em'],
+        awards.map((a: AwardWithRefs) => [
+          a.salesperson_name ?? '',
+          a.bonus_name ?? '',
+          format(parseISO(a.period_month), 'yyyy-MM'),
+          a.bonus_kind,
+          Number(a.computed_amount).toFixed(2),
+          statusMeta[a.status].label,
+          format(parseISO(a.awarded_at), 'yyyy-MM-dd HH:mm'),
+          a.paid_at ? format(parseISO(a.paid_at), 'yyyy-MM-dd HH:mm') : '',
+        ]),
+      );
+    }
+    toast.success('CSV exportado');
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -97,20 +201,43 @@ export default function AdminAuditoriaPremiacoes() {
             </p>
           </div>
         </div>
-        <Select
-          value={statusFilter}
-          onValueChange={(v) => setStatusFilter(v as AwardStatus | 'all')}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filtrar status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="pending">Pendentes</SelectItem>
-            <SelectItem value="paid">Pagos</SelectItem>
-            <SelectItem value="cancelled">Cancelados</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-md border bg-background/60 p-0.5 h-8">
+            <Button
+              size="sm"
+              variant={viewMode === 'detailed' ? 'default' : 'ghost'}
+              className="h-7 px-2 text-xs"
+              onClick={() => setViewMode('detailed')}
+            >
+              <LayoutList className="h-3.5 w-3.5 mr-1" /> Detalhado
+            </Button>
+            <Button
+              size="sm"
+              variant={viewMode === 'consolidated' ? 'default' : 'ghost'}
+              className="h-7 px-2 text-xs"
+              onClick={() => setViewMode('consolidated')}
+            >
+              <Layers className="h-3.5 w-3.5 mr-1" /> Consolidado
+            </Button>
+          </div>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v as AwardStatus | 'all')}
+          >
+            <SelectTrigger className="w-44 h-8">
+              <SelectValue placeholder="Filtrar status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os status</SelectItem>
+              <SelectItem value="pending">Pendentes</SelectItem>
+              <SelectItem value="paid">Pagos</SelectItem>
+              <SelectItem value="cancelled">Cancelados</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button size="sm" variant="outline" className="h-8" onClick={handleExport}>
+            <Download className="h-3.5 w-3.5 mr-1" /> Exportar CSV
+          </Button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -136,14 +263,22 @@ export default function AdminAuditoriaPremiacoes() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">Registros exibidos</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-black tabular-nums">{awards.length}</p></CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">
+            {viewMode === 'consolidated' ? 'Vendedores' : 'Registros exibidos'}
+          </CardTitle></CardHeader>
+          <CardContent>
+            <p className="text-2xl font-black tabular-nums">
+              {viewMode === 'consolidated' ? consolidated.length : awards.length}
+            </p>
+          </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Registros</CardTitle>
+          <CardTitle className="text-base">
+            {viewMode === 'consolidated' ? 'Consolidado por vendedor' : 'Registros'}
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
@@ -155,6 +290,37 @@ export default function AdminAuditoriaPremiacoes() {
           ) : awards.length === 0 ? (
             <div className="p-10 text-center text-sm text-muted-foreground">
               Nenhum registro de premiação para os filtros selecionados.
+            </div>
+          ) : viewMode === 'consolidated' ? (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Vendedor</TableHead>
+                    <TableHead className="text-right">Registros</TableHead>
+                    <TableHead className="text-right">Pendente</TableHead>
+                    <TableHead className="text-right">Pago</TableHead>
+                    <TableHead className="text-right">Cancelado</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Última conquista</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {consolidated.map((r) => (
+                    <TableRow key={r.salesperson_id}>
+                      <TableCell className="font-medium">{r.salesperson_name}</TableCell>
+                      <TableCell className="text-right tabular-nums">{r.totalCount}</TableCell>
+                      <TableCell className="text-right tabular-nums text-amber-600 dark:text-amber-400">{brl(r.pendingSum)}</TableCell>
+                      <TableCell className="text-right tabular-nums text-emerald-600 dark:text-emerald-400">{brl(r.paidSum)}</TableCell>
+                      <TableCell className="text-right tabular-nums text-muted-foreground">{brl(r.cancelledSum)}</TableCell>
+                      <TableCell className="text-right tabular-nums font-semibold">{brl(r.totalSum)}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {format(parseISO(r.lastAt), "d MMM yyyy", { locale: ptBR })}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           ) : (
             <div className="overflow-x-auto">
