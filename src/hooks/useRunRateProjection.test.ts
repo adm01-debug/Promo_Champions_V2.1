@@ -106,4 +106,37 @@ describe('computeRunRateProjection', () => {
     expect(r.goal).toBe(0);
     expect(r.hasGoal).toBe(false);
   });
+
+  it('commissionRate: calcula comissão MTD, projetada e gap de comissão', () => {
+    const r = computeRunRateProjection({
+      mtdRevenue: 20000,
+      goal: 100000,
+      now: at('2026-07-10'),
+      commissionRate: 0.05, // 5%
+    });
+    expect(r.hasCommissionRate).toBe(true);
+    expect(r.commissionRate).toBe(0.05);
+    expect(r.mtdCommission).toBe(1000); // 20000 * 0.05
+    expect(r.projectedCommission).toBeCloseTo(r.projectedEOM * 0.05, 6);
+    expect(r.goalCommission).toBe(5000);
+    // gap positivo => commissionGap = gap * rate
+    if (r.gap > 0) {
+      expect(r.commissionGap).toBeCloseTo(r.gap * 0.05, 6);
+    } else {
+      expect(r.commissionGap).toBe(0);
+    }
+  });
+
+  it('sem commissionRate: campos de comissão zerados sem NaN', () => {
+    const r = computeRunRateProjection({
+      mtdRevenue: 20000,
+      goal: 30000,
+      now: at('2026-07-10'),
+    });
+    expect(r.hasCommissionRate).toBe(false);
+    expect(r.commissionRate).toBe(0);
+    expect(r.mtdCommission).toBe(0);
+    expect(r.projectedCommission).toBe(0);
+    expect(r.commissionGap).toBe(0);
+  });
 });
