@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp } from "lucide-react";
+import { ShoppingCart, History, BrainCircuit, MessageCircle, Mail, TrendingUp, DollarSign } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,8 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
   const [showAIInsights, setShowAIInsights] = useState(false);
   const [showAIEmail, setShowAIEmail] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showRentabilidade, setShowRentabilidade] = useState(false);
+  const markupInfo = classifyMarkup(sale.markup_pct);
 
   const getPredictionColor = (score: number) => {
     if (score >= 80) return "text-emerald-500";
@@ -121,6 +123,16 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             <Button
               variant="ghost"
               size="icon"
+              className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 group-hover:scale-110 transition-all"
+              onClick={() => setShowRentabilidade(true)}
+              title="Rentabilidade"
+              aria-label="Rentabilidade"
+            >
+              <DollarSign className="h-4 w-4 text-amber-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 group-hover:scale-110 transition-all"
               onClick={() => setShowLog(true)}
               title="Registrar Atividade"
@@ -191,6 +203,65 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
         onOpenChange={setShowWhatsApp}
         sale={sale}
       />
+
+      <Dialog open={showRentabilidade} onOpenChange={setShowRentabilidade}>
+        <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-amber-500/20 rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-amber-500" />
+              Rentabilidade
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Detalhamento de preço, custo, margem e markup desta venda.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <RentabilidadeRow label="Preço de venda" value={formatBRL(sale.valor)} />
+            {sale.unit_cost != null && (
+              <RentabilidadeRow label="Custo unitário" value={formatBRL(sale.unit_cost)} />
+            )}
+            {sale.total_cost != null && (
+              <RentabilidadeRow label="Custo total" value={formatBRL(sale.total_cost)} />
+            )}
+            {sale.margin_amount != null && (
+              <RentabilidadeRow
+                label="Margem (R$)"
+                value={formatBRL(sale.margin_amount)}
+                highlight
+              />
+            )}
+            <div className="flex items-center justify-between rounded-xl border border-border/30 bg-muted/20 px-3 py-2">
+              <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/70">
+                Markup %
+              </span>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "gap-1 px-2 py-0.5 text-[11px] font-black uppercase tracking-widest",
+                  markupInfo.className,
+                )}
+              >
+                <TrendingUp className="h-3 w-3" />
+                {formatMarkupPct(markupInfo.value)}
+              </Badge>
+            </div>
+            <RentabilidadeRow
+              label="Fonte do custo"
+              value={
+                sale.cost_source
+                  ? (COST_SOURCE_LABELS[sale.cost_source] ?? sale.cost_source)
+                  : "—"
+              }
+            />
+            {sale.unit_cost == null && sale.total_cost == null && (
+              <p className="text-xs text-muted-foreground italic pt-1">
+                Custo ainda não sincronizado com o Promo Gifts. Valores de custo ficam
+                visíveis apenas para perfis autorizados.
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });
@@ -249,5 +320,31 @@ function MarkupChip({ sale }: { sale: Sale }) {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
+  );
+}
+
+function RentabilidadeRow({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-border/30 bg-muted/10 px-3 py-2">
+      <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/70">
+        {label}
+      </span>
+      <span
+        className={cn(
+          "text-sm font-bold",
+          highlight ? "text-primary" : "text-foreground",
+        )}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
