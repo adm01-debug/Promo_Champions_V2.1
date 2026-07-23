@@ -169,6 +169,7 @@ export function AppRoutes() {
                       <Route path="/admin/premiacoes" element={<Manager><AdminPremiacoes /></Manager>} />
                       <Route path="/admin/premiacoes/auditoria" element={<Manager><AdminAuditoriaPremiacoes /></Manager>} />
                       <Route path="/admin/fila-tarefas-automaticas" element={<Manager><AdminFilaTarefasAutomaticas /></Manager>} />
+                      <Route path="/admin/regras-inatividade" element={<Manager><AdminRegrasInatividade /></Manager>} />
                       <Route path="/minhas-premiacoes" element={<MinhasPremiacoes />} />
 
                       <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
