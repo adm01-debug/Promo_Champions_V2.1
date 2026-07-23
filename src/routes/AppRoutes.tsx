@@ -252,6 +252,7 @@ export function AppRoutes() {
 
                       {/* ─── Ferramentas & IA ──────────────────────── */}
                       <Route path="/assistente" element={<Assistente />} />
+                      <Route path="/meu-assistente" element={<MeuAssistente />} />
                       <Route path="/perguntar" element={<AskAnything />} />
                       <Route path="/busca-inteligente" element={<SmartSearch />} />
                       <Route path="/busca" element={<SemanticSearch />} />
