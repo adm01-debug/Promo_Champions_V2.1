@@ -46,6 +46,12 @@ export const salesService = {
       ai_prediction_reasoning?: string;
       whatsapp_status?: string;
       whatsapp_last_interaction?: string;
+      markup_pct?: number | null;
+      margin_amount?: number | null;
+      unit_cost?: number | null;
+      total_cost?: number | null;
+      cost_source?: string | null;
+      cost_synced_at?: string | null;
     };
     return ((data || []) as SaleRow[]).map(sale => ({
       id: sale.id.substring(0, 8).toUpperCase(),
@@ -65,7 +71,26 @@ export const salesService = {
       ai_prediction_reasoning: sale.ai_prediction_reasoning,
       whatsapp_status: sale.whatsapp_status,
       whatsapp_last_interaction: sale.whatsapp_last_interaction,
+      markup_pct: sale.markup_pct ?? null,
+      margin_amount: sale.margin_amount ?? null,
+      unit_cost: sale.unit_cost ?? null,
+      total_cost: sale.total_cost ?? null,
+      cost_source: sale.cost_source ?? null,
+      cost_synced_at: sale.cost_synced_at ?? null,
     }));
+  },
+
+  async createSale(input: CreateSaleInput) {
+    const { data, error } = await supabase
+      .from('sales')
+      .insert([input])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+};
   },
 
   async createSale(input: CreateSaleInput) {
