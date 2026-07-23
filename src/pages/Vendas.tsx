@@ -84,6 +84,16 @@ const Vendas = () => {
           return a.valor - b.valor;
         case 'client_asc':
           return a.cliente.localeCompare(b.cliente);
+        case 'markup_desc': {
+          const av = a.markup_pct ?? Number.NEGATIVE_INFINITY;
+          const bv = b.markup_pct ?? Number.NEGATIVE_INFINITY;
+          return bv - av;
+        }
+        case 'markup_asc': {
+          const av = a.markup_pct ?? Number.POSITIVE_INFINITY;
+          const bv = b.markup_pct ?? Number.POSITIVE_INFINITY;
+          return av - bv;
+        }
         default:
           return 0;
       }
