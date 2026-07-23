@@ -241,6 +241,114 @@ const AdminAlertasChurn = () => {
         </motion.div>
 
         <motion.div variants={itemVariants}>
+          <Card className="p-6 space-y-5">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-primary" />
+              <h2 className="text-lg font-semibold">Envio por e-mail</h2>
+            </div>
+            {isLoading || !draft ? (
+              <Skeleton className="h-32 w-full" />
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-label">Ativar envio por e-mail</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Envia um e-mail toda vez que um alerta for disparado. Requer domínio verificado.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={draft.email_enabled}
+                    onCheckedChange={(v) => setDraft({ ...draft, email_enabled: v })}
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label className="text-label">Provedor</Label>
+                    <select
+                      className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                      value={draft.email_provider}
+                      onChange={(e) => setDraft({ ...draft, email_provider: e.target.value })}
+                    >
+                      <option value="lovable">Lovable Emails (domínio próprio)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Configure o domínio verificado em Cloud → E-mails antes de habilitar.
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-label">Remetente (From)</Label>
+                    <Input
+                      type="email"
+                      placeholder="alertas@seudominio.com"
+                      value={draft.email_from ?? ''}
+                      onChange={(e) => setDraft({ ...draft, email_from: e.target.value || null })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-label">Responder para (Reply-To)</Label>
+                    <Input
+                      type="email"
+                      placeholder="opcional"
+                      value={draft.email_reply_to ?? ''}
+                      onChange={(e) => setDraft({ ...draft, email_reply_to: e.target.value || null })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-label">Assunto (template)</Label>
+                    <Input
+                      value={draft.email_subject_template}
+                      onChange={(e) => setDraft({ ...draft, email_subject_template: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Variáveis: <code>{'{{client_name}}'}</code>, <code>{'{{level}}'}</code>, <code>{'{{days}}'}</code>.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-label">Destinatários</Label>
+                  <Textarea
+                    rows={3}
+                    placeholder="Um e-mail por linha ou separados por vírgula"
+                    value={draft.email_recipients.join('\n')}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        email_recipients: e.target.value
+                          .split(/[\n,;]+/)
+                          .map((s) => s.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {draft.email_recipients.length} destinatário(s) configurado(s).
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={sendTestEmail}
+                    disabled={sendingTest || !draft.email_enabled || !draft.email_from || draft.email_recipients.length === 0}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {sendingTest ? 'Enviando...' : 'Enviar e-mail de teste'}
+                  </Button>
+                  <Button onClick={() => saveMutation.mutate(draft)} disabled={saveMutation.isPending}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar
+                  </Button>
+                </div>
+              </>
+            )}
+          </Card>
+        </motion.div>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Bell className="h-4 w-4 text-primary" />
