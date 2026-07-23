@@ -41,6 +41,22 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
   const { data, isLoading } = useRunRateProjection(salespersonId, {
     commissionRate: rateFraction,
   });
+  const { data: bonuses = [] } = useEligibleBonuses(salespersonId ?? undefined);
+
+  const { achievedFixedTotal, achievedCount, inProgressCount } = useMemo(() => {
+    let sum = 0;
+    let ac = 0;
+    let ip = 0;
+    for (const b of bonuses) {
+      if (b.achieved) {
+        ac++;
+        if (b.bonus_kind === 'fixed') sum += Number(b.bonus_amount) || 0;
+      } else {
+        ip++;
+      }
+    }
+    return { achievedFixedTotal: sum, achievedCount: ac, inProgressCount: ip };
+  }, [bonuses]);
 
   if (isLoading || !data) {
     return (
