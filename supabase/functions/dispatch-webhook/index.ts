@@ -9,6 +9,52 @@ interface DispatchRequest {
   payload: Record<string, unknown>;
 }
 
+// ─── SSRF Protection ────────────────────────────────────────────────────────
+// Blocklist: nunca permitir IPs privados, loopback, ou metadata endpoints
+const SSRF_BLOCKLIST_HOSTNAMES = new Set([
+  'localhost', 'metadata', 'metadata.google.internal', '169.254.169.254',
+  'metadata.google', 'azure.metadata.ubuntu.com',
+]);
+const SSRF_BLOCKLIST_PATTERNS = [
+  /^127\./,           // 127.0.0.0/8
+  /^10\./,            // 10.0.0.0/8
+  /^172\.(1[6-9]|2\d|3[01])\./,  // 172.16.0.0/12
+  /^192\.168\./,      // 192.168.0.0/16
+  /^0\./,             // 0.0.0.0/8
+  /^224\./,           // 224.0.0.0/4
+  /^::1$/,            // IPv6 loopback
+  /^fe80:/i,         // IPv6 link-local
+  /^fc00:/i,          // IPv6 ULA
+];
+
+function isUrlSafeForSSRF(url: string): { safe: boolean; reason?: string } {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+
+    // 1) Block hostname literals
+    if (SSRF_BLOCKLIST_HOSTNAMES.has(host)) {
+      return { safe: false, reason: `blocklisted hostname: ${host}` };
+    }
+
+    // 2) Block private IP patterns
+    for (const pattern of SSRF_BLOCKLIST_PATTERNS) {
+      if (pattern.test(host)) {
+        return { safe: false, reason: `private/reserved IP range: ${host}` };
+      }
+    }
+
+    // 3) Block non-HTTP(S) protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { safe: false, reason: `disallowed protocol: ${parsed.protocol}` };
+    }
+
+    return { safe: true };
+  } catch {
+    return { safe: false, reason: 'malformed URL' };
+  }
+}
+
 async function hmacSign(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
@@ -103,6 +149,12 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
         await withEdgeCircuitBreaker(
           `webhook:${wh.id}`,
           async () => {
+            // SSRF: validar URL antes de fazer request
+            const ssrfCheck = isUrlSafeForSSRF(wh.url);
+            if (!ssrfCheck.safe) {
+              console.warn(`[dispatch-webhook] SSRF blocked: ${wh.url} — ${ssrfCheck.reason}`);
+              throw new Error(`ssrf_blocked:${ssrfCheck.reason}`);
+            }
             const r = await fetch(wh.url, {
               method: 'POST',
               headers,

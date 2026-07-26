@@ -103,6 +103,32 @@ export async function dispatchOne(
   deps: DispatchDeps,
 ): Promise<DispatchResult> {
   const { fetchFn, sleep, insertDelivery, updateSubscription, onDeadLetter, now = Date.now, rand = Math.random, log, requestId } = deps;
+
+  // ─── SSRF Protection ───────────────────────────────────────────────────
+  // Blocklist: private IPs, loopback, metadata endpoints, non-HTTP protocols
+  const SSRF_BLOCKLIST = new Set([
+    'localhost', 'metadata', 'metadata.google.internal', '169.254.169.254',
+  ]);
+  const SSRF_IP_PATTERNS = [
+    /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./,
+    /^192\.168\./, /^0\./, /^224\./, /^::1$/, /^fe80:/i, /^fc00:/i,
+  ];
+  function isUrlSafe(url: string): boolean {
+    try {
+      const { hostname } = new URL(url);
+      const h = hostname.toLowerCase();
+      if (SSRF_BLOCKLIST.has(h)) return false;
+      for (const p of SSRF_IP_PATTERNS) if (p.test(h)) return false;
+      return ['http:', 'https:'].includes(new URL(url).protocol);
+    } catch { return false; }
+  }
+  if (!isUrlSafe(sub.url)) {
+    const reason = `ssrf_blocked: ${sub.url}`;
+    log?.('warn', { msg: 'ssrf_blocked', subscriptionId: sub.id, url: sub.url });
+    return { id: sub.id, status: 0, attempts: 0, succeeded: false, error: reason, total_latency_ms: 0 };
+  }
+  // ─── end SSRF ─────────────────────────────────────────────────────────
+
   const outbound = sanitizeOutboundPayload(payload);
   const body = JSON.stringify({ ...outbound, dispatched_at: new Date().toISOString() });
   const event = String(payload.event ?? "unknown");
