@@ -15,6 +15,7 @@ import { SalesTopProductsChart } from "@/components/reports/sales/SalesTopProduc
 import { SalesStatusDonut } from "@/components/reports/sales/SalesStatusDonut";
 import { SalesMarkupTrendChart } from "@/components/reports/sales/SalesMarkupTrendChart";
 import { SalesTeamRankingChart } from "@/components/reports/sales/SalesTeamRankingChart";
+import { SalesMarkupRankingTable } from "@/components/reports/sales/SalesMarkupRankingTable";
 import { SalesTopDealsTable } from "@/components/reports/sales/SalesTopDealsTable";
 import { useSalesReport } from "@/hooks/reports/useSalesReport";
 import { generateSalesReportPdf } from "@/lib/reports/salesReportPdf";
@@ -137,6 +138,8 @@ export default function SalesReportPage() {
             </div>
 
             <SalesTeamRankingChart data={data.teamRanking} />
+
+            <SalesMarkupRankingTable data={data.markupRanking} />
 
             <SalesTopDealsTable data={data.topDeals} />
           </motion.div>
