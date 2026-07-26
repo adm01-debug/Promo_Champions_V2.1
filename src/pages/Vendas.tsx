@@ -87,6 +87,11 @@ const Vendas = () => {
       filtered = filtered.filter(s => s.status !== 'lost');
     }
 
+    // Apply markup tier filter (faixa de rentabilidade)
+    if (markupFilter) {
+      filtered = filtered.filter(s => classifyMarkup(s.markup_pct).tier === markupFilter);
+    }
+
     // Apply sorting
     return filtered.sort((a, b) => {
       switch (sortBy) {
@@ -114,7 +119,13 @@ const Vendas = () => {
           return 0;
       }
     });
-  }, [sales, fuse, debouncedSearchTerm, sortBy, statusFilter]);
+  }, [sales, fuse, debouncedSearchTerm, sortBy, statusFilter, markupFilter]);
+
+  const markupSummary = useMemo(
+    () => summarizeMarkup(filteredAndSortedSales.map(s => s.markup_pct)),
+    [filteredAndSortedSales],
+  );
+
 
   const {
     paginatedItems,
