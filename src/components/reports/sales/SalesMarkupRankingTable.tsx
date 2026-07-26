@@ -50,7 +50,7 @@ export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
           aria-label="Amostra mínima de vendas"
         >
           <span className="px-2 text-caption">Amostra mín.</span>
-          {MIN_SAMPLE_OPTIONS.map(opt => (
+          {options.map((opt: number) => (
             <Button
               key={opt}
               type="button"
