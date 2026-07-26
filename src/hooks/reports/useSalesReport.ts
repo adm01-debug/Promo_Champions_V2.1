@@ -65,6 +65,7 @@ export function useSalesReport(period: ReportPeriod, refDate: Date) {
       return {
         current: buildKpiDeltas(curKpis, prevKpis),
         revenueSeries: buildRevenueSeries(current, period, start, end),
+        markupSeries: buildMarkupSeries(current, period, start, end),
         topProducts: buildTopProducts(current),
         statusBreakdown: buildStatusBreakdown(current),
         teamRanking: buildTeamRanking(current, salespeople),
