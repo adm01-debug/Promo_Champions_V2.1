@@ -376,3 +376,59 @@ describe('buildMarkupSeries', () => {
     expect(series.some((p) => p.value === 45)).toBe(true);
   });
 });
+
+describe('buildMarkupRanking', () => {
+  const people = [
+    { id: 'p1', name: 'Ana' },
+    { id: 'p2', name: 'Bruno' },
+  ];
+  const sale = (
+    id: string,
+    salesperson_id: string | null,
+    markup_pct: number | null,
+    status = 'completed',
+    amount = 1000,
+  ): SaleRow => ({
+    id,
+    amount,
+    status,
+    created_at: '2026-07-20T10:00:00',
+    client_name: 'C',
+    product_name: 'P',
+    salesperson_id,
+    markup_pct,
+  });
+
+  it('ordena por markup médio decrescente e calcula amostra/receita', () => {
+    const rows = buildMarkupRanking(
+      [
+        sale('1', 'p1', 20),
+        sale('2', 'p1', 40),
+        sale('3', 'p2', 50, 'completed', 2000),
+      ],
+      people,
+    );
+    expect(rows.map((r) => r.name)).toEqual(['Bruno', 'Ana']);
+    expect(rows[1].avgMarkup).toBe(30);
+    expect(rows[1].sample).toBe(2);
+    expect(rows[0].revenue).toBe(2000);
+  });
+
+  it('ignora vendas não ganhas, sem custo ou sem vendedor', () => {
+    const rows = buildMarkupRanking(
+      [
+        sale('1', 'p1', 30, 'cancelled'),
+        sale('2', 'p1', null),
+        sale('3', null, 60),
+      ],
+      people,
+    );
+    expect(rows).toHaveLength(0);
+  });
+
+  it('resolve vendedor desconhecido e respeita topN', () => {
+    const rows = buildMarkupRanking([sale('1', 'px', 15), sale('2', 'p1', 10)], people, 1);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].name).toBe('Desconhecido');
+  });
+});
