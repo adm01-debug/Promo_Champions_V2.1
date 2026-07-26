@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon, FileDown, ArrowLeft, Sheet } from "lucide-react";
+import { Calendar as CalendarIcon, FileDown, ArrowLeft, Sheet, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ interface Props {
   onDateChange: (d: Date) => void;
   onExport: () => void;
   onExportCsv: () => void;
+  onExportMarkupCsv: () => void;
   exporting: boolean;
 }
 
@@ -26,6 +27,7 @@ export const SalesReportHeader: FC<Props> = ({
   onDateChange,
   onExport,
   onExportCsv,
+  onExportMarkupCsv,
   exporting,
 }) => {
   const navigate = useNavigate();
@@ -84,6 +86,18 @@ export const SalesReportHeader: FC<Props> = ({
             <Sheet className="h-4 w-4" />
             Exportar CSV
           </Button>
+
+          <Button
+            onClick={onExportMarkupCsv}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            title="Exporta a série de markup médio por período"
+          >
+            <TrendingUp className="h-4 w-4" />
+            CSV Markup
+          </Button>
+
 
           <Button onClick={onExport} disabled={exporting} size="sm" className="gap-2">
             <FileDown className="h-4 w-4" />
