@@ -207,21 +207,63 @@ const Vendas = () => {
                         value: statusFilter,
                         onChange: setStatusFilter,
                       },
+                      {
+                        label: 'Rentabilidade',
+                        options: markupTierOptions,
+                        value: markupFilter,
+                        onChange: setMarkupFilter,
+                      },
                     ]}
                   />
                 </div>
                 <SavedFiltersBar
                   entityType="vendas"
-                  currentFilters={{ searchTerm, sortBy, statusFilter }}
+                  currentFilters={{ searchTerm, sortBy, statusFilter, markupFilter }}
                   onApplyFilter={filters => {
                     if (filters.searchTerm !== undefined)
                       setSearchTerm(filters.searchTerm as string);
                     if (filters.sortBy !== undefined) setSortBy(filters.sortBy as string);
                     if (filters.statusFilter !== undefined)
                       setStatusFilter(filters.statusFilter as string);
+                    if (filters.markupFilter !== undefined)
+                      setMarkupFilter(filters.markupFilter as string);
                   }}
                 />
+
+                {/* Resumo de rentabilidade da seleção atual */}
+                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/10 pt-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Markup médio
+                  </span>
+                  <span className="text-sm font-bold text-foreground tabular-nums">
+                    {formatMarkupPct(markupSummary.average)}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    (mediana {formatMarkupPct(markupSummary.median)} ·{' '}
+                    {markupSummary.withCost}/{markupSummary.total} com custo)
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5 ml-auto">
+                    {markupTierOptions.map(tier => (
+                      <button
+                        key={tier.value}
+                        type="button"
+                        onClick={() =>
+                          setMarkupFilter(markupFilter === tier.value ? '' : tier.value)
+                        }
+                        aria-pressed={markupFilter === tier.value}
+                        className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                          markupFilter === tier.value
+                            ? 'bg-primary/15 border-primary/40 text-primary'
+                            : 'bg-muted/40 border-border/40 text-muted-foreground hover:bg-muted/70'
+                        }`}
+                      >
+                        {tier.label.split(' (')[0]} · {markupSummary.counts[tier.value]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
+
 
               {/* HUD Table */}
               {filteredAndSortedSales.length > 0 ? (
