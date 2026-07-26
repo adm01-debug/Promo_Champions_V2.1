@@ -19,6 +19,7 @@ export interface SaleRow {
   client_name: string | null;
   product_name: string | null;
   salesperson_id: string | null;
+  markup_pct?: number | null;
 }
 
 export interface SalespersonRow {
@@ -67,6 +68,7 @@ export interface TopDeal {
   salesperson: string;
   amount: number;
   status: string;
+  markupPct: number | null;
 }
 
 export interface SalesReportData {
@@ -202,6 +204,10 @@ export function buildTopDeals(
       salesperson: salespeople.find(p => p.id === s.salesperson_id)?.name ?? '—',
       amount: Number(s.amount ?? 0),
       status: STATUS_LABEL[s.status ?? ''] ?? s.status ?? '—',
+      markupPct:
+        s.markup_pct === null || s.markup_pct === undefined || Number.isNaN(Number(s.markup_pct))
+          ? null
+          : Number(s.markup_pct),
     }));
 }
 
