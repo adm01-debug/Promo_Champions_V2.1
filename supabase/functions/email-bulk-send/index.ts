@@ -1,6 +1,8 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { filterOptedOut } from "../_shared/unsubscribe.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -56,10 +58,27 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .is('sent_at', null)
       .limit(10000);
 
+    // Guarda de opt-out: nunca enviar para quem se descadastrou (falha fechada).
+    const { allowed, blocked } = await filterOptedOut(
+      admin as never,
+      drafts ?? [],
+      (d) => d.recipient_email,
+    );
+
+    let skipped = 0;
+    for (const d of blocked) {
+      await admin
+        .from('email_bulk_drafts')
+        .update({ error: 'opted_out' })
+        .eq('id', d.id);
+      skipped++;
+    }
+
     let sent = 0;
     let failed = 0;
 
-    for (const d of drafts ?? []) {
+    for (const d of allowed) {
+
       if (!d.recipient_email) {
         await admin
           .from('email_bulk_drafts')
@@ -108,9 +127,10 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .update({ status: 'completed', completed_at: new Date().toISOString() })
       .eq('id', job_id);
 
-    return new Response(JSON.stringify({ sent, failed }), {
+    return new Response(JSON.stringify({ sent, failed, skipped }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (e) {
     console.error('email-bulk-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {

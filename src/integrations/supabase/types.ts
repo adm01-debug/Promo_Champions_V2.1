@@ -7185,6 +7185,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_opt_outs: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          owner_id: string | null
+          reason: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          owner_id?: string | null
+          reason?: string | null
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          owner_id?: string | null
+          reason?: string | null
+          source?: string
+        }
+        Relationships: []
+      }
       email_tracking_events: {
         Row: {
           created_at: string
@@ -21982,6 +22012,7 @@ export type Database = {
         Args: { check_country_code: string }
         Returns: boolean
       }
+      is_email_opted_out: { Args: { _email: string }; Returns: boolean }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
       is_known_device: {
@@ -22092,6 +22123,16 @@ export type Database = {
       reconcile_forecast_accuracy: {
         Args: { _days?: number }
         Returns: undefined
+      }
+      record_email_opt_out: {
+        Args: {
+          _email: string
+          _metadata?: Json
+          _owner_id?: string
+          _reason?: string
+          _source?: string
+        }
+        Returns: string
       }
       record_engagement_signal: {
         Args: {
