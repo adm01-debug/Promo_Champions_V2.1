@@ -145,8 +145,9 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     const pageW = doc.internal.pageSize.getWidth();
 
     // Capture all charts in parallel
-    const [revenuePng, productsPng, statusPng, teamPng] = await Promise.all([
+    const [revenuePng, markupPng, productsPng, statusPng, teamPng] = await Promise.all([
       captureChart('[data-report-chart="revenue"]'),
+      captureChart('[data-report-chart="markup-trend"]'),
       captureChart('[data-report-chart="top-products"]'),
       captureChart('[data-report-chart="status"]'),
       captureChart('[data-report-chart="team"]'),
