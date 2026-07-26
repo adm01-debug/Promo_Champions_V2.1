@@ -172,6 +172,10 @@ function AdminSupressaoEmails() {
           </div>
         </header>
 
+        <EmailSuppressionMetricsCard />
+
+
+
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Adicionar manualmente</CardTitle>
