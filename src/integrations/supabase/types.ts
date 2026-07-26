@@ -21770,6 +21770,25 @@ export type Database = {
           total_tasks: number
         }[]
       }
+      get_campaign_delivery_stats: {
+        Args: { _days?: number }
+        Returns: {
+          created_at: string
+          failed_count: number
+          first_sent_at: string
+          job_id: string
+          last_sent_at: string
+          max_latency_seconds: number
+          p50_latency_seconds: number
+          p95_latency_seconds: number
+          pending_count: number
+          prompt: string
+          sent_count: number
+          status: string
+          target_count: number
+          throughput_per_minute: number
+        }[]
+      }
       get_campaign_optout_rates: {
         Args: { _days?: number }
         Returns: {
