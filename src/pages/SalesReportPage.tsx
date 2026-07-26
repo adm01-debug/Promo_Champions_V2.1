@@ -31,6 +31,8 @@ export default function SalesReportPage() {
   const [exporting, setExporting] = useState(false);
 
   const { data, isLoading } = useSalesReport(period, refDate);
+  // Reflete no PDF a mesma amostra mínima escolhida na tabela de ranking.
+  const { minSample } = useMarkupMinSamplePreference();
 
   const periodLabel =
     period === "weekly"
@@ -41,7 +43,7 @@ export default function SalesReportPage() {
     if (!data) return;
     setExporting(true);
     try {
-      await generateSalesReportPdf(data, periodLabel);
+      await generateSalesReportPdf(data, periodLabel, minSample);
     } finally {
       setExporting(false);
     }
