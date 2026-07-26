@@ -137,7 +137,12 @@ function addImage(
   doc.setTextColor(...BRAND_DARK);
 }
 
-export async function generateSalesReportPdf(data: SalesReportData, periodLabel: string) {
+export async function generateSalesReportPdf(
+  data: SalesReportData,
+  periodLabel: string,
+  /** Amostra mínima de vendas com custo conhecido para entrar no ranking (default 1). */
+  minSample = 1
+) {
   try {
     const { default: JsPDFCtor } = await import('jspdf');
     const { default: autoTable } = await import('jspdf-autotable');
