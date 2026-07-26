@@ -218,7 +218,7 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     doc.text('Distribuição por status', 14, 130);
     addImage(doc, statusPng, 14, 134, pageW - 28, 80, 'Sem dados de status');
 
-    // ===== Page 4 — Team ranking + top deals =====
+    // ===== Page 5 — Team ranking + top deals =====
     doc.addPage();
     header(doc, periodLabel);
     doc.setFont('helvetica', 'bold');
