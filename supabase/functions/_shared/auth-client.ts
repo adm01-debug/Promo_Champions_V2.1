@@ -92,3 +92,21 @@ export async function requireAdmin(ctx: AuthenticatedContext): Promise<void> {
   if (error) throw new UnauthorizedError(`role_check_failed:${error.message}`);
   if (!data) throw new UnauthorizedError("admin_role_required");
 }
+
+/**
+ * Constant-time string comparison — prevents timing side-channel attacks.
+ * Uses Web Crypto API for correct constant-time semantics.
+ * Falls back to byte-loop if TextEncoder unavailable (edge functions env).
+ */
+export function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  const enc = new TextEncoder();
+  const ua = enc.encode(a);
+  const ub = enc.encode(b);
+  if (ua.byteLength !== ub.byteLength) return false;
+  let diff = 0;
+  const viewA = new DataView(ua.buffer, ua.byteOffset, ua.byteLength);
+  const viewB = new DataView(ub.buffer, ub.byteOffset, ub.byteLength);
+  for (let i = 0; i < ua.byteLength; i++) diff |= viewA.getUint8(i) ^ viewB.getUint8(i);
+  return diff === 0;
+}

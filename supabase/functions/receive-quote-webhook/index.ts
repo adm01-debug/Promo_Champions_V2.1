@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateWebhookPayload, WebhookContracts, createValidationErrorResponse } from "../_shared/webhook-validator.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { timingSafeEqual } from "../_shared/auth-client.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -68,13 +69,6 @@ function mapToPipelineStatus(quoteStatus: string): string {
   return mapping[quoteStatus] || "lead";
 }
 
-// ── Helper: constant-time-ish string compare ──────────────────────
-function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
 
 Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
@@ -98,7 +92,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
   }
 
   const apiKey = req.headers.get("x-api-key") ?? "";
-  if (!apiKey || !safeEqual(apiKey, syncApiKey)) {
+  if (!apiKey || !timingSafeEqual(apiKey, syncApiKey)) {
     console.warn("[receive-quote-webhook] unauthorized request (missing/invalid x-api-key)");
     return new Response(
       JSON.stringify({ error: "Unauthorized: invalid or missing x-api-key" }),

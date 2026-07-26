@@ -8,7 +8,7 @@ import {
   collectErrors,
   validationErrorResponse,
 } from '../_shared/validation.ts';
-import { getCorsHeaders(req) } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 

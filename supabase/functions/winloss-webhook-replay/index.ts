@@ -1,4 +1,4 @@
-import { getCorsHeaders(req) } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';

@@ -1,6 +1,6 @@
 // Daily queue: auto-generates follow-up tasks for high-urgency clients
 // Runs via cron every hour; only executes when local time >= configured cutoff and not already run today.
-import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 const WON_STATUSES = ['won', 'closed_won', 'paid', 'delivered', 'completed'];

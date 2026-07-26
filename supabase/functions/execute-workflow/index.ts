@@ -1,4 +1,4 @@
-import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";

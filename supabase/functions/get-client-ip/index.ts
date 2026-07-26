@@ -1,4 +1,4 @@
-import { getCorsHeaders(req) } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 Deno.serve(

@@ -1,4 +1,4 @@
-import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 // Endpoint: GET/POST winloss-webhook-timeline
 // Returns a unified, chronologically sorted timeline of webhook events
 // correlated by `requestId` and/or `subscriptionId`.

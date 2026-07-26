@@ -3,7 +3,7 @@
 // last N minutes and creates admin notifications (deduped by (jobid, start_time)).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateNotificationBatch } from "../_shared/notification-categories.ts";
 
 interface CronFailure {

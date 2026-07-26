@@ -5,6 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { timingSafeEqual } from "../_shared/auth-client.ts";
 
 interface AiAction {
   category: 'opening' | 'discovery' | 'objection' | 'closing' | 'talk_ratio' | 'pace' | 'empathy' | 'other';
@@ -50,15 +51,6 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
       .select('value')
       .eq('key', 'coaching_cron_secret')
       .maybeSingle();
-
-    // Constant-time comparison: compare length first, then each byte.
-    // Prevents timing attacks that could reveal secret length via response time.
-    function timingSafeEqual(a: string, b: string): boolean {
-      if (a.length !== b.length) return false;
-      let diff = 0;
-      for (let i = 0; i < a.length; i++) diff |= a.codePointAt(i)! ^ b.codePointAt(i)!;
-      return diff === 0;
-    }
 
     if (!sec?.value || !providedSecret || !timingSafeEqual(sec.value, providedSecret)) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {

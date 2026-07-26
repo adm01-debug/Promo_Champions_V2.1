@@ -1,4 +1,4 @@
-import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface Payload {

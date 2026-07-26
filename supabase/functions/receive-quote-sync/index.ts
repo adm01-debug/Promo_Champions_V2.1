@@ -17,9 +17,10 @@
 // Ambos compartilham public.webhook_inbound_dedupe e public.quote_sync_inbound_log.
 
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
-import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { timingSafeEqual } from "../_shared/auth-client.ts";
 
 const encoder = new TextEncoder();
 
@@ -35,13 +36,6 @@ async function hmacSha256Hex(secret: string, body: string): Promise<string> {
   return Array.from(new Uint8Array(sig))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-}
-
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
 }
 
 function json(body: unknown, status = 200): Response {

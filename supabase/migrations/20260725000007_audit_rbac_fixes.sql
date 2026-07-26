@@ -109,7 +109,10 @@ EXCEPTION WHEN undefined_function THEN
   BEGIN
     IF p_user_id IS NULL OR p_role_name IS NULL THEN RETURN FALSE; END IF;
     BEGIN v_role := p_role_name::app_role;
-    EXCEPTION WHEN undefined_function THEN RETURN FALSE; END;
+    EXCEPTION WHEN OTHERS THEN
+      -- Se o cast falhar (role nao existe no enum app_role), retornar FALSE
+      -- OTHERS é seguro aqui porque ja verificamos existencia com PERFORM acima
+      RETURN FALSE; END;
     RETURN has_role(p_user_id, v_role);
   END; $$;
   $$;
@@ -170,8 +173,9 @@ BEGIN
 
     RETURN v_result;
 
-  EXCEPTION WHEN raise_exception THEN
-    -- Se o cast falhar, retornar salesperson como fallback seguro
+  EXCEPTION WHEN OTHERS THEN
+    -- Se o cast falhar (role fora do enum), retornar salesperson como fallback seguro
+    -- OTHERS safe: intent is already confirmed via PERFORM check above
     RETURN 'salesperson'::app_role;
   END;
   $$;

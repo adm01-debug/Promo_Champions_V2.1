@@ -1,16 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
-
-// Constant-time string compare to avoid timing side-channels.
-function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
+import { timingSafeEqual } from "../_shared/auth-client.ts";
 
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
@@ -63,7 +56,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
   const token = authHeader.slice(7); // strip "Bearer "
 
   // Check if this is an internal service-to-service call.
-  const isServiceCall = safeEqual(token, supabaseServiceKey);
+  const isServiceCall = timingSafeEqual(token, supabaseServiceKey);
 
   let callerUserId: string | null = null;
   if (!isServiceCall) {

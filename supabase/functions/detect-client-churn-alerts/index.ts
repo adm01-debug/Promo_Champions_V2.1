@@ -1,7 +1,7 @@
 // Detects clients that crossed the churn threshold and creates notifications
 // for the responsible salesperson. Idempotent within cooldown window.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
