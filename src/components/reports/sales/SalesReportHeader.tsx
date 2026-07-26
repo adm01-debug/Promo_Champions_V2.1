@@ -27,6 +27,7 @@ export const SalesReportHeader: FC<Props> = ({
   onDateChange,
   onExport,
   onExportCsv,
+  onExportMarkupCsv,
   exporting,
 }) => {
   const navigate = useNavigate();
