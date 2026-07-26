@@ -87,6 +87,18 @@ export const SalesReportHeader: FC<Props> = ({
             Exportar CSV
           </Button>
 
+          <Button
+            onClick={onExportMarkupCsv}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            title="Exporta a série de markup médio por período"
+          >
+            <TrendingUp className="h-4 w-4" />
+            CSV Markup
+          </Button>
+
+
           <Button onClick={onExport} disabled={exporting} size="sm" className="gap-2">
             <FileDown className="h-4 w-4" />
             {exporting ? "Gerando..." : "Exportar PDF"}
