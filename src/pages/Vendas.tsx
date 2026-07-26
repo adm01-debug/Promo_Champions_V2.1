@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { VendasLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SavedFiltersBar } from '@/components/filters/SavedFiltersBar';
 import Fuse from 'fuse.js';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -48,11 +49,17 @@ const markupTierOptions: { label: string; value: MarkupTier }[] = [
   { label: MARKUP_TIER_LABELS.unknown, value: 'unknown' },
 ];
 
+const VALID_TIERS: ReadonlyArray<string> = ['excellent', 'healthy', 'critical', 'unknown'];
+
 const Vendas = () => {
+  const [searchParams] = useSearchParams();
+  const initialMarkup = searchParams.get('markup') ?? '';
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date_desc');
   const [statusFilter, setStatusFilter] = useState('');
-  const [markupFilter, setMarkupFilter] = useState('');
+  const [markupFilter, setMarkupFilter] = useState(
+    VALID_TIERS.includes(initialMarkup) ? initialMarkup : '',
+  );
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
   const { data: sales, isLoading } = useSalesData('');
 
