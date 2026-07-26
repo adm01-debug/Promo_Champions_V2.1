@@ -238,7 +238,7 @@ Deno.serve(
           top_discounters: topDiscounters,
           product_recommendations: productRecommendations,
         }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     } catch (e) {
       console.error('pricing-intelligence error:', e);
@@ -246,7 +246,7 @@ Deno.serve(
         JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
         {
           status: 500,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

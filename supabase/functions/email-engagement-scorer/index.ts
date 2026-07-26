@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -132,14 +132,14 @@ Deno.serve(withRequestId("email-engagement-scorer", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, updated, by_tier: tierCounts, total_processed: saleIds.length }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('email-engagement-scorer error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

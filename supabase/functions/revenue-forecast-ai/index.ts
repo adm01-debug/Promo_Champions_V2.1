@@ -192,13 +192,13 @@ Deno.serve(withRequestId("revenue-forecast-ai", async (req, _ctx) => {
         opportunities,
         generated_at: new Date().toISOString(),
       }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("revenue-forecast-ai error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

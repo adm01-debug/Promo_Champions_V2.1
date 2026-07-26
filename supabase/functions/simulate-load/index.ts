@@ -23,7 +23,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   if (!authHeader) {
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -38,7 +38,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -48,7 +48,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
     if (!targetUrl) {
       return new Response(JSON.stringify({ error: 'targetUrl is required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -58,7 +58,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
         JSON.stringify({ error: 'Requests to private or internal addresses are not allowed' }),
         {
           status: 400,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -114,13 +114,13 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
         minLatencyMs: Math.round(minLatency),
         successRate: (results.passed / safeTotal) * 100,
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('simulate-load error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

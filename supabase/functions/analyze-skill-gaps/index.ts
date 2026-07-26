@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -89,7 +89,7 @@ Deno.serve(withRequestId('analyze-skill-gaps', async (req, _ctx) => {
 
     const { data: salespeople } = await supabase.from("salespeople").select("id, name").eq("active", true).limit(500);
     if (!salespeople?.length) {
-      return new Response(JSON.stringify({ assessments: 0, tracks: 0 }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ assessments: 0, tracks: 0 }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const since90 = new Date(Date.now() - 90 * 86400e3).toISOString();
@@ -176,12 +176,12 @@ Deno.serve(withRequestId('analyze-skill-gaps', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ assessments: assessmentRows.length, tracks: trackRows.length, salespeople: salespeople.length }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("analyze-skill-gaps error", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

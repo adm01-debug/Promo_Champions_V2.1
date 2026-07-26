@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -41,7 +41,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
     if (e instanceof UnauthorizedError) {
       return new Response(
         JSON.stringify({ error: "Unauthorized: " + e.message }),
-        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
     throw e;
@@ -56,7 +56,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       console.error(`[Contract Violation] Workflow execution failed validation: ${validation.error}`);
       return new Response(
         JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
-        { status: validation.statusCode, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: validation.statusCode, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -76,7 +76,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
 
     if (wErr || !workflow) {
       return new Response(JSON.stringify({ error: "Workflow not found or inactive" }), {
-        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -95,7 +95,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
         completed_at: new Date().toISOString(),
       });
       return new Response(JSON.stringify({ skipped: true, reason: "conditions_not_met" }), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -177,12 +177,12 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       .eq("id", workflow_id);
 
     return new Response(JSON.stringify({ status: finalStatus, executed }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('execute-workflow error:', e);
     return new Response(JSON.stringify({ error: String((e as Error).message) }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

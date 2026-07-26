@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
@@ -18,7 +18,7 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
     if (e instanceof UnauthorizedError) {
       return new Response(
         JSON.stringify({ error: "Unauthorized: " + e.message }),
-        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     throw e;
@@ -30,7 +30,7 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
     if (!leadId || typeof leadId !== 'string') {
       return new Response(
         JSON.stringify({ error: 'leadId is required and must be a string' }),
-        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -74,7 +74,7 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
     if (leadReadErr || !leadRow) {
       return new Response(
         JSON.stringify({ error: 'Lead not found' }),
-        { status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -86,7 +86,7 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
     ) {
       return new Response(
         JSON.stringify({ error: 'Forbidden: you do not have access to this lead' }),
-        { status: 403, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -129,13 +129,13 @@ Deno.serve(withRequestId("enrich-lead", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ success: true, company: companyEnrichment, person: personEnrichment }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: message }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       status: 400,
     })
   }

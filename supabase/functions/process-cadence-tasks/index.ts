@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -30,7 +30,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     if (!claimedIds || claimedIds.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, processed: 0, results: [] }),
-        { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
       );
     }
 
@@ -156,14 +156,14 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, processed: tasks.length, results }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {
     console.error('process-cadence-tasks error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 500 },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 500 },
     );
   }
 }));

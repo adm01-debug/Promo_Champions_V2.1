@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -43,7 +43,7 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
     if (!userData.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -156,14 +156,14 @@ Deno.serve(withRequestId("conversational-intelligence", async (req, _ctx) => {
         top_topics: top(topicTally),
         recordings: items,
       }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error('conversational-intelligence error:', e);
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

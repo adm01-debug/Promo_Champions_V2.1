@@ -45,7 +45,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
 
     if (!accounts) {
       return new Response(JSON.stringify({ accounts: [], summary: {} }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -135,7 +135,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
     };
 
     return new Response(JSON.stringify({ accounts: enriched, summary }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('customer-success-hub error:', error);
@@ -143,7 +143,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

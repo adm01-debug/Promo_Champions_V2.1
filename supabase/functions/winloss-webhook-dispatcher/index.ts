@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
@@ -96,7 +96,7 @@ function envelope(
   };
   return new Response(JSON.stringify(body), {
     status,
-    headers: { getCorsHeaders(req), "Content-Type": "application/json", "X-Request-Id": requestId },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json", "X-Request-Id": requestId },
   });
 }
 

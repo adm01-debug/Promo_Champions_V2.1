@@ -391,7 +391,7 @@ Deno.serve(async req => {
     if (sale_id) {
       const result = await processOne(supabase, sale_id);
       return new Response(JSON.stringify(result), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -407,7 +407,7 @@ Deno.serve(async req => {
       if (!user) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
           status: 401,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       const { data: sales } = await supabase
@@ -420,13 +420,13 @@ Deno.serve(async req => {
 
       const results = await Promise.all((sales || []).map(s => processOne(supabase, s.id)));
       return new Response(JSON.stringify({ processed: results.length, results }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(JSON.stringify({ error: 'missing sale_id or batch' }), {
       status: 400,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error(e);
@@ -434,7 +434,7 @@ Deno.serve(async req => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

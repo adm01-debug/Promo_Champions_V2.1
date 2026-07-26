@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface Turn {
@@ -24,7 +24,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const supabase = createClient(
@@ -37,7 +37,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
     if (claimsErr || !claims?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -46,7 +46,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -63,7 +63,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
     if (recErr || !rec) {
       return new Response(JSON.stringify({ error: "recording not found" }), {
         status: 404,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -142,7 +142,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
     if (upErr) {
       return new Response(JSON.stringify({ error: upErr.message }), {
         status: 500,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -151,12 +151,12 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
       health,
       pace_score: paceScore,
       engagement_score: engagement,
-    }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+    }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     console.error('analyze-conversation-metrics error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

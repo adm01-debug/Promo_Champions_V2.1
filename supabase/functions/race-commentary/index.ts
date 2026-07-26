@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface CommentaryRequest {
@@ -58,7 +58,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
       // Return 200 + skipped flag so the UI doesn't blank-screen when AI isn't configured
       return new Response(
         JSON.stringify({ commentary: "", skipped: true, reason: "no_api_key" }),
-        { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -66,7 +66,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
     if (!body.leaderboard || !Array.isArray(body.leaderboard)) {
       return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -76,7 +76,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
     if (cached) {
       return new Response(
         JSON.stringify({ commentary: cached, cached: true, generated_at: new Date().toISOString() }),
-        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -129,7 +129,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
           skipped: true,
           reason: aborted ? "ai_timeout" : "ai_unreachable",
         }),
-        { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
     clearTimeout(timeoutId);
@@ -137,13 +137,13 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
     if (aiResp.status === 429) {
       return new Response(JSON.stringify({ error: "Rate limited" }), {
         status: 429,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (aiResp.status === 402) {
       return new Response(JSON.stringify({ error: "AI credits exhausted" }), {
         status: 402,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!aiResp.ok) {
@@ -151,7 +151,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
       console.error("AI gateway error:", aiResp.status, t);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -161,13 +161,13 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ commentary, generated_at: new Date().toISOString() }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error("race-commentary error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 }));

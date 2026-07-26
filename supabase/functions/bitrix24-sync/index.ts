@@ -81,7 +81,7 @@ async function getAccessToken(): Promise<string | null> {
     console.info('No access token found. OAuth2 authorization required.');
     return null;
   } catch (error) {
-    console.error('Error getting access token:', error);
+    console.error('Error getting access token: [redacted]');
     return null;
   }
 }
@@ -591,7 +591,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
         duration_ms: durationMs,
         timestamp: new Date().toISOString(),
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     const durationMs = Date.now() - startTime;
@@ -631,7 +631,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
       }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

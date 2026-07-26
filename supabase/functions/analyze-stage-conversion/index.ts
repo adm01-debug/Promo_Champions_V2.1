@@ -288,13 +288,13 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
         days,
         owner_id: ownerId,
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('analyze-stage-conversion error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

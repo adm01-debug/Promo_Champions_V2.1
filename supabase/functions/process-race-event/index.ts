@@ -22,7 +22,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -45,7 +45,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
 
     if (!season) {
       return new Response(JSON.stringify({ ok: true, skipped: 'no-active-season' }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -276,13 +276,13 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, events_emitted: 1 + events.length }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('process-race-event error', err);
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

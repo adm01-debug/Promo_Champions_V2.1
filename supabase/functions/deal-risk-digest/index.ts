@@ -97,7 +97,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   if (riskyErr) {
     console.error('[deal-risk-digest] query failed', riskyErr);
     return new Response(JSON.stringify({ error: riskyErr.message }), {
-      status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -125,7 +125,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
 
   if (bySeller.size === 0) {
     return new Response(JSON.stringify({ ok: true, digests_created: 0, elapsed_ms: Date.now() - startedAt }), {
-      status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -214,7 +214,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
           ctx.requestId,
         );
         return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
-          status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       inserted = count ?? valid.length;
@@ -242,6 +242,6 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   ctx.log('info', 'digest_summary', summary);
 
   return new Response(JSON.stringify(summary), {
-    status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+    status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }));

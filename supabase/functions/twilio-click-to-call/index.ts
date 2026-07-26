@@ -18,7 +18,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -33,7 +33,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (userErr || !userData.user) {
       return new Response(JSON.stringify({ error: 'Invalid token' }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     const ownerId = userData.user.id;
@@ -42,7 +42,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (!body.to_number) {
       return new Response(JSON.stringify({ error: 'to_number required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -60,7 +60,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (!cred) {
       return new Response(
         JSON.stringify({ error: 'Twilio não configurado. Conecte em Multichannel.' }),
-        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -70,7 +70,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (!accountSid || !authToken) {
       return new Response(JSON.stringify({ error: 'Credenciais Twilio incompletas' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -78,7 +78,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
     if (!fromNumber) {
       return new Response(JSON.stringify({ error: 'from_number ausente' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -114,7 +114,7 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
           error: twilioData.message || 'Twilio error',
           details: twilioData,
         }),
-        { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -141,13 +141,13 @@ Deno.serve(withRequestId('twilio-click-to-call', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, call_sid: callSid, session_id: session?.id }),
-      { status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('twilio-click-to-call error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 Deno.serve(withRequestId("sequence-ab-promote", async (req, _ctx) => {
@@ -9,7 +9,7 @@ Deno.serve(withRequestId("sequence-ab-promote", async (req, _ctx) => {
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -24,7 +24,7 @@ Deno.serve(withRequestId("sequence-ab-promote", async (req, _ctx) => {
   if (claimErr || !claims?.claims) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -34,7 +34,7 @@ Deno.serve(withRequestId("sequence-ab-promote", async (req, _ctx) => {
     if (!sequenceId) {
       return new Response(JSON.stringify({ error: "sequence_id required" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -45,14 +45,14 @@ Deno.serve(withRequestId("sequence-ab-promote", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, promoted: data ?? [] }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('sequence-ab-promote error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

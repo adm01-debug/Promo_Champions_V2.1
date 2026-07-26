@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
     if (!settings?.enabled) {
       return new Response(JSON.stringify({ ok: true, skipped: 'disabled' }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -275,13 +275,13 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ ok: true, evaluated: alerts.length, created, skipped, tasks_created: tasksCreated }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   } catch (e) {
     console.error('detect-client-churn-alerts error', e);
     return new Response(JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 });

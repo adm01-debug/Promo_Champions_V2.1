@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface Suggestion {
@@ -125,14 +125,14 @@ Deno.serve(withRequestId('automation-suggestions', async (req, _ctx) => {
         active_workflows: (workflows ?? []).filter((w) => w.is_active).length,
         total_workflows: workflows?.length ?? 0,
       }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("automation-suggestions error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

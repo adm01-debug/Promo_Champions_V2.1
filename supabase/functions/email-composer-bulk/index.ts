@@ -166,7 +166,7 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
     if (!user) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -174,7 +174,7 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
     if (!body?.prompt || !Array.isArray(body.sale_ids) || body.sale_ids.length === 0) {
       return new Response(JSON.stringify({ error: 'prompt and sale_ids required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     const saleIds = body.sale_ids.slice(0, 50);
@@ -247,13 +247,13 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
       .eq('id', job.id);
 
     return new Response(JSON.stringify({ job_id: job.id, generated: rows.length }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('email-composer-bulk error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

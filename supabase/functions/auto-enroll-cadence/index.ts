@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -150,13 +150,13 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ processed: results.length, enrolled: enrolledCount, results }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 },
     );
   } catch (e) {
     console.error('auto-enroll-cadence error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 500 },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 500 },
     );
   }
 }));

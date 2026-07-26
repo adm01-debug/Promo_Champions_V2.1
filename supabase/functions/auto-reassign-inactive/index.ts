@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 
@@ -63,7 +63,7 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
         message: 'Auto-reassignment is disabled',
         reassigned: 0 
       }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -115,7 +115,7 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
         message: 'No clients eligible for reassignment',
         reassigned: 0 
       }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -250,7 +250,7 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
       strategy: rotationStrategy,
       threshold_days: inactivityThresholdDays,
     }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
 
   } catch (error: unknown) {
@@ -258,7 +258,7 @@ Deno.serve(withRequestId('auto-reassign-inactive', async (req, _ctx) => {
     console.error('[auto-reassign-inactive] Error:', message);
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

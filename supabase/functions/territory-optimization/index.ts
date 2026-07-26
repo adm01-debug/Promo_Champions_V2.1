@@ -332,7 +332,7 @@ Deno.serve(
           salesperson_loads: loads,
           recommendations,
         }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     } catch (e) {
       console.error('territory-optimization error:', e);
@@ -340,7 +340,7 @@ Deno.serve(
         JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
         {
           status: 500,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

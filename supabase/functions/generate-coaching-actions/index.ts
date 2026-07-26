@@ -2,7 +2,7 @@
 // Modo síncrono (POST manual) OU chamado assincronamente por trigger via pg_net.
 // Auth: se Authorization header presente, valida; senão exige X-Cron-Secret == COACHING_CRON_SECRET.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { getCorsHeaders(req) } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -14,14 +14,14 @@ interface AiAction {
   timestamp_sec?: number;
 }
 
-const VALID_CATEGORIES = ['opening','discovery','objection','closing','talk_ratio','pace','empathy','other'];
-const VALID_SEVERITIES = ['info','warning','critical'];
+const VALID_CATEGORIES = new Set(['opening','discovery','objection','closing','talk_ratio','pace','empathy','other']);
+const VALID_SEVERITIES = new Set(['info','warning','critical']);
 
 Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 405, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -31,7 +31,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   const lovableKey = Deno.env.get('LOVABLE_API_KEY');
   if (!lovableKey) {
     return new Response(JSON.stringify({ error: 'AI not configured' }), {
-      status: 503, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 503, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -56,13 +56,13 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
     function timingSafeEqual(a: string, b: string): boolean {
       if (a.length !== b.length) return false;
       let diff = 0;
-      for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+      for (let i = 0; i < a.length; i++) diff |= a.codePointAt(i)! ^ b.codePointAt(i)!;
       return diff === 0;
     }
 
     if (!sec?.value || !providedSecret || !timingSafeEqual(sec.value, providedSecret)) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     isCron = true;
@@ -73,7 +73,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
     const { data: userData, error: userErr } = await authClient.auth.getUser();
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Invalid token' }), {
-        status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
   }
@@ -81,13 +81,13 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   let body: { recording_id?: string };
   try { body = await req.json(); } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
-      status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const recordingId = body?.recording_id;
   if (!recordingId || typeof recordingId !== 'string') {
     return new Response(JSON.stringify({ error: 'recording_id (uuid) required' }), {
-      status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -102,18 +102,18 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
 
   if (recErr || !rec) {
     return new Response(JSON.stringify({ error: 'Recording not found', detail: recErr?.message }), {
-      status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (!rec.salesperson_id) {
     return new Response(JSON.stringify({ error: 'Recording has no salesperson_id' }), {
-      status: 422, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 422, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const content = rec.transcript || rec.summary;
   if (!content || content.trim().length < 40) {
     return new Response(JSON.stringify({ error: 'Recording has no transcript/summary to analyze' }), {
-      status: 422, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 422, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -126,7 +126,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
 
   if ((existingCount ?? 0) > 0) {
     return new Response(JSON.stringify({ ok: true, skipped: 'already_generated', existing: existingCount }), {
-      status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -153,20 +153,20 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   if (aiRes.status === 429) {
     await aiRes.text();
     return new Response(JSON.stringify({ error: 'AI rate limit' }), {
-      status: 429, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (aiRes.status === 402) {
     await aiRes.text();
     return new Response(JSON.stringify({ error: 'Créditos IA insuficientes' }), {
-      status: 402, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 402, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (!aiRes.ok) {
     const t = await aiRes.text();
     console.error('[generate-coaching-actions] AI error', aiRes.status, t);
     return new Response(JSON.stringify({ error: 'AI error', status: aiRes.status }), {
-      status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 502, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -175,26 +175,30 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   let parsed: { actions?: unknown };
   try { parsed = JSON.parse(raw); } catch {
     return new Response(JSON.stringify({ error: 'AI returned invalid JSON', raw }), {
-      status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 502, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
   const rawActions = Array.isArray(parsed.actions) ? parsed.actions : [];
   const actions: AiAction[] = rawActions
     .filter((a): a is Record<string, unknown> => !!a && typeof a === 'object')
-    .map((a) => ({
-      category: VALID_CATEGORIES.includes(String(a.category)) ? (a.category as AiAction['category']) : 'other',
-      severity: VALID_SEVERITIES.includes(String(a.severity)) ? (a.severity as AiAction['severity']) : 'info',
-      tip: String(a.tip ?? '').trim().slice(0, 220),
-      quote: a.quote ? String(a.quote).trim().slice(0, 180) : undefined,
-      timestamp_sec: typeof a.timestamp_sec === 'number' ? Math.max(0, Math.floor(a.timestamp_sec)) : undefined,
-    }))
+    .map((a) => {
+      const cat = VALID_CATEGORIES.has(a.category as string) ? (a.category as AiAction['category']) : 'other';
+      const sev = VALID_SEVERITIES.has(a.severity as string) ? (a.severity as AiAction['severity']) : 'info';
+      return {
+        category: cat,
+        severity: sev,
+        tip: String(a.tip ?? '').trim().slice(0, 220),
+        quote: a.quote ? String(a.quote).trim().slice(0, 180) : undefined,
+        timestamp_sec: typeof a.timestamp_sec === 'number' ? Math.max(0, Math.floor(a.timestamp_sec)) : undefined,
+      };
+    })
     .filter((a) => a.tip.length > 0)
     .slice(0, 3);
 
   if (actions.length === 0) {
     return new Response(JSON.stringify({ error: 'AI returned no valid actions' }), {
-      status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 502, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -218,11 +222,11 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   if (insErr) {
     console.error('[generate-coaching-actions] insert failed', insErr);
     return new Response(JSON.stringify({ error: 'Failed to persist actions', detail: insErr.message }), {
-      status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
   return new Response(JSON.stringify({ ok: true, source: isCron ? 'cron' : 'user', actions: inserted }), {
-    status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+    status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }));

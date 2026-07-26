@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -19,7 +19,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
 
     if (action === "schedule_only") {
       return new Response(JSON.stringify({ ok: true, schedules_updated: rolled }), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -43,7 +43,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
     if (active.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, schedules_updated: rolled, upcoming_qbrs: 0, events_created: 0, notifications_created: 0 }),
-        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -144,12 +144,12 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
         events_created: eventsCreated,
         notifications_created: notificationsCreated,
       }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (err) {
     console.error('qbr-scheduler error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

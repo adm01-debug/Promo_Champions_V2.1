@@ -91,13 +91,13 @@ Deno.serve(withRequestId('refresh-stage-baselines', async (req, _ctx) => {
       else console.error('stage_velocity_baselines upsert error:', upErr);
     }
     return new Response(JSON.stringify({ buckets: upserts.length, upserted: inserted }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('refresh-stage-baselines error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

@@ -23,7 +23,7 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
-        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -122,14 +122,14 @@ ${body.transcript_text.slice(0, 12000)}`,
     await supabase.from("call_recordings").update({ status: "ready" }).eq("id", body.recording_id);
 
     return new Response(JSON.stringify({ success: true, insights }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "unknown";
     console.error("analyze-call error:", msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

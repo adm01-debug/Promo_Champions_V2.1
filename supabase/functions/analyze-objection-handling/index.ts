@@ -249,13 +249,13 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ recording_id, total, resolved, partial, unresolved, handling_score: score, health }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
     console.error('analyze-objection-handling error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

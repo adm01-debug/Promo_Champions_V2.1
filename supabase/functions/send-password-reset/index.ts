@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface PasswordResetRequest {
@@ -162,10 +162,10 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       }
     );
   } catch (error: unknown) {
-    console.error('send-password-reset error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('send-password-reset error: [redacted]');
+    // Never expose raw error messages to clients — prevents information disclosure
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: 'Internal error. Please try again later.' }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...getCorsHeaders(req) },

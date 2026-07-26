@@ -15,7 +15,7 @@ Deno.serve(
 
     return new Response(JSON.stringify({ ip }), {
       status: 200,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }),
 );

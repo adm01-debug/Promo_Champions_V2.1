@@ -11,7 +11,7 @@ Deno.serve(
     const json = (data: unknown, status = 200) =>
       new Response(JSON.stringify({ ...(data as object), request_id: ctx.requestId }), {
         status,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
 
     try {

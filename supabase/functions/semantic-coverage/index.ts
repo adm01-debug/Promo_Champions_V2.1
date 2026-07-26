@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
@@ -14,7 +14,7 @@ Deno.serve(withRequestId("semantic-coverage", async (req, _ctx) => {
     } catch (authErr) {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
       return new Response(JSON.stringify({ error: msg }), {
-        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -28,17 +28,17 @@ Deno.serve(withRequestId("semantic-coverage", async (req, _ctx) => {
     if (error) {
       const status = /forbidden/i.test(error.message) ? 403 : 500;
       return new Response(JSON.stringify({ error: error.message }), {
-        status, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     return new Response(JSON.stringify({ ok: true, coverage: data ?? [] }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-coverage error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

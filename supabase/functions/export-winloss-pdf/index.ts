@@ -22,7 +22,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
     if (e instanceof UnauthorizedError) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: ' + e.message }),
-        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     throw e;
@@ -113,7 +113,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
         inline: signedUrl ? null : md,
       }),
       {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   } catch (e) {
@@ -122,7 +122,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface Body { recording_id: string }
@@ -58,7 +58,7 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
     const { recording_id }: Body = await req.json();
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
-        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -79,7 +79,7 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
     const rec = recRes.data;
     if (!rec) {
       return new Response(JSON.stringify({ error: "recording not found" }), {
-        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -189,12 +189,12 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ recording_id, overall_score, health }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('aggregate-coaching-scorecard error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

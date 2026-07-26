@@ -28,7 +28,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     if (!dealIds || !Array.isArray(dealIds) || dealIds.length === 0) {
       return new Response(JSON.stringify({ error: 'dealIds array is required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -158,14 +158,14 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     );
 
     return new Response(JSON.stringify({ probabilities }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error calculating deal probabilities:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

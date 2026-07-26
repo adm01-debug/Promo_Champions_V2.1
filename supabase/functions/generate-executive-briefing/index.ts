@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -46,7 +46,7 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
       .maybeSingle();
     if (existing && !body?.force) {
       return new Response(JSON.stringify(existing), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -125,10 +125,10 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
       const t = await aiRes.text();
       console.error("AI error", aiRes.status, t);
       if (aiRes.status === 429) {
-        return new Response(JSON.stringify({ error: "Limite de requisições excedido. Tente novamente em instantes." }), { status: 429, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ error: "Limite de requisições excedido. Tente novamente em instantes." }), { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       if (aiRes.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos no workspace." }), { status: 402, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos no workspace." }), { status: 402, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       throw new Error("Falha na IA");
     }
@@ -156,12 +156,12 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
       .single();
     if (upErr) throw upErr;
 
-    return new Response(JSON.stringify(upserted), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify(upserted), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-executive-briefing error", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

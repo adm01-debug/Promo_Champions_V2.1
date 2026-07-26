@@ -238,7 +238,7 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
         JSON.stringify({ error: 'Provide sale_id or sale_ids (1-50)' }),
         {
           status: 400,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -259,7 +259,7 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ results, count: results.length }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('predictive-scoring-explain error:', e);
@@ -267,7 +267,7 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

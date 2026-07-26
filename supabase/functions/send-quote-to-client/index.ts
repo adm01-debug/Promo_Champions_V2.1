@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
 
@@ -17,7 +17,7 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -26,7 +26,7 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -39,7 +39,7 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   if (claimsErr || !claimsData?.claims) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -51,14 +51,14 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
   if (!body.quote_id) {
     return new Response(JSON.stringify({ error: "quote_id é obrigatório" }), {
       status: 400,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -76,7 +76,7 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   if (quoteErr || !quote) {
     return new Response(JSON.stringify({ error: "Quote não encontrado" }), {
       status: 404,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -169,6 +169,6 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
 
   return new Response(
     JSON.stringify({ success: anySuccess, channels: results, pdf_url: signedPdfUrl }),
-    { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+    { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
   );
 }));

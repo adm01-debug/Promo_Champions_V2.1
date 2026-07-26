@@ -107,14 +107,14 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
     if (rowErr) throw rowErr;
     if (!row) {
       return new Response(JSON.stringify({ error: "entity not found" }), {
-        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     const content = buildContent(entity_type, row).trim();
     if (!content) {
       return new Response(JSON.stringify({ skipped: true, reason: "empty content" }), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -131,7 +131,7 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
         .maybeSingle();
       if (existing && existing.content_hash === contentHash) {
         return new Response(JSON.stringify({ skipped: true, reason: "unchanged", content_hash: contentHash }), {
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
     }
@@ -162,12 +162,12 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
     }).eq("entity_type", entity_type).eq("entity_id", entity_id);
 
     return new Response(JSON.stringify({ ok: true, id: upsertId, content_preview: content.slice(0, 120), content_hash: contentHash }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-index-entity error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

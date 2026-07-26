@@ -136,7 +136,7 @@ Deno.serve(withRequestId("next-best-action", async (req, _ctx) => {
     const salesperson = spRes.data;
     if (!salesperson) {
       return new Response(JSON.stringify(fallback("Vendedor não encontrado.")), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -312,13 +312,13 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
       if (aiResponse.status === 429) {
         return new Response(
           JSON.stringify({ error: "Limite de requisições excedido. Tente novamente em alguns minutos." }),
-          { status: 429, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+          { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
         );
       }
       if (aiResponse.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos insuficientes no workspace Lovable AI." }), {
           status: 402,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       throw new Error(`AI request failed: ${aiResponse.status}`);
@@ -329,7 +329,7 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
     if (!toolCall?.function?.arguments) {
       console.error("No tool call returned:", JSON.stringify(aiData));
       return new Response(JSON.stringify(fallback("IA não retornou recomendações estruturadas.")), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -339,7 +339,7 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
     } catch (e) {
       console.error("Failed to parse tool args:", e);
       return new Response(JSON.stringify(fallback("Falha ao interpretar resposta da IA.")), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -391,14 +391,14 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
     }
 
     return new Response(JSON.stringify(result), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("next-best-action error:", error);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

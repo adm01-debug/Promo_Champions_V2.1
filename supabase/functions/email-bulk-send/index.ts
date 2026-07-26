@@ -19,7 +19,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
     if (!user) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -27,7 +27,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
     if (!job_id) {
       return new Response(JSON.stringify({ error: 'job_id required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -42,7 +42,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
     if (!job || job.owner_id !== user.id) {
       return new Response(JSON.stringify({ error: 'forbidden' }), {
         status: 403,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -109,13 +109,13 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .eq('id', job_id);
 
     return new Response(JSON.stringify({ sent, failed }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('email-bulk-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

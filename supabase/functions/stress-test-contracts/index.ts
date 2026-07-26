@@ -16,7 +16,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     if (!schema) {
       return new Response(JSON.stringify({ error: 'Contract not found' }), {
         status: 404,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -62,13 +62,13 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify(results), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('stress-test-contracts error:', e);
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

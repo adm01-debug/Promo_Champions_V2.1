@@ -78,7 +78,7 @@ Deno.serve(
         return new Response(
           JSON.stringify({ ok: true, playbooks: 0, opportunities_created: 0 }),
           {
-            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -173,7 +173,7 @@ Deno.serve(
           skipped_existing: skipped,
         }),
         {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     } catch (err) {
@@ -182,7 +182,7 @@ Deno.serve(
         JSON.stringify({ error: err instanceof Error ? err.message : 'unknown' }),
         {
           status: 500,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

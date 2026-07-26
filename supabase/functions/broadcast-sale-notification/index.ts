@@ -23,7 +23,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     if (e instanceof UnauthorizedError) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: ' + e.message }),
-        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     throw e;
@@ -49,7 +49,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
 
     if (saleErr || !sale) {
       return new Response(JSON.stringify({ error: 'Sale not found' }), {
-        status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -62,7 +62,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
         .maybeSingle();
       if (!roleRow || !['admin', 'manager'].includes(roleRow.role)) {
         return new Response(JSON.stringify({ error: 'Forbidden: only the seller or an admin may broadcast this sale' }), {
-          status: 403, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
     }
@@ -215,14 +215,14 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
 
     ctx.log('info', 'broadcast_ok', { notified: results.length, sale_id });
     return new Response(JSON.stringify({ success: true, notified: results.length, request_id: ctx.requestId }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     ctx.log('error', 'broadcast_failed', { error: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage, request_id: ctx.requestId }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

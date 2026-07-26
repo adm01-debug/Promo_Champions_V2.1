@@ -77,7 +77,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
   if (!authHeader) {
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const authClient = createClient(
@@ -92,7 +92,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -103,7 +103,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
     if (!event_type || !payload) {
       return new Response(JSON.stringify({ error: 'event_type and payload are required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -218,13 +218,13 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
     ]);
 
     return new Response(JSON.stringify({ dispatched: results.length, results }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error("dispatch-webhook error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

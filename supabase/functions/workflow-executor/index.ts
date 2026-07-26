@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface WorkflowNode {
@@ -64,7 +64,7 @@ Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
     if (!workflow_id) {
       return new Response(JSON.stringify({ error: "workflow_id obrigatório" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -78,14 +78,14 @@ Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
     if (wfErr || !wf) {
       return new Response(JSON.stringify({ error: "Workflow não encontrado" }), {
         status: 404,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     if (!wf.is_active) {
       return new Response(JSON.stringify({ error: "Workflow inativo" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -169,14 +169,14 @@ Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ execution_id: execRow!.id, status: "success", duration_ms: duration, log }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Erro interno";
     console.error("workflow-executor error:", msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

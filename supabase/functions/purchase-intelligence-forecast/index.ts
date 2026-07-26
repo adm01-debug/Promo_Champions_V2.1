@@ -24,7 +24,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -49,7 +49,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
     if (!summary || (summary as { error?: string }).error) {
       return new Response(JSON.stringify(summary ?? { error: "no_data" }), {
         status: 403,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -139,7 +139,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
             ai_prediction: null,
             ai_error: aiResp.status === 429 ? "rate_limited" : "credits_required",
           }),
-          { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+          { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
         );
       }
       throw new Error(`AI gateway: ${aiResp.status}`);
@@ -158,13 +158,13 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
 
     return new Response(
       JSON.stringify({ ...summary, ai_prediction: prediction }),
-      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("purchase-intelligence-forecast error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

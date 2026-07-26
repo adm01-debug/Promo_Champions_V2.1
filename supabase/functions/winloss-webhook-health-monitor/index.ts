@@ -335,7 +335,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     if (subscriptions.length === 0) {
       return new Response(
         JSON.stringify({ requestId, checked: 0, fired: 0, suppressed: 0, evaluations: [] }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
       );
     }
 

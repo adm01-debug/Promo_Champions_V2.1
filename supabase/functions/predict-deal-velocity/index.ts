@@ -217,7 +217,7 @@ async function batchPredict(limit: number): Promise<Response> {
 
   if (!salesData?.length) {
     return new Response(JSON.stringify({ count: 0, results: [] }), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -370,7 +370,7 @@ async function batchPredict(limit: number): Promise<Response> {
   }
 
   return new Response(JSON.stringify({ count: results.length, results }), {
-    headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
@@ -389,13 +389,13 @@ Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
 
     const result = await predictForSale(body.sale_id!);
     return new Response(JSON.stringify(result), {
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('predict-deal-velocity error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

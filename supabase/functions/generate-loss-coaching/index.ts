@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -13,7 +13,7 @@ Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
   try {
     const { analysis_id, salesperson_id } = await req.json();
     if (!analysis_id) {
-      return new Response(JSON.stringify({ error: "analysis_id required" }), { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "analysis_id required" }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const supabase = createClient(
@@ -29,12 +29,12 @@ Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
 
     const a = analysis as AnalysisRow | null;
     if (!a || a.outcome !== "lost") {
-      return new Response(JSON.stringify({ skipped: true }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ skipped: true }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const prompt = `Você é coach de vendas B2B. Um deal foi perdido.
@@ -59,7 +59,7 @@ Gere EXATAMENTE 3 lições acionáveis e curtíssimas (máx 18 palavras cada), f
       console.error("AI gateway error:", aiRes.status, t);
       return new Response(JSON.stringify({ error: "AI gateway error", status: aiRes.status }), {
         status: aiRes.status === 429 || aiRes.status === 402 ? aiRes.status : 500,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -82,13 +82,13 @@ Gere EXATAMENTE 3 lições acionáveis e curtíssimas (máx 18 palavras cada), f
     }
 
     return new Response(JSON.stringify({ lessons, count: lessons.length }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("generate-loss-coaching error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

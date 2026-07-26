@@ -358,13 +358,13 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ predictions_count: predictions.length, alerts_count: alerts.length }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("predict-quota-attainment error", e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

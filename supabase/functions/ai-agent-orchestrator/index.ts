@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -133,7 +133,7 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -143,7 +143,7 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
     if (!claims?.claims?.sub) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -291,7 +291,7 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
     });
 
     return new Response(JSON.stringify({ run_id: runId, status: finalStatus, result: finalResult }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown";
@@ -299,7 +299,7 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
     console.error("ai-agent-orchestrator error:", e);
     return new Response(JSON.stringify({ error: msg }), {
       status,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

@@ -24,7 +24,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -392,7 +392,7 @@ DIRETRIZES:
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           {
             status: 429,
-            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -403,7 +403,7 @@ DIRETRIZES:
           }),
           {
             status: 402,
-            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -413,7 +413,7 @@ DIRETRIZES:
     }
 
     return new Response(response.body, {
-      headers: { getCorsHeaders(req), 'Content-Type': 'text/event-stream' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream' },
     });
   } catch (error) {
     console.error('Error in sales-assistant-chat:', error);
@@ -421,7 +421,7 @@ DIRETRIZES:
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

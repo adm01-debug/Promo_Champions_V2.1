@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -52,7 +52,7 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
     const auth = req.headers.get("Authorization");
     if (!auth) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -64,13 +64,13 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
     const { data: u } = await userClient.auth.getUser();
     if (!u?.user) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const { data: isAdmin } = await userClient.rpc("is_admin_or_manager", { _user_id: u.user.id });
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: "admin/manager only" }), {
-        status: 403, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -138,12 +138,12 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, summary }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-reindex-batch error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

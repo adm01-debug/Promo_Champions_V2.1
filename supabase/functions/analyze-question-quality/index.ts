@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface Turn {
@@ -71,7 +71,7 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
     if (!claims?.claims?.sub) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -80,7 +80,7 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
     if (!recordingId || typeof recordingId !== "string") {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -182,14 +182,14 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ recording_id: recordingId, total, score, health, counts }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error('analyze-question-quality error:', e);
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

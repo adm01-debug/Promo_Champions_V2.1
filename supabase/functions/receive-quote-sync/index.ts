@@ -17,7 +17,7 @@
 // Ambos compartilham public.webhook_inbound_dedupe e public.quote_sync_inbound_log.
 
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -47,7 +47,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 

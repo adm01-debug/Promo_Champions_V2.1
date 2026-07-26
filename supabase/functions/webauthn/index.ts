@@ -85,14 +85,14 @@ const handler = async (req: Request): Promise<Response> => {
       if (!callerUserId) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
           status: 401,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       // Ensure the userId in the body matches the authenticated caller
       if (body.userId && body.userId !== callerUserId) {
         return new Response(JSON.stringify({ error: 'Forbidden: userId mismatch' }), {
           status: 403,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       // Override body.userId with the verified caller identity
@@ -155,7 +155,7 @@ const handler = async (req: Request): Promise<Response> => {
         };
 
         return new Response(JSON.stringify(options), {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -202,7 +202,7 @@ const handler = async (req: Request): Promise<Response> => {
         }
 
         return new Response(JSON.stringify({ success: true }), {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -258,7 +258,7 @@ const handler = async (req: Request): Promise<Response> => {
         };
 
         return new Response(JSON.stringify(options), {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -358,7 +358,7 @@ const handler = async (req: Request): Promise<Response> => {
             token: signInData.properties?.hashed_token,
             actionLink: signInData.properties?.action_link,
           }),
-          { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
 
@@ -376,7 +376,7 @@ const handler = async (req: Request): Promise<Response> => {
         if (error) throw error;
 
         return new Response(JSON.stringify({ credentials: data }), {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -394,7 +394,7 @@ const handler = async (req: Request): Promise<Response> => {
         if (error) throw error;
 
         return new Response(JSON.stringify({ success: true }), {
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -406,7 +406,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.error('WebAuthn error:', error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 400,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 };

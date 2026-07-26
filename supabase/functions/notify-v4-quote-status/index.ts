@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -65,7 +65,7 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
     log("warn", "v4_callback_disabled", { pending: count ?? 0, reason: "missing_secrets" });
     return new Response(
       JSON.stringify({ success: true, processed: 0, pending: count ?? 0, note: "callback disabled (missing config)" }),
-      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 
@@ -73,7 +73,7 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
     log("error", "v4_callback_misconfigured", { reason: "invalid_url" });
     return new Response(
       JSON.stringify({ success: false, error: "invalid V4_CALLBACK_URL" }),
-      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 
@@ -91,7 +91,7 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
     log("error", "v4_callback_fetch_failed", { message: error.message });
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -173,6 +173,6 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
 
   return new Response(
     JSON.stringify({ success: true, processed: results.length, results }),
-    { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+    { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
   );
 }));

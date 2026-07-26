@@ -191,7 +191,7 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
     req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: { getCorsHeaders(req), "X-Request-Id": requestId } });
+    return new Response("ok", { headers: { ...getCorsHeaders(req), "X-Request-Id": requestId } });
   }
 
   if (req.method !== "POST") {

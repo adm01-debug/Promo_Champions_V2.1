@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -93,12 +93,12 @@ async function sendZapi(
 
 const unauthorized = (msg: string) =>
   new Response(JSON.stringify({ ok: false, error: msg }), {
-    status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+    status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 
 const forbidden = (msg: string) =>
   new Response(JSON.stringify({ ok: false, error: msg }), {
-    status: 403, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+    status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 
 Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
@@ -125,7 +125,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
     const payload = (await req.json()) as Payload;
     if (!payload.ownerId || !payload.channel || !payload.to || !payload.body) {
       return new Response(JSON.stringify({ ok: false, error: "Missing required fields" }), {
-        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -155,7 +155,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
     if (credErr) throw credErr;
     if (!cred && !isMock) {
       return new Response(JSON.stringify({ ok: false, error: "no_credentials", skipped: true }), {
-        status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -202,13 +202,13 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
         providerMessageId: result.providerMessageId,
         error: result.error,
       }),
-      { status: result.ok ? 200 : 502, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: result.ok ? 200 : 502, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('send-multichannel-message error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
-      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

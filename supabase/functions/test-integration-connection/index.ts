@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface Body {
@@ -91,7 +91,7 @@ Deno.serve(withRequestId("test-integration-connection", async (req, _ctx) => {
     if (!authHeader.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const supabase = createClient(
@@ -103,7 +103,7 @@ Deno.serve(withRequestId("test-integration-connection", async (req, _ctx) => {
     if (!connection_id) {
       return new Response(JSON.stringify({ error: "connection_id required" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -116,7 +116,7 @@ Deno.serve(withRequestId("test-integration-connection", async (req, _ctx) => {
     if (connErr || !conn) {
       return new Response(JSON.stringify({ error: "Connection not found" }), {
         status: 404,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -152,13 +152,13 @@ Deno.serve(withRequestId("test-integration-connection", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: status === "success", status, latency_ms, error, label: c.label, kind: c.kind }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('test-integration-connection error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

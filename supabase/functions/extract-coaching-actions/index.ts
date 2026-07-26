@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -127,13 +127,13 @@ Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤
     if (aiResp.status === 429) {
       return new Response(JSON.stringify({ error: "Rate limit excedido. Tente novamente em instantes." }), {
         status: 429,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (aiResp.status === 402) {
       return new Response(JSON.stringify({ error: "Créditos de IA esgotados." }), {
         status: 402,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!aiResp.ok) {
@@ -174,13 +174,13 @@ Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤
 
     return new Response(
       JSON.stringify({ recording_id, actions_count: rows.length }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("extract-coaching-actions error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "erro desconhecido" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

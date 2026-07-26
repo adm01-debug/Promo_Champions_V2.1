@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -31,7 +31,7 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
     if (authErr || !claims?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -93,7 +93,7 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
 
     if (rows.length === 0) {
       return new Response(JSON.stringify({ inserted: 0 }), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -105,13 +105,13 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ inserted: inserted?.length ?? 0, period_start: periodStart, period_end: periodEnd }),
-      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('snapshot-forecast error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

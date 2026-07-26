@@ -160,7 +160,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? (authErr as UnauthorizedError).message : 'unauthorized' }),
-        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       );
     }
 
@@ -206,7 +206,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
         }),
         {
           status: 429,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -218,7 +218,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
         }),
         {
           status: 402,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -242,7 +242,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
           tool_calls: [],
           period: null,
         }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -315,7 +315,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
             }
           : null,
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (err) {
     console.error('nlq-query fatal', err);
@@ -323,7 +323,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
       JSON.stringify({
         error: err instanceof Error ? err.message : 'Erro desconhecido',
       }),
-      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

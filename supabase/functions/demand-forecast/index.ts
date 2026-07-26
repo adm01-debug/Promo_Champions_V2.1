@@ -197,7 +197,7 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
           critical_items: forecasts.filter(f => f.risk_level === 'critical').length,
           high_risk_items: forecasts.filter(f => f.risk_level === 'high').length,
         }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -214,20 +214,20 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
       if (error && error.code !== 'PGRST116') throw error;
 
       return new Response(JSON.stringify({ success: true, forecast }), {
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(JSON.stringify({ error: 'Invalid action' }), {
       status: 400,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
     console.error('[Demand Forecast] Error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

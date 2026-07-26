@@ -4,7 +4,7 @@
 // - Insere em call_recordings com ON CONFLICT DO NOTHING para nunca duplicar.
 // - Marca sucesso; em falha, agenda retry com backoff exponencial (via RPC).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface JobPayload {
@@ -140,6 +140,6 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }

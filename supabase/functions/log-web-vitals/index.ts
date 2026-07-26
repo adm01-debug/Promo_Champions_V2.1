@@ -65,7 +65,7 @@ Deno.serve(
       if (clean.length === 0) {
         return new Response(JSON.stringify({ inserted: 0, request_id: ctx.requestId }), {
           status: 200,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -79,19 +79,19 @@ Deno.serve(
         ctx.log("error", "insert_failed", { error: error.message });
         return new Response(JSON.stringify({ error: error.message, request_id: ctx.requestId }), {
           status: 500,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
       return new Response(JSON.stringify({ inserted: clean.length, request_id: ctx.requestId }), {
         status: 200,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     } catch (e) {
       ctx.log("error", "bad_request", { error: e instanceof Error ? e.message : String(e) });
       return new Response(JSON.stringify({ error: "bad_request", request_id: ctx.requestId }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
   }),

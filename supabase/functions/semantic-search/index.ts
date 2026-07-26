@@ -42,7 +42,7 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < TTL_MS) {
       return new Response(JSON.stringify({ ...cached.data, cached: true }), {
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -103,13 +103,13 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
       if (aiRes.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit excedido. Tente novamente em alguns segundos." }), {
           status: 429,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       if (aiRes.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos em Settings > Workspace > Usage." }), {
           status: 402,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       const txt = await aiRes.text();
@@ -164,13 +164,13 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
     cache.set(cacheKey, { ts: Date.now(), data: result });
 
     return new Response(JSON.stringify(result), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-search error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

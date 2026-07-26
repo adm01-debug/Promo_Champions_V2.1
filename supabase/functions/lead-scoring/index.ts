@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface ScoringFactors {
@@ -25,7 +25,7 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
       console.error(`[Contract Violation] Lead scoring failed validation: ${validation.error}`);
       return new Response(
         JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
-        { status: validation.statusCode, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
+        { status: validation.statusCode, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -205,7 +205,7 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ scores }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
@@ -218,7 +218,7 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
     console.error('Error in lead-scoring function:', message, error);
     return new Response(
       JSON.stringify({ error: message || 'Unknown error' }),
-      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

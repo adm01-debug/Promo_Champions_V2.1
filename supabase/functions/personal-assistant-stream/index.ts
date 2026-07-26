@@ -318,7 +318,7 @@ Deno.serve(
       if (!LOVABLE_API_KEY) {
         return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
           status: 500,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -334,7 +334,7 @@ Deno.serve(
         const text = await upstream.text().catch(() => "");
         return new Response(JSON.stringify({ error: "ai_gateway_error", status: upstream.status, details: text.slice(0, 500) }), {
           status,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -390,19 +390,19 @@ Deno.serve(
       }
 
       return new Response(responseBody, {
-        headers: { getCorsHeaders(req), "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
       });
     } catch (err) {
       if (err instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: err.message }), {
           status: 401,
-          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       console.error("personal-assistant-stream error:", err);
       return new Response(JSON.stringify({ error: "internal_error" }), {
         status: 500,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
   }),

@@ -28,7 +28,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
     if (!recording_id || typeof recording_id !== 'string') {
       return new Response(JSON.stringify({ error: 'recording_id required' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -45,19 +45,19 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
     if (recErr || !rec) {
       return new Response(JSON.stringify({ error: 'recording not found' }), {
         status: 404,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     if (!rec.sale_id) {
       return new Response(JSON.stringify({ error: 'recording has no sale_id' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     if (!rec.transcript) {
       return new Response(JSON.stringify({ error: 'recording has no transcript' }), {
         status: 400,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -145,7 +145,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
         JSON.stringify({ error: 'AI gateway error', detail: t.slice(0, 500) }),
         {
           status,
-          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -249,7 +249,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
         updated: updatedCount,
         confidence: avgConfidence,
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('extract-committee error', e);
@@ -257,7 +257,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
       {
         status: 500,
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

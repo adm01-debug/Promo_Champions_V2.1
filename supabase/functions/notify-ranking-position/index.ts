@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
@@ -83,7 +83,7 @@ Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
     });
 
     if (rows.length === 0) {
-      return new Response(JSON.stringify({ sent: 0 }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ sent: 0 }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const { error: upErr } = await supabase
@@ -93,14 +93,14 @@ Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
     if (upErr) throw upErr;
 
     return new Response(JSON.stringify({ sent: rows.length, period_start: periodStart }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('notify-ranking-position error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

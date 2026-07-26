@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -15,7 +15,7 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -27,7 +27,7 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
     if (authErr || !claims?.claims) {
       return new Response(JSON.stringify({ error: "Token inválido" }), {
         status: 401,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const userId = claims.claims.sub;
@@ -36,7 +36,7 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
     if (!schedule_id) {
       return new Response(JSON.stringify({ error: "schedule_id obrigatório" }), {
         status: 400,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -50,7 +50,7 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
     if (sErr || !schedule) {
       return new Response(JSON.stringify({ error: "Agendamento não encontrado" }), {
         status: 404,
-        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -64,13 +64,13 @@ Deno.serve(withRequestId("scheduled-report-trigger", async (req, _ctx) => {
     const result = await r.json();
 
     return new Response(JSON.stringify({ ok: true, triggered_by: userId, result }), {
-      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error('scheduled-report-trigger error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : "Erro" }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

@@ -9,7 +9,7 @@
 //   EDGE_RETRY_ALERT_WINDOW_HOURS (opcional, default 24)
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry, RetryError } from "../_shared/retry.ts";
@@ -70,14 +70,14 @@ Deno.serve(withRequestId(async (req, ctx) => {
   if (!url || !key) {
     return new Response(
       JSON.stringify({ error: "missing_env", request_id: ctx.requestId }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
   if (!webhook) {
     ctx.log("warn", "slack_webhook_missing");
     return new Response(
       JSON.stringify({ skipped: "no_webhook", request_id: ctx.requestId }),
-      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 
@@ -97,7 +97,7 @@ Deno.serve(withRequestId(async (req, ctx) => {
     ctx.log("error", "query_failed", { error: error.message });
     return new Response(
       JSON.stringify({ error: "query_failed", detail: error.message, request_id: ctx.requestId }),
-      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 
@@ -114,7 +114,7 @@ Deno.serve(withRequestId(async (req, ctx) => {
         window_hours: windowH,
         request_id: ctx.requestId,
       }),
-      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+      { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 
@@ -147,7 +147,7 @@ Deno.serve(withRequestId(async (req, ctx) => {
           total,
           request_id: ctx.requestId,
         }),
-        { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     if (err instanceof RetryError) {
@@ -160,7 +160,7 @@ Deno.serve(withRequestId(async (req, ctx) => {
           total,
           request_id: ctx.requestId,
         }),
-        { status: 502, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+        { status: 502, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     throw err;
@@ -175,6 +175,6 @@ Deno.serve(withRequestId(async (req, ctx) => {
       window_hours: windowH,
       request_id: ctx.requestId,
     }),
-    { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
+    { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } },
   );
 }));

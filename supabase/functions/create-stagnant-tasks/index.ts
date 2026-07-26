@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { ...getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -52,7 +52,7 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
           message: 'No stagnant deals found',
           tasksCreated: 0 
         }),
-        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     
@@ -121,7 +121,7 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
         dealsAlreadyWithTasks: existingDealIds.size,
         thresholdDays: stagnantDays
       }),
-      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
     
   } catch (error: unknown) {
@@ -131,7 +131,7 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
       JSON.stringify({ error: errorMessage }),
       { 
         status: 500, 
-        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } 
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } 
       }
     );
   }
