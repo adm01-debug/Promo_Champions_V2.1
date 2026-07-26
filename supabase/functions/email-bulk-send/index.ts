@@ -56,10 +56,27 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .is('sent_at', null)
       .limit(10000);
 
+    // Guarda de opt-out: nunca enviar para quem se descadastrou (falha fechada).
+    const { allowed, blocked } = await filterOptedOut(
+      admin as never,
+      drafts ?? [],
+      (d) => d.recipient_email,
+    );
+
+    let skipped = 0;
+    for (const d of blocked) {
+      await admin
+        .from('email_bulk_drafts')
+        .update({ error: 'opted_out' })
+        .eq('id', d.id);
+      skipped++;
+    }
+
     let sent = 0;
     let failed = 0;
 
-    for (const d of drafts ?? []) {
+    for (const d of allowed) {
+
       if (!d.recipient_email) {
         await admin
           .from('email_bulk_drafts')
