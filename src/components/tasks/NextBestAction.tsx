@@ -15,21 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Sparkles,
-  Loader2,
-  Phone,
-  Users,
-  Mail,
-  Clock,
-  FileText,
-  MoreHorizontal,
-  Plus,
-  Lightbulb,
-  Zap,
-  Linkedin,
-  MessageSquare,
-} from 'lucide-react';
+import { Sparkles, Loader2, Phone, Users, Mail, Clock, FileText, MoreHorizontal, Plus, Lightbulb, Zap, MessageSquare } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { cn } from '@/lib/utils';
 import { getLocalISODate } from '@/utils/dateHelpers';
 

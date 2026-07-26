@@ -1,4 +1,5 @@
-import { Clock, Mail, MessageSquare, Linkedin, X, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Clock, Mail, MessageSquare, X, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

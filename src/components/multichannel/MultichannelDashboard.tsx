@@ -15,15 +15,8 @@ import { ChannelChart } from './ChannelChart';
 import { InteractionTimeline } from './InteractionTimeline';
 import { TemplateManager } from './TemplateManager';
 import { AIEmailComposerButton } from '@/components/email/AIEmailComposerButton';
-import {
-  MessageSquare,
-  Mail,
-  Linkedin,
-  Phone,
-  Smartphone,
-  Search,
-  FileText,
-} from 'lucide-react';
+import { MessageSquare, Mail, Phone, Smartphone, Search, FileText } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { cn } from '@/lib/utils';
 
 const CHANNEL_CONFIG: Record<

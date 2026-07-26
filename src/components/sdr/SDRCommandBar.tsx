@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Plus, Phone, Mail, Linkedin, Sparkles, LayoutGrid } from 'lucide-react';
+import { Plus, Phone, Mail, Sparkles, LayoutGrid } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { motion } from 'framer-motion';
 
 export const SDRCommandBar = () => {

@@ -5,18 +5,8 @@ import { TaskRecord, useCompleteTask } from '@/hooks/useTasks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Check, 
-  Phone, 
-  Users, 
-  Mail, 
-  FileText, 
-  Clock,
-  MoreHorizontal,
-  GripVertical,
-  Linkedin,
-  MessageCircle
-} from 'lucide-react';
+import { Check, Phone, Users, Mail, FileText, Clock, MoreHorizontal, GripVertical, MessageCircle } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { cn } from '@/lib/utils';
 
 const priorityConfig = {

@@ -6,25 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  Lightbulb,
-  Phone,
-  Mail,
-  Users,
-  ArrowRight,
-  MessageSquare,
-  FileText,
-  Loader2,
-  AlertTriangle,
-  Linkedin,
-  MessagesSquare,
-  Sparkles,
-  Plus,
-  Target,
-  RefreshCw,
-  TrendingUp,
-  Calendar,
-} from 'lucide-react';
+import { Lightbulb, Phone, Mail, Users, ArrowRight, MessageSquare, FileText, Loader2, AlertTriangle, MessagesSquare, Sparkles, Plus, Target, RefreshCw, TrendingUp, Calendar } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { getLocalISODate } from '@/utils/dateHelpers';
