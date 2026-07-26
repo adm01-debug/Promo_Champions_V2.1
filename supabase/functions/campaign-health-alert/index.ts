@@ -1,7 +1,7 @@
 // Alertas automáticos de saúde de campanhas de e-mail em massa.
 // Executado por cron/manualmente. Idempotente dentro da janela de cooldown.
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 import {
   dedupeAlerts,
@@ -22,6 +22,7 @@ interface DraftRow {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const json = (body: unknown, status = 200) =>
