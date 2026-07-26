@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CampaignDeliveryLatencyCard } from '@/components/email/CampaignDeliveryLatencyCard';
 import { CampaignOptOutRateCard } from '@/components/email/CampaignOptOutRateCard';
 import { EmailSuppressionMetricsCard } from '@/components/email/EmailSuppressionMetricsCard';
 import { supabase } from '@/integrations/supabase/client';
