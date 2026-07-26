@@ -21770,6 +21770,17 @@ export type Database = {
           total_tasks: number
         }[]
       }
+      get_campaign_optout_rates: {
+        Args: { _days?: number }
+        Returns: {
+          created_at: string
+          job_id: string
+          opt_out_rate: number
+          opted_out_count: number
+          prompt: string
+          sent_count: number
+        }[]
+      }
       get_client_purchase_heatmap: {
         Args: { _client_id?: string; _months?: number }
         Returns: {

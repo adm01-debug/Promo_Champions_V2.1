@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CampaignOptOutRateCard } from '@/components/email/CampaignOptOutRateCard';
 import { EmailSuppressionMetricsCard } from '@/components/email/EmailSuppressionMetricsCard';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -174,6 +175,8 @@ function AdminSupressaoEmails() {
         </header>
 
         <EmailSuppressionMetricsCard />
+
+        <CampaignOptOutRateCard />
 
 
 
