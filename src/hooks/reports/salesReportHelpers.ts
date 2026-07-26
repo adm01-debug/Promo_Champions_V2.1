@@ -213,6 +213,50 @@ export function buildTeamRanking(
     .slice(0, topN);
 }
 
+/**
+ * Ranking de rentabilidade por vendedor.
+ * Considera apenas vendas ganhas com custo conhecido (markup_pct != null).
+ * Vendedores sem nenhuma venda com custo são omitidos (evita 0% enganoso).
+ */
+export function buildMarkupRanking(
+  sales: SaleRow[],
+  salespeople: SalespersonRow[],
+  topN = 10
+): MarkupRankingRow[] {
+  const map = new Map<string, { sum: number; sample: number; revenue: number }>();
+
+  sales
+    .filter(
+      s =>
+        isWonSaleStatus(s.status) &&
+        !!s.salesperson_id &&
+        s.markup_pct !== null &&
+        s.markup_pct !== undefined &&
+        Number.isFinite(Number(s.markup_pct))
+    )
+    .forEach(s => {
+      const id = s.salesperson_id as string;
+      const acc = map.get(id) ?? { sum: 0, sample: 0, revenue: 0 };
+      acc.sum += Number(s.markup_pct);
+      acc.sample += 1;
+      acc.revenue += Number(s.amount ?? 0);
+      map.set(id, acc);
+    });
+
+  return Array.from(map.entries())
+    .map(([id, acc]) => ({
+      salespersonId: id,
+      name: salespeople.find(p => p.id === id)?.name ?? 'Desconhecido',
+      avgMarkup: acc.sum / acc.sample,
+      sample: acc.sample,
+      revenue: acc.revenue,
+    }))
+    .sort((a, b) => b.avgMarkup - a.avgMarkup)
+    .slice(0, topN);
+}
+
+
+
 export function buildTopDeals(
   sales: SaleRow[],
   salespeople: SalespersonRow[],
