@@ -76,9 +76,18 @@ export interface TopDeal {
   markupPct: number | null;
 }
 
+/** Ponto da série de markup: média do bucket + tamanho da amostra. */
+export interface MarkupPoint {
+  name: string;
+  /** Markup % médio do bucket. `null` quando não há venda ganha com custo conhecido. */
+  value: number | null;
+  sample: number;
+}
+
 export interface SalesReportData {
   current: ReportKpiDelta;
   revenueSeries: ChartPoint[];
+  markupSeries: MarkupPoint[];
   topProducts: TopProduct[];
   statusBreakdown: StatusSlice[];
   teamRanking: TeamRanking[];
@@ -231,3 +240,44 @@ export const formatBRL = (value: number) =>
     currency: 'BRL',
     maximumFractionDigits: 0,
   }).format(value);
+
+/**
+ * Série temporal do markup médio (apenas vendas ganhas com custo conhecido).
+ * Buckets diários (semanal) ou semanais (mensal), espelhando buildRevenueSeries.
+ * Buckets sem amostra retornam `value: null` para o Recharts criar gap em vez de zero enganoso.
+ */
+export function buildMarkupSeries(
+  sales: SaleRow[],
+  period: ReportPeriod,
+  start: Date,
+  end: Date
+): MarkupPoint[] {
+  const known = sales.filter(
+    s =>
+      isWonSaleStatus(s.status) &&
+      s.markup_pct !== null &&
+      s.markup_pct !== undefined &&
+      Number.isFinite(Number(s.markup_pct))
+  );
+
+  const avg = (rows: SaleRow[]): { value: number | null; sample: number } => {
+    if (rows.length === 0) return { value: null, sample: 0 };
+    const sum = rows.reduce((acc, s) => acc + Number(s.markup_pct), 0);
+    return { value: Math.round((sum / rows.length) * 100) / 100, sample: rows.length };
+  };
+
+  if (period === 'weekly') {
+    return eachDayOfInterval({ start, end }).map(d => {
+      const key = format(d, 'yyyy-MM-dd');
+      const rows = known.filter(s => format(new Date(s.created_at), 'yyyy-MM-dd') === key);
+      return { name: format(d, 'EEE', { locale: ptBR }), ...avg(rows) };
+    });
+  }
+
+  return eachWeekOfInterval({ start, end }, { weekStartsOn: 1 }).map((w, i) => {
+    const ws = startOfWeek(w, { weekStartsOn: 1 });
+    const we = endOfWeek(w, { weekStartsOn: 1 });
+    const rows = known.filter(s => isWithinInterval(new Date(s.created_at), { start: ws, end: we }));
+    return { name: `Sem ${i + 1}`, ...avg(rows) };
+  });
+}
