@@ -10,7 +10,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap, Linkedin, MessageCircle } from "lucide-react";
+import { Users, UserCheck, Percent, Clock, Activity, Phone, Mail, Calendar, Trophy, TrendingUp, Sparkles, Zap, MessageCircle } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { motion } from "framer-motion";
 import { BISDRCharts } from "@/components/bi/BISDRCharts";
 

@@ -1,4 +1,5 @@
-import { Mail, MessageCircle, Phone, Linkedin, ListChecks } from "lucide-react";
+import { Mail, MessageCircle, Phone, ListChecks } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 
 export const CHANNEL_META = {
   email: { label: "E-mail", icon: Mail, color: "text-blue-500" },

@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Users, Crown, Medal, TrendingUp, Activity } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, Users, Crown, Medal, TrendingUp, Activity } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { SalespersonActivityData } from "@/hooks/sales/useSalespersonActivityReport";
 import { cn } from "@/lib/utils";
 

@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Phone, Mail, Calendar, MessageCircle, Linkedin, Target } from "lucide-react";
+import { Phone, Mail, Calendar, MessageCircle, Target } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { useUpsertActivityGoal, useActivityGoals } from "@/hooks/activities/useActivityGoals";
 import {
   Form,
