@@ -1,6 +1,7 @@
-import { memo, useState } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
@@ -9,8 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Percent, AlertTriangle } from 'lucide-react';
+import { Percent, AlertTriangle, Download } from 'lucide-react';
 import { useMarkupOverview } from '@/hooks/bi/useMarkupOverview';
+import { buildMarkupSellersCsv } from '@/lib/bi/markupOverviewHelpers';
+import { downloadCsv } from '@/lib/csv';
 import { formatMarkupPct, MARKUP_TIER_LABELS, classifyMarkup } from '@/lib/markupHelpers';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +28,13 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
   const { data, isLoading } = useMarkupOverview(days);
 
   const summary = data?.summary;
-  const topSellers = (data?.sellers ?? []).slice(0, 5);
+  const sellers = data?.sellers ?? [];
+  const topSellers = sellers.slice(0, 5);
+
+  const handleExport = useCallback(() => {
+    if (sellers.length === 0) return;
+    downloadCsv(`rentabilidade-vendedores-${days}d.csv`, buildMarkupSellersCsv(sellers));
+  }, [sellers, days]);
 
   return (
     <Card className={cn('overflow-hidden', className)}>
@@ -34,19 +43,32 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
           <Percent className="h-4 w-4 text-primary" />
           Rentabilidade (markup)
         </CardTitle>
-        <Select value={String(days)} onValueChange={(v) => setDays(Number(v))}>
-          <SelectTrigger className="h-8 w-[110px]" aria-label="Período do markup">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {PERIODS.map((p) => (
-              <SelectItem key={p} value={String(p)}>
-                {p} dias
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8"
+            onClick={handleExport}
+            disabled={sellers.length === 0}
+          >
+            <Download className="h-3.5 w-3.5 mr-1" />
+            CSV
+          </Button>
+          <Select value={String(days)} onValueChange={(v) => setDays(Number(v))}>
+            <SelectTrigger className="h-8 w-[110px]" aria-label="Período do markup">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PERIODS.map((p) => (
+                <SelectItem key={p} value={String(p)}>
+                  {p} dias
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
+
 
       <CardContent className="space-y-4">
         {isLoading || !summary ? (
