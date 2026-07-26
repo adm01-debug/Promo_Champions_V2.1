@@ -76,9 +76,18 @@ export interface TopDeal {
   markupPct: number | null;
 }
 
+/** Ponto da série de markup: média do bucket + tamanho da amostra. */
+export interface MarkupPoint {
+  name: string;
+  /** Markup % médio do bucket. `null` quando não há venda ganha com custo conhecido. */
+  value: number | null;
+  sample: number;
+}
+
 export interface SalesReportData {
   current: ReportKpiDelta;
   revenueSeries: ChartPoint[];
+  markupSeries: MarkupPoint[];
   topProducts: TopProduct[];
   statusBreakdown: StatusSlice[];
   teamRanking: TeamRanking[];
