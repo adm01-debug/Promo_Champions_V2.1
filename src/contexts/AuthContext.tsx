@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode, useMemo, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { queryClient } from "@/lib/queryClient";
 
 interface Salesperson {
   id: string;
@@ -120,8 +121,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     fetchedRef.current = null;
+    // Clear all TanStack Query cached data on logout — prevents session data
+    // leaking to next user on shared devices (CRITICAL: B-4 fix)
+    queryClient.clear();
     window.location.href = "/auth";
-  }, []);
+  }, [queryClient]);
 
   const value = useMemo(() => ({ 
     user, 

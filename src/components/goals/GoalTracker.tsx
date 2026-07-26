@@ -37,7 +37,11 @@ export const GoalTracker: FC<GoalTrackerProps> = ({
   onEdit,
   showDetails = true,
 }) => {
-  const progress = Math.min((goal.current / goal.target) * 100, 100);
+  // Guard: target must be a positive number — NaN/Inf otherwise
+  const rawProgress = goal.target && goal.target > 0
+    ? (goal.current / goal.target) * 100
+    : goal.current > 0 ? 100 : 0;
+  const progress = Math.min(rawProgress, 100);
 
   const statusConfig = {
     on_track: {

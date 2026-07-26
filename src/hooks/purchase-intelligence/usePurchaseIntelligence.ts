@@ -80,7 +80,7 @@ export function usePurchaseIntelligence(clientId?: string, withAI = true) {
       return data as unknown as PurchaseIntelligence;
     },
     enabled: !!clientId,
-    staleTime: 4 * 60 * 60_000, // 4h
+    staleTime: 10 * 60_000, // 10min — purchase intelligence changes with new orders
     gcTime: 6 * 60 * 60_000,
   });
 }

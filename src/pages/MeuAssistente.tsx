@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Bot, Send, Loader2, Sparkles, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -107,7 +108,7 @@ const HubInner: FC = () => {
                 <p className="text-sm text-destructive">Não consegui gerar o briefing. Tente novamente.</p>
               ) : (
                 <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
-                  <ReactMarkdown>{briefing || "_Aguardando…_"}</ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{briefing || "_Aguardando…_"}</ReactMarkdown>
                 </div>
               )}
             </Card>
@@ -163,7 +164,7 @@ const HubInner: FC = () => {
                             : "bg-muted/50 mr-8 prose prose-sm dark:prose-invert max-w-none",
                         )}
                       >
-                        {m.role === "user" ? m.content : <ReactMarkdown>{m.content || "…"}</ReactMarkdown>}
+                        {m.role === "user" ? m.content : <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{m.content || "…"}</ReactMarkdown>}
                       </div>
                     ))}
                   </div>

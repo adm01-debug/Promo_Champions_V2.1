@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { format, parseISO, isToday, isYesterday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { History, ChevronDown, ChevronRight, Search, Printer } from "lucide-react";
@@ -51,7 +52,7 @@ const Item: FC<{ entry: BriefingHistoryEntry }> = ({ entry }) => {
       </button>
       {open && (
         <div className={cn("px-4 py-3 bg-background/60 border-t", "prose prose-sm dark:prose-invert max-w-none text-sm max-h-72 overflow-y-auto")}>
-          <ReactMarkdown>{entry.content || "_Sem conteúdo_"}</ReactMarkdown>
+          <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{entry.content || "_Sem conteúdo_"}</ReactMarkdown>
         </div>
       )}
     </div>
@@ -160,7 +161,7 @@ export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
                 {labelForDate(entry.briefing_date)} · {format(parseISO(entry.briefing_date), "dd/MM/yyyy")}
               </h2>
               <div className="prose prose-sm max-w-none" style={{ fontSize: 11 }}>
-                <ReactMarkdown>{entry.content || ""}</ReactMarkdown>
+                <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{entry.content || ""}</ReactMarkdown>
               </div>
             </section>
           ))}

@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Bot, Loader2, MessageSquare, Sparkles, Volume2, Square } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
                 <p className="text-xs text-destructive">Não consegui gerar o briefing agora. Tente novamente.</p>
               ) : (
                 <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-muted-foreground leading-relaxed line-clamp-6">
-                  <ReactMarkdown>{briefing || "Preparando seu resumo do dia…"}</ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{briefing || "Preparando seu resumo do dia…"}</ReactMarkdown>
                 </div>
               )}
             </div>

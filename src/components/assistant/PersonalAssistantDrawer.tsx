@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Sparkles, Send, Loader2, X, Bot, ThumbsUp, ThumbsDown } from "lucide-react";
 import {
   Sheet,
@@ -148,7 +149,7 @@ export const PersonalAssistantDrawer: FC = () => {
               </div>
             ) : (
               <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
-                <ReactMarkdown>{briefing || "_Sem briefing ainda._"}</ReactMarkdown>
+                <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{briefing || "_Sem briefing ainda._"}</ReactMarkdown>
               </div>
             )}
           </section>
@@ -168,7 +169,7 @@ export const PersonalAssistantDrawer: FC = () => {
                   {m.role === "user" ? (
                     m.content
                   ) : (
-                    <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
+                    <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{m.content || "…"}</ReactMarkdown>
                   )}
                 </div>
               ))}

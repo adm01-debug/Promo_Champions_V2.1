@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Database } from "lucide-react";
@@ -36,7 +37,7 @@ export function NLQAnswerCard({ response }: Props) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="prose prose-sm dark:prose-invert max-w-none [&_strong]:text-primary [&_p]:text-foreground [&_p]:leading-relaxed">
-            <ReactMarkdown>{response.answer}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[[rehypeSanitize, defaultSchema]]}>{response.answer}</ReactMarkdown>
           </div>
 
           {primary && primary.rows.length > 1 && (
