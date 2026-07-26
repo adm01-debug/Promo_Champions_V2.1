@@ -127,9 +127,10 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .update({ status: 'completed', completed_at: new Date().toISOString() })
       .eq('id', job_id);
 
-    return new Response(JSON.stringify({ sent, failed }), {
+    return new Response(JSON.stringify({ sent, failed, skipped }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (e) {
     console.error('email-bulk-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
