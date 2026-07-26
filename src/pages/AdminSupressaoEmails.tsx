@@ -55,7 +55,7 @@ function csvCell(value: unknown): string {
   return `"${safe.replace(/"/g, '""')}"`;
 }
 
-const AdminSupressaoEmails: React.FC = () => {
+function AdminSupressaoEmails() {
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('all');
   const [page, setPage] = useState(0);
@@ -317,6 +317,6 @@ const AdminSupressaoEmails: React.FC = () => {
       </div>
     </PageTransition>
   );
-};
+}
 
 export default AdminSupressaoEmails;
