@@ -5,19 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import {
-  Check,
-  Phone,
-  Users,
-  Mail,
-  FileText,
-  Clock,
-  MoreHorizontal,
-  Linkedin,
-  MessageCircle,
-  ShieldAlert,
-  ExternalLink,
-} from 'lucide-react';
+import { Check, Phone, Users, Mail, FileText, Clock, MoreHorizontal, MessageCircle, ShieldAlert, ExternalLink } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { cn } from '@/lib/utils';
 
 const priorityConfig = {

@@ -12,20 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import {
-  Trash2,
-  Pencil,
-  Save,
-  GripVertical,
-  MoreHorizontal,
-  Phone,
-  Mail,
-  Linkedin,
-  MessageCircle,
-  Users,
-  CheckSquare,
-  Zap,
-} from 'lucide-react';
+import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, MessageCircle, Users, CheckSquare, Zap } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { CadenceStep, ActionType } from '@/hooks/cadences/useCadenceQueries';
 import { MergeTagPicker } from './MergeTagPicker';
 

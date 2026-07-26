@@ -1,16 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { useActivityStats, useActivityGoals } from '@/hooks/activities/useActivities';
-import {
-  Phone,
-  Mail,
-  Users,
-  CheckCircle,
-  CalendarCheck,
-  Activity,
-  Linkedin,
-  MessageCircle,
-  FileText,
-} from 'lucide-react';
+import { Phone, Mail, Users, CheckCircle, CalendarCheck, Activity, MessageCircle, FileText } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 

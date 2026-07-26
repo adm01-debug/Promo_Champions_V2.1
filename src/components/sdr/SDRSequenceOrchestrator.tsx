@@ -2,14 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import {
-  Mail,
-  Phone,
-  Linkedin,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-} from 'lucide-react';
+import { Mail, Phone, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { motion } from 'framer-motion';
 
 const sequences = [

@@ -12,23 +12,8 @@ import {
   ActionType,
   useUpdateLeadStage,
 } from '@/hooks/useCadences';
-import {
-  Phone,
-  Mail,
-  Linkedin,
-  MessageCircle,
-  Users,
-  MoreHorizontal,
-  Check,
-  SkipForward,
-  Clock,
-  ListTodo,
-  MessageSquare,
-  X,
-  Zap,
-  CheckSquare,
-  RefreshCw,
-} from 'lucide-react';
+import { Phone, Mail, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, Zap, CheckSquare, RefreshCw } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,

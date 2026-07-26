@@ -7,7 +7,8 @@ import {
   useActivityGoals,
   useUpdateActivityGoals,
 } from '@/hooks/activities/useActivities';
-import { Target, Phone, Mail, Users, Linkedin, MessageCircle, Save } from 'lucide-react';
+import { Target, Phone, Mail, Users, MessageCircle, Save } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function ActivityGoalForm() {

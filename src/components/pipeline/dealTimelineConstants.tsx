@@ -1,22 +1,6 @@
 import React from 'react';
-import {
-  Phone,
-  Mail,
-  Calendar,
-  Linkedin,
-  MessageCircle,
-  MoreHorizontal,
-  ArrowRight,
-  CheckCircle2,
-  PhoneCall,
-  Users,
-  Reply,
-  FileText,
-  Trophy,
-  Bot,
-  Filter,
-  Activity,
-} from 'lucide-react';
+import { Phone, Mail, Calendar, MessageCircle, MoreHorizontal, ArrowRight, CheckCircle2, PhoneCall, Users, Reply, FileText, Trophy, Bot, Filter, Activity } from 'lucide-react';
+import { Linkedin } from '@/components/icons/Linkedin';
 import type { TimelineEventType } from '@/hooks/useDealTimeline';
 
 export const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
