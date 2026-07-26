@@ -66,14 +66,11 @@ type TimelineItem = {
 };
 
 async function assertAdmin(supabase: SupabaseClient, userId: string, requestId: string): Promise<Response | null> {
+  // Use has_role_name RPC for admin check (consistent with codebase)
   const { data, error } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
+    .rpc("has_role_name", { p_user_id: userId, p_role_name: "admin" });
   if (error) {
-    jlog("error", { msg: "auth_role_lookup_failed", requestId, userId, ...describeError(error) });
+    jlog("error", { msg: "auth_role_check_failed", requestId, userId, ...describeError(error) });
     return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
   }
   if (!data) {

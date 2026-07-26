@@ -38,15 +38,14 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       throw new Error("Unauthorized");
     }
 
-    // Check if user is admin
-    const { data: roleData } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .single();
+    // Verify the user is an admin using has_role_name RPC (not direct table access)
+    const { data: roleData, error: roleError } = await supabaseAdmin
+      .rpc("has_role_name", {
+        p_user_id: user.id,
+        p_role_name: "admin",
+      });
 
-    if (!roleData) {
+    if (roleError || !roleData) {
       throw new Error("Only admins can approve password resets");
     }
 

@@ -53,12 +53,8 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       );
     }
 
-    // Load admin user_ids (bounded — admins are a small set)
-    const { data: admins, error: aErr } = await admin
-      .from("user_roles")
-      .select("user_id")
-      .eq("role", "admin")
-      .limit(100);
+    // Load admin user_ids via RPC fn_get_all_admin_ids (SECURITY DEFINER — bypass RLS, service_role only)
+    const { data: admins, error: aErr } = await admin.rpc("fn_get_all_admin_ids");
 
     if (aErr) {
       log("error", "failed loading admins", { error: aErr.message });
@@ -68,7 +64,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       });
     }
 
-    const adminIds = (admins ?? []).map((r) => r.user_id as string);
+    const adminIds = (admins ?? []) as string[];
 
     // Build ALL notification rows across ALL failures in one pass — no DB calls inside loop
     const allNotifRows: Array<Record<string, unknown>> = [];
