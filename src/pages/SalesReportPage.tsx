@@ -13,6 +13,7 @@ import { SalesReportKpis } from "@/components/reports/sales/SalesReportKpis";
 import { SalesRevenueChart } from "@/components/reports/sales/SalesRevenueChart";
 import { SalesTopProductsChart } from "@/components/reports/sales/SalesTopProductsChart";
 import { SalesStatusDonut } from "@/components/reports/sales/SalesStatusDonut";
+import { SalesMarkupTrendChart } from "@/components/reports/sales/SalesMarkupTrendChart";
 import { SalesTeamRankingChart } from "@/components/reports/sales/SalesTeamRankingChart";
 import { SalesTopDealsTable } from "@/components/reports/sales/SalesTopDealsTable";
 import { useSalesReport } from "@/hooks/reports/useSalesReport";
