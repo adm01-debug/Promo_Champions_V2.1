@@ -21,6 +21,7 @@ import { useSalesReport } from "@/hooks/reports/useSalesReport";
 import { generateSalesReportPdf } from "@/lib/reports/salesReportPdf";
 import { buildCsv, downloadCsv } from "@/lib/csv";
 import { format as formatDate } from "date-fns";
+import { useMarkupMinSamplePreference } from "@/hooks/reports/useMarkupMinSamplePreference";
 import type { ReportPeriod } from "@/hooks/reports/salesReportHelpers";
 
 export default function SalesReportPage() {
