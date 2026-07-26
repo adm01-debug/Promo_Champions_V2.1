@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { filterOptedOut } from "../_shared/unsubscribe.ts";
+import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 
@@ -77,8 +77,31 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
     let sent = 0;
     let failed = 0;
 
-    for (const d of allowed) {
+    // Remetente: env dedicada ou o configurado nos alertas (única fonte hoje).
+    let fromAddress = Deno.env.get('BULK_EMAIL_FROM') ?? '';
+    if (!fromAddress) {
+      const { data: s } = await admin
+        .from('churn_alert_settings')
+        .select('email_from, email_reply_to')
+        .maybeSingle();
+      fromAddress = (s as { email_from?: string } | null)?.email_from ?? '';
+    }
+    if (!fromAddress) {
+      await admin
+        .from('email_bulk_jobs')
+        .update({ status: 'failed', error_message: 'sender_not_configured' })
+        .eq('id', job_id);
+      return new Response(
+        JSON.stringify({
+          error:
+            'Remetente de e-mail não configurado. Defina um domínio verificado antes de disparar envios.',
+          needsEmailSetup: true,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
 
+    for (const d of allowed) {
       if (!d.recipient_email) {
         await admin
           .from('email_bulk_drafts')
@@ -88,39 +111,57 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
         continue;
       }
       try {
-        const { data: res, error } = await admin.functions.invoke(
-          'send-multichannel-message',
-          {
-            body: {
-              channel: 'email',
-              to: d.recipient_email,
-              recipient_name: d.recipient_name ?? d.recipient_email,
-              subject: d.subject,
-              message: d.body,
-              metadata: {
-                source: 'bulk-composer',
-                job_id,
-                draft_id: d.id,
-                client_id: d.client_id,
-              },
-            },
-          }
-        );
-        const resData = res as { error?: string } | null;
-        if (error || resData?.error) throw new Error(error?.message ?? resData?.error);
+        // Conformidade LGPD/CAN-SPAM: todo envio em massa carrega descadastro
+        // visível (rodapé) e one-click (RFC 8058) para provedores.
+        const footer = await unsubscribeFooterHtml(d.recipient_email);
+        const headers = await unsubscribeHeaders(d.recipient_email);
+        const html = `${d.body ?? ''}${footer}`;
+
+        const { error } = await admin.rpc('enqueue_email', {
+          p_to: [d.recipient_email],
+          p_from: fromAddress,
+          p_reply_to: null,
+          p_subject: d.subject,
+          p_html: html,
+          p_purpose: 'transactional',
+          p_template_name: 'bulk-composer',
+          p_headers: headers,
+        } as never);
+        if (error) throw new Error(error.message);
+
         await admin
           .from('email_bulk_drafts')
           .update({ sent_at: new Date().toISOString(), error: null })
           .eq('id', d.id);
         sent++;
       } catch (e) {
+        const msg = (e as Error).message ?? String(e);
+        if (/enqueue_email/i.test(msg) && /does not exist/i.test(msg)) {
+          // Falha de infraestrutura: aborta o lote em vez de queimar destinatários.
+          await admin
+            .from('email_bulk_jobs')
+            .update({ status: 'failed', error_message: 'email_infra_missing' })
+            .eq('id', job_id);
+          return new Response(
+            JSON.stringify({
+              error:
+                'Infraestrutura de e-mail ainda não configurada. Configure um domínio verificado antes de disparar envios.',
+              needsEmailSetup: true,
+              sent,
+              failed,
+              skipped,
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          );
+        }
         await admin
           .from('email_bulk_drafts')
-          .update({ error: (e as Error).message.slice(0, 500) })
+          .update({ error: msg.slice(0, 500) })
           .eq('id', d.id);
         failed++;
       }
     }
+
 
     await admin
       .from('email_bulk_jobs')
