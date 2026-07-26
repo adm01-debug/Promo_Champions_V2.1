@@ -185,6 +185,8 @@ function AdminSupressaoEmails() {
 
         <CampaignHealthAlertsCard />
 
+        <FailedDraftsCard />
+
 
 
         <Card>
