@@ -137,7 +137,12 @@ function addImage(
   doc.setTextColor(...BRAND_DARK);
 }
 
-export async function generateSalesReportPdf(data: SalesReportData, periodLabel: string) {
+export async function generateSalesReportPdf(
+  data: SalesReportData,
+  periodLabel: string,
+  /** Amostra mínima de vendas com custo conhecido para entrar no ranking (default 1). */
+  minSample = 1
+) {
   try {
     const { default: JsPDFCtor } = await import('jspdf');
     const { default: autoTable } = await import('jspdf-autotable');
@@ -210,17 +215,28 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('Ranking de rentabilidade por vendedor', 14, 138);
-    if (data.markupRanking.length === 0) {
+
+    const safeMinSample = Number.isFinite(minSample) && minSample > 0 ? Math.floor(minSample) : 1;
+    const rankingRows = data.markupRanking.filter(r => r.sample >= safeMinSample);
+    const hiddenCount = data.markupRanking.length - rankingRows.length;
+
+    if (rankingRows.length === 0) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(150, 150, 150);
-      doc.text('Nenhuma venda com custo conhecido no período.', 14, 146);
+      doc.text(
+        data.markupRanking.length === 0
+          ? 'Nenhuma venda com custo conhecido no período.'
+          : `Nenhum vendedor com pelo menos ${safeMinSample} venda(s) com custo conhecido.`,
+        14,
+        146
+      );
       doc.setTextColor(...BRAND_DARK);
     } else {
       autoTable(doc, {
         startY: 142,
         head: [['#', 'Vendedor', 'Markup médio', 'Vendas', 'Receita']],
-        body: data.markupRanking.map((r, i) => [
+        body: rankingRows.map((r, i) => [
           String(i + 1),
           r.name,
           `${r.avgMarkup.toFixed(1)}%`,
@@ -233,7 +249,21 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
         margin: { left: 14, right: 14 },
         styles: { cellPadding: 2 },
       });
+
+      const afterY =
+        (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 142;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      doc.text(
+        `Amostra mínima aplicada: ${safeMinSample} venda(s).` +
+          (hiddenCount > 0 ? ` ${hiddenCount} vendedor(es) oculto(s).` : ''),
+        14,
+        afterY + 5
+      );
+      doc.setTextColor(...BRAND_DARK);
     }
+
 
 
 
