@@ -138,6 +138,8 @@ export default function SalesReportPage() {
 
             <SalesTeamRankingChart data={data.teamRanking} />
 
+            <SalesMarkupRankingTable data={data.markupRanking} />
+
             <SalesTopDealsTable data={data.topDeals} />
           </motion.div>
         )}
