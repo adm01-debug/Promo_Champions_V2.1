@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
+import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 
@@ -77,6 +78,11 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
     let sent = 0;
     let failed = 0;
 
+    // Vazão controlada: protege o limite do provedor e a fila compartilhada.
+    const throttle = resolveThrottle((k) => Deno.env.get(k) ?? undefined);
+    const pacer = new SendPacer(throttle);
+    let throttledMs = 0;
+
     // Remetente: env dedicada ou o configurado nos alertas (única fonte hoje).
     let fromAddress = Deno.env.get('BULK_EMAIL_FROM') ?? '';
     if (!fromAddress) {
@@ -134,6 +140,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
           .update({ sent_at: new Date().toISOString(), error: null })
           .eq('id', d.id);
         sent++;
+        throttledMs += await pacer.afterSend();
       } catch (e) {
         const msg = (e as Error).message ?? String(e);
         if (/enqueue_email/i.test(msg) && /does not exist/i.test(msg)) {
@@ -168,7 +175,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
       .update({ status: 'completed', completed_at: new Date().toISOString() })
       .eq('id', job_id);
 
-    return new Response(JSON.stringify({ sent, failed, skipped }), {
+    return new Response(JSON.stringify({ sent, failed, skipped, throttledMs, throttle }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
