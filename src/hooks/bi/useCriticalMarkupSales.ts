@@ -46,7 +46,7 @@ export function useCriticalMarkupSales(days: number, limit = 10) {
       return ((data ?? []) as Row[]).map((r) => ({
         id: r.id,
         clientName: r.client_name ?? 'Cliente não informado',
-        productName: r.product_name ?? 'Produto не informado'.replace('не', 'não'),
+        productName: r.product_name ?? 'Produto não informado',
         amount: Number(r.amount ?? 0),
         markupPct: Number(r.markup_pct ?? 0),
         createdAt: r.created_at,
