@@ -1,7 +1,7 @@
 import { Resend } from 'npm:resend@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -15,10 +15,29 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   // ── Authentication ────────────────────────────────────────────────────
   // Require a valid user JWT. Content (salesperson_name, client_name, amount)
   // is read from the DB — NOT the request body — to prevent content injection.
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: missing bearer token' }),
+      { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+    );
+  }
+
   let callerUserId: string;
   try {
-    const ctx2 = await getUserClient(req);
-    callerUserId = ctx2.userId;
+    const { createClient } = await import('npm:@supabase/supabase-js@2.49.4');
+    const url = Deno.env.get('SUPABASE_URL')!;
+    const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const userClient = createClient(url, anon, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const token = authHeader.replace('Bearer ', '');
+    const { data, error } = await userClient.auth.getClaims(token);
+    if (error || !data?.claims?.sub) {
+      throw new UnauthorizedError('invalid_or_expired_token');
+    }
+    callerUserId = data.claims.sub;
   } catch (e) {
     if (e instanceof UnauthorizedError) {
       return new Response(
@@ -53,17 +72,21 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
       });
     }
 
-    // Authorization: only the salesperson on the sale or an admin may trigger.
+    // Authorization: only the salesperson on the sale or an admin/manager may trigger.
     if (sale.salesperson_id !== callerUserId) {
-      const { data: roleRow } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', callerUserId)
-        .maybeSingle();
-      if (!roleRow || !['admin', 'manager'].includes(roleRow.role)) {
-        return new Response(JSON.stringify({ error: 'Forbidden: only the seller or an admin may broadcast this sale' }), {
-          status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      // Use has_role_name RPC — admin OR manager
+      const { data: isAdmin } = await supabase.rpc('has_role_name', {
+        p_user_id: callerUserId, p_role_name: 'admin',
+      });
+      if (!isAdmin) {
+        const { data: isManager } = await supabase.rpc('has_role_name', {
+          p_user_id: callerUserId, p_role_name: 'manager',
         });
+        if (!isManager) {
+          return new Response(JSON.stringify({ error: 'Forbidden: only the seller or an admin/manager may broadcast this sale' }), {
+            status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          });
+        }
       }
     }
 

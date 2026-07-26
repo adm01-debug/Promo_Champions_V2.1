@@ -94,6 +94,24 @@ export async function requireAdmin(ctx: AuthenticatedContext): Promise<void> {
 }
 
 /**
+ * Helper para verificar role admin OU manager server-side.
+ * Usa has_role_name RPC com checagem sequencial (admin → manager).
+ */
+export async function requireAdminOrManager(ctx: AuthenticatedContext): Promise<void> {
+  const { data, error } = await ctx.client.rpc("has_role_name", {
+    p_user_id: ctx.userId,
+    p_role_name: "admin",
+  });
+  if (!error && data) return;
+  const { data: managerData, error: managerError } = await ctx.client.rpc("has_role_name", {
+    p_user_id: ctx.userId,
+    p_role_name: "manager",
+  });
+  if (managerError) throw new UnauthorizedError(`role_check_failed:${managerError.message}`);
+  if (!managerData) throw new UnauthorizedError("admin_or_manager_role_required");
+}
+
+/**
  * Constant-time string comparison — prevents timing side-channel attacks.
  * Uses Web Crypto API for correct constant-time semantics.
  * Falls back to byte-loop if TextEncoder unavailable (edge functions env).
