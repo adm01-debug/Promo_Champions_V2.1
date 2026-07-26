@@ -117,9 +117,11 @@ export default function SalesReportPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <SalesMarkupTrendChart data={data.markupSeries} />
               <SalesStatusDonut data={data.statusBreakdown} />
-              <SalesTeamRankingChart data={data.teamRanking} />
             </div>
+
+            <SalesTeamRankingChart data={data.teamRanking} />
 
             <SalesTopDealsTable data={data.topDeals} />
           </motion.div>
