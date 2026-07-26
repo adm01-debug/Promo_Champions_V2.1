@@ -1,4 +1,4 @@
-import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -40,7 +40,7 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
     const userClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -50,7 +50,7 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
     const token = authHeader.replace('Bearer ', '');
     const { data: claims, error: authError } = await userClient.auth.getClaims(token);
     if (authError || !claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const admin = createClient(
@@ -58,9 +58,9 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    const { data: isAdmin } = await admin.rpc('has_role', { _user_id: claims.claims.sub, _role: 'admin' });
+    const { data: isAdmin } = await admin.rpc('has_role_name', { p_user_id: claims.claims.sub, p_role_name: 'admin' });
     if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'Forbidden — admin only' }), { status: 403, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Forbidden — admin only' }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const body = await req.json();
@@ -75,10 +75,10 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
     };
 
     if (!name || !start_date || !end_date || !goal_amount) {
-      return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
     if (!['closer', 'sdr'].includes(role_type)) {
-      return new Response(JSON.stringify({ error: 'Invalid role_type' }), { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Invalid role_type' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // Finalizar apenas a temporada ativa do mesmo papel
@@ -161,12 +161,12 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
       cars_created: toCreate.length,
       powerups_spawned: powerupRows.length,
       rules_created: ruleRows.length,
-    }), { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   } catch (err) {
     console.error('start-race-season error', err);
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
-      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));
