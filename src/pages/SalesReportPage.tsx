@@ -62,6 +62,19 @@ export default function SalesReportPage() {
     downloadCsv(`relatorio-vendas-${formatDate(refDate, "yyyy-MM-dd")}.csv`, csv);
   };
 
+  const handleExportMarkupCsv = () => {
+    if (!data) return;
+    const csv = buildCsv(data.markupSeries, [
+      { header: "Período", value: (p) => p.name },
+      {
+        header: "Markup médio %",
+        value: (p) => (p.value === null ? "Sem custo" : p.value.toFixed(2).replace(".", ",")),
+      },
+      { header: "Vendas consideradas", value: (p) => p.sample },
+    ]);
+    downloadCsv(`markup-medio-${formatDate(refDate, "yyyy-MM-dd")}.csv`, csv);
+  };
+
   return (
     <>
       <Helmet>
