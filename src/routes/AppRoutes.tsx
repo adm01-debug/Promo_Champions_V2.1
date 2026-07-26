@@ -172,6 +172,7 @@ export function AppRoutes() {
                       <Route path="/admin/regras-inatividade" element={<Manager><AdminRegrasInatividade /></Manager>} />
                       <Route path="/admin/alertas-churn" element={<Manager><AdminAlertasChurn /></Manager>} />
                       <Route path="/admin/alertas-churn/historico" element={<Manager><AdminHistoricoAlertasChurn /></Manager>} />
+                      <Route path="/admin/supressao-emails" element={<Manager><AdminSupressaoEmails /></Manager>} />
                       <Route path="/minhas-premiacoes" element={<MinhasPremiacoes />} />
 
                       <Route path="/aprovacoes" element={<ApprovalWorkflows />} />
