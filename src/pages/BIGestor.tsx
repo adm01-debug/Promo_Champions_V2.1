@@ -33,6 +33,7 @@ import { BIGestorTeamSection } from '@/components/bi/BIGestorTeamSection';
 import { ChurnTaskCompletionCard } from '@/components/bi/ChurnTaskCompletionCard';
 import { ChurnOverdueRankingCard } from '@/components/bi/ChurnOverdueRankingCard';
 import { MarkupOverviewCard } from '@/components/bi/MarkupOverviewCard';
+import { CriticalMarkupAlertCard } from '@/components/bi/CriticalMarkupAlertCard';
 import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
@@ -457,7 +458,9 @@ const BIGestor = () => {
               <div className="grid gap-4 md:grid-cols-2 animate-slide-up">
                 <ChurnTaskCompletionCard />
                 <ChurnOverdueRankingCard />
-                <MarkupOverviewCard className="md:col-span-2" />
+                <MarkupOverviewCard />
+                <CriticalMarkupAlertCard />
+
               </div>
 
 
