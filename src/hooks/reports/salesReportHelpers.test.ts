@@ -316,3 +316,62 @@ describe('salesReportHelpers.formatBRL', () => {
     expect(formatBRL(-100)).toContain('-');
   });
 });
+
+describe('buildMarkupSeries', () => {
+  const mk = (id: string, created_at: string, markup_pct: number | null, status = 'completed'): SaleRow => ({
+    id,
+    amount: 100,
+    status,
+    created_at,
+    client_name: 'C',
+    product_name: 'P',
+    salesperson_id: 's1',
+    markup_pct,
+  });
+
+  it('agrega média diária no período semanal e usa null em buckets vazios', () => {
+    const start = new Date('2026-07-20T00:00:00');
+    const end = new Date('2026-07-26T23:59:59');
+    const series = buildMarkupSeries(
+      [
+        mk('1', '2026-07-20T10:00:00', 30),
+        mk('2', '2026-07-20T14:00:00', 50),
+        mk('3', '2026-07-22T09:00:00', 10),
+      ],
+      'weekly',
+      start,
+      end,
+    );
+    expect(series).toHaveLength(7);
+    expect(series[0].value).toBe(40);
+    expect(series[0].sample).toBe(2);
+    expect(series[1].value).toBeNull();
+    expect(series[1].sample).toBe(0);
+    expect(series[2].value).toBe(10);
+  });
+
+  it('ignora vendas não ganhas e sem custo', () => {
+    const start = new Date('2026-07-20T00:00:00');
+    const end = new Date('2026-07-26T23:59:59');
+    const series = buildMarkupSeries(
+      [
+        mk('1', '2026-07-20T10:00:00', 80, 'cancelled'),
+        mk('2', '2026-07-20T11:00:00', null),
+        mk('3', '2026-07-20T12:00:00', 25),
+      ],
+      'weekly',
+      start,
+      end,
+    );
+    expect(series[0].value).toBe(25);
+    expect(series[0].sample).toBe(1);
+  });
+
+  it('agrega por semana no período mensal', () => {
+    const start = new Date('2026-07-01T00:00:00');
+    const end = new Date('2026-07-31T23:59:59');
+    const series = buildMarkupSeries([mk('1', '2026-07-02T10:00:00', 45)], 'monthly', start, end);
+    expect(series.length).toBeGreaterThan(3);
+    expect(series.some((p) => p.value === 45)).toBe(true);
+  });
+});
