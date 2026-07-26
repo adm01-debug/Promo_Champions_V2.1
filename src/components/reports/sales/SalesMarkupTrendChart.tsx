@@ -21,7 +21,7 @@ interface Props {
 
 const CustomTooltip: FC<RechartsTooltipProps> = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
-  const point = payload[0].payload as MarkupPoint;
+  const point = payload[0].payload as unknown as MarkupPoint;
   return (
     <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-md">
       <p className="text-xs font-medium text-foreground">{label}</p>
