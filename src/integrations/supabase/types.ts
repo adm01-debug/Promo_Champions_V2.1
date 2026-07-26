@@ -3262,6 +3262,50 @@ export type Database = {
           },
         ]
       }
+      campaign_health_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          job_id: string
+          message: string
+          metrics: Json
+          owner_id: string
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          job_id: string
+          message: string
+          metrics?: Json
+          owner_id: string
+          severity?: string
+          updated_at?: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+          message?: string
+          metrics?: Json
+          owner_id?: string
+          severity?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_health_alerts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "email_bulk_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       category_metrics: {
         Row: {
           category: string
