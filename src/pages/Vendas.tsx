@@ -14,6 +14,13 @@ import { FilterPopover, SortOption } from '@/components/shared/FilterPopover';
 import { usePagination } from '@/hooks/usePagination';
 import { TablePagination } from '@/components/shared/TablePagination';
 import { SaleHUDCard } from '@/components/sales/SaleHUDCard';
+import {
+  classifyMarkup,
+  formatMarkupPct,
+  summarizeMarkup,
+  MARKUP_TIER_LABELS,
+  type MarkupTier,
+} from '@/lib/markupHelpers';
 
 const sortOptions: SortOption[] = [
   { label: 'Mais recente', value: 'date_desc', direction: 'desc' },
@@ -34,12 +41,21 @@ const statusOptions = [
   { label: 'Perdida', value: 'lost' },
 ];
 
+const markupTierOptions: { label: string; value: MarkupTier }[] = [
+  { label: MARKUP_TIER_LABELS.excellent, value: 'excellent' },
+  { label: MARKUP_TIER_LABELS.healthy, value: 'healthy' },
+  { label: MARKUP_TIER_LABELS.critical, value: 'critical' },
+  { label: MARKUP_TIER_LABELS.unknown, value: 'unknown' },
+];
+
 const Vendas = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date_desc');
   const [statusFilter, setStatusFilter] = useState('');
+  const [markupFilter, setMarkupFilter] = useState('');
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
   const { data: sales, isLoading } = useSalesData('');
+
 
   // Fuse.js for fuzzy search
   const fuse = useMemo(() => {
