@@ -22304,6 +22304,7 @@ export type Database = {
         Args: { p_active: boolean; p_workflow_id: string }
         Returns: boolean
       }
+      trigger_campaign_health_alert: { Args: never; Returns: undefined }
       unlock_race_item: {
         Args: { _required_league?: string; _unlock_key: string }
         Returns: Json
