@@ -50,7 +50,17 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
       .select('value')
       .eq('key', 'coaching_cron_secret')
       .maybeSingle();
-    if (!sec?.value || providedSecret !== sec.value) {
+
+    // Constant-time comparison: compare length first, then each byte.
+    // Prevents timing attacks that could reveal secret length via response time.
+    function timingSafeEqual(a: string, b: string): boolean {
+      if (a.length !== b.length) return false;
+      let diff = 0;
+      for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+      return diff === 0;
+    }
+
+    if (!sec?.value || !providedSecret || !timingSafeEqual(sec.value, providedSecret)) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
