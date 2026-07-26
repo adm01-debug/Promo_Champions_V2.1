@@ -1,10 +1,11 @@
-import { FC, memo, useMemo, useState } from "react";
+import { FC, memo, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { classifyMarkup, formatMarkupPct } from "@/lib/markupHelpers";
+import { useMarkupMinSamplePreference } from "@/hooks/reports/useMarkupMinSamplePreference";
 import type { MarkupRankingRow } from "@/hooks/reports/salesReportHelpers";
 
 interface Props {
@@ -14,21 +15,19 @@ interface Props {
 const currency = (v: number): string =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
-/** Opções de amostra mínima — evita ranking distorcido por vendedor com 1 única venda. */
-const MIN_SAMPLE_OPTIONS = [1, 3, 5] as const;
-type MinSample = (typeof MIN_SAMPLE_OPTIONS)[number];
-
 /**
  * Ranking de rentabilidade (markup médio) por vendedor.
  * Base: apenas vendas ganhas com custo conhecido — vendedores sem custo não aparecem.
+ * A amostra mínima escolhida é persistida entre sessões.
  */
 export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
-  const [minSample, setMinSample] = useState<MinSample>(1);
+  const { minSample, setMinSample, options } = useMarkupMinSamplePreference();
 
   const rows = useMemo(
     () => data.filter(r => r.sample >= minSample),
     [data, minSample]
   );
+
 
   const hiddenCount = data.length - rows.length;
 
