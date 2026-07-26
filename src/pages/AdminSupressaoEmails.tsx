@@ -179,6 +179,8 @@ function AdminSupressaoEmails() {
 
         <CampaignOptOutRateCard />
 
+        <CampaignDeliveryLatencyCard />
+
 
 
         <Card>
