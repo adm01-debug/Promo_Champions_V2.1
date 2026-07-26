@@ -145,8 +145,9 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     const pageW = doc.internal.pageSize.getWidth();
 
     // Capture all charts in parallel
-    const [revenuePng, productsPng, statusPng, teamPng] = await Promise.all([
+    const [revenuePng, markupPng, productsPng, statusPng, teamPng] = await Promise.all([
       captureChart('[data-report-chart="revenue"]'),
+      captureChart('[data-report-chart="markup-trend"]'),
       captureChart('[data-report-chart="top-products"]'),
       captureChart('[data-report-chart="status"]'),
       captureChart('[data-report-chart="team"]'),
@@ -189,7 +190,25 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
       'Gráfico de receita indisponível'
     );
 
-    // ===== Page 3 — Top products + status =====
+    // ===== Page 3 — Evolução do markup =====
+    doc.addPage();
+    header(doc, periodLabel);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Evolução do markup médio', 14, 36);
+    addImage(doc, markupPng, 14, 40, pageW - 28, 80, 'Sem markup no período');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(
+      'Considera apenas vendas ganhas com custo conhecido. Linhas de referência: 20% (crítico) e 40% (excelente).',
+      14,
+      126
+    );
+    doc.setTextColor(...BRAND_DARK);
+
+    // ===== Page 4 — Top products + status =====
+
     doc.addPage();
     header(doc, periodLabel);
     doc.setFont('helvetica', 'bold');
@@ -199,7 +218,7 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     doc.text('Distribuição por status', 14, 130);
     addImage(doc, statusPng, 14, 134, pageW - 28, 80, 'Sem dados de status');
 
-    // ===== Page 4 — Team ranking + top deals =====
+    // ===== Page 5 — Team ranking + top deals =====
     doc.addPage();
     header(doc, periodLabel);
     doc.setFont('helvetica', 'bold');
