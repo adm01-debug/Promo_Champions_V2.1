@@ -105,3 +105,68 @@ export const COST_SOURCE_LABELS: Record<string, string> = {
   manual: 'Manual',
   product_default: 'Padrão do produto',
 };
+
+export const MARKUP_TIER_LABELS: Record<MarkupTier, string> = {
+  excellent: 'Excelente (≥ 40%)',
+  healthy: 'Saudável (20–40%)',
+  critical: 'Crítico (< 20%)',
+  unknown: 'Sem custo',
+};
+
+export interface MarkupSummary {
+  /** Média aritmética dos markups conhecidos (null se nenhum). */
+  average: number | null;
+  /** Mediana dos markups conhecidos (null se nenhum). */
+  median: number | null;
+  /** Quantidade de itens por faixa. */
+  counts: Record<MarkupTier, number>;
+  /** Total de itens avaliados. */
+  total: number;
+  /** Itens com markup calculável. */
+  withCost: number;
+}
+
+/**
+ * Agrega uma lista de markups (percentuais) em métricas de rentabilidade.
+ * Valores null/undefined/NaN contam como "unknown" e não entram na média/mediana.
+ */
+export function summarizeMarkup(
+  values: ReadonlyArray<number | null | undefined>,
+): MarkupSummary {
+  const counts: Record<MarkupTier, number> = {
+    excellent: 0,
+    healthy: 0,
+    critical: 0,
+    unknown: 0,
+  };
+  const known: number[] = [];
+
+  for (const value of values) {
+    const { tier } = classifyMarkup(value);
+    counts[tier] += 1;
+    if (tier !== 'unknown' && typeof value === 'number') known.push(value);
+  }
+
+  let average: number | null = null;
+  let median: number | null = null;
+
+  if (known.length > 0) {
+    const sum = known.reduce((acc, v) => acc + v, 0);
+    average = Math.round((sum / known.length) * 100) / 100;
+
+    const sorted = [...known].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const raw =
+      sorted.length % 2 === 0 ? ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2 : (sorted[mid] as number);
+    median = Math.round(raw * 100) / 100;
+  }
+
+  return {
+    average,
+    median,
+    counts,
+    total: values.length,
+    withCost: known.length,
+  };
+}
+
