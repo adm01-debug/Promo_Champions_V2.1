@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -10,7 +10,7 @@ interface VisualSearchRequest {
 
 Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -19,7 +19,7 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
     if (!image || typeof image !== "string") {
       return new Response(JSON.stringify({ error: "image (base64 or data URL) is required" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -86,13 +86,13 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
       if (aiRes.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit excedido. Tente novamente em alguns segundos." }), {
           status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       if (aiRes.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos em Settings > Workspace > Usage." }), {
           status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       const txt = await aiRes.text();
@@ -125,7 +125,7 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
           error: "Não foi possível identificar o produto na imagem. Tente uma foto mais nítida.",
           analysis,
         }),
-        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 422, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -179,7 +179,7 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
       });
       return new Response(
         JSON.stringify({ analysis, results: legacyProducts ?? [], count: (legacyProducts ?? []).length }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -189,13 +189,13 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
         results: products ?? [],
         count: (products ?? []).length,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("visual-search error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

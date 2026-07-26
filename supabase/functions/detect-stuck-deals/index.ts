@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
@@ -22,13 +22,13 @@ function classify(hours: number, p75: number, p90: number): "watch" | "stuck" | 
 }
 
 Deno.serve(withRequestId("detect-stuck-deals", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -84,12 +84,12 @@ Deno.serve(withRequestId("detect-stuck-deals", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, alerts: upserts.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("detect-stuck-deals error", e);
     return new Response(JSON.stringify({ error: String(e) }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

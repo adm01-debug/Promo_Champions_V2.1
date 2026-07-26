@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';
@@ -34,7 +34,7 @@ function jlog(level: 'info' | 'warn' | 'error', data: Record<string, unknown>) {
 
 function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
   const headers: Record<string, string> = {
-    ...corsHeaders,
+    ...getCorsHeaders(req),
     'Content-Type': 'application/json',
   };
   if (requestId) headers['X-Request-Id'] = requestId;
@@ -168,7 +168,7 @@ async function persistInvocationAudit(
 }
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   const requestId = crypto.randomUUID();
   const startedAt = Date.now();
 

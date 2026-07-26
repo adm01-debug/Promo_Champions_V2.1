@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -23,10 +23,10 @@ function getServiceClient() {
 
 Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { headers: getCorsHeaders(req) });
   }
 
-  const headers = { ...corsHeaders, "Content-Type": "application/json" };
+  const headers = { getCorsHeaders(req), "Content-Type": "application/json" };
 
   try {
     const token = req.headers.get("authorization");

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface EnrollPayload {
@@ -9,7 +9,7 @@ interface EnrollPayload {
 
 Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -17,7 +17,7 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -31,7 +31,7 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
     if (userErr || !userData.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -39,7 +39,7 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
     if (!payload.sequence_id || !Array.isArray(payload.contacts) || payload.contacts.length === 0) {
       return new Response(JSON.stringify({ error: "Invalid payload" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -53,7 +53,7 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
     if (seqErr || !seq) {
       return new Response(JSON.stringify({ error: "Sequence not found or no access" }), {
         status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -97,14 +97,14 @@ Deno.serve(withRequestId('sequence-enroll', async (req, _ctx) => {
         enrolled: inserted?.length ?? 0,
         skipped_duplicates: rows.length - (inserted?.length ?? 0),
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error('sequence-enroll error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ ok: false, error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

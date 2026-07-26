@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
@@ -112,7 +112,7 @@ async function generateAdvancedActions(supabase: ReturnType<typeof createClient>
 }
 
 Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -126,7 +126,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
       validateEnum(body.period, "period", ["month", "quarter"], false),
       validateUUID(body.salesperson_id, "salesperson_id", false),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const period: "month" | "quarter" = body.period === "quarter" ? "quarter" : "month";
     const filterSp: string | null = body.salesperson_id ?? null;
@@ -358,13 +358,13 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ predictions_count: predictions.length, alerts_count: alerts.length }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("predict-quota-attainment error", e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

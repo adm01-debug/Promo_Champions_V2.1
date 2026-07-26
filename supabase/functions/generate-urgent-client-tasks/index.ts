@@ -1,6 +1,6 @@
 // Daily queue: auto-generates follow-up tasks for high-urgency clients
 // Runs via cron every hour; only executes when local time >= configured cutoff and not already run today.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 const WON_STATUSES = ['won', 'closed_won', 'paid', 'delivered', 'completed'];
@@ -44,7 +44,7 @@ function computeUrgency(daysSince: number, avgInterval: number): { urgency: Urge
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -166,6 +166,6 @@ Deno.serve(async (req) => {
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }

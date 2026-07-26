@@ -1,4 +1,4 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 interface Payload {
@@ -40,7 +40,7 @@ function renderHtml(ctx: {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
               'Infraestrutura de e-mail ainda não configurada. Configure um domínio verificado em Admin → E-mails antes de enviar.',
             needsEmailSetup: true,
           }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
         );
       }
       throw qErr;
@@ -104,13 +104,13 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ ok: true, test: !!body.test, recipients: s.email_recipients.length }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: message }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 });

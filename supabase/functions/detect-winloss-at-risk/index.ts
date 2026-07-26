@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
@@ -17,7 +17,7 @@ function log(event: string, data: Record<string, unknown>) {
 
 Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const startedAt = Date.now();
@@ -85,7 +85,7 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
           threshold,
         },
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('detect-winloss-at-risk error:', e);
@@ -93,7 +93,7 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
     log("error", { message, duration_ms: Date.now() - startedAt });
     return new Response(JSON.stringify({ error: message, deals: [] }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

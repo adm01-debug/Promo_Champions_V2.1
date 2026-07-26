@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -9,7 +9,7 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   // Require authentication — this function uses SERVICE_ROLE_KEY to read sensitive salesperson data
@@ -20,7 +20,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
   if (!authHeader) {
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const authClient = createClient(supabaseUrl, supabaseAnonKey, {
@@ -30,7 +30,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
   if (authError || !authData?.user) {
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -54,7 +54,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
         }),
         {
           status: validation.statusCode,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -70,7 +70,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       if (!forecastId) {
         return new Response(
           JSON.stringify({ error: 'forecast_id (uuid) obrigatório para skill forecast_narrative' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
         );
       }
       const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/forecast-narrative`, {
@@ -84,7 +84,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const skillBody = await skillResp.text();
       return new Response(skillBody, {
         status: skillResp.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -92,7 +92,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       if (!recordingId) {
         return new Response(
           JSON.stringify({ error: 'recording_id (uuid) obrigatório para skill coaching_plan' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
         );
       }
       const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
@@ -106,7 +106,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const skillBody = await skillResp.text();
       return new Response(skillBody, {
         status: skillResp.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     // ────────────────────────────────────────────────────────────────
@@ -220,7 +220,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
           JSON.stringify({ error: 'Rate limit atingido. Tente novamente em breve.' }),
           {
             status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -229,7 +229,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
           JSON.stringify({ error: 'Créditos insuficientes.', suggestion: '' }),
           {
             status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -243,7 +243,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
             disabled: response.status === 403,
             fallback: true,
           }),
-          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
       throw new Error(`AI gateway error: ${response.status}`);
@@ -253,7 +253,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
     const suggestion = data.choices?.[0]?.message?.content || '';
 
     return new Response(JSON.stringify({ suggestion }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('ai-copilot error:', e);
@@ -261,7 +261,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

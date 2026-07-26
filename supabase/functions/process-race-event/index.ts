@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
@@ -13,7 +13,7 @@ interface LeaderboardRow {
 const CHECKPOINTS = [0.25, 0.5, 0.75];
 
 Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   try {
     try {
@@ -22,7 +22,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -45,7 +45,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
 
     if (!season) {
       return new Response(JSON.stringify({ ok: true, skipped: 'no-active-season' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -276,13 +276,13 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, events_emitted: 1 + events.length }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('process-race-event error', err);
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

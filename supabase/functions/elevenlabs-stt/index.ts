@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -8,7 +8,7 @@ const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -19,7 +19,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -28,7 +28,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
     if (typeof audio === "string" && audio.length > MAX_AUDIO_BASE64_LENGTH) {
       return new Response(
         JSON.stringify({ error: "audio_too_large", message: "Audio payload exceeds maximum allowed size" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -47,7 +47,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
         }),
         {
           status: 503,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -81,14 +81,14 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
       if (response.status === 401) {
         return new Response(
           JSON.stringify({ error: 'invalid_api_key', message: 'Invalid ElevenLabs API key' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
       
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'rate_limit', message: 'ElevenLabs rate limit exceeded' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 429, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
 
@@ -104,7 +104,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
         language: result.language_code || 'pt'
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
@@ -113,7 +113,7 @@ Deno.serve(withRequestId("elevenlabs-stt", async (req, _ctx) => {
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface CoachingTarget {
@@ -18,7 +18,7 @@ interface CoachingTarget {
 }
 
 Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -103,14 +103,14 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
     };
 
     return new Response(JSON.stringify({ targets, summary }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("coaching-intelligence error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

@@ -1,7 +1,7 @@
 // Detects clients that crossed the churn threshold and creates notifications
 // for the responsible salesperson. Idempotent within cooldown window.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { getCorsHeaders(req) } from 'npm:@supabase/supabase-js@2/cors';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
@@ -44,7 +44,7 @@ function thresholdDaysFor(level: Level, expectedInterval: number | null): number
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
     if (!settings?.enabled) {
       return new Response(JSON.stringify({ ok: true, skipped: 'disabled' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -275,13 +275,13 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ ok: true, evaluated: alerts.length, created, skipped, tasks_created: tasksCreated }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   } catch (e) {
     console.error('detect-client-churn-alerts error', e);
     return new Response(JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 });

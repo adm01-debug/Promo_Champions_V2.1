@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -20,7 +20,7 @@ interface AnalysisResult {
 }
 
 Deno.serve(withRequestId('behavioral-analysis', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const { interactionId, text, contactName, channel, dealId } = (await req.json()) as AnalysisRequest;
@@ -28,7 +28,7 @@ Deno.serve(withRequestId('behavioral-analysis', async (req, _ctx) => {
     if (!text || text.length < 100) {
       return new Response(
         JSON.stringify({ error: "Text must be at least 100 characters", skipped: true }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -65,13 +65,13 @@ Retorne APENAS JSON válido, sem markdown.`;
     if (aiRes.status === 429) {
       return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
         status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (aiRes.status === 402) {
       return new Response(JSON.stringify({ error: "AI credits exhausted" }), {
         status: 402,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!aiRes.ok) throw new Error(`AI gateway error: ${aiRes.status}`);
@@ -103,14 +103,14 @@ Retorne APENAS JSON válido, sem markdown.`;
     });
 
     return new Response(JSON.stringify({ analysis }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("behavioral-analysis error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

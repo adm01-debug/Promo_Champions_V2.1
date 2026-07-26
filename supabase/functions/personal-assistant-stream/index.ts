@@ -11,7 +11,7 @@
 
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import {
   validateString,
@@ -227,7 +227,7 @@ Se não houver nada realmente urgente nem mudança relevante, responda EXATAMENT
 
 Deno.serve(
   withRequestId("personal-assistant-stream", async (req, _ctx) => {
-    if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
     try {
       const auth = await getUserClient(req).catch((e) => {
@@ -249,7 +249,7 @@ Deno.serve(
           : null,
         validateArray(history, "conversationHistory", { maxLength: 30 }),
       ]);
-      if (errors.length) return validationErrorResponse(errors, corsHeaders);
+      if (errors.length) return validationErrorResponse(errors, getCorsHeaders(req));
 
       const context = await buildContext(auth.client, salespersonId!);
 
@@ -298,7 +298,7 @@ Deno.serve(
           });
           return new Response(stream, {
             headers: {
-              ...corsHeaders,
+              ...getCorsHeaders(req),
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
               Connection: "keep-alive",
@@ -318,7 +318,7 @@ Deno.serve(
       if (!LOVABLE_API_KEY) {
         return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
           status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -334,7 +334,7 @@ Deno.serve(
         const text = await upstream.text().catch(() => "");
         return new Response(JSON.stringify({ error: "ai_gateway_error", status: upstream.status, details: text.slice(0, 500) }), {
           status,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -390,19 +390,19 @@ Deno.serve(
       }
 
       return new Response(responseBody, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
+        headers: { getCorsHeaders(req), "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" },
       });
     } catch (err) {
       if (err instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: err.message }), {
           status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       console.error("personal-assistant-stream error:", err);
       return new Response(JSON.stringify({ error: "internal_error" }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
   }),

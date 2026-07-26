@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -74,18 +74,18 @@ function inferSegment(amount: number | null): string {
 }
 
 Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
     }
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: claims, error: authErr } = await supabase.auth.getClaims(authHeader.replace("Bearer ", ""));
     if (authErr || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -96,7 +96,7 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
 
     if (body.mode === "explain") {
       if (!LOVABLE_API_KEY) {
-        return new Response(JSON.stringify({ explanation: "IA indisponível no momento." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ explanation: "IA indisponível no momento." }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       try {
         const r = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -113,10 +113,10 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
         if (!r.ok) throw new Error(`AI ${r.status}`);
         const j = await r.json();
         const explanation = j.choices?.[0]?.message?.content ?? "Sem explicação disponível.";
-        return new Response(JSON.stringify({ explanation }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ explanation }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
       } catch (e) {
         console.error("explain error", e);
-        return new Response(JSON.stringify({ explanation: "Falha ao gerar explicação." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ explanation: "Falha ao gerar explicação." }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
       }
     }
 
@@ -172,9 +172,9 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
     }
     const processed = analysisRows.length;
 
-    return new Response(JSON.stringify({ ok: true, processed }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ ok: true, processed }), { headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     console.error("analyze-win-loss error", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 }));

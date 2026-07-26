@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -86,7 +86,7 @@ const STO_CHANNELS = new Set(["email", "linkedin"]);
 
 Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabase = createClient(
@@ -409,14 +409,14 @@ Deno.serve(withRequestId('sequence-runner', async (req, _ctx) => {
         duration_ms: Date.now() - startedAt,
         errors: errors.slice(0, 10),
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error('sequence-runner error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

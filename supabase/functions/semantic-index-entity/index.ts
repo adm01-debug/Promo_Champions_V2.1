@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -82,7 +82,7 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
 const VALID_ENTITY_TYPES = Object.keys(TABLE_BY_TYPE) as EntityType[];
 
 Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const { entity_type, entity_id, force = false } = (await req.json()) as IndexRequest;
@@ -91,7 +91,7 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
       validateEnum(entity_type, "entity_type", VALID_ENTITY_TYPES, true),
       validateUUID(entity_id, "entity_id", true),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
@@ -107,14 +107,14 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
     if (rowErr) throw rowErr;
     if (!row) {
       return new Response(JSON.stringify({ error: "entity not found" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     const content = buildContent(entity_type, row).trim();
     if (!content) {
       return new Response(JSON.stringify({ skipped: true, reason: "empty content" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -131,7 +131,7 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
         .maybeSingle();
       if (existing && existing.content_hash === contentHash) {
         return new Response(JSON.stringify({ skipped: true, reason: "unchanged", content_hash: contentHash }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
     }
@@ -162,12 +162,12 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
     }).eq("entity_type", entity_type).eq("entity_id", entity_id);
 
     return new Response(JSON.stringify({ ok: true, id: upsertId, content_preview: content.slice(0, 120), content_hash: contentHash }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-index-entity error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

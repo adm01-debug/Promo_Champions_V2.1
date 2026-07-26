@@ -1,10 +1,10 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -14,7 +14,7 @@ Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "ELEVENLABS_API_KEY is not configured" }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -22,7 +22,7 @@ Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
       if (!text || !voiceId) {
         return new Response(JSON.stringify({ error: "Missing text or voiceId" }), {
           status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -47,25 +47,25 @@ Deno.serve(withRequestId("elevenlabs-voice", async (req, _ctx) => {
         console.error("ElevenLabs error:", errorText);
         return new Response(JSON.stringify({ error: "Failed to synthesize speech" }), {
           status: response.status,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
       const audioBuffer = await response.arrayBuffer();
       return new Response(audioBuffer, {
-        headers: { ...corsHeaders, "Content-Type": "audio/mpeg" },
+        headers: { getCorsHeaders(req), "Content-Type": "audio/mpeg" },
       });
     }
 
     return new Response(JSON.stringify({ error: "Invalid action" }), {
       status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error in elevenlabs-voice:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

@@ -1,12 +1,12 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
 Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -10,7 +10,7 @@ function percentile(sorted: number[], p: number): number {
 }
 
 Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     try {
@@ -18,7 +18,7 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
     } catch (authErr) {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
       return new Response(JSON.stringify({ error: msg }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -67,12 +67,12 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, baselines: upserts.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("recompute-stage-baselines error", e);
     return new Response(JSON.stringify({ error: String(e) }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

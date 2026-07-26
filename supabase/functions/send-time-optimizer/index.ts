@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -44,10 +44,10 @@ function aggregate(events: OpenEvent[]) {
 }
 
 Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const auth = req.headers.get("Authorization");
-    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const body = await req.json().catch(() => ({}));
@@ -60,7 +60,7 @@ Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
       const { data } = await admin.from("sales").select("id").limit(500);
       targets = (data ?? []).map((r: { id: string }) => r.id);
     } else {
-      return new Response(JSON.stringify({ error: "sale_ids or recompute_all required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "sale_ids or recompute_all required" }), { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const { data: globalStats } = await admin.rpc("get_global_send_time_stats");
@@ -135,12 +135,12 @@ Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ updated, fallbacks, total: targets.length }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('send-time-optimizer error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

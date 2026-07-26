@@ -17,7 +17,7 @@
 // Ambos compartilham public.webhook_inbound_dedupe e public.quote_sync_inbound_log.
 
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -47,7 +47,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
@@ -352,7 +352,7 @@ async function handlePromoGifts(
 
 // ─── Handler principal ─────────────────────────────────────────────────────
 Deno.serve(withRequestId('receive-quote-sync', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   // S1: rate-limit por IP — 300 req / 60s (webhook legítimo raramente ultrapassa; HMAC valida acima)
   const rl = enforceRateLimit(req, { name: "receive-quote-sync", limit: 300, windowSeconds: 60, bypassAuthenticated: false });

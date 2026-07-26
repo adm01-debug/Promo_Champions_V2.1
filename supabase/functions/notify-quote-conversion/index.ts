@@ -28,7 +28,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 interface Payload {
   quote_id: string;
@@ -49,7 +49,7 @@ function json(status: number, body: unknown, requestId: string) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      ...corsHeaders,
+      ...getCorsHeaders(req),
       "Content-Type": "application/json",
       "X-Request-Id": requestId,
     },
@@ -191,7 +191,7 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
     req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: { ...corsHeaders, "X-Request-Id": requestId } });
+    return new Response("ok", { headers: { getCorsHeaders(req), "X-Request-Id": requestId } });
   }
 
   if (req.method !== "POST") {
@@ -215,7 +215,7 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
     return json(400, { error: "invalid_json" }, requestId);
   }
   const errs = collectErrors([validateUUID(payload?.quote_id, "quote_id", true)]);
-  if (errs.length) return validationErrorResponse(errs, corsHeaders);
+  if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
   if (typeof payload.success !== "boolean") {
     return json(400, { error: "invalid_payload", detail: "success é obrigatório" }, requestId);
   }

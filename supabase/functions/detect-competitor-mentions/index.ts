@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
@@ -16,14 +16,14 @@ function escapeRegExp(s: string) {
 }
 
 Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -38,7 +38,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     if (cErr || !claims?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -46,7 +46,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     if (!recording_id || typeof recording_id !== "string") {
       return new Response(JSON.stringify({ error: "recording_id is required" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -65,7 +65,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     if (rErr || !rec) {
       return new Response(JSON.stringify({ error: "Recording not found" }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -73,7 +73,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     if (!transcript) {
       return new Response(
         JSON.stringify({ mentions_count: 0, competitors: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -86,7 +86,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
     if (!registry?.length) {
       return new Response(
         JSON.stringify({ mentions_count: 0, competitors: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -161,7 +161,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
           count,
         })),
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("detect-competitor-mentions error", e);
@@ -169,7 +169,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   }

@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -10,7 +10,7 @@ const SENIORITY_WEIGHT: Record<string, number> = {
 };
 
 Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -29,7 +29,7 @@ Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
       ids = (data ?? []).map((r: { id: string }) => r.id);
     } else {
       return new Response(JSON.stringify({ error: "Provide account_ids or recompute_all" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -100,12 +100,12 @@ Deno.serve(withRequestId('account-engagement-aggregator', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, updated, by_tier: tierCounts }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('account-engagement-aggregator error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

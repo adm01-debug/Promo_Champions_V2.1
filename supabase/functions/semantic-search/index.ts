@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -26,7 +26,7 @@ const TTL_MS = 5 * 60 * 1000;
 
 Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -35,14 +35,14 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
     const errs = collectErrors([
       validateString(query, "query", { required: true, maxLength: 500 }),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const safeLimit = Math.min(Math.max(1, Number(limit) || 20), 50);
     const cacheKey = `${query.trim().toLowerCase()}::${safeLimit}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < TTL_MS) {
       return new Response(JSON.stringify({ ...cached.data, cached: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -103,13 +103,13 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
       if (aiRes.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit excedido. Tente novamente em alguns segundos." }), {
           status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       if (aiRes.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos em Settings > Workspace > Usage." }), {
           status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       const txt = await aiRes.text();
@@ -164,13 +164,13 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
     cache.set(cacheKey, { ts: Date.now(), data: result });
 
     return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("semantic-search error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

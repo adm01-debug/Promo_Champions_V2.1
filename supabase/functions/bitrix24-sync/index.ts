@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -518,7 +518,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
 
 Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const startTime = Date.now();
@@ -591,7 +591,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
         duration_ms: durationMs,
         timestamp: new Date().toISOString(),
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     const durationMs = Date.now() - startTime;
@@ -631,7 +631,7 @@ Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -23,23 +23,23 @@ function nextOccurrence(dow: number, hour: number, tz = "America/Sao_Paulo"): Da
 }
 
 Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const auth = req.headers.get("Authorization");
-    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
 
     const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: auth } },
     });
     const { data: { user } } = await userClient.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const body = await req.json();
     const { sale_id, channel, payload, force_now } = body as { sale_id: string; channel: string; payload: Record<string, unknown>; force_now?: boolean };
 
     if (!sale_id || !channel || !payload) {
-      return new Response(JSON.stringify({ error: "sale_id, channel, payload required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "sale_id, channel, payload required" }), { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     let scheduledFor: Date;
@@ -75,11 +75,11 @@ Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
       id: inserted.id,
       scheduled_for: scheduledFor.toISOString(),
       source, confidence,
-    }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }), { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     console.error('schedule-optimal-send error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

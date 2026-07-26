@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -16,7 +16,7 @@ interface SalespersonAlert {
 Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -225,7 +225,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
         alerts: alertList.map(a => ({ name: a.name, progress: a.progress })),
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         status: 200,
       }
     );
@@ -235,7 +235,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         status: 500,
       }
     );

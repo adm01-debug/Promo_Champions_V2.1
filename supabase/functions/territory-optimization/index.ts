@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 interface TerritoryRow {
@@ -79,7 +79,7 @@ function healthFromBalance(
 
 Deno.serve(
   withRequestId('territory-optimization', async (req, _ctx) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+    if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
     try {
       const url = new URL(req.url);
@@ -332,7 +332,7 @@ Deno.serve(
           salesperson_loads: loads,
           recommendations,
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     } catch (e) {
       console.error('territory-optimization error:', e);
@@ -340,7 +340,7 @@ Deno.serve(
         JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

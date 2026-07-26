@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
@@ -11,7 +11,7 @@ interface AnalysisRow {
 }
 
 Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   // ── Authentication ────────────────────────────────────────────────────
   // Require a valid user JWT — prevents unauthenticated callers from
@@ -22,7 +22,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
     if (e instanceof UnauthorizedError) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: ' + e.message }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     throw e;
@@ -113,7 +113,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
         inline: signedUrl ? null : md,
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   } catch (e) {
@@ -122,7 +122,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

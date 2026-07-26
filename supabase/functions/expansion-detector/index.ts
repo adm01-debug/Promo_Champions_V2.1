@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
@@ -58,7 +58,7 @@ function evalAccount(
 
 Deno.serve(
   withRequestId('expansion-detector', async (req, _ctx) => {
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
     try {
       const supabase = createClient(
@@ -78,7 +78,7 @@ Deno.serve(
         return new Response(
           JSON.stringify({ ok: true, playbooks: 0, opportunities_created: 0 }),
           {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -173,7 +173,7 @@ Deno.serve(
           skipped_existing: skipped,
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     } catch (err) {
@@ -182,7 +182,7 @@ Deno.serve(
         JSON.stringify({ error: err instanceof Error ? err.message : 'unknown' }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

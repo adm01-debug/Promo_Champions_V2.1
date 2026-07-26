@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -118,7 +118,7 @@ async function callAi(
 }
 
 Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
     const days = Math.min(365, Math.max(7, Number(body.days) || 90));
@@ -288,13 +288,13 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
         days,
         owner_id: ownerId,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('analyze-stage-conversion error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

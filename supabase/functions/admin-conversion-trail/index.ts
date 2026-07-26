@@ -10,19 +10,19 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
 Deno.serve(
   withRequestId("admin-conversion-trail", async (req, ctx) => {
     if (req.method === "OPTIONS") {
-      return new Response("ok", { headers: corsHeaders });
+      return new Response("ok", { headers: getCorsHeaders(req) });
     }
     if (req.method !== "GET") {
       return json(405, { error: "method_not_allowed" });

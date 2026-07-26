@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'npm:resend@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { errorEnvelope, jsonResponse } from '../_shared/http-envelope.ts';
 
@@ -16,7 +16,7 @@ interface LeadSLAViolation {
 
 Deno.serve(withRequestId('check-lead-sla', async (req, ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   ctx.log('info', 'sla_check_started');

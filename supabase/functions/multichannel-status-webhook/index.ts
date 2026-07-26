@@ -1,11 +1,11 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 // Generic status webhook for Twilio / Meta Cloud / Z-API.
 // Returns 200 always to avoid retry storms.
 Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -40,7 +40,7 @@ Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
 
     if (!providerMessageId || !status) {
       return new Response(JSON.stringify({ ok: true, ignored: true }), {
-        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -55,7 +55,7 @@ Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
 
     if (!normalized) {
       return new Response(JSON.stringify({ ok: true, ignored: true }), {
-        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -90,11 +90,11 @@ Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (_e) {
     return new Response(JSON.stringify({ ok: true, error: "swallowed" }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

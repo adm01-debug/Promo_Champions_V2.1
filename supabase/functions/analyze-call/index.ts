@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -13,7 +13,7 @@ interface AnalyzePayload {
 }
 
 Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     // Verify caller identity before consuming AI credits
@@ -23,7 +23,7 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -43,7 +43,7 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
         maxLength: MAX_TRANSCRIPT_LENGTH,
       }),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     await supabase.from("call_recordings").update({ status: "analyzing" }).eq("id", body.recording_id);
 
@@ -122,14 +122,14 @@ ${body.transcript_text.slice(0, 12000)}`,
     await supabase.from("call_recordings").update({ status: "ready" }).eq("id", body.recording_id);
 
     return new Response(JSON.stringify({ success: true, insights }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "unknown";
     console.error("analyze-call error:", msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

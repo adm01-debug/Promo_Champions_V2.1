@@ -1,15 +1,15 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 
 Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -21,7 +21,7 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
     const { sale_id } = await req.json();
     if (!sale_id) {
       return new Response(JSON.stringify({ error: "sale_id required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -32,7 +32,7 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
       .single();
     if (!sale) {
       return new Response(JSON.stringify({ error: "Sale not found" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -44,7 +44,7 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
     const ownerId = sp?.user_id;
     if (!ownerId) {
       return new Response(JSON.stringify({ error: "Owner not found" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -100,12 +100,12 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
     if (upsertErr) throw upsertErr;
 
     return new Response(JSON.stringify({ success: true, coverage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("calculate-committee-coverage error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

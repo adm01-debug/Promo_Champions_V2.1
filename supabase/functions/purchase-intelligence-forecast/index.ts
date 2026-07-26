@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 // Purchase Intelligence Forecast - AI prediction layer for client purchase patterns
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
@@ -13,7 +13,7 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
 Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     let authHeader: string;
@@ -24,7 +24,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "Unauthorized";
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -36,7 +36,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
     const clientId = body?.client_id as string | undefined;
 
     const errs = collectErrors([validateUUID(clientId, "client_id", true)]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     // Pull summary + heatmap
     const [summaryRes, heatmapRes] = await Promise.all([
@@ -49,7 +49,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
     if (!summary || (summary as { error?: string }).error) {
       return new Response(JSON.stringify(summary ?? { error: "no_data" }), {
         status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -139,7 +139,7 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
             ai_prediction: null,
             ai_error: aiResp.status === 429 ? "rate_limited" : "credits_required",
           }),
-          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
         );
       }
       throw new Error(`AI gateway: ${aiResp.status}`);
@@ -158,13 +158,13 @@ Deno.serve(withRequestId("purchase-intelligence-forecast", async (req, _ctx) => 
 
     return new Response(
       JSON.stringify({ ...summary, ai_prediction: prediction }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("purchase-intelligence-forecast error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

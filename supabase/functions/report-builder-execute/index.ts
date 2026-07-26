@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 interface ReportFilter {
@@ -76,14 +76,14 @@ function buildSelect(columns: string[], targets: Set<string>): string {
 }
 
 Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -98,7 +98,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     if (authErr || !claims?.claims) {
       return new Response(JSON.stringify({ error: 'Token inválido' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -108,7 +108,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     if (!report_id) {
       return new Response(JSON.stringify({ error: 'report_id obrigatório' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -121,7 +121,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     if (rErr || !report) {
       return new Response(JSON.stringify({ error: 'Relatório não encontrado' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -138,7 +138,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
           JSON.stringify({ error: `Base inválida para cross: ${base}` }),
           {
             status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -157,7 +157,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
         JSON.stringify({ error: `Entidade não permitida: ${entity}` }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -209,7 +209,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -257,13 +257,13 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
         is_cross: isCross,
         viz_type: cfg.viz_type ?? 'table',
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (err) {
     console.error('report-builder-execute error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : 'Erro desconhecido' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

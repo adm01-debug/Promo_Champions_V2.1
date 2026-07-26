@@ -3,7 +3,7 @@
 // last N minutes and creates admin notifications (deduped by (jobid, start_time)).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { validateNotificationBatch } from "../_shared/notification-categories.ts";
 
 interface CronFailure {
@@ -16,7 +16,7 @@ interface CronFailure {
 }
 
 Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const { requestId, log } = ctx;
 
@@ -40,7 +40,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       log("error", "rpc fn_admin_get_new_cron_failures failed", { error: fErr.message });
       return new Response(JSON.stringify({ error: fErr.message, requestId }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -49,7 +49,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       log("info", "no new cron failures", { sinceMinutes });
       return new Response(
         JSON.stringify({ ok: true, failures: 0, notified: 0, requestId }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -64,7 +64,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       log("error", "failed loading admins", { error: aErr.message });
       return new Response(JSON.stringify({ error: aErr.message, requestId }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -109,7 +109,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
         // Don't mark alerted — let next tick retry
         return new Response(JSON.stringify({ error: nErr.message, requestId }), {
           status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       notifiedTotal = validated.length;
@@ -147,7 +147,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
         admins: adminIds.length,
         requestId,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error('cron-failure-alerter error:', e);
@@ -155,7 +155,7 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
     log("error", "unhandled", { error: msg });
     return new Response(JSON.stringify({ error: msg, requestId }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

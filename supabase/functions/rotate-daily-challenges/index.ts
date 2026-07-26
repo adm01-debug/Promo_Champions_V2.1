@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 
@@ -19,7 +19,7 @@ const DAILY_CHALLENGE_TEMPLATES = [
 
 Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: getCorsHeaders(req) })
   }
 
   try {
@@ -41,7 +41,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
       console.info('Daily challenges already exist for today:', today)
       return new Response(
         JSON.stringify({ message: 'Daily challenges already created for today', count: existingChallenges.length }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       )
     }
 
@@ -83,14 +83,14 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
         message: 'Daily challenges created successfully', 
         challenges: newChallenges 
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error in rotate-daily-challenges:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 }))

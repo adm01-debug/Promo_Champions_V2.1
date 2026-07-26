@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 // Executes the test cases declared in supabase/functions/winloss-webhook-dispatcher/retry_test.ts
 // in-process, by overriding the global Deno.test API to capture (instead of run) the registered
@@ -139,7 +139,7 @@ async function captureAndRun(): Promise<{
 }
 
 Deno.serve(withRequestId('run-retry-tests', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const { tests, totalDurationMs } = await captureAndRun();
@@ -158,14 +158,14 @@ Deno.serve(withRequestId('run-retry-tests', async (req, _ctx) => {
         ignored,
         tests,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('run-retry-tests error:', e);
     const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

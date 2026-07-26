@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import {
@@ -24,7 +24,7 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
 
 function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
   const headers: Record<string, string> = {
-    ...corsHeaders,
+    ...getCorsHeaders(req),
     "Content-Type": "application/json",
   };
   if (requestId) headers["X-Request-Id"] = requestId;
@@ -55,7 +55,7 @@ interface BatchSummary {
 }
 
 Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const inboundReqId =
     req.headers.get("x-request-id") ?? req.headers.get("X-Request-Id") ?? crypto.randomUUID();

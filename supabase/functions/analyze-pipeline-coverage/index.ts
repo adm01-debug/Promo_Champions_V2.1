@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -23,7 +23,7 @@ function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "stron
 }
 
 Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
@@ -217,13 +217,13 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
         recommendations_inserted: recommendations.length,
         calculated_at: calculatedAt,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("analyze-pipeline-coverage error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

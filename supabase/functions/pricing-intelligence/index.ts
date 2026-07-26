@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 interface SaleRow {
@@ -56,7 +56,7 @@ function pricingHealth(avgDiscount: number, alertRatio: number): string {
 
 Deno.serve(
   withRequestId('pricing-intelligence', async (req, _ctx) => {
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+    if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
     try {
       const url = new URL(req.url);
@@ -238,7 +238,7 @@ Deno.serve(
           top_discounters: topDiscounters,
           product_recommendations: productRecommendations,
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     } catch (e) {
       console.error('pricing-intelligence error:', e);
@@ -246,7 +246,7 @@ Deno.serve(
         JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }

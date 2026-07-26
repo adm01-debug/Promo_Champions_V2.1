@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -16,14 +16,14 @@ function isPrivateUrl(raw: string): boolean {
 }
 
 Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   // Require valid JWT — this endpoint can generate significant outbound traffic
   const authHeader = req.headers.get('Authorization');
   if (!authHeader) {
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -38,7 +38,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -48,7 +48,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
     if (!targetUrl) {
       return new Response(JSON.stringify({ error: 'targetUrl is required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -58,7 +58,7 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
         JSON.stringify({ error: 'Requests to private or internal addresses are not allowed' }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -114,13 +114,13 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
         minLatencyMs: Math.round(minLatency),
         successRate: (results.passed / safeTotal) * 100,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('simulate-load error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

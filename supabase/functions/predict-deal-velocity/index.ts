@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -217,7 +217,7 @@ async function batchPredict(limit: number): Promise<Response> {
 
   if (!salesData?.length) {
     return new Response(JSON.stringify({ count: 0, results: [] }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -370,12 +370,12 @@ async function batchPredict(limit: number): Promise<Response> {
   }
 
   return new Response(JSON.stringify({ count: results.length, results }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
 Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const body: PredictBody = await req.json().catch(() => ({}));
     if (body.batch) {
@@ -385,17 +385,17 @@ Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
     const errs = collectErrors([
       validateUUID(body.sale_id, 'sale_id', true),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const result = await predictForSale(body.sale_id!);
     return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('predict-deal-velocity error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

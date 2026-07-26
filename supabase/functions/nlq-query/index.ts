@@ -2,7 +2,7 @@
 // Auth required (verify_jwt = true). Uses caller JWT so RLS applies.
 // deno-lint-ignore-file no-explicit-any
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { validateString, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
@@ -149,7 +149,7 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
 }
 
 Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     let authHeader: string;
@@ -160,7 +160,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? (authErr as UnauthorizedError).message : 'unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
       );
     }
 
@@ -176,7 +176,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     const errs = collectErrors([
       validateString(question, 'question', { required: true, maxLength: MAX_QUESTION_LENGTH }),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const apiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
@@ -206,7 +206,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
         }),
         {
           status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -218,7 +218,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
         }),
         {
           status: 402,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -242,7 +242,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
           tool_calls: [],
           period: null,
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -315,7 +315,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
             }
           : null,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (err) {
     console.error('nlq-query fatal', err);
@@ -323,7 +323,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
       JSON.stringify({
         error: err instanceof Error ? err.message : 'Erro desconhecido',
       }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

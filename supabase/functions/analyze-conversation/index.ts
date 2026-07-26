@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -13,7 +13,7 @@ interface Payload {
 const SOURCES = new Set(["call", "email", "meeting", "whatsapp"]);
 
 Deno.serve(withRequestId('analyze-conversation', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -31,7 +31,7 @@ Deno.serve(withRequestId('analyze-conversation', async (req, _ctx) => {
     if (!userData.user) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -39,13 +39,13 @@ Deno.serve(withRequestId('analyze-conversation', async (req, _ctx) => {
     if (!body?.transcript || body.transcript.trim().length < 30) {
       return new Response(JSON.stringify({ error: "transcript muito curto (mín 30 chars)" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!SOURCES.has(body.source)) {
       return new Response(JSON.stringify({ error: "source inválido" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -88,13 +88,13 @@ ${body.transcript.slice(0, 14000)}`,
       if (ai.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit. Tente novamente." }), {
           status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       if (ai.status === 402) {
         return new Response(JSON.stringify({ error: "Créditos de IA esgotados." }), {
           status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       throw new Error(`AI error ${ai.status}: ${txt}`);
@@ -133,14 +133,14 @@ ${body.transcript.slice(0, 14000)}`,
     if (insertError) throw insertError;
 
     return new Response(JSON.stringify({ success: true, analysis: saved }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "unknown";
     console.error("analyze-conversation error:", msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

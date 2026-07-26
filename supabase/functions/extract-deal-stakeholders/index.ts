@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -20,14 +20,14 @@ interface ExtractedStakeholder {
 }
 
 Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -43,7 +43,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     if (!user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -62,7 +62,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
       if (!rec) {
         return new Response(JSON.stringify({ error: 'Recording not found' }), {
           status: 404,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       saleId = rec.sale_id;
@@ -72,7 +72,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     if (!saleId || !transcriptText) {
       return new Response(JSON.stringify({ error: 'sale_id and content required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -85,7 +85,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     if (!sale) {
       return new Response(JSON.stringify({ error: 'Sale not found' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -178,7 +178,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
           }),
           {
             status: aiResp.status,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -262,7 +262,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     return new Response(
       JSON.stringify({ success: true, stakeholders: upserted, count: upserted.length }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   } catch (e) {
@@ -271,7 +271,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

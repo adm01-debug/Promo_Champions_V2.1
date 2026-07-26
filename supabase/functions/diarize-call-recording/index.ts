@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -167,7 +167,7 @@ async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] 
 }
 
 Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get('Authorization');
@@ -248,6 +248,6 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }

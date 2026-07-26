@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateWebhookPayload, WebhookContracts, createValidationErrorResponse } from "../_shared/webhook-validator.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -78,13 +78,13 @@ function safeEqual(a: string, b: string): boolean {
 
 Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -93,7 +93,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
     console.error("[receive-quote-webhook] QUOTE_SYNC_API_KEY não configurada");
     return new Response(
       JSON.stringify({ error: "Server misconfigured: missing QUOTE_SYNC_API_KEY" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 
@@ -102,7 +102,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
     console.warn("[receive-quote-webhook] unauthorized request (missing/invalid x-api-key)");
     return new Response(
       JSON.stringify({ error: "Unauthorized: invalid or missing x-api-key" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 
@@ -116,7 +116,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
     } catch {
       return new Response(
         JSON.stringify({ error: "Invalid JSON body" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -128,12 +128,12 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
           validation.error!,
           validation.details!,
           validation.contract_version,
-          corsHeaders
+          getCorsHeaders(req)
         );
       }
       return new Response(
         JSON.stringify({ error: validation.error, contract_version: validation.contract_version }),
-        { status: validation.statusCode, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: validation.statusCode, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -380,7 +380,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
           status: mappedStatus,
           pipeline_status: pipelineStatus,
         }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     } catch (processingError) {
       const errMsg = processingError instanceof Error ? processingError.message : "Unknown error";
@@ -395,7 +395,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
 
       return new Response(
         JSON.stringify({ error: errMsg }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
   } catch (error) {
@@ -403,7 +403,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
     console.error("[receive-quote-webhook] fatal error:", error);
     return new Response(
       JSON.stringify({ error: errMsg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 }));

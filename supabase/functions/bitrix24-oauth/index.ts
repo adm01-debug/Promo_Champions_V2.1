@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -11,7 +11,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -30,7 +30,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
       
       return new Response(
         JSON.stringify({ authUrl }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -101,7 +101,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
           </div>
         </body>
         </html>`,
-        { headers: { ...corsHeaders, "Content-Type": "text/html" } }
+        { headers: { getCorsHeaders(req), "Content-Type": "text/html" } }
       );
     }
 
@@ -157,7 +157,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
 
       return new Response(
         JSON.stringify({ success: true, message: "Token refreshed" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -186,7 +186,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
         needsReauth: isConnected && isExpired,
         domain: BITRIX24_DOMAIN,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Bitrix24 OAuth error:", error);
@@ -195,7 +195,7 @@ Deno.serve(withRequestId('bitrix24-oauth', async (req, _ctx) => {
       JSON.stringify({ error: errorMessage }),
       { 
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" } 
       }
     );
   }

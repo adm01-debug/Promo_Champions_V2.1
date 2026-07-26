@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -69,13 +69,13 @@ async function fetchFreshdesk(domain: string, apiKey: string) {
 }
 
 Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const body = (await req.json().catch(() => ({}))) as SyncRequest;
     const { provider, account_id } = body;
-    if (!provider) return new Response(JSON.stringify({ error: "provider required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!provider) return new Response(JSON.stringify({ error: "provider required" }), { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } });
 
     let tickets: Array<Record<string, unknown>> = [];
     if (provider === "zendesk") {
@@ -121,13 +121,13 @@ Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
     const upserted = upsertError ? 0 : tickets.length;
 
     return new Response(JSON.stringify({ ok: true, provider, fetched: tickets.length, upserted }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error('helpdesk-sync error:', err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "unknown" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

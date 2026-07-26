@@ -1,11 +1,11 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -14,7 +14,7 @@ Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
     if (!salespersonId) {
       return new Response(JSON.stringify({ error: 'salespersonId is required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -32,7 +32,7 @@ Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
     if (!salesperson) {
       return new Response(JSON.stringify({ error: 'Salesperson not found' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -273,7 +273,7 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
         coaching,
         generatedAt: new Date().toISOString(),
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
     console.error('Coaching error:', error);
@@ -281,7 +281,7 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
       error instanceof Error ? error.message : 'Failed to generate coaching';
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

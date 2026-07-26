@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 
 const SLOW_QUERY_THRESHOLD_MS = 3000;
@@ -94,7 +94,7 @@ const ALLOWED_TABLES = new Set([
 
 Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { headers: getCorsHeaders(req) });
   }
 
   // Require authentication — this function proxies arbitrary queries to an external database
@@ -102,7 +102,7 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   if (!authHeader) {
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const localUrl = Deno.env.get('SUPABASE_URL')!;
@@ -117,7 +117,7 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const userId = user.id;
@@ -141,7 +141,7 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
         JSON.stringify({
           error: `Table '${table}' is not accessible through this bridge`,
         }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -152,7 +152,7 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
     if (!externalUrl || !externalKey) {
       return new Response(JSON.stringify({ error: 'External database not configured' }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -218,14 +218,14 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
       if (selectError) {
         return new Response(JSON.stringify({ error: selectError.message }), {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(
         JSON.stringify({ data: selectData, count, duration_ms: durationMs }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -259,12 +259,12 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
       if (rpcError) {
         return new Response(JSON.stringify({ error: rpcError.message }), {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(JSON.stringify({ data: rpcData, duration_ms: durationMs }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -315,27 +315,27 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
       if (result.error) {
         return new Response(JSON.stringify({ error: result.error.message }), {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
       return new Response(
         JSON.stringify({ data: result.data, duration_ms: durationMs }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
 
     return new Response(JSON.stringify({ error: `Unknown operation: ${operation}` }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('Bridge error:', err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

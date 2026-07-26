@@ -1,16 +1,16 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from "../_shared/request-id.ts";
 
 
 
 Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
     const userClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -20,12 +20,12 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
     const token = authHeader.replace('Bearer ', '');
     const { data: claims, error: authError } = await userClient.auth.getClaims(token);
     if (authError || !claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const { powerup_id } = await req.json();
     if (!powerup_id) {
-      return new Response(JSON.stringify({ error: 'Missing powerup_id' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Missing powerup_id' }), { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const admin = createClient(
@@ -35,7 +35,7 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
 
     // resolve salesperson do usuário
     const { data: sp } = await admin.from('salespeople').select('id').eq('auth_user_id', claims.claims.sub).maybeSingle();
-    if (!sp) return new Response(JSON.stringify({ error: 'Salesperson not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (!sp) return new Response(JSON.stringify({ error: 'Salesperson not found' }), { status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
     // busca powerup
     const { data: pu, error: puErr } = await admin
@@ -43,9 +43,9 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
       .select('id, salesperson_id, season_id, powerup_type, used_at, effect_data')
       .eq('id', powerup_id)
       .maybeSingle();
-    if (puErr || !pu) return new Response(JSON.stringify({ error: 'Power-up not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    if (pu.salesperson_id !== sp.id) return new Response(JSON.stringify({ error: 'Not your power-up' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    if (pu.used_at) return new Response(JSON.stringify({ error: 'Already collected' }), { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (puErr || !pu) return new Response(JSON.stringify({ error: 'Power-up not found' }), { status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (pu.salesperson_id !== sp.id) return new Response(JSON.stringify({ error: 'Not your power-up' }), { status: 403, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (pu.used_at) return new Response(JSON.stringify({ error: 'Already collected' }), { status: 409, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
     // valida posição: progresso do vendedor precisa ter passado pela posição
     const positionPct = Number((pu.effect_data as Record<string, unknown>)?.position_pct ?? 0);
@@ -57,7 +57,7 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
       .maybeSingle();
     const progress = Number(lb?.progress ?? 0);
     if (progress < positionPct) {
-      return new Response(JSON.stringify({ error: 'Not yet reached', progress, positionPct }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Not yet reached', progress, positionPct }), { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // marca como coletado
@@ -86,13 +86,13 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify({ ok: true, powerup_type: pu.powerup_type, badge_unlocked: (count ?? 0) >= 3 }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('collect-race-powerup error', err);
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

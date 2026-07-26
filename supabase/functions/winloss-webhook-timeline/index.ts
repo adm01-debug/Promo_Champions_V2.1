@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 // Endpoint: GET/POST winloss-webhook-timeline
 // Returns a unified, chronologically sorted timeline of webhook events
 // correlated by `requestId` and/or `subscriptionId`.
@@ -30,7 +30,7 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
 }
 
 function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
-  const headers: Record<string, string> = { ...corsHeaders, "Content-Type": "application/json" };
+  const headers: Record<string, string> = { getCorsHeaders(req), "Content-Type": "application/json" };
   if (requestId) headers["X-Request-Id"] = requestId;
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -104,7 +104,7 @@ async function readInput(req: Request): Promise<unknown> {
 }
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   const requestId = crypto.randomUUID();
 
   try {

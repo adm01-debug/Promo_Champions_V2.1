@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
@@ -57,7 +57,7 @@ async function generateAnswer(query: string, results: Array<{ entity_type: strin
 }
 
 Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     // Validate JWT — presence check alone is insufficient
@@ -69,7 +69,7 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -79,7 +79,7 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
       validateString(query, "query", { required: true, maxLength: MAX_QUERY_LENGTH }),
       validateArray(entity_types, "entity_types", { maxLength: 5 }),
     ]);
-    if (errs.length) return validationErrorResponse(errs, corsHeaders);
+    if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
     const safeLimit = Math.min(Math.max(1, Number(limit) || 20), MAX_RESULT_LIMIT);
 
@@ -90,7 +90,7 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < TTL_MS) {
       return new Response(JSON.stringify({ ...cached.data, cached: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -123,23 +123,23 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
     cache.set(cacheKey, { ts: Date.now(), data: payload });
 
     return new Response(JSON.stringify(payload), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown";
     if (msg === "RATE_LIMIT") {
       return new Response(JSON.stringify({ error: "Rate limit excedido. Tente novamente em alguns segundos." }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 429, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (msg === "CREDITS_EXHAUSTED") {
       return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos em Settings > Workspace > Usage." }), {
-        status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 402, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     console.error("semantic-search-universal error:", e);
     return new Response(JSON.stringify({ error: msg }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

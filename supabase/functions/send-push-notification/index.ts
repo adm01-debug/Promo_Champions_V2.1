@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -40,7 +40,7 @@ async function sendWebPushNotification(
 
 Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -56,7 +56,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
   if (!authHeader.startsWith('Bearer ')) {
     return new Response(
       JSON.stringify({ error: 'Unauthorized: missing bearer token' }),
-      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 
@@ -76,7 +76,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     if (authErr || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: invalid or expired token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     callerUserId = user.id;
@@ -92,19 +92,19 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     if (!user_ids || !Array.isArray(user_ids) || user_ids.length === 0) {
       return new Response(
         JSON.stringify({ error: 'user_ids array is required and must not be empty' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     if (user_ids.length > 100) {
       return new Response(
         JSON.stringify({ error: 'Maximum 100 user_ids per request' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     if (title && typeof title !== 'string') {
       return new Response(
         JSON.stringify({ error: 'title must be a string' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -114,7 +114,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       if (unauthorized) {
         return new Response(
           JSON.stringify({ error: 'Forbidden: users may only push to their own user_id' }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 403, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
     }
@@ -133,7 +133,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
     if (!subscriptions || subscriptions.length === 0) {
       return new Response(
         JSON.stringify({ success: true, sent: 0, message: 'No subscriptions found' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -166,14 +166,14 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ success: true, sent, failed: results.length - sent, total: subscriptions.length }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
     console.error('send-push-notification error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

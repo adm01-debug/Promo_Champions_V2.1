@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
@@ -43,9 +43,9 @@ function sanitize(raw: unknown, ua: string | null): Sample | null {
 
 Deno.serve(
   withRequestId("log-web-vitals", async (req, ctx) => {
-    if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
     if (req.method !== "POST") {
-      return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+      return new Response("Method not allowed", { status: 405, headers: getCorsHeaders(req) });
     }
 
     // S1: rate-limit por IP — 120 req / 60s por isolate (bypass p/ requisições autenticadas)
@@ -65,7 +65,7 @@ Deno.serve(
       if (clean.length === 0) {
         return new Response(JSON.stringify({ inserted: 0, request_id: ctx.requestId }), {
           status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
@@ -79,19 +79,19 @@ Deno.serve(
         ctx.log("error", "insert_failed", { error: error.message });
         return new Response(JSON.stringify({ error: error.message, request_id: ctx.requestId }), {
           status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
 
       return new Response(JSON.stringify({ inserted: clean.length, request_id: ctx.requestId }), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     } catch (e) {
       ctx.log("error", "bad_request", { error: e instanceof Error ? e.message : String(e) });
       return new Response(JSON.stringify({ error: "bad_request", request_id: ctx.requestId }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
   }),

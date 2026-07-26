@@ -1,17 +1,17 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 Deno.serve(
   withRequestId('push-subscribe', async (req, ctx) => {
     if (req.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(req) });
     }
 
     const json = (data: unknown, status = 200) =>
       new Response(JSON.stringify({ ...(data as object), request_id: ctx.requestId }), {
         status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
 
     try {

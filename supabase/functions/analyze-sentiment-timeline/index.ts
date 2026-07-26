@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -47,14 +47,14 @@ function buildWindows(turns: DiarizationTurn[]) {
 }
 
 Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const { recording_id } = await req.json();
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -72,7 +72,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
     if (recErr || !rec) {
       return new Response(JSON.stringify({ error: "recording not found" }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -83,7 +83,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
         JSON.stringify({ error: "no diarization available" }),
         {
           status: 422,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -180,7 +180,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
         }),
         {
           status: aiRes.status,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -235,7 +235,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
     return new Response(
       JSON.stringify({ recording_id, segments_count: rows.length }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   } catch (e) {
@@ -244,7 +244,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   }

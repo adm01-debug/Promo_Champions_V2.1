@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -100,7 +100,7 @@ async function resolveContext(
 
 Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -113,7 +113,7 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : "unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -121,7 +121,7 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -131,7 +131,7 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     const instrErr = validateString(body.custom_instructions, "custom_instructions", {
       maxLength: MAX_CUSTOM_INSTRUCTIONS,
     });
-    if (instrErr) return validationErrorResponse([instrErr], corsHeaders);
+    if (instrErr) return validationErrorResponse([instrErr], getCorsHeaders(req));
 
     const mode = body.mode ?? "sequence";
     const goal = body.goal ?? "follow_up";
@@ -232,13 +232,13 @@ Gere o e-mail agora chamando a tool emit_email.`;
     if (aiResp.status === 429) {
       return new Response(
         JSON.stringify({ error: "Limite de uso da IA atingido. Tente novamente em alguns instantes." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 429, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     if (aiResp.status === 402) {
       return new Response(
         JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos em Configurações > Workspace." }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 402, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     if (!aiResp.ok) {
@@ -246,7 +246,7 @@ Gere o e-mail agora chamando a tool emit_email.`;
       console.error("AI gateway error:", aiResp.status, errText);
       return new Response(
         JSON.stringify({ error: "Falha ao gerar e-mail com IA." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -255,7 +255,7 @@ Gere o e-mail agora chamando a tool emit_email.`;
     if (!toolCall?.function?.arguments) {
       return new Response(
         JSON.stringify({ error: "Resposta da IA sem tool call estruturada." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -272,14 +272,14 @@ Gere o e-mail agora chamando a tool emit_email.`;
         variables_used: parsed.variables_used ?? [],
         meta: { goal, tone, language, length, mode },
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("ai-email-composer error:", msg);
     return new Response(
       JSON.stringify({ error: msg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

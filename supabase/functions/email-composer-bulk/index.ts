@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -152,7 +152,7 @@ async function processInBatches<T, R>(
 }
 
 Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY missing');
@@ -166,7 +166,7 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
     if (!user) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -174,7 +174,7 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
     if (!body?.prompt || !Array.isArray(body.sale_ids) || body.sale_ids.length === 0) {
       return new Response(JSON.stringify({ error: 'prompt and sale_ids required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     const saleIds = body.sale_ids.slice(0, 50);
@@ -247,13 +247,13 @@ Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
       .eq('id', job.id);
 
     return new Response(JSON.stringify({ job_id: job.id, generated: rows.length }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('email-composer-bulk error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

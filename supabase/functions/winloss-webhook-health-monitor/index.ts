@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -278,7 +278,7 @@ async function sendAlertEmail(
 }
 
 Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   const requestId = crypto.randomUUID();
   const requestStart = Date.now();
@@ -335,7 +335,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
     if (subscriptions.length === 0) {
       return new Response(
         JSON.stringify({ requestId, checked: 0, fired: 0, suppressed: 0, evaluations: [] }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+        { headers: { getCorsHeaders(req), 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
       );
     }
 
@@ -577,7 +577,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
       }),
       {
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           'Content-Type': 'application/json',
           'X-Request-Id': requestId,
         },
@@ -598,7 +598,7 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
       {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           'Content-Type': 'application/json',
           'X-Request-Id': requestId,
         },

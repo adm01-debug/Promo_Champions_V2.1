@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
   WebhookContracts,
@@ -6,7 +6,7 @@ import {
 } from '../_shared/webhook-validator.ts';
 
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   try {
     const { iterations = 100, targetContract = 'crmEvent' } = await req.json();
@@ -16,7 +16,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     if (!schema) {
       return new Response(JSON.stringify({ error: 'Contract not found' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -62,13 +62,13 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     }
 
     return new Response(JSON.stringify(results), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error('stress-test-contracts error:', e);
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 }));

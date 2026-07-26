@@ -1,10 +1,10 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 Deno.serve(
   withRequestId('get-client-ip', async (req, _ctx) => {
     if (req.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(req) });
     }
 
     const ip =
@@ -15,7 +15,7 @@ Deno.serve(
 
     return new Response(JSON.stringify({ ip }), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }),
 );

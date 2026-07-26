@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
@@ -378,7 +378,7 @@ async function processOne(supabase: SupabaseClient, saleId: string) {
 }
 
 Deno.serve(async req => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const url = Deno.env.get('SUPABASE_URL')!;
@@ -391,7 +391,7 @@ Deno.serve(async req => {
     if (sale_id) {
       const result = await processOne(supabase, sale_id);
       return new Response(JSON.stringify(result), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -407,7 +407,7 @@ Deno.serve(async req => {
       if (!user) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
           status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       const { data: sales } = await supabase
@@ -420,13 +420,13 @@ Deno.serve(async req => {
 
       const results = await Promise.all((sales || []).map(s => processOne(supabase, s.id)));
       return new Response(JSON.stringify({ processed: results.length, results }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(JSON.stringify({ error: 'missing sale_id or batch' }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (e) {
     console.error(e);
@@ -434,7 +434,7 @@ Deno.serve(async req => {
       JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

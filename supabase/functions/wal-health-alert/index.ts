@@ -17,7 +17,7 @@
 // esta função a cada 5 minutos.
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
@@ -74,7 +74,7 @@ async function postSlack(webhook: string, text: string, blocks?: unknown, reques
 
 Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -96,7 +96,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
         }),
         {
           status: 503,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -136,7 +136,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     if (alerts.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, alerts: [], snapshot: data }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -158,7 +158,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, alerts, snapshot: data }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -166,7 +166,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
       ctx.log("warn", "slack_circuit_open", { circuit: "slack:wal-health-alert" });
       return new Response(
         JSON.stringify({ ok: false, degraded: true, reason: "slack_circuit_open" }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 503, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     ctx.log("error", "wal_health_alert_failed", { error: msg });
@@ -174,7 +174,7 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
       JSON.stringify({ error: msg }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   }

@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'npm:resend@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
@@ -314,7 +314,7 @@ async function sendNotificationToSDR(
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -370,7 +370,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       return new Response(
         JSON.stringify({ success: true, message: 'No alerts needed', count: 0 }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
       );
     }
 
@@ -465,14 +465,14 @@ const handler = async (req: Request): Promise<Response> => {
         count: underperformingSDRs.length,
         sdrs: underperformingSDRs.map(s => s.name),
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
     );
   } catch (error: unknown) {
     console.error('Error in SDR consecutive alerts:', error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
     });
   }
 };

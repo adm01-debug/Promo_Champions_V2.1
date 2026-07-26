@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
@@ -9,13 +9,13 @@ interface BuildPayload {
 }
 
 Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -34,14 +34,14 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
     );
     if (claimsError || !claims?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     const body = (await req.json()) as BuildPayload;
     if (!body.queue_id) {
       return new Response(JSON.stringify({ error: "queue_id required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -51,7 +51,7 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
       .from("dialer_queues").select("id, filter, owner_id, priority_strategy").eq("id", body.queue_id).single();
     if (qErr || !queue) {
       return new Response(JSON.stringify({ error: "Queue not found" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -72,7 +72,7 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
     if (!sales || sales.length === 0) {
       await supabase.from("dialer_queues").update({ last_built_at: new Date().toISOString() }).eq("id", queue.id);
       return new Response(JSON.stringify({ ok: true, items_built: 0 }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -135,13 +135,13 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
       .update({ last_built_at: new Date().toISOString() }).eq("id", queue.id);
 
     return new Response(JSON.stringify({ ok: true, items_built: rows.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (err) {
     console.error('dialer-queue-builder error:', err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

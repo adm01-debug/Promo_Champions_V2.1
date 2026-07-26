@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -66,14 +66,14 @@ const MOMENT_TOOL = {
 };
 
 Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -88,7 +88,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     if (claimsErr || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     const userId = claimsData.claims.sub as string;
@@ -98,7 +98,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     if (!recordingId) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -115,7 +115,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     if (recErr || !rec) {
       return new Response(JSON.stringify({ error: "Recording not found" }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -123,7 +123,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     if (!transcript.trim()) {
       return new Response(
         JSON.stringify({ error: "Transcript ausente. Transcreva primeiro." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 400, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
 
@@ -169,13 +169,13 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     if (aiResp.status === 429) {
       return new Response(JSON.stringify({ error: "Rate limit, tente novamente em instantes." }), {
         status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (aiResp.status === 402) {
       return new Response(
         JSON.stringify({ error: "Créditos esgotados. Adicione em Settings > Workspace > Usage." }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { status: 402, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
       );
     }
     if (!aiResp.ok) {
@@ -183,7 +183,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
       console.error("AI gateway error:", aiResp.status, txt);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -218,7 +218,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
         console.error("insert error", insErr);
         return new Response(JSON.stringify({ error: insErr.message }), {
           status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { getCorsHeaders(req), "Content-Type": "application/json" },
         });
       }
       inserted = rows.length;
@@ -226,13 +226,13 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ recording_id: recordingId, moments_detected: inserted }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (e) {
     console.error("detect-critical-moments error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
     );
   }
 }));

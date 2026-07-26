@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -26,7 +26,7 @@ async function dispatchOne(admin: ReturnType<typeof createClient>, row: Schedule
 }
 
 Deno.serve(withRequestId("process-scheduled-sends", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const { data, error } = await admin
@@ -49,12 +49,12 @@ Deno.serve(withRequestId("process-scheduled-sends", async (req, _ctx) => {
     await Promise.all(workers);
 
     return new Response(JSON.stringify({ processed: rows.length }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error('process-scheduled-sends error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

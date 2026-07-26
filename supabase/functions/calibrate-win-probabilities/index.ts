@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -72,7 +72,7 @@ function getDeclaredProbability(sale: Sale): number {
 }
 
 Deno.serve(async req => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -192,13 +192,13 @@ Deno.serve(async req => {
         calibrations_written: calibrations.length,
         groups_analyzed: groups.size,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (err) {
     console.error('calibrate-win-probabilities error:', err);
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 }));

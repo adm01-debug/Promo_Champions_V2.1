@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
@@ -13,7 +13,7 @@ interface TriggerRequest {
 }
 
 Deno.serve(withRequestId("csat-ces-trigger", async (req, ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,

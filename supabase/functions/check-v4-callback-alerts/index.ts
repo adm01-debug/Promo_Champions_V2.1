@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { evaluateAlerts, type AlertContext } from "./alerts.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 
@@ -16,7 +16,7 @@ function log(level: "info" | "warn" | "error", event: string, data: Record<strin
 }
 
 Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   const { data: settings } = await supabase
@@ -28,7 +28,7 @@ Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
   if (!settings || !settings.is_active) {
     log("info", "v4_alerts_disabled", {});
     return new Response(JSON.stringify({ success: true, skipped: true }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -92,6 +92,6 @@ Deno.serve(withRequestId('check-v4-callback-alerts', async (req, _ctx) => {
   }
 
   return new Response(JSON.stringify({ success: true, evaluated: ctx, fired }), {
-    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200, headers: { getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }));

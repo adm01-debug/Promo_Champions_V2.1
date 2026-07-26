@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -30,7 +30,7 @@ interface AccountHealth {
 }
 
 Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -45,7 +45,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
 
     if (!accounts) {
       return new Response(JSON.stringify({ accounts: [], summary: {} }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -135,7 +135,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
     };
 
     return new Response(JSON.stringify({ accounts: enriched, summary }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('customer-success-hub error:', error);
@@ -143,7 +143,7 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

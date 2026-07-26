@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -59,12 +59,12 @@ function healthFor(score: number): string {
 }
 
 Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: getCorsHeaders(req) });
     }
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -74,12 +74,12 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: claims, error: claimsErr } = await supabase.auth.getClaims(token);
     if (claimsErr || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: getCorsHeaders(req) });
     }
 
     const { recording_id } = await req.json();
     if (!recording_id) {
-      return new Response(JSON.stringify({ error: "recording_id required" }), { status: 400, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "recording_id required" }), { status: 400, headers: getCorsHeaders(req) });
     }
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -91,12 +91,12 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
       .single();
 
     if (recErr || !rec) {
-      return new Response(JSON.stringify({ error: "Recording not found" }), { status: 404, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Recording not found" }), { status: 404, headers: getCorsHeaders(req) });
     }
 
     const turns: Turn[] = Array.isArray(rec.diarization) ? rec.diarization : (rec.diarization?.turns ?? []);
     if (!turns.length) {
-      return new Response(JSON.stringify({ error: "No diarization available" }), { status: 422, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "No diarization available" }), { status: 422, headers: getCorsHeaders(req) });
     }
 
     const objections: Array<{
@@ -249,13 +249,13 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ recording_id, total, resolved, partial, unresolved, handling_score: score, health }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      { headers: { getCorsHeaders(req), "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
     console.error('analyze-objection-handling error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 }));

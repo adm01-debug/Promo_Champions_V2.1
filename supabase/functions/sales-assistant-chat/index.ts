@@ -8,13 +8,13 @@ import {
   collectErrors,
   validationErrorResponse,
 } from '../_shared/validation.ts';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -24,7 +24,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
       return new Response(JSON.stringify({ error: msg }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -49,7 +49,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       validateString(salespersonName, 'salespersonName', { maxLength: 100 }),
     ]);
     if (errors.length > 0) {
-      return validationErrorResponse(errors, corsHeaders);
+      return validationErrorResponse(errors, getCorsHeaders(req));
     }
 
     // Use custom AI name if provided, otherwise default
@@ -392,7 +392,7 @@ DIRETRIZES:
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           {
             status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -403,7 +403,7 @@ DIRETRIZES:
           }),
           {
             status: 402,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
           }
         );
       }
@@ -413,7 +413,7 @@ DIRETRIZES:
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
+      headers: { getCorsHeaders(req), 'Content-Type': 'text/event-stream' },
     });
   } catch (error) {
     console.error('Error in sales-assistant-chat:', error);
@@ -421,7 +421,7 @@ DIRETRIZES:
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }

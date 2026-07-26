@@ -1,7 +1,7 @@
 // Forecast Narrative — gera explicação em PT-BR do forecast atual usando Lovable AI Gateway.
 // Auth: requer JWT do usuário. Rate-limit: 20 req/min por usuário.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
@@ -27,10 +27,10 @@ const BRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v ?? 0);
 
 Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -38,7 +38,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   if (!authHeader) {
     ctx.log('warn', 'auth_missing');
     return new Response(JSON.stringify({ error: 'Authorization header required' }), {
-      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -52,7 +52,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   if (userErr || !userData?.user) {
     ctx.log('warn', 'auth_invalid', { error: userErr?.message });
     return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 401, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const userId = userData.user.id;
@@ -67,7 +67,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   try { body = await req.json(); } catch {
     ctx.log('warn', 'invalid_json', { userId });
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   const forecastId = body?.forecast_id;
@@ -75,7 +75,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
   if (!forecastId || typeof forecastId !== 'string' || !uuidRe.test(forecastId)) {
     ctx.log('warn', 'validation_failed', { userId, field: 'forecast_id' });
     return new Response(JSON.stringify({ error: 'forecast_id (uuid) required' }), {
-      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -88,19 +88,19 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
 
   if (fErr) {
     return new Response(JSON.stringify({ error: 'Failed to load forecast', detail: fErr.message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (!forecast) {
     return new Response(JSON.stringify({ error: 'Forecast not found or not authorized' }), {
-      status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 404, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
   const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!lovableApiKey) {
     return new Response(JSON.stringify({ error: 'AI service not configured' }), {
-      status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 503, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -140,7 +140,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
       .eq('cache_key', cacheKey);
     return new Response(
       JSON.stringify({ narrative: cached.narrative, cached: true, generated_at: new Date().toISOString() }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   }
 
@@ -221,7 +221,7 @@ Gere a narrativa executiva.`;
         });
       } catch { /* swallow */ }
       return new Response(JSON.stringify({ error: 'AI gateway unreachable' }), {
-        status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
   }
@@ -246,7 +246,7 @@ Gere a narrativa executiva.`;
     ctx.log('warn', 'ai_rate_limited', { userId, forecastId });
     await logDeadLetter('rate_limited', 429, t);
     return new Response(JSON.stringify({ error: 'AI rate limit — tente novamente em instantes' }), {
-      status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 429, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (aiRes.status === 402) {
@@ -254,7 +254,7 @@ Gere a narrativa executiva.`;
     ctx.log('error', 'ai_payment_required', { userId, forecastId });
     await logDeadLetter('payment_required', 402, t);
     return new Response(JSON.stringify({ error: 'Créditos IA insuficientes na workspace' }), {
-      status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 402, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
   if (!aiRes.ok) {
@@ -262,7 +262,7 @@ Gere a narrativa executiva.`;
     ctx.log('error', 'ai_error', { userId, forecastId, status: aiRes.status, detail: errText.slice(0, 300) });
     await logDeadLetter('provider_error', aiRes.status, errText);
     return new Response(JSON.stringify({ error: 'AI provider error', status: aiRes.status }), {
-      status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -273,7 +273,7 @@ Gere a narrativa executiva.`;
     ctx.log('error', 'ai_empty_narrative', { userId, forecastId });
     await logDeadLetter('empty_narrative', aiRes.status, null);
     return new Response(JSON.stringify({ error: 'AI returned empty narrative' }), {
-      status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 502, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -302,6 +302,6 @@ Gere a narrativa executiva.`;
 
   return new Response(
     JSON.stringify({ narrative, cached: false, generated_at: new Date().toISOString() }),
-    { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    { status: 200, headers: { getCorsHeaders(req), 'Content-Type': 'application/json' } },
   );
 }));

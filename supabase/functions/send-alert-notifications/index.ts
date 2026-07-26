@@ -1,7 +1,7 @@
 import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { differenceInDays } from 'npm:date-fns@3';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders(req) } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 
@@ -239,7 +239,7 @@ const logEmailToDatabase = async (
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -285,7 +285,7 @@ const handler = async (req: Request): Promise<Response> => {
             message: 'No active notification preferences',
             emailsSent: 0,
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -359,7 +359,7 @@ const handler = async (req: Request): Promise<Response> => {
           message: `CRON job completed. Sent to ${totalSent}/${preferences.length} recipients`,
           results,
         }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
       );
     } else {
       // Manual trigger with specific email
@@ -387,7 +387,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.info('No critical alerts to send');
         return new Response(
           JSON.stringify({ message: 'No critical alerts found', alertsSent: 0 }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -418,7 +418,7 @@ const handler = async (req: Request): Promise<Response> => {
             alertsSent: alerts.length,
             emailResponse,
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       } catch (emailError: unknown) {
         console.error('Error sending email:', emailError);
@@ -439,7 +439,7 @@ const handler = async (req: Request): Promise<Response> => {
             message: 'Failed to send email',
             error: emailErrorMessage,
           }),
-          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 500, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
     }
@@ -448,7 +448,7 @@ const handler = async (req: Request): Promise<Response> => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
     });
   }
 };

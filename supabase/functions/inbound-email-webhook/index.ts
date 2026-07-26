@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders(req), getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 
@@ -64,11 +64,11 @@ function parseEvent(payload: Record<string, unknown>, headers: Headers): ParsedE
 }
 
 Deno.serve(withRequestId("inbound-email-webhook", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -130,6 +130,6 @@ Deno.serve(withRequestId("inbound-email-webhook", async (req, _ctx) => {
   // Always 200 to avoid retry storms
   return new Response(
     JSON.stringify({ ok: true, matched: matchedEnrollmentId, event_type: ev.eventType }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    { headers: { getCorsHeaders(req), "Content-Type": "application/json" } },
   );
 }));
