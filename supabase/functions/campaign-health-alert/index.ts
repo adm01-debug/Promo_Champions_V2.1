@@ -153,7 +153,11 @@ Deno.serve(async (req) => {
       title: a.severity === "critical" ? "Campanha em risco" : "Alerta de campanha",
       message: a.message,
       type: a.severity === "critical" ? "error" : "warning",
-      category: "email",
+      category: "system",
+      priority: a.severity === "critical" ? "high" : "medium",
+      action_url: "/admin/supressao-emails",
+      action_label: "Ver campanhas",
+      metadata: { job_id: a.job_id, alert_type: a.alert_type, ...a.metrics },
     }));
     const { error: notifyError } = await supabase.from("notifications").insert(notifications);
     if (notifyError) {
