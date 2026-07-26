@@ -207,6 +207,36 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
     );
     doc.setTextColor(...BRAND_DARK);
 
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Ranking de rentabilidade por vendedor', 14, 138);
+    if (data.markupRanking.length === 0) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(150, 150, 150);
+      doc.text('Nenhuma venda com custo conhecido no período.', 14, 146);
+      doc.setTextColor(...BRAND_DARK);
+    } else {
+      autoTable(doc, {
+        startY: 142,
+        head: [['#', 'Vendedor', 'Markup médio', 'Vendas', 'Receita']],
+        body: data.markupRanking.map((r, i) => [
+          String(i + 1),
+          r.name,
+          `${r.avgMarkup.toFixed(1)}%`,
+          String(r.sample),
+          formatBRL(r.revenue),
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: BRAND_GREEN, fontSize: 8, fontStyle: 'bold' },
+        bodyStyles: { fontSize: 8 },
+        margin: { left: 14, right: 14 },
+        styles: { cellPadding: 2 },
+      });
+    }
+
+
+
     // ===== Page 4 — Top products + status =====
 
     doc.addPage();
