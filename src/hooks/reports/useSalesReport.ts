@@ -10,6 +10,7 @@ import {
   buildTopProducts,
   buildStatusBreakdown,
   buildTeamRanking,
+  buildMarkupRanking,
   buildTopDeals,
   type ReportPeriod,
   type SalesReportData,
