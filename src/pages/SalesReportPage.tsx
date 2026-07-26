@@ -17,6 +17,8 @@ import { SalesTeamRankingChart } from "@/components/reports/sales/SalesTeamRanki
 import { SalesTopDealsTable } from "@/components/reports/sales/SalesTopDealsTable";
 import { useSalesReport } from "@/hooks/reports/useSalesReport";
 import { generateSalesReportPdf } from "@/lib/reports/salesReportPdf";
+import { buildCsv, downloadCsv } from "@/lib/csv";
+import { format as formatDate } from "date-fns";
 import type { ReportPeriod } from "@/hooks/reports/salesReportHelpers";
 
 export default function SalesReportPage() {
@@ -42,6 +44,23 @@ export default function SalesReportPage() {
     }
   };
 
+  const handleExportCsv = () => {
+    if (!data) return;
+    const csv = buildCsv(data.topDeals, [
+      { header: "#", value: (_d) => data.topDeals.indexOf(_d) + 1 },
+      { header: "Cliente", value: (d) => d.client },
+      { header: "Produto", value: (d) => d.product },
+      { header: "Vendedor", value: (d) => d.salesperson },
+      { header: "Valor (R$)", value: (d) => d.amount.toFixed(2).replace(".", ",") },
+      {
+        header: "Markup %",
+        value: (d) => (d.markupPct === null ? "Sem custo" : d.markupPct.toFixed(2).replace(".", ",")),
+      },
+      { header: "Status", value: (d) => d.status },
+    ]);
+    downloadCsv(`relatorio-vendas-${formatDate(refDate, "yyyy-MM-dd")}.csv`, csv);
+  };
+
   return (
     <>
       <Helmet>
@@ -57,6 +76,7 @@ export default function SalesReportPage() {
           onPeriodChange={setPeriod}
           onDateChange={setRefDate}
           onExport={handleExport}
+          onExportCsv={handleExportCsv}
           exporting={exporting}
         />
 

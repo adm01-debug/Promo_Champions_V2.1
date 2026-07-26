@@ -64,10 +64,16 @@ function kpis(doc: jsPDF, data: SalesReportData, startY: number): number {
       value: `${data.current.conversionRate.toFixed(1)}%`,
       delta: data.current.conversionRateDelta,
     },
+    {
+      label: 'Markup médio',
+      value:
+        data.current.markupSample > 0 ? `${data.current.avgMarkup.toFixed(1)}%` : 'Sem custo',
+      delta: data.current.avgMarkupDelta,
+    },
   ];
-  const cardW = 42;
+  const cardW = 34;
   items.forEach((it, i) => {
-    const x = 14 + i * (cardW + 4);
+    const x = 14 + i * (cardW + 3);
     doc.setFillColor(245, 245, 245);
     doc.roundedRect(x, y, cardW, 26, 2, 2, 'F');
     doc.setFont('helvetica', 'normal');
@@ -203,13 +209,14 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
 
     autoTable(doc, {
       startY: 130,
-      head: [['#', 'Cliente', 'Produto', 'Vendedor', 'Valor', 'Status']],
+      head: [['#', 'Cliente', 'Produto', 'Vendedor', 'Valor', 'Markup %', 'Status']],
       body: data.topDeals.map((d, i) => [
         String(i + 1),
         d.client,
         d.product,
         d.salesperson,
         formatBRL(d.amount),
+        d.markupPct === null ? 'Sem custo' : `${d.markupPct.toFixed(1)}%`,
         d.status,
       ]),
       theme: 'grid',
