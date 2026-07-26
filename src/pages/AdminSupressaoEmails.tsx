@@ -175,6 +175,8 @@ function AdminSupressaoEmails() {
 
         <EmailSuppressionMetricsCard />
 
+        <CampaignOptOutRateCard />
+
 
 
         <Card>
