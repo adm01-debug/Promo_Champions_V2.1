@@ -190,7 +190,25 @@ export async function generateSalesReportPdf(data: SalesReportData, periodLabel:
       'Gráfico de receita indisponível'
     );
 
-    // ===== Page 3 — Top products + status =====
+    // ===== Page 3 — Evolução do markup =====
+    doc.addPage();
+    header(doc, periodLabel);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Evolução do markup médio', 14, 36);
+    addImage(doc, markupPng, 14, 40, pageW - 28, 80, 'Sem markup no período');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(
+      'Considera apenas vendas ganhas com custo conhecido. Linhas de referência: 20% (crítico) e 40% (excelente).',
+      14,
+      126
+    );
+    doc.setTextColor(...BRAND_DARK);
+
+    // ===== Page 4 — Top products + status =====
+
     doc.addPage();
     header(doc, periodLabel);
     doc.setFont('helvetica', 'bold');
