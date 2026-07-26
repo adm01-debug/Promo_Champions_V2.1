@@ -46,7 +46,10 @@ describe('salesReportHelpers.buildKpis', () => {
       salesCount: 0,
       avgTicket: 0,
       conversionRate: 0,
+      avgMarkup: 0,
+      markupSample: 0,
     });
+
   });
 
   it('trata amount nulo como zero', () => {
@@ -57,8 +60,27 @@ describe('salesReportHelpers.buildKpis', () => {
   });
 });
 
+describe('salesReportHelpers.buildKpis markup', () => {
+  it('ignora vendas sem custo e vendas não ganhas no markup médio', () => {
+    const kpis = buildKpis([
+      sale({ status: 'completed', amount: 100, markup_pct: 50 }),
+      sale({ status: 'completed', amount: 100, markup_pct: 30 }),
+      sale({ status: 'completed', amount: 100, markup_pct: null }),
+      sale({ status: 'pending', amount: 100, markup_pct: 999 }),
+    ]);
+    expect(kpis.markupSample).toBe(2);
+    expect(kpis.avgMarkup).toBe(40);
+  });
+
+  it('retorna zero quando nenhuma venda tem custo', () => {
+    const kpis = buildKpis([sale({ status: 'completed', amount: 100, markup_pct: null })]);
+    expect(kpis.markupSample).toBe(0);
+    expect(kpis.avgMarkup).toBe(0);
+  });
+});
+
 describe('salesReportHelpers.buildKpiDeltas', () => {
-  const base = { revenue: 0, salesCount: 0, avgTicket: 0, conversionRate: 0 };
+  const base = { revenue: 0, salesCount: 0, avgTicket: 0, conversionRate: 0, avgMarkup: 0, markupSample: 0 };
 
   it('calcula variação percentual quando existe base', () => {
     const d = buildKpiDeltas(
@@ -78,6 +100,11 @@ describe('salesReportHelpers.buildKpiDeltas', () => {
 
   it('retorna 0 quando ambos são zero', () => {
     expect(buildKpiDeltas(base, base).revenueDelta).toBe(0);
+  });
+
+  it('calcula delta de markup médio', () => {
+    const d = buildKpiDeltas({ ...base, avgMarkup: 60 }, { ...base, avgMarkup: 40 });
+    expect(d.avgMarkupDelta).toBe(50);
   });
 });
 

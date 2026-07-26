@@ -32,6 +32,10 @@ export interface ReportKpis {
   salesCount: number;
   avgTicket: number;
   conversionRate: number;
+  /** Markup % médio das vendas ganhas com custo conhecido. 0 quando não há custo. */
+  avgMarkup: number;
+  /** Quantidade de vendas ganhas com markup calculável (base do avgMarkup). */
+  markupSample: number;
 }
 
 export interface ReportKpiDelta extends ReportKpis {
@@ -39,6 +43,7 @@ export interface ReportKpiDelta extends ReportKpis {
   salesCountDelta: number;
   avgTicketDelta: number;
   conversionRateDelta: number;
+  avgMarkupDelta: number;
 }
 
 export interface ChartPoint {
@@ -101,7 +106,15 @@ export function buildKpis(sales: SaleRow[]): ReportKpis {
   const salesCount = completed.length;
   const avgTicket = salesCount > 0 ? revenue / salesCount : 0;
   const conversionRate = sales.length > 0 ? (salesCount / sales.length) * 100 : 0;
-  return { revenue, salesCount, avgTicket, conversionRate };
+
+  // Markup médio considera apenas vendas ganhas com custo conhecido (markup_pct != null).
+  const withMarkup = completed
+    .map(s => (s.markup_pct === null || s.markup_pct === undefined ? null : Number(s.markup_pct)))
+    .filter((v): v is number => v !== null && Number.isFinite(v));
+  const markupSample = withMarkup.length;
+  const avgMarkup = markupSample > 0 ? withMarkup.reduce((a, b) => a + b, 0) / markupSample : 0;
+
+  return { revenue, salesCount, avgTicket, conversionRate, avgMarkup, markupSample };
 }
 
 export function buildKpiDeltas(current: ReportKpis, previous: ReportKpis): ReportKpiDelta {
@@ -111,6 +124,7 @@ export function buildKpiDeltas(current: ReportKpis, previous: ReportKpis): Repor
     salesCountDelta: calcDelta(current.salesCount, previous.salesCount),
     avgTicketDelta: calcDelta(current.avgTicket, previous.avgTicket),
     conversionRateDelta: calcDelta(current.conversionRate, previous.conversionRate),
+    avgMarkupDelta: calcDelta(current.avgMarkup, previous.avgMarkup),
   };
 }
 

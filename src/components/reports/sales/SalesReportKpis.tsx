@@ -2,7 +2,7 @@ import { FC } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Receipt, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Receipt, Target, Percent } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
 import { formatBRL, type ReportKpiDelta } from "@/hooks/reports/salesReportHelpers";
 
@@ -58,13 +58,21 @@ export const SalesReportKpis: FC<Props> = ({ data }) => {
   const sales = useCountUp(data.salesCount, { duration: 800 });
   const ticket = useCountUp(data.avgTicket, { duration: 800 });
   const conv = useCountUp(data.conversionRate, { duration: 800, decimals: 1 });
+  const markup = useCountUp(data.avgMarkup, { duration: 800, decimals: 1 });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       <KpiCard label="Receita total" value={formatBRL(revenue)} delta={data.revenueDelta} Icon={DollarSign} index={0} />
       <KpiCard label="Nº de vendas" value={String(sales)} delta={data.salesCountDelta} Icon={ShoppingCart} index={1} />
       <KpiCard label="Ticket médio" value={formatBRL(ticket)} delta={data.avgTicketDelta} Icon={Receipt} index={2} />
       <KpiCard label="Taxa de conversão" value={`${conv.toFixed(1)}%`} delta={data.conversionRateDelta} Icon={Target} index={3} />
+      <KpiCard
+        label="Markup médio"
+        value={data.markupSample > 0 ? `${markup.toFixed(1)}%` : "Sem custo"}
+        delta={data.avgMarkupDelta}
+        Icon={Percent}
+        index={4}
+      />
     </div>
   );
 };
