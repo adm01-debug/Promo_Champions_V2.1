@@ -6996,9 +6996,12 @@ export type Database = {
           error: string | null
           id: string
           job_id: string
+          last_error_at: string | null
+          next_retry_at: string | null
           personalization_notes: string | null
           recipient_email: string | null
           recipient_name: string | null
+          retry_count: number
           sale_id: string | null
           sent_at: string | null
           subject: string
@@ -7012,9 +7015,12 @@ export type Database = {
           error?: string | null
           id?: string
           job_id: string
+          last_error_at?: string | null
+          next_retry_at?: string | null
           personalization_notes?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
+          retry_count?: number
           sale_id?: string | null
           sent_at?: string | null
           subject?: string
@@ -7028,9 +7034,12 @@ export type Database = {
           error?: string | null
           id?: string
           job_id?: string
+          last_error_at?: string | null
+          next_retry_at?: string | null
           personalization_notes?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
+          retry_count?: number
           sale_id?: string | null
           sent_at?: string | null
           subject?: string

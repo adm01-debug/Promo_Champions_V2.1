@@ -2,6 +2,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
+import { backoffMs } from "../_shared/retry-policy.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 
 
@@ -161,9 +162,14 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
           );
         }
+        // Marca a falha e agenda a primeira nova tentativa (email-bulk-retry).
         await admin
           .from('email_bulk_drafts')
-          .update({ error: msg.slice(0, 500) })
+          .update({
+            error: msg.slice(0, 500),
+            last_error_at: new Date().toISOString(),
+            next_retry_at: new Date(Date.now() + backoffMs(1, d.id)).toISOString(),
+          })
           .eq('id', d.id);
         failed++;
       }
