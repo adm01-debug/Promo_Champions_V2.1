@@ -182,6 +182,8 @@ function AdminSupressaoEmails() {
 
         <CampaignDeliveryLatencyCard />
 
+        <CampaignHealthAlertsCard />
+
 
 
         <Card>
