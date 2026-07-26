@@ -114,6 +114,7 @@ export const AdminFilaTarefasAutomaticas = lazyWithPrefetch(() => import('@/page
 export const AdminRegrasInatividade = lazyWithPrefetch(() => import('@/pages/AdminRegrasInatividade'));
 export const AdminAlertasChurn = lazyWithPrefetch(() => import('@/pages/AdminAlertasChurn'));
 export const AdminHistoricoAlertasChurn = lazyWithPrefetch(() => import('@/pages/AdminHistoricoAlertasChurn'));
+export const AdminSupressaoEmails = lazyWithPrefetch(() => import('@/pages/AdminSupressaoEmails'));
 export const MinhasPremiacoes = lazyWithPrefetch(() => import('@/pages/MinhasPremiacoes'));
 export const Webhooks = lazyWithPrefetch(() => import('@/pages/WebhooksPage'));
 export const AuditLogs = lazyWithPrefetch(() => import('@/pages/AuditLogsPage'));
