@@ -46,7 +46,10 @@ describe('salesReportHelpers.buildKpis', () => {
       salesCount: 0,
       avgTicket: 0,
       conversionRate: 0,
+      avgMarkup: 0,
+      markupSample: 0,
     });
+
   });
 
   it('trata amount nulo como zero', () => {
