@@ -70,6 +70,7 @@ export function useSalesReport(period: ReportPeriod, refDate: Date) {
         topProducts: buildTopProducts(current),
         statusBreakdown: buildStatusBreakdown(current),
         teamRanking: buildTeamRanking(current, salespeople),
+        markupRanking: buildMarkupRanking(current, salespeople),
         topDeals: buildTopDeals(current, salespeople),
         isEmpty: current.length === 0,
       };
