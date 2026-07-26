@@ -3,6 +3,7 @@ import {
   buildKpis,
   buildKpiDeltas,
   buildRevenueSeries,
+  buildMarkupSeries,
   buildTopProducts,
   buildStatusBreakdown,
   buildTeamRanking,
