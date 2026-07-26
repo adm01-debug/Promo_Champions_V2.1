@@ -258,7 +258,9 @@ describe('salesReportHelpers.buildTopDeals', () => {
       salesperson: '—',
       amount: 0,
       status: '—',
+      markupPct: null,
     });
+
   });
 
   it('ordena corretamente com amounts nulos em múltiplos registros (linha 197)', () => {

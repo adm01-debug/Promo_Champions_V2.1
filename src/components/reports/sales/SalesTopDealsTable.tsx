@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL, type TopDeal } from "@/hooks/reports/salesReportHelpers";
+import { classifyMarkup, formatMarkupPct } from "@/lib/markupHelpers";
 
 const statusTone = (status: string): "success" | "warning" | "destructive" | "muted" => {
   const s = status.toLowerCase();
@@ -34,12 +35,14 @@ export const SalesTopDealsTable: FC<{ data: TopDeal[] }> = ({ data }) => (
               <TableHead>Produto</TableHead>
               <TableHead>Vendedor</TableHead>
               <TableHead className="text-right">Valor</TableHead>
+              <TableHead className="text-right">Markup %</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((d, i) => {
               const tone = statusTone(d.status);
+              const markup = classifyMarkup(d.markupPct);
               return (
                 <TableRow key={i}>
                   <TableCell className="text-muted-foreground">{i + 1}</TableCell>
@@ -47,6 +50,11 @@ export const SalesTopDealsTable: FC<{ data: TopDeal[] }> = ({ data }) => (
                   <TableCell>{d.product}</TableCell>
                   <TableCell>{d.salesperson}</TableCell>
                   <TableCell className="text-right tabular-nums">{formatBRL(d.amount)}</TableCell>
+                  <TableCell className="text-right">
+                    <Badge variant="outline" className={markup.className} title={markup.label}>
+                      {markup.value === null ? "Sem custo" : formatMarkupPct(markup.value)}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={toneClass[tone]}>
                       {d.status}
