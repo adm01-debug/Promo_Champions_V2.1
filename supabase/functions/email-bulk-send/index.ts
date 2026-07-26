@@ -1,6 +1,8 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { filterOptedOut } from "../_shared/unsubscribe.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
