@@ -1,5 +1,7 @@
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
+  classifySuppression,
+
   filterOptedOut,
   makeUnsubscribeToken,
   normalizeEmail,
@@ -87,4 +89,28 @@ Deno.test("filterOptedOut lida com mais de 200 destinatários (chunking)", async
   );
   assertEquals(blocked.length, 2);
   assertEquals(allowed.length, 448);
+});
+
+Deno.test("classifySuppression: complaint e unsubscribe sempre suprimem", () => {
+  assertEquals(classifySuppression("complaint"), "complaint");
+  assertEquals(classifySuppression("unsubscribe"), "unsubscribe");
+});
+
+Deno.test("classifySuppression: eventos não relacionados não suprimem", () => {
+  assertEquals(classifySuppression("reply"), null);
+  assertEquals(classifySuppression("other"), null);
+  assertEquals(classifySuppression(""), null);
+});
+
+Deno.test("classifySuppression: hard bounce suprime, soft bounce não", () => {
+  assertEquals(classifySuppression("bounce"), "hard_bounce");
+  assertEquals(
+    classifySuppression("bounce", { data: { bounce: { type: "Permanent" } } }),
+    "hard_bounce",
+  );
+  assertEquals(
+    classifySuppression("bounce", { data: { bounce: { type: "Transient", subType: "MailboxFull" } } }),
+    null,
+  );
+  assertEquals(classifySuppression("bounce", { type: "email.bounced.soft" }), null);
 });

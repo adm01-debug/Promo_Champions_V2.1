@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
+import { classifySuppression } from "../_shared/unsubscribe.ts";
 
 interface ParsedEvent {
   provider: string;
@@ -114,6 +115,20 @@ Deno.serve(withRequestId("inbound-email-webhook", async (req, _ctx) => {
       payload: payload as never,
     });
 
+    // Supressão automática: hard bounce, reclamação de spam e descadastro do
+    // provedor entram na lista de opt-out (soft bounce é preservado).
+    const suppression = classifySuppression(ev.eventType, payload);
+    if (suppression && ev.fromEmail) {
+      const { error: supErr } = await admin.rpc("record_email_opt_out", {
+        _email: ev.fromEmail,
+        _reason: suppression,
+        _source: `webhook:${ev.provider}`,
+        _owner_id: null,
+        _metadata: { message_id: ev.messageId, event_type: ev.eventType } as never,
+      } as never);
+      if (supErr) console.error("suppression insert failed", supErr.message);
+    }
+
     if (matchedEnrollmentId) {
       const reason = ev.eventType === "bounce" ? "bounce"
         : ev.eventType === "unsubscribe" ? "unsubscribe"
@@ -123,6 +138,7 @@ Deno.serve(withRequestId("inbound-email-webhook", async (req, _ctx) => {
         _reason: reason,
       });
     }
+
   } catch (e) {
     console.error("inbound-email-webhook error", e);
   }

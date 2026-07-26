@@ -133,3 +133,39 @@ export async function filterOptedOut<T>(
   }
   return { allowed, blocked };
 }
+
+/**
+ * Classificação de supressão a partir de eventos de webhook de e-mail.
+ *
+ * Regra: bounce permanente (hard), reclamação de spam e descadastro no
+ * provedor suprimem o endereço. Bounce temporário (soft/transient) NÃO
+ * suprime — o destinatário continua válido e o retry é legítimo.
+ */
+export type SuppressionReason = "hard_bounce" | "complaint" | "unsubscribe";
+
+export function classifySuppression(
+  eventType: string,
+  payload: Record<string, unknown> = {},
+): SuppressionReason | null {
+  const type = (eventType ?? "").toLowerCase();
+  if (type === "complaint") return "complaint";
+  if (type === "unsubscribe") return "unsubscribe";
+  if (type !== "bounce") return null;
+
+  // Detecta a natureza do bounce em formatos comuns (Resend/SendGrid/genérico).
+  const data = (payload.data ?? payload) as Record<string, unknown>;
+  const bounce = (data.bounce ?? {}) as Record<string, unknown>;
+  const raw = [
+    bounce.type,
+    bounce.subType,
+    (data as { type?: unknown }).type,
+    (data as { bounce_classification?: unknown }).bounce_classification,
+    (payload as { type?: unknown }).type,
+  ]
+    .filter((v) => typeof v === "string")
+    .join(" ")
+    .toLowerCase();
+
+  if (/soft|transient|temporary|deferred|mailbox_full|throttl/.test(raw)) return null;
+  return "hard_bounce";
+}
