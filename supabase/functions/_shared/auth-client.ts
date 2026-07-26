@@ -82,13 +82,13 @@ export function getServiceClient(reason: string): SupabaseClient {
 
 /**
  * Helper para verificar role admin server-side sem uma nova query.
- * Usa `has_role` — SECURITY DEFINER function no banco.
+ * Usa has_role_name (param TEXT) — converte para app_role internamente.
  */
 export async function requireAdmin(ctx: AuthenticatedContext): Promise<void> {
-  const { data, error } = await ctx.client.rpc("has_role" as never, {
-    _user_id: ctx.userId,
-    _role: "admin",
-  } as never);
+  const { data, error } = await ctx.client.rpc("has_role_name", {
+    p_user_id: ctx.userId,
+    p_role_name: "admin",
+  });
   if (error) throw new UnauthorizedError(`role_check_failed:${error.message}`);
   if (!data) throw new UnauthorizedError("admin_role_required");
 }
