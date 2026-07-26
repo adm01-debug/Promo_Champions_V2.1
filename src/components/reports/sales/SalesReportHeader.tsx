@@ -16,6 +16,7 @@ interface Props {
   onDateChange: (d: Date) => void;
   onExport: () => void;
   onExportCsv: () => void;
+  onExportMarkupCsv: () => void;
   exporting: boolean;
 }
 
