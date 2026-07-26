@@ -84,16 +84,27 @@ export interface MarkupPoint {
   sample: number;
 }
 
+/** Linha do ranking de rentabilidade (markup médio) por vendedor. */
+export interface MarkupRankingRow {
+  salespersonId: string;
+  name: string;
+  avgMarkup: number;
+  sample: number;
+  revenue: number;
+}
+
 export interface SalesReportData {
   current: ReportKpiDelta;
   revenueSeries: ChartPoint[];
   markupSeries: MarkupPoint[];
+  markupRanking: MarkupRankingRow[];
   topProducts: TopProduct[];
   statusBreakdown: StatusSlice[];
   teamRanking: TeamRanking[];
   topDeals: TopDeal[];
   isEmpty: boolean;
 }
+
 
 export const STATUS_LABEL: Record<string, string> = {
   completed: 'Concluídas',
