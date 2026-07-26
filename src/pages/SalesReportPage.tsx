@@ -91,6 +91,7 @@ export default function SalesReportPage() {
           onDateChange={setRefDate}
           onExport={handleExport}
           onExportCsv={handleExportCsv}
+          onExportMarkupCsv={handleExportMarkupCsv}
           exporting={exporting}
         />
 
