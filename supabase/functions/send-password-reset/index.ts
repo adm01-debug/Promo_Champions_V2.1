@@ -18,6 +18,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
+const resendFromAddress = Deno.env.get("RESEND_FROM_ADDRESS") ?? "Sistema <onboarding@resend.dev>";
 
     // Verify authorization
     const authHeader = req.headers.get("Authorization");
@@ -91,7 +92,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       const resend = new Resend(resendApiKey);
 
       const { error: emailError } = await resend.emails.send({
-        from: "Sistema <onboarding@resend.dev>",
+        from: resendFromAddress,
         to: [email],
         subject: "Redefinição de Senha Aprovada",
         html: `

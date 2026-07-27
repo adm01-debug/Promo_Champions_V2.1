@@ -140,6 +140,29 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
 
     console.info(`[receive-quote-webhook] action=${action} quote_number=${quote.quote_number} ts=${timestamp}`);
 
+    // ── Dedupe check: evitar duplicate processing ─────────────────
+    const dedupeKey = `quote_sync:${quote.id}:${action}`;
+    const { data: dedupeRow } = await supabase
+      .from("webhook_inbound_dedupe")
+      .select("id")
+      .eq("event_id", dedupeKey)
+      .maybeSingle();
+
+    if (dedupeRow) {
+      console.info(`[receive-quote-webhook] duplicate skipped for ${dedupeKey}`);
+      return new Response(
+        JSON.stringify({ success: true, duplicate: true, quote_id: existingQuote?.id ?? null }),
+        { status: 200, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+
+    // Registrar dedupe key ANTES de processar (evita race condition entre threads)
+    await supabase.from("webhook_inbound_dedupe").insert({
+      event_id: dedupeKey,
+      provider: "quote_sync",
+      processed_at: new Date().toISOString(),
+    });
+
     // ── Log inicial ───────────────────────────────────────────────
     const { data: logData, error: logErr } = await supabase
       .from("quote_sync_logs")

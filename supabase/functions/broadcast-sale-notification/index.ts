@@ -4,6 +4,8 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+const RESEND_FROM_ADDRESS = Deno.env.get('RESEND_FROM_ADDRESS') ?? 'Vendas Elite <vendas@resend.dev>';
+const EMAIL_BATCH_DELAY_MS = Number(Deno.env.get('BROADCAST_EMAIL_DELAY_MS') ?? '0'); // 0 = sem delay
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
 const resend = new Resend(RESEND_API_KEY);
 
@@ -208,7 +210,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
           `;
 
           const emailResponse = await resend.emails.send({
-            from: 'Vendas Elite <vendas@resend.dev>',
+            from: RESEND_FROM_ADDRESS,
             to: [recipient.email],
             subject: emailSubject,
             html: emailHtml,
@@ -221,6 +223,20 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
             status: emailResponse.error ? 'failed' : 'success',
             error_log: emailResponse.error ? JSON.stringify(emailResponse.error) : null,
           });
+
+          // Retry backoff: if Resend rate-limitou, espera e tenta novamente (max 1 retry)
+          if (emailResponse.error && (emailResponse.error as { statusCode?: number }).statusCode === 429) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const retryResp = await resend.emails.send({
+              from: RESEND_FROM_ADDRESS,
+              to: [recipient.email],
+              subject: emailSubject,
+              html: emailHtml,
+            });
+            const retryFailed = !!(retryResp as { error?: unknown }).error;
+            const idx = auditRows.length - 1;
+            auditRows[idx] = { ...auditRows[idx], status: retryFailed ? 'failed' : 'success', retry: true };
+          }
         } catch (e) {
           console.error(`Email failed for ${recipient.id}:`, e);
           auditRows.push({ ...baseAudit, notification_type: 'email', channel: 'email', status: 'failed', error_log: String(e) });

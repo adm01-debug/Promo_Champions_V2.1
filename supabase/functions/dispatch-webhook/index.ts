@@ -146,28 +146,49 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
         errMsg: string | null = null,
         success = false;
       try {
-        await withEdgeCircuitBreaker(
-          `webhook:${wh.id}`,
-          async () => {
-            // SSRF: validar URL antes de fazer request
-            const ssrfCheck = isUrlSafeForSSRF(wh.url);
-            if (!ssrfCheck.safe) {
-              console.warn(`[dispatch-webhook] SSRF blocked: ${wh.url} — ${ssrfCheck.reason}`);
-              throw new Error(`ssrf_blocked:${ssrfCheck.reason}`);
+        // Retry with exponential backoff for 5xx errors (max 2 retries, 5s cap)
+        let attempt = 0;
+        let lastError: Error | null = null;
+        const MAX_RETRIES = 2;
+        const BASE_DELAY_MS = 1000;
+
+        while (attempt <= MAX_RETRIES) {
+          attempt++;
+          try {
+            await withEdgeCircuitBreaker(
+              `webhook:${wh.id}`,
+              async () => {
+                const ssrfCheck = isUrlSafeForSSRF(wh.url);
+                if (!ssrfCheck.safe) {
+                  console.warn(`[dispatch-webhook] SSRF blocked: ${wh.url} — ${ssrfCheck.reason}`);
+                  throw new Error(`ssrf_blocked:${ssrfCheck.reason}`);
+                }
+                const r = await fetch(wh.url, {
+                  method: 'POST',
+                  headers,
+                  body,
+                  signal: AbortSignal.timeout(10000),
+                });
+                status = r.status;
+                respBody = (await r.text()).slice(0, 1000);
+                success = r.ok;
+                // Retry only on 5xx — 4xx means the target understood but rejected
+                if (r.status >= 500) throw new Error(`webhook_http_${r.status}`);
+              },
+              { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 10_000 },
+            );
+            lastError = null;
+            break; // success
+          } catch (e) {
+            lastError = e instanceof Error ? e : new Error(String(e));
+            if (lastError.message === 'Circuit breaker is open') break;
+            if (attempt <= MAX_RETRIES) {
+              const delay = Math.min(BASE_DELAY_MS * 2 ** (attempt - 1), 5000);
+              await new Promise(r => setTimeout(r, delay));
             }
-            const r = await fetch(wh.url, {
-              method: 'POST',
-              headers,
-              body,
-              signal: AbortSignal.timeout(10000),
-            });
-            status = r.status;
-            respBody = (await r.text()).slice(0, 1000);
-            success = r.ok;
-            if (!r.ok) throw new Error(`webhook_http_${r.status}`);
-          },
-          { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 10_000 },
-        );
+          }
+        }
+        if (lastError) throw lastError;
       } catch (e) {
         if (e instanceof CircuitBreakerOpenError) {
           errMsg = 'circuit_open';
