@@ -189,6 +189,9 @@ function AdminSupressaoEmails() {
 
         <FailedDraftsCard />
 
+        <RecoveryRateCard />
+
+
 
 
         <Card>
