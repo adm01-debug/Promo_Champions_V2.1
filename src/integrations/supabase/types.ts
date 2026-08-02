@@ -6997,10 +6997,12 @@ export type Database = {
           id: string
           job_id: string
           last_error_at: string | null
+          last_error_message: string | null
           next_retry_at: string | null
           personalization_notes: string | null
           recipient_email: string | null
           recipient_name: string | null
+          recovered_at: string | null
           retry_count: number
           sale_id: string | null
           sent_at: string | null
@@ -7016,10 +7018,12 @@ export type Database = {
           id?: string
           job_id: string
           last_error_at?: string | null
+          last_error_message?: string | null
           next_retry_at?: string | null
           personalization_notes?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
+          recovered_at?: string | null
           retry_count?: number
           sale_id?: string | null
           sent_at?: string | null
@@ -7035,10 +7039,12 @@ export type Database = {
           id?: string
           job_id?: string
           last_error_at?: string | null
+          last_error_message?: string | null
           next_retry_at?: string | null
           personalization_notes?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
+          recovered_at?: string | null
           retry_count?: number
           sale_id?: string | null
           sent_at?: string | null
@@ -21853,6 +21859,19 @@ export type Database = {
           sent_count: number
         }[]
       }
+      get_campaign_recovery_rates: {
+        Args: { _days?: number }
+        Returns: {
+          avg_recovery_minutes: number
+          created_at: string
+          failed_total: number
+          job_id: string
+          prompt: string
+          recovered_count: number
+          recovery_rate: number
+          still_failing: number
+        }[]
+      }
       get_client_purchase_heatmap: {
         Args: { _client_id?: string; _months?: number }
         Returns: {
@@ -21992,6 +22011,17 @@ export type Database = {
       get_purchase_intelligence_summary: {
         Args: { _client_id: string }
         Returns: Json
+      }
+      get_recovery_by_failure_type: {
+        Args: { _days?: number }
+        Returns: {
+          avg_recovery_minutes: number
+          failed_total: number
+          failure_type: string
+          recovered_count: number
+          recovery_rate: number
+          still_failing: number
+        }[]
       }
       get_revenue_forecast: {
         Args: { _days?: number }
@@ -22166,6 +22196,10 @@ export type Database = {
           sale_id: string
           score: number
         }[]
+      }
+      normalize_bulk_failure_reason: {
+        Args: { _error: string }
+        Returns: string
       }
       pick_step_variant: {
         Args: { _step_id: string }
