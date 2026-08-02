@@ -24,6 +24,8 @@ import { CampaignHealthAlertsCard } from '@/components/email/CampaignHealthAlert
 import { CampaignOptOutRateCard } from '@/components/email/CampaignOptOutRateCard';
 import { EmailSuppressionMetricsCard } from '@/components/email/EmailSuppressionMetricsCard';
 import { FailedDraftsCard } from '@/components/email/FailedDraftsCard';
+import { RecoveryRateCard } from '@/components/email/RecoveryRateCard';
+
 import { supabase } from '@/integrations/supabase/client';
 import {
   useAddEmailOptOut,
@@ -186,6 +188,9 @@ function AdminSupressaoEmails() {
         <CampaignHealthAlertsCard />
 
         <FailedDraftsCard />
+
+        <RecoveryRateCard />
+
 
 
 
