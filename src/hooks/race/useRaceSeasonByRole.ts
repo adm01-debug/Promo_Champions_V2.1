@@ -30,8 +30,11 @@ export function useRaceSeasonByRole(roleType: RoleType) {
   });
 
   useEffect(() => {
+    // Nome único por instância: evita reuso de tópico já inscrito (erro
+    // "cannot add postgres_changes callbacks ... after subscribe()").
+    const topic = `race-seasons-${roleType}-${Math.random().toString(36).slice(2)}`;
     const ch = supabase
-      .channel(`race-seasons-${roleType}`)
+      .channel(topic)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'race_seasons' }, () => {
         qc.invalidateQueries({ queryKey: ['race-season-active', roleType] });
       })
