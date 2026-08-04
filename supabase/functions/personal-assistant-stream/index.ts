@@ -13,6 +13,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { buildFallbackContent, createSseResponse, isAiDisabledError } from "./fallback.ts";
 import {
   validateString,
   validateUUID,
@@ -250,8 +251,9 @@ Deno.serve(
         validateArray(history, "conversationHistory", { maxLength: 30 }),
       ]);
       if (errors.length) return validationErrorResponse(errors, corsHeaders);
+      if (!salespersonId) return validationErrorResponse(["salespersonId is required"], corsHeaders);
 
-      const context = await buildContext(auth.client, salespersonId!);
+      const context = await buildContext(auth.client, salespersonId);
 
       // Busca briefing anterior (não o de hoje) para permitir análise de delta no nudge proativo.
       let previousBriefing: string | null = null;
@@ -262,7 +264,7 @@ Deno.serve(
         const { data: prev } = await auth.client
           .from("personal_assistant_briefings")
           .select("content, briefing_date")
-          .eq("salesperson_id", salespersonId!)
+          .eq("salesperson_id", salespersonId)
           .lt("briefing_date", todayISO)
           .order("briefing_date", { ascending: false })
           .limit(1)
@@ -281,7 +283,7 @@ Deno.serve(
         const { data: cached } = await auth.client
           .from("personal_assistant_briefings")
           .select("content")
-          .eq("salesperson_id", salespersonId!)
+          .eq("salesperson_id", salespersonId)
           .eq("briefing_date", todayKey)
           .maybeSingle();
 
@@ -330,8 +332,13 @@ Deno.serve(
       });
 
       if (!upstream.ok) {
-        const status = upstream.status === 429 || upstream.status === 402 ? upstream.status : 502;
         const text = await upstream.text().catch(() => "");
+        if (isAiDisabledError(upstream.status, text)) {
+          const fallback = buildFallbackContent(mode, context);
+          return createSseResponse(fallback, corsHeaders);
+        }
+
+        const status = upstream.status === 429 || upstream.status === 402 ? upstream.status : 502;
         return new Response(JSON.stringify({ error: "ai_gateway_error", status: upstream.status, details: text.slice(0, 500) }), {
           status,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -365,7 +372,7 @@ Deno.serve(
                 .from("personal_assistant_briefings")
                 .upsert(
                   {
-                    salesperson_id: salespersonId!,
+                    salesperson_id: salespersonId,
                     briefing_date: todayKey,
                     content,
                     model: MODEL,

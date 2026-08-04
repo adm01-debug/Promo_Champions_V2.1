@@ -49,3 +49,16 @@ export function drainSSEChunk(chunk: string, buffer: string): { text: string; bu
 export function makeMessageId(): string {
   return `msg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
+
+export function getAssistantErrorMessage(status: number, responseBody: string): string {
+  if (status === 401) return "Sua sessão expirou. Entre novamente para usar o assistente.";
+  if (status === 402) return "O limite de uso da IA foi atingido. Tente novamente mais tarde.";
+  if (status === 429) return "O assistente recebeu muitas solicitações. Aguarde um instante e tente novamente.";
+
+  const normalized = responseBody.toLowerCase();
+  if (status === 403 && normalized.includes("lovable ai is disabled")) {
+    return "A IA está desabilitada neste workspace. Solicite a ativação a um administrador.";
+  }
+
+  return "O assistente está temporariamente indisponível. Tente novamente em instantes.";
+}
