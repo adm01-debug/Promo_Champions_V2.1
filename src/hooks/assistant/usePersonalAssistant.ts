@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   drainSSEChunk,
+  getAssistantErrorMessage,
   makeMessageId,
   type AssistantChatMessage,
   type AssistantMode,
@@ -41,7 +42,7 @@ async function streamRequest(opts: StreamOptions): Promise<void> {
 
   if (!res.ok) {
     const details = await res.text().catch(() => "");
-    throw new Error(`personal-assistant-stream ${res.status}: ${details.slice(0, 200)}`);
+    throw new Error(getAssistantErrorMessage(res.status, details));
   }
   if (!res.body) throw new Error("empty stream body");
 
@@ -151,7 +152,16 @@ export function usePersonalAssistant(
             ),
         });
       } catch (e) {
-        if ((e as Error).name !== "AbortError") setError((e as Error).message);
+        if ((e as Error).name !== "AbortError") {
+          setError((e as Error).message);
+          setMessages((prev) =>
+            prev.map((message) =>
+              message.id === assistantMsg.id && !message.content
+                ? { ...message, content: "Não consegui responder agora. Tente novamente em instantes." }
+                : message,
+            ),
+          );
+        }
       } finally {
         setIsStreaming(false);
       }
