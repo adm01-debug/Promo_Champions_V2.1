@@ -30,6 +30,7 @@ export const PersonalAssistantDrawer: FC = () => {
     messages,
     isBriefingLoading,
     isStreaming,
+    error,
     proactiveNudge,
     refreshBriefing,
     sendMessage,
@@ -145,6 +146,13 @@ export const PersonalAssistantDrawer: FC = () => {
             {isBriefingLoading && !briefing ? (
               <div className="text-sm text-muted-foreground flex items-center gap-2">
                 <Loader2 className="h-3 w-3 animate-spin" /> Preparando…
+              </div>
+            ) : error && !briefing ? (
+              <div
+                role="alert"
+                className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+              >
+                {error}
               </div>
             ) : (
               <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
