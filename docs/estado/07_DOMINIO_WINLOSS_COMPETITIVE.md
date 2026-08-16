@@ -184,7 +184,7 @@ Legenda: ✅ IMPLEMENTADO_TOTAL · 🟨 PARCIAL · 🟦 SUGERIDO_OU_INICIADO · 
 | Timeline de webhook | `WebhookAttemptSliceDrawer.tsx` | `useWebhookTimeline.ts` | `winloss-webhook-timeline` (298 l) | **0** | 🟦 | Idem |
 | Alertas de webhook | — | `useWebhookAlerts.ts`, `useWebhookAlertSettings.ts` | `winloss_webhook_alerts` / `winloss_alert_settings` | **0 / 0** | 🟦 | Nem as configurações foram criadas |
 | Dispatcher | — (só texto em `RetryTestStatusPage.tsx:157`) | — | `winloss-webhook-dispatcher` (318 l) | **0** | 🟦 | **Nenhum produtor de eventos existe** |
-| Webhooks genéricos | `src/pages/Webhooks.tsx` | `useWebhooks.ts` | `dispatch-webhook` / `webhooks` | **0** | 🟦 | Nenhum webhook cadastrado |
+| Webhooks genéricos | `src/pages/WebhooksPage.tsx` ⟵ *corrigido na Fase D; constava `src/pages/Webhooks.tsx`, arquivo que não existe* | `useWebhooks.ts` | `dispatch-webhook` / `webhooks` | **0** | 🟦 | Nenhum webhook cadastrado |
 | Notificar padrão crítico | — | — | `notify-critical-pattern` + trigger `trg_notify_critical_winloss` | **0** | ⬛ | Trigger ativo mas **quebrado duas vezes**: `current_setting('app.functions_url')` = **NULL** (nunca faz POST) e o corpo referencia `NEW.name`, coluna **inexistente** em `win_loss_patterns`; erro engolido por `exception when others then null` (migração `20260420210849…sql:55-94`) |
 | Coaching de perda | — | — | `generate-loss-coaching` | — | ⬛ | **Zero referências** em `src/` e em `supabase/migrations/` |
 

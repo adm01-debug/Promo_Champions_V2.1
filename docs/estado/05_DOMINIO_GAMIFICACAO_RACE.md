@@ -130,9 +130,9 @@ totalmente invisível.
 
 ### 3.1 Causa-raiz do jobid 2 (falha silenciosa desde 2026-06-19)
 
-- `supabase/migrations/20260512144635_...sql:58` agenda: `cron.schedule('weekly-matchmaking', '1 0 * * 1', 'SELECT public.match_weekly_players()')`
-- `supabase/migrations/20260619144542_...sql:11` lista `'match_weekly_players'` no array de funções a endurecer
-- `supabase/migrations/20260619144542_...sql:19` executa `ALTER FUNCTION %s SET SCHEMA private`
+- `supabase/migrations/20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql:58` agenda: `cron.schedule('weekly-matchmaking', '1 0 * * 1', 'SELECT public.match_weekly_players()')`
+- `supabase/migrations/20260619144542_a653d2f5-450c-42f6-9c81-6ec8f008b20a.sql:11` lista `'match_weekly_players'` no array de funções a endurecer
+- `supabase/migrations/20260619144542_a653d2f5-450c-42f6-9c81-6ec8f008b20a.sql:19` executa `ALTER FUNCTION %s SET SCHEMA private`
 
 Confirmado no banco: `select nspname, proname from pg_proc ...` retorna
 `private | match_weekly_players`. A função **existe**, mas mudou de schema; o cron nunca foi
