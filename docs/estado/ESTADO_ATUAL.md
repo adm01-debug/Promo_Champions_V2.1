@@ -35,14 +35,17 @@ As unidades **não são somáveis entre si** (uma rota não é uma Edge Function
 funcionalidade de domínio frequentemente atravessa as duas). Por isso os três blocos são
 apresentados separados, cada um com seu denominador.
 
-### Funcionalidades de domínio de negócio — 450 avaliadas
+### Funcionalidades de domínio de negócio — 451 avaliadas
 
 | Classificação | Qtd | % |
 |---|---:|---:|
 | ✅ IMPLEMENTADO_TOTAL | **110** | 24,4% |
-| 🟨 IMPLEMENTADO_PARCIAL | **258** | 57,3% |
-| 🟦 SUGERIDO_OU_INICIADO | **46** | 10,2% |
+| 🟨 IMPLEMENTADO_PARCIAL | **260** | 57,6% |
+| 🟦 SUGERIDO_OU_INICIADO | **44** | 9,8% |
 | ⬛ MORTO_OU_ABANDONADO | **37** | 8,2% |
+
+> Números corrigidos na verificação da própria auditoria ([lote 14](14_VERIFICACAO_DA_AUDITORIA.md)).
+> A versão anterior dizia 450 / 258 / 46 — o erro era meu, no lote 13.
 
 ### Rotas de front-end — 174
 
@@ -72,7 +75,7 @@ aos logs de invocação, então não é prova de execução.
 | 07 | Win/Loss / Competitivo / CS | 86 | 26 | 35 | 17 | 8 |
 | 08 | Admin / Segurança | 52 | 20 | 19 | 3 | 10 |
 | 10 | Edge Functions | 168 | 54 | 81 | 9 | 24 |
-| 13 | Integrações externas | 16 | **0** | 11 | 5 | 0 |
+| 13 | Integrações externas | 16 | **0** | 13 | 3 | 0 |
 
 \* O lote 05 declara base 38 mas suas linhas somam 39 — um item de infraestrutura aparece entre
 parênteses no ✅. Inconsistência registrada, não corrigida em silêncio.
@@ -218,6 +221,23 @@ não vem de uma policy que nega, vem de um erro de permissão em função auxili
 
 Cada item é código a manter, revisar e proteger sem retorno.
 
+### 10. A documentação anterior contém evidência fabricada — `VERIFICADO`
+
+Achado produzido pela [verificação da própria auditoria](14_VERIFICACAO_DA_AUDITORIA.md).
+
+Dos **165 arquivos citados como prova** nos 48 documentos de `docs/` (fora de `docs/estado/`),
+**10 não existem** (6,1%). E `git log --all` mostra que **os 10 nunca existiram** — não são
+arquivos removidos depois, são citações de código que jamais foi escrito.
+
+**Cinco dos dez estão em `TELEMETRY_MODULE_DOCS.md`**, que descreve uma página administrativa e
+três suítes de teste inexistentes. Os relatórios de auditoria anteriores —
+`AUDIT_REPORT.md`, `auditoria_enterprise_v5.md`, `BACKEND_ANALYSIS_REPORT.md`,
+`RELATORIO_FALHAS.md`, `DOCUMENTACAO_SISTEMA.md` — também citam arquivos que não existem.
+
+Somado ao que já se sabia (`FUNCIONALIDADES_COMPLETAS.md` subestima o sistema em 3x), a conclusão
+é direta: **a documentação pré-existente deste repositório não serve como fonte para decisão nem
+para alimentar outra auditoria.**
+
 ---
 
 ## O que está bom — e é bastante
@@ -258,10 +278,12 @@ Declarado, não escondido:
    Postgres. `vault.secrets` está vazio, mas isso é esperado e não prova nada sobre eles.
 4. **O front-end não foi executado.** Nenhuma tela foi aberta, nenhum fluxo percorrido.
 5. **Nenhuma chamada real a terceiro foi disparada** — seria alterar estado externo.
-6. **Cobertura em nível de arquivo**: os lotes citam 587 arquivos distintos. **40 de 104 domínios
-   de componentes não têm citação em nível de arquivo** — foram tratados em altitude ou ficaram na
-   costura entre lotes. Os menos cobertos: `bi`, `reports`, `portfolio`, `goals`, `shared`,
-   `navigation`, `skeletons`, `molecules`. Edge Functions, ao contrário, têm **168 de 168** citadas.
+6. **Cobertura em nível de arquivo**: os documentos citam **673** arquivos distintos. **28 de 104
+   domínios de componentes não têm citação em nível de arquivo** — foram tratados em altitude ou
+   ficaram na costura entre lotes. Os maiores: `portfolio` (11 arq), `shared` (10), `navigation`
+   (8), `closer` (8), `lead-routing` (6), `conversation-intelligence` (6). Também não foram
+   auditados `components.json` e `tailwind.config.ts`. Edge Functions, ao contrário, têm
+   **168 de 168** citadas.
 7. **Histórico de `pg_cron` limitado a ~12 dias** de retenção; estatísticas de tabela zeradas em
    2026-07-24.
 8. **Branch protection do GitHub** não é versionada — não sei quais checks são obrigatórios.
@@ -270,15 +292,24 @@ Declarado, não escondido:
 
 Os 13 lotes foram produzidos em paralelo e depois **verificados de forma independente**:
 
-- **Recontagem**: dos 587 arquivos citados, **4 não existiam** (0,7%). Triados um a um — 1 era
-  erro de caminho real (corrigido), 2 eram nomes truncados na prosa (completados), e 1
-  (`src/main.ts`) **não era erro e sim achado**: o `deno.json` manda checar um arquivo inexistente.
+- **Recontagem**: dos **673** arquivos citados nos 15 documentos, **2** não existem — e ambos se
+  explicam. `src/main.ts` **não é erro e sim achado** (o `deno.json` manda checar arquivo
+  inexistente), e `src/pages/Webhooks.tsx` aparece somente **dentro do texto de errata**, como o
+  caminho errado que foi corrigido. Taxa efetiva de citação inválida: **zero**. (Uma medição
+  anterior, feita antes de o lote 04 terminar, dizia 587 citados e 4 inexistentes.)
 - **Amostragem dos achados graves**: reproduzi pessoalmente 7. Seis confirmados, **um refutado** —
   a exposição de `clients`/`activities`, corrigida com bloco de errata no próprio lote 08, com o
   texto original preservado.
 - Registro também um erro **meu**: minha primeira conferência dessa exposição usou um filtro
   estreito demais e quase absolveu o achado por engano. Foi o teste empírico com `SET ROLE anon`,
   não a leitura estrutural, que deu a resposta certa.
+- **A auditoria foi depois auditada** ([lote 14](14_VERIFICACAO_DA_AUDITORIA.md)). Reexecutei 12
+  medições estruturais — **todas confirmadas, nenhuma refutada**, várias exatas até o dígito (302
+  tabelas vazias, 33.636 linhas, 7.707 linhas de webhook, 1.019 policies). Mas **6 erros numéricos
+  meus** e **4 dos lotes** foram encontrados e corrigidos, incluindo a contagem do meu próprio lote
+  13, que eu havia propagado para este documento. E uma exigência do método que eu não havia
+  cumprido — checar evidência fabricada na documentação anterior — foi executada, produzindo o
+  risco nº 10.
 
 ---
 

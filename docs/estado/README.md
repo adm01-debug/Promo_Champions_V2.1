@@ -21,6 +21,7 @@ Medição: **2026-08-16**. Banco de produção acessado somente para leitura; na
 | [11](11_DADOS_BANCO.md) | Banco: censo, RLS, drift, cron | estrutural |
 | [12](12_INFRA_CI_TESTES.md) | Infra, CI, testes | estrutural |
 | [13](13_INTEGRACOES.md) | Integrações externas | 16 |
+| [14](14_VERIFICACAO_DA_AUDITORIA.md) | **Verificação da própria auditoria** — erros e lacunas encontrados neste trabalho | meta |
 
 ## Como ler
 
@@ -34,6 +35,10 @@ verificável cai para 🟦 — não sobe.
 
 Onde a auditoria não pôde verificar, está marcado **`NAO_VERIFICADO`**, sem meio-termo. As
 limitações estão declaradas na seção "O que esta auditoria NÃO cobriu" do documento executivo.
+
+O **lote 14** audita esta auditoria: reverifica os achados estruturais, corrige as contagens
+que estavam erradas (inclusive as minhas) e declara as lacunas que permanecem. Leia-o antes de
+citar qualquer número daqui.
 
 O lote 08 contém um **bloco de errata** de um achado que foi refutado na verificação
 independente. O texto original foi preservado de propósito: quem lê precisa saber que houve

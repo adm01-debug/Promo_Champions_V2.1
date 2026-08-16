@@ -12,7 +12,13 @@
 sustentam integrações, credenciais de canal e webhooks têm **exatamente 0 linhas**. O código
 existe, em vários casos é sólido e completo, mas **nenhum fio chega até um terceiro real**.
 
-Contagem do lote: **0 ✅ / 11 🟨 / 5 🟦 / 0 ⬛** de 16 integrações identificadas.
+Contagem do lote: **0 ✅ / 13 🟨 / 3 🟦 / 0 ⬛** de 16 integrações identificadas.
+
+> **Corrigido na Fase D.** A versão original desta linha dizia *11 🟨 / 5 🟦*. O erro foi meu:
+> contei como 🟦 quatro itens que estão na tabela separada de "mencionadas mas inexistentes"
+> (Sentry, PostHog, flags de build, `VITE_USE_MOCK_DATA`), misturando duas populações. As 16
+> linhas numeradas da tabela abaixo somam 13 🟨 e 3 🟦. O erro havia se propagado para o
+> `ESTADO_ATUAL.md` e para a descrição da PR, e foi corrigido nos dois.
 
 ---
 
