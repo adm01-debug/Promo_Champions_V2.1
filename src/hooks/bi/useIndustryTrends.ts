@@ -1,33 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getMockIndustryTrends, getMockSeasonality } from "@/lib/bi/mockData";
 
 export const useIndustryTrends = (clientId?: string, ramoAtividade?: string) => {
   return useQuery({
     queryKey: ['bi-tool-industry-trends', clientId, ramoAtividade],
     enabled: !!ramoAtividade,
     queryFn: async () => {
-      if (!ramoAtividade) return getMockIndustryTrends();
+      if (!ramoAtividade) return [];
 
       const { data: clientsInBranch } = await supabase
         .from('clients')
         .select('id')
         .eq('ramo_atividade', ramoAtividade)
         .neq('id', clientId || '');
-      
+
       const companyIds = (clientsInBranch || []).map(c => c.id);
+      if (companyIds.length < 3) return [];
 
-      if (companyIds.length < 3) return getMockIndustryTrends();
-
-      const { data: industryProducts } = await supabase.rpc('get_industry_top_products', { 
-        _company_ids: companyIds, 
-        _days: 90, 
-        _limit: 5 
+      const { data: industryProducts } = await supabase.rpc('get_industry_top_products', {
+        _company_ids: companyIds,
+        _days: 90,
+        _limit: 5,
       });
 
-      if (!industryProducts || industryProducts.length === 0) return getMockIndustryTrends();
+      if (!industryProducts || industryProducts.length === 0) return [];
 
-      type IndustryProduct = { product_name: string; growth_rate: number | string; total_sales: number | string };
+      type IndustryProduct = {
+        product_name: string;
+        growth_rate: number | string;
+        total_sales: number | string;
+      };
       return (industryProducts as IndustryProduct[]).map((p) => ({
         name: p.product_name,
         growth: `+${p.growth_rate}%`,
@@ -42,14 +44,14 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
     queryKey: ['bi-tool-seasonality', clientId, ramoAtividade],
     enabled: !!clientId,
     queryFn: async () => {
-      const { data: clientsInBranch } = ramoAtividade 
+      const { data: clientsInBranch } = ramoAtividade
         ? await supabase
             .from('clients')
             .select('id')
             .eq('ramo_atividade', ramoAtividade)
             .neq('id', clientId || '')
         : { data: [] };
-      
+
       const companyIds = (clientsInBranch || []).map(c => c.id);
 
       const [
@@ -62,15 +64,16 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
           : Promise.resolve({ data: [] })
       ]);
 
-      type SeasonRow = { month: number | string; quotes_count?: number | string; avg_quotes_per_company?: number | string };
+      type SeasonRow = {
+        month: number | string;
+        quotes_count?: number | string;
+        avg_quotes_per_company?: number | string;
+      };
       const clientSeasonality = (clientSeasonalityRes ?? []) as SeasonRow[];
       const industrySeasonality = (industrySeasonalityRes ?? []) as SeasonRow[];
 
       const hasEnoughClientData = clientSeasonality.length >= 3;
       const hasEnoughIndustryData = industrySeasonality.length >= 3;
-
-      const finalClientSeasonality = hasEnoughClientData ? clientSeasonality : (getMockSeasonality(clientId!) as SeasonRow[]);
-      const finalIndustrySeasonality = hasEnoughIndustryData ? industrySeasonality : (getMockSeasonality(ramoAtividade || 'generic') as SeasonRow[]);
 
       const normalizeIntensity = (data: SeasonRow[]) => {
         if (!data || data.length === 0) return [];
@@ -91,9 +94,11 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
         next12Months.push({ month: d.getMonth() + 1, name: d.toLocaleString('pt-BR', { month: 'long' }) });
       }
 
-      const dataSource = hasEnoughClientData ? finalClientSeasonality : finalIndustrySeasonality;
-      const monthMap = new Map(dataSource.map(d => [Number(d.month), Number(d.quotes_count || d.avg_quotes_per_company || 0)]));
-      
+      const dataSource = hasEnoughClientData ? clientSeasonality : industrySeasonality;
+      const monthMap = new Map(
+        dataSource.map(d => [Number(d.month), Number(d.quotes_count || d.avg_quotes_per_company || 0)])
+      );
+
       let bestMonth = next12Months[0];
       let maxVal = -1;
       next12Months.forEach(m => {
@@ -105,14 +110,17 @@ export const useClientSeasonality = (clientId?: string, ramoAtividade?: string) 
       });
 
       return {
+        hasData: hasEnoughClientData || hasEnoughIndustryData,
         months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-        clientIntensity: normalizeIntensity(finalClientSeasonality),
-        industryIntensity: normalizeIntensity(finalIndustrySeasonality),
+        clientIntensity: normalizeIntensity(clientSeasonality),
+        industryIntensity: normalizeIntensity(industrySeasonality),
         nextPeak: {
           month: bestMonth.name.charAt(0).toUpperCase() + bestMonth.name.slice(1),
-          insight: hasEnoughClientData 
+          insight: hasEnoughClientData
             ? `Historicamente, seu cliente apresenta demanda alta em ${bestMonth.name}.`
-            : `Empresas deste setor costumam ter pico de demanda em ${bestMonth.name}.`
+            : hasEnoughIndustryData
+              ? `Empresas deste setor costumam ter pico de demanda em ${bestMonth.name}.`
+              : 'Sem dados de sazonalidade suficientes para determinar o próximo pico.'
         }
       };
     }

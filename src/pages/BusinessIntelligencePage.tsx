@@ -114,10 +114,7 @@ export default function BusinessIntelligencePage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-8">
                   {clientBI && (
-                    <ClientOverview360
-                      data={clientBI.customer360}
-                      isMocked={clientBI.isMocked}
-                    />
+                    <ClientOverview360 data={clientBI.customer360} />
                   )}
                 </div>
                 <div className="lg:col-span-4">

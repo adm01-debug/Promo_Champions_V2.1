@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 interface FocusModeConfig {
@@ -41,8 +41,9 @@ export function useFocusMode() {
     return DEFAULT_CONFIG;
   });
 
-  const [timeInFocus, setTimeInFocus] = useState(0);
   const [shouldShowBreakReminder, setShouldShowBreakReminder] = useState(false);
+  const timeInFocusRef = useRef(0);
+  const [tick, setTick] = useState(0); // minimal state trigger, not the actual value
 
   // Apply focus mode classes
   useEffect(() => {
@@ -74,17 +75,19 @@ export function useFocusMode() {
     }
   }, [config]);
 
-  // Timer for focus duration
+  // Timer for focus duration — uses ref internally to avoid 1Hz re-renders of the whole tree
   useEffect(() => {
     if (!config.enabled || !config.startedAt) {
-      setTimeInFocus(0);
+      timeInFocusRef.current = 0;
+      setTick(t => t + 1);
       return;
     }
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - config.startedAt!) / 1000);
-      setTimeInFocus(elapsed);
-      
+      timeInFocusRef.current = elapsed;
+      setTick(t => t + 1);
+
       // Check for break reminder
       if (config.autoBreakReminder) {
         const breakIntervalSeconds = config.breakIntervalMinutes * 60;
@@ -117,12 +120,12 @@ export function useFocusMode() {
   }, []);
 
   const disableFocusMode = useCallback(() => {
-    setConfig(prev => ({ 
-      ...prev, 
-      enabled: false, 
-      startedAt: null 
+    setConfig(prev => ({
+      ...prev,
+      enabled: false,
+      startedAt: null
     }));
-    setTimeInFocus(0);
+    timeInFocusRef.current = 0;
   }, []);
 
   const toggleFocusMode = useCallback(() => {
@@ -141,22 +144,23 @@ export function useFocusMode() {
     setShouldShowBreakReminder(false);
   }, []);
 
-  const formatTime = useCallback((seconds: number) => {
+  const timeInFocus = useMemo(() => timeInFocusRef.current, [tick]);
+  const formattedTime = useMemo(() => {
+    const seconds = timeInFocusRef.current;
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
     if (hrs > 0) {
       return `${hrs}h ${mins}m`;
     }
     return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }, []);
+  }, [tick]);
 
   return {
     isEnabled: config.enabled,
     config,
     timeInFocus,
-    formattedTime: formatTime(timeInFocus),
+    formattedTime,
     shouldShowBreakReminder,
     enableFocusMode,
     disableFocusMode,

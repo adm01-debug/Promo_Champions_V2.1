@@ -81,12 +81,19 @@ export const IntelligenceZones = () => {
             <FileDown className="size-3" />
             {isExporting ? 'Gerando...' : 'Exportar Dossiê PDF'}
           </Button>
-          <Badge
-            variant={data?.isMocked ? 'secondary' : 'default'}
-            className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10"
-          >
-            {data?.isMocked ? '📊 Dados Simulados' : '⚡ Dados em Tempo Real'}
-          </Badge>
+          {!data?.hasClientData && !data?.hasIndustryData && (
+            <span className="text-[9px] font-black bg-violet-500/10 text-violet-400 px-2 py-1 rounded uppercase tracking-[0.2em] border border-violet-500/20">
+              Sem dados suficientes
+            </span>
+          )}
+          {data?.hasClientData && (
+            <Badge
+              variant="default"
+              className="font-mono text-[10px] px-3 py-1 uppercase tracking-widest border-white/10"
+            >
+              Dados em Tempo Real
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -148,21 +155,25 @@ export const IntelligenceZones = () => {
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
               <TrendingUp className="size-3 text-primary" /> Timeline 5 Últimos Pedidos
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-              {data?.customer360.lastOrders.map(order => (
-                <div
-                  key={order.id}
-                  className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all"
-                >
-                  <p className="text-[9px] text-muted-foreground font-mono">
-                    {new Date(order.date).toLocaleDateString('pt-BR')}
-                  </p>
-                  <p className="text-sm font-black text-primary mt-1">
-                    {formatCurrency(order.value)}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {data?.customer360.lastOrders && data.customer360.lastOrders.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                {data.customer360.lastOrders.map((order: { id: string; date: string; value: number }) => (
+                  <div
+                    key={order.id}
+                    className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all"
+                  >
+                    <p className="text-[9px] text-muted-foreground font-mono">
+                      {new Date(order.date).toLocaleDateString('pt-BR')}
+                    </p>
+                    <p className="text-sm font-black text-primary mt-1">
+                      {formatCurrency(order.value)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">Sem pedidos registrados.</p>
+            )}
           </div>
         </Card>
 

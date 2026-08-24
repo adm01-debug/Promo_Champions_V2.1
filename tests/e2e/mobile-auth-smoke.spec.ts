@@ -1,4 +1,4 @@
-import { test, expect, devices, type Page, type BrowserContextOptions } from '@playwright/test';
+import { test, expect, devices, type Page, type BrowserContextOptions, defineConfig } from '@playwright/test';
 
 /**
  * Smoke E2E: sign-in → ProtectedRoute → sign-out → deep link recovery
@@ -39,8 +39,7 @@ async function installAuthMocks(page: Page) {
 }
 
 for (const { name, device } of mobileDevices) {
-  test.describe(`Mobile smoke • ${name}`, () => {
-    test.use({ ...device });
+  test.describe(`Mobile smoke • ${name}`, defineConfig({ ...device }), () => {
 
     test('redireciona deep link → /auth → faz login → volta ao deep link → sign-out', async ({ page }) => {
       await installAuthMocks(page);

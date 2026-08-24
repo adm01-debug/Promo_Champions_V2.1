@@ -5,11 +5,11 @@ import { UI } from '@/config/constants';
  * Centralizes cache strategy decisions for consistency.
  */
 
-/** Frequently changing data (sales, activities) — short cache, background refetch */
+/** Frequently changing data (sales, activities) — short cache, no background refetch on tab switch */
 export const REALTIME_QUERY_OPTIONS = {
   staleTime: 60 * 1000,          // 1min (optimized for performance)
   gcTime: 10 * 60 * 1000,         // 10min
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: false,     // NEVER refetch on tab switch — kills performance
   refetchOnReconnect: true,
 } as const;
 
@@ -38,7 +38,7 @@ export const ANALYTICS_QUERY_OPTIONS = {
 export const USER_DATA_QUERY_OPTIONS = {
   staleTime: 60 * 1000,      // 1min
   gcTime: 10 * 60 * 1000,        // 10min
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: false,     // Never refetch on tab switch
 } as const;
 
 /** Default options (matches App.tsx global config) */

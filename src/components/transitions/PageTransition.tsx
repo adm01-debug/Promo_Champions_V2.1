@@ -236,14 +236,6 @@ export const PageTransition: FC<PageTransitionProps> = memo(
           variants={variants}
           className={containerClass}
         >
-          {!reducedMotion && (
-            <motion.div
-              className="absolute top-0 left-0 w-full h-[1px] bg-primary/40 z-[100] pointer-events-none"
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: [0, 1, 0], opacity: [0, 1, 0] }}
-              transition={{ duration: 0.8, ease: 'easeInOut' }}
-            />
-          )}
           {children}
         </motion.div>
       </AnimatePresence>

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Camera, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { fetchWithUserToken } from "@/lib/edgeFetch";
 
 interface VisualSearchButtonProps {
   onResults: (data: VisualSearchResponse) => void;
@@ -71,12 +72,9 @@ export function VisualSearchButton({
     try {
       const dataUrl = await fileToBase64(file);
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/visual-search`;
-      const res = await fetch(url, {
+      const res = await fetchWithUserToken(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: dataUrl, limit: 20 }),
       });
 

@@ -1,9 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+
+type Channel = ReturnType<typeof supabase.channel>;
+
+// Module-level cache: stores the channel for each topic so that
+// Strict-Mode double-mount reuses the same channel instead of creating a new
+// one. Cleared on Vite HMR via import.meta.hot.
+const channelCache = new Map<string, Channel>();
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    channelCache.forEach((ch) => supabase.removeChannel(ch));
+    channelCache.clear();
+  });
+}
 
 export function useSalesBattles() {
   const queryClient = useQueryClient();
+  const channelRef = useRef<Channel | null>(null);
 
   const { data: battles, isLoading } = useQuery({
     queryKey: ['sales-battles'],
@@ -25,16 +40,26 @@ export function useSalesBattles() {
     },
   });
 
-  // Realtime for live scores
+  // Realtime for live scores — module-level cache keeps a single subscribed
+  // channel per topic, even across Strict-Mode double-mounts.
   useEffect(() => {
-    const channel = supabase
-      .channel('battles-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'battle_participants' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['sales-battles'] });
-      })
-      .subscribe();
+    const topic = 'battles-realtime';
+    let channel = channelCache.get(topic);
 
-    return () => { supabase.removeChannel(channel); };
+    if (!channel) {
+      channel = supabase
+        .channel(topic)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'battle_participants' }, () => {
+          queryClient.invalidateQueries({ queryKey: ['sales-battles'] });
+        })
+        .subscribe();
+      channelCache.set(topic, channel);
+    }
+    channelRef.current = channel;
+
+    return () => {
+      channelRef.current = null;
+    };
   }, [queryClient]);
 
   const createBattle = useMutation({

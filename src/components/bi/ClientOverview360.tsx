@@ -10,10 +10,9 @@ interface ClientOverview360Props {
     orderCount: number;
     lastOrders: { id: string; date: string; value: number; status: string }[];
   };
-  isMocked?: boolean;
 }
 
-export function ClientOverview360({ data, isMocked }: ClientOverview360Props) {
+export function ClientOverview360({ data }: ClientOverview360Props) {
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
@@ -25,11 +24,6 @@ export function ClientOverview360({ data, isMocked }: ClientOverview360Props) {
         <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2">
           <Users className="size-5 text-primary" /> Visão <span className="text-primary">360°</span> do Cliente
         </h3>
-        {isMocked && (
-          <span className="text-[9px] font-black bg-violet-500/10 text-violet-400 px-2 py-1 rounded uppercase tracking-[0.2em] border border-violet-500/20">
-            Dados Simulados
-          </span>
-        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 relative z-10">

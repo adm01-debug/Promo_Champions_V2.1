@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
   ReactNode,
   useRef,
   useEffect,
@@ -216,18 +217,18 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
     },
   ];
 
+  const value = useMemo(() => ({
+    openSearch,
+    openNewSale,
+    openNewClient,
+    showShortcutsDialog,
+    registerSearchHandler,
+    registerNewSaleHandler,
+    registerNewClientHandler,
+  }), [openSearch, openNewSale, openNewClient, showShortcutsDialog, registerSearchHandler, registerNewSaleHandler, registerNewClientHandler]);
+
   return (
-    <KeyboardShortcutsContext.Provider
-      value={{
-        openSearch,
-        openNewSale,
-        openNewClient,
-        showShortcutsDialog,
-        registerSearchHandler,
-        registerNewSaleHandler,
-        registerNewClientHandler,
-      }}
-    >
+    <KeyboardShortcutsContext.Provider value={value}>
       {children}
 
       <NavigationHud isVisible={isGKeyDown} baseKey="G" />

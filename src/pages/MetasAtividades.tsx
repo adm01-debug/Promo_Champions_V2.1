@@ -262,7 +262,7 @@ export default function MetasAtividades() {
                       <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
                     </div>
 
-                    <p className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
+                    <div className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
                       <div className="p-2 rounded-lg bg-muted/50 border border-border/50">
                         <Calendar className="h-5 w-5 text-primary/70" />
                       </div>
@@ -273,7 +273,7 @@ export default function MetasAtividades() {
                           Ciclo de Alta Performance
                         </span>
                       </span>
-                    </p>
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 relative z-10">

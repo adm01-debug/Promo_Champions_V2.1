@@ -18,17 +18,19 @@ export const PerformanceMonitor = memo(() => {
   const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<number[]>([]);
   const [hasAlert, setHasAlert] = useState(false);
-  
+
   // Custom thresholds
   const [fpsThreshold, setFpsThreshold] = useState(DEFAULT_FPS_THRESHOLD);
   const [renderThreshold, setRenderThreshold] = useState(DEFAULT_RENDER_THRESHOLD);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  
+
   const frameCount = useRef(0);
   const lastTime = useRef(performance.now());
   const requestRef = useRef<number>();
   const lastRenderRef = useRef(performance.now());
   const lastAlertTime = useRef(0);
+  // Only update renderTime state every 500ms to avoid 60 state updates/second
+  const lastRenderUpdate = useRef(0);
 
   useEffect(() => {
     const updateFps = () => {
@@ -40,7 +42,7 @@ export const PerformanceMonitor = memo(() => {
         const currentFps = Math.round((frameCount.current * 1000) / elapsed);
         setFps(currentFps);
         setHistory(prev => [...prev.slice(-20), currentFps]);
-        
+
         // Performance Alert Logic
         if (notificationsEnabled && currentFps < fpsThreshold && now - lastAlertTime.current > 15000) {
           setHasAlert(true);
@@ -56,22 +58,23 @@ export const PerformanceMonitor = memo(() => {
         lastTime.current = now;
       }
 
-      // Estimate render time (frame duration)
+      // Estimate render time — only update state every 500ms to avoid 60 setState calls/sec
       const frameDuration = now - lastRenderRef.current;
-      if (frameDuration < 100) { // Filter out background tab pauses
-         const smoothedRenderTime = Number((renderTime * 0.9 + frameDuration * 0.1).toFixed(2));
-         setRenderTime(smoothedRenderTime);
+      if (frameDuration < 100 && now - lastRenderUpdate.current >= 500) {
+        lastRenderUpdate.current = now;
+        const smoothedRenderTime = Number((renderTime * 0.9 + frameDuration * 0.1).toFixed(2));
+        setRenderTime(smoothedRenderTime);
 
-         // Render time alert
-         if (notificationsEnabled && smoothedRenderTime > renderThreshold && now - lastAlertTime.current > 15000) {
-            setHasAlert(true);
-            toast.error("High Render Latency", {
-              description: `Frame took ${smoothedRenderTime}ms. Threshold is ${renderThreshold}ms.`,
-              duration: 4000
-            });
-            lastAlertTime.current = now;
-            setTimeout(() => setHasAlert(false), 3000);
-         }
+        // Render time alert
+        if (notificationsEnabled && smoothedRenderTime > renderThreshold && now - lastAlertTime.current > 15000) {
+          setHasAlert(true);
+          toast.error("High Render Latency", {
+            description: `Frame took ${smoothedRenderTime}ms. Threshold is ${renderThreshold}ms.`,
+            duration: 4000
+          });
+          lastAlertTime.current = now;
+          setTimeout(() => setHasAlert(false), 3000);
+        }
       }
       lastRenderRef.current = now;
 

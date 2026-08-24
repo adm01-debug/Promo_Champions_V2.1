@@ -90,19 +90,25 @@ export const useBIDossierExport = (
       doc.setFontSize(14);
       doc.text('Timeline de Pedidos (Últimos 5)', 20, 90);
 
-      const orders = biData.customer360.lastOrders.map(o => [
-        format(new Date(o.date), 'dd/MM/yyyy'),
-        `R$ ${o.value.toLocaleString()}`,
-        o.status === 'delivered' ? 'Entregue' : o.status,
-      ]);
+      if (biData.customer360.lastOrders.length > 0) {
+        const orders = biData.customer360.lastOrders.map((o: { date: string; value: number; status?: string }) => [
+          format(new Date(o.date), 'dd/MM/yyyy'),
+          `R$ ${o.value.toLocaleString()}`,
+          o.status === 'delivered' ? 'Entregue' : o.status ?? '—',
+        ]);
 
-      adoc.autoTable({
-        startY: 100,
-        head: [['Data', 'Valor', 'Status']],
-        body: orders,
-        theme: 'striped',
-        headStyles: { fillColor: primaryColor },
-      });
+        adoc.autoTable({
+          startY: 100,
+          head: [['Data', 'Valor', 'Status']],
+          body: orders,
+          theme: 'striped',
+          headStyles: { fillColor: primaryColor },
+        });
+      } else {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'italic');
+        doc.text('Sem pedidos registrados.', 20, 100);
+      }
 
       // Page 3: Cliente vs Setor
       doc.addPage();

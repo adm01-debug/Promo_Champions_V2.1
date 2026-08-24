@@ -2,10 +2,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
   validateWebhookPayload,
   WebhookContracts,
 } from '../_shared/webhook-validator.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {

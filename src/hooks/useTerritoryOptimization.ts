@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithUserToken } from "@/lib/edgeFetch";
 
 export type TerritoryHealth = "excellent" | "healthy" | "warning" | "critical";
 export type TerritoryStatus = "healthy" | "underserved" | "overloaded" | "stagnant" | "unowned";
@@ -64,12 +65,7 @@ export function useTerritoryOptimization(days: 30 | 60 | 90 = 30) {
     queryKey: ["territory-optimization", days],
     queryFn: async () => {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/territory-optimization?days=${days}`;
-      const resp = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        },
-      });
+      const resp = await fetchWithUserToken(url, { method: "GET" });
       if (!resp.ok) throw new Error(`Territory optimization failed: ${resp.status}`);
       return (await resp.json()) as TerritoryOptimizationResponse;
     },

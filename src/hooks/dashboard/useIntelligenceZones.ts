@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { getExpertRecommendations } from '@/lib/bi/industryRecommendations';
 
 export interface SeasonalityPoint {
   year: number;
@@ -19,7 +20,6 @@ export interface IndustrySeasonalityPoint {
   intensity: number; // 0-100 normalized
 }
 
-/** Row shape returned by seasonality RPCs (and the deterministic mock generator). */
 interface SeasonalityRow {
   month?: number | string;
   quotes_count?: number | string;
@@ -29,7 +29,6 @@ interface SeasonalityRow {
   [key: string]: unknown;
 }
 
-/** Row shape returned by benchmark stats RPC. */
 interface BenchmarkRow {
   metric_name: string;
   industry_avg: number | string;
@@ -37,7 +36,6 @@ interface BenchmarkRow {
   [key: string]: unknown;
 }
 
-/** Row shape returned by top-products RPCs. */
 interface TopProductRow {
   product_name: string;
   growth_rate?: number | string;
@@ -49,7 +47,6 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
   return useQuery({
     queryKey: ['intelligence-zones-v5', clientId, ramoAtividade],
     queryFn: async () => {
-      // 1. Resolve company IDs for the industry branch
       let companyIds: string[] = [];
       if (ramoAtividade) {
         const { data: clientsInBranch } = await supabase
@@ -61,7 +58,6 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         companyIds = (clientsInBranch || []).map(c => c.id);
       }
 
-      // 2. Parallel fetch from RPCs
       const [
         { data: clientProductsRes },
         { data: industryProductsRes },
@@ -96,8 +92,8 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
           : Promise.resolve({ data: [] }),
       ]);
 
-      const clientProducts = clientProductsRes || [];
-      const industryProducts = industryProductsRes || [];
+      const clientProducts = (clientProductsRes || []) as TopProductRow[];
+      const industryProducts = (industryProductsRes || []) as TopProductRow[];
       const clientSeasonality = (clientSeasonalityRes || []) as SeasonalityRow[];
       const industrySeasonality = (industrySeasonalityRes || []) as SeasonalityRow[];
       const benchmarks = (benchmarkRes || []) as BenchmarkRow[];
@@ -106,27 +102,6 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
       const hasEnoughIndustryData =
         companyIds.length >= 3 && industrySeasonality.length >= 3;
 
-      // Deterministic Mock Data Generation
-      const getDeterministicMockSeasonality = (id: string) => {
-        const seed = id
-          ? id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-          : 123;
-        return Array.from({ length: 12 }, (_, i) => ({
-          month: i + 1,
-          quotes_count: Math.floor(10 + Math.sin(seed + i) * 8 + 10),
-          total_revenue: Math.floor(30000 + Math.cos(seed + i) * 15000 + 20000),
-          avg_ticket: 2000 + (seed % 1000),
-        }));
-      };
-
-      const finalClientSeasonality = hasEnoughClientData
-        ? clientSeasonality
-        : getDeterministicMockSeasonality(clientId || 'mock');
-      const finalIndustrySeasonality = hasEnoughIndustryData
-        ? industrySeasonality
-        : getDeterministicMockSeasonality(ramoAtividade || 'generic');
-
-      // Normalize Seasonality Intensity
       const normalizeIntensity = (data: SeasonalityRow[], key: string) => {
         if (!data || data.length === 0) return [];
         const maxVal = Math.max(...data.map(d => Number(d[key])));
@@ -137,15 +112,14 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
       };
 
       const normalizedClientSeasonality = normalizeIntensity(
-        finalClientSeasonality,
+        clientSeasonality,
         'quotes_count'
       );
       const normalizedIndustrySeasonality = normalizeIntensity(
-        finalIndustrySeasonality,
+        industrySeasonality,
         'quotes_count'
       );
 
-      // Logic for Next Peak and Strategic Insight
       const getNextPeakInfo = (cData: SeasonalityRow[], iData: SeasonalityRow[]) => {
         const next12Months = [];
         const today = new Date();
@@ -158,6 +132,13 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         }
 
         const dataSource = hasEnoughClientData ? cData : iData;
+        if (dataSource.length === 0) {
+          return {
+            month: '—',
+            insight: 'Sem dados de sazonalidade suficientes.',
+          };
+        }
+
         const monthMap = new Map(
           dataSource.map(d => [Number(d.month), Number(d.quotes_count || 0)])
         );
@@ -184,162 +165,57 @@ export const useIntelligenceZones = (clientId?: string, ramoAtividade?: string) 
         };
       };
 
-      // Expert Recommendations
-      const getExpertCurated = (ramo: string) => {
-        const recommendations: Record<string, { name: string; reason: string }[]> = {
-          tecnologia: [
-            {
-              name: 'Infraestrutura Serverless',
-              reason: 'Redução de 30% no custo operacional para empresas de tech.',
-            },
-            {
-              name: 'Segurança Zero Trust',
-              reason: 'Tendência crítica de conformidade para o próximo semestre.',
-            },
-          ],
-          industria: [
-            {
-              name: 'Automação Pneumática',
-              reason: 'Ganho de escala em linhas de produção de alto volume.',
-            },
-            {
-              name: 'Manutenção Preditiva IoT',
-              reason: 'Redução de downtime em paradas não programadas.',
-            },
-          ],
-          varejo: [
-            {
-              name: 'Omnichannel Connect',
-              reason: 'Integração de estoque físico e digital em tempo real.',
-            },
-            {
-              name: 'CRM Predictor',
-              reason: 'Aumento de 15% na recompra via segmentação comportamental.',
-            },
-          ],
-        };
-        const normalizedRamo = ramo.toLowerCase();
-        for (const key in recommendations) {
-          if (normalizedRamo.includes(key)) return recommendations[key];
-        }
-        return [
-          {
-            name: 'Consultoria de Eficiência',
-            reason: 'Otimização de processos baseada nos benchmarks do setor.',
-          },
-          {
-            name: 'Programa de Fidelidade IA',
-            reason: 'Aumento do LTV através de ofertas personalizadas.',
-          },
-        ];
-      };
-
       return {
-        isMocked: !hasEnoughClientData,
-        isIndustryMocked: !hasEnoughIndustryData,
+        hasClientData: hasEnoughClientData,
+        hasIndustryData: hasEnoughIndustryData,
         customer360: {
-          ltv: finalClientSeasonality.reduce(
+          ltv: clientSeasonality.reduce(
             (acc: number, curr: SeasonalityRow) => acc + Number(curr.total_revenue),
             0
           ),
-          avgTicket: finalClientSeasonality.length
-            ? finalClientSeasonality.reduce(
-                (acc: number, curr: SeasonalityRow) => acc + Number(curr.avg_ticket),
-                0
-              ) / finalClientSeasonality.length
-            : 2450,
-          recency: 12,
-          orderCount: finalClientSeasonality.reduce(
+          avgTicket:
+            clientSeasonality.length > 0
+              ? clientSeasonality.reduce(
+                  (acc: number, curr: SeasonalityRow) => acc + Number(curr.avg_ticket),
+                  0
+                ) / clientSeasonality.length
+              : 0,
+          recency: 0,
+          orderCount: clientSeasonality.reduce(
             (acc: number, curr: SeasonalityRow) => acc + Number(curr.quotes_count),
             0
           ),
-          lastOrders: [
-            { id: 1, date: '2026-05-20', value: 3200, status: 'delivered' },
-            { id: 2, date: '2026-05-15', value: 1500, status: 'delivered' },
-            { id: 3, date: '2026-05-08', value: 4100, status: 'delivered' },
-          ],
+          lastOrders: [],
         },
-        benchmarks:
-          benchmarks.length > 0
-            ? benchmarks.map(b => ({
-                metric: b.metric_name,
-                client: 85,
-                sector: Number(b.industry_avg),
-                unit: b.unit,
-                insight: `${b.metric_name} estável vs setor.`,
-              }))
-            : [
-                {
-                  metric: 'Volume',
-                  client: 85,
-                  sector: 72,
-                  unit: 'un',
-                  insight: 'Volume 18% acima da média. Consolidar estoque.',
-                },
-                {
-                  metric: 'Conversão',
-                  client: 12.4,
-                  sector: 10.8,
-                  unit: '%',
-                  insight: 'Eficiência superior. Manter estratégia atual.',
-                },
-                {
-                  metric: 'Frequência',
-                  client: 4.2,
-                  sector: 3.5,
-                  unit: 'ped/mês',
-                  insight: 'Fidelidade alta. Oportunidade de up-sell.',
-                },
-                {
-                  metric: 'Satisfação',
-                  client: 92,
-                  sector: 88,
-                  unit: 'pts',
-                  insight: 'NPS excelente vs concorrentes diretos.',
-                },
-              ],
+        benchmarks: benchmarks.map(b => ({
+          metric: b.metric_name,
+          client: 0,
+          sector: Number(b.industry_avg),
+          unit: b.unit,
+          insight: `${b.metric_name}: ${b.industry_avg}${b.unit}.`,
+        })),
         affinity: {
-          topCategories: ['Eletrônicos', 'Periféricos', 'Office'],
-          suggestedProducts: clientProducts.length
-            ? clientProducts.map((p: TopProductRow) => ({
-                name: p.product_name,
-                confidence: 90,
-              }))
-            : [
-                { name: 'Monitor 4K UltraWide', confidence: 94 },
-                { name: 'Teclado Mecânico RGB', confidence: 88 },
-              ],
+          topCategories: [],
+          suggestedProducts: clientProducts.map((p: TopProductRow) => ({
+            name: p.product_name,
+            confidence: 90,
+          })),
         },
-        sectorTrends: industryProducts.length
-          ? industryProducts.map((p: TopProductRow) => ({
-              name: p.product_name,
-              growth: `+${p.growth_rate}%`,
-              sales: p.total_sales,
-            }))
-          : [
-              { name: 'MacBook Pro M3', growth: '+24%', sales: 1420 },
-              { name: 'Dell XPS 15', growth: '+18%', sales: 980 },
-            ],
+        sectorTrends: industryProducts.map((p: TopProductRow) => ({
+          name: p.product_name,
+          growth: p.growth_rate !== undefined ? `+${p.growth_rate}%` : '',
+          sales: p.total_sales,
+        })),
         seasonality: {
           months: [
-            'Jan',
-            'Fev',
-            'Mar',
-            'Abr',
-            'Mai',
-            'Jun',
-            'Jul',
-            'Ago',
-            'Set',
-            'Out',
-            'Nov',
-            'Dez',
+            'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+            'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
           ],
           clientIntensity: normalizedClientSeasonality,
           industryIntensity: normalizedIndustrySeasonality,
-          nextPeak: getNextPeakInfo(finalClientSeasonality, finalIndustrySeasonality),
+          nextPeak: getNextPeakInfo(clientSeasonality, industrySeasonality),
         },
-        expertCurated: getExpertCurated(ramoAtividade || 'geral'),
+        expertCurated: getExpertRecommendations(ramoAtividade || 'geral'),
       };
     },
     staleTime: 1000 * 60 * 5,

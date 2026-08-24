@@ -51,7 +51,7 @@ export const useWeakCoverageDeals = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("deal_committee_coverage")
-        .select("*, sales(id, client_name, stage, final_value)")
+        .select("*, sale_id(id, client_name, amount, status)")
         .in("tier", ["weak", "partial"])
         .order("coverage_score", { ascending: true })
         .limit(50);

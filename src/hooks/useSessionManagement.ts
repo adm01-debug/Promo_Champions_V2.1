@@ -101,10 +101,14 @@ export const useSessionManagement = () => {
     }
   }, [user]);
 
-  // Atualizar atividade da sessão
+  // Atualizar atividade da sessão — throttle: no máximo 1x a cada 10s
+  const lastActivityUpdate = useRef<number>(0);
   const updateActivity = useCallback(async () => {
     const sessionId = getStoredSessionId();
     if (!sessionId || !user) return;
+    const now = Date.now();
+    if (now - lastActivityUpdate.current < 10_000) return;
+    lastActivityUpdate.current = now;
 
     try {
       await supabase

@@ -1,27 +1,50 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+type Channel = ReturnType<typeof supabase.channel>;
+
+// Module-level cache: stores the channel for each (userId) so that
+// Strict-Mode double-mount reuses the same channel instead of creating a new
+// one. Cleared on Vite HMR via import.meta.hot.
+const channelCache = new Map<string, Channel>();
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    channelCache.forEach((ch) => supabase.removeChannel(ch));
+    channelCache.clear();
+  });
+}
+
 export function useUnreadNotificationsCount() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const channelRef = useRef<Channel | null>(null);
 
-  // Realtime: invalidate on changes
   useEffect(() => {
     if (!user?.id) return;
-    const channel = supabase
-      .channel(`notifications-count:${user.id}:${crypto.randomUUID()}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
-        }
-      )
-      .subscribe();
+
+    const topic = `notifications-count:${user.id}`;
+    let channel = channelCache.get(topic);
+
+    if (!channel) {
+      channel = supabase
+        .channel(topic)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
+          }
+        )
+        .subscribe();
+      channelCache.set(topic, channel);
+    }
+    channelRef.current = channel;
+
     return () => {
-      supabase.removeChannel(channel);
+      channelRef.current = null;
     };
   }, [user?.id, queryClient]);
 

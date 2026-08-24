@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useVictoryFeed } from '@/hooks/useVictoryFeed';
+import { useAuth } from '@/contexts/AuthContext';
 import { Trophy, MessageCircle, Send, PartyPopper, Star, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -25,18 +26,20 @@ const EVENT_ICONS: Record<string, { icon: React.ElementType; color: string }> = 
 
 const VictoryFeedPage = () => {
   const { feedItems, isLoading, addReaction, addComment } = useVictoryFeed(50);
+  const { salesperson } = useAuth();
   const [commentText, setCommentText] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
 
   const handleReaction = (feedItemId: string, reaction: string) => {
-    // In a real app, we would get the current user's ID
-    addReaction.mutate({ feedItemId, salespersonId: 'demo-user', reaction });
+    if (!salesperson?.id) return;
+    addReaction.mutate({ feedItemId, salespersonId: salesperson.id, reaction });
   };
 
   const handleComment = (feedItemId: string) => {
+    if (!salesperson?.id) return;
     const text = commentText[feedItemId]?.trim();
     if (!text) return;
-    addComment.mutate({ feedItemId, salespersonId: 'demo-user', content: text });
+    addComment.mutate({ feedItemId, salespersonId: salesperson.id, content: text });
     setCommentText(prev => ({ ...prev, [feedItemId]: '' }));
   };
 
@@ -103,7 +106,7 @@ const VictoryFeedPage = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p
+                          <div
                             className="font-bold text-sm cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5"
                             onClick={() =>
                               (window.location.href = `/vendedor/${item.salesperson_id}`)
@@ -116,7 +119,7 @@ const VictoryFeedPage = () => {
                             >
                               {item.salespeople?.role || 'Vendedor'}
                             </Badge>
-                          </p>
+                          </div>
                           <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                             {formatDistanceToNow(new Date(item.created_at), {
                               addSuffix: true,

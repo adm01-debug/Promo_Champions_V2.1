@@ -50,8 +50,6 @@ export const CyberArenaBackground = React.memo(() => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
-        ctx.shadowBlur = p.size * 4;
-        ctx.shadowColor = `rgb(${p.color})`;
         ctx.fill();
       });
 

@@ -1,0 +1,10 @@
+﻿log-web-vitals
+receive-quote-sync
+email-unsubscribe
+race-commentary
+collect-race-powerup
+process-race-event
+start-race-season
+lead-scoring
+ai-copilot
+revenue-forecast-ai

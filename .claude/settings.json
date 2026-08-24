@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf node_modules/.vite)",
+      "Bash(nohup npm run dev)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

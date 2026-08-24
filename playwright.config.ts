@@ -56,6 +56,12 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testIgnore: /quote-to-sale.*\.spec\.ts/,
     },
+    {
+      // Page-level smoke tests — all pages must load with correct title/heading
+      name: 'page-smoke',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: /pages-.*\.spec\.ts/,
+    },
     { name: 'mobile-ios-safari', use: { ...devices['iPhone 14'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
     { name: 'mobile-android-chrome', use: { ...devices['Pixel 7'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
   ],

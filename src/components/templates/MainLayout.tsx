@@ -5,7 +5,6 @@ import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
 import { SearchTrigger } from "@/components/atoms/SearchTrigger";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
 import { Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
 import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useIsMobile } from "@/hooks/useMediaQuery";
@@ -95,33 +94,27 @@ export function MainLayout({ children }: MainLayoutProps) {
       <div className="min-h-screen flex w-full bg-background/50">
         <ErrorBoundary fallback={sidebarFallback}>
           <Suspense fallback={sidebarFallback}>
-            <motion.nav 
-              id="main-navigation" 
-              className="hidden md:block" 
+            <nav
+              id="main-navigation"
+              className="hidden md:block"
               aria-label="Navegação principal"
-              initial={{ x: -280, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             >
               <RoleAwareSidebar />
-            </motion.nav>
+            </nav>
           </Suspense>
         </ErrorBoundary>
-        
-        <motion.main 
-          id="main-content" 
+
+        <main
+          id="main-content"
           className={cn(
             "flex-1 relative flex flex-col bg-background/40 backdrop-blur-[2px]",
             isMobile && "pb-[calc(5rem+env(safe-area-inset-bottom,0px))]"
           )}
           role="main"
           aria-label="Conteúdo principal"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Mobile Header */}
-          <MobilePageHeader 
+          <MobilePageHeader
             title={currentPageInfo.title}
             subtitle={currentPageInfo.subtitle}
             rightAction={
@@ -138,44 +131,38 @@ export function MainLayout({ children }: MainLayoutProps) {
               </div>
             }
           />
-          
+
           {/* Desktop Top Bar — clean, grouped */}
           <DesktopTopBar searchRef={searchRef} />
-          
+
           <ErrorBoundary fallback={null}>
             <Suspense fallback={null}>
               <GlobalSearch ref={searchRef} />
             </Suspense>
           </ErrorBoundary>
-          
+
           {/* Main content area */}
           <div className="flex-1">
             {children}
           </div>
-        </motion.main>
-        
+        </main>
+
         <Suspense fallback={null}>
           <MobileNavigation />
         </Suspense>
-        
+
         <Suspense fallback={null}>
           <CelebrationOverlayProvider />
         </Suspense>
-        
+
         <FocusModeBreakReminder />
-        
-        <Suspense fallback={null}>
-          
-          
-        </Suspense>
-        
+
         <Suspense fallback={null}>
           <PersonalAssistantDrawer />
         </Suspense>
-        
+
         <ScrollToTop />
-        
-        
+
         <DevOnly>
           <Suspense fallback={smartSkeleton}>
             <PerformanceMonitor />

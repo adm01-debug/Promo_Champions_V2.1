@@ -46,7 +46,7 @@
     <link rel="preconnect" href="https://saejqkojleeaxzrslzfg.supabase.co" crossorigin />
     
     <!-- Security: apenas diretivas válidas via <meta>. Headers reais (X-Frame-Options, HSTS, Permissions-Policy, frame-ancestors) são aplicados pelo hosting via HTTP. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com https://nominatim.openstreetmap.org; base-uri 'self'; form-action 'self';" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     
     <!-- Fonts - use display=swap and preconnect -->
@@ -85,12 +85,21 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Register Service Worker -->
+    <!-- Register Service Worker (production only — a SW in dev caches stale
+         Vite chunks and survives normal hard-refreshes, masking real fixes) -->
     <script>
+      var isLocalDev = ['localhost', '127.0.0.1'].indexOf(location.hostname) !== -1;
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/pwa-sw.js').catch(function() {});
-        });
+        if (isLocalDev) {
+          // Clean up any SW previously registered while this guard didn't exist yet.
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.unregister(); });
+          }).catch(function () {});
+        } else {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/pwa-sw.js').catch(function() {});
+          });
+        }
       }
     </script>
   </body>

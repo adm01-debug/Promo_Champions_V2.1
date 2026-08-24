@@ -124,7 +124,7 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
     const { data: sales, error } = await admin
       .from("sales")
       .select("id,status,amount,stage,segment,notes,loss_reason,competitor_name,created_at,updated_at,closed_at")
-      .in("status", ["completed", "lost"])
+      .in("status", ["completed", "won", "lost"])
       .gte("updated_at", since)
       .limit(500);
     if (error) throw error;
@@ -134,7 +134,7 @@ Deno.serve(withRequestId('analyze-win-loss', async (req, _ctx) => {
 
     // AI calls are inherently sequential per-sale; DB writes are collected and batched after
     for (const s of (sales as SaleRow[] | null) ?? []) {
-      const outcome = s.status === "completed" ? "won" : "lost";
+      const outcome = s.status === "lost" ? "lost" : "won";
       const closedAt = s.closed_at ?? s.updated_at;
       const cycleDays = closedAt ? (new Date(closedAt).getTime() - new Date(s.created_at).getTime()) / 86400000 : null;
 

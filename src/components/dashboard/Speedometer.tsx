@@ -1,8 +1,6 @@
-import { useEffect, useState, useMemo, useRef, memo } from 'react';
+import { useEffect, useState, useMemo, useRef, memo, useCallback } from 'react';
 import { sanitizeCsvCell } from '@/utils/csvExport';
 import { motion } from 'framer-motion';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import {
   TrendingUp,
   TrendingDown,
@@ -168,8 +166,12 @@ export const Speedometer = memo(
       document.body.removeChild(link);
     };
 
-    const handleExportPDF = () => {
+    const handleExportPDF = async () => {
       if (!displayData.length) return;
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ]);
       const doc = new jsPDF();
 
       doc.setFontSize(20);

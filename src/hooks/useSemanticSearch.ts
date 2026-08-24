@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { fetchWithUserToken } from "@/lib/edgeFetch";
 
 export interface SemanticProduct {
   id: string;
@@ -30,12 +31,9 @@ export function useSemanticSearch() {
     setLoading(true);
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/semantic-search`;
-      const res = await fetch(url, {
+      const res = await fetchWithUserToken(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, limit: 20 }),
       });
 

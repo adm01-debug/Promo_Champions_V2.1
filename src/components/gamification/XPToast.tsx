@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, createContext, useContext, useCallback, ReactNode } from 'react';
+import { useState, createContext, useContext, useCallback, useMemo, ReactNode } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface XPNotification {
@@ -37,8 +37,10 @@ export function XPToastProvider({ children }: { children: ReactNode }) {
     }, 3000);
   }, []);
 
+  const value = useMemo(() => ({ showXP }), [showXP]);
+
   return (
-    <XPToastContext.Provider value={{ showXP }}>
+    <XPToastContext.Provider value={value}>
       {children}
       <XPToastContainer notifications={notifications} />
     </XPToastContext.Provider>
