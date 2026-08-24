@@ -1,0 +1,350 @@
+import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Download, LayoutDashboard, Settings2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuoteCadences } from '@/hooks/cadences/useQuoteCadences';
+import { QuoteCadenceMetrics } from '@/components/cadences/quote/QuoteCadenceMetrics';
+import { QuoteCadenceConversionChart } from '@/components/cadences/quote/QuoteCadenceConversionChart';
+import { QuoteCadenceCard } from '@/components/cadences/quote/QuoteCadenceCard';
+import { QuoteCadenceComparison } from '@/components/cadences/quote/QuoteCadenceComparison';
+import { QuoteCadenceBulkBar } from '@/components/cadences/quote/QuoteCadenceBulkBar';
+import { SkeletonShimmer } from '@/components/ui/skeleton-shimmer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useCallback, useMemo, useState } from 'react';
+import { QuoteCadenceDetailDrawer } from '@/components/cadences/quote/QuoteCadenceDetailDrawer';
+import { QuoteCadenceEmptyState } from '@/components/cadences/quote/QuoteCadenceEmptyState';
+import type { QuoteCadenceRow } from '@/hooks/cadences/useQuoteCadences';
+import {
+  QuoteCadenceFilters,
+  emptyQuoteCadenceFilters,
+  type QuoteCadenceFilterValues,
+} from '@/components/cadences/quote/QuoteCadenceFilters';
+import { differenceInCalendarDays, isToday } from 'date-fns';
+import { useQuoteCadenceRealtime } from '@/hooks/cadences/useQuoteCadenceRealtime';
+import { exportToCSV } from '@/lib/csvExporter';
+import { quoteCadencesToCsvRows } from '@/lib/quoteCadenceExport';
+import { useQuoteCadenceShortcuts } from '@/hooks/cadences/useQuoteCadenceShortcuts';
+import { CadenceTemplateManager } from '@/components/sales/cadence/CadenceTemplateManager';
+import { ContactFrequencyRules } from '@/components/sales/cadence/ContactFrequencyRules';
+import { ApprovalQueue } from '@/components/sales/cadence/ApprovalQueue';
+import { CadenceOutcomeConfig } from '@/components/sales/cadence/CadenceOutcomeConfig';
+import { CadenceAlertConfig } from '@/components/sales/cadence/CadenceAlertConfig';
+import { CadenceSimulationDialog } from '@/components/sales/cadence/CadenceSimulationDialog';
+
+type Filter = 'all' | 'active' | 'paused' | 'completed';
+type ViewMode = 'monitoring' | 'strategy';
+
+export default function QuoteCadencesPage() {
+  useQuoteCadenceRealtime();
+  const { data, isLoading } = useQuoteCadences();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const todayOnly = searchParams.get('filter') === 'today';
+  const [filter, setFilter] = useState<Filter>('active');
+  const [viewMode, setViewMode] = useState<ViewMode>('monitoring');
+  const [selected, setSelected] = useState<QuoteCadenceRow | null>(null);
+  const [advanced, setAdvanced] = useState<QuoteCadenceFilterValues>(
+    emptyQuoteCadenceFilters
+  );
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const toggleSelect = (id: string) =>
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+
+  const rows = useMemo(() => {
+    const base = (data ?? []).filter(r => filter === 'all' || r.status === filter);
+    const search = advanced.search.trim().toLowerCase();
+    const seller = advanced.seller.trim().toLowerCase();
+    const min = advanced.minValue !== '' ? Number(advanced.minValue) : null;
+    const max = advanced.maxValue !== '' ? Number(advanced.maxValue) : null;
+    const today = new Date();
+
+    return base.filter(r => {
+      const q = r.quote;
+      if (search && !(q?.client_name ?? '').toLowerCase().includes(search)) return false;
+      if (seller && !(q?.seller_name ?? '').toLowerCase().includes(seller)) return false;
+      if (min !== null && (q?.total_value ?? 0) < min) return false;
+      if (max !== null && (q?.total_value ?? 0) > max) return false;
+      if (advanced.daysWithoutResponse > 0) {
+        const sentAt = q?.sent_at
+          ? new Date(q.sent_at)
+          : r.started_at
+            ? new Date(r.started_at)
+            : null;
+        if (!sentAt) return false;
+        if (differenceInCalendarDays(today, sentAt) < advanced.daysWithoutResponse)
+          return false;
+      }
+      if (todayOnly) {
+        if (!r.next_action_date) return false;
+        if (!isToday(new Date(r.next_action_date))) return false;
+      }
+      return true;
+    });
+  }, [data, filter, advanced, todayOnly]);
+
+  const handleExport = useCallback(
+    () => exportToCSV(quoteCadencesToCsvRows(rows), 'cadencias-orcamentos'),
+    [rows]
+  );
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedIds(prev => (prev.length === rows.length ? [] : rows.map(r => r.id)));
+  }, [rows]);
+
+  useQuoteCadenceShortcuts({
+    onExport: handleExport,
+    onSelectAll: handleSelectAll,
+    onClearSelection: () => setSelectedIds([]),
+    onCloseDrawer: () => setSelected(null),
+    hasSelection: selectedIds.length > 0,
+    drawerOpen: !!selected,
+  });
+
+  const clearTodayFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('filter');
+    setSearchParams(next, { replace: true });
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Cadência de Orçamentos | Promo Champions</title>
+        <meta
+          name="description"
+          content="Follow-up automatizado de orçamentos: acompanhe etapas, conversão e tarefas do dia em uma cadência inteligente."
+        />
+        <link
+          rel="canonical"
+          href="https://championgifts.lovable.app/cadencias-orcamentos"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content="https://championgifts.lovable.app/cadencias-orcamentos"
+        />
+        <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
+        <meta
+          property="og:description"
+          content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
+        />
+        <meta
+          property="og:image"
+          content="https://championgifts.lovable.app/favicon.ico"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />
+        <meta
+          name="twitter:description"
+          content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
+        />
+      </Helmet>
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6 p-4 md:p-6"
+      >
+        <header className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+              <Send className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="font-display text-page-title">Cadências de Orçamento</h1>
+              <p className="text-sm text-muted-foreground">
+                Follow-up automatizado de propostas enviadas
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Tabs
+              value={viewMode}
+              onValueChange={v => setViewMode(v as ViewMode)}
+              className="bg-muted p-1 rounded-lg"
+            >
+              <TabsList className="bg-transparent h-8">
+                <TabsTrigger
+                  value="monitoring"
+                  className="text-xs data-[state=active]:bg-background"
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
+                  Monitoramento
+                </TabsTrigger>
+                <TabsTrigger
+                  value="strategy"
+                  className="text-xs data-[state=active]:bg-background"
+                >
+                  <Settings2 className="h-3.5 w-3.5 mr-1.5" />
+                  Estratégia e Regras
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={rows.length === 0}
+              aria-label="Exportar cadências filtradas para CSV"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Exportar CSV
+            </Button>
+          </div>
+        </header>
+
+        <AnimatePresence mode="wait">
+          {viewMode === 'monitoring' ? (
+            <motion.div
+              key="monitoring"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              className="space-y-6"
+            >
+              <QuoteCadenceMetrics />
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                  <QuoteCadenceConversionChart />
+                  <QuoteCadenceComparison />
+
+                  {todayOnly && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                        Tarefas para hoje
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearTodayFilter}
+                        aria-label="Limpar filtro de hoje"
+                      >
+                        Limpar filtro
+                      </Button>
+                    </div>
+                  )}
+
+                  <QuoteCadenceFilters values={advanced} onChange={setAdvanced} />
+
+                  <Tabs
+                    value={filter}
+                    onValueChange={v => setFilter(v as Filter)}
+                    className="space-y-4"
+                  >
+                    <TabsList>
+                      <TabsTrigger value="active">Ativos</TabsTrigger>
+                      <TabsTrigger value="paused">Pausados</TabsTrigger>
+                      <TabsTrigger value="completed">Concluídos</TabsTrigger>
+                      <TabsTrigger value="all">Todos</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value={filter} className="mt-0" forceMount>
+                      {isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {Array.from({ length: 4 }).map((_, i) => (
+                            <SkeletonShimmer key={i} className="h-44 rounded-xl" />
+                          ))}
+                        </div>
+                      ) : rows.length === 0 ? (
+                        <QuoteCadenceEmptyState />
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {rows.map(r => (
+                            <motion.button
+                              key={r.id}
+                              type="button"
+                              onClick={() => setSelected(r)}
+                              className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                            >
+                              <QuoteCadenceCard
+                                row={r}
+                                selected={selectedIds.includes(r.id)}
+                                onToggleSelect={toggleSelect}
+                              />
+                            </motion.button>
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                <div className="lg:col-span-1">
+                  <ApprovalQueue />
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="strategy"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            >
+              <div className="lg:col-span-2 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-section-title">Configurações de Estratégia</h2>
+                  <CadenceSimulationDialog />
+                </div>
+                <Tabs defaultValue="outcomes" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="outcomes">Desfechos de Ligação</TabsTrigger>
+                    <TabsTrigger value="alerts">Templates de Alerta</TabsTrigger>
+                    <TabsTrigger value="templates">
+                      Mensagens (WhatsApp/Email)
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="outcomes" className="mt-4">
+                    <CadenceOutcomeConfig />
+                  </TabsContent>
+                  <TabsContent value="alerts" className="mt-4">
+                    <CadenceAlertConfig />
+                  </TabsContent>
+                  <TabsContent value="templates" className="mt-4">
+                    <CadenceTemplateManager />
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <div className="lg:col-span-1 space-y-6">
+                <ContactFrequencyRules />
+                <Card className="glass border-border/40">
+                  <CardHeader>
+                    <CardTitle className="text-section-title text-sm">Configurações Rápidas</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between text-xs">
+                      <span>Fuso Horário Padrão</span>
+                      <Badge variant="outline">America/Sao_Paulo</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span>Janela de Alertas</span>
+                      <Badge variant="outline">09:00 - 18:00</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      <QuoteCadenceBulkBar selectedIds={selectedIds} onClear={() => setSelectedIds([])} />
+
+      <QuoteCadenceDetailDrawer
+        row={selected}
+        open={!!selected}
+        onOpenChange={o => !o && setSelected(null)}
+      />
+    </>
+  );
+}

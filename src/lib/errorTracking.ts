@@ -1,0 +1,226 @@
+/**
+ * Centralized Error Tracking Service
+ * Captures, categorizes, and persists errors for monitoring.
+ */
+import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
+
+type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
+type ErrorCategory = 'runtime' | 'network' | 'auth' | 'database' | 'ui' | 'unknown';
+
+interface TrackedError {
+  message: string;
+  stack?: string;
+  severity: ErrorSeverity;
+  category: ErrorCategory;
+  component?: string;
+  metadata?: Record<string, unknown>;
+  url?: string;
+  userAgent?: string;
+}
+
+const ERROR_BUFFER: TrackedError[] = [];
+const BREADCRUMBS: {
+  message: string;
+  timestamp: number;
+  category?: string;
+  data?: unknown;
+}[] = [];
+const MAX_BREADCRUMBS = 20;
+const FLUSH_INTERVAL = 30_000; // 30s
+const MAX_BUFFER = 50;
+let flushTimer: ReturnType<typeof setInterval> | null = null;
+
+export function addBreadcrumb(message: string, category?: string, data?: unknown): void {
+  BREADCRUMBS.push({ message, timestamp: Date.now(), category, data });
+  if (BREADCRUMBS.length > MAX_BREADCRUMBS) {
+    BREADCRUMBS.shift();
+  }
+}
+
+function classifyError(error: Error | string): {
+  severity: ErrorSeverity;
+  category: ErrorCategory;
+} {
+  const msg = typeof error === 'string' ? error : error.message;
+  const lower = msg.toLowerCase();
+
+  if (lower.includes('chunk') || lower.includes('dynamic import')) {
+    return { severity: 'medium', category: 'network' };
+  }
+  if (lower.includes('401') || lower.includes('unauthorized') || lower.includes('jwt')) {
+    return { severity: 'high', category: 'auth' };
+  }
+  if (lower.includes('network') || lower.includes('fetch') || lower.includes('cors')) {
+    return { severity: 'medium', category: 'network' };
+  }
+  if (lower.includes('supabase') || lower.includes('postgres') || lower.includes('rls')) {
+    return { severity: 'high', category: 'database' };
+  }
+  if (
+    lower.includes('render') ||
+    lower.includes('hydrat') ||
+    lower.includes('component')
+  ) {
+    return { severity: 'medium', category: 'ui' };
+  }
+  return { severity: 'medium', category: 'runtime' };
+}
+
+async function flushErrors(): Promise<void> {
+  if (ERROR_BUFFER.length === 0) return;
+
+  const batch = ERROR_BUFFER.splice(0, MAX_BUFFER);
+
+  try {
+    const { error } = await supabase.from('error_logs').insert(
+      batch.map(e => ({
+        message: e.message.slice(0, 1000),
+        stack_trace: e.stack?.slice(0, 5000) ?? null,
+        severity: e.severity,
+        category: e.category,
+        component: e.component ?? null,
+        metadata: (e.metadata ?? {}) as Json,
+        url: e.url ?? window.location.href,
+        user_agent: e.userAgent ?? navigator.userAgent,
+      }))
+    );
+
+    if (error && import.meta.env.DEV) {
+      console.warn('[ErrorTracking] Failed to flush:', error.message);
+    }
+  } catch {
+    // Silently fail - don't create error loops
+  }
+}
+
+export function captureError(
+  error: Error | string,
+  options?: {
+    component?: string;
+    metadata?: Record<string, unknown>;
+    severity?: ErrorSeverity;
+    category?: ErrorCategory;
+  }
+): void {
+  const msg = typeof error === 'string' ? error : error.message;
+  const stack = typeof error === 'string' ? undefined : error.stack;
+  const { severity, category } = classifyError(error);
+
+  const tracked: TrackedError = {
+    message: msg,
+    stack,
+    severity: options?.severity ?? severity,
+    category: options?.category ?? category,
+    component: options?.component,
+    metadata: {
+      ...(options?.metadata ?? {}),
+      breadcrumbs: [...BREADCRUMBS],
+    },
+    url: window.location.href,
+    userAgent: navigator.userAgent,
+  };
+
+  ERROR_BUFFER.push(tracked);
+
+  // Auto-recovery for chunk errors
+  if (category === 'network' && msg.toLowerCase().includes('chunk')) {
+    const lastReload = localStorage.getItem('last-error-reload');
+    const now = Date.now();
+    if (!lastReload || now - parseInt(lastReload) > 60000) {
+      localStorage.setItem('last-error-reload', now.toString());
+      console.warn('Chunk error detected. Auto-reloading for recovery...');
+      window.location.reload();
+      return;
+    }
+  }
+
+  if (ERROR_BUFFER.length >= MAX_BUFFER) {
+    void flushErrors();
+  }
+
+  if (import.meta.env.DEV) {
+    console.warn(`[ErrorTracking] ${tracked.severity}/${tracked.category}: ${msg}`);
+  }
+}
+
+export function captureException(error: unknown, component?: string): void {
+  if (error instanceof Error) {
+    captureError(error, { component });
+  } else {
+    captureError(String(error), { component });
+  }
+}
+
+export function initErrorTracking(): void {
+  if (flushTimer) return;
+
+  // Flush periodically
+  flushTimer = setInterval(() => void flushErrors(), FLUSH_INTERVAL);
+
+  // Flush on unload
+  window.addEventListener('beforeunload', () => void flushErrors());
+
+  // Capture unhandled errors
+  window.addEventListener('error', event => {
+    captureError(event.error instanceof Error ? event.error : event.message, {
+      category: 'runtime',
+      metadata: { filename: event.filename, lineno: event.lineno, colno: event.colno },
+    });
+  });
+
+  // Capture unhandled promise rejections
+  window.addEventListener('unhandledrejection', event => {
+    captureException(event.reason, 'unhandledrejection');
+  });
+
+  // Intercept console.error / console.warn so existing call sites flow into errorTracking
+  // without requiring file-by-file refactors. Original console behavior is preserved.
+  const originalError = console.error.bind(console);
+  const originalWarn = console.warn.bind(console);
+
+  console.error = (...args: unknown[]) => {
+    try {
+      const first = args[0];
+      const message =
+        first instanceof Error
+          ? first
+          : args.map(a => (typeof a === 'string' ? a : safeStringify(a))).join(' ');
+      // Skip self-originated tracking logs to avoid loops.
+      if (typeof message === 'string' && message.startsWith('[ErrorTracking]')) {
+        originalError(...args);
+        return;
+      }
+      captureError(message, { severity: 'high', metadata: { source: 'console.error' } });
+    } catch {
+      /* never break console */
+    }
+    originalError(...args);
+  };
+
+  console.warn = (...args: unknown[]) => {
+    try {
+      const first = args[0];
+      const message =
+        first instanceof Error
+          ? first
+          : args.map(a => (typeof a === 'string' ? a : safeStringify(a))).join(' ');
+      if (typeof message === 'string' && message.startsWith('[ErrorTracking]')) {
+        originalWarn(...args);
+        return;
+      }
+      captureError(message, { severity: 'low', metadata: { source: 'console.warn' } });
+    } catch {
+      /* never break console */
+    }
+    originalWarn(...args);
+  };
+}
+
+function safeStringify(value: unknown): string {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}

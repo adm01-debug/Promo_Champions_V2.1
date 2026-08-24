@@ -1,0 +1,125 @@
+import { useState, useEffect } from 'react';
+import { Activity, ShieldCheck, AlertCircle, WifiOff } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
+
+export function SystemHealthBadge() {
+  const [status, setStatus] = useState<'healthy' | 'warning' | 'error' | 'offline'>(
+    'healthy'
+  );
+  const [, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Initial check
+    checkSystemHealth();
+
+    // Periodic check
+    // Verificação a cada 3 minutos para reduzir carga no Postgres
+    // (uma única query filtrada substitui o antigo par de queries por minuto).
+    const interval = setInterval(checkSystemHealth, 180000);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const checkSystemHealth = async () => {
+    if (!navigator.onLine) {
+      setStatus('offline');
+      return;
+    }
+
+    try {
+      // Query única: valida conectividade E detecta erros críticos recentes.
+      // Usa o índice (severity, created_at) em error_logs — muito mais barata
+      // que o LIMIT 1 sem filtro que rodava antes.
+      const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
+      const { data: recentErrors, error } = await supabase
+        .from('error_logs')
+        .select('id')
+        .eq('severity', 'critical')
+        .gt('created_at', oneHourAgo)
+        .limit(1);
+
+      if (error) {
+        setStatus('error');
+        return;
+      }
+
+      setStatus(recentErrors && recentErrors.length > 0 ? 'warning' : 'healthy');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  const statusConfig = {
+    healthy: {
+      icon: <ShieldCheck className="h-4 w-4 text-emerald-500" />,
+      text: 'Sistema Operacional',
+      color: 'bg-emerald-500/10 border-emerald-500/20',
+      tooltip: 'Todos os sistemas operando normalmente.',
+    },
+    warning: {
+      icon: <Activity className="h-4 w-4 text-amber-500" />,
+      text: 'Atenção',
+      color: 'bg-amber-500/10 border-amber-500/20',
+      tooltip: 'Instabilidades detectadas recentemente. Monitorando...',
+    },
+    error: {
+      icon: <AlertCircle className="h-4 w-4 text-rose-500" />,
+      text: 'Erro Crítico',
+      color: 'bg-rose-500/10 border-rose-500/20',
+      tooltip: 'Falha na conexão com o banco de dados.',
+    },
+    offline: {
+      icon: <WifiOff className="h-4 w-4 text-muted-foreground" />,
+      text: 'Offline',
+      color: 'bg-muted/10 border-border',
+      tooltip: 'Você está sem conexão com a internet.',
+    },
+  };
+
+  const current = statusConfig[status];
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className={cn(
+              'flex items-center gap-2 px-2.5 py-1 rounded-full border transition-all duration-300',
+              current.color
+            )}
+          >
+            <div className="relative flex items-center justify-center">
+              {current.icon}
+              {status === 'healthy' && (
+                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+              )}
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest hidden lg:block">
+              {current.text}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="text-xs">
+          <p>{current.tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}

@@ -1,0 +1,105 @@
+name: Quote-to-Sale Guard Rails
+
+on:
+  pull_request:
+    paths:
+      - 'src/hooks/useQuotes.ts'
+      - 'src/hooks/quoteErrorMessages.ts'
+      - 'tests/e2e/quote-to-sale-*'
+      - 'tests/e2e/helpers/quote-to-sale-*'
+      - 'scripts/verify-quote-to-sale-invariants.ts'
+      - 'supabase/migrations/**convert**'
+      - 'supabase/tests/quote-to-sale-stress.sql'
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit — parseConvertQuoteError
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install
+        run: npm ci
+      - name: Vitest — quote-error-messages
+        run: npx vitest run src/test/quote-error-messages.test.ts src/test/quote-conversion-errors.test.ts
+
+  invariants:
+    name: Production Invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    needs: unit-tests
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install
+        run: npm ci
+      - name: Run invariants script
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: |
+          if [ -z "$E2E_TEST_EMAIL" ]; then
+            echo "::warning::E2E_TEST_EMAIL ausente (fork) — pulando invariantes"
+            exit 0
+          fi
+          npx tsx scripts/verify-quote-to-sale-invariants.ts
+
+  e2e-quote-to-sale:
+    name: E2E — Quote-to-Sale Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: unit-tests
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install
+        run: npm ci
+      - name: Skip check
+        id: skip
+        env:
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+        run: |
+          if [ -z "$E2E_TEST_EMAIL" ]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "::warning::E2E_TEST_EMAIL ausente — E2E pulada (compat com forks)"
+          else
+            echo "run=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Install Playwright
+        if: steps.skip.outputs.run == 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Playwright — quote-to-sale specs
+        if: steps.skip.outputs.run == 'true'
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: npx playwright test tests/e2e/quote-to-sale-*.spec.ts
+      - name: Upload report
+        if: always() && steps.skip.outputs.run == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-quote-to-sale-report
+          path: playwright-report/
+          retention-days: 14

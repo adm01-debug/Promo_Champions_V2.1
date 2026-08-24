@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "check": "deno check src/main.ts"
+  },
+  "lint": {
+    "files": {
+      "include": ["src"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["src"]
+    }
+  }
+}

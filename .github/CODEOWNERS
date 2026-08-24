@@ -1,0 +1,36 @@
+# CODEOWNERS
+# Este arquivo define quem é responsável por revisar alterações em partes específicas do código
+
+# Regra global - owner principal do projeto
+* @adm01-debug
+
+# Frontend
+/src/components/ @adm01-debug
+/src/pages/ @adm01-debug
+/src/styles/ @adm01-debug
+
+# Backend e Database
+/supabase/ @adm01-debug
+/supabase/migrations/ @adm01-debug
+/supabase/functions/ @adm01-debug
+
+# Configurações e CI/CD
+/.github/ @adm01-debug
+/.github/workflows/ @adm01-debug
+/vite.config.ts @adm01-debug
+/tsconfig.json @adm01-debug
+
+# Documentação
+/docs/ @adm01-debug
+README.md @adm01-debug
+CONTRIBUTING.md @adm01-debug
+SECURITY.md @adm01-debug
+
+# Dependências
+package.json @adm01-debug
+package-lock.json @adm01-debug
+
+# Notas:
+# - Ao adicionar novos membros à equipe, adicione seus handles aqui
+# - Use @organizacao/time para times inteiros
+# - Ordem importa: regras mais específicas sobrescrevem as gerais

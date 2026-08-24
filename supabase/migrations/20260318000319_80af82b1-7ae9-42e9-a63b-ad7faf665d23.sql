@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Authenticated users can request password reset" ON public.password_reset_requests;

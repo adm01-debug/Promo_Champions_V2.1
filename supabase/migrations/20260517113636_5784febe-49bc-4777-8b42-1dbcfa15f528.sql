@@ -1,0 +1,13 @@
+-- Revoke execute from public on all current functions in public schema
+REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC;
+REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM anon;
+
+-- Grant execute back to authenticated and service_role
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO service_role;
+
+-- Ensure future functions also have these restrictions
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO service_role;

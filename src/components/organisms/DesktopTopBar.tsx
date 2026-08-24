@@ -1,0 +1,314 @@
+import React, { RefObject, useMemo, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { PreloadLink } from '@/components/navigation/PreloadLink';
+import { Bell, Sparkles, FileText, Mic, LogOut, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTodaysQuoteCadenceTasks } from '@/hooks/cadences/useTodaysQuoteCadenceTasks';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { ThemeToggle } from '@/components/atoms/ThemeToggle';
+import { FocusModeToggle } from '@/components/focus/FocusModeToggle';
+import { LanguageToggle } from '@/components/atoms/LanguageToggle';
+import { NotificationBadge } from '@/components/ui/NotificationBadge';
+import { NotificationPopover } from '@/components/notifications';
+import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { BackButton } from '@/components/navigation/BackButton';
+import { cn } from '@/lib/utils';
+import { useUnreadNotificationsCount } from '@/hooks/useUnreadNotificationsCount';
+import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
+import { StreakIndicator } from '@/components/competitive/StreakIndicator';
+import { SystemHealthBadge } from '@/components/atoms/SystemHealthBadge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { UserRoleBadge } from '@/components/molecules/UserRoleBadge';
+
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Dashboard',
+  '/pipeline': 'Pipeline',
+  '/vendas': 'Vendas',
+  '/clientes': 'Clientes',
+  '/produtos': 'Produtos',
+  '/tarefas': 'Tarefas',
+  '/atividades': 'Atividades',
+  '/cadencias': 'Cadências',
+  '/cadencias-orcamentos': 'Cadências de Orçamento',
+  '/metas': 'Metas',
+  '/analytics': 'Analytics',
+  '/relatorios': 'Relatórios',
+  '/ranking': 'Ranking',
+  '/vendedores': 'Vendedores',
+  '/forecast': 'Forecast',
+  '/inteligencia-preditiva': 'Inteligência Preditiva',
+  '/revops': 'Revenue Operations Hub',
+  '/calendario': 'Calendário',
+  '/automacoes': 'Automações',
+  '/automacao-inteligente': 'Automação Inteligente',
+  '/coaching-inteligente': 'Coaching Inteligente',
+  '/configuracoes': 'Configurações',
+  '/notificacoes': 'Notificações',
+  '/assistente': 'Assistente IA',
+  '/admin': 'Admin',
+  '/customer-success': 'Customer Success',
+  '/sales-enablement': 'Sales Enablement',
+  '/conversational-intelligence': 'Conversational Intelligence',
+  '/pricing-intelligence': 'Pricing Intelligence',
+  '/territory-optimization': 'Territory Optimization',
+};
+
+interface DesktopTopBarProps {
+  searchRef: RefObject<GlobalSearchHandle>;
+}
+
+export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {
+  const { theme } = useDashboardTheme();
+  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
+  const { data: todaysQuoteTasks } = useTodaysQuoteCadenceTasks();
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const quoteTasksCount = todaysQuoteTasks?.count ?? 0;
+  const { salesperson, signOut } = useAuth();
+
+  useEffect(() => {
+    const handleVoiceNav = (e: Event) =>
+      setIsVoiceListening((e as CustomEvent<boolean>).detail);
+    window.addEventListener('voice-nav:listening', handleVoiceNav);
+    return () => window.removeEventListener('voice-nav:listening', handleVoiceNav);
+  }, []);
+  const location = useLocation();
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const isTopLevel = pathSegments.length < 2;
+  const pageTitle = useMemo(
+    () => PAGE_TITLES[location.pathname] ?? null,
+    [location.pathname]
+  );
+  return (
+    <div
+      className={cn(
+        'sticky top-0 z-40 hidden md:flex items-center justify-between h-14 px-4 lg:px-6 backdrop-blur-xl transition-all duration-500',
+        theme === 'cyber'
+          ? 'bg-[#0a0b1a]/70 border-b border-cyan-500/20 shadow-[0_4px_20px_rgba(34,211,238,0.05)]'
+          : 'bg-background/70 border-b border-border/50'
+      )}
+    >
+      {/* LEFT CLUSTER: Back Button + Sidebar Toggle + Breadcrumbs */}
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center">
+          <BackButton showLabel={false} className="mr-2" />
+
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarTrigger className="h-9 w-9 shrink-0 rounded-lg hover:bg-muted/80 transition-colors focus-ring" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-[10px] font-medium">
+                Alternar menu (⌘B)
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        {/* Page title chip (top-level) or Breadcrumbs (nested) */}
+        <div className="min-w-0 overflow-hidden flex items-center">
+          {isTopLevel && pageTitle ? (
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-4 bg-primary rounded-full" />
+              <span className="text-sm font-bold text-foreground tracking-tight">
+                {pageTitle}
+              </span>
+            </div>
+          ) : (
+            <Breadcrumbs />
+          )}
+        </div>
+      </div>
+
+      {/* RIGHT CLUSTER: Actions */}
+      <TooltipProvider delayDuration={300} skipDelayDuration={0}>
+        <div className="flex items-center gap-0.5">
+          {/* Search — visually prominent */}
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(var(--primary),0.3)' }}
+            whileTap={{ scale: 0.95 }}
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('semantic-search:open'))}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-300 group/search focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 outline-none"
+          >
+            <Sparkles className="h-4 w-4 group-hover/search:scale-110 transition-transform" />
+            <span className="text-xs font-bold uppercase tracking-widest hidden lg:inline">
+              IA Assistant
+            </span>
+            <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-0.5 rounded border border-primary/30 bg-primary/10 px-1.5 font-mono text-[10px] font-medium text-primary/70">
+              ⌘⇧F
+            </kbd>
+          </motion.button>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => searchRef.current?.open()}
+                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors"
+                aria-label="Pesquisar no sistema"
+              >
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Buscar (⌘K)</p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Voice Navigation Status */}
+          <AnimatePresence>
+            {isVoiceListening && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary mr-2"
+              >
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <Mic className="h-3.5 w-3.5" />
+                </motion.div>
+                <span className="text-[10px] font-black uppercase tracking-widest animate-pulse">
+                  IA Ouvindo...
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Streak Indicator */}
+          <StreakIndicator />
+
+          {/* Divider */}
+          <div className="w-px h-5 bg-border/50 mx-1.5" />
+
+          {/* Quote cadence tasks for today */}
+          {quoteTasksCount > 0 && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PreloadLink
+                  to="/cadencias-orcamentos?filter=today"
+                  className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
+                  aria-label={`${quoteTasksCount} tarefa${quoteTasksCount > 1 ? 's' : ''} de cadência de orçamento para hoje`}
+                >
+                  <FileText className="h-4 w-4 text-primary" />
+                  <NotificationBadge
+                    count={quoteTasksCount}
+                    size="sm"
+                    pulse={quoteTasksCount > 3}
+                    variant="info"
+                    className="absolute -top-1 -right-1"
+                  />
+                </PreloadLink>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Tarefas de cadência de orçamento para hoje ({quoteTasksCount})</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          {/* Notifications */}
+          <NotificationPopover>
+            <button
+              type="button"
+              className="relative h-9 w-9 flex items-center justify-center rounded-lg hover:bg-muted/80 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
+              aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} novas)` : ''}`}
+              title={`Notificações${unreadCount > 0 ? ` (${unreadCount} novas)` : ''}`}
+            >
+              <Bell
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  unreadCount > 5
+                    ? 'text-destructive'
+                    : unreadCount > 0
+                      ? 'text-warning'
+                      : 'text-muted-foreground'
+                )}
+              />
+              <NotificationBadge
+                count={unreadCount}
+                size="sm"
+                pulse={unreadCount > 5}
+                variant={
+                  unreadCount > 5
+                    ? 'destructive'
+                    : unreadCount > 0
+                      ? 'warning'
+                      : 'default'
+                }
+                className="absolute -top-1 -right-1"
+              />
+            </button>
+          </NotificationPopover>
+
+          {/* Focus Mode */}
+          <FocusModeToggle />
+
+          {/* Divider */}
+          <div className="w-px h-5 bg-border/50 mx-1.5" />
+
+          {/* Settings cluster */}
+          <SystemHealthBadge />
+          <LanguageToggle />
+          <ThemeToggle />
+
+          {/* User Account & Logout */}
+          <div className="w-px h-5 bg-border/50 mx-1.5" />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                aria-label={`Menu do usuário: ${salesperson?.name || 'Usuário'}`}
+                className="flex items-center gap-2 p-1 rounded-lg hover:bg-muted/80 transition-colors outline-none group"
+              >
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shadow-inner border border-primary/10 group-hover:border-primary/30 transition-all">
+                  {salesperson?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 mt-1">
+              <DropdownMenuLabel className="p-3 pb-2">
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold leading-none truncate">
+                      {salesperson?.name || 'Usuário'}
+                    </p>
+                    <UserRoleBadge />
+                  </div>
+                  <p className="text-xs leading-none text-muted-foreground truncate">
+                    {salesperson?.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => signOut()}
+                className="p-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="font-semibold">Sair do sistema</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </TooltipProvider>
+    </div>
+  );
+});
+
+DesktopTopBar.displayName = 'DesktopTopBar';

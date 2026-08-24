@@ -1,0 +1,480 @@
+import { Helmet } from 'react-helmet-async';
+import React, { Suspense, lazy, useState } from 'react';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { RankingPositionBanner } from '@/components/ranking/RankingPositionBanner';
+import { OnboardingChecklist } from '@/components/onboarding/OnboardingChecklist';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
+import { CompetitiveStatusBar } from '@/components/gamification/CompetitiveStatusBar';
+// Removed unused useDashboardKPIs import
+import {
+  useDashboardKPIsPeriod,
+  KPIPeriod,
+  PERIOD_LABELS,
+} from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import { useSalesRealtime } from '@/hooks/sales/useSalesRealtime';
+import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { useAuth } from '@/contexts/AuthContext';
+import { useDashboardPriorities } from '@/hooks/dashboard/useDashboardPriorities';
+import { DashboardLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
+import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  PageTransition,
+  containerVariants,
+  itemVariants,
+} from '@/components/transitions/PageTransition';
+import {
+  DollarSign,
+  Users,
+  TrendingUp,
+  Zap,
+  Calendar,
+  ChevronDown,
+  RotateCcw,
+} from 'lucide-react';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { useDashboardRedirect } from '@/hooks/dashboard/useDashboardRedirect';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { DevKpiDebugPanel } from '@/components/dashboard/DevKpiDebugPanel';
+
+// Lazy-loaded modules for better performance
+const OverviewModule = lazy(() =>
+  import('@/components/dashboard/modules/OverviewModule').then(m => ({
+    default: m.OverviewModule,
+  }))
+);
+const PerformanceModule = lazy(() =>
+  import('@/components/dashboard/modules/PerformanceModule').then(m => ({
+    default: m.PerformanceModule,
+  }))
+);
+const AnalyticsModule = lazy(() =>
+  import('@/components/dashboard/modules/AnalyticsModule').then(m => ({
+    default: m.AnalyticsModule,
+  }))
+);
+const CompetitionModule = lazy(() =>
+  import('@/components/dashboard/modules/CompetitionModule').then(m => ({
+    default: m.CompetitionModule,
+  }))
+);
+const IntelligenceModule = lazy(() =>
+  import('@/components/dashboard/modules/IntelligenceModule').then(m => ({
+    default: m.IntelligenceModule,
+  }))
+);
+const EngagementModule = lazy(() =>
+  import('@/components/dashboard/modules/EngagementModule').then(m => ({
+    default: m.EngagementModule,
+  }))
+);
+
+// On-demand module loaders (per tab) — avoids pulling recharts/framer-motion
+// into the initial chunk when the user never opens those tabs.
+const MODULE_LOADERS: Record<string, () => Promise<unknown>> = {
+  overview: () => import('@/components/dashboard/modules/OverviewModule'),
+  performance: () => import('@/components/dashboard/modules/PerformanceModule'),
+  analytics: () => import('@/components/dashboard/modules/AnalyticsModule'),
+  competition: () => import('@/components/dashboard/modules/CompetitionModule'),
+  intelligence: () => import('@/components/dashboard/modules/IntelligenceModule'),
+  engagement: () => import('@/components/dashboard/modules/EngagementModule'),
+};
+
+const idle = (cb: () => void) => {
+  const w = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  };
+  if (typeof w.requestIdleCallback === 'function') {
+    w.requestIdleCallback(cb, { timeout: 2500 });
+  } else {
+    setTimeout(cb, 1500);
+  }
+};
+
+const SECTION_MAP: Record<string, string> = {
+  performance: 'performance',
+  analises: 'analytics',
+  competicao: 'competition',
+  inteligencia: 'intelligence',
+  engajamento: 'engagement',
+};
+
+const Index = () => {
+  const { section } = useParams<{ section?: string }>();
+  const navigate = useNavigate();
+  useDashboardRedirect();
+  const [period, setPeriod] = useState<KPIPeriod>('current_month');
+  const { salesperson } = useAuth();
+
+  const { data: kpis, isLoading } = useDashboardKPIsPeriod(
+    period,
+    salesperson?.id,
+    salesperson?.role
+  );
+  const { data: goalsData } = useGoalsDashboard();
+  const { data: salesTrend } = useSalesChartData('30d');
+  const priorities = useDashboardPriorities();
+
+  useSalesRealtime(
+    salesperson?.id,
+    salesperson?.role as 'sdr' | 'closer' | 'hybrid' | undefined
+  );
+
+  // Validate section
+  const isValidSection = section && (section in SECTION_MAP || section === 'visao-geral');
+  const activeTab = section ? (SECTION_MAP[section] ?? 'overview') : 'overview';
+
+  React.useEffect(() => {
+    // Preload only the active tab's module on idle. Sibling tabs are
+    // prefetched lazily on hover via the Tabs onValueChange path below.
+    idle(() => {
+      MODULE_LOADERS[activeTab]?.();
+    });
+  }, [activeTab]);
+
+  if (section && !isValidSection) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const formatCurrency = (value: number) =>
+    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+
+  const isSDR = salesperson?.role === 'sdr';
+
+  const hasRevenue = (kpis?.current.totalRevenue ?? 0) > 0;
+  const hasSales = (kpis?.current.totalSales ?? 0) > 0;
+  const hasClients = (kpis?.current.newClients ?? 0) > 0;
+  const hasConversion = (kpis?.current.conversionRate ?? 0) > 0;
+
+  return (
+    <PageTransition className="pb-10 overflow-x-hidden">
+      <DevKpiDebugPanel />
+      <Helmet>
+        <title>Dashboard | Circuito de Vencedores</title>
+        <meta
+          name="description"
+          content="Acompanhe sua performance em tempo real no Circuito de Vencedores. KPIs de vendas, ranking competitivo e inteligência comercial 10/10."
+        />
+        <meta
+          name="keywords"
+          content="vendas, dashboard, performance, CRM, inteligência comercial"
+        />
+        <link rel="canonical" href="https://promochampions.com.br/dashboard" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Circuito de Vencedores Dashboard',
+            description:
+              'Plataforma inteligente de gestão de vendas e performance comercial.',
+            publisher: {
+              '@type': 'Organization',
+              name: 'Promo Champions',
+            },
+          })}
+        </script>
+      </Helmet>
+
+      <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-700">
+        <RankingPositionBanner />
+        <CompetitiveStatusBar />
+        <OnboardingChecklist />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex-1">
+            <DashboardHeader />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="bg-card/60 border-primary/30 text-primary hover:bg-primary/10 font-mono text-[10px] uppercase tracking-widest h-10 px-4"
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  PERÍODO: {PERIOD_LABELS[period].label}
+                  <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-popover/95 border-primary/30 backdrop-blur-xl"
+              >
+                {(Object.keys(PERIOD_LABELS) as KPIPeriod[]).map(p => (
+                  <DropdownMenuItem
+                    key={p}
+                    onClick={() => setPeriod(p)}
+                    className="text-xs font-mono uppercase tracking-widest text-foreground focus:bg-primary/20 focus:text-primary cursor-pointer"
+                  >
+                    {PERIOD_LABELS[p].label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Priority Hint based on role */}
+        <AnimatePresence>
+          {priorities.roleHint && (
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 20, opacity: 0 }}
+              className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center gap-3 overflow-hidden relative group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="p-1.5 rounded-full bg-current/10 relative z-10">
+                <Zap className="h-4 w-4 animate-pulse" />
+              </div>
+              <p className="text-sm font-bold uppercase tracking-tight relative z-10">
+                {priorities.roleHint}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <SkeletonTransition isLoading={isLoading} skeleton={<DashboardLoadingSkeleton />}>
+          <div className="space-y-8">
+            {/* KPI Overview */}
+            {!hasRevenue && !hasSales && !hasClients ? (
+              <motion.div
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                className="w-full h-[50vh] min-h-[400px]"
+              >
+                <DashboardEmptyState type="revenue" hero />
+              </motion.div>
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              >
+                {/* Hero Stat - Logic adapted for SDR or Closer */}
+                <motion.div variants={itemVariants} className="md:col-span-3">
+                  {isSDR ? (
+                    <StatCard
+                      title="Taxa de Agendamento"
+                      value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                      numericValue={kpis?.current.conversionRate ?? 0}
+                      change={kpis?.changes.conversion ?? 0}
+                      icon={TrendingUp}
+                      variant="primary"
+                      hero
+                    />
+                  ) : hasRevenue ? (
+                    <StatCard
+                      title="Faturamento Total"
+                      value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+                      numericValue={kpis?.current.totalRevenue ?? 0}
+                      change={kpis?.changes.revenue ?? 0}
+                      previousValue={
+                        kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined
+                      }
+                      icon={DollarSign}
+                      variant="primary"
+                      hero
+                      sparklineData={salesTrend?.map(d => d.value)}
+                    />
+                  ) : (
+                    <DashboardEmptyState type="revenue" hero />
+                  )}
+                </motion.div>
+
+                <motion.div
+                  variants={itemVariants}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:col-span-3"
+                >
+                  {/* Card 1: Vendas or Reuniões */}
+                  <motion.div variants={itemVariants}>
+                    {isSDR ? (
+                      <StatCard
+                        title="Reuniões Agendadas"
+                        value={String(kpis?.current.meetingsScheduled ?? 0)}
+                        numericValue={kpis?.current.meetingsScheduled ?? 0}
+                        change={kpis?.changes.meetings ?? 0}
+                        icon={Calendar}
+                        variant="success"
+                      />
+                    ) : (
+                      <StatCard
+                        title="Venda Ativação"
+                        value={formatCurrency(kpis?.current.firstSaleRevenue ?? 0)}
+                        numericValue={kpis?.current.firstSaleRevenue ?? 0}
+                        change={kpis?.changes.firstSaleRevenue ?? 0}
+                        previousValue={
+                          kpis
+                            ? formatCurrency(kpis.previous.firstSaleRevenue ?? 0)
+                            : undefined
+                        }
+                        icon={Zap}
+                        variant="success"
+                      />
+                    )}
+                  </motion.div>
+
+                  {/* Card 2: Venda Carteira or Leads Qualificados */}
+                  <motion.div variants={itemVariants}>
+                    {isSDR ? (
+                      <StatCard
+                        title="Leads Qualificados"
+                        value={String(kpis?.current.qualifiedLeads ?? 0)}
+                        numericValue={kpis?.current.qualifiedLeads ?? 0}
+                        change={kpis?.changes.qualified ?? 0}
+                        icon={Users}
+                        variant="primary"
+                      />
+                    ) : (
+                      <StatCard
+                        title="Venda Carteira"
+                        value={formatCurrency(kpis?.current.recurringRevenue ?? 0)}
+                        numericValue={kpis?.current.recurringRevenue ?? 0}
+                        change={kpis?.changes.recurringRevenue ?? 0}
+                        previousValue={
+                          kpis
+                            ? formatCurrency(kpis.previous.recurringRevenue ?? 0)
+                            : undefined
+                        }
+                        icon={RotateCcw}
+                        variant="primary"
+                      />
+                    )}
+                  </motion.div>
+
+                  {/* Card 3: Novos Clientes or Leads Ativos */}
+                  <motion.div variants={itemVariants}>
+                    {hasClients ? (
+                      <StatCard
+                        title={isSDR ? 'Novos Leads' : 'Novos Clientes'}
+                        value={String(kpis?.current.newClients ?? 0)}
+                        numericValue={kpis?.current.newClients ?? 0}
+                        change={kpis?.changes.clients ?? 0}
+                        previousValue={
+                          kpis ? String(kpis.previous.newClients) : undefined
+                        }
+                        icon={Users}
+                        variant={isSDR ? 'warning' : 'success'}
+                      />
+                    ) : (
+                      <DashboardEmptyState type="clients" />
+                    )}
+                  </motion.div>
+
+                  {/* Card 4: Taxa de Conversão */}
+                  <motion.div variants={itemVariants}>
+                    {hasConversion ? (
+                      <StatCard
+                        title="Conversão Global"
+                        value={`${(kpis?.current.conversionRate ?? 0).toFixed(1)}%`}
+                        numericValue={kpis?.current.conversionRate ?? 0}
+                        change={kpis?.changes.conversion ?? 0}
+                        previousValue={
+                          kpis ? `${kpis.previous.conversionRate.toFixed(1)}%` : undefined
+                        }
+                        icon={Zap}
+                        variant="warning"
+                      />
+                    ) : (
+                      <DashboardEmptyState type="conversion" />
+                    )}
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* ===== SUB-MODULES (driven by URL/sidebar) ===== */}
+            <Tabs
+              value={activeTab}
+              onValueChange={value => {
+                const sectionKey =
+                  Object.keys(SECTION_MAP).find(key => SECTION_MAP[key] === value) ||
+                  'visao-geral';
+                navigate(`/dashboard/${sectionKey}`);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="w-full"
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 1.02, y: -10 }}
+                  transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <TabsContent
+                    value="overview"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <OverviewModule goalsData={goalsData} kpis={kpis} />
+                    </Suspense>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="performance"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <PerformanceModule />
+                    </Suspense>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="analytics"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <AnalyticsModule />
+                    </Suspense>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="competition"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <CompetitionModule salesperson={salesperson} />
+                    </Suspense>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="intelligence"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <IntelligenceModule />
+                    </Suspense>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="engagement"
+                    className="mt-0 focus-visible:outline-none"
+                  >
+                    <Suspense fallback={<DashboardLoadingSkeleton />}>
+                      <EngagementModule />
+                    </Suspense>
+                  </TabsContent>
+                </motion.div>
+              </AnimatePresence>
+            </Tabs>
+          </div>
+        </SkeletonTransition>
+      </div>
+    </PageTransition>
+  );
+};
+
+export default Index;

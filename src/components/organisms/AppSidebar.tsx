@@ -1,0 +1,416 @@
+/* sidebar v3 — grouped submenus */
+import React, { useState, useMemo, memo, useEffect, useRef, useCallback } from 'react';
+import { Crown, LogOut, LayoutGrid, LayoutList, ShieldCheck } from 'lucide-react';
+import { NavItem, NavGroup } from '@/components/navigation';
+import { UserRoleBadge } from '@/components/molecules/UserRoleBadge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAlerts } from '@/hooks/notifications/useAlerts';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
+import { cn } from '@/lib/utils';
+import { triggerHaptic } from '@/lib/haptics';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import {
+  type ViewMode,
+  type MenuItem,
+  type MenuGroup,
+  getMainItems,
+  getGroupedItems,
+  viewModes,
+  systemItems,
+  adminOnlyItems,
+} from '../layout/sidebar/sidebarMenuData';
+import * as Pages from '@/routes/lazyPages';
+
+const userTypeAccentClasses = {
+  sdr: 'bg-info/15 text-info',
+  closer: 'bg-success/15 text-success',
+  hybrid: 'bg-purple-500/15 text-purple-500',
+  admin: 'bg-destructive/15 text-destructive',
+  manager: 'bg-primary/15 text-primary',
+  salesperson: 'bg-muted text-muted-foreground',
+} as const;
+
+// Helper to map route URL to lazy component for prefetching
+const componentMap: Record<
+  string,
+  React.LazyExoticComponent<React.ComponentType<unknown>>
+> = {
+  '/sdr': Pages.SDRDashboard,
+  '/closer': Pages.CloserDashboard,
+  '/pipeline': Pages.Pipeline,
+  '/atividades': Pages.Atividades,
+  '/clientes': Pages.Clientes,
+  '/agenda': Pages.Agenda,
+  '/ranking': Pages.RankingCompetitivo,
+  '/arena': Pages.ArenaCompetitiva,
+  '/race-arena': Pages.RaceArena,
+  '/orcamentos': Pages.Orcamentos,
+  '/cadencias-orcamentos': Pages.QuoteCadencias,
+  '/vendas': Pages.Vendas,
+  '/comissoes': Pages.Comissoes,
+  '/vendedores': Pages.Vendedores,
+  '/metas': Pages.Metas,
+  '/analytics': Pages.Analytics,
+  '/relatorios': Pages.Relatorios,
+  '/configuracoes': Pages.Configuracoes,
+  '/notificacoes': Pages.Notificacoes,
+  '/admin': Pages.AdminDashboard,
+  '/bi-gestor': Pages.BIGestor,
+  '/bi-sdr': Pages.BISDR,
+  '/bi-closer': Pages.BICloser,
+  '/funil': Pages.FunnelAnalysis,
+  '/nps': Pages.NPSDashboard,
+  '/assistente': Pages.Assistente,
+};
+
+export const AppSidebar = memo(function AppSidebar() {
+  const { theme } = useDashboardTheme();
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
+  const { data: alerts } = useAlerts();
+  const alertCount = alerts?.length || 0;
+  const { salesperson, signOut } = useAuth();
+  const { currentUserRole, isLoadingCurrentRole } = useUserRoles();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  // Auto-scroll to active item for excellence
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const activeItem = scrollAreaRef.current.querySelector('[aria-current="page"]');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [location.pathname]);
+
+  const userType = useMemo(():
+    | 'admin'
+    | 'manager'
+    | 'sdr'
+    | 'closer'
+    | 'hybrid'
+    | 'salesperson' => {
+    const role = currentUserRole?.role;
+    if (role === 'admin') return 'admin';
+    if (role === 'manager') return 'manager';
+    const salespersonRole = salesperson?.role;
+    if (salespersonRole === 'sdr') return 'sdr';
+    if (salespersonRole === 'closer') return 'closer';
+    if (salespersonRole === 'hybrid') return 'hybrid';
+    return 'salesperson';
+  }, [currentUserRole, salesperson]);
+
+  const isAdminOrManager = useMemo(
+    () => ['admin', 'manager'].includes(userType),
+    [userType]
+  );
+
+  const defaultViewMode = useMemo((): ViewMode => {
+    if (userType === 'sdr') return 'sdr';
+    if (userType === 'closer' || userType === 'hybrid') return 'closer';
+    return 'gestao';
+  }, [userType]);
+
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const saved = localStorage.getItem('sidebar_view_mode');
+    if (saved && ['gestao', 'sdr', 'closer'].includes(saved)) {
+      return saved as ViewMode;
+    }
+    return defaultViewMode;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebar_view_mode', viewMode);
+  }, [viewMode]);
+
+  const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
+  const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
+
+  const renderMenuItem = useCallback(
+    (item: MenuItem) => {
+      const isNotifications = item.title === 'Notificações';
+
+      return (
+        <NavItem
+          key={item.title + item.url}
+          title={item.title}
+          url={item.url}
+          icon={item.icon}
+          isCollapsed={isCollapsed}
+          badgeCount={isNotifications ? alertCount : 0}
+          badgeVariant={isNotifications ? 'warning' : 'default'}
+          component={componentMap[item.url]}
+          id={`nav-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+        />
+      );
+    },
+    [isCollapsed, alertCount]
+  );
+
+  const renderGroupedMenu = useCallback(
+    (group: MenuGroup) => {
+      const currentPath = window.location.pathname;
+      const hasActiveChild = group.items.some(
+        (item: MenuItem) =>
+          currentPath === item.url ||
+          (item.url !== '/' && currentPath.startsWith(item.url + '/'))
+      );
+
+      return (
+        <NavGroup
+          key={group.label}
+          label={group.label}
+          icon={group.icon}
+          isCollapsed={isCollapsed}
+          defaultOpen={hasActiveChild}
+        >
+          {group.items.map((item: MenuItem) => renderMenuItem(item))}
+        </NavGroup>
+      );
+    },
+    [isCollapsed, renderMenuItem]
+  );
+
+  if (isLoadingCurrentRole) {
+    return (
+      <Sidebar collapsible="icon" className="border-r-0 bg-sidebar">
+        <SidebarContent
+          className="flex items-center justify-center"
+          aria-busy="true"
+          aria-label="Carregando menu"
+        >
+          <div className="animate-pulse space-y-3 p-4 w-full" aria-hidden="true">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-10 bg-muted rounded-xl" />
+            ))}
+          </div>
+        </SidebarContent>
+      </Sidebar>
+    );
+  }
+
+  return (
+    <Sidebar
+      collapsible="icon"
+      className={cn(
+        'border-r border-border/30 backdrop-blur-sm transition-all duration-500',
+        theme === 'cyber'
+          ? 'bg-[#0a0b1a]/95 border-cyan-500/20 shadow-[0_0_20px_rgba(34,211,238,0.05)]'
+          : 'bg-sidebar/95'
+      )}
+    >
+      <SidebarHeader className="px-4 pt-4 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
+            <Crown className="h-5 w-5 text-primary-foreground" />
+          </div>
+          {!isCollapsed && (
+            <div className="flex flex-col min-w-0">
+              <span className="text-base font-bold text-foreground tracking-tight italic">
+                PROMO CHAMPIONS
+              </span>
+              <span className="text-[9px] uppercase tracking-widest text-primary font-black opacity-80 animate-pulse">
+                Execute Excellence
+              </span>
+            </div>
+          )}
+        </div>
+      </SidebarHeader>
+
+      {(isAdminOrManager || userType === 'hybrid') && !isCollapsed && (
+        <div className="px-3 pb-3 mt-4">
+          <div className="flex flex-col gap-1.5 p-1 bg-muted/20 rounded-2xl border border-border/50">
+            <p className="px-2 pt-1 pb-0.5 text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">
+              Modo de Visualização
+            </p>
+            <div className="flex gap-1 relative overflow-hidden">
+              {viewModes.map((vm: { mode: ViewMode; label: string }) => {
+                const isActive = viewMode === vm.mode;
+                const Icon =
+                  vm.mode === 'gestao'
+                    ? ShieldCheck
+                    : vm.mode === 'sdr'
+                      ? LayoutGrid
+                      : LayoutList;
+                return (
+                  <Button
+                    key={vm.mode}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      triggerHaptic('medium');
+                      setViewMode(vm.mode);
+                    }}
+                    className={cn(
+                      'flex-1 h-9 text-[10px] font-black rounded-xl transition-all duration-300 gap-1.5 px-2 relative z-10',
+                      isActive
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          layoutId="active-view-mode"
+                          className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
+                          initial={false}
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </AnimatePresence>
+                    <Icon
+                      className={cn(
+                        'h-3.5 w-3.5',
+                        isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                      )}
+                    />
+                    <span className="truncate uppercase tracking-tighter">
+                      {vm.label}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Separator className="bg-border/30" />
+
+      <SidebarContent className="px-3 py-2" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1">
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {mainItems.map((item: MenuItem) => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <Separator className="my-2 bg-border/30" />
+          <SidebarGroup>
+            <div className="space-y-1">
+              {groupedItems.map((group: MenuGroup) => renderGroupedMenu(group))}
+            </div>
+          </SidebarGroup>
+          <Separator className="my-2 bg-border/30" />
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {systemItems.map((item: MenuItem) => renderMenuItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          {userType === 'admin' && (
+            <>
+              <Separator className="my-2 bg-border/30" />
+              <SidebarGroup>
+                <p className="px-3 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+                  Administração
+                </p>
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-1">
+                    {adminOnlyItems.map((item: MenuItem) => renderMenuItem(item))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </>
+          )}
+        </ScrollArea>
+      </SidebarContent>
+
+      <SidebarFooter className="p-3 border-t border-border/30">
+        <div className="flex flex-col gap-2">
+          {isCollapsed ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      'h-10 w-10 rounded-xl flex items-center justify-center mx-auto cursor-default font-bold text-sm',
+                      userTypeAccentClasses[
+                        userType as keyof typeof userTypeAccentClasses
+                      ]
+                    )}
+                  >
+                    {salesperson?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="font-medium">{salesperson?.name || 'Usuário'}</p>
+                  <p className="text-xs text-muted-foreground">{salesperson?.email}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
+              <div
+                className={cn(
+                  'h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm',
+                  userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses]
+                )}
+              >
+                {salesperson?.name?.charAt(0)?.toUpperCase() || 'U'}
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <p
+                    className="text-sm font-semibold truncate max-w-[110px]"
+                    title={salesperson?.name || 'Usuário'}
+                  >
+                    {salesperson?.name || 'Usuário'}
+                  </p>
+                  <div className="flex-shrink-0">
+                    <UserRoleBadge />
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {salesperson?.email || ''}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <Button
+            variant="ghost"
+            size={isCollapsed ? 'icon' : 'sm'}
+            onClick={() => signOut()}
+            className={cn(
+              'w-full text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors group',
+              isCollapsed ? 'justify-center' : 'justify-start px-2.5'
+            )}
+            title="Sair do sistema"
+          >
+            <LogOut className={cn('h-4 w-4 shrink-0', isCollapsed ? '' : 'mr-2')} />
+            {!isCollapsed && (
+              <span className="text-xs font-semibold">Sair do sistema</span>
+            )}
+          </Button>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  );
+});
+
+AppSidebar.displayName = 'AppSidebar';

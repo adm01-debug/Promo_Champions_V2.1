@@ -1,0 +1,9 @@
+# Legacy edge functions grandfathered from the X-Request-Id lint (OBS-04).
+# Each name is a folder under supabase/functions/ whose index.ts calls Deno.serve/serve
+# without withRequestId. As functions are refactored to adopt withRequestId, REMOVE
+# them from this file — the CI lint will fail if:
+#   1. a function outside this list is missing withRequestId, OR
+#   2. a function in this list has already adopted withRequestId (stale entry).
+# New edge functions MUST NOT be added here.
+
+# All functions have been migrated to use withRequestId — allowlist is intentionally empty.

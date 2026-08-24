@@ -1,0 +1,1 @@
+ALTER VIEW public.race_rivalries_view SET (security_invoker = true);

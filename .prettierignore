@@ -1,0 +1,8 @@
+dist
+node_modules
+.lovable
+coverage
+playwright-report
+package-lock.json
+bun.lock
+bun.lockb

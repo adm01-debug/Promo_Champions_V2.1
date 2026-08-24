@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.lighthouseci/
+test-results/
+playwright-report/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime
+bun.lockb
+
+# E2E session cache
+tests/e2e/.auth/
+
+# Onda O — bundle analyzer output
+bundle-stats/
+dependency-graph.svg
+
+# Onda Q — a11y sweep artifacts
+a11y-report.json
+a11y-report-html/

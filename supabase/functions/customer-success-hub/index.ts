@@ -1,0 +1,150 @@
+import { corsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from "../_shared/request-id.ts";
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { chunkedIn } from "../_shared/chunked-in.ts";
+
+interface HealthFactor {
+  label: string;
+  status: 'good' | 'warning' | 'bad';
+  value: string;
+}
+
+interface AccountHealth {
+  account_id: string;
+  account_name: string;
+  tier: string;
+  health_status: string;
+  health_score: number;
+  churn_risk: 'low' | 'medium' | 'high' | 'critical';
+  expansion_potential: number;
+  days_since_last_activity: number;
+  total_revenue: number;
+  recommended_action: string;
+  health_factors?: HealthFactor[];
+  engagement_radar?: {
+    usage: number;
+    sentiment: number;
+    support: number;
+    financial: number;
+  };
+}
+
+Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    const { data: accounts } = await supabase
+      .from('accounts')
+      .select('id, name, tier, health_status, account_score, annual_revenue, updated_at')
+      .order('annual_revenue', { ascending: false, nullsFirst: false })
+      .limit(100);
+
+    if (!accounts) {
+      return new Response(JSON.stringify({ accounts: [], summary: {} }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Batch-fetch latest activity date per account — replaces N serial queries
+    const accountIds = accounts.map(a => a.id);
+    const allActivities = await chunkedIn<{ account_id: string; occurred_at: string }>(
+      accountIds,
+      (chunk) => supabase.from('account_activities').select('account_id, occurred_at').in('account_id', chunk).order('occurred_at', { ascending: false }).limit(chunk.length * 50),
+      { parallel: true, label: 'customer-success-hub.activities' },
+    );
+    const lastActivityByAccount = new Map<string, string>();
+    for (const act of allActivities) {
+      const cur = lastActivityByAccount.get(act.account_id);
+      if (!cur || act.occurred_at > cur) lastActivityByAccount.set(act.account_id, act.occurred_at);
+    }
+
+    const now = Date.now();
+    const enriched: AccountHealth[] = accounts.map(acc => {
+        const lastOccurredAt = lastActivityByAccount.get(acc.id);
+        const lastDate = lastOccurredAt
+          ? new Date(lastOccurredAt).getTime()
+          : new Date(acc.updated_at).getTime();
+        const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+
+        const score = acc.account_score ?? 50;
+        let churnRisk: AccountHealth['churn_risk'] = 'low';
+        if (daysSince > 90 || score < 30) churnRisk = 'critical';
+        else if (daysSince > 60 || score < 50) churnRisk = 'high';
+        else if (daysSince > 30 || score < 70) churnRisk = 'medium';
+
+        const expansionPotential = Math.max(
+          0,
+          Math.min(100, score - daysSince + (acc.tier === 'enterprise' ? 20 : 0))
+        );
+
+        const action = 'Manter cadência regular';
+        const factors: HealthFactor[] = [
+          {
+            label: 'Atividade',
+            status: daysSince > 30 ? 'bad' : daysSince > 14 ? 'warning' : 'good',
+            value: `${daysSince}d`,
+          },
+          {
+            label: 'Sentimento',
+            status: score < 40 ? 'bad' : score < 70 ? 'warning' : 'good',
+            value: score > 70 ? 'Positivo' : score > 40 ? 'Neutro' : 'Negativo',
+          },
+          { label: 'Suporte', status: 'good', value: 'Normal' },
+        ];
+
+        const radar = {
+          usage: Math.round(score * 0.8),
+          sentiment: score,
+          support: 90,
+          financial: 100,
+        };
+
+        return {
+          account_id: acc.id,
+          account_name: acc.name,
+          tier: acc.tier,
+          health_status: acc.health_status,
+          health_score: score,
+          churn_risk: churnRisk,
+          expansion_potential: expansionPotential,
+          days_since_last_activity: daysSince,
+          total_revenue: acc.annual_revenue ?? 0,
+          recommended_action: action,
+          health_factors: factors,
+          engagement_radar: radar,
+        };
+      });
+
+    const summary = {
+      total_accounts: enriched.length,
+      at_risk: enriched.filter(
+        a => a.churn_risk === 'high' || a.churn_risk === 'critical'
+      ).length,
+      critical: enriched.filter(a => a.churn_risk === 'critical').length,
+      expansion_ready: enriched.filter(a => a.expansion_potential > 70).length,
+      total_revenue_at_risk: enriched
+        .filter(a => a.churn_risk === 'high' || a.churn_risk === 'critical')
+        .reduce((sum, a) => sum + a.total_revenue, 0),
+      avg_health_score: Math.round(
+        enriched.reduce((s, a) => s + a.health_score, 0) / Math.max(enriched.length, 1)
+      ),
+    };
+
+    return new Response(JSON.stringify({ accounts: enriched, summary }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('customer-success-hub error:', error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+}));

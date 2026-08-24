@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /dashboard
+Allow: /auth
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://pixels-with-personality-09.lovable.app/sitemap.xml

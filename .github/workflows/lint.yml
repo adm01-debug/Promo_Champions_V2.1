@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+      
+      - name: Type Check
+        run: npx tsc --noEmit
+      
+      - name: Lint
+        run: npm run lint
+      
+      - name: Unit Tests
+        run: npm run test -- --run --reporter=verbose
+      
+      - name: Security Audit
+        run: npm audit --production --audit-level=high
+        
+      - name: Bundle Size Check
+        run: |
+          npm run build
+          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          du -sh dist/assets/*.js | sort -rh | head -10 >> $GITHUB_STEP_SUMMARY

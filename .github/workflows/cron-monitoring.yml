@@ -1,0 +1,64 @@
+name: Cron Monitoring Regression
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/cron-failure-alerter/**'
+      - 'supabase/migrations/**cron**'
+      - '.github/workflows/cron-monitoring.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/cron-failure-alerter/**'
+      - 'supabase/migrations/**cron**'
+  schedule:
+    # Roda diariamente às 06:00 UTC — captura regressões causadas por mudanças
+    # de schema/RLS mesmo sem PR na função de cron.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: cron-monitoring-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deno-regression:
+    name: Deno — cron-failure-alerter suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Sanity check env
+        id: env-check
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::warning::Integration-test secrets absent — skipping live suite"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Deno regression suite (13 tests)
+        if: steps.env-check.outputs.skip != 'true'
+        run: |
+          deno test \
+            --allow-net \
+            --allow-env \
+            --allow-read \
+            supabase/functions/cron-failure-alerter/index.test.ts
+
+      - name: Upload deno cache on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: deno-logs-${{ github.run_id }}
+          path: |
+            ~/.cache/deno/
+            !~/.cache/deno/deps
+          if-no-files-found: ignore
+          retention-days: 3
