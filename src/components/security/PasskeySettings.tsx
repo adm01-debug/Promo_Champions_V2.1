@@ -21,6 +21,7 @@ import {
 export const PasskeySettings: React.FC = () => {
   const {
     isSupported,
+    isAvailable,
     isLoading,
     credentials,
     registerPasskey,
@@ -61,6 +62,22 @@ export const PasskeySettings: React.FC = () => {
           </CardTitle>
           <CardDescription>
             Seu navegador não suporta WebAuthn/Passkeys. Atualize para um navegador moderno ou use outro método de autenticação.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!isAvailable) {
+    return (
+      <Card className="border-amber-500/50">
+        <CardHeader>
+          <CardTitle className="text-section-title flex items-center gap-2 text-amber-700 dark:text-amber-300">
+            <AlertTriangle className="h-5 w-5" />
+            Passkeys Temporariamente Indisponíveis
+          </CardTitle>
+          <CardDescription>
+            O login biométrico foi pausado enquanto reforçamos a verificação de segurança. Use seu método de login habitual até a conclusão da manutenção.
           </CardDescription>
         </CardHeader>
       </Card>

@@ -15,11 +15,11 @@ export interface ClientPortfolioItem {
   assigned_by: string | null;
   created_at: string;
   updated_at: string;
-  client?: { 
-    name: string; 
-    email?: string; 
-    phone?: string; 
-    company?: string; 
+  client?: {
+    name: string;
+    email?: string;
+    phone?: string;
+    company?: string;
     total_value?: number;
     is_activated?: boolean;
     activated_at?: string;
@@ -33,7 +33,9 @@ export const useClientPortfolio = (salespersonId?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('client_portfolio')
-        .select('*, client:clients(name, email, phone, company, total_value, is_activated, activated_at), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)');
+        .select(
+          '*, client:clients(name, email, phone, company, total_value, is_activated, activated_at), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)'
+        );
 
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
@@ -51,10 +53,21 @@ export const useClientPortfolio = (salespersonId?: string) => {
 export const useUpdatePortfolioStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ portfolioId, status, lastPurchaseDate }: { portfolioId: string; status: string; lastPurchaseDate?: string }) => {
+    mutationFn: async ({
+      portfolioId,
+      status,
+      lastPurchaseDate,
+    }: {
+      portfolioId: string;
+      status: string;
+      lastPurchaseDate?: string;
+    }) => {
       const updates: TableUpdate<'client_portfolio'> = { status };
       if (lastPurchaseDate) updates.last_purchase_date = lastPurchaseDate;
-      const { error } = await supabase.from('client_portfolio').update(updates).eq('id', portfolioId);
+      const { error } = await supabase
+        .from('client_portfolio')
+        .update(updates)
+        .eq('id', portfolioId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -69,7 +82,10 @@ export const useRemoveFromPortfolio = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (portfolioId: string) => {
-      const { error } = await supabase.from('client_portfolio').delete().eq('id', portfolioId);
+      const { error } = await supabase
+        .from('client_portfolio')
+        .delete()
+        .eq('id', portfolioId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -97,36 +113,47 @@ export interface PortfolioStats {
 }
 
 export const usePortfolioStats = (salespersonId?: string) => {
-  const { data: portfolio, isLoading: isPortfolioLoading } = useClientPortfolio(salespersonId);
+  const { data: portfolio, isLoading: isPortfolioLoading } =
+    useClientPortfolio(salespersonId);
   const { data: unassigned, isLoading: isUnassignedLoading } = useUnassignedClients();
 
-  const clientIds = (portfolio || []).map((item) => item.client_id);
+  const clientIds = (portfolio || []).map(item => item.client_id);
 
   const { data: icpRows = [], isLoading: isIcpLoading } = useQuery({
     queryKey: ['portfolio-icp-stats', clientIds],
     queryFn: async () => {
-      if (clientIds.length === 0) return [] as Array<{ client_id: string; is_icp_match: boolean | null }>;
+      if (clientIds.length === 0)
+        return [] as Array<{ client_id: string; is_icp_match: boolean | null }>;
 
       return await chunkedIn<{ client_id: string; is_icp_match: boolean | null }>(
         clientIds,
-        (chunk) => supabase.from('icp_data').select('client_id, is_icp_match').in('client_id', chunk as string[]),
-        { parallel: true, label: 'portfolio.icp' },
+        chunk =>
+          supabase
+            .from('icp_data')
+            .select('client_id, is_icp_match')
+            .in('client_id', chunk as string[]),
+        { parallel: true, label: 'portfolio.icp' }
       );
     },
     enabled: clientIds.length > 0,
   });
 
   const total = portfolio?.length || 0;
-  const active = portfolio?.filter((p) => p.status === 'active').length || 0;
-  const inactive = portfolio?.filter((p) => p.status === 'inactive').length || 0;
-  const activatedCount = portfolio?.filter((p) => p.client?.is_activated).length || 0;
+  const active = portfolio?.filter(p => p.status === 'active').length || 0;
+  const inactive = portfolio?.filter(p => p.status === 'inactive').length || 0;
+  const activatedCount = portfolio?.filter(p => p.client?.is_activated).length || 0;
   const unassignedCount = unassigned?.length || 0;
 
-  const totalValue = (portfolio || []).reduce((sum, item) => sum + (item.client?.total_value || 0), 0);
+  const totalValue = (portfolio || []).reduce(
+    (sum, item) => sum + (item.client?.total_value || 0),
+    0
+  );
 
-  const icpMap = new Map(icpRows.map((row) => [row.client_id, row]));
-  const icpMatch = clientIds.filter((id) => icpMap.get(id)?.is_icp_match === true).length;
-  const icpPartial = clientIds.filter((id) => icpMap.has(id) && icpMap.get(id)?.is_icp_match !== true).length;
+  const icpMap = new Map(icpRows.map(row => [row.client_id, row]));
+  const icpMatch = clientIds.filter(id => icpMap.get(id)?.is_icp_match === true).length;
+  const icpPartial = clientIds.filter(
+    id => icpMap.has(id) && icpMap.get(id)?.is_icp_match !== true
+  ).length;
   const icpNone = total - (icpMatch + icpPartial);
 
   const stats: PortfolioStats = {
@@ -146,7 +173,8 @@ export const usePortfolioStats = (salespersonId?: string) => {
 
   return {
     data: stats,
-    isLoading: isPortfolioLoading || isUnassignedLoading || (clientIds.length > 0 && isIcpLoading),
+    isLoading:
+      isPortfolioLoading || isUnassignedLoading || (clientIds.length > 0 && isIcpLoading),
   };
 };
 
@@ -154,14 +182,16 @@ export const useUnassignedClients = () => {
   return useQuery({
     queryKey: ['unassigned_clients'],
     queryFn: async () => {
-      const { data: assigned, error: assignedError } = await supabase.from('client_portfolio').select('client_id');
+      const { data: assigned, error: assignedError } = await supabase
+        .from('client_portfolio')
+        .select('client_id');
       if (assignedError) throw assignedError;
 
-      const assignedIds = (assigned || []).map((a) => a.client_id).filter(Boolean);
+      const assignedIds = (assigned || []).map(a => a.client_id).filter(Boolean);
 
       let query = supabase.from('clients').select('*');
       if (assignedIds.length > 0) {
-        const inFilter = `(${assignedIds.map((id) => `"${id}"`).join(',')})`;
+        const inFilter = `(${assignedIds.map(id => `"${id}"`).join(',')})`;
         query = query.not('id', 'in', inFilter);
       }
 
@@ -175,18 +205,27 @@ export const useUnassignedClients = () => {
 export const useAssignClient = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ clientId, salespersonId, source }: { clientId: string; salespersonId: string; source?: string }) => {
-      const { error } = await supabase.from('client_portfolio').insert({
-        client_id: clientId,
-        salesperson_id: salespersonId,
-        source: source || 'manual',
-        status: 'active',
+    mutationFn: async ({
+      clientId,
+      salespersonId,
+      source,
+    }: {
+      clientId: string;
+      salespersonId: string;
+      source?: string;
+    }) => {
+      const { error } = await supabase.rpc('route_unassigned_client_portfolio', {
+        p_client_id: clientId,
+        p_strategy: 'manual',
+        p_salesperson_id: salespersonId,
+        p_reason: source ? `Atribuição de carteira: ${source}` : 'Atribuição manual',
       });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client_portfolio'] });
       queryClient.invalidateQueries({ queryKey: ['unassigned_clients'] });
+      queryClient.invalidateQueries({ queryKey: ['routing_history'] });
       toast.success('Cliente atribuído com sucesso!');
     },
     onError: (err: Error) => toast.error('Erro: ' + err.message),

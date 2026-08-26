@@ -33,6 +33,9 @@ export interface CreateDocumentInput {
   signers?: { name: string; email: string }[];
 }
 
+export const DIGITAL_SIGNATURE_INTEGRATION_MESSAGE =
+  "O envio e a confirmação de assinatura estão indisponíveis até que uma integração de assinatura seja configurada e validada.";
+
 export function useDigitalSignatures() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -97,8 +100,8 @@ export function useDigitalSignatures() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
       toast({
-        title: "Documento criado",
-        description: "O documento foi criado como rascunho.",
+        title: "Rascunho criado",
+        description: "O documento foi salvo internamente; ele ainda não foi enviado para assinatura.",
       });
     },
     onError: (error) => {
@@ -111,79 +114,28 @@ export function useDigitalSignatures() {
   });
 
   const sendForSignature = useMutation({
-    mutationFn: async (documentId: string) => {
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
-
-      const { error } = await supabase
-        .from('digital_signatures')
-        .update({
-          status: 'pending',
-          expires_at: expiresAt.toISOString(),
-        })
-        .eq('id', documentId);
-
-      if (error) throw error;
+    mutationFn: async (_documentId: string) => {
+      throw new Error(DIGITAL_SIGNATURE_INTEGRATION_MESSAGE);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
+    onError: () => {
       toast({
-        title: "Documento enviado",
-        description: "O documento foi enviado para assinatura.",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Erro ao enviar documento",
-        description: error.message,
+        title: "Envio para assinatura indisponível",
+        description: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
         variant: "destructive",
       });
     },
   });
 
   const updateSignerStatus = useMutation({
-    mutationFn: async ({ signerId, status }: { signerId: string; status: 'signed' | 'rejected' }) => {
-      const { error } = await supabase
-        .from('document_signers')
-        .update({
-          status,
-          signed_at: status === 'signed' ? new Date().toISOString() : null,
-        })
-        .eq('id', signerId);
-
-      if (error) throw error;
-
-      // Check if all signers have signed, then update document status
-      const { data: signer } = await supabase
-        .from('document_signers')
-        .select('document_id')
-        .eq('id', signerId)
-        .single();
-
-      if (signer) {
-        const { data: allSigners } = await supabase
-          .from('document_signers')
-          .select('status')
-          .eq('document_id', signer.document_id);
-
-        if (allSigners?.every(s => s.status === 'signed')) {
-          await supabase
-            .from('digital_signatures')
-            .update({
-              status: 'signed',
-              signed_at: new Date().toISOString(),
-            })
-            .eq('id', signer.document_id);
-        } else if (allSigners?.some(s => s.status === 'rejected')) {
-          await supabase
-            .from('digital_signatures')
-            .update({ status: 'rejected' })
-            .eq('id', signer.document_id);
-        }
-      }
+    mutationFn: async (_input: { signerId: string; status: 'signed' | 'rejected' }) => {
+      throw new Error(DIGITAL_SIGNATURE_INTEGRATION_MESSAGE);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
+    onError: () => {
+      toast({
+        title: "Confirmação de assinatura indisponível",
+        description: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
+        variant: "destructive",
+      });
     },
   });
 
@@ -252,5 +204,7 @@ export function useDigitalSignatures() {
     updateSignerStatus,
     deleteDocument,
     addSigner,
+    signatureIntegrationConfigured: false,
+    signatureIntegrationMessage: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
   };
 }

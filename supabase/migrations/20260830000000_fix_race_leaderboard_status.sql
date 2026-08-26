@@ -1,8 +1,8 @@
 -- Fix race_leaderboard_view: aceitar tanto 'won' quanto 'completed' como status de venda ganha.
 -- O banco só usa 'won' em sales.status, então a view estava retornando zeros.
-DROP VIEW IF EXISTS public.race_spectator_view CASCADE;
-DROP VIEW IF EXISTS public.race_leaderboard_view CASCADE;
-CREATE VIEW public.race_leaderboard_view
+-- A projeção mantém nomes, ordem e tipos da view anterior; CREATE OR REPLACE
+-- preserva as dependências e evita remover a race_spectator_view em cascata.
+CREATE OR REPLACE VIEW public.race_leaderboard_view
 WITH (security_invoker = true)
 AS
  WITH season_metrics AS (
@@ -33,7 +33,7 @@ AS
              CROSS JOIN race_cars rc)
              JOIN salespeople sp ON ((sp.id = rc.salesperson_id)))
              LEFT JOIN sales s ON (((s.salesperson_id = rc.salesperson_id) AND (((s.created_at)::date >= rs.start_date) AND ((s.created_at)::date <= rs.end_date)))))
-          WHERE (rs.status = 'active'::text)
+          WHERE ((rs.status = 'active'::text) AND (((sp.role)::text = rs.role_type) OR ((sp.role)::text = 'hybrid'::text)))
           GROUP BY rs.id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id, rc.salesperson_id, sp.name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname
         ), scored AS (
          SELECT sm.season_id,
@@ -93,7 +93,7 @@ AS
         END AS progress
    FROM scored;
 
--- Recreate race_spectator_view (was dropped via CASCADE above)
+-- Mantém a view de espectador dependente da leaderboard sem removê-la.
 CREATE OR REPLACE VIEW public.race_spectator_view
 WITH (security_invoker = true)
 AS
@@ -110,6 +110,9 @@ AS
     role_type,
     total_sales,
     deals_count,
-    score,
-    progress
+   score,
+   progress
    FROM public.race_leaderboard_view;
+
+-- Contrato público do modo espectador, inclusive em bancos onde o ACL prévio não exista.
+GRANT SELECT ON public.race_spectator_view TO anon, authenticated;

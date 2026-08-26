@@ -9,5 +9,9 @@ verify_jwt = false
 [functions.email-unsubscribe]
 verify_jwt = false
 
-[functions.migrate-helper]
+# Webhooks de provedores externos: a autenticação criptográfica ocorre no handler.
+[functions.inbound-email-webhook]
+verify_jwt = false
+
+[functions.multichannel-status-webhook]
 verify_jwt = false

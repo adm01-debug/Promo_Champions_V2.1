@@ -1,9 +1,8 @@
 // Seed sales + activities for August 2026 (current month shown in UI).
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 const log = (...a) => console.log('•', ...a);
@@ -36,7 +35,7 @@ const TARGETS: { name: string; won: number; avg: number; lost: number }[] = [
   { name: 'Leticia',   won: 2,  avg:  9000, lost: 1 },
 ];
 
-const rows: any[] = [];
+const rows: Record<string, unknown>[] = [];
 let seq = 0;
 for (const t of TARGETS) {
   const sp = real.find(p => p.name === t.name);
@@ -104,7 +103,7 @@ log(`sales inserted: ${inserted}/${rows.length}`);
 
 // Activities — 1 sale_id NULL is fine; we'll generate ~400 activities
 const ACTIVITY_TYPES = ['call','email','meeting','whatsapp','linkedin'];
-const actRows: any[] = [];
+const actRows: Record<string, unknown>[] = [];
 let aseq = 0;
 for (let d = 1; d <= 31; d++) {
   for (const sp of real) {

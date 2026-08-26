@@ -4,13 +4,14 @@ import type { OrderStatus } from "@/components/orders/orderHelpers";
 
 export interface OrderRow {
   id: string;
-  user_id: string;
+  user_id: string | null;
   order_number: string;
   status: OrderStatus;
   subtotal: number;
   shipping: number;
   total: number;
   cancellation_reason: string | null;
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -44,14 +45,12 @@ export function useOrder(orderId: string | undefined) {
     queryFn: async (): Promise<OrderDetail | null> => {
       if (!orderId) return null;
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
-
+      // A visibilidade é definida no banco por RLS (dono, vendedor atribuído ou gestão).
+      // Um filtro adicional por user_id faria gestores e vendedores perderem pedidos autorizados.
       const { data: order, error: orderErr } = await supabase
         .from("orders")
         .select("*")
         .eq("id", orderId)
-        .eq("user_id", user.id)
         .maybeSingle();
 
       if (orderErr) throw orderErr;

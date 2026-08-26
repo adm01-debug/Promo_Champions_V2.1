@@ -2,10 +2,9 @@
 // that referenced them so the demo ids don't leave orphaned FK references.
 // Keeps admin + real names.
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -37,7 +36,7 @@ const fallbackSdr = realPeople.find((p) => p.role === 'sdr') ?? realPeople[0];
 const fallbackAny = realPeople[0];
 if (!fallbackCloser || !fallbackAny) throw new Error('no real salespeople to fall back on');
 
-async function nullOut(table: string, col: string, ids: string[]) {
+async function _nullOut(table: string, col: string, ids: string[]) {
   // For each demo id, re-point to a real closer; if column is optional, set null
   // where the column allows nulls. Here we re-point to the admin to be safe.
   for (const id of ids) {

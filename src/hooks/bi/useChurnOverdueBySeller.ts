@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { subDays } from 'date-fns';
 
 export interface ChurnOverdueBySellerRow {
@@ -49,12 +50,16 @@ export function useChurnOverdueBySeller(days = 30, limit = 5) {
       const ids = [...map.keys()];
       if (ids.length === 0) return [];
 
-      const { data: sellers, error: sErr } = await supabase
-        .from('salespeople')
-        .select('id,name')
-        .in('id', ids);
-      if (sErr) throw sErr;
-      const nameMap = new Map((sellers ?? []).map((s) => [s.id, s.name]));
+      const sellers = await chunkedIn<{ id: string; name: string | null }>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('salespeople')
+            .select('id,name')
+            .in('id', chunk as string[]),
+        { parallel: true, label: 'bi.churn-overdue-sellers' },
+      );
+      const nameMap = new Map(sellers.map((s) => [s.id, s.name]));
 
       return [...map.entries()]
         .map<ChurnOverdueBySellerRow>(([id, v]) => ({

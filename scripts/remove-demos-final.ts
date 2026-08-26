@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 const ADMIN = 'Administrador Promo Brindes';
 const log = (...a) => console.log('•', ...a);
@@ -33,7 +33,7 @@ const { data: salesRows } = await sb.from('sales').select('id, salesperson_id, s
 ).limit(5000);
 log(`  rows to update: ${salesRows?.length ?? 0}`);
 for (const r of salesRows ?? []) {
-  const patch: any = {};
+  const patch: Record<string, string> = {};
   if (r.salesperson_id && demoIds.includes(r.salesperson_id)) patch.salesperson_id = admin.id;
   if (r.closer_id && demoIds.includes(r.closer_id)) patch.closer_id = closerFb.id;
   if (r.sdr_id && demoIds.includes(r.sdr_id)) patch.sdr_id = sdrFb.id;

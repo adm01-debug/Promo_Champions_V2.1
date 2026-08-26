@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 const log = (...a) => console.log(new Date().toISOString(), '•', ...a);
 
@@ -10,7 +10,7 @@ const demoIds = (people ?? []).filter(p => p.name !== ADMIN && /^Vendedor Demo/i
 const real = (people ?? []).filter(p => p.name === ADMIN || !/^Vendedor Demo/i.test(p.name));
 const admin = real.find(p => p.name === ADMIN)!;
 const sdrFb = real.find(p => p.role === 'sdr') ?? admin;
-const closerFb = real.find(p => p.role === 'closer') ?? admin;
+const _closerFb = real.find(p => p.role === 'closer') ?? admin;
 log('demo ids:', demoIds.length);
 
 // 1) Bulk delete all activities owned by demos
@@ -31,7 +31,7 @@ for (let i = 0; i < (badRows ?? []).length; i += CHUNK) {
   const batch = (badRows ?? []).slice(i, i + CHUNK);
   // Build batch update using RPC would be ideal; instead do per-row with Promise.all
   const results = await Promise.all(batch.map(async (r) => {
-    const patch: any = {};
+    const patch: Record<string, string> = {};
     if (r.salesperson_id && demoIds.includes(r.salesperson_id)) patch.salesperson_id = admin.id;
     if (r.sdr_id && demoIds.includes(r.sdr_id)) patch.sdr_id = sdrFb.id;
     if (Object.keys(patch).length === 0) return { ok: true };

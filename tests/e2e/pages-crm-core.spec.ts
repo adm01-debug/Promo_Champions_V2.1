@@ -5,7 +5,7 @@
  * Run with: npx playwright test tests/e2e/pages-crm-core.spec.ts
  */
 import { test, expect } from '@playwright/test';
-import { HAS_AUTH, SESSION_JSON, STORAGE_KEY, skipReason, restoreSession, loadPage } from './helpers/page-helpers';
+import { HAS_AUTH, skipReason, restoreSession, loadPage } from './helpers/page-helpers';
 
 test.describe.configure({ mode: 'parallel' });
 

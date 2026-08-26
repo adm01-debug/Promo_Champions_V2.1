@@ -1,13 +1,15 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
+import { getServiceClient, getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 interface DispatchRequest {
   webhook_id?: string;
   event_type: string;
   payload: Record<string, unknown>;
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function hmacSign(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -25,45 +27,77 @@ async function hmacSign(secret: string, body: string): Promise<string> {
 
 Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
-
-  // Require authentication — this function triggers outbound HTTP requests and writes delivery records
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Authorization header required' }), {
-      status: 401,
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Método não permitido' }), {
+      status: 405,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-  const authClient = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_ANON_KEY')!,
-    { global: { headers: { Authorization: authHeader } } }
+
+  // Esta operação faz chamadas HTTP externas; exige JWT real e role operacional.
+  let auth: Awaited<ReturnType<typeof getUserClient>>;
+  try {
+    auth = await getUserClient(req);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'Token inválido ou expirado' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    console.error('dispatch-webhook authentication error:', error);
+    return new Response(JSON.stringify({ error: 'Não foi possível validar a autenticação' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // A tabela webhooks já restringe gestão a admin/manager; a edge repete a
+  // mesma regra antes de usar service_role e disparar destinos externos.
+  const { data: isAdminOrManager, error: roleError } = await auth.client.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: auth.userId } as never,
   );
-  const {
-    data: { user },
-    error: authError,
-  } = await authClient.auth.getUser();
-  if (authError || !user) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-      status: 401,
+  if (roleError) {
+    console.error('dispatch-webhook role check error:', roleError);
+    return new Response(JSON.stringify({ error: 'Não foi possível confirmar as permissões' }), {
+      status: 503,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  if (!isAdminOrManager) {
+    return new Response(JSON.stringify({ error: 'Sem permissão: role de administrador ou gestor é obrigatória' }), {
+      status: 403,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
   try {
     const body = await req.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return new Response(JSON.stringify({ error: 'JSON inválido' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     const { event_type, payload, webhook_id }: DispatchRequest = body;
 
-    if (!event_type || !payload) {
+    if (
+      typeof event_type !== 'string' ||
+      !event_type.trim() ||
+      !payload ||
+      typeof payload !== 'object' ||
+      Array.isArray(payload) ||
+      (webhook_id !== undefined && (typeof webhook_id !== 'string' || !UUID_RE.test(webhook_id)))
+    ) {
       return new Response(JSON.stringify({ error: 'event_type and payload are required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = getServiceClient(
+      'dispatch-webhook lê segredos de webhooks e grava entregas após RBAC',
     );
 
     // Find matching webhooks
@@ -77,7 +111,7 @@ Deno.serve(withRequestId('dispatch-webhook', async (req, _ctx) => {
 
     const results = [];
     const deliveryRows: Record<string, unknown>[] = [];
-    const webhookUpdateOps: Array<Promise<unknown>> = [];
+    const webhookUpdateOps: Array<PromiseLike<unknown>> = [];
     const nowIso = new Date().toISOString();
 
     // Phase 1: sequential HTTP dispatch (each endpoint is independent but ordering is preserved)

@@ -9,13 +9,33 @@ interface SignatureStatsCardsProps {
   signed: number;
   drafts: number;
   isLoading: boolean;
+  integrationConfigured?: boolean;
 }
 
-export const SignatureStatsCards = React.memo(function SignatureStatsCards({ total, pending, signed, drafts, isLoading }: SignatureStatsCardsProps) {
+export const SignatureStatsCards = React.memo(function SignatureStatsCards({
+  total,
+  pending,
+  signed,
+  drafts,
+  isLoading,
+  integrationConfigured = true,
+}: SignatureStatsCardsProps) {
   const cards = [
     { icon: FileSignature, label: "Total de Documentos", value: total, className: "glass border-border/40" },
-    { icon: Clock, label: "Aguardando Assinatura", value: pending, className: "glass border-status-warning/30 bg-status-warning/5", textColor: "text-status-warning" },
-    { icon: CheckCircle2, label: "Assinados", value: signed, className: "glass border-status-success/30 bg-status-success/5", textColor: "text-status-success" },
+    {
+      icon: Clock,
+      label: integrationConfigured ? "Aguardando assinatura" : "Registros pendentes",
+      value: pending,
+      className: "glass border-status-warning/30 bg-status-warning/5",
+      textColor: "text-status-warning",
+    },
+    {
+      icon: CheckCircle2,
+      label: integrationConfigured ? "Assinados" : "Assinaturas registradas",
+      value: signed,
+      className: "glass border-status-success/30 bg-status-success/5",
+      textColor: "text-status-success",
+    },
     { icon: FileSignature, label: "Rascunhos", value: drafts, className: "glass border-border/40" },
   ];
 

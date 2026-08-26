@@ -2,10 +2,9 @@
 // the demo rows. Done row-by-row with skip-on-error so an audit_log trigger
 // bug on one row doesn't abort the rest of the batch.
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },

@@ -70,34 +70,14 @@ const FollowUpAudit = () => {
   const [filterAction, setFilterAction] = useState('all');
   const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
-  const { data: logs = [], isLoading } = useQuery({
+  const {
+    data: logs = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['follow-up-audit', searchLead, searchSalesperson, filterAction, dateRange],
     queryFn: async () => {
-      // Mocking real data for demonstration based on the request
-      const mockLogs = [
-        {
-          id: '1',
-          created_at: new Date().toISOString(),
-          lead_name: 'Mariana Oliveira',
-          action_type: 'intent_trigger',
-          user_name: 'Sistema (IA)',
-          status: 'success',
-          details: "Abertura de Proposta detectada. Tarefa 'Ligar Agora' criada.",
-          retry_count: 0,
-        },
-        {
-          id: '2',
-          created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-          lead_name: 'Ricardo Santos',
-          action_type: 'intent_trigger',
-          user_name: 'Sistema (IA)',
-          status: 'success',
-          details:
-            'Cliques repetidos em Preços (4x). Sugestão de Next Best Action gerada.',
-          retry_count: 0,
-        },
-      ];
-
       let query = supabase
         .from('follow_up_audit_view')
         .select('*')
@@ -112,13 +92,16 @@ const FollowUpAudit = () => {
       if (filterAction !== 'all') {
         query = query.eq('action_type', filterAction);
       }
+      if (dateRange.from) {
+        query = query.gte('created_at', `${dateRange.from}T00:00:00`);
+      }
+      if (dateRange.to) {
+        query = query.lte('created_at', `${dateRange.to}T23:59:59.999`);
+      }
 
       const { data, error } = await query.limit(100);
-      if (error) {
-        console.warn('Using mock data due to database error:', error.message);
-        return mockLogs;
-      }
-      return [...mockLogs, ...(data || [])];
+      if (error) throw error;
+      return data ?? [];
     },
   });
 
@@ -246,6 +229,16 @@ const FollowUpAudit = () => {
                 </div>
               }
             >
+              {isError ? (
+                <div className="rounded-md border p-8 text-center space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Não foi possível carregar a auditoria. Nenhum dado demonstrativo foi exibido.
+                  </p>
+                  <Button size="sm" variant="outline" onClick={() => refetch()}>
+                    Tentar novamente
+                  </Button>
+                </div>
+              ) : (
               <div className="rounded-md border overflow-hidden">
                 <Table>
                   <TableHeader className="bg-muted/50">
@@ -361,6 +354,7 @@ const FollowUpAudit = () => {
                   </TableBody>
                 </Table>
               </div>
+              )}
             </SkeletonTransition>
           </CardContent>
         </Card>

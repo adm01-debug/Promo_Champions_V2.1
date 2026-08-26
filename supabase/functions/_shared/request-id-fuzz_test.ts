@@ -16,6 +16,7 @@
 // Uso: deno test --allow-read supabase/functions/_shared/request-id-fuzz_test.ts
 
 import { assert, assertEquals, assertMatch, assertNotEquals } from "jsr:@std/assert";
+import { getCorsHeaders } from "./cors.ts";
 import { withRequestId } from "./request-id.ts";
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -118,6 +119,18 @@ Deno.test("INV-4 — thrown errors return JSON envelope with matching requestId"
     assertEquals(body.requestId, id, "body.requestId must equal header");
     assertEquals(body.error, "simulated_failure");
   }
+});
+
+Deno.test("INV-4b — thrown errors preservam o CORS calculado pela requisição", async () => {
+  const wrapped = withRequestId("fuzz-err-cors", errHandler);
+  const req = new Request("http://x/", { headers: { Origin: "https://app.example.test" } });
+  const res = await wrapped(req);
+
+  assertEquals(
+    res.headers.get("Access-Control-Allow-Origin"),
+    getCorsHeaders(req)["Access-Control-Allow-Origin"],
+  );
+  await res.text();
 });
 
 Deno.test("INV-5 — concurrent requests never share requestId", async () => {

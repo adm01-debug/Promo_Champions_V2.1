@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 interface FocusModeConfig {
@@ -43,7 +43,7 @@ export function useFocusMode() {
 
   const [shouldShowBreakReminder, setShouldShowBreakReminder] = useState(false);
   const timeInFocusRef = useRef(0);
-  const [tick, setTick] = useState(0); // minimal state trigger, not the actual value
+  const [_tick, setTick] = useState(0); // minimal state trigger, not the actual value
 
   // Apply focus mode classes
   useEffect(() => {
@@ -144,17 +144,13 @@ export function useFocusMode() {
     setShouldShowBreakReminder(false);
   }, []);
 
-  const timeInFocus = useMemo(() => timeInFocusRef.current, [tick]);
-  const formattedTime = useMemo(() => {
-    const seconds = timeInFocusRef.current;
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    if (hrs > 0) {
-      return `${hrs}h ${mins}m`;
-    }
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }, [tick]);
+  const timeInFocus = timeInFocusRef.current;
+  const hrs = Math.floor(timeInFocus / 3600);
+  const mins = Math.floor((timeInFocus % 3600) / 60);
+  const secs = timeInFocus % 60;
+  const formattedTime = hrs > 0
+    ? `${hrs}h ${mins}m`
+    : `${mins}:${secs.toString().padStart(2, "0")}`;
 
   return {
     isEnabled: config.enabled,

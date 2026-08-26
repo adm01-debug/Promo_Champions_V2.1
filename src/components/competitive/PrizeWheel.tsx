@@ -151,7 +151,10 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
                 className="text-center"
               >
                 <p className="text-lg font-bold text-primary">🎉 {wonPrize}</p>
-                <p className="text-xs text-muted-foreground">Prêmio adicionado à sua conta!</p>
+                <p className="text-xs text-muted-foreground">
+                  Resultado registrado. A concessão do benefício segue a regra de
+                  premiação vigente.
+                </p>
               </motion.div>
             )}
 

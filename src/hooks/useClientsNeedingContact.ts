@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES, CACHE_TIMES } from '@/constants';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { differenceInDays, parseISO } from 'date-fns';
 
 export type ContactUrgency = 'critical' | 'high' | 'medium' | 'low';
@@ -82,11 +83,26 @@ export const useClientsNeedingContact = ({ salespersonId, limit = 10 }: Options 
 
       const contactMap = new Map<string, { phone: string | null; email: string | null }>();
       if (clientIds.length > 0) {
-        const { data: clients } = await supabase
-          .from('clients')
-          .select('id, phone, email')
-          .in('id', clientIds);
-        (clients || []).forEach((c) =>
+        let clients: Array<{ id: string; phone: string | null; email: string | null }> = [];
+        try {
+          clients = await chunkedIn<{
+            id: string;
+            phone: string | null;
+            email: string | null;
+          }>(
+            clientIds,
+            (chunk) =>
+              supabase
+                .from('clients')
+                .select('id, phone, email')
+                .in('id', chunk as string[]),
+            { parallel: true, label: 'clients-needing-contact' },
+          );
+        } catch {
+          // Preserva o comportamento anterior: sem dados de contato, o alerta continua utilizável.
+          clients = [];
+        }
+        clients.forEach((c) =>
           contactMap.set(c.id, { phone: c.phone ?? null, email: c.email ?? null })
         );
       }

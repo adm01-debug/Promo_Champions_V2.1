@@ -1,9 +1,9 @@
 // Run win/loss analysis via direct DB writes (bypass edge function auth).
 // Reads sales, classifies heuristically, inserts into win_loss_analyses + patterns + insights.
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const serviceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: serviceKey } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 

@@ -111,8 +111,10 @@ describe('salesReportHelpers.buildKpiDeltas', () => {
 });
 
 describe('salesReportHelpers.buildRevenueSeries', () => {
-  const start = new Date('2026-01-05T00:00:00Z');
-  const end = new Date('2026-01-11T00:00:00Z');
+  // O relatório é delimitado pelo calendário local do usuário (`startOfWeek`/`endOfWeek`).
+  // Datas UTC à meia-noite podem cair no dia anterior em fusos a oeste de UTC.
+  const start = new Date(2026, 0, 5);
+  const end = new Date(2026, 0, 11);
 
   it('weekly trata amount nulo como zero (linha 128)', () => {
     const series = buildRevenueSeries(

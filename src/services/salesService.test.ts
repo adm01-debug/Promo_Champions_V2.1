@@ -80,7 +80,8 @@ describe('salesService.getSales', () => {
 
     const result = await salesService.getSales();
 
-    expect(fromMock).toHaveBeenCalledWith('sales');
+    // A leitura usa a view que mascara custos por perfil; a escrita continua em `sales`.
+    expect(fromMock).toHaveBeenCalledWith('sales_with_markup');
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
       id: 'ABCDEF12',

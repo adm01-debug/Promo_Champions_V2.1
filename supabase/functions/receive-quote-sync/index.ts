@@ -20,8 +20,17 @@ import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 
 const encoder = new TextEncoder();
+const MAX_WEBHOOK_BODY_BYTES = 240 * 1024;
+const MAX_EVENT_LENGTH = 120;
+const MAX_CORRELATION_KEY_LENGTH = 128;
+const MAX_EXTERNAL_QUOTE_ID_LENGTH = 128;
+
+function isBoundedText(value: unknown, maxLength: number): value is string {
+  return typeof value === "string" && value.length <= maxLength && value.trim().length > 0;
+}
 
 async function hmacSha256Hex(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -83,6 +92,28 @@ async function logInbound(
   }
 }
 
+/**
+ * A reserva de deduplicação serializa replays antes da escrita. Quando a
+ * escrita posterior falha, libera-se a linha exata criada nesta requisição
+ * para que o retry legítimo do provedor possa tentar novamente. Atomicidade
+ * absoluta entre as tabelas ainda exige RPC/transação no banco reconciliado.
+ */
+async function releaseDedupeReservation(
+  supabase: SupabaseClient,
+  reservationId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("webhook_inbound_dedupe")
+    .delete()
+    .eq("id", reservationId);
+  if (error) {
+    console.error("[receive-quote-sync] failed to release dedupe reservation", {
+      reservationId,
+      error: error.message,
+    });
+  }
+}
+
 // ─── Fluxo V4 (legado) ──────────────────────────────────────────────────────
 const QUOTE_COLUMNS = [
   "title", "description", "client_name", "client_email", "client_phone",
@@ -126,15 +157,15 @@ async function handleV4(
   }
 
   const { event, data, correlation_key } = parsed;
-  if (!event || typeof event !== "string") {
+  if (!isBoundedText(event, MAX_EVENT_LENGTH)) {
     await logInbound(supabase, { status: "event_required", http_status: 400, correlation_key, payload: parsed, source: "v4" });
     return json({ error: "event_required" }, 400);
   }
-  if (!correlation_key || typeof correlation_key !== "string") {
+  if (!isBoundedText(correlation_key, MAX_CORRELATION_KEY_LENGTH)) {
     await logInbound(supabase, { status: "correlation_key_required", http_status: 400, event, payload: parsed, source: "v4" });
     return json({ error: "correlation_key_required" }, 400);
   }
-  if (!data || typeof data !== "object") {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
     await logInbound(supabase, { status: "data_required", http_status: 400, event, correlation_key, payload: parsed, source: "v4" });
     return json({ error: "data_required" }, 400);
   }
@@ -142,14 +173,16 @@ async function handleV4(
   const externalQuoteId = (data as Record<string, unknown>).external_quote_id
     ?? (data as Record<string, unknown>).quote_id
     ?? (data as Record<string, unknown>).id;
-  if (!externalQuoteId || typeof externalQuoteId !== "string") {
+  if (!isBoundedText(externalQuoteId, MAX_EXTERNAL_QUOTE_ID_LENGTH)) {
     await logInbound(supabase, { status: "external_quote_id_required", http_status: 400, event, correlation_key, payload: parsed, source: "v4" });
     return json({ error: "external_quote_id_required" }, 400);
   }
 
-  const { error: dedupeErr } = await supabase
+  const { data: dedupeReservation, error: dedupeErr } = await supabase
     .from("webhook_inbound_dedupe")
-    .insert({ correlation_key, event, source: "v4", payload: parsed as unknown as Record<string, unknown> });
+    .insert({ correlation_key, event, source: "v4", payload: parsed as unknown as Record<string, unknown> })
+    .select("id")
+    .single();
 
   if (dedupeErr) {
     if ((dedupeErr as { code?: string }).code === "23505") {
@@ -158,6 +191,12 @@ async function handleV4(
     }
     await logInbound(supabase, { status: "dedupe_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: dedupeErr.message, payload: parsed, source: "v4" });
     return json({ error: "dedupe_failed", details: dedupeErr.message }, 500);
+  }
+
+  const dedupeReservationId = (dedupeReservation as { id?: string } | null)?.id;
+  if (!dedupeReservationId) {
+    await logInbound(supabase, { status: "dedupe_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: "dedupe reservation sem id", payload: parsed, source: "v4" });
+    return json({ error: "dedupe_failed" }, 500);
   }
 
   const quoteRow: Record<string, unknown> = {
@@ -178,29 +217,33 @@ async function handleV4(
   const { data: existing, error: selErr } = await supabase
     .from("quotes").select("id").eq("external_quote_id", externalQuoteId).maybeSingle();
   if (selErr) {
+    await releaseDedupeReservation(supabase, dedupeReservationId);
     await logInbound(supabase, { status: "lookup_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: selErr.message, payload: parsed, source: "v4" });
     return json({ error: "lookup_failed", details: selErr.message }, 500);
   }
 
-  let upserted: { id: string; external_quote_id: string; status: string } | null = null;
+  type SyncedQuote = { id: string; external_quote_id: string; status: string };
+  let upserted: SyncedQuote | null = null;
   if (existing?.id) {
     const { data: updated, error: updErr } = await supabase
       .from("quotes").update(quoteRow).eq("id", existing.id)
       .select("id, external_quote_id, status").single();
     if (updErr) {
+      await releaseDedupeReservation(supabase, dedupeReservationId);
       await logInbound(supabase, { status: "upsert_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: updErr.message, payload: parsed, source: "v4" });
       return json({ error: "upsert_failed", details: updErr.message }, 500);
     }
-    upserted = updated as typeof upserted;
+    upserted = updated as SyncedQuote;
   } else {
     const { data: inserted, error: insErr } = await supabase
       .from("quotes").insert(quoteRow)
       .select("id, external_quote_id, status").single();
     if (insErr) {
+      await releaseDedupeReservation(supabase, dedupeReservationId);
       await logInbound(supabase, { status: "upsert_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: insErr.message, payload: parsed, source: "v4" });
       return json({ error: "upsert_failed", details: insErr.message }, 500);
     }
-    upserted = inserted as typeof upserted;
+    upserted = inserted as SyncedQuote;
   }
 
   await logInbound(supabase, {
@@ -270,9 +313,9 @@ async function handlePromoGifts(
   const payload = parsed.payload;
 
   const missing: string[] = [];
-  if (!event || typeof event !== "string") missing.push("event");
-  if (!correlationKey || typeof correlationKey !== "string") missing.push("correlation_key");
-  if (!payload || typeof payload !== "object") missing.push("payload");
+  if (!isBoundedText(event, MAX_EVENT_LENGTH)) missing.push("event");
+  if (!isBoundedText(correlationKey, MAX_CORRELATION_KEY_LENGTH)) missing.push("correlation_key");
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) missing.push("payload");
   if (missing.length > 0) {
     await logInbound(supabase, {
       status: "invalid_payload", http_status: 400, event, correlation_key: correlationKey,
@@ -292,9 +335,11 @@ async function handlePromoGifts(
   }
 
   // Dedupe
-  const { error: dedupeErr } = await supabase
+  const { data: dedupeReservation, error: dedupeErr } = await supabase
     .from("webhook_inbound_dedupe")
-    .insert({ correlation_key: correlationKey!, event: event!, source: "promogifts", payload: parsed as unknown as Record<string, unknown> });
+    .insert({ correlation_key: correlationKey!, event: event!, source: "promogifts", payload: parsed as unknown as Record<string, unknown> })
+    .select("id")
+    .single();
 
   if (dedupeErr) {
     if ((dedupeErr as { code?: string }).code === "23505") {
@@ -312,6 +357,15 @@ async function handlePromoGifts(
     return json({ ok: false, error: "internal", request_id: requestId }, 500);
   }
 
+  const dedupeReservationId = (dedupeReservation as { id?: string } | null)?.id;
+  if (!dedupeReservationId) {
+    await logInbound(supabase, {
+      status: "dedupe_failed", http_status: 500, event, correlation_key: correlationKey,
+      external_quote_id: quoteId, error_message: "dedupe reservation sem id", payload: parsed, source: "promogifts",
+    });
+    return json({ ok: false, error: "internal", request_id: requestId }, 500);
+  }
+
   // Upsert em quotes_inbound
   const mirrorRow = {
     quote_id: quoteId,
@@ -319,7 +373,7 @@ async function handlePromoGifts(
     status: typeof p.status === "string" ? p.status : null,
     client_id: p.client_id != null ? String(p.client_id) : null,
     client_name: typeof p.client_name === "string" ? p.client_name : null,
-    total: typeof p.total === "number" ? p.total : (p.total != null ? Number(p.total) : null),
+    total: typeof p.total === "number" && Number.isFinite(p.total) ? p.total : null,
     seller_email: typeof p.seller_email === "string" ? p.seller_email : null,
     source: "promogifts",
     source_updated_at: typeof p.updated_at === "string" ? p.updated_at : null,
@@ -334,6 +388,7 @@ async function handlePromoGifts(
     .upsert(mirrorRow, { onConflict: "quote_id" });
 
   if (upErr) {
+    await releaseDedupeReservation(supabase, dedupeReservationId);
     console.error("[receive-quote-sync/promogifts] upsert failed", upErr);
     await logInbound(supabase, {
       status: "upsert_failed", http_status: 500, event, correlation_key: correlationKey,
@@ -351,7 +406,7 @@ async function handlePromoGifts(
 }
 
 // ─── Handler principal ─────────────────────────────────────────────────────
-Deno.serve(withRequestId('receive-quote-sync', async (req, _ctx) => {
+Deno.serve(withRequestId('receive-quote-sync', async (req, ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   // S1: rate-limit por IP — 300 req / 60s (webhook legítimo raramente ultrapassa; HMAC valida acima)
@@ -371,7 +426,8 @@ Deno.serve(withRequestId('receive-quote-sync', async (req, _ctx) => {
     return json({ error: "server_misconfigured" }, 500);
   }
 
-  const rawBody = await req.text();
+  const rawBody = await readUtf8BodyWithinLimit(req, MAX_WEBHOOK_BODY_BYTES);
+  if (rawBody === null) return json({ error: "payload_too_large" }, 413);
   const signatureHeader =
     req.headers.get("x-webhook-signature") ??
     req.headers.get("X-Webhook-Signature") ?? "";
@@ -382,8 +438,7 @@ Deno.serve(withRequestId('receive-quote-sync', async (req, _ctx) => {
 
   // Roteamento: presença de x-webhook-event ⇒ fluxo PromoGifts.
   if (headerEvent) {
-    const requestId = crypto.randomUUID();
-    return handlePromoGifts(supabase, rawBody, signatureHeader, headerEvent, headerCorrelation, requestId);
+    return handlePromoGifts(supabase, rawBody, signatureHeader, headerEvent, headerCorrelation, ctx.requestId);
   }
 
   // Caso contrário, fluxo V4 legado.

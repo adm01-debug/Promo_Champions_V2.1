@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -28,18 +29,9 @@ export const PRIZE_SLICES: PrizeSlice[] = [
   { label: '+25 XP', type: 'xp', value: 25, color: '#6366F1', probability: 15 },
 ];
 
-function weightedRandom(): number {
-  const totalWeight = PRIZE_SLICES.reduce((s, p) => s + p.probability, 0);
-  let random = Math.random() * totalWeight;
-  for (let i = 0; i < PRIZE_SLICES.length; i++) {
-    random -= PRIZE_SLICES[i].probability;
-    if (random <= 0) return i;
-  }
-  return 0;
-}
-
 export function usePrizeWheel(salespersonId?: string) {
   const queryClient = useQueryClient();
+  const pendingRequestId = useRef<string | null>(null);
 
   const { data: availableSpins } = useQuery({
     queryKey: ['available-spins', salespersonId],
@@ -77,29 +69,30 @@ export function usePrizeWheel(salespersonId?: string) {
       if (!salespersonId) throw new Error('No salesperson');
       if (!availableSpins || availableSpins <= 0) throw new Error('No spins available');
 
-      const prizeIndex = weightedRandom();
-      const prize = PRIZE_SLICES[prizeIndex];
+      // A mesma tentativa usa a mesma chave em caso de retry. O banco decide
+      // o prêmio, bloqueia o saldo e registra tudo em uma transação atômica.
+      const requestId = pendingRequestId.current ?? crypto.randomUUID();
+      pendingRequestId.current = requestId;
 
-      // Record the spin
-      const { error: spinErr } = await supabase
-        .from('prize_wheel_spins')
-        .insert({
-          salesperson_id: salespersonId,
-          prize_type: prize.type,
-          prize_value: prize.value,
-          prize_label: prize.label,
-          trigger_type: 'mission',
-        });
-      if (spinErr) throw spinErr;
+      const { data, error } = await supabase.rpc('spin_prize_wheel', {
+        p_request_id: requestId,
+      });
+      if (error) throw error;
 
-      // Decrement available spins
-      const { error: updateErr } = await supabase
-        .from('available_spins')
-        .update({ spins_count: (availableSpins || 1) - 1, updated_at: new Date().toISOString() })
-        .eq('salesperson_id', salespersonId);
-      if (updateErr) throw updateErr;
+      const result = data?.[0];
+      const prize = result && PRIZE_SLICES[result.prize_index];
+      if (
+        !result ||
+        !prize ||
+        prize.type !== result.prize_type ||
+        prize.value !== result.prize_value ||
+        prize.label !== result.prize_label
+      ) {
+        throw new Error('A roleta retornou um prêmio inválido');
+      }
 
-      return { prizeIndex, prize };
+      pendingRequestId.current = null;
+      return { prizeIndex: result.prize_index, prize };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['available-spins'] });

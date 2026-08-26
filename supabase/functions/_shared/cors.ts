@@ -24,8 +24,15 @@ const STATIC_HEADERS: Record<string, string> = {
 };
 
 function parseAllowlist(): string[] {
-  const raw = (globalThis as unknown as { Deno?: { env?: { get(k: string): string | undefined } } })
-    .Deno?.env?.get?.("ALLOWED_ORIGINS");
+  let raw: string | undefined;
+  try {
+    raw = (globalThis as unknown as { Deno?: { env?: { get(k: string): string | undefined } } })
+      .Deno?.env?.get?.("ALLOWED_ORIGINS");
+  } catch {
+    // Testes in-process e runtimes sem permissão de ambiente mantêm o
+    // fallback compatível em vez de falhar ao construir uma resposta.
+    return [];
+  }
   if (!raw) return [];
   return raw
     .split(",")
@@ -33,15 +40,24 @@ function parseAllowlist(): string[] {
     .filter(Boolean);
 }
 
-function matchOrigin(origin: string, pattern: string): boolean {
+export function matchOrigin(origin: string, pattern: string): boolean {
   if (pattern === "*") return true;
   if (pattern === origin) return true;
   if (!pattern.includes("*")) return false;
-  // Wildcard subdomain: convert `*.lovable.app` → regex `^https?://[^/]+\.lovable\.app$`
-  const escaped = pattern
-    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-    .replace(/\\\*/g, "[^/]*");
-  return new RegExp(`^${escaped}$`).test(origin);
+
+  // Para padrões sem esquema, `*.lovable.app` significa subdomínios HTTP(S).
+  // Escapamos cada segmento antes de inserir o curinga; escapar o padrão
+  // inteiro e só depois procurar `\\*` deixava o asterisco cru e causava
+  // `SyntaxError: Nothing to repeat` em tempo de execução.
+  const withScheme = /^(https?):\/\//i.exec(pattern);
+  const protocol = withScheme ? withScheme[1].toLowerCase() : "https?";
+  const hostPattern = withScheme ? pattern.slice(withScheme[0].length) : pattern;
+  const escapedHost = hostPattern
+    .split("*")
+    .map((part) => part.replace(/[|\\{}()[\]^$+?.]/g, "\\$&"))
+    .join("[^/]*");
+
+  return new RegExp(`^${protocol}://${escapedHost}$`, "i").test(origin);
 }
 
 /** Compute CORS headers scoped to the incoming request. */
