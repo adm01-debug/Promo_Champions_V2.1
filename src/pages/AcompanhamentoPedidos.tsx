@@ -1,46 +1,48 @@
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Package, Search, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { Package, Search, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderTrackingCard } from "@/components/order-tracking/OrderTrackingCard";
 import { useOrderTracking } from "@/hooks/orders/useOrderTracking";
-import { formatBRL } from "@/lib/orderTracking/stages";
-import type { TrackKey } from "@/lib/orderTracking/stages";
+import { formatBRL } from "@/components/orders/orderHelpers";
 
-type FilterKey = "all" | TrackKey | "at_risk";
+type FilterKey = "all" | "active" | "delivered" | "cancelled";
 
 export default function AcompanhamentoPedidos() {
-  const { data: orders, isLoading } = useOrderTracking();
+  const { data: orders, isLoading, isError } = useOrderTracking();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
 
   const filtered = useMemo(() => {
     if (!orders) return [];
-    return orders.filter((o) => {
+
+    return orders.filter((order) => {
       const matchSearch =
         !search ||
-        o.orderNumber.toLowerCase().includes(search.toLowerCase()) ||
-        o.clientName.toLowerCase().includes(search.toLowerCase());
+        order.orderNumber.toLowerCase().includes(search.toLowerCase()) ||
+        (order.clientName ?? "").toLowerCase().includes(search.toLowerCase());
       const matchFilter =
         filter === "all" ||
-        (filter === "at_risk" && o.health !== "on_track") ||
-        o.currentTrack === filter;
+        (filter === "active" && !["delivered", "cancelled"].includes(order.status)) ||
+        order.status === filter;
+
       return matchSearch && matchFilter;
     });
   }, [orders, search, filter]);
 
   const kpis = useMemo(() => {
-    if (!orders) return { total: 0, value: 0, onTrack: 0, atRisk: 0, delivered: 0 };
+    if (!orders) return { total: 0, value: 0, active: 0, delivered: 0, cancelled: 0 };
+
     return {
       total: orders.length,
-      value: orders.reduce((s, o) => s + o.totalValue, 0),
-      onTrack: orders.filter((o) => o.health === "on_track").length,
-      atRisk: orders.filter((o) => o.health !== "on_track").length,
-      delivered: orders.filter((o) => o.currentTrack !== "operational").length,
+      value: orders.reduce((sum, order) => sum + order.totalValue, 0),
+      active: orders.filter((order) => !["delivered", "cancelled"].includes(order.status)).length,
+      delivered: orders.filter((order) => order.status === "delivered").length,
+      cancelled: orders.filter((order) => order.status === "cancelled").length,
     };
   }, [orders]);
 
@@ -50,7 +52,7 @@ export default function AcompanhamentoPedidos() {
         <title>Acompanhamento de Pedidos | CRM</title>
         <meta
           name="description"
-          content="Acompanhe em tempo real os status operacionais, financeiros e de pós-venda dos seus pedidos."
+          content="Consulte os status, itens e eventos registrados para os pedidos aos quais você tem acesso."
         />
       </Helmet>
 
@@ -60,16 +62,16 @@ export default function AcompanhamentoPedidos() {
           <h1 className="font-display text-2xl font-semibold tracking-tight">Acompanhamento de Pedidos</h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Visão completa de Compras → Logística → Triagem → Personalização → Expedição → Entrega, mais Financeiro e Pós-Venda.
+          Status, valores e histórico dos pedidos registrados no sistema.
         </p>
       </motion.header>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <KPICard label="Pedidos ativos" value={String(kpis.total)} icon={Package} tone="primary" />
+        <KPICard label="Pedidos visíveis" value={String(kpis.total)} icon={Package} tone="primary" />
         <KPICard label="Valor total" value={formatBRL(kpis.value)} icon={CheckCircle2} tone="success" />
-        <KPICard label="No prazo" value={String(kpis.onTrack)} icon={CheckCircle2} tone="success" />
-        <KPICard label="Em risco" value={String(kpis.atRisk)} icon={AlertTriangle} tone="warning" />
-        <KPICard label="Pós-operacional" value={String(kpis.delivered)} icon={Clock} tone="primary" />
+        <KPICard label="Ativos" value={String(kpis.active)} icon={Clock} tone="primary" />
+        <KPICard label="Entregues" value={String(kpis.delivered)} icon={CheckCircle2} tone="success" />
+        <KPICard label="Cancelados" value={String(kpis.cancelled)} icon={XCircle} tone="destructive" />
       </div>
 
       <Card>
@@ -78,19 +80,18 @@ export default function AcompanhamentoPedidos() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar por nº do pedido ou cliente..."
               className="pl-9"
             />
           </div>
 
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as FilterKey)}>
+          <Tabs value={filter} onValueChange={(value) => setFilter(value as FilterKey)}>
             <TabsList>
               <TabsTrigger value="all">Todos</TabsTrigger>
-              <TabsTrigger value="operational">Operacional</TabsTrigger>
-              <TabsTrigger value="financial">Financeiro</TabsTrigger>
-              <TabsTrigger value="post_sale">Pós-Venda</TabsTrigger>
-              <TabsTrigger value="at_risk">Atenção</TabsTrigger>
+              <TabsTrigger value="active">Ativos</TabsTrigger>
+              <TabsTrigger value="delivered">Entregues</TabsTrigger>
+              <TabsTrigger value="cancelled">Cancelados</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardContent>
@@ -98,13 +99,23 @@ export default function AcompanhamentoPedidos() {
 
       {isLoading && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 rounded-xl" />
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-48 rounded-xl" />
           ))}
         </div>
       )}
 
-      {!isLoading && filtered.length === 0 && (
+      {!isLoading && isError && (
+        <Card>
+          <CardContent className="py-16 text-center space-y-2">
+            <XCircle className="h-10 w-10 mx-auto text-destructive" />
+            <p className="font-medium">Não foi possível carregar os pedidos</p>
+            <p className="text-sm text-muted-foreground">Tente novamente. Nenhum dado de demonstração foi exibido.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isLoading && !isError && filtered.length === 0 && (
         <Card>
           <CardContent className="py-16 text-center space-y-2">
             <Package className="h-10 w-10 mx-auto text-muted-foreground" />
@@ -114,10 +125,10 @@ export default function AcompanhamentoPedidos() {
         </Card>
       )}
 
-      {!isLoading && filtered.length > 0 && (
+      {!isLoading && !isError && filtered.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((o, i) => (
-            <OrderTrackingCard key={o.id} order={o} index={i} />
+          {filtered.map((order, index) => (
+            <OrderTrackingCard key={order.id} order={order} index={index} />
           ))}
         </div>
       )}
@@ -134,13 +145,14 @@ function KPICard({
   label: string;
   value: string;
   icon: React.ComponentType<{ className?: string }>;
-  tone: "primary" | "success" | "warning";
+  tone: "primary" | "success" | "destructive";
 }) {
   const toneMap = {
     primary: "bg-primary/10 text-primary",
     success: "bg-success/10 text-success",
-    warning: "bg-warning/10 text-warning",
+    destructive: "bg-destructive/10 text-destructive",
   };
+
   return (
     <Card>
       <CardContent className="p-4 flex items-center gap-3">

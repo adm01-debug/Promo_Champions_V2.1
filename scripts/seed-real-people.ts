@@ -1,9 +1,8 @@
 // Seed real-named salespeople (não toca o admin). Idempotente.
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -29,8 +28,15 @@ if (loadErr) throw loadErr;
 // Don't touch the admin: any row whose email contains the admin handle or
 // whose name explicitly mentions "Administrador" / "Admin".
 const ADMIN_NAME = 'Administrador Promo Brindes';
-const byName = new Map<string, any>();
-const byEmail = new Map<string, any>();
+type ExistingSalesperson = {
+  id: string;
+  name: string;
+  email: string | null;
+  role: string;
+  squad_id: string | null;
+};
+const byName = new Map<string, ExistingSalesperson>();
+const byEmail = new Map<string, ExistingSalesperson>();
 for (const row of existing ?? []) {
   if (row.name === ADMIN_NAME || /admin/i.test(row.name)) continue;
   byName.set(row.name.toLowerCase(), row);
@@ -56,7 +62,7 @@ for (let i = 0; i < SEED.length; i++) {
   if (existingRow) {
     // Update only fields that drifted (name, email, role, squad).
     // Preserve score_total, commission_rate, is_active, auth_user_id.
-    const patch: any = {};
+    const patch: Partial<Pick<ExistingSalesperson, 'name' | 'email' | 'role' | 'squad_id'>> = {};
     if (existingRow.name !== seed.name) patch.name = seed.name;
     if (existingRow.email !== seed.email) patch.email = seed.email;
     if (existingRow.role !== seed.role) patch.role = seed.role;
@@ -70,7 +76,7 @@ for (let i = 0; i < SEED.length; i++) {
     updated++;
     log(`updated ${seed.name} (${seed.role})`);
   } else {
-    const { data: ins, error } = await sb.from('salespeople').insert({
+    const { error } = await sb.from('salespeople').insert({
       name: seed.name,
       email: seed.email,
       role: seed.role,

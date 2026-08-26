@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef, memo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useRef, memo } from 'react';
 import { sanitizeCsvCell } from '@/utils/csvExport';
 import { motion } from 'framer-motion';
 import {

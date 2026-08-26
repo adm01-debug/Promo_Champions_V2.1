@@ -2,6 +2,8 @@
 // Executado por cron/manualmente. Idempotente dentro da janela de cooldown.
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 
 import {
   dedupeAlerts,
@@ -21,20 +23,50 @@ interface DraftRow {
   error: string | null;
 }
 
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc("is_admin_or_manager" as never, {
+    _user_id: caller.userId,
+  } as never);
+  if (error) throw error;
+  return Boolean(data);
+}
+
 Deno.serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const responseCorsHeaders = getCorsHeaders(req);
+  if (req.method === "OPTIONS") return new Response("ok", { headers: responseCorsHeaders });
 
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
       status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
     });
+
+  if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+
+  if (!isInternalServiceRequest(req)) {
+    try {
+      if (!await isAdminOrManagerRequest(req)) {
+        return json({ error: "forbidden" }, 403);
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) return json({ error: "unauthorized" }, 401);
+      console.error("campaign-health-alert authorization failed:", error);
+      return json({ error: "authorization_unavailable" }, 503);
+    }
+  }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error("campaign-health-alert misconfigured: missing Supabase service credentials");
+    return json({ error: "service_not_configured" }, 503);
+  }
 
   try {
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      supabaseUrl,
+      serviceRoleKey,
     );
 
     const since = new Date(Date.now() - LOOKBACK_DAYS * 86400_000).toISOString();

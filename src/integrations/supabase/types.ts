@@ -11840,6 +11840,7 @@ export type Database = {
           prize_label: string
           prize_type: string
           prize_value: number
+          request_id: string | null
           salesperson_id: string
           spun_at: string
           trigger_type: string
@@ -11849,6 +11850,7 @@ export type Database = {
           prize_label: string
           prize_type: string
           prize_value?: number
+          request_id?: string | null
           salesperson_id: string
           spun_at?: string
           trigger_type?: string
@@ -11858,6 +11860,7 @@ export type Database = {
           prize_label?: string
           prize_type?: string
           prize_value?: number
+          request_id?: string | null
           salesperson_id?: string
           spun_at?: string
           trigger_type?: string
@@ -21287,7 +21290,7 @@ export type Database = {
         Args: { _sale_id: string }
         Returns: {
           assigned_to: string
-          rule_id: string
+          rule_id: string | null
           strategy: string
         }[]
       }
@@ -22278,11 +22281,40 @@ export type Database = {
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }
+      reassign_inactive_client_portfolio: {
+        Args: {
+          p_expected_salesperson_id: string
+          p_expected_updated_at: string
+          p_inactivity_threshold_days: number
+          p_portfolio_id: string
+          p_strategy: string
+          p_to_salesperson_id: string
+        }
+        Returns: {
+          assigned_to: string
+          client_id: string
+          portfolio_id: string
+          previous_salesperson_id: string
+        }[]
+      }
       register_race_daily_checkin: {
         Args: { _salesperson_id: string; _season_id: string }
         Returns: Json
       }
       reset_pg_stat_statements_weekly: { Args: never; Returns: undefined }
+      route_unassigned_client_portfolio: {
+        Args: {
+          p_client_id: string
+          p_reason?: string | null
+          p_salesperson_id?: string | null
+          p_strategy: string
+        }
+        Returns: {
+          assigned_to: string
+          portfolio_id: string
+          strategy_used: string
+        }[]
+      }
       schedule_next_qbrs: { Args: never; Returns: number }
       search_call_library: {
         Args: { _limit?: number; _query: string }
@@ -22339,6 +22371,18 @@ export type Database = {
       }
       set_mfa_preferred_method: { Args: { p_method: string }; Returns: boolean }
       setup_sms_mfa: { Args: { p_phone: string }; Returns: boolean }
+      spin_prize_wheel: {
+        Args: { p_request_id: string }
+        Returns: {
+          id: string
+          prize_index: number
+          prize_label: string
+          prize_type: string
+          prize_value: number
+          spun_at: string
+          trigger_type: string
+        }[]
+      }
       start_of_week: {
         Args: { date_val: string; start_day?: number }
         Returns: string

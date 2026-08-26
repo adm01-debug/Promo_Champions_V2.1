@@ -1,151 +1,173 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
+import {
+  createValidationErrorResponse,
+  validateWebhookPayload,
+  WebhookContracts,
+} from "../_shared/webhook-validator.ts";
 import { classifySuppression } from "../_shared/unsubscribe.ts";
+import { authenticateInboundEmailWebhook } from "../_shared/webhook-auth.ts";
+import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
+import {
+  type InboundEmailPayload,
+  parseInboundEmailEvents,
+  shouldMatchAndPauseEnrollment,
+} from "../_shared/webhook-integrity.ts";
 
-interface ParsedEvent {
-  provider: string;
-  messageId: string | null;
-  fromEmail: string | null;
-  subject: string | null;
-  receivedAt: string;
-  eventType: string;
-}
+const MAX_INBOUND_EMAIL_BODY_BYTES = 256 * 1024;
 
-function parseEvent(payload: Record<string, unknown>, headers: Headers): ParsedEvent {
-  const ua = headers.get("user-agent")?.toLowerCase() ?? "";
-  const isResend = ua.includes("resend") || typeof (payload as { type?: unknown }).type === "string";
-  const isSendGrid = Array.isArray(payload) || ua.includes("sendgrid");
-
-  if (isResend) {
-    const data = (payload as { data?: Record<string, unknown> }).data ?? {};
-    const type = String((payload as { type?: unknown }).type ?? "email.received");
-    const eventType = type.includes("bounce") ? "bounce"
-      : type.includes("complain") ? "complaint"
-      : type.includes("reply") || type.includes("received") ? "reply"
-      : "other";
-    const from = (data.from as string | undefined) ?? null;
-    return {
-      provider: "resend",
-      messageId: (data.email_id as string | undefined) ?? (data.id as string | undefined) ?? null,
-      fromEmail: typeof from === "string" ? from.replace(/.*<([^>]+)>.*/, "$1") : null,
-      subject: (data.subject as string | undefined) ?? null,
-      receivedAt: (data.created_at as string | undefined) ?? new Date().toISOString(),
-      eventType,
-    };
-  }
-
-  if (isSendGrid) {
-    const ev = Array.isArray(payload) ? (payload[0] as Record<string, unknown>) : payload;
-    const event = String(ev?.event ?? "");
-    const eventType = event === "bounce" ? "bounce"
-      : event === "spamreport" ? "complaint"
-      : event === "unsubscribe" ? "unsubscribe"
-      : "reply";
-    return {
-      provider: "sendgrid",
-      messageId: (ev?.sg_message_id as string | undefined) ?? null,
-      fromEmail: (ev?.email as string | undefined) ?? null,
-      subject: (ev?.subject as string | undefined) ?? null,
-      receivedAt: ev?.timestamp ? new Date(Number(ev.timestamp) * 1000).toISOString() : new Date().toISOString(),
-      eventType,
-    };
-  }
-
-  // Generic fallback
-  return {
-    provider: "generic",
-    messageId: (payload.message_id as string | undefined) ?? null,
-    fromEmail: (payload.from as string | undefined) ?? null,
-    subject: (payload.subject as string | undefined) ?? null,
-    receivedAt: (payload.received_at as string | undefined) ?? new Date().toISOString(),
-    eventType: (payload.event_type as string | undefined) ?? "reply",
-  };
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
 Deno.serve(withRequestId("inbound-email-webhook", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ error: "method_not_allowed" }, 405);
   }
 
-  let payload: Record<string, unknown> = {};
+  const rawBody = await readUtf8BodyWithinLimit(
+    req,
+    MAX_INBOUND_EMAIL_BODY_BYTES,
+  );
+  if (rawBody === null) {
+    return json({ ok: false, error: "payload_too_large" }, 413);
+  }
+  const authentication = await authenticateInboundEmailWebhook(
+    req.headers,
+    rawBody,
+    (name) => Deno.env.get(name),
+  );
+  if (!authentication.ok) {
+    return json(
+      { ok: false, error: authentication.code },
+      authentication.status,
+    );
+  }
+
+  let payload: InboundEmailPayload;
   try {
-    payload = await req.json();
+    const parsed: unknown = JSON.parse(rawBody);
+    if (!parsed || (typeof parsed !== "object")) {
+      throw new Error("payload inválido");
+    }
+    payload = parsed as InboundEmailPayload;
   } catch {
-    payload = {};
+    return json({ ok: false, error: "invalid_json" }, 400);
   }
 
-  const ev = parseEvent(payload, req.headers);
+  const events = parseInboundEmailEvents(payload, authentication.provider);
+  if (events.length === 0) {
+    return json({ ok: false, error: "invalid_payload" }, 422);
+  }
 
-  // Contract validation
-  const validation = validateWebhookPayload(WebhookContracts.inboundEmail, ev, "1.1.0");
-  if (!validation.success) {
-    console.warn(`[Contract Violation] Inbound email event failed validation: ${validation.error}`);
-    // We log but proceed for robustness, or we could return 422 if we want strict enforcement
+  // Valida o lote inteiro antes de qualquer escrita. Isso impede que um item
+  // inválido deixe o lote parcialmente aceito sem sinalização ao provedor.
+  for (const event of events) {
+    const validation = validateWebhookPayload(
+      WebhookContracts.inboundEmail,
+      event,
+      "1.1.0",
+    );
+    if (!validation.success) {
+      return createValidationErrorResponse(
+        validation.error ?? "Payload inválido",
+        validation.details ?? [],
+        validation.contract_version,
+        corsHeaders,
+      );
+    }
+  }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    return json({ ok: false, error: "server_misconfigured" }, 503);
   }
 
   const admin = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    supabaseUrl,
+    serviceRoleKey,
   );
 
-  let matchedEnrollmentId: string | null = null;
   try {
-    if (ev.fromEmail) {
-      const { data: matched } = await admin.rpc("match_reply_to_enrollment", {
-        _contact_email: ev.fromEmail,
-        _received_at: ev.receivedAt,
-      });
-      matchedEnrollmentId = (matched as string | null) ?? null;
+    const matchedEnrollmentIds: string[] = [];
+    for (const event of events) {
+      let matchedEnrollmentId: string | null = null;
+      const affectsEnrollment = shouldMatchAndPauseEnrollment(event.eventType);
+      if (affectsEnrollment && event.fromEmail) {
+        const { data: matched, error: matchError } = await admin.rpc(
+          "match_reply_to_enrollment",
+          {
+            _contact_email: event.fromEmail,
+            _received_at: event.receivedAt,
+          },
+        );
+        if (matchError) throw matchError;
+        matchedEnrollmentId = (matched as string | null) ?? null;
+      }
+
+      const { error: insertError } = await admin.from("inbound_reply_events")
+        .insert({
+          provider: event.provider,
+          message_id: event.messageId,
+          from_email: event.fromEmail,
+          subject: event.subject,
+          received_at: event.receivedAt,
+          event_type: event.eventType,
+          matched_enrollment_id: matchedEnrollmentId,
+          payload: event.payload as never,
+        });
+      if (insertError) throw insertError;
+
+      // Supressão automática: hard bounce, reclamação de spam e descadastro do
+      // provedor entram na lista de opt-out (soft bounce é preservado).
+      const suppression = classifySuppression(event.eventType, event.payload);
+      if (suppression && event.fromEmail) {
+        const { error: supErr } = await admin.rpc("record_email_opt_out", {
+          _email: event.fromEmail,
+          _reason: suppression,
+          _source: `webhook:${event.provider}`,
+          _owner_id: null,
+          _metadata: {
+            message_id: event.messageId,
+            event_type: event.eventType,
+          } as never,
+        } as never);
+        if (supErr) throw supErr;
+      }
+
+      if (matchedEnrollmentId && affectsEnrollment) {
+        const reason = event.eventType === "bounce"
+          ? "bounce"
+          : event.eventType === "unsubscribe"
+          ? "unsubscribe"
+          : event.eventType === "complaint"
+          ? "complaint"
+          : "reply_detected";
+        const { error: pauseError } = await admin.rpc("auto_pause_enrollment", {
+          _enrollment_id: matchedEnrollmentId,
+          _reason: reason,
+        });
+        if (pauseError) throw pauseError;
+        matchedEnrollmentIds.push(matchedEnrollmentId);
+      }
     }
 
-    await admin.from("inbound_reply_events").insert({
-      provider: ev.provider,
-      message_id: ev.messageId,
-      from_email: ev.fromEmail,
-      subject: ev.subject,
-      received_at: ev.receivedAt,
-      event_type: ev.eventType,
-      matched_enrollment_id: matchedEnrollmentId,
-      payload: payload as never,
+    return json({
+      ok: true,
+      processed: events.length,
+      matched: matchedEnrollmentIds.length,
+      event_type: events.length === 1 ? events[0].eventType : undefined,
     });
-
-    // Supressão automática: hard bounce, reclamação de spam e descadastro do
-    // provedor entram na lista de opt-out (soft bounce é preservado).
-    const suppression = classifySuppression(ev.eventType, payload);
-    if (suppression && ev.fromEmail) {
-      const { error: supErr } = await admin.rpc("record_email_opt_out", {
-        _email: ev.fromEmail,
-        _reason: suppression,
-        _source: `webhook:${ev.provider}`,
-        _owner_id: null,
-        _metadata: { message_id: ev.messageId, event_type: ev.eventType } as never,
-      } as never);
-      if (supErr) console.error("suppression insert failed", supErr.message);
-    }
-
-    if (matchedEnrollmentId) {
-      const reason = ev.eventType === "bounce" ? "bounce"
-        : ev.eventType === "unsubscribe" ? "unsubscribe"
-        : "reply_detected";
-      await admin.rpc("auto_pause_enrollment", {
-        _enrollment_id: matchedEnrollmentId,
-        _reason: reason,
-      });
-    }
-
   } catch (e) {
     console.error("inbound-email-webhook error", e);
+    return json({ ok: false, error: "processing_failed" }, 500);
   }
-
-  // Always 200 to avoid retry storms
-  return new Response(
-    JSON.stringify({ ok: true, matched: matchedEnrollmentId, event_type: ev.eventType }),
-    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-  );
 }));

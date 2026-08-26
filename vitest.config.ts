@@ -1,11 +1,25 @@
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
+const hasSupabaseCredentials = Boolean(
+  process.env.VITE_SUPABASE_URL &&
+  (process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY)
+);
+
 export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Testes unitários que importam o cliente exigem valores não secretos. Quando
+    // credenciais reais forem fornecidas, elas prevalecem para os testes de integração.
+    env: hasSupabaseCredentials
+      ? {}
+      : {
+          VITE_SUPABASE_URL: 'https://test.supabase.co',
+          VITE_SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
+          VITE_SUPABASE_TEST_MODE: 'true',
+        },
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'dist', 'tests/e2e', 'tests/load'],
     coverage: {

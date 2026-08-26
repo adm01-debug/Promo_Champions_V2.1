@@ -36,6 +36,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { isSafeInternalPath } from '@/lib/safeNavigation';
 import {
   Dialog,
   DialogContent,
@@ -251,7 +252,7 @@ export function NotificationCenter() {
 
   const handleClick = (n: AppNotification) => {
     if (!n.read_at) markRead.mutate(n.id);
-    if (n.action_url) navigate(n.action_url);
+    if (isSafeInternalPath(n.action_url)) navigate(n.action_url);
   };
 
   return (

@@ -2,10 +2,9 @@
 // /battle_participants/activity_goals. This is destructive for the demo
 // rows but preserves admin + real names.
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -50,7 +49,7 @@ log(`  → ${eAg ? 'ERR ' + eAg.message : 'ok'}`);
 // demo id, null out whichever columns it's in (instead of cascade-deleting
 // all sales — that would be lossy). We'll do this row-by-row on sales.
 log('nulling demo refs in sales');
-let salesTouched = 0;
+let _salesTouched = 0;
 const { data: salesRows } = await sb.from('sales').select('id, salesperson_id, sdr_id, closer_id').or(
   `salesperson_id.in.(${demoIds.join(',')}),sdr_id.in.(${demoIds.join(',')}),closer_id.in.(${demoIds.join(',')})`,
 ).limit(5000);
@@ -73,7 +72,7 @@ let okUpdates = 0;
 let failedUpdates = 0;
 for (const [id, patch] of updatesById) {
   // Convert undefined → no-op; null is allowed for sdr_id
-  const clean: any = {};
+  const clean: Record<string, string | null> = {};
   if (patch.salesperson_id !== undefined) clean.salesperson_id = patch.salesperson_id;
   if (patch.sdr_id !== undefined) clean.sdr_id = patch.sdr_id;
   if (patch.closer_id !== undefined) clean.closer_id = patch.closer_id;
@@ -82,7 +81,7 @@ for (const [id, patch] of updatesById) {
   else okUpdates++;
 }
 log(`  sales re-pointed: ok=${okUpdates} failed=${failedUpdates}`);
-salesTouched = okUpdates;
+_salesTouched = okUpdates;
 
 // Final check: any remaining demo refs?
 async function stillDemo(): Promise<Record<string, number>> {

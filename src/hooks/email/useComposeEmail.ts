@@ -64,15 +64,13 @@ export interface SendEmailInput {
 export function useSendComposedEmail() {
   return useMutation({
     mutationFn: async (input: SendEmailInput) => {
-      const { data, error } = await supabase.functions.invoke("send-multichannel-message", {
+      const { data, error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
-          channel: "email",
           to: input.to,
-          recipient_name: input.recipient_name ?? input.to,
           subject: input.subject,
-          message: input.body_text,
           html: input.body_html,
-          metadata: { source: "ai-composer", client_id: input.client_id },
+          text: input.body_text,
+          purpose: "outreach",
         },
       });
       if (error) throw new Error(error.message ?? "Falha ao enviar e-mail.");

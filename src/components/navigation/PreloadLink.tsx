@@ -3,6 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { HTMLMotionProps } from 'framer-motion';
 import { triggerHaptic } from '@/lib/haptics';
+import {
+  isSafeExternalHttpUrl,
+  isSafeInternalPath,
+  safeNavigationHref,
+} from '@/lib/safeNavigation';
 
 type PrefetchableRouteComponent = {
   prefetch?: () => Promise<unknown> | unknown;
@@ -41,7 +46,7 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
       if (!to || to.startsWith('#') || prefetchedTargets.has(to)) return;
       prefetchedTargets.add(to);
 
-      const isInternalRoute = to.startsWith('/') && !to.startsWith('//');
+      const isInternalRoute = isSafeInternalPath(to);
       if (!isInternalRoute) {
         const link = document.createElement('link');
         link.rel = to.endsWith('.js') ? 'modulepreload' : 'prefetch';
@@ -58,8 +63,13 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
       onClick?.(e);
       if (e.defaultPrevented) return;
 
-      // If it's an external link or a hash, let the browser handle it
-      if (to.startsWith('http') || to.startsWith('#')) {
+      // Links externos HTTP(S) e âncoras continuam sob controle do navegador.
+      if (isSafeExternalHttpUrl(to) || to.startsWith('#')) {
+        return;
+      }
+
+      if (!isSafeInternalPath(to)) {
+        e.preventDefault();
         return;
       }
 
@@ -88,7 +98,7 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
         {...props}
         ref={ref}
         id={id}
-        href={to}
+        href={safeNavigationHref(to)}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onTouchStart={handleTouchStart}

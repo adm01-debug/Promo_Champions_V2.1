@@ -54,22 +54,27 @@ import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 
 ## 2. CORS — single source of truth in `_shared/cors.ts`
 
-Every function that responds to a browser **must** import CORS headers from the
-canonical shared module:
+Every function that responds to a browser **must** obtain CORS headers from the
+canonical shared module using the current request:
 
 ```typescript
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 Deno.serve(async (req) => {
+  const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: responseCorsHeaders });
   }
-  // ... include corsHeaders in EVERY response, including errors
+  // ... include responseCorsHeaders in EVERY response, including errors
   return new Response(JSON.stringify(data), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
   });
 });
 ```
+
+`corsHeaders` permanece reservado a chamadas estritamente server-to-server.
+Para endpoints de navegador, usar o valor estático ignora a allowlist de
+`ALLOWED_ORIGINS`.
 
 ### What you must NOT do
 
@@ -163,6 +168,25 @@ verify_jwt = false
 Do **not** create additional `config.toml` files inside subdirectories — they
 are silently ignored.
 
+### Webhooks públicos de provedores
+
+`inbound-email-webhook` e `multichannel-status-webhook` usam `verify_jwt = false`
+porque os provedores externos não possuem JWT do Supabase. Isto só é seguro
+porque cada requisição é verificada sobre o corpo bruto **antes** de qualquer
+acesso com `service_role`:
+
+| Endpoint | Protocolo aceito | Configuração obrigatória |
+|---|---|---|
+| `inbound-email-webhook` | Resend/Svix | `RESEND_WEBHOOK_SECRET` |
+|  | Twilio SendGrid/ECDSA | `SENDGRID_WEBHOOK_PUBLIC_KEY` |
+|  | Integrador HMAC-SHA256 (`X-Webhook-Signature`) | `INBOUND_EMAIL_WEBHOOK_SECRET` |
+| `multichannel-status-webhook` | Twilio (`X-Twilio-Signature`) | `TWILIO_AUTH_TOKEN` e, quando a URL pública divergir, `TWILIO_WEBHOOK_URL` |
+|  | Meta Cloud (`X-Hub-Signature-256`) | `META_APP_SECRET`; o handshake também exige `META_WEBHOOK_VERIFY_TOKEN` |
+|  | Integrador HMAC-SHA256 (`X-Webhook-Signature`) | `MULTICHANNEL_WEBHOOK_SECRET` |
+
+Ausência de segredo/chave retorna `503`; assinatura ausente, ambígua ou inválida
+retorna `401`. Nunca crie uma exceção de JWT sem uma dessas verificações.
+
 ---
 
 ## 7. CI enforcement
@@ -170,7 +194,8 @@ are silently ignored.
 Two checks gate every PR that touches `supabase/functions/**`:
 
 1. **CORS lint** (`_shared/cors_lint_test.ts`) — fails if `corsHeaders` is
-   declared outside `_shared/cors.ts`.
+      declared outside `_shared/cors.ts` e verifica os endpoints de navegador
+      selecionados contra regressão para CORS estático.
 2. **Bundle check** (`.github/workflows/edge-functions-bundle.yml` →
    `scripts/bundle-edge-functions.ts`) — runs `deno check` on every
    function, extracts the failing import URL when resolution breaks, and
@@ -199,9 +224,9 @@ deploy time — it auto-installs npm modules itself.
 ## 8. Quick checklist for new functions
 
 - [ ] Imports `@supabase/supabase-js` via `npm:@supabase/supabase-js@2.49.4`
-- [ ] Imports `corsHeaders` from `../_shared/cors.ts` (no local declaration)
-- [ ] Handles `OPTIONS` preflight + spreads `corsHeaders` in **every**
-      response (including 4xx/5xx)
+- [ ] Imports `getCorsHeaders` from `../_shared/cors.ts` (no local declaration)
+- [ ] Handles `OPTIONS` preflight + espalha `responseCorsHeaders` em **todas**
+      as respostas (incluindo 4xx/5xx)
 - [ ] Validates request body with Zod (or returns 400 on bad input)
 - [ ] All third-party imports are pinned to exact versions
 - [ ] No imports from `src/`

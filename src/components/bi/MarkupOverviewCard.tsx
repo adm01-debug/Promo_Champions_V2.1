@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
   const { data, isLoading } = useMarkupOverview(days);
 
   const summary = data?.summary;
-  const sellers = data?.sellers ?? [];
+  const sellers = useMemo(() => data?.sellers ?? [], [data?.sellers]);
   const topSellers = sellers.slice(0, 5);
 
   const handleExport = useCallback(() => {

@@ -1,7 +1,12 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 
 interface Payload {
   ownerId: string;
@@ -17,7 +22,52 @@ interface ProviderResult {
   ok: boolean;
   providerMessageId?: string;
   error?: string;
-  raw?: unknown;
+}
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const MAX_MESSAGE_LENGTH = 4_096;
+
+function isValidPhone(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return /^[+\d().\s-]+$/.test(value) && digits.length >= 6 &&
+    digits.length <= 20;
+}
+
+function parsePayload(value: unknown): Payload | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+
+  if (
+    typeof raw.ownerId !== "string" || !UUID_RE.test(raw.ownerId) ||
+    (raw.channel !== "whatsapp" && raw.channel !== "sms") ||
+    typeof raw.to !== "string" || !isValidPhone(raw.to.trim()) ||
+    typeof raw.body !== "string" || !raw.body.trim() ||
+    raw.body.length > MAX_MESSAGE_LENGTH
+  ) {
+    return null;
+  }
+
+  if (
+    (raw.templateId !== undefined && typeof raw.templateId !== "string") ||
+    (raw.enrollmentId !== undefined &&
+      (typeof raw.enrollmentId !== "string" ||
+        !UUID_RE.test(raw.enrollmentId))) ||
+    (raw.stepId !== undefined &&
+      (typeof raw.stepId !== "string" || !UUID_RE.test(raw.stepId)))
+  ) {
+    return null;
+  }
+
+  return {
+    ownerId: raw.ownerId,
+    channel: raw.channel,
+    to: raw.to.trim(),
+    body: raw.body,
+    templateId: raw.templateId as string | undefined,
+    enrollmentId: raw.enrollmentId as string | undefined,
+    stepId: raw.stepId as string | undefined,
+  };
 }
 
 async function sendTwilio(
@@ -29,21 +79,26 @@ async function sendTwilio(
 ): Promise<ProviderResult> {
   const sid = creds.account_sid;
   const token = creds.auth_token;
-  if (!sid || !token) return { ok: false, error: "Twilio: missing account_sid/auth_token" };
+  if (!sid || !token) return { ok: false, error: "twilio_credentials_missing" };
 
   const fromAddr = channel === "whatsapp" ? `whatsapp:${from}` : from;
   const toAddr = channel === "whatsapp" ? `whatsapp:${to}` : to;
-
   const form = new URLSearchParams({ From: fromAddr, To: toAddr, Body: body });
   const auth = btoa(`${sid}:${token}`);
-  const r = await fetchWithTimeout(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
-    method: "POST",
-    headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/x-www-form-urlencoded" },
-    body: form.toString(),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) return { ok: false, error: j?.message || `Twilio ${r.status}`, raw: j };
-  return { ok: true, providerMessageId: j?.sid, raw: j };
+  const response = await fetchWithTimeout(
+    `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    },
+  );
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) return { ok: false, error: `twilio_${response.status}` };
+  return { ok: true, providerMessageId: result?.sid };
 }
 
 async function sendMetaCloud(
@@ -54,20 +109,33 @@ async function sendMetaCloud(
 ): Promise<ProviderResult> {
   const phoneId = creds.phone_number_id;
   const token = creds.access_token;
-  if (!phoneId || !token) return { ok: false, error: "Meta Cloud: missing phone_number_id/access_token" };
+  if (!phoneId || !token) {
+    return { ok: false, error: "meta_credentials_missing" };
+  }
 
   const payload: Record<string, unknown> = templateId
-    ? { messaging_product: "whatsapp", to, type: "template", template: { name: templateId, language: { code: "pt_BR" } } }
+    ? {
+      messaging_product: "whatsapp",
+      to,
+      type: "template",
+      template: { name: templateId, language: { code: "pt_BR" } },
+    }
     : { messaging_product: "whatsapp", to, type: "text", text: { body } };
 
-  const r = await fetchWithTimeout(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) return { ok: false, error: j?.error?.message || `Meta ${r.status}`, raw: j };
-  return { ok: true, providerMessageId: j?.messages?.[0]?.id, raw: j };
+  const response = await fetchWithTimeout(
+    `https://graph.facebook.com/v20.0/${phoneId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) return { ok: false, error: `meta_${response.status}` };
+  return { ok: true, providerMessageId: result?.messages?.[0]?.id };
 }
 
 async function sendZapi(
@@ -78,71 +146,114 @@ async function sendZapi(
   const instance = creds.instance_id;
   const token = creds.token;
   const clientToken = creds.client_token;
-  if (!instance || !token) return { ok: false, error: "Z-API: missing instance_id/token" };
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (!instance || !token) {
+    return { ok: false, error: "zapi_credentials_missing" };
+  }
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
   if (clientToken) headers["Client-Token"] = clientToken;
-  const r = await fetchWithTimeout(`https://api.z-api.io/instances/${instance}/token/${token}/send-text`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ phone: to, message: body }),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) return { ok: false, error: j?.error || `Z-API ${r.status}`, raw: j };
-  return { ok: true, providerMessageId: j?.messageId || j?.id, raw: j };
+  const response = await fetchWithTimeout(
+    `https://api.z-api.io/instances/${instance}/token/${token}/send-text`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ phone: to, message: body }),
+    },
+  );
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) return { ok: false, error: `zapi_${response.status}` };
+  return { ok: true, providerMessageId: result?.messageId || result?.id };
 }
 
-const unauthorized = (msg: string) =>
-  new Response(JSON.stringify({ ok: false, error: msg }), {
-    status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
+  const responseCorsHeaders = getCorsHeaders(req);
+  const json = (body: Record<string, unknown>, status = 200): Response => {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+    });
+  };
 
-const forbidden = (msg: string) =>
-  new Response(JSON.stringify({ ok: false, error: msg }), {
-    status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: responseCorsHeaders });
+  }
+  if (req.method !== "POST") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+  if (req.headers.has("x-mock-provider")) {
+    return json({ ok: false, error: "mock_provider_disabled" }, 403);
+  }
 
-Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    ctx.log("error", "environment_not_configured");
+    return json({ ok: false, error: "service_not_configured" }, 503);
+  }
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const anonKey     = Deno.env.get("SUPABASE_ANON_KEY")!;
+  const internalRequest = isInternalServiceRequest(req);
+  let caller: Awaited<ReturnType<typeof getUserClient>> | null = null;
 
-  // ── Authentication guard ───────────────────────────────────────────────
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return unauthorized("Missing Authorization header");
+  if (!internalRequest) {
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return json({ ok: false, error: "unauthorized" }, 401);
+      }
+      ctx.log("error", "user_authentication_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return json({ ok: false, error: "service_not_configured" }, 503);
+    }
+  }
 
-  const callerClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: authHeader } },
-  });
-  const { data: { user }, error: authErr } = await callerClient.auth.getUser();
-  if (authErr || !user) return unauthorized("Invalid or expired token");
-  // ──────────────────────────────────────────────────────────────────────
+  let payload: Payload | null;
+  try {
+    payload = parsePayload(await req.json());
+  } catch {
+    return json({ ok: false, error: "invalid_json" }, 400);
+  }
+  if (!payload) return json({ ok: false, error: "invalid_payload" }, 400);
 
-  const supabase = createClient(supabaseUrl, serviceKey);
+  // `record_outbound_message` é uma RPC privilegiada. Enrollment e step são
+  // referências de auditoria internas, não uma escolha do navegador: aceitar
+  // IDs arbitrários de uma chamada humana permitiria registrar atividade em
+  // uma cadência de terceiro. Jobs autenticados por service_role continuam
+  // podendo propagar esses vínculos já carregados do banco.
+  if (!internalRequest && (payload.enrollmentId || payload.stepId)) {
+    return json({ ok: false, error: "direct_cadence_reference_forbidden" }, 403);
+  }
+
+  let supabase;
+  try {
+    supabase = getServiceClient(
+      "send-multichannel-message lê credenciais e registra o resultado do provedor",
+    );
+  } catch (error) {
+    ctx.log("error", "service_client_unavailable", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return json({ ok: false, error: "service_not_configured" }, 503);
+  }
+
+  if (caller && payload.ownerId !== caller.userId) {
+    const { data: isAdminOrManager, error: roleError } = await caller.client
+      .rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+    if (roleError) {
+      ctx.log("error", "role_check_failed", { error: roleError.message });
+      return json({ ok: false, error: "authorization_unavailable" }, 503);
+    }
+    if (!isAdminOrManager) return json({ ok: false, error: "forbidden" }, 403);
+  }
 
   try {
-    const payload = (await req.json()) as Payload;
-    if (!payload.ownerId || !payload.channel || !payload.to || !payload.body) {
-      return new Response(JSON.stringify({ ok: false, error: "Missing required fields" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // ── Authorization: caller may only send as themselves unless they are admin
-    if (payload.ownerId !== user.id) {
-      // Check if caller has admin role
-      const { data: hasAdmin } = await supabase.rpc("has_role", {
-        _user_id: user.id,
-        _role: "admin",
-      });
-      if (!hasAdmin) return forbidden("Cannot send messages on behalf of another user");
-    }
-
-    const isMock = req.headers.get("x-mock-provider") === "true";
-
-    // Find active credential for owner+channel
-    const { data: cred, error: credErr } = await supabase
+    const { data: credential, error: credentialError } = await supabase
       .from("channel_credentials")
       .select("id, provider, credentials, from_number")
       .eq("owner_id", payload.ownerId)
@@ -152,63 +263,91 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, _ctx) => {
       .limit(1)
       .maybeSingle();
 
-    if (credErr) throw credErr;
-    if (!cred && !isMock) {
-      return new Response(JSON.stringify({ ok: false, error: "no_credentials", skipped: true }), {
-        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (credentialError) throw credentialError;
+    if (!credential) {
+      return json({ ok: false, error: "no_credentials", skipped: true });
+    }
+
+    const credentials = credential.credentials;
+    if (
+      !credentials || typeof credentials !== "object" ||
+      Array.isArray(credentials)
+    ) {
+      return json({ ok: false, error: "invalid_provider_credentials" }, 502);
     }
 
     let result: ProviderResult;
-    const provider = cred?.provider ?? "mock";
-
-    if (isMock) {
-      result = { ok: true, providerMessageId: `mock_${crypto.randomUUID()}` };
-    } else {
-      const credsObj = (cred!.credentials ?? {}) as Record<string, string>;
-      switch (cred!.provider) {
-        case "twilio":
-          result = await sendTwilio(credsObj, cred!.from_number ?? "", payload.to, payload.body, payload.channel);
-          break;
-        case "meta_cloud":
-          result = await sendMetaCloud(credsObj, payload.to, payload.body, payload.templateId);
-          break;
-        case "zapi":
-          result = await sendZapi(credsObj, payload.to, payload.body);
-          break;
-        default:
-          result = { ok: false, error: `Provider ${cred!.provider} not implemented` };
-      }
+    switch (credential.provider) {
+      case "twilio":
+        result = await sendTwilio(
+          credentials as Record<string, string>,
+          credential.from_number ?? "",
+          payload.to,
+          payload.body,
+          payload.channel,
+        );
+        break;
+      case "meta_cloud":
+        result = await sendMetaCloud(
+          credentials as Record<string, string>,
+          payload.to,
+          payload.body,
+          payload.templateId,
+        );
+        break;
+      case "zapi":
+        result = await sendZapi(
+          credentials as Record<string, string>,
+          payload.to,
+          payload.body,
+        );
+        break;
+      default:
+        result = { ok: false, error: "provider_not_supported" };
     }
 
-    // Log via RPC
-    await supabase.rpc("record_outbound_message", {
-      _owner_id: payload.ownerId,
-      _enrollment_id: payload.enrollmentId ?? null,
-      _step_id: payload.stepId ?? null,
-      _channel: payload.channel,
-      _to: payload.to,
-      _body: payload.body,
-      _provider: provider,
-      _provider_msg_id: result.providerMessageId ?? null,
-      _status: result.ok ? "sent" : "failed",
-      _error: result.error ?? null,
-      _template_id: payload.templateId ?? null,
-    });
+    const { data: outboundMessageId, error: recordError } = await supabase.rpc(
+      "record_outbound_message",
+      {
+        _owner_id: payload.ownerId,
+        _enrollment_id: payload.enrollmentId ?? null,
+        _step_id: payload.stepId ?? null,
+        _channel: payload.channel,
+        _to: payload.to,
+        _body: payload.body,
+        _provider: credential.provider,
+        _provider_msg_id: result.providerMessageId ?? null,
+        _status: result.ok ? "sent" : "failed",
+        _error: result.error ?? null,
+        _template_id: payload.templateId ?? null,
+      },
+    );
 
-    return new Response(
-      JSON.stringify({
+    if (recordError) {
+      ctx.log("error", "outbound_message_record_failed", {
+        provider: credential.provider,
+        provider_message_id: result.providerMessageId ?? null,
+        error: recordError.message,
+      });
+      return json({
         ok: result.ok,
         providerMessageId: result.providerMessageId,
         error: result.error,
-      }),
-      { status: result.ok ? 200 : 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  } catch (e) {
-    console.error('send-multichannel-message error:', e);
-    const msg = e instanceof Error ? e.message : String(e);
-    return new Response(JSON.stringify({ ok: false, error: msg }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        recorded: false,
+      }, result.ok ? 202 : 502);
+    }
+
+    return json({
+      ok: result.ok,
+      providerMessageId: result.providerMessageId,
+      error: result.error,
+      outboundMessageId,
+      recorded: true,
+    }, result.ok ? 200 : 502);
+  } catch (error) {
+    ctx.log("error", "send_failed", {
+      error: error instanceof Error ? error.message : String(error),
     });
+    return json({ ok: false, error: "send_failed" }, 500);
   }
 }));
