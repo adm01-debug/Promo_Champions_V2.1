@@ -49,6 +49,12 @@ npx playwright test --list                # 483 testes em 46 arquivos descoberto
 
 Os dois testes ignorados dependem de privilégio de banco e não foram mascarados como sucesso. Testes E2E são apenas listados enquanto `supabase start` não consegue compor o banco local devido às chaves de migration duplicadas descritas na reconciliação.
 
+## CI remoto
+
+A PR de entrega disparou os workflows ativos do GitHub Actions, mas os jobs não chegaram a iniciar nenhuma etapa. As anotações dos checks `Edge Functions Bundle Check`, `Edge Functions X-Request-Id Lint`, `PR Checks` e `CI` registram literalmente que o orçamento de Actions impede novo uso. O mesmo padrão — falha em poucos segundos, sem steps e sem logs — já existia em execuções de `main` e da PR de auditoria anteriores.
+
+Isso é um bloqueio externo de orçamento da conta/repositório, não evidência de falha dos comandos ou dos testes locais. A normalização do orçamento e a nova execução do CI são pré-requisitos para aprovar ou fazer deploy desta PR.
+
 ## Bloqueios e autorizações necessárias para a próxima onda
 
 1. Disponibilizar acesso somente-leitura autenticado ao catálogo do banco destino e confirmar qual dos MCPs aponta para origem e destino.
@@ -61,6 +67,7 @@ Os dois testes ignorados dependem de privilégio de banco e não foram mascarado
 8. Criar, após reconciliação, claim/idempotência persistente para `email-bulk-retry`; duas execuções ainda podem alcançar o mesmo rascunho antes de `sent_at`.
 9. Definir o efeito de domínio de cada prêmio de roleta (XP, duração de power-up e badge); o giro persistido não deve ser anunciado como prêmio concedido sem esse contrato.
 10. Configurar a allowlist real em `ALLOWED_ORIGINS` no ambiente de deploy; sem esse valor, o fallback compatível de CORS continua permissivo.
+11. Regularizar o orçamento do GitHub Actions e reexecutar todos os gates remotos; enquanto os jobs não iniciam, não há evidência de CI remoto aprovando o commit.
 
 ## Critério para deploy
 
