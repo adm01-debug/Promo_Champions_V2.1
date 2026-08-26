@@ -6,6 +6,14 @@
 **Projetos Supabase informados:** origem rapjswienfhkobhlamxb; destino usyxfpqlsspldubptrdl
 **Natureza do trabalho:** auditoria somente leitura e criação deste documento
 
+> **Errata de evidência viva:** a reconciliação mais recente está em
+> [MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md](MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md).
+> O MCP de destino falhou para todas as leituras de catálogo e os dois URLs MCP
+> fornecidos eram idênticos. Qualquer afirmação anterior baseada em snapshot,
+> OpenAPI ou tipos deve ser tratada como evidência histórica, não como prova do
+> estado vivo atual do destino. A matriz também corrige a cobertura de índices:
+> há 25 FKs sem índice com colunas na liderança.
+
 ## Veredito executivo
 
 O sistema tem uma superfície funcional muito ampla e o frontend compila, gera build e permite navegação anônima básica. Isso explica a percepção de que ele está quase pronto. Entretanto, **o estado atual não atende à definição de pronto do próprio projeto: ligado em produção, com tráfego real, contratos íntegros e evidência operacional**.

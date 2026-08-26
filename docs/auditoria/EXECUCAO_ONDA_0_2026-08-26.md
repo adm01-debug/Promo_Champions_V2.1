@@ -7,7 +7,7 @@ Escopo: correções locais, verificáveis e reversíveis no repositório. Nenhum
 
 Esta onda começa pela simulação de cenários de falha e só executa mudanças cujo contrato pôde ser demonstrado pelo código, pelos tipos ou por testes locais. Onde o catálogo do banco destino não pôde ser lido, a mudança foi preparada e marcada como bloqueada para aplicação, nunca inferida.
 
-O detalhamento de cenários está em [SIMULACAO_CENARIOS_ONDA_0_2026-08-26.md](SIMULACAO_CENARIOS_ONDA_0_2026-08-26.md), o inventário de origem em [CATALOGO_BANCO_ORIGEM_2026-08-26.md](CATALOGO_BANCO_ORIGEM_2026-08-26.md) e a reconciliação de migrations em [RECONCILIACAO_MIGRATIONS_2026-08-26.md](RECONCILIACAO_MIGRATIONS_2026-08-26.md).
+O detalhamento de cenários está em [SIMULACAO_CENARIOS_ONDA_0_2026-08-26.md](SIMULACAO_CENARIOS_ONDA_0_2026-08-26.md), o inventário e a matriz atual dos bancos em [MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md](MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md) e a reconciliação de migrations em [RECONCILIACAO_MIGRATIONS_2026-08-26.md](RECONCILIACAO_MIGRATIONS_2026-08-26.md).
 
 ## Contenções efetivamente implementadas
 

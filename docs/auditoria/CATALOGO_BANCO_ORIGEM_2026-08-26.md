@@ -7,6 +7,13 @@ leitura.
 catálogo SQL/Management API não foi configurado. Nenhum bootstrap foi rodado,
 pois isso alteraria o destino.
 
+> **Atualização de fechamento:** a matriz canônica desta coleta está em
+> [MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md](MATRIZ_FORENSE_BANCOS_E_CONTRATOS_2026-08-26.md).
+> Ela corrige a contagem total de colunas de public para 7.723, registra 25 FKs
+> candidatas a índice por ausência de prefixo líder e confirma sete falhas
+> estruturais. O destino continua classificado como **não observável**, nunca
+> como ausente.
+
 ## Escopo e método
 
 Foram feitas consultas `SELECT` em catálogos PostgreSQL (`pg_class`,
@@ -23,7 +30,7 @@ local continuam sendo estruturas potencialmente necessárias.
 | Tipo de objeto | Quantidade | Observação |
 | --- | ---: | --- |
 | Tabelas/partições | 391 | 390 com RLS habilitado |
-| Colunas | 7.633 | não houve alteração de tipo ou nulidade |
+| Colunas | 7.723 | 5.086 em tabelas/partições, 2.547 em views e 90 em MVs |
 | Views | 192 | 183 com `security_invoker=true` |
 | Views materializadas | 4 | requerem validação de refresh antes de qualquer mudança |
 | Índices | 1.170 | 632 únicos |
