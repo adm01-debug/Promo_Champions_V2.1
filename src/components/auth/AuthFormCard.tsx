@@ -153,7 +153,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
               <div className="w-full border-t border-white/10"></div>
             </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
-              <span className="bg-[#0a0b1a] px-3 text-white/30">ou via credenciais</span>
+              <span className="bg-[#0a0b1a] px-3 text-white/60">ou via credenciais</span>
             </div>
           </div>
 
@@ -235,6 +235,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
+                  aria-label={showPwd ? 'Ocultar senha' : 'Mostrar senha'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 transition-colors"
                 >
                   {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

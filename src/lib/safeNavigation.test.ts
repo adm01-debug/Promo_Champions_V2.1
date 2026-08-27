@@ -18,7 +18,7 @@ describe('isSafeInternalPath', () => {
     'javascript:alert(1)',
     ' /vendas',
     '/vendas ',
-  ])('rejeita destino não interno seguro: %s', (value) => {
+  ])('rejeita destino não interno seguro: %s', value => {
     expect(isSafeInternalPath(value)).toBe(false);
   });
 });
@@ -27,7 +27,9 @@ describe('safeNavigationHref', () => {
   it('preserva somente HTTP(S), hash e rotas internas seguras', () => {
     expect(isSafeExternalHttpUrl('https://docs.example.com')).toBe(true);
     expect(isSafeExternalHttpUrl('javascript:alert(1)')).toBe(false);
-    expect(safeNavigationHref('https://docs.example.com')).toBe('https://docs.example.com');
+    expect(safeNavigationHref('https://docs.example.com')).toBe(
+      'https://docs.example.com'
+    );
     expect(safeNavigationHref('/clientes')).toBe('/clientes');
     expect(safeNavigationHref('#detalhes')).toBe('#detalhes');
   });

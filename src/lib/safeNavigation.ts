@@ -40,7 +40,11 @@ export function isSafeExternalHttpUrl(value: unknown): boolean {
 }
 
 export function safeNavigationHref(value: string): string {
-  if (isSafeInternalPath(value) || isSafeExternalHttpUrl(value) || value.startsWith('#')) {
+  if (
+    isSafeInternalPath(value) ||
+    isSafeExternalHttpUrl(value) ||
+    value.startsWith('#')
+  ) {
     return value;
   }
 

@@ -44,7 +44,9 @@ export function useWebAuthn() {
   const registerPasskey = useCallback(
     async (_friendlyName?: string): Promise<boolean> => {
       if (!PASSKEYS_AVAILABLE) {
-        toast.error('Passkeys estão temporariamente indisponíveis por manutenção de segurança');
+        toast.error(
+          'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+        );
         return false;
       }
       if (!isWebAuthnSupported) {
@@ -125,7 +127,9 @@ export function useWebAuthn() {
 
   const loginWithPasskey = useCallback(async (email?: string): Promise<boolean> => {
     if (!PASSKEYS_AVAILABLE) {
-      toast.error('Passkeys estão temporariamente indisponíveis por manutenção de segurança');
+      toast.error(
+        'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+      );
       return false;
     }
     if (!isWebAuthnSupported) {
@@ -207,7 +211,9 @@ export function useWebAuthn() {
   const deletePasskey = useCallback(
     async (credentialId: string): Promise<boolean> => {
       if (!PASSKEYS_AVAILABLE) {
-        toast.error('Passkeys estão temporariamente indisponíveis por manutenção de segurança');
+        toast.error(
+          'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+        );
         return false;
       }
       if (!user?.id) {
