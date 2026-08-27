@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
-import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export interface ClientPortfolioItem {
   id: string;
@@ -62,12 +61,14 @@ export const useUpdatePortfolioStatus = () => {
       status: string;
       lastPurchaseDate?: string;
     }) => {
-      const updates: TableUpdate<'client_portfolio'> = { status };
-      if (lastPurchaseDate) updates.last_purchase_date = lastPurchaseDate;
-      const { error } = await supabase
-        .from('client_portfolio')
-        .update(updates)
-        .eq('id', portfolioId);
+      const { error } = await supabase.rpc(
+        'update_client_portfolio_status' as never,
+        {
+          p_portfolio_id: portfolioId,
+          p_status: status,
+          p_last_purchase_date: lastPurchaseDate ?? null,
+        } as never
+      );
       if (error) throw error;
     },
     onSuccess: () => {

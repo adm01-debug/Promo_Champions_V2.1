@@ -15,13 +15,16 @@ const BASE_URL = process.env.A11Y_BASE_URL ?? 'http://localhost:5173';
  * Restaura a sessão Supabase (localStorage + cookies SSR) antes de navegar
  * para uma rota autenticada. No-op se a sessão gerenciada não estiver injetada.
  */
-async function restoreSupabaseSession(context: BrowserContext, page: Page): Promise<void> {
+async function restoreSupabaseSession(
+  context: BrowserContext,
+  page: Page
+): Promise<void> {
   if (!AUTH_INJECTED) return;
 
   if (COOKIES_JSON) {
     try {
       const cookies = JSON.parse(COOKIES_JSON) as Array<Record<string, unknown>>;
-      const scoped = cookies.map((c) => ({ ...c, url: BASE_URL }));
+      const scoped = cookies.map(c => ({ ...c, url: BASE_URL }));
       // Playwright aceita cookies como array; tipagem tolerante ao formato do @supabase/ssr.
       await context.addCookies(scoped as Parameters<BrowserContext['addCookies']>[0]);
     } catch {
@@ -36,7 +39,7 @@ async function restoreSupabaseSession(context: BrowserContext, page: Page): Prom
       ([key, value]) => {
         window.localStorage.setItem(key, value);
       },
-      [STORAGE_KEY, SESSION_JSON] as const,
+      [STORAGE_KEY, SESSION_JSON] as const
     );
   }
 }
@@ -56,12 +59,16 @@ interface AxeViolation {
 }
 
 function formatViolations(routeName: string, violations: AxeViolation[]): string {
-  const lines: string[] = [`\n[a11y] ${routeName} — ${violations.length} violação(ões) serious/critical:`];
+  const lines: string[] = [
+    `\n[a11y] ${routeName} — ${violations.length} violação(ões) serious/critical:`,
+  ];
   for (const v of violations) {
     lines.push(`  • ${v.id} (${v.impact ?? 'unknown'}) — ${v.help}`);
     lines.push(`    ${v.helpUrl}`);
     for (const node of v.nodes.slice(0, 3)) {
-      const selector = Array.isArray(node.target) ? node.target.join(' ') : String(node.target);
+      const selector = Array.isArray(node.target)
+        ? node.target.join(' ')
+        : String(node.target);
       lines.push(`      ↳ ${selector}`);
     }
     if (v.nodes.length > 3) lines.push(`      … +${v.nodes.length - 3} nó(s)`);
@@ -76,7 +83,10 @@ test.describe('Onda Q — a11y sweep (axe-core)', () => {
       test.setTimeout(60_000);
 
       if (route.requiresAuth && !AUTH_INJECTED) {
-        test.skip(true, 'Sessão Supabase gerenciada não injetada (LOVABLE_BROWSER_AUTH_STATUS != injected).');
+        test.skip(
+          true,
+          'Sessão Supabase gerenciada não injetada (LOVABLE_BROWSER_AUTH_STATUS != injected).'
+        );
         return;
       }
 
@@ -88,9 +98,7 @@ test.describe('Onda Q — a11y sweep (axe-core)', () => {
       await page.waitForLoadState('networkidle').catch(() => {
         /* algumas rotas mantêm polling; segue com selector-âncora */
       });
-      await page.waitForSelector(route.waitFor, { timeout: 15_000 }).catch(() => {
-        /* deixa o axe rodar mesmo assim para reportar violation informativa */
-      });
+      await expect(page.locator(route.waitFor).first()).toBeVisible({ timeout: 15_000 });
 
       // Pequeno buffer para animações Framer / hydration completar
       await page.waitForTimeout(400);
@@ -108,7 +116,7 @@ test.describe('Onda Q — a11y sweep (axe-core)', () => {
 
       const results = await builder.analyze();
       const blocking = (results.violations as AxeViolation[]).filter(
-        (v) => v.impact === 'serious' || v.impact === 'critical',
+        v => v.impact === 'serious' || v.impact === 'critical'
       );
 
       const routeAttachment: Record<string, unknown> = {
@@ -116,7 +124,7 @@ test.describe('Onda Q — a11y sweep (axe-core)', () => {
         path: route.path,
         blockingCount: blocking.length,
         totalViolations: results.violations.length,
-        violations: blocking.map((v) => ({
+        violations: blocking.map(v => ({
           id: v.id,
           impact: v.impact,
           help: v.help,
