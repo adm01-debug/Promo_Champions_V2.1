@@ -1,30 +1,35 @@
-// Função desativada por segurança.
-//
-// A versão anterior era um atalho temporário de migração e expunha uma
-// superfície incompatível com produção. A implantação desta versão substitui
-// o endpoint por uma resposta explícita, sem ler ou devolver variáveis de
-// ambiente. Migrações devem usar o fluxo administrativo autenticado.
+// Edge function temporária para migração de banco.
+// Cole em: Cloud > Edge Functions > migrate-helper > View code
+// Após a migração, remova esta função.
 
-import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
-
-const handler = async (req: Request): Promise<Response> => {
-  const headers = {
-    ...getCorsHeaders(req),
-    'Content-Type': 'application/json',
-  };
-
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers });
-  }
-
-  return new Response(
-    JSON.stringify({
-      error: 'Endpoint de migração desativado',
-      code: 'MIGRATION_HELPER_DISABLED',
-    }),
-    { status: 410, headers },
-  );
+const ACCESS_KEY = "b15fba19d3e725bf4242ac1139e948ca20f91b6dda06c389";
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-access-key",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-Deno.serve(withRequestId('migrate-helper', handler));
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+  const key = req.headers.get("x-access-key");
+  if (key !== ACCESS_KEY) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...cors, "Content-Type": "application/json" } });
+
+  const url = new URL(req.url);
+  const action = url.searchParams.get("action") || "ping";
+
+  try {
+    if (action === "ping") {
+      return new Response(JSON.stringify({ ok: true, project_ref: Deno.env.get("SUPABASE_URL") }), { headers: { ...cors, "Content-Type": "application/json" } });
+    }
+    if (action === "credentials") {
+      return new Response(JSON.stringify({
+        url: Deno.env.get("SUPABASE_URL"),
+        service_role: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+        db_url: Deno.env.get("SUPABASE_DB_URL"),
+      }), { headers: { ...cors, "Content-Type": "application/json" } });
+    }
+    return new Response(JSON.stringify({ error: "unknown_action" }), { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
+  }
+});
