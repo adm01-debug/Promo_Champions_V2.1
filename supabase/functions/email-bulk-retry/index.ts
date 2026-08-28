@@ -10,6 +10,7 @@ import {
   unsubscribeHeaders,
 } from "../_shared/unsubscribe.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -36,7 +37,7 @@ async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
   return Boolean(data);
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId("email-bulk-retry", async (req) => {
   const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: responseCorsHeaders });
@@ -215,4 +216,4 @@ Deno.serve(async (req) => {
     console.error("email-bulk-retry error:", e);
     return json({ error: (e as Error).message }, 500);
   }
-});
+}));

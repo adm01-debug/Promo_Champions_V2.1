@@ -3,6 +3,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { partitionNotificationBatch } from '../_shared/notification-categories.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
@@ -52,7 +53,7 @@ function thresholdDaysFor(level: Level, expectedInterval: number | null): number
   return ABSOLUTE_THRESHOLDS[level];
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
@@ -339,4 +340,4 @@ Deno.serve(async req => {
       }
     );
   }
-});
+}));

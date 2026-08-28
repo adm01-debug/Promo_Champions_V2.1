@@ -4,6 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 import {
   dedupeAlerts,
@@ -36,7 +37,7 @@ async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
   return Boolean(data);
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('campaign-health-alert', async req => {
   const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS')
     return new Response('ok', { headers: responseCorsHeaders });
@@ -259,4 +260,4 @@ Deno.serve(async req => {
     console.error(JSON.stringify({ scope: 'campaign-health-alert', error: message }));
     return json({ error: message }, 500);
   }
-});
+}));

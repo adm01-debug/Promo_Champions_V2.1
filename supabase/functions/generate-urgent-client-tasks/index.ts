@@ -2,6 +2,7 @@
 // Runs via cron every hour; only executes when local time >= configured cutoff and not already run today.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
 
 const WON_STATUSES = ['won', 'closed_won', 'paid', 'delivered', 'completed'];
 
@@ -43,7 +44,7 @@ function computeUrgency(daysSince: number, avgInterval: number): { urgency: Urge
   return { urgency, risk };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('generate-urgent-client-tasks', async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const supabase = createClient(
@@ -161,7 +162,7 @@ Deno.serve(async (req) => {
     console.error(e);
     return json({ error: (e as Error).message }, 500);
   }
-});
+}));
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
