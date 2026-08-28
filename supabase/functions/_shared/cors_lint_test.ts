@@ -3,7 +3,8 @@
  *
  * Rule: `corsHeaders` MUST be declared exactly once across the entire
  * `supabase/functions` tree — namely in `supabase/functions/_shared/cors.ts`.
- * Every other edge function file must `import { corsHeaders } from "../_shared/cors.ts"`.
+ * Endpoints de navegador devem usar `getCorsHeaders(req)` para que a allowlist
+ * seja avaliada na origem que fez a requisição.
  *
  * This test fails the build (via `deno test` / `supabase--test_edge_functions`)
  * when any other file declares its own `corsHeaders`. Failure output lists every
@@ -15,10 +16,21 @@
  */
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
-import { fromFileUrl, relative, resolve } from "https://deno.land/std@0.224.0/path/mod.ts";
+import {
+  fromFileUrl,
+  relative,
+  resolve,
+} from "https://deno.land/std@0.224.0/path/mod.ts";
 
 const FUNCTIONS_ROOT = resolve(fromFileUrl(import.meta.url), "../..");
 const CANONICAL_FILE = "_shared/cors.ts";
+const DYNAMIC_CORS_ENDPOINTS = [
+  "send-quote-to-client",
+  "send-multichannel-message",
+  "process-cadence-tasks",
+  "process-scheduled-sends",
+  "sequence-runner",
+];
 
 /** Matches `const corsHeaders =`, `let corsHeaders =`, `var corsHeaders =`,
  *  or `export const corsHeaders =`, with optional type annotation. Multiline-safe
@@ -71,13 +83,39 @@ Deno.test("corsHeaders is declared exactly once (in _shared/cors.ts)", async () 
   // 2. No other file may declare its own corsHeaders.
   const offenders = declarations.filter((d) => d.file !== CANONICAL_FILE);
   if (offenders.length > 0) {
-    const list = offenders.map((d) => `  ✗ ${d.file}:${d.line}  ${d.snippet}`).join("\n");
+    const list = offenders.map((d) => `  ✗ ${d.file}:${d.line}  ${d.snippet}`)
+      .join("\n");
     throw new Error(
       `Found ${offenders.length} duplicate \`corsHeaders\` declaration(s) outside ${CANONICAL_FILE}.\n` +
-        `Replace each with:\n` +
-        `    import { corsHeaders } from "../_shared/cors.ts";\n\n` +
+        `Use os exports compartilhados de _shared/cors.ts.\n\n` +
         `Offenders:\n${list}`,
     );
   }
   assertEquals(offenders, []);
+});
+
+Deno.test("endpoints de navegador aplicam CORS dinâmico a preflight e respostas", async () => {
+  for (const endpoint of DYNAMIC_CORS_ENDPOINTS) {
+    const source = await Deno.readTextFile(
+      new URL(`../${endpoint}/index.ts`, import.meta.url),
+    );
+    const staticReferences = source.match(/\bcorsHeaders\b/g) ?? [];
+
+    if (!source.includes("getCorsHeaders(req)")) {
+      throw new Error(`${endpoint} não calcula CORS pela requisição`);
+    }
+    assertEquals(
+      staticReferences,
+      [],
+      `${endpoint} ainda referencia o CORS estático`,
+    );
+    if (
+      !source.includes("headers: responseCorsHeaders") ||
+      !source.includes("...responseCorsHeaders")
+    ) {
+      throw new Error(
+        `${endpoint} não aplica CORS dinâmico a todos os tipos de resposta`,
+      );
+    }
+  }
 });

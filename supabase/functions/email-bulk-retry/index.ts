@@ -1,9 +1,16 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { decideRetry, type RetryableDraft } from "../_shared/retry-policy.ts";
-import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
+import {
+  filterOptedOut,
+  unsubscribeFooterHtml,
+  unsubscribeHeaders,
+} from "../_shared/unsubscribe.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -18,15 +25,52 @@ interface DraftRow extends RetryableDraft {
   body: string;
 }
 
-Deno.serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc(
+    "is_admin_or_manager" as never,
+    {
+      _user_id: caller.userId,
+    } as never,
+  );
+  if (error) throw error;
+  return Boolean(data);
+}
+
+Deno.serve(withRequestId("email-bulk-retry", async (req) => {
+  const responseCorsHeaders = getCorsHeaders(req);
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: responseCorsHeaders });
+  }
 
   const json = (payload: unknown, status = 200) =>
     new Response(JSON.stringify(payload), {
       status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
     });
+
+  if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+
+  if (!isInternalServiceRequest(req)) {
+    try {
+      if (!await isAdminOrManagerRequest(req)) {
+        return json({ error: "forbidden" }, 403);
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return json({ error: "unauthorized" }, 401);
+      }
+      console.error("email-bulk-retry authorization failed:", error);
+      return json({ error: "authorization_unavailable" }, 503);
+    }
+  }
+
+  if (!SUPABASE_URL || !SERVICE_ROLE) {
+    console.error(
+      "email-bulk-retry misconfigured: missing Supabase service credentials",
+    );
+    return json({ error: "service_not_configured" }, 503);
+  }
 
   try {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
@@ -41,6 +85,9 @@ Deno.serve(async (req) => {
       .is("sent_at", null)
       .eq("approved", true)
       .not("error", "is", null)
+      // Filtra antes do LIMIT para que reprocessamentos futuros não ocupem a
+      // janela e deixem rascunhos já vencidos sem oportunidade de execução.
+      .or(`next_retry_at.is.null,next_retry_at.lte.${now.toISOString()}`)
       .order("last_error_at", { ascending: true, nullsFirst: true })
       .limit(SCAN_LIMIT);
 
@@ -67,7 +114,11 @@ Deno.serve(async (req) => {
     for (const d of blocked) {
       await admin
         .from("email_bulk_drafts")
-        .update({ error: "opted_out", next_retry_at: null, last_error_at: now.toISOString() })
+        .update({
+          error: "opted_out",
+          next_retry_at: null,
+          last_error_at: now.toISOString(),
+        })
         .eq("id", d.id);
       gaveUp++;
     }
@@ -82,10 +133,15 @@ Deno.serve(async (req) => {
       fromAddress = (s as { email_from?: string } | null)?.email_from ?? "";
     }
     if (!fromAddress) {
-      return json({ error: "sender_not_configured", scanned: drafts.length }, 400);
+      return json(
+        { error: "sender_not_configured", scanned: drafts.length },
+        400,
+      );
     }
 
-    const pacer = new SendPacer(resolveThrottle((k) => Deno.env.get(k) ?? undefined));
+    const pacer = new SendPacer(
+      resolveThrottle((k) => Deno.env.get(k) ?? undefined),
+    );
 
     for (const d of drafts) {
       if (!allowedIds.has(d.id)) continue;
@@ -160,4 +216,4 @@ Deno.serve(async (req) => {
     console.error("email-bulk-retry error:", e);
     return json({ error: (e as Error).message }, 500);
   }
-});
+}));

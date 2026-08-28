@@ -30,9 +30,21 @@ interface PortfolioEntry {
 const STAGES = [
   { id: 'active', label: 'Ativo', color: 'bg-success/10 border-success/30 text-success' },
   { id: 'nurturing', label: 'Nutrição', color: 'bg-info/10 border-info/30 text-info' },
-  { id: 'at_risk', label: 'Em Risco', color: 'bg-rank-gold/10 border-rank-gold/30 text-rank-gold dark:text-rank-gold' },
-  { id: 'inactive', label: 'Inativo', color: 'bg-destructive/10 border-destructive/30 text-destructive' },
-  { id: 'churned', label: 'Perdido', color: 'bg-muted border-border text-muted-foreground' },
+  {
+    id: 'at_risk',
+    label: 'Em Risco',
+    color: 'bg-rank-gold/10 border-rank-gold/30 text-rank-gold dark:text-rank-gold',
+  },
+  {
+    id: 'inactive',
+    label: 'Inativo',
+    color: 'bg-destructive/10 border-destructive/30 text-destructive',
+  },
+  {
+    id: 'churned',
+    label: 'Perdido',
+    color: 'bg-muted border-border text-muted-foreground',
+  },
 ];
 
 const StageValue = ({ value }: { value: number }) => {
@@ -54,7 +66,9 @@ export function ClientKanban() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('client_portfolio')
-        .select('id, client_id, status, clients(id, name, company, email, phone, total_value)')
+        .select(
+          'id, client_id, status, clients(id, name, company, email, phone, total_value)'
+        )
         .order('updated_at', { ascending: false });
       if (error) throw error;
       return (data as unknown as PortfolioEntry[]) || [];
@@ -62,11 +76,21 @@ export function ClientKanban() {
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ portfolioId, newStatus }: { portfolioId: string; newStatus: string }) => {
-      const { error } = await supabase
-        .from('client_portfolio')
-        .update({ status: newStatus })
-        .eq('id', portfolioId);
+    mutationFn: async ({
+      portfolioId,
+      newStatus,
+    }: {
+      portfolioId: string;
+      newStatus: string;
+    }) => {
+      const { error } = await supabase.rpc(
+        'update_client_portfolio_status' as never,
+        {
+          p_portfolio_id: portfolioId,
+          p_status: newStatus,
+          p_last_purchase_date: null,
+        } as never
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -77,7 +101,9 @@ export function ClientKanban() {
 
   const groupedByStage = useMemo(() => {
     const grouped: Record<string, PortfolioEntry[]> = {};
-    STAGES.forEach(s => { grouped[s.id] = []; });
+    STAGES.forEach(s => {
+      grouped[s.id] = [];
+    });
     portfolio.forEach(entry => {
       const stage = grouped[entry.status] ? entry.status : 'active';
       grouped[stage].push(entry);
@@ -103,33 +129,52 @@ export function ClientKanban() {
   };
 
   const formatValue = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
+    new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0,
+    }).format(value);
 
   if (isLoading) {
-    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-      {STAGES.map(s => <Card key={s.id} className="h-60 md:h-96 animate-pulse bg-muted/30" />)}
-    </div>;
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {STAGES.map(s => (
+          <Card key={s.id} className="h-60 md:h-96 animate-pulse bg-muted/30" />
+        ))}
+      </div>
+    );
   }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto pb-2">
       {STAGES.map(stage => {
         const entries = groupedByStage[stage.id] || [];
-        const totalValue = entries.reduce((sum, e) => sum + (e.clients?.total_value || 0), 0);
+        const totalValue = entries.reduce(
+          (sum, e) => sum + (e.clients?.total_value || 0),
+          0
+        );
         return (
           <div
             key={stage.id}
             className={cn(
-              "rounded-xl border-2 border-dashed p-2 transition-all min-h-[300px] lg:min-h-[400px]",
-              dragOverStage === stage.id ? "border-primary bg-primary/5" : "border-transparent"
+              'rounded-xl border-2 border-dashed p-2 transition-all min-h-[300px] lg:min-h-[400px]',
+              dragOverStage === stage.id
+                ? 'border-primary bg-primary/5'
+                : 'border-transparent'
             )}
-            onDragOver={(e) => handleDragOver(e, stage.id)}
+            onDragOver={e => handleDragOver(e, stage.id)}
             onDragLeave={() => setDragOverStage(null)}
             onDrop={() => handleDrop(stage.id)}
           >
             <div className="flex items-center justify-between mb-4 px-2">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border-2", stage.color)}>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border-2',
+                    stage.color
+                  )}
+                >
                   {stage.label}
                 </Badge>
                 <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground border border-border/50">
@@ -155,8 +200,8 @@ export function ClientKanban() {
                         draggable
                         onDragStart={() => handleDragStart(entry.id)}
                         className={cn(
-                          "cursor-grab active:cursor-grabbing transition-all duration-300 border border-border/50 bg-card/40 backdrop-blur-sm hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 group relative overflow-hidden",
-                          draggedItem === entry.id && "opacity-50 grayscale"
+                          'cursor-grab active:cursor-grabbing transition-all duration-300 border border-border/50 bg-card/40 backdrop-blur-sm hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 group relative overflow-hidden',
+                          draggedItem === entry.id && 'opacity-50 grayscale'
                         )}
                       >
                         <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
@@ -177,7 +222,7 @@ export function ClientKanban() {
                               )}
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center justify-between pt-1 border-t border-border/10">
                             <span className="text-[11px] font-black text-primary/80 tracking-tighter">
                               {formatValue(entry.clients?.total_value || 0)}
@@ -187,10 +232,13 @@ export function ClientKanban() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-6 w-6 rounded-md hover:bg-primary/20 hover:text-primary p-0"
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
-                                  const event = new CustomEvent('create-task-modal', { 
-                                    detail: { clientId: entry.client_id, clientName: entry.clients.name } 
+                                  const event = new CustomEvent('create-task-modal', {
+                                    detail: {
+                                      clientId: entry.client_id,
+                                      clientName: entry.clients.name,
+                                    },
                                   });
                                   window.dispatchEvent(event);
                                 }}
@@ -198,8 +246,12 @@ export function ClientKanban() {
                               >
                                 <Plus className="h-3 w-3" />
                               </Button>
-                              {entry.clients?.email && <Mail className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
-                              {entry.clients?.phone && <Phone className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />}
+                              {entry.clients?.email && (
+                                <Mail className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />
+                              )}
+                              {entry.clients?.phone && (
+                                <Phone className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />
+                              )}
                             </div>
                           </div>
                         </CardContent>
@@ -210,7 +262,9 @@ export function ClientKanban() {
                 {entries.length === 0 && (
                   <div className="text-center py-10 border-2 border-dashed border-muted rounded-xl bg-muted/5">
                     <Users className="h-6 w-6 mx-auto mb-2 text-muted-foreground opacity-20" />
-                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">Estágio Vazio</p>
+                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">
+                      Estágio Vazio
+                    </p>
                   </div>
                 )}
               </div>

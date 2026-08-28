@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 /** Rascunho de campanha que falhou e ainda não foi entregue. */
 export interface FailedDraft {
@@ -64,15 +65,21 @@ export function useManualRetryDrafts() {
     mutationFn: async (ids: string[]) => {
       if (ids.length === 0) throw new Error('Selecione ao menos um rascunho.');
 
-      const { error: updateError } = await supabase
-        .from('email_bulk_drafts')
-        .update({
-          error: 'manual_retry_requested',
-          retry_count: 0,
-          next_retry_at: new Date().toISOString(),
-        })
-        .in('id', ids);
-      if (updateError) throw new Error(updateError.message);
+      const nextRetryAt = new Date().toISOString();
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('email_bulk_drafts')
+            .update({
+              error: 'manual_retry_requested',
+              retry_count: 0,
+              next_retry_at: nextRetryAt,
+            })
+            .in('id', chunk as string[])
+            .select('id'),
+        { label: 'email.manual-retry-drafts' },
+      );
 
       const { data, error } = await supabase.functions.invoke('email-bulk-retry', { body: {} });
       if (error) throw new Error(error.message);
@@ -99,11 +106,16 @@ export function useDiscardDrafts() {
   return useMutation<number, Error, string[]>({
     mutationFn: async (ids: string[]) => {
       if (ids.length === 0) throw new Error('Selecione ao menos um rascunho.');
-      const { error } = await supabase
-        .from('email_bulk_drafts')
-        .update({ approved: false, next_retry_at: null })
-        .in('id', ids);
-      if (error) throw new Error(error.message);
+      await chunkedIn<{ id: string }>(
+        ids,
+        (chunk) =>
+          supabase
+            .from('email_bulk_drafts')
+            .update({ approved: false, next_retry_at: null })
+            .in('id', chunk as string[])
+            .select('id'),
+        { label: 'email.discard-drafts' },
+      );
       return ids.length;
     },
     onSuccess: () => {

@@ -1,15 +1,85 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
-Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
+interface CadenceStep {
+  action_type: string;
+  title: string;
+  template_content: string;
+}
+
+interface Client {
+  email: string | null;
+  phone: string | null;
+}
+
+interface Sale {
+  id: string;
+  client: Client | null;
+  salesperson: { auth_user_id: string | null } | null;
+}
+
+interface ProspectCadence {
+  status: string;
+  sale: Sale | null;
+}
+
+interface CadenceTask {
+  id: string;
+  cadence_step: CadenceStep | null;
+  prospect_cadence: ProspectCadence | null;
+}
+
+Deno.serve(withRequestId("process-cadence-tasks", async (req, ctx) => {
+  const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: responseCorsHeaders });
+  }
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ ok: false, error: "method_not_allowed" }), {
+      status: 405, headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    ctx.log("error", "environment_not_configured");
+    return new Response(JSON.stringify({ ok: false, error: "service_not_configured" }), {
+      status: 503, headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+    });
   }
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  if (!isInternalServiceRequest(req)) {
+    try {
+      const caller = await getUserClient(req);
+      const { data: isAdminOrManager, error } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (error) throw error;
+      if (!isAdminOrManager) {
+        return new Response(JSON.stringify({ ok: false, error: "forbidden" }), {
+          status: 403, headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+          status: 401, headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      ctx.log("error", "authorization_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return new Response(JSON.stringify({ ok: false, error: "authorization_unavailable" }), {
+        status: 503, headers: { ...responseCorsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
+
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   try {
@@ -30,12 +100,12 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
     if (!claimedIds || claimedIds.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, processed: 0, results: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+        { headers: { ...responseCorsHeaders, "Content-Type": "application/json" }, status: 200 },
       );
     }
 
     // Fetch full task data for the claimed IDs only
-    const tasks = await chunkedIn<Record<string, unknown>>(
+    const tasks = await chunkedIn<CadenceTask>(
       claimedIds,
       (chunk) => supabase
         .from("cadence_tasks")
@@ -44,7 +114,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
           cadence_step:cadence_steps(*),
           prospect_cadence:prospect_cadences(
             *,
-            sale:sales(*, client:clients(*))
+            sale:sales(*, client:clients(*), salesperson:salespeople!sales_salesperson_id_fkey(auth_user_id))
           )
         `)
         .in("id", chunk),
@@ -67,6 +137,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
       const prospectCadence = task.prospect_cadence;
       const sale = prospectCadence?.sale;
       const client = sale?.client;
+      const ownerId = sale?.salesperson?.auth_user_id;
 
       // Guard: only proceed if the cadence is still active
       // (status could have changed between claim and fetch)
@@ -86,29 +157,30 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
         let sent = false;
         let sendError: unknown = null;
 
-        if (step.action_type === "email") {
-          const { error: emailErr } = await supabase.functions.invoke("email-bulk-send", {
+        if (step.action_type === "email" && client.email && step.template_content.trim()) {
+          const { data: emailData, error: emailErr } = await supabase.functions.invoke("send-transactional-email", {
             body: {
               to: client.email,
               subject: step.title,
-              body: step.template_content,
-              sale_id: sale.id,
+              text: step.template_content,
+              purpose: "outreach",
             },
           });
-          if (!emailErr) sent = true;
-          else sendError = emailErr;
-        } else if (step.action_type === "whatsapp" && client.phone) {
-          const { error: waErr } = await supabase.functions.invoke("send-multichannel-message", {
+          const result = emailData as { ok?: boolean; error?: string } | null;
+          if (!emailErr && result?.ok) sent = true;
+          else sendError = emailErr ?? new Error(result?.error ?? "transactional_email_failed");
+        } else if (step.action_type === "whatsapp" && client.phone && ownerId) {
+          const { data: waData, error: waErr } = await supabase.functions.invoke("send-multichannel-message", {
             body: {
-              ownerId: sale.salesperson_id,
+              ownerId,
               channel: "whatsapp",
               to: client.phone,
               body: step.template_content,
-              saleId: sale.id,
             },
           });
-          if (!waErr) sent = true;
-          else sendError = waErr;
+          const result = waData as { ok?: boolean; error?: string } | null;
+          if (!waErr && result?.ok) sent = true;
+          else sendError = waErr ?? new Error(result?.error ?? "multichannel_send_failed");
         } else {
           // No action for this step type / missing phone — mark as skipped
           taskOutcomes.push({ id: task.id, status: "skipped", notes: "No eligible action for step type." });
@@ -156,14 +228,14 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, _ctx) => {
 
     return new Response(
       JSON.stringify({ ok: true, processed: tasks.length, results }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+      { headers: { ...responseCorsHeaders, "Content-Type": "application/json" }, status: 200 },
     );
   } catch (error) {
     console.error('process-cadence-tasks error:', error);
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },
+      { headers: { ...responseCorsHeaders, "Content-Type": "application/json" }, status: 500 },
     );
   }
 }));

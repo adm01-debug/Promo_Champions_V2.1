@@ -19,13 +19,17 @@ interface WebAuthnCredential {
   last_used_at: string | null;
 }
 
+// A Edge Function correspondente está desativada até a validação
+// criptográfica completa de WebAuthn ser reimplementada.
+const PASSKEYS_AVAILABLE = false;
+
 export function useWebAuthn() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState<WebAuthnCredential[]>([]);
 
   const loadCredentials = useCallback(async () => {
-    if (!user?.id) return;
+    if (!PASSKEYS_AVAILABLE || !user?.id) return;
     try {
       const { data, error } = await supabase.functions.invoke('webauthn', {
         body: { action: 'list-credentials', userId: user.id },
@@ -39,6 +43,12 @@ export function useWebAuthn() {
 
   const registerPasskey = useCallback(
     async (_friendlyName?: string): Promise<boolean> => {
+      if (!PASSKEYS_AVAILABLE) {
+        toast.error(
+          'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+        );
+        return false;
+      }
       if (!isWebAuthnSupported) {
         toast.error('WebAuthn não é suportado neste navegador');
         return false;
@@ -116,6 +126,12 @@ export function useWebAuthn() {
   );
 
   const loginWithPasskey = useCallback(async (email?: string): Promise<boolean> => {
+    if (!PASSKEYS_AVAILABLE) {
+      toast.error(
+        'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+      );
+      return false;
+    }
     if (!isWebAuthnSupported) {
       toast.error('WebAuthn não é suportado neste navegador');
       return false;
@@ -194,6 +210,12 @@ export function useWebAuthn() {
 
   const deletePasskey = useCallback(
     async (credentialId: string): Promise<boolean> => {
+      if (!PASSKEYS_AVAILABLE) {
+        toast.error(
+          'Passkeys estão temporariamente indisponíveis por manutenção de segurança'
+        );
+        return false;
+      }
       if (!user?.id) {
         toast.error('Você precisa estar logado');
         return false;
@@ -220,6 +242,7 @@ export function useWebAuthn() {
 
   return {
     isSupported: isWebAuthnSupported,
+    isAvailable: PASSKEYS_AVAILABLE,
     isLoading,
     credentials,
     registerPasskey,

@@ -1,5 +1,6 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
 
 interface Payload {
   test?: boolean;
@@ -39,7 +40,7 @@ function renderHtml(ctx: {
     </div></body></html>`;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const supabase = createClient(
@@ -113,4 +114,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}));

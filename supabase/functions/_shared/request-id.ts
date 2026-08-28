@@ -4,6 +4,8 @@
 // it to structured logs and echoes it in the response headers so callers can
 // correlate a request across dispatcher → downstream → DB.
 
+import { getCorsHeaders } from "./cors.ts";
+
 const REQ_ID_HEADER = "X-Request-Id";
 // Accept UUIDs or short opaque ids (letters, digits, dash/underscore, 8-64 chars).
 const SAFE_ID = /^[A-Za-z0-9_-]{8,64}$/;
@@ -78,7 +80,11 @@ export function withRequestId(
       const body = JSON.stringify({ requestId, error: message });
       return new Response(body, {
         status: 500,
-        headers: { "Content-Type": "application/json", [REQ_ID_HEADER]: requestId },
+        headers: {
+          ...getCorsHeaders(req),
+          "Content-Type": "application/json",
+          [REQ_ID_HEADER]: requestId,
+        },
       });
     }
   };

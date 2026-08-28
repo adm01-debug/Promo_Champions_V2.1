@@ -23,7 +23,7 @@ export default defineConfig({
     ['./tests/e2e/helpers/quote-to-sale-failure-reporter.ts'],
   ],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -62,8 +62,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: /pages-.*\.spec\.ts/,
     },
-    { name: 'mobile-ios-safari', use: { ...devices['iPhone 14'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
-    { name: 'mobile-android-chrome', use: { ...devices['Pixel 7'] }, testMatch: /mobile-auth-smoke\.spec\.ts/ },
+    {
+      name: 'mobile-ios-safari',
+      use: { ...devices['iPhone 14'] },
+      testMatch: /mobile-auth-smoke\.spec\.ts/,
+    },
+    {
+      name: 'mobile-android-chrome',
+      use: { ...devices['Pixel 7'] },
+      testMatch: /mobile-auth-smoke\.spec\.ts/,
+    },
   ],
   webServer: process.env.CI
     ? {
@@ -74,5 +82,3 @@ export default defineConfig({
       }
     : undefined,
 });
-
-

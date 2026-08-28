@@ -3,10 +3,9 @@
 // activity_goals, squads. Idempotent: safe to re-run (uses upsert where
 // possible, deletes its own seed rows by stable prefix where needed).
 import { createClient } from '@supabase/supabase-js';
+import { requireSupabaseAdminEnv } from './lib/requireSupabaseAdminEnv';
 
-const url = 'https://usyxfpqlsspldubptrdl.supabase.co';
-const key =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeXhmcHFsc3NwbGR1YnB0cmRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTgyMDg4MiwiZXhwIjoyMTAxMzk2ODgyfQ.gHonefmUBT3BQGT7EgnJ41vBKc-fTso1audID5FNBoo';
+const { supabaseUrl: url, serviceRoleKey: key } = requireSupabaseAdminEnv();
 
 const sb = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -31,7 +30,7 @@ const hybrids = (sps ?? []).filter((s) => s.role === 'hybrid');
 log(`people: ${sps?.length} (closer=${closers.length} sdr=${sdrs.length} hybrid=${hybrids.length})`);
 
 // Deterministic shuffle by id so each seller gets a stable slice
-function pickByMod<T>(arr: T[], mod: number, key: (t: T) => string): T {
+function _pickByMod<T>(arr: T[], mod: number, _key: (t: T) => string): T {
   const idx = mod % arr.length;
   return arr[idx];
 }
@@ -171,7 +170,7 @@ if (seasonInserts.length) {
 // Set winner for the finished one (best closer by won revenue)
 const finishedId = seasonMap.get('Q2 Closer Cup');
 if (finishedId && closerIds[0]) {
-  const winner = closerIds[0]!;
+  const _winner = closerIds[0]!;
   const { data: won } = await sb
     .from('sales')
     .select('salesperson_id, amount')
@@ -308,7 +307,12 @@ if (!existingAch || existingAch.length === 0) {
     'first_sale', 'streak_7d', 'streak_30d', 'top_week', 'top_month',
     'goal_100pct', 'mega_deal', 'fast_closer', 'pipeline_king',
   ];
-  const rows: { salesperson_id: string; achievement_type: string; achievement_date: string; details: any }[] = [];
+  const rows: {
+    salesperson_id: string;
+    achievement_type: string;
+    achievement_date: string;
+    details: { source: string; weight: number };
+  }[] = [];
   for (const sp of allSellers) {
     const count = 2 + Math.floor(((sp.id.charCodeAt(0) ?? 0) % 5));
     for (let k = 0; k < count; k++) {

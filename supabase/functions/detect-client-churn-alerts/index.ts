@@ -2,11 +2,21 @@
 // for the responsible salesperson. Idempotent within cooldown window.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { partitionNotificationBatch } from '../_shared/notification-categories.ts';
+import { withRequestId } from '../_shared/request-id.ts';
 
 type Level = 'low' | 'medium' | 'high' | 'critical';
 const LEVEL_RANK: Record<Level, number> = { low: 0, medium: 1, high: 2, critical: 3 };
-const RATIO_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 1.3, high: 2, critical: 3 };
-const ABSOLUTE_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = { medium: 30, high: 60, critical: 120 };
+const RATIO_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = {
+  medium: 1.3,
+  high: 2,
+  critical: 3,
+};
+const ABSOLUTE_THRESHOLDS: Record<Exclude<Level, 'low'>, number> = {
+  medium: 30,
+  high: 60,
+  critical: 120,
+};
 
 interface AlertRow {
   salesperson_id: string;
@@ -43,18 +53,20 @@ function thresholdDaysFor(level: Level, expectedInterval: number | null): number
   return ABSOLUTE_THRESHOLDS[level];
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     const { data: settings } = await supabase
       .from('churn_alert_settings')
-      .select('enabled, min_level, cooldown_hours, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days')
+      .select(
+        'enabled, min_level, cooldown_hours, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days'
+      )
       .maybeSingle();
 
     if (!settings?.enabled) {
@@ -68,7 +80,8 @@ Deno.serve(async (req) => {
     const autoTaskEnabled = Boolean(settings.auto_task_enabled);
     const autoTaskMinLevel = (settings.auto_task_min_level ?? 'high') as Level;
     const autoTaskCooldownMs = (settings.auto_task_cooldown_hours ?? 48) * 3600 * 1000;
-    const autoTaskPriority = (settings.auto_task_priority ?? 'high') as 'low' | 'medium' | 'high' | 'urgent';
+    const autoTaskPriority = (settings.auto_task_priority ?? 'high') as
+      'low' | 'medium' | 'high' | 'urgent';
     const autoTaskDueInDays = Math.max(0, Number(settings.auto_task_due_in_days ?? 1));
 
     // Pull recent sales (limit to last 3 years to keep memory bounded)
@@ -84,7 +97,10 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     // Group by salesperson + client
-    const groups = new Map<string, { salesperson_id: string; client_name: string; dates: Date[] }>();
+    const groups = new Map<
+      string,
+      { salesperson_id: string; client_name: string; dates: Date[] }
+    >();
     for (const s of sales ?? []) {
       if (!s.client_name || !s.salesperson_id) continue;
       if (s.status && String(s.status).toLowerCase().includes('cancel')) continue;
@@ -92,7 +108,12 @@ Deno.serve(async (req) => {
       const existing = groups.get(key);
       const d = new Date(s.created_at);
       if (existing) existing.dates.push(d);
-      else groups.set(key, { salesperson_id: s.salesperson_id, client_name: s.client_name, dates: [d] });
+      else
+        groups.set(key, {
+          salesperson_id: s.salesperson_id,
+          client_name: s.client_name,
+          dates: [d],
+        });
     }
 
     const alerts: AlertRow[] = [];
@@ -103,7 +124,8 @@ Deno.serve(async (req) => {
       let expected: number | null = null;
       if (g.dates.length >= 2) {
         const intervals: number[] = [];
-        for (let i = 1; i < g.dates.length; i++) intervals.push(dayDiff(g.dates[i - 1], g.dates[i]));
+        for (let i = 1; i < g.dates.length; i++)
+          intervals.push(dayDiff(g.dates[i - 1], g.dates[i]));
         expected = intervals.reduce((a, b) => a + b, 0) / intervals.length;
       }
       const level = computeLevel(daysSince, expected);
@@ -122,13 +144,20 @@ Deno.serve(async (req) => {
     // Load current state
     const { data: state } = await supabase
       .from('client_churn_alerts_state')
-      .select('salesperson_id, client_name, last_level, last_alerted_at, last_task_id, last_task_created_at');
-    const stateMap = new Map<string, { level: Level; at: number; lastTaskAt: number | null; lastTaskId: string | null }>();
+      .select(
+        'salesperson_id, client_name, last_level, last_alerted_at, last_task_id, last_task_created_at'
+      );
+    const stateMap = new Map<
+      string,
+      { level: Level; at: number; lastTaskAt: number | null; lastTaskId: string | null }
+    >();
     for (const r of state ?? []) {
       stateMap.set(`${r.salesperson_id}::${r.client_name.trim().toLowerCase()}`, {
         level: r.last_level as Level,
         at: new Date(r.last_alerted_at).getTime(),
-        lastTaskAt: r.last_task_created_at ? new Date(r.last_task_created_at).getTime() : null,
+        lastTaskAt: r.last_task_created_at
+          ? new Date(r.last_task_created_at).getTime()
+          : null,
         lastTaskId: r.last_task_id ?? null,
       });
     }
@@ -159,39 +188,51 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const priority = a.level === 'critical' ? 'urgent' : a.level === 'high' ? 'high' : 'medium';
-      const title = a.level === 'critical'
-        ? `🚨 Cliente em risco crítico de churn`
-        : a.level === 'high'
-        ? `⚠️ Cliente com alto risco de churn`
-        : `Cliente inativo`;
-      const avgPart = a.expected_interval_days > 0
-        ? ` · média do cliente: ${a.expected_interval_days}d`
-        : '';
-      const limitPart = a.threshold_days > 0
-        ? ` · limite ${a.level}: ${a.threshold_days}d`
-        : '';
+      const priority =
+        a.level === 'critical' ? 'urgent' : a.level === 'high' ? 'high' : 'medium';
+      const title =
+        a.level === 'critical'
+          ? `🚨 Cliente em risco crítico de churn`
+          : a.level === 'high'
+            ? `⚠️ Cliente com alto risco de churn`
+            : `Cliente inativo`;
+      const avgPart =
+        a.expected_interval_days > 0
+          ? ` · média do cliente: ${a.expected_interval_days}d`
+          : '';
+      const limitPart =
+        a.threshold_days > 0 ? ` · limite ${a.level}: ${a.threshold_days}d` : '';
       const message = `${a.client_name} está há ${a.days_since} dias sem comprar${avgPart}${limitPart}.`;
 
-      const { error: insErr } = await supabase.from('notifications').insert({
-        user_id: a.salesperson_id,
-        type: 'churn_alert',
-        category: 'client',
-        priority,
-        title,
-        message,
-        icon: '⏰',
-        action_url: `/clientes?search=${encodeURIComponent(a.client_name)}`,
-        action_label: 'Ver cliente',
-        metadata: {
-          client_name: a.client_name,
-          days_since: a.days_since,
-          level: a.level,
-          expected_interval_days: a.expected_interval_days,
-          threshold_days: a.threshold_days,
-        },
-        expires_at: new Date(now.getTime() + 7 * 86400000).toISOString(),
-      });
+      const { valid: validNotifications, invalid: invalidNotifications } =
+        partitionNotificationBatch([
+          {
+            user_id: a.salesperson_id,
+            type: 'churn_alert',
+            category: 'sales',
+            priority,
+            title,
+            message,
+            icon: '⏰',
+            action_url: `/clientes?search=${encodeURIComponent(a.client_name)}`,
+            action_label: 'Ver cliente',
+            metadata: {
+              client_name: a.client_name,
+              days_since: a.days_since,
+              level: a.level,
+              expected_interval_days: a.expected_interval_days,
+              threshold_days: a.threshold_days,
+            },
+            expires_at: new Date(now.getTime() + 7 * 86400000).toISOString(),
+          },
+        ]);
+      if (invalidNotifications.length > 0) {
+        console.error('invalid churn notification', invalidNotifications);
+        continue;
+      }
+      const { error: insErr } = await supabase
+        .from('notifications')
+        .insert(validNotifications);
       if (insErr) {
         console.error('notification insert failed', insErr);
         continue;
@@ -202,7 +243,9 @@ Deno.serve(async (req) => {
       let newTaskId: string | null = null;
       let newTaskAt: string | null = null;
       const prevState = stateMap.get(key);
-      const taskCooldownOk = !prevState?.lastTaskAt || now.getTime() - prevState.lastTaskAt > autoTaskCooldownMs;
+      const taskCooldownOk =
+        !prevState?.lastTaskAt ||
+        now.getTime() - prevState.lastTaskAt > autoTaskCooldownMs;
       const levelMeetsMin = LEVEL_RANK[a.level] >= LEVEL_RANK[autoTaskMinLevel];
       if (autoTaskEnabled && levelMeetsMin && taskCooldownOk) {
         // Extra dedup: ensure there isn't already an open task for this client+salesperson
@@ -224,7 +267,9 @@ Deno.serve(async (req) => {
           const taskTitle = `Follow-up de retenção · ${a.client_name}`;
           const taskDesc =
             `[auto:churn] Nível ${a.level.toUpperCase()} — ${a.days_since} dias sem comprar` +
-            (a.expected_interval_days > 0 ? ` (média ${a.expected_interval_days}d)` : '') +
+            (a.expected_interval_days > 0
+              ? ` (média ${a.expected_interval_days}d)`
+              : '') +
             (a.threshold_days > 0 ? ` · limite ${a.threshold_days}d` : '') +
             `. Entrar em contato para reengajar e diagnosticar motivo da inatividade.`;
 
@@ -261,7 +306,9 @@ Deno.serve(async (req) => {
         last_threshold_days: a.threshold_days || null,
         last_alerted_at: now.toISOString(),
         last_task_id: newTaskId ?? prevState?.lastTaskId ?? null,
-        last_task_created_at: newTaskAt ?? (prevState?.lastTaskAt ? new Date(prevState.lastTaskAt).toISOString() : null),
+        last_task_created_at:
+          newTaskAt ??
+          (prevState?.lastTaskAt ? new Date(prevState.lastTaskAt).toISOString() : null),
         updated_at: now.toISOString(),
       });
     }
@@ -274,14 +321,23 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ ok: true, evaluated: alerts.length, created, skipped, tasks_created: tasksCreated }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      JSON.stringify({
+        ok: true,
+        evaluated: alerts.length,
+        created,
+        skipped,
+        tasks_created: tasksCreated,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('detect-client-churn-alerts error', e);
-    return new Response(JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
-});
+}));
