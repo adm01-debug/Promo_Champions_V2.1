@@ -47,3 +47,5 @@ dependency-graph.svg
 # Onda Q — a11y sweep artifacts
 a11y-report.json
 a11y-report-html/
+graphify-out/graph.json
+graphify-out/graph.html
