@@ -1,9 +1,24 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(rm -rf node_modules/.vite)",
-      "Bash(nohup npm run dev)",
-      "Read(//tmp/**)"
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/workspace/.local/bin/graphify hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/workspace/.local/bin/graphify hook-guard read"
+          }
+        ]
+      }
     ]
   }
 }
