@@ -1,4 +1,4 @@
-project_id = "rapjswienfhkobhlamxb"
+project_id = "usyxfpqlsspldubptrdl"
 
 [functions.log-web-vitals]
 verify_jwt = false
@@ -16,5 +16,4 @@ verify_jwt = false
 [functions.multichannel-status-webhook]
 verify_jwt = false
 
-[functions.migrate-helper]
-verify_jwt = false
+# migrate-helper removido: edge function aposentada no V2 (não deployada no destino; verify_jwt=false é risco de segurança)
