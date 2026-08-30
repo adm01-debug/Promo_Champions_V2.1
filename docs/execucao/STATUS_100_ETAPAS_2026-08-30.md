@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | Data de abertura | 2026-08-30 |
-| Esta revisão | v2.1 — reescrita integral (v2: 15 correções do operador + 9 threads Codex do PR #68) + revisão pós-revisão com as 14 threads do PR #69 respondidas e evidências reexecutadas (§9.3, §11) |
+| Esta revisão | v2.2 — v2 (15 correções do operador + 9 threads Codex do #68) → v2.1 (14 comentários do #69) → **v2.2: atendimento integral das 20 correções do operador** com baseline de segredos fixado por commit, P0s reconciliados com as fontes reais e revalidação do Lote 1 (§9.3, §9.4, §11) |
 | Executor | Cline (agente) sob supervisão do operador |
 | Fonte canônica das etapas | `docs/auditoria/AUDITORIA_EXAUSTIVA_2026-08-26_PLANO_100_ETAPAS.md` (§"Plano de melhorias e correções em 100 etapas", linhas 651–783) — **a numeração 1–100 deste documento segue exatamente essa fonte** |
 | Fontes auxiliares | Handoff operacional 2026-08-30; Auditoria 2026-08-30 v2 (plano re-renumerado — divergência documentada em §5.1) |
@@ -20,7 +20,7 @@
 |---|---|---|
 | PR #67 `fix/hermes-h102707-auditoria-exaustiva` (auditoria exaustiva + plano de 100 etapas) | **Mergeado** em 2026-08-30 19:45:54 UTC | merge `aa0a12a42771` |
 | PR #68 `docs/hermes-h108538-status-100-etapas` (status v1) | **Mergeado** em 2026-08-30 19:46:01 UTC, com 9 threads de revisão Codex **não resolvidas** | merge `ce5dd167954f` |
-| PR desta revisão (v2/v2.1) | Continuação que substitui o conteúdo deste arquivo: a v2 respondeu às 9 threads do PR #68 (§9.2); a v2.1 responde às 14 threads deste PR (§9.3) e reexecuta as evidências | este PR |
+| PR desta revisão (v2/v2.1/v2.2) | Continuação que substitui o conteúdo deste arquivo: v2 respondeu às 9 threads do #68 (§9.2); v2.1 às 14 do #69 (§9.3); v2.2 atende às 20 correções do operador (§9.4) e às 2 threads Codex adicionais | este PR |
 
 A v1 foi escrita quando o PR #67 ainda estava aberto e não declarava essa dependência; ambos foram mergeados em sequência. Nada na v1 alterou código — 1 arquivo, 233 adições, 0 remoções.
 
@@ -29,7 +29,7 @@ A v1 foi escrita quando o PR #67 ainda estava aberto e não declarava essa depen
 ## 1. Resumo executivo
 
 1. **Condição de parada do §17 do handoff permanece acionada**: o único banco acessível (self-hosted PG 15.8 @ `10.0.1.132`) **não é o destino** e a Management API responde **HTTP 403** para destino e origem com o token atual (evidências em §2). Nenhuma etapa dependente de banco foi executada.
-2. **Revalidação P0 no escopo repo foi aprofundada nesta revisão**: varredura de segredos no HEAD (8 achados, modo `dir`) e no **histórico completo** (`gitleaks git --log-opts=--all`, 32→33 impressões digitais de commit — §3.2) concluídas e triadas (§3.1 e §3.2). A v1 afirmava "histórico limpo" com base em `git log -S` parciais — **incorreto**: o histórico contém o segredo service_role nos 12 scripts (commit `b722848dd5`, ancestral de `main`). O HEAD está limpo nesses arquivos porque os scripts foram **parametrizados** (leem env via `scripts/lib/requireSupabaseAdminEnv`), não removidos.
+2. **Revalidação P0 no escopo repo foi aprofundada nesta revisão**: varredura de segredos com **baseline fixado** (§3.1/§3.2): HEAD materializado = **8 achados** (`gitleaks dir` em checkout do commit `ce5dd16`) e histórico da `main` = **32 ocorrências** (`gitleaks git --log-opts='--full-history ce5dd16'`; gitleaks 8.30.1, sem configuração própria; `--all` rejeitado como baseline por instável). A v1 afirmava "histórico limpo" com base em `git log -S` parciais — **incorreto**: o histórico contém o segredo service_role nos 12 scripts (commit `b722848dd5`, ancestral de `main`). O HEAD está limpo nesses arquivos porque os scripts foram **parametrizados** (leem env via `scripts/lib/requireSupabaseAdminEnv`), não removidos.
 3. **A rotação das credenciais (etapas 5–7) segue não verificável pelo repositório** e pendente de autorização/janela (§7).
 4. **A matriz da §4 reproduz fielmente as 100 etapas canônicas de 26/08** (números, títulos, saídas e gates). Atividades que não pertencem à numeração canônica — inclusive o plano re-renumerado da auditoria de 30/08 — foram movidas para §5.
 5. Nenhuma escrita foi executada em qualquer banco ou painel. Todas as ações foram leitura (`SELECT` de catálogo, `git log`, gitleaks, greps locais, chamadas GET de API).
@@ -61,23 +61,25 @@ A v1 foi escrita quando o PR #67 ainda estava aberto e não declarava essa depen
 
 ## 3. Revalidação dos achados P0 (somente leitura)
 
-| ID | Achado (fonte: auditoria 30/08) | Status | Evidência |
-|---|---|---|---|
-| P0-001 | RLS/policies do destino | 🔶 **Bloqueado — acesso** | Destino inacessível (§2) |
-| P0-002 | Grants/privilégios excessivos | 🔶 **Bloqueado — acesso** | Idem |
-| P0-003 | 563 funções sem `search_path` fixo | 🔶 **Bloqueado — acesso** | Idem |
-| P0-004 | Rotação de credenciais + exposição de chaves | 🟡 **Triagem repo concluída (§3.1/§3.2); rotação não verificável; painéis pendentes** | gitleaks HEAD = 8 achados triados; histórico completo = 32 achados triados (segredo real presente no histórico de `main`); `git log -S` × 7 padrões de chaves externas (`sk_live_`, `rk_live_`, `key-`, `sbp_`, `sk-or-`, `mlsn.`, `re_`) = 0 ocorrências reais (acertos apenas em documentos de auditoria/status que citam o padrão como texto; nenhuma credencial real) |
-| P0-005 | Mocks/simulação persistida | ⚠️ **Divergente — alvos corrigidos na v2.1** | Os suspeitos `PremiumPrizeWheel.tsx`/`SlotMachine.tsx` citados na v1 **não existem**: `git grep -n -E 'PremiumPrizeWheel\.tsx|SlotMachine\.tsx' -- src supabase` = 0 acertos (v2.1 restringe a busca ao código, não à árvore toda, que inclui este documento). **Alvos confirmados no HEAD** (auditoria 30/08, itens ~L203/206/607; reverificados nesta sessão): `src/components/dashboard/FuturisticSpeedometerDashboard.tsx:277/285` (`mockRevenueHistory`/`mockSalesHistory` — históricos artificiais), `src/components/conversational/SentimentTimelineChart.tsx:191` (`battleCardId="mock-id"`) e `src/lib/bi/mockData.ts` (módulo órfão nominalmente mock). **Removido como alvo na v2.1:** `src/pages/FollowUpAudit.tsx` — `mockLogs` foi eliminado pelo commit `648dcc9d4`; o HEAD consulta `follow_up_audit_view` com filtros reais. `RevenueForecastV2.tsx` (Monte Carlo what-if é funcionalidade declarada) e `FollowUpInteligente.tsx` (apenas selo de pré-visualização de mensagem) não configuram persistência de mock; inventário nominal completo fica com a etapa 54 |
-| P0-006 | Divergência ledger × migrations | ⚠️ **Divergente — contagens corrigidas** | Repo `main` (`ce5dd16`): **595 arquivos** `.sql`; **582 marcações de data numéricas distintas** e **586 identificadores de versão distintos até o 1º `_`** (critério do ledger Supabase; sufixos alfabéticos `…ad/ma/so/ab/fe/we` contam como versões próprias — método no §10); 3 pares de versão de 14 dígitos duplicados (6 arquivos: `20260104143930`, `20260104170152`, `20260104181000` ×2); 15 nomes fora do padrão de 14 dígitos; **4 versões posteriores ao topo `20260825093000`: `20260827000001`, `20260830000000`, `20260830000001`, `20260830000002`**. A versão `20260827202206` citada na v1 **não existe** (erro corrigido — §9, Codex-5). Ledger do destino inacessível (§2) |
+A numeração **P0-001…P0-006 foi introduzida na v1 deste documento**; as auditorias de 26/08 e 30/08 **não usam esses identificadores** — a coluna "Origem na fonte" mapeia cada item à seção real de onde o tema procede.
+
+| Ref. | Achado | Origem na fonte | Status | Evidência |
+|---|---|---|---|---|
+| P0-001 | RLS/policies do destino | 30/08 §"P0 — views adicionais do destino podem contornar RLS e estão abertas a anon"; 30/08 §"P1 — RLS existe, porém policies permissivas expõem dados"; 26/08 §"P0 de triagem — exposição SECURITY DEFINER no destino" | 🔶 **Bloqueado — acesso** | Destino inacessível (§2) |
+| P0-002 | Grants/privilégios excessivos (guards ausentes em funções mutating) | 26/08 e 30/08 §"P0/P1 — funções SECURITY DEFINER executáveis por anon" | 🔶 **Bloqueado — acesso** | Idem |
+| P0-003 | Funções sem `search_path` fixo — a v1 citava "563", **número sem fonte nas auditorias** (tema correlato: 30/08 etapa 49 e §"30 funções SECURITY DEFINER", que informa search_path configurado nelas) | v1 deste documento (valor interno, não confirmado) | 🔶 **Bloqueado — acesso; quantidade a recontar no destino** | Sem fonte rastreável; recontar quando acessível |
+| P0-004 | Rotação de credenciais + exposição de chaves | 26/08 §"P0 — chave service_role versionada e ativa" e §"P0 — migrate-helper exfiltra credenciais"; 30/08 §"P0 — migrate-helper foi reintroduzida e continua implantada na origem" | 🟡 **Triagem repo concluída com baseline fixado (§3.1/§3.2); rotação não verificável; painéis pendentes** | HEAD fixado (`dir`) = 8 triados; histórico da `main` fixado (`--full-history ce5dd16`) = **32 ocorrências** triadas (service_role real no histórico); laço `git log -S` × 7 padrões externos (`sk_live_`, `rk_live_`, `key-`, `sbp_`, `sk-or-`, `mlsn.`, `re_`) = 0 credenciais reais (acertos apenas em documentos que citam o padrão como texto) |
+| P0-005 | Mocks/simulação persistida | 26/08 §"mocks produtivos silenciosos"; 30/08 §"Dados fabricados apresentados como reais" | ⚠️ **Divergente — alvos corrigidos na v2.2** | **Cinco caminhos originais citados pela v1** (procedentes da própria v1; não rastreáveis nas auditorias): `components/admin/funnel/FunnelSettingsTab.tsx`, `components/achievements/Achievements.tsx`, `pages/Leaderboard.tsx`, `pages/Suppliers.tsx` — **inexistentes** — e `components/competitive/PrizeWheel.tsx` (citado como `gamification/`; **existe** e não contém mock). Suspeitos `PremiumPrizeWheel.tsx`/`SlotMachine.tsx`/`DEMO_MODE`: `git grep -c -E 'PremiumPrizeWheel|SlotMachine|DEMO_MODE' -- src supabase` = **0 acertos**. **Alvos atuais confirmados** (30/08 L193–208/607; reverificados): `src/components/dashboard/FuturisticSpeedometerDashboard.tsx:277/285` (`mockRevenueHistory`/`mockSalesHistory`), `src/components/conversational/SentimentTimelineChart.tsx:191` (`battleCardId="mock-id"`), `src/lib/bi/mockData.ts` — além dos demais casos nominais da fonte (enrich-lead, UsageAnalytics, LiveIntelligenceFeed, RecordingSummaryDrawer, PriceElasticityChart, ArenaAITips, EnhancedActivityCard, useWhatsApp, pipeline-pulse-aggregator; inventário completo na etapa 54). `FollowUpAudit.tsx` **fora** da lista atual (`mockLogs` eliminado em `648dcc9d4`); `RevenueForecastV2.tsx`/`FollowUpInteligente.tsx` reclassificados (funcionalidade/pré-visualização) |
+| P0-006 | Divergência ledger × migrations | 26/08 (L67/L458-466: **592 arquivos locais × 2.354 entradas**); 30/08 (L297/L484: **595 arquivos × 242 entradas** do ledger vivo — sob ressalva D-05) | ⚠️ **Divergente — contagens por método** | Repo `main` (`ce5dd16`): **595 arquivos** `.sql` / **586 versões** (até o 1º `_`; **582 marcações de data** — método no §10); 3 pares 14d duplicados (`20260104143930`, `20260104170152`, `20260104181000` ×2); 15 fora do padrão; **4 pós-topo** (`20260827000001`, `20260830000000/1/2`); `20260827202206` da v1 não existe. Ledger do destino inacessível (§2) |
 
 ### 3.1 Triagem dos 8 achados gitleaks no HEAD (`main` = `ce5dd16`)
 
-Comando (corrigido na v2.1): `gitleaks dir --no-banner --report-format json --report-path <out> <repo>` — o modo `dir` varre os arquivos do HEAD (8 achados); o modo `git` varre commits e devolve 33 impressões digitais (§3.2). Regras padrão; sem baseline. Nenhum valor reproduzido.
+Comandos (v2.2 — **baseline fixado**; execução em *checkout limpo do commit* `ce5dd16`; gitleaks **8.30.1**; **sem arquivo de configuração próprio**, regras padrão embutidas na versão; `git fsck --full --no-reflogs` executado antes como **pré-condição de integridade** — código 0 neste clone): `gitleaks dir --no-banner --report-format json --report-path <out> <checkout>` → **8** no HEAD materializado; `gitleaks git <checkout> --log-opts='--full-history ce5dd167954f6ef20855c31a02675657f1169e32' --no-banner --report-format json --report-path <out>` → **32** no histórico da `main`. **`--all` não é baseline estável** (varre branches de trabalho; neste PR elevou a contagem a 33 porque o próprio documento v2 reproduzia uma constante — falso positivo registrado e eliminado). Em clones com objetos ausentes (`fsck` ≠ 0), a triagem fica **bloqueada** até recuperar os objetos — a validade declarada vale para o clone íntegro onde foi executada. Nenhum valor reproduzido.
 
 | # | Arquivo:linha | Regra | Classificação | Ação |
 |---|---|---|---|---|
 | 1 | `supabase/functions/migrate-helper/index.ts:5` | generic-api-key | **Verdadeiro — credencial real versionada** (ACCESS_KEY fixa; P0 canônico, etapa 5). Nota: `d150ec2ee` removeu apenas a seção `[functions.migrate-helper]` do `config.toml`; o arquivo segue no repo | Rotação (etapa 5, gate segredo) + remoção do arquivo (etapa 93/97, gate aprovação nominal) |
-| 2 | `supabase/migrations/20260418124334_2874267c-...sql:56` | jwt | Verdadeiro — **anon JWT** do projeto legado `saejqkojleeaxzrslzfg` (terceiro); privilégio baixo por design, protegido por RLS | Parametrização de migrations (etapa 51, escopo ampliado); expurgo (etapa 52) |
+| 2 | `supabase/migrations/20260418124334_2874267c-...sql:56` | jwt | Verdadeiro — **anon JWT** do projeto legado `saejqkojleeaxzrslzfg` (terceiro); privilégio baixo por design, protegido por RLS | **Migration permanece imutável** (handoff L35/42): rotação dos tokens anon do legado + expurgo autorizado do histórico (etapa 52, gate) ou migration corretiva nova com gate próprio |
 | 3 | `supabase/migrations/20260512213243_8e4190b5-...sql:74` | jwt | Verdadeiro — mesmo token do item 2 (duplicata) | Idem |
 | 4 | `supabase/migrations/20260512214007_64196e26-...sql:37` | jwt | Verdadeiro — **anon JWT** da origem `rapjswienfhkobhlamxb` | Idem |
 | 5 | `supabase/migrations/20260726202421_0e6c60a8-...sql:15` | jwt | Verdadeiro — mesmo token do item 4 (duplicata) | Idem |
@@ -87,20 +89,20 @@ Comando (corrigido na v2.1): `gitleaks dir --no-banner --report-format json --re
 
 Síntese HEAD: **1 credencial real crítica** (migrate-helper) + 5 ocorrências de **2 anon JWTs** distintos (baixo privilégio por design) + 2 falsos positivos. **Nenhum service_role no HEAD** — os 12 scripts foram parametrizados (ver §3.2).
 
-### 3.2 Triagem dos 32 achados gitleaks no histórico completo (`--log-opts=--all`)
+### 3.2 Triagem das 32 ocorrências do histórico da `main` (baseline fixado em `ce5dd16`)
 
-Comando: `gitleaks git --log-opts=--all --no-banner --report-format json --report-path <out> <repo>`. Execução **concluída com sucesso** nesta sessão (artefato local `/tmp/gitleaks-full.json`, 30.954 bytes, 32 achados). A varredura do revisor Codex falhou no ambiente dele com `fatal: unable to read tree 96e8b744...` (git exit 128); **neste clone o objeto `96e8b744` existe e é legível**, portanto o resultado abaixo é válido para este clone — e contradiz a alegação da v1 de "histórico limpo".
+Comando (v2.2, baseline fixado): `gitleaks git <checkout> --log-opts='--full-history ce5dd167954f6ef20855c31a02675657f1169e32' --no-banner --report-format json --report-path <out>` — gitleaks **8.30.1**, sem configuração própria. **Pré-condição:** `git fsck --full --no-reflogs` no mesmo checkout (código 0 neste clone — apenas objetos soltos). A varredura de `--all` **não** é baseline estável (varre branches de trabalho). Em clones com objetos ausentes (`fsck` ≠ 0 — como relatado pelo revisor no ambiente dele), **a triagem fica bloqueada** até a recuperação dos objetos; a validade aqui declarada vale para o clone íntegro onde foi executada. O objeto `96e8b744` é legível (`tree`) neste clone — o resultado contradiz a alegação da v1 de "histórico limpo".
 
-| Grupo | Ocorrências | Commits (data) | Classificação | Ação |
+| Grupo | **Ocorrências históricas** | Commits | Classificação | Ação |
 |---|---|---|---|---|
 | 12 scripts operacionais (`remove-demos*.ts` ×5, `seed-*.ts` ×6, `run-win-loss-analysis.ts`) — JWT **service_role do destino** | 12 | `b722848dd5` (2026-08-24) — **ancestral de `main`** | **Verdadeiro — segredo privilegiado no histórico**. No HEAD os arquivos existem parametrizados via `scripts/lib/requireSupabaseAdminEnv` (sem segredo); remediação de HEAD já ocorreu em `22e447f6a`/`648dcc9d4` | Rotação da chave (etapa 6, gate segredo/janela) + expurgo do histórico (etapa 52, gate reescrita) |
 | `supabase/functions/migrate-helper/index.ts:5` — ACCESS_KEY | 3 | `0c11341b85` (08-04), `0d52e9ea44` (08-26), `79f0ed63c9` (08-28) | Verdadeiro — persiste no HEAD (§3.1 #1) | Etapas 5 e 93/97 |
-| Migrations com anon JWT (`20260418124334`, `20260512213243`, `20260512214007`, `20260726202421`, `20260726202545`) | 5 arquivos — **10 impressões digitais** (2 commits por arquivo; é a diferença entre os 27 agrupamentos por arquivo e as 32 impressões totais) | `5c5bd1de24`, `70e1b6d166`, `38ce5e80a4`, `66e1432417`, `033c7ebb13` (04–07/2026) | Verdadeiro — 2 tokens anon distintos (mesmos do HEAD); **migrations permanecem imutáveis** (o handoff, linhas 35/42, proíbe editar migrations aplicadas) | Expurgo do histórico (etapa 52, gate de reescrita) e/ou migration corretiva expressamente autorizada; a etapa 51 **não** foi ampliada para editar migrations (correção v2.1) |
+| Migrations com anon JWT — 5 arquivos × 2 commits | **10** | Arquivos: `20260418124334`, `20260512213243`, `20260512214007`, `20260726202421`, `20260726202545`; commits introdutores `5c5bd1de24`, `70e1b6d166`, `38ce5e80a4`, `66e1432417`, `033c7ebb13` (04–07/2026) e os segundos commits que re-toque cada arquivo | Verdadeiro — 2 tokens anon do projeto legado (privilégio baixo por design, protegidos por RLS). **Classificação das 5 ocorrências além dos 5 arquivos:** são re-aparições dos mesmos 2 tokens em segundos commits — mesma classificação e mesma ação dos pares originais. **Migrations permanecem imutáveis** (handoff L35/42 proíbe editar migrations aplicadas) | Rotação dos tokens + expurgo autorizado do histórico (etapa 52, gate de reescrita) ou migration corretiva nova com gate próprio; a etapa 51 **não** cobre migrations |
 | `.env:2` — fragmento casado pela regra `jwt` | 2 | `3b8fbe9ae3` (2025-12-12), `d0a4a2983` (2026-05-11) | **Provável falso positivo parcial** — o segredo capturado tem apenas 8 caracteres e não forma um JWT completo; ainda assim o `.env` foi commitado e **removido do tracking em `13c31aa8e`** ("fix: CRITICAL - remove .env from git tracking") | Manter expurgo do `.env` no runbook da etapa 52; verificação nominal do conteúdo histórico do arquivo |
 | `docs/reports/BACKEND_ANALYSIS_REPORT.md:39` | 3 | `c334bbc936`, `d8e57bc90a` (05-20), `b722848dd5` (08-24) | Falso positivo documental (§3.1 #7) | Opcional |
 | `src/hooks/win-loss/useInsightExplanation.ts:5` | 2 | `a84135a305` (04-20), `b722848dd5` (08-24) | Falso positivo (§3.1 #8) | Nenhuma |
 
-**Divergência de contagens (registrada, não resolvida):** a auditoria de 26/08 citou "20 ocorrências no estado versionado e 31 no histórico"; o revisor citou 32; a v2 mediu 8 no HEAD e 32 impressões no histórico. **v2.1:** a reexecução após o commit `5db439afb` mede **33 impressões** — a 33ª era o próprio documento v2 reproduzindo literalmente a constante do item §3.1 #8 (falso positivo eliminado nesta revisão); a aritmética fecha: 27 agrupamentos por arquivo + 5 duplicações por commit nas migrations = 32/33 impressões. Diferenças entre sessões: modo de varredura (`dir` = 8 no HEAD; `git --all` = 33 impressões), versão/config do gitleaks e contagem por commit × por arquivo. Ação: fixar config de gitleaks no CI (etapa 87).
+**Fechamento aritmético (v2.2):** 12 (scripts) + 3 (migrate-helper) + **10 (migrations)** + 2 (`.env`) + 3 (relatório documental) + 2 (`useInsightExplanation`) = **32 ocorrências históricas** no baseline fixado. **Série de medições:** 26/08 "20/31"; revisor 32; v2 = 8+32 (método não fixado); v2.1 = 33 com `--all` (instável — incluiu o branch deste PR e o falso positivo do próprio documento, eliminado); **v2.2 = baseline estável: 8 (`dir`) + 32 (`--full-history ce5dd16`)**, gitleaks 8.30.1, sem config própria. D-03 permanece **Aberta** até a etapa 87 fixar a config no CI e reproduzir (§9.4, item 13).
 
 **Conclusão P0-004:** o segredo service_role do destino **existe no histórico de `main`** e sua rotação não é verificável pelo repo. As etapas 5–7 (rotações) e 52 (expurgo) seguem **pendentes e com gate**; a parametrização dos scripts (parte da etapa 51) já está refletida no HEAD.
 
@@ -132,7 +134,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 11 | Reparar o conector SQL somente leitura do destino (exec_sql seguro ou token Management API de leitura) | SELECT de catálogo aprovado | autorização de infraestrutura | 🔒 | Pedir token/DSN RO (§7) |
 | 12 | Capturar snapshots de catálogo (metadados, nunca dados pessoais; origem+destino no mesmo instante) | manifests assinados | acesso RO | 🔒 | Depende de 11 |
 | 13 | Registrar fingerprints dos projetos (ref, região, Postgres/PostgREST, schemas, owners) | inventário canônico | nenhum | 🔒 | Refs conhecidos; versões exigem acesso |
-| 14 | Reconciliar referências de projeto (config.toml, .temp, index.html, envs, scripts e CI) | matriz ambiente→ref | decisão de topologia | 🔶 | `config.toml` repontado ao destino em `d150ec2ee` não substitui a decisão do proprietário (saída e gate canônicos restaurados na v2.1 — §9.3); demais referências pendentes de varredura |
+| 14 | Reconciliar referências de projeto (config.toml, .temp, index.html, envs, scripts e CI) | matriz ambiente→ref | decisão de topologia | 🔒 | **Aguarda decisão de topologia** (gate não atendido; o reponte do `config.toml` em `d150ec2ee` não o satisfaz — v2.2) |
 | 15 | Definir fonte de verdade das migrations (ledger canônico; 592 arquivos vs 2.354 entradas citados em 26/08) | ADR de migrations | decisão de arquitetura | 🔶 | Insumo repo-local pronto: 595 arquivos / 586 versões (P0-006) |
 | 16 | Gerar tipos por ambiente (origem/destino separados, commit/ref e PostgREST versionados) | contratos reproduzíveis | acesso RO | 🔒 | Depende de 11 |
 | 17 | Isolar toolchains Node/Bun/Deno (Deno não altera node_modules; versões = CI) | setup reproduzível | nenhum | ⬜ | Propor no Lote 2 |
@@ -275,7 +277,7 @@ A auditoria de 30/08 traz seu próprio plano com numeração diferente da canôn
 | Inventário de secrets/env do destino | Etapa 8 (investigação) + etapas 5–7 (rotação) | Absorvido como sub-tarefa quando houver acesso |
 | Inventário Stripe/Resend/MailerSend/OpenRouter + rotação | Etapas 6/69 (integrações externas) | Painéis pendentes (§7) |
 | Inventário/congelamento/snapshots da origem Lovable | Etapas 2, 7, 12 | Aguarda acesso Lovable |
-| Export `auth.users` da origem | **Atividade própria — não é a etapa 12** (a etapa 12 captura metadados de catálogo, "nunca dados pessoais"; export de usuários contém dados de identidade) | Gates: autorização nominal de dados + cópia de segurança/pré-execução + análise LGPD (v2.1 — §9.3, Codex L278) |
+| Export `auth.users` da origem | **Atividade própria — não é a etapa 12** (catálogo = metadados, "nunca dados pessoais"; export contém dados de identidade) | **Gate AUTH-DATA:** autorização nominal de dados + justificativa LGPD + escopo mínimo + retenção especificada + proteção em trânsito/repouso + cópia de segurança/pré-execução (v2.2) |
 | Painel de status com proprietário/validação | Etapa 10 (scorecard) | Este documento é o embrião |
 | Acesso RO/escrita controlada ao destino | Etapa 11 | §7 |
 | Confirmar Top 20 e contadores (mínimos reais) | Etapas 12/13/20 | Aguarda acesso |
@@ -298,9 +300,9 @@ Escopo fechado, somente etapas canônicas repo-locais. **Critério de aceite do 
 
 | # | Etapa canônica | Trabalho | Validação |
 |---|---|---|---|
-| 41 | Eliminar os sete erros de parser | Varredura sintática das **170 Edge Functions** (entrypoints `index.ts`; baseline: 171 dirs / 170 index.ts / 283 .ts) com `deno check` (fallback `deno lint`) + relatório nominal em `docs/execucao/` | Relatório com lista fechada de arquivos com assinatura inválida |
-| 42 | Corrigir `_shared/retry.ts` | Correção dos arquivos listados pela etapa 41 **e do módulo compartilhado `supabase/functions/_shared/retry.ts` com seus 5 consumidores** (v2.1: a falha compartilhada não está entre os pontos de entrada da 41 — §9.3, Codex L302); telemetria coerente | Reexecução do verificador com 0 falhas + testes unitários de retry |
-| 43 | Zerar as outras 33 falhas TypeScript (**escopo: Edge Functions/Deno**; o `tsc --noEmit` do aplicativo está verde no HEAD — v2.1) | Correção por domínio, sem conversões de tipo que escondam divergência | `deno check` 170/170 entrypoints |
+| 41 | Eliminar os sete erros de parser | Varredura sintática das **170 Edge Functions** (entrypoints `index.ts`; baseline: 171 dirs / 170 index.ts / 283 .ts) com `deno check` — **Deno obrigatório: sem o binário a validação fica bloqueada** (ambiente reproduzível = etapa 17; **sem fallback `deno lint`**, v2.2) + relatório nominal em `docs/execucao/`. Contagem atual do baseline: **7 erros de parser presentes** (§11) | **Sete `deno check` verdes + 0 erros de parser no relatório final** (v2.2 — validação não aceita lista residual; §9.3, Codex L301) |
+| 42 | Corrigir `_shared/retry.ts` | Correção dos arquivos com erro de parser **e do módulo compartilhado `supabase/functions/_shared/retry.ts`** com seus **cinco consumidores nominais**: `deal-risk-digest`, `wal-health-alert`, `notify-quote-conversion`, `edge-retry-threshold-alert`, `forecast-narrative` (importam `withRetry`/`RetryError`; `email-bulk-*` importam `retry-policy`, fora do escopo); telemetria coerente | Reexecução do verificador com 0 falhas + testes unitários de retry |
+| 43 | Zerar as outras 33 falhas TypeScript (**escopo: Edge Functions/Deno**; `tsc --noEmit` do aplicativo verde no HEAD) | Correção por domínio, sem conversões de tipo que escondam divergência. **Recontagem v2.2 (ambiente local sem `deno install`):** 7 erros de parser + 158 falhas de resolução de dependência npm (ambientais — etapa 17) + 5 aprovados; as "33 falhas de tipo" são linha de base de 26/08 **a revalidar em ambiente Deno dedicado antes de manter o número** | `deno check` 170/170 entrypoints |
 | 44 | Tornar check de tipos bloqueante no CI | Adicionar gate de typecheck Edge aos workflows (hoje: `lint.yml`, `pr-checks.yml`, `qa-exhaustive.yml`, `edge-functions-bundle.yml`, `codeql.yml`, `quote-to-sale-e2e.yml`, `cron-monitoring.yml`) | Teste negativo do workflow |
 | 81 | Zerar lint atual | **Revalidação v2.1 (HEAD `ce5dd16`, reexecutado localmente):** `npm run lint` encerra com código 0 (0 erros, 0 avisos) e `npx tsc --noEmit` também 0 — a linha de base de 26/08 (5 erros/19 avisos) foi superada; o trabalho passa a ser **manter o verde** sob o gate `--max-warnings 0` já vigente (§9, Codex-7; §9.3, Codex L306) | `npm run lint` com 0 erros e 0 avisos (já atendido; garantir por regressão) |
 | 82 | Corrigir testes unitários | **Revalidação v2.1 (HEAD `ce5dd16`, reexecutado localmente):** `vitest run` = 458 aprovados / 2 ignorados / 0 falhas (51 arquivos) — a linha de base de 26/08 (3 falhas/4 casos) foi superada; trabalho = manter 100% verde sem afrouxar asserções (§9, Codex-8; §9.3, Codex L306) | `npm run test` (vitest run) 100% verde (já atendido; garantir por regressão) |
@@ -308,7 +310,7 @@ Escopo fechado, somente etapas canônicas repo-locais. **Critério de aceite do 
 
 **Sobre `npm run ci` (correção da v1):** "criar `npm run ci`" **não é etapa canônica** (a v1 o rotulou erroneamente como etapa 89). Se o operador quiser um agregador local, a proposta é `ci = lint + typecheck + test + build` — **incluindo `npm run typecheck`** (`tsc --noEmit`), pois o build do Vite transpila sem typecheck completo e os workflows rodam verificação TS separada (§9, Codex-9). Fica como **atividade auxiliar** (§5), não como etapa.
 
-**Sobre CI — falhas preexistentes vs introduzidas:** antes do lote, registrar o baseline de cada workflow obrigatório em `main` (quais já falham). O gate do lote é: (a) nenhum check que estava verde fica vermelho; (b) falhas preexistentes são citadas no PR com evidência de que não foram introduzidas pelo diff. O lote não é responsável por zerar falhas preexistentes fora de escopo, mas deve registrá-las. **Registro v2.1 (PR #69, estado final):** `Lighthouse Performance Audit` falhou também no PR #68 (tarefa 99291438246, diff apenas documental) e `e2e-simulation` falha no `main` (execução 33331779618); `E2E Tests` foi cancelado após falhas ambientais de autenticação (sessões anônimas nos executores) — todas preexistentes, nenhuma introduzida por este diff.
+**Sobre CI — falhas preexistentes vs introduzidas:** antes do lote, registrar o baseline de cada workflow obrigatório em `main` (quais já falham). O gate do lote é: (a) nenhum check que estava verde fica vermelho; (b) falhas preexistentes são citadas no PR com evidência de que não foram introduzidas pelo diff. O lote não é responsável por zerar falhas preexistentes fora de escopo, mas deve registrá-las. **Registro v2.2 (estado do CI — sem alegação de verde):** `Lighthouse Performance Audit` = **FALHA** no commit `8e0d8d609` e **já falhava no PR #68** (tarefa 99291438246, também doc-only); `e2e-simulation` falha no `main` (execução 33331779618); `E2E Tests` pendente/cancelado após falhas ambientais de autenticação — **todas preexistentes, nenhuma introduzida por diff documental**. Verde apenas em: Lint & Type Check, Build, Unit Tests, Bundle Size, quality, quality-gate. **Este PR não se declara com CI verde enquanto Lighthouse falhar ou E2E estiver pendente** (§9.4, item 19).
 
 ---
 
@@ -329,8 +331,8 @@ Escopo fechado, somente etapas canônicas repo-locais. **Critério de aceite do 
 | ID | Divergência | Estado |
 |---|---|---|
 | D-01 | Banco acessível ≠ destino (§2) | Aberta — aguarda §7 item 3 |
-| D-02 | Auditoria 26/08 (fonte canônica, linha 67): **592 arquivos locais**, ledger com 2.354 entradas; repo atual: 595 arquivos / 586 identificadores de versão (582 marcações de data) — crescimento de +3 arquivos (v2.1 corrigiu a linha de base "263/275" sem fonte — §9.3, Codex L332) | Aberta — confirmar em reconciliação (Fase C) |
-| D-03 | Contagens gitleaks: 20/31 (26/08) vs 32 (revisor) vs 8 HEAD + 32 histórico (v2) vs 8 HEAD + 33 histórico (v2.1; a 33ª era este documento) | **Aberta** — fixar config de gitleaks no CI (etapa 87) e reproduzir contagens; só então reavaliar (v2.1 — §9.3, CR L333) |
+| D-02 | Baseline canônica 26/08: **592 migrations locais × 2.354 entradas no ledger**; atual (`ce5dd16`): **595 arquivos / 586 versões** (582 marcações de data — método no §10); 30/08 mediu 242 entradas no ledger vivo (ressalva D-05). "263/275" removido (sem fonte) | Aberta — confirmar em reconciliação (Fase C) |
+| D-03 | Contagens gitleaks: 20/31 (26/08) vs 32 (revisor) vs 8+32 (v2) vs 33 `--all` (v2.1, instável) vs **baseline fixado 8+32** (v2.2; commit `ce5dd16`, gitleaks 8.30.1, sem config própria) | **Aberta** — etapa 87 (fixar config no CI) pendente; reproduzir contagens e só então reavaliar |
 | D-04 | Plano de 30/08 re-renumera as etapas canônicas | Resolvida nesta v2 — §4 segue a canônica; §5.1 mapeia a divergente |
 | D-05 | Topo do ledger citado em 30/08 coincide com o banco errado | Aberta — aguarda §7 itens 3–4 |
 | D-06 | "597 Edge Functions" (v1 e docs antigas) vs 171 dirs/170 index.ts/283 .ts medidos | Resolvida nesta v2 — baseline corrigido (§4 Fase E) |
@@ -395,9 +397,36 @@ Todas as threads foram verificadas contra o código antes da correção; nenhuma
 | Codex L306 — linha de base do lote defasada | Procedente | Reexecução local no HEAD `ce5dd16`: `npm run lint` código 0; `npx tsc --noEmit` código 0; `vitest run` 458/2 ignorados/0 falhas — etapas 81/82/43 atualizadas para "manter o verde" |
 | Codex L332 — linha de base de migrations errada | Procedente | D-02 corrigida: 592 arquivos (26/08, fonte canônica L67) → 595; "263/275" não tinha fonte |
 | Codex L80 — editar migrations históricas | Procedente | Ação dos JWT em migrations reescrita: imutabilidade preservada (handoff L35/42); tratamento via expurgo (etapa 52, gate) e/ou migration corretiva autorizada |
+| Codex L431 — "não declare integridade histórica como comprovada" (clone do revisor com fsck código 2) | Parcialmente procedente | §3.1/§3.2 reescritas na v2.2: `fsck` é **pré-condição** declarada; linguagem "integridade total" substituída por "clone íntegro onde foi executada"; em clones com objetos ausentes a triagem fica **bloqueada**. A divergência do ambiente do revisor permanece registrada (verossimilmente checkout sem histórico completo) |
+| Codex L301 — validação da etapa 41 aceitava lista residual | Procedente | Validação da etapa 41 endurecida: **sete `deno check` verdes + 0 erros de parser**; contagem atual (7 presentes) registrada no §6/§11 |
 
 **Efeitos colaterais positivos da revisão:** (i) o documento v2 disparava a regra `generic-api-key` ao reproduzir literalmente a constante do §3.1 #8 — a v2.1 elimina essa reprodução e, com isso, o 33º achado desaparece das próximas varreduras; (ii) o modo correto de varredura do HEAD (`gitleaks dir`) ficou documentado no §10; (iii) as falhas de CI do PR (Lighthouse/E2E) foram demonstradas preexistentes (PR #68 e `main`).
 
+
+### 9.4 Matriz das 20 correções do operador → ação → evidência (v2.2)
+
+| # | Exigência do operador | Ação v2.2 | Evidência |
+|---|---|---|---|
+| 1 | Responder nominalmente os comentários Codex/CodeRabbit | 16 threads: 4 CR confirmadas; 10 CX respondidas na v2.1; 2 CX novas respondidas na v2.2 (§9.3) | Threads do PR |
+| 2 | Triagem histórica: total 32; tabela fechando; migrations = 10; classificar as 5 omitidas | Tabela §3.2 reescrita por **ocorrências históricas** (12+3+10+2+3+2=32); as 5 extras das migrations classificadas como re-aparições dos mesmos tokens | §3.2 |
+| 3 | Separar comandos HEAD (`dir` em checkout fixado) × histórico (`--full-history ce5dd16`); registrar versão/config/commit; rejeitar `--all` | Feito em §3.1 e §10; gitleaks **8.30.1**, **sem config própria**, commit `ce5dd16`; `--all` marcado como não estável | §3.1, §10 |
+| 4 | P0-005: remover FollowUpAudit; 5 caminhos nominais; busca só em `src`/`supabase`; sem alegar zero na árvore | Feito (v2.2) | §3, P0-005 |
+| 5 | Etapa 14: saída/gate canônicos; aguardando decisão | Restaurado; estado 🔒 "Aguarda decisão de topologia" | §4 |
+| 6 | D-02: 592×2.354 → 595/586; remover 263/275 | Feito (com ressalva D-05 para o 242 da 30/08) | §8 |
+| 7 | Revalidar Lote 1; reexecutar e registrar; estados 81/82; recontar Deno antes de manter 7+33 | Reexecutado (lint/tsc/vitest verdes — §6/§11); Deno recontado: 7 parser + 158 resolução npm + 5 ok; "33" marcada como linha de base a revalidar em ambiente dedicado | §6, §11 |
+| 8 | Etapa 42: permitir `retry.ts`; nomear os 5 consumidores; sem "somente etapa 41" | Feito — 5 consumidores nominais | §6 |
+| 9 | Remover fallback `deno lint`; ausência de Deno bloqueia | Feito | §6, etapa 41 |
+| 10 | Não orientar edição/parametrização de migrations históricas | §3.1 #2 e §3.2 reescritas; imutabilidade + rotação/expurgo/corretiva | §3.1, §3.2 |
+| 11 | Export `auth.users` fora do snapshot; gate AUTH-DATA + LGPD + escopo + retenção + proteção | Feito | §5 |
+| 12 | Denominadores 175 | Etapas 70/85 com 175 de execução | §4 |
+| 13 | D-03 Aberta/Pendente | Mantida Aberta com série de medições | §8 |
+| 14 | Laço real dos 7 padrões (sem "idem") | Laço com `--full-history` fixado | §10 |
+| 15 | pt-BR editorial | Termos convertidos; identificadores preservados | todo o documento |
+| 16 | Descrição do PR conforme modelo do repositório | Body reescrito segundo `.github/pull_request_template.md` | PR #69 |
+| 17 | Reconciliar P0-001…006 com os P0s reais das fontes; não atribuir IDs inexistentes | Tabela §3 com "Origem na fonte" nominal; "563" e os 5 caminhos declarados como provenientes da v1 | §3 |
+| 18 | Registrar o falso positivo `generic-api-key` do próprio documento | Mantido e detalhado (sem allowlist) | §3.1 #8, §3.2 |
+| 19 | Aguardar todos os checks; não declarar CI verde | Estado real registrado (Lighthouse FALHA, E2E pendente); sem alegação de verde | §6 "Registro v2.2", §11 |
+| 20 | Validações finais completas + nova matriz | 100 etapas, Markdown, `git diff --check`, gitleaks fixado, revisores reexecutados, threads resolvidas, esta matriz | §10, §11, PR |
 
 ---
 
@@ -417,24 +446,27 @@ ls supabase/migrations/*.sql | xargs -n1 basename | cut -d_ -f1 | sort -u | wc -
 grep -c 'path=' src/routes/AppRoutes.tsx                                                # 175 rotas declaradas (v2.1)
 
 # Varredura de segredos — HEAD (8 achados) e histórico completo (32 achados)
-gitleaks dir --no-banner --report-format json --report-path /tmp/gitleaks-head.json .    # 8 (HEAD; modo dir — corrigido na v2.1)
-gitleaks git --log-opts=--all --no-banner --report-format json --report-path /tmp/gitleaks-full.json .   # 32 (v2) → 33 impressões digitais (v2.1)
+# Baseline fixado (v2.2) — checkout limpo do commit; gitleaks 8.30.1; sem arquivo de config própria
+git worktree add <dir> ce5dd167954f6ef20855c31a02675657f1169e32 --detach
+git -C <dir> fsck --full --no-reflogs    # pré-condição: código de saída 0
+gitleaks dir --no-banner --report-format json --report-path <out1> <dir>   # 8 — HEAD materializado
+gitleaks git <dir> --log-opts='--full-history ce5dd167954f6ef20855c31a02675657f1169e32' --no-banner --report-format json --report-path <out2>   # 32 — histórico da main (NÃO usar --all como baseline)
 
 # Segredo service_role no histórico: commit introdutor é ancestral de main
 git merge-base --is-ancestor b722848dd5 main            # exit 0 (é ancestral)
 
 # .env removido do tracking (segredo persiste no histórico)
-git log --all --oneline -- .env                         # 13c31aa8e (remoção), d0a4a2983, 3b8fbe9ae
+git log --full-history ce5dd167954f6ef20855c31a02675657f1169e32 --oneline -- .env   # 13c31aa8e (remoção), d0a4a2983, 3b8fbe9ae
 
 # Objeto citado pelo revisor como corrompido — íntegro neste clone
 git cat-file -t 96e8b744b6faadffc94a18cf7f717656075fec21   # tree
-git fsck --full --no-reflogs                              # código de saída 0; apenas objetos soltos (dangling) — integridade total deste clone (v2.1)
+git fsck --full --no-reflogs                              # código de saída 0; apenas objetos soltos — clone íntegro (pré-condição da triagem; clones com objetos ausentes ficam bloqueados)
 
 # Padrões de chaves externas sem ocorrência real (2 hits são docs de auditoria)
-for padrao in 'sk_live_' 'rk_live_' 'key-' 'sbp_' 'sk-or-' 'mlsn.' 're_'; do printf '\n== %s ==\n' "$padrao"; git log -S "$padrao" --all --oneline; done   # acertos apenas em docs; nenhuma credencial real
+for padrao in 'sk_live_' 'rk_live_' 'key-' 'sbp_' 'sk-or-' 'mlsn.' 're_'; do printf '\n== %s ==\n' "$padrao"; git log -S "$padrao" --full-history ce5dd167954f6ef20855c31a02675657f1169e32 --oneline; done   # acertos apenas em docs; nenhuma credencial real
 ```
 
-**Notas de reprodutibilidade:** (i) as contagens gitleaks dependem da versão e da config — a divergência D-03 só se fecha fixando a config no CI (etapa 87); (ii) a contagem "por commit" do modo `--log-opts=--all` difere da contagem "por arquivo no HEAD"; (iii) o acesso ao banco segue bloqueado (§2) — nenhuma evidência de banco foi coletada nesta sessão.
+**Notas de reprodutibilidade:** (i) as contagens gitleaks dependem da versão e da config — a divergência D-03 só se fecha fixando a config no CI (etapa 87); (ii) a contagem "por commit" (modo `git`) difere da contagem "por arquivo no HEAD" (modo `dir`) — por isso o baseline fixa commit e modo; (iii) o acesso ao banco segue bloqueado (§2) — nenhuma evidência de banco foi coletada nesta sessão.
 
 ---
 
@@ -449,7 +481,9 @@ for padrao in 'sk_live_' 'rk_live_' 'key-' 'sbp_' 'sk-or-' 'mlsn.' 're_'; do pri
 | Verificação de scripts no HEAD | Existem e estão parametrizados (`requireSupabaseAdminEnv`); a alegação da v1 de "histórico limpo" estava incorreta |
 | Medição de contagens | migrations 595 arquivos / 586 identificadores de versão (582 marcações de data — método no §10); Edge 171/170/283; rotas declaradas 175 (`AppRoutes.tsx`); workflows de CI listados; `package.json` conferido (`--max-warnings 0`, `typecheck`) |
 | **Revisão v2.1 (14 threads do PR #69)** | Todas triadas e respondidas (§9.3); evidências reexecutadas: `git fsck` código 0; lint/tsc/vitest verdes no HEAD; rotas 175; migrations 582/586; D-02 592→595; FollowUpAudit limpo; gitleaks `dir`=8 / `git --all`=33 impressões |
-| Simulação da etapa 41 (v2.1) | `deno check` nos 170 pontos de entrada (Deno 2.9.5; sem `deno install`): 5 aprovados; **7 erros de parser** — quantidade idêntica à lista canônica da etapa 41; 158 falhas de resolução de dependência npm (ambientais — ambiente Deno dedicado é a etapa 17); 0 expirados |
+| Simulação da etapa 41 (v2.1/v2.2) | `deno check` nos 170 pontos de entrada (Deno 2.9.5; sem `deno install`): 5 aprovados; **7 erros de parser** (quantidade da lista canônica da 41 — presentes no baseline); 158 falhas de resolução de dependência npm (ambientais — etapa 17); 0 expirados |
+| **v2.2 — atendimento das 20 correções do operador** | Baseline fixado: `dir`=8 e `--full-history ce5dd16`=**32** (gitleaks 8.30.1, sem config própria; fsck código 0 no checkout fixado); 5 caminhos originais do P0-005 listados e verificados; 5 consumidores de `retry.ts` nomeados; P0s reconciliados com as seções reais das fontes; descrição do PR conforme o modelo do repositório |
+| Estado do CI (v2.2 — sem alegação de verde) | Lighthouse **FALHA** (preexistente: PR #68) e E2E pendente/cancelado; verdes: Lint/Build/Unit/Bundle/quality/quality-gate; aguardar todos os checks antes de qualquer declaração |
 | PR #68 | Mergeado com 9 threads não resolvidas; esta v2 responde nominalmente (§9.2) e é entregue em PR de continuação |
 | Escrita em bancos/painéis remotos | **Nenhuma** (modo somente leitura respeitado) |
 
