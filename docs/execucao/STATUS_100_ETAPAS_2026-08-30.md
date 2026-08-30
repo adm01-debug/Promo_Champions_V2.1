@@ -69,7 +69,7 @@ A numeração **P0-001…P0-006 foi introduzida na v1 deste documento**; as audi
 | P0-002 | Grants/privilégios excessivos (guards ausentes em funções mutating) | 26/08 e 30/08 §"P0/P1 — funções SECURITY DEFINER executáveis por anon" | 🔶 **Bloqueado — acesso** | Idem |
 | P0-003 | Funções sem `search_path` fixo — a v1 citava "563", **número sem fonte nas auditorias** (tema correlato: 30/08 etapa 49 e §"30 funções SECURITY DEFINER", que informa search_path configurado nelas) | v1 deste documento (valor interno, não confirmado) | 🔶 **Bloqueado — acesso; quantidade a recontar no destino** | Sem fonte rastreável; recontar quando acessível |
 | P0-004 | Rotação de credenciais + exposição de chaves | 26/08 §"P0 — chave service_role versionada e ativa" e §"P0 — migrate-helper exfiltra credenciais"; 30/08 §"P0 — migrate-helper foi reintroduzida e continua implantada na origem" | 🟡 **Triagem repo concluída com baseline fixado (§3.1/§3.2); rotação não verificável; painéis pendentes** | HEAD fixado (`dir`) = 8 triados; histórico da `main` fixado (`--full-history ce5dd16`) = **32 ocorrências** triadas (service_role real no histórico); laço `git log -S` × 7 padrões externos (`sk_live_`, `rk_live_`, `key-`, `sbp_`, `sk-or-`, `mlsn.`, `re_`) = 0 credenciais reais (acertos apenas em documentos que citam o padrão como texto) |
-| P0-005 | Mocks/simulação persistida | 26/08 §"mocks produtivos silenciosos"; 30/08 §"Dados fabricados apresentados como reais" | ⚠️ **Divergente — alvos corrigidos na v2.2** | **Cinco caminhos originais citados pela v1** (procedentes da própria v1; não rastreáveis nas auditorias): `components/admin/funnel/FunnelSettingsTab.tsx`, `components/achievements/Achievements.tsx`, `pages/Leaderboard.tsx`, `pages/Suppliers.tsx` — **inexistentes** — e `components/competitive/PrizeWheel.tsx` (citado como `gamification/`; **existe** e não contém mock). Suspeitos `PremiumPrizeWheel.tsx`/`SlotMachine.tsx`/`DEMO_MODE`: `git grep -c -E 'PremiumPrizeWheel|SlotMachine|DEMO_MODE' -- src supabase` = **0 acertos**. **Alvos atuais confirmados** (30/08 L193–208/607; reverificados): `src/components/dashboard/FuturisticSpeedometerDashboard.tsx:277/285` (`mockRevenueHistory`/`mockSalesHistory`), `src/components/conversational/SentimentTimelineChart.tsx:191` (`battleCardId="mock-id"`), `src/lib/bi/mockData.ts` — além dos demais casos nominais da fonte (enrich-lead, UsageAnalytics, LiveIntelligenceFeed, RecordingSummaryDrawer, PriceElasticityChart, ArenaAITips, EnhancedActivityCard, useWhatsApp, pipeline-pulse-aggregator; inventário completo na etapa 54). `FollowUpAudit.tsx` **fora** da lista atual (`mockLogs` eliminado em `648dcc9d4`); `RevenueForecastV2.tsx`/`FollowUpInteligente.tsx` reclassificados (funcionalidade/pré-visualização) |
+| P0-005 | Mocks/simulação persistida | 26/08 §"mocks produtivos silenciosos"; 30/08 §"Dados fabricados apresentados como reais" | ⚠️ **Divergente — alvos corrigidos na v2.2** | **Cinco caminhos originais citados pela v1** (procedentes da própria v1; não rastreáveis nas auditorias): `components/admin/funnel/FunnelSettingsTab.tsx`, `components/achievements/Achievements.tsx`, `pages/Leaderboard.tsx`, `pages/Suppliers.tsx` — **inexistentes** — e `components/competitive/PrizeWheel.tsx` (citado como `gamification/`; **existe** e não contém mock). Suspeitos `PremiumPrizeWheel.tsx`/`SlotMachine.tsx`/`DEMO_MODE`: `git grep -c -E 'PremiumPrizeWheel[|]SlotMachine[|]DEMO_MODE' -- src supabase` = **0 acertos** (v2.2.2 — pipes escapados em `[|]` para não quebrar a tabela; regex equivalente). **Alvos atuais confirmados** (30/08 L193–208/607; reverificados): `src/components/dashboard/FuturisticSpeedometerDashboard.tsx:277/285` (`mockRevenueHistory`/`mockSalesHistory`), `src/components/conversational/SentimentTimelineChart.tsx:191` (`battleCardId="mock-id"`), `src/lib/bi/mockData.ts` — além dos demais casos nominais da fonte (enrich-lead, UsageAnalytics, LiveIntelligenceFeed, RecordingSummaryDrawer, PriceElasticityChart, ArenaAITips, EnhancedActivityCard, useWhatsApp, pipeline-pulse-aggregator; inventário completo na etapa 54). `FollowUpAudit.tsx` **fora** da lista atual (`mockLogs` eliminado em `648dcc9d4`); `RevenueForecastV2.tsx`/`FollowUpInteligente.tsx` reclassificados (funcionalidade/pré-visualização) |
 | P0-006 | Divergência ledger × migrations | 26/08 (L67/L458-466: **592 arquivos locais × 2.354 entradas**); 30/08 (L297/L484: **595 arquivos × 242 entradas** do ledger vivo — sob ressalva D-05) | ⚠️ **Divergente — contagens por método** | Repo `main` (`ce5dd16`): **595 arquivos** `.sql` / **586 versões** (até o 1º `_`; **582 marcações de data** — método no §10); 3 pares 14d duplicados (`20260104143930`, `20260104170152`, `20260104181000` ×2); 15 fora do padrão; **4 pós-topo** (`20260827000001`, `20260830000000/1/2`); `20260827202206` da v1 não existe. Ledger do destino inacessível (§2) |
 
 ### 3.1 Triagem dos 8 achados gitleaks no HEAD (`main` = `ce5dd16`)
@@ -110,7 +110,7 @@ Comando (v2.2, baseline fixado): `gitleaks git <checkout> --log-opts='--full-his
 
 ## 4. Matriz de status das 100 etapas canônicas (fonte: plano de 26/08)
 
-Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651–783). **Legenda de estado:** ✅ concluída com evidência · 🟡 parcialmente atendida (evidência anexa, verificação pendente) · 🔵 em andamento · ⬜ não iniciada, executável no repo local · 🔶 aguardando decisão/autorização do operador · 🔒 bloqueada por acesso (§7). Nenhuma etapa está ✅ nesta data.
+Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651–783). **Legenda de estado:** ✅ concluída com evidência · 🟡 parcialmente atendida (evidência anexa, verificação pendente) · 🔵 em andamento · ⬜ não iniciada, executável no repo local · 🔶 aguardando decisão/autorização do operador · 🔒 bloqueada por acesso (§7). Etapas 81 e 82 estão ✅ com evidência (revalidadas no baseline `ce5dd16`, código inalterado por este PR — v2.2.2); as demais seguem nos estados indicados.
 
 ### Fase A — contenção, custódia e linha de base
 
@@ -134,7 +134,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 11 | Reparar o conector SQL somente leitura do destino (exec_sql seguro ou token Management API de leitura) | SELECT de catálogo aprovado | autorização de infraestrutura | 🔒 | Pedir token/DSN RO (§7) |
 | 12 | Capturar snapshots de catálogo (metadados, nunca dados pessoais; origem+destino no mesmo instante) | manifests assinados | acesso RO | 🔒 | Depende de 11 |
 | 13 | Registrar fingerprints dos projetos (ref, região, Postgres/PostgREST, schemas, owners) | inventário canônico | nenhum | 🔒 | Refs conhecidos; versões exigem acesso |
-| 14 | Reconciliar referências de projeto (config.toml, .temp, index.html, envs, scripts e CI) | matriz ambiente→ref | decisão de topologia | 🔒 | **Aguarda decisão de topologia** (gate não atendido; o reponte do `config.toml` em `d150ec2ee` não o satisfaz — v2.2) |
+| 14 | Reconciliar referências de projeto (config.toml, .temp, index.html, envs, scripts e CI) | matriz ambiente→ref | decisão de topologia | 🔶 | **Aguarda decisão de topologia do operador** (gate não atendido; o reponte do `config.toml` em `d150ec2ee` não o satisfaz — v2.2.2 usa 🔶, pois o bloqueio é decisão, não acesso) |
 | 15 | Definir fonte de verdade das migrations (ledger canônico; 592 arquivos vs 2.354 entradas citados em 26/08) | ADR de migrations | decisão de arquitetura | 🔶 | Insumo repo-local pronto: 595 arquivos / 586 versões (P0-006) |
 | 16 | Gerar tipos por ambiente (origem/destino separados, commit/ref e PostgREST versionados) | contratos reproduzíveis | acesso RO | 🔒 | Depende de 11 |
 | 17 | Isolar toolchains Node/Bun/Deno (Deno não altera node_modules; versões = CI) | setup reproduzível | nenhum | ⬜ | Propor no Lote 2 |
@@ -148,7 +148,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 |---|---|---|---|---|---|
 | 21 | Comparar schemas e relações (classificar cada diferença 564/410: intencional, faltante, renomeada, obsoleta) | matriz assinada por owner | catálogo destino completo | 🔒 | Depende de 11 |
 | 22 | Comparar todas as colunas (tipo, nullable, default, identity, generated, comentário, posição) | diff de 386/118 nomes e demais estruturas | nenhum DDL | 🔒 | Depende de 11 |
-| 23 | Comparar constraints (PK, FK, UNIQUE, CHECK, deferrability, ação referencial) | diff com severidade | catálogo destino completo | 🔒 | Depende de 11 |
+| 23 | Comparar constraints (PK, FK, UNIQUE, CHECK, deferrability, ação referencial, **validação** — `NOT VALID`/convalidated) | diff com severidade | catálogo destino completo | 🔒 | Depende de 11 |
 | 24 | Comparar índices (definição, include, parcial, expressão, validade, tamanho, uso) | matriz de equivalência/perda | catálogo destino completo | 🔒 | Depende de 11 |
 | 25 | Comparar RLS e FORCE RLS (cobertura por tabela/partição, efeito por role) | mapa deny/allow real | catálogo destino completo | 🔒 | Depende de 11 |
 | 26 | Comparar policies (roles, comando, permissiva/restritiva, USING/WITH CHECK normalizados) | diff revisável | catálogo destino completo | 🔒 | Depende de 11 |
@@ -164,7 +164,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 31 | Corrigir a partição p2026_11 (habilitar RLS, alinhar grants/policies ao pai) | teste de acesso direto e pelo pai | autorização DDL explícita | 🔒 | Aguarda acesso + autorização |
 | 32 | Corrigir o job 297 (VACUUM fora de transação ou manutenção suportada) | execução bem-sucedida | autorização de job | 🔒 | Idem |
 | 33 | Implementar o log de preço (fn_log_price_change/trg_log_price_change: payload, retenção, idempotência) | teste de mudança auditada | autorização de função/trigger | 🔒 | Idem |
-| 34 | Fechar default ACLs (revogar grants futuros excessivos de postgres/supabase_admin) | teste de criação de objeto | autorização de privilégios | 🔒 | Idem |
+| 34 | Fechar default ACLs (revogar grants futuros excessivos de `postgres`/`supabase_admin`, **preservando os privilégios gerenciados do Supabase** — plataforma continua criando/mantendo objetos) | teste de criação de objeto | autorização de privilégios | 🔒 | Idem |
 | 35 | Reduzir grants de tabelas e sequences (remover MAINTAIN/REFERENCES/TRIGGER e escrita de anon injustificada) | matriz mínima por role | autorização por lote | 🔒 | Idem |
 | 36 | Revisar policies literais true (classificar 176 USING e 48 CHECK; substituir só as não intencionais) | testes anon/authenticated/service_role | autorização RLS por lote | 🔒 | Idem |
 | 37 | Minimizar façades públicas (reduzir v_products_public; revisar 9 views owner-context) | contrato público aprovado | decisão funcional e DDL | 🔒 | Idem |
@@ -238,10 +238,10 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 
 | # | Etapa canônica | Saída canônica | Gate canônico | Estado | Próxima ação |
 |---|---|---|---|---|---|
-| 81 | Zerar lint atual (corrigir 5 erros e revisar 19 warnings, sem refatoração ampla) | npm run lint verde | nenhum | ⬜ | **Lote 1** (§6) — atenção: `lint` usa `--max-warnings 0`, logo "verde" exige 0 erros **e** 0 warnings |
-| 82 | Corrigir testes unitários (3 falhas + 4 casos de cardinalidade, sem afrouxar asserts) | Vitest 100% verde | nenhum | ⬜ | **Lote 1** (§6) — lista de falhas remanescentes é diagnóstico, **não** aceite |
+| 81 | Zerar lint atual (corrigir 5 erros e revisar 19 warnings, sem refatoração ampla) | npm run lint verde | nenhum | ✅ | **Concluída no baseline `ce5dd16`** (v2.2.2): `npm run lint` = código 0, 0 erros/0 avisos; `npx tsc --noEmit` = 0; código inalterado por este PR (evidência no §6/§11) |
+| 82 | Corrigir testes unitários (3 falhas + 4 casos de cardinalidade, sem afrouxar asserts) | Vitest 100% verde | nenhum | ✅ | **Concluída no baseline `ce5dd16`** (v2.2.2): `vitest run` = 458 aprovados / 2 ignorados / 0 falhas (51 arquivos); código inalterado por este PR (evidência no §6/§11) |
 | 83 | Medir cobertura real (todo src elegível; separar generated/UI trivial; elevar até 85% significativo) | relatório não-curado | política de qualidade | ⬜ | Baseline de cobertura é repo-local |
-| 84 | Executar E2E autenticado no CI (contas/fixtures isoladas; falhar quando auth não configurada) | fluxos críticos não pulados | ambiente de teste | 🔒 | Aguarda ambiente |
+| 84 | Executar E2E autenticado no CI (contas/fixtures isoladas; falhar quando auth não configurada; **segredos protegidos no workflow**; **limpeza das fixtures pós-execução**) | fluxos críticos não pulados | ambiente de teste | 🔒 | Aguarda ambiente |
 | 85 | Expandir acessibilidade (174 rotas por amostragem; remover supressões justificadas; nomear 82 botões) | gates de axe/teclado/leitor de tela | nenhum | ⬜ | Parcialmente repo-local; **denominador de execução = 175 rotas no HEAD (recontagem v2.1 — §9.3, Codex L218)** |
 | 86 | Automatizar testes Edge (por entrypoint: contratos, auth negativa, CORS, SSRF, webhooks, service-role) | cobertura por função | ambiente isolado | 🔒 | Aguarda ambiente |
 | 87 | Endurecer a cadeia de suprimentos (15 vulnerabilidades, fixar Deno/npm, SBOM, Dependabot, gitleaks em pre-receive/CI) | zero crítica/alta sem aceite | upgrades avaliados | ⬜ | Parcialmente repo-local; config de gitleaks resolve divergência de contagens (§3.2) |
@@ -261,7 +261,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 96 | Deprecar antes de remover objetos de banco (revogar consumidores em staging; observar ≥1 ciclo) | zero chamada no período acordado | autorização por objeto | 🔒 | Aguarda acesso + autorização |
 | 97 | Submeter lote de remoção ao proprietário (evidência, impacto, rollback, backup por item) | aprovação/rejeição explícita nominal | obrigatório | 🔶 | Aguarda lote |
 | 98 | Fazer canário com rollback automático (staging/canário; SLOs; tráfego real) | evidência de estabilidade | autorização de release | 🔒 | Aguarda release |
-| 99 | Executar smoke ponta a ponta em produção (login, quote→sale, pedido, webhook, gamificação, relatórios, jobs) | evidência assinada e sem PII | janela/tráfego autorizado | 🔒 | Aguarda janela |
+| 99 | Executar smoke ponta a ponta em produção (login, quote→sale, pedido, webhook, gamificação, relatórios, jobs) — **sem fabricar dados** (nenhum registro fictício em produção) | evidência assinada e sem PII | janela/tráfego autorizado | 🔒 | Aguarda janela |
 | 100 | Certificar ou rejeitar prontidão (P0/P1 fechados, CI verde, reconciliação, restore, tráfego saudável) | ata go/no-go e backlog residual | proprietário, engenharia e operação | 🔒 | Última etapa do programa |
 
 ---
@@ -377,7 +377,7 @@ Consolidação das correções exigidas pelo operador à v1 (15 pontos) e das 9 
 | C-8 | #3889994578 (P2) | Aceite de testes com falhas remanescentes contradiz a etapa 82 | §6 etapa 82: etapa permanece pendente até `vitest run` verde |
 | C-9 | #3889994580 (P2) | `npm run ci` proposto sem `typecheck` | §6: agregador inclui `typecheck` e deixa de ser apresentado como etapa canônica |
 
-### 9.3 Threads de revisão deste PR #69 (14) — veredictos e correções da v2.1
+### 9.3 Threads de revisão deste PR #69 — veredictos e correções (14 da v2.1 + 2 da v2.2; 16 registros)
 
 Todas as threads foram verificadas contra o código antes da correção; nenhuma resposta é "por cortesia".
 
