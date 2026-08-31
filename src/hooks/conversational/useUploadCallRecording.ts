@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveRecordingMimeType } from "@/lib/recordingMime";
 import { toast } from "sonner";
 
 interface UploadInput {
@@ -33,11 +34,12 @@ export function useUploadCallRecording() {
       const ext = input.file.name.split(".").pop()?.toLowerCase() || "mp3";
       const recordingId = crypto.randomUUID();
       const path = `${sp as string}/${recordingId}.${ext}`;
+      const contentType = resolveRecordingMimeType(input.file);
 
       const { error: upErr } = await supabase.storage
         .from("call-recordings")
         .upload(path, input.file, {
-          contentType: input.file.type || "audio/mpeg",
+          contentType,
           upsert: false,
         });
       if (upErr) throw upErr;
@@ -58,7 +60,7 @@ export function useUploadCallRecording() {
         metadata: {
           original_filename: input.file.name,
           size_bytes: input.file.size,
-          mime_type: input.file.type,
+          mime_type: contentType,
         },
       };
 

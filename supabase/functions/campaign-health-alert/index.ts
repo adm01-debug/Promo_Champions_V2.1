@@ -3,7 +3,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
+import {
+  isExpectedSharedSecret,
+  isInternalServiceRequest,
+} from '../_shared/internal-service-auth.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 import {
@@ -37,6 +40,29 @@ async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
   return Boolean(data);
 }
 
+async function isCronSecretRequest(
+  req: Request,
+  supabaseUrl: string,
+  serviceRoleKey: string
+): Promise<boolean> {
+  const provided = req.headers.get('X-Cron-Secret');
+  if (!provided) return false;
+
+  const admin = createClient(supabaseUrl, serviceRoleKey);
+  const { data, error } = await admin
+    .from('_internal_secrets')
+    .select('value')
+    .eq('key', 'coaching_cron_secret')
+    .maybeSingle();
+  if (error) {
+    console.error('campaign-health-alert cron secret lookup failed:', error.message);
+    return false;
+  }
+
+  const expected = (data as { value?: string | null } | null)?.value;
+  return isExpectedSharedSecret(provided, expected);
+}
+
 Deno.serve(withRequestId('campaign-health-alert', async req => {
   const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS')
@@ -50,7 +76,20 @@ Deno.serve(withRequestId('campaign-health-alert', async req => {
 
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
 
-  if (!isInternalServiceRequest(req)) {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error(
+      'campaign-health-alert misconfigured: missing Supabase service credentials'
+    );
+    return json({ error: 'service_not_configured' }, 503);
+  }
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+  const isInternal =
+    isInternalServiceRequest(req) ||
+    (await isCronSecretRequest(req, supabaseUrl, serviceRoleKey));
+  if (!isInternal) {
     try {
       if (!(await isAdminOrManagerRequest(req))) {
         return json({ error: 'forbidden' }, 403);
@@ -62,18 +101,7 @@ Deno.serve(withRequestId('campaign-health-alert', async req => {
     }
   }
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL');
-  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  if (!supabaseUrl || !serviceRoleKey) {
-    console.error(
-      'campaign-health-alert misconfigured: missing Supabase service credentials'
-    );
-    return json({ error: 'service_not_configured' }, 503);
-  }
-
   try {
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
     const since = new Date(Date.now() - LOOKBACK_DAYS * 86400_000).toISOString();
 
     const { data: jobs, error: jobsError } = await supabase

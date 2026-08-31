@@ -22,6 +22,25 @@ export function isExpectedServiceRoleAuthorization(
   return difference === 0;
 }
 
+/** Compara segredos sem encerrar no primeiro byte divergente. */
+export function isExpectedSharedSecret(
+  provided: string | null,
+  expected: string | null | undefined,
+): boolean {
+  if (!provided || !expected) return false;
+
+  const expectedBytes = new TextEncoder().encode(expected);
+  const providedBytes = new TextEncoder().encode(provided);
+  const length = Math.max(expectedBytes.length, providedBytes.length);
+  let difference = expectedBytes.length ^ providedBytes.length;
+
+  for (let index = 0; index < length; index++) {
+    difference |= (expectedBytes[index] ?? 0) ^ (providedBytes[index] ?? 0);
+  }
+
+  return difference === 0;
+}
+
 export function isInternalServiceRequest(req: Request): boolean {
   return isExpectedServiceRoleAuthorization(
     req.headers.get("Authorization"),

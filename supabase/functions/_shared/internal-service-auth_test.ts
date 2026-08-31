@@ -1,4 +1,7 @@
-import { isExpectedServiceRoleAuthorization } from "./internal-service-auth.ts";
+import {
+  isExpectedServiceRoleAuthorization,
+  isExpectedSharedSecret,
+} from "./internal-service-auth.ts";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -27,5 +30,28 @@ Deno.test("reconhece somente o bearer de serviço esperado", () => {
   assert(
     !isExpectedServiceRoleAuthorization("Bearer chave-interna", undefined),
     "não deve aceitar segredo ausente",
+  );
+});
+
+Deno.test("compara segredo compartilhado sem aceitar ausências ou prefixos", () => {
+  assert(
+    isExpectedSharedSecret("segredo-completo", "segredo-completo"),
+    "deve aceitar igualdade",
+  );
+  assert(
+    !isExpectedSharedSecret("segredo", "segredo-completo"),
+    "não deve aceitar prefixo",
+  );
+  assert(
+    !isExpectedSharedSecret("segredo-completo-x", "segredo-completo"),
+    "não deve aceitar sufixo",
+  );
+  assert(
+    !isExpectedSharedSecret(null, "segredo-completo"),
+    "não deve aceitar valor ausente",
+  );
+  assert(
+    !isExpectedSharedSecret("segredo-completo", undefined),
+    "não deve aceitar esperado ausente",
   );
 });
