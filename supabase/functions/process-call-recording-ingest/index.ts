@@ -4,6 +4,7 @@
 // - Insere em call_recordings com ON CONFLICT DO NOTHING para nunca duplicar.
 // - Marca sucesso; em falha, agenda retry com backoff exponencial (via RPC).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -39,11 +40,34 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
     return json({ error: "Method not allowed" }, 405);
   }
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceKey) {
+    console.error("[process-call-recording-ingest] missing Supabase service credentials");
+    return json({ error: "service_not_configured" }, 503);
+  }
+
   const admin = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+  try {
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await admin
+        .from("_internal_secrets")
+        .select("value")
+        .eq("key", "coaching_cron_secret")
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) return json({ error: "unauthorized" }, 401);
+  } catch (error) {
+    console.error(
+      "[process-call-recording-ingest] cron authorization unavailable:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return json({ error: "authorization_unavailable" }, 503);
+  }
 
   const startedAt = Date.now();
   let processed = 0, succeeded = 0, failed = 0, dedup = 0;

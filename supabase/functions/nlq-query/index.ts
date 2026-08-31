@@ -6,8 +6,8 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { validateString, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import {
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
   querySalesMetric,
   queryPipelineSnapshot,
   queryActivities,
@@ -150,6 +150,12 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
 
 Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
     let authHeader: string;
@@ -181,9 +187,21 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     const apiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
 
+    const recentConversation: ChatMessage[] = Array.isArray(conversation)
+      ? conversation.slice(-6).flatMap((message): ChatMessage[] => {
+          if (!message || typeof message !== 'object') return [];
+          const candidate = message as { role?: unknown; content?: unknown };
+          if (typeof candidate.role !== 'string') return [];
+          if (candidate.content !== null && typeof candidate.content !== 'string') return [];
+          return [{
+            role: candidate.role,
+            content: candidate.content as string | null | undefined,
+          }];
+        })
+      : [];
     const baseMessages: ChatMessage[] = [
       { role: 'system', content: SYSTEM_PROMPT },
-      ...(Array.isArray(conversation) ? conversation.slice(-6) : []),
+      ...recentConversation,
       { role: 'user', content: question },
     ];
 

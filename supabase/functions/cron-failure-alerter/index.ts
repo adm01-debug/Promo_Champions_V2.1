@@ -2,6 +2,7 @@
 // Runs periodically (via pg_cron), scans cron.job_run_details for failures in the
 // last N minutes and creates admin notifications (deduped by (jobid, start_time)).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { validateNotificationBatch } from "../_shared/notification-categories.ts";
@@ -19,11 +20,50 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const { requestId, log } = ctx;
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "method_not_allowed", requestId }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceKey) {
+      log("error", "Supabase service credentials missing");
+      return new Response(JSON.stringify({ error: "service_not_configured", requestId }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
+    try {
+      const authorized = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await admin
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+      if (!authorized) {
+        return new Response(JSON.stringify({ error: "unauthorized", requestId }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      log("error", "Cron authorization unavailable", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return new Response(JSON.stringify({ error: "authorization_unavailable", requestId }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const url = new URL(req.url);
     const sinceMinutes = Math.min(
