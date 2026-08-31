@@ -202,3 +202,34 @@ Deno.test("cron de campanha usa destino interno sem literal de credencial", asyn
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /EXCEPTION\s+WHEN\s+OTHERS/i);
 });
+
+Deno.test("crons privilegiados de churn e fila usam segredo interno", async () => {
+  const sql = await readMigration(
+    "20260831163000_secure_churn_and_task_crons.sql",
+  );
+
+  for (
+    const endpoint of [
+      "generate-urgent-client-tasks",
+      "detect-client-churn-alerts",
+    ]
+  ) {
+    assertMatch(
+      sql,
+      new RegExp(`rtrim\\(v_base_url,\\s*'/'\\)\\s*\\|\\|\\s*'/${endpoint}'`, "i"),
+    );
+  }
+  assertEquals((sql.match(/'X-Cron-Secret',\s*v_cron_secret/gi) ?? []).length, 2);
+  assertEquals((sql.match(/SET\s+search_path\s*=\s*public,\s*net/gi) ?? []).length, 2);
+  assertMatch(
+    sql,
+    /'SELECT public\.trigger_generate_urgent_client_tasks\(\);'/i,
+  );
+  assertMatch(
+    sql,
+    /'SELECT public\.trigger_detect_client_churn_alerts\(\);'/i,
+  );
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});

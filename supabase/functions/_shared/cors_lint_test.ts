@@ -25,12 +25,18 @@ import {
 const FUNCTIONS_ROOT = resolve(fromFileUrl(import.meta.url), "../..");
 const CANONICAL_FILE = "_shared/cors.ts";
 const DYNAMIC_CORS_ENDPOINTS = [
+  "detect-client-churn-alerts",
+  "generate-urgent-client-tasks",
   "send-quote-to-client",
+  "send-churn-alert-email",
   "send-multichannel-message",
   "process-cadence-tasks",
   "process-scheduled-sends",
   "sequence-runner",
 ];
+
+const INVALID_PACKAGE_CORS_IMPORT =
+  /from\s+["']npm:@supabase\/supabase-js@[^"']+\/cors["']/;
 
 /** Matches `const corsHeaders =`, `let corsHeaders =`, `var corsHeaders =`,
  *  or `export const corsHeaders =`, with optional type annotation. Multiline-safe
@@ -92,6 +98,28 @@ Deno.test("corsHeaders is declared exactly once (in _shared/cors.ts)", async () 
     );
   }
   assertEquals(offenders, []);
+});
+
+Deno.test("CORS nunca é importado de subpath inexistente do supabase-js", async () => {
+  const offenders: string[] = [];
+  for await (
+    const entry of walk(FUNCTIONS_ROOT, {
+      exts: [".ts"],
+      includeDirs: false,
+      skip: [/node_modules/, /\.git/],
+    })
+  ) {
+    const rel = relative(FUNCTIONS_ROOT, entry.path);
+    if (rel === "_shared/cors_lint_test.ts") continue;
+    const source = await Deno.readTextFile(entry.path);
+    if (INVALID_PACKAGE_CORS_IMPORT.test(source)) offenders.push(rel);
+  }
+
+  assertEquals(
+    offenders,
+    [],
+    "Use ../_shared/cors.ts; o pacote @supabase/supabase-js não exporta /cors no Edge Runtime",
+  );
 });
 
 Deno.test("endpoints de navegador aplicam CORS dinâmico a preflight e respostas", async () => {

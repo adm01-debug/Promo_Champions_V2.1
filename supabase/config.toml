@@ -1,5 +1,14 @@
 project_id = "usyxfpqlsspldubptrdl"
 
+[functions.campaign-health-alert]
+verify_jwt = false
+
+[functions.detect-client-churn-alerts]
+verify_jwt = false
+
+[functions.generate-urgent-client-tasks]
+verify_jwt = false
+
 [functions.log-web-vitals]
 verify_jwt = false
 
