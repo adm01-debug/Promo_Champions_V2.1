@@ -16,6 +16,8 @@ const repositoryRoot = resolve(scriptsRoot, "..");
 const execFileAsync = promisify(execFile);
 const legacyJwtPattern = /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g;
 const secretKeyLiteralPattern = /(['"`])sb_secret_[A-Za-z0-9_-]{16,}\1/g;
+const operationalSecretAssignmentPattern =
+  /\b(?:const|let|var)\s+[A-Za-z0-9_]*(?:ACCESS_KEY|SECRET|TOKEN|PASSWORD|PRIVATE_KEY)[A-Za-z0-9_]*\s*=\s*(['"`])(?:[0-9a-f]{32,}|[A-Za-z0-9_+/=-]{40,})\1/gi;
 
 async function listTrackedFiles(): Promise<string[]> {
   const { stdout } = await execFileAsync("git", ["ls-files", "-z"], {
@@ -74,6 +76,14 @@ async function findCommittedServiceRoleKeys(): Promise<Finding[]> {
       findings.push({
         file: relativeFile,
         kind: "chave secreta Supabase literal",
+        line: lineAt(content, match.index ?? 0),
+      });
+    }
+
+    for (const match of content.matchAll(operationalSecretAssignmentPattern)) {
+      findings.push({
+        file: relativeFile,
+        kind: "segredo operacional literal",
         line: lineAt(content, match.index ?? 0),
       });
     }

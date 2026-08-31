@@ -6,6 +6,8 @@
  * qualquer envio para endereços já descadastrados.
  */
 
+import { chunkedIn } from "./chunked-in.ts";
+
 export interface OptOutFilterResult<T> {
   allowed: T[];
   blocked: T[];
@@ -97,7 +99,13 @@ export async function unsubscribeHeaders(
 interface MinimalClient {
   from: (table: string) => {
     select: (cols: string) => {
-      in: (col: string, values: string[]) => Promise<{ data: { email: string }[] | null; error: unknown }>;
+      in: (
+        col: string,
+        values: string[],
+      ) => PromiseLike<{
+        data: { email: string }[] | null;
+        error: { message?: string } | null;
+      }>;
     };
   };
 }
@@ -117,12 +125,15 @@ export async function filterOptedOut<T>(
   if (emails.length === 0) return { allowed: items, blocked: [] };
 
   const optedOut = new Set<string>();
-  const CHUNK = 200;
-  for (let i = 0; i < emails.length; i += CHUNK) {
-    const slice = emails.slice(i, i + CHUNK);
-    const { data, error } = await client.from("email_opt_outs").select("email").in("email", slice);
-    if (error) throw new Error("opt_out_lookup_failed");
-    for (const row of data ?? []) optedOut.add(normalizeEmail(row.email));
+  try {
+    const rows = await chunkedIn<{ email: string }>(
+      emails,
+      (chunk) => client.from("email_opt_outs").select("email").in("email", chunk),
+      { chunkSize: 200, label: "filterOptedOut" },
+    );
+    for (const row of rows) optedOut.add(normalizeEmail(row.email));
+  } catch {
+    throw new Error("opt_out_lookup_failed");
   }
 
   const allowed: T[] = [];
