@@ -1,7 +1,12 @@
 // Daily queue: auto-generates follow-up tasks for high-urgency clients
 // Runs via cron every hour; only executes when local time >= configured cutoff and not already run today.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
+import {
+  isExpectedSharedSecret,
+  isInternalServiceRequest,
+} from '../_shared/internal-service-auth.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 const WON_STATUSES = ['won', 'closed_won', 'paid', 'delivered', 'completed'];
@@ -16,6 +21,39 @@ interface Settings {
   min_urgency: 'critical' | 'high' | 'medium';
   max_tasks_per_salesperson: number;
   last_run_date: string | null;
+}
+
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: caller.userId } as never
+  );
+  if (error) throw error;
+  return Boolean(data);
+}
+
+async function isCronSecretRequest(
+  req: Request,
+  supabaseUrl: string,
+  serviceRoleKey: string
+): Promise<boolean> {
+  const provided = req.headers.get('X-Cron-Secret');
+  if (!provided) return false;
+
+  const admin = createClient(supabaseUrl, serviceRoleKey);
+  const { data, error } = await admin
+    .from('_internal_secrets')
+    .select('value')
+    .eq('key', 'coaching_cron_secret')
+    .maybeSingle();
+  if (error) {
+    console.error('generate-urgent-client-tasks cron secret lookup failed:', error.message);
+    return false;
+  }
+
+  const expected = (data as { value?: string | null } | null)?.value;
+  return isExpectedSharedSecret(provided, expected);
 }
 
 const URGENCY_RANK: Record<Urgency, number> = { critical: 4, high: 3, medium: 2, low: 1 };
@@ -45,12 +83,39 @@ function computeUrgency(daysSince: number, avgInterval: number): { urgency: Urge
 }
 
 Deno.serve(withRequestId('generate-urgent-client-tasks', async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const responseCorsHeaders = getCorsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
+    });
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  );
+  if (req.method === 'OPTIONS')
+    return new Response('ok', { headers: responseCorsHeaders });
+  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error('generate-urgent-client-tasks missing Supabase service credentials');
+    return json({ error: 'service_not_configured' }, 503);
+  }
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const isInternal =
+    isInternalServiceRequest(req) ||
+    (await isCronSecretRequest(req, supabaseUrl, serviceRoleKey));
+  if (!isInternal) {
+    try {
+      if (!(await isAdminOrManagerRequest(req))) {
+        return json({ error: 'forbidden' }, 403);
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
+      console.error('generate-urgent-client-tasks authorization failed:', error);
+      return json({ error: 'authorization_unavailable' }, 503);
+    }
+  }
 
   try {
     const url = new URL(req.url);
@@ -163,10 +228,3 @@ Deno.serve(withRequestId('generate-urgent-client-tasks', async (req) => {
     return json({ error: (e as Error).message }, 500);
   }
 }));
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}

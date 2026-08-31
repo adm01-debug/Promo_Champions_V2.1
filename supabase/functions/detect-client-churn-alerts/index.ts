@@ -1,7 +1,12 @@
 // Detects clients that crossed the churn threshold and creates notifications
 // for the responsible salesperson. Idempotent within cooldown window.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
+import {
+  isExpectedSharedSecret,
+  isInternalServiceRequest,
+} from '../_shared/internal-service-auth.ts';
 import { partitionNotificationBatch } from '../_shared/notification-categories.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
@@ -25,6 +30,39 @@ interface AlertRow {
   level: Level;
   expected_interval_days: number;
   threshold_days: number;
+}
+
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: caller.userId } as never
+  );
+  if (error) throw error;
+  return Boolean(data);
+}
+
+async function isCronSecretRequest(
+  req: Request,
+  supabaseUrl: string,
+  serviceRoleKey: string
+): Promise<boolean> {
+  const provided = req.headers.get('X-Cron-Secret');
+  if (!provided) return false;
+
+  const admin = createClient(supabaseUrl, serviceRoleKey);
+  const { data, error } = await admin
+    .from('_internal_secrets')
+    .select('value')
+    .eq('key', 'coaching_cron_secret')
+    .maybeSingle();
+  if (error) {
+    console.error('detect-client-churn-alerts cron secret lookup failed:', error.message);
+    return false;
+  }
+
+  const expected = (data as { value?: string | null } | null)?.value;
+  return isExpectedSharedSecret(provided, expected);
 }
 
 function dayDiff(from: Date, to: Date): number {
@@ -54,14 +92,41 @@ function thresholdDaysFor(level: Level, expectedInterval: number | null): number
 }
 
 Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const responseCorsHeaders = getCorsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  if (req.method === 'OPTIONS')
+    return new Response('ok', { headers: responseCorsHeaders });
+  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error('detect-client-churn-alerts missing Supabase service credentials');
+    return json({ error: 'service_not_configured' }, 503);
+  }
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const isInternal =
+    isInternalServiceRequest(req) ||
+    (await isCronSecretRequest(req, supabaseUrl, serviceRoleKey));
+  if (!isInternal) {
+    try {
+      if (!(await isAdminOrManagerRequest(req))) {
+        return json({ error: 'forbidden' }, 403);
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
+      console.error('detect-client-churn-alerts authorization failed:', error);
+      return json({ error: 'authorization_unavailable' }, 503);
+    }
+  }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
-
     const { data: settings } = await supabase
       .from('churn_alert_settings')
       .select(
@@ -71,7 +136,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
 
     if (!settings?.enabled) {
       return new Response(JSON.stringify({ ok: true, skipped: 'disabled' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -328,7 +393,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
         skipped,
         tasks_created: tasksCreated,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
     console.error('detect-client-churn-alerts error', e);
@@ -336,7 +401,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
       JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

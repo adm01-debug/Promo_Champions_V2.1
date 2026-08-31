@@ -1,5 +1,6 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 interface Payload {
@@ -17,6 +18,16 @@ interface Settings {
   email_recipients: string[];
   email_subject_template: string;
   email_provider: string;
+}
+
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: caller.userId } as never
+  );
+  if (error) throw error;
+  return Boolean(data);
 }
 
 function renderSubject(tpl: string, ctx: Record<string, string>) {
@@ -41,12 +52,36 @@ function renderHtml(ctx: {
 }
 
 Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const responseCorsHeaders = getCorsHeaders(req);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  if (req.method === 'OPTIONS')
+    return new Response('ok', { headers: responseCorsHeaders });
+  if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
+    if (!(await isAdminOrManagerRequest(req))) {
+      return json({ error: 'forbidden' }, 403);
+    }
+  } catch (error) {
+    if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
+    console.error('send-churn-alert-email authorization failed:', error);
+    return json({ error: 'authorization_unavailable' }, 503);
+  }
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error('send-churn-alert-email missing Supabase service credentials');
+    return json({ error: 'service_not_configured' }, 503);
+  }
+
+  try {
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const body = (await req.json().catch(() => ({}))) as Payload;
 
@@ -97,7 +132,10 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
               'Infraestrutura de e-mail ainda não configurada. Configure um domínio verificado em Admin → E-mails antes de enviar.',
             needsEmailSetup: true,
           }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          {
+            status: 400,
+            headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
+          },
         );
       }
       throw qErr;
@@ -105,13 +143,16 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
 
     return new Response(
       JSON.stringify({ ok: true, test: !!body.test, recipients: s.email_recipients.length }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      {
+        status: 200,
+        headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
+      },
     );
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ ok: false, error: message }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' },
     });
   }
 }));
