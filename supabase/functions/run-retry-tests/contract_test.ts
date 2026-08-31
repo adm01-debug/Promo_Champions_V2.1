@@ -28,7 +28,7 @@ Deno.test("Contract: CRMEvent - invalid UUID", () => {
   const result = validateWebhookPayload(CRMEventContract, payload);
   assertEquals(result.success, false);
   assertEquals(result.statusCode, 422);
-  assert(result.error?.includes("event_id"));
+  assert(result.details?.some((detail) => detail.field === "event_id"));
 });
 
 Deno.test("Contract: CRMEvent - invalid source enum", () => {
@@ -41,7 +41,7 @@ Deno.test("Contract: CRMEvent - invalid source enum", () => {
   const result = validateWebhookPayload(CRMEventContract, payload);
   assertEquals(result.success, false);
   assertEquals(result.statusCode, 422);
-  assert(result.error?.includes("source"));
+  assert(result.details?.some((detail) => detail.field === "source"));
 });
 
 // ─────────────────── Lead Update Contract ───────────────────
