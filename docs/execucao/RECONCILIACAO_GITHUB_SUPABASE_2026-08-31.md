@@ -118,9 +118,15 @@ Depois das correções:
 |---|---|
 | recorte Deno do PR #66 | 51 aprovados, 0 falhas |
 | regressões diretamente corrigidas | 20 aprovados, 0 falhas |
-| suíte Deno recursiva | 542 aprovados, 26 falhas |
+| suíte Deno recursiva | 543 aprovados, 26 falhas |
 
 As 26 falhas restantes dependem majoritariamente de fixtures/credenciais/serviço local ausentes e de testes que inicializam `Deno.serve` durante import. Elas não foram mascaradas nem convertidas em skips.
+
+### 5.4 P0 encontrado pelo CI desta reconciliação
+
+O workflow de adoção de `withRequestId` expôs uma falha que o script `security:secrets` não detectava: `migrate-helper` permanecia no HEAD apesar de `supabase/config.toml` e `CLAUDE.md` declararem a função aposentada. Não há consumidores no repositório. A implementação residual continha uma chave operacional literal e uma ação capaz de devolver credenciais administrativas.
+
+A função não foi apagada nem implantada. O código versionado foi convertido em tombstone: preserva preflight, propaga request ID e responde `410 Gone` para qualquer operação. A leitura de segredos e a ação de credenciais foram removidas. O scanner foi ampliado para bloquear novas atribuições literais de segredos operacionais. A credencial que esteve no histórico ainda precisa ser rotacionada e tratada na remediação de histórico; remover o literal do HEAD não prova rotação.
 
 ## 6. CI do PR #69
 
@@ -142,6 +148,9 @@ O PR #69 modifica apenas `docs/execucao/STATUS_100_ETAPAS_2026-08-30.md`; não i
 | `supabase/functions/_shared/unsubscribe.ts` | consulta de opt-out migrada para `chunkedIn`, preservando falha fechada e chunks de 200 | baixo; fluxo e erro público preservados |
 | `supabase/functions/campaign-health-alert/authz_test.ts` | assertions independentes do estilo de aspas | somente teste |
 | `supabase/functions/run-retry-tests/contract_test.ts` | assertions usam `details.field`, contrato real do validator | somente teste |
+| `supabase/functions/migrate-helper/index.ts` | implementação aposentada convertida em tombstone `410`, sem leitura/exposição de credenciais | redução de superfície P0; função não apagada |
+| `supabase/functions/migrate-helper/security_test.ts` | regressão impede reativação silenciosa da superfície administrativa | somente teste |
+| `scripts/security/check-no-committed-service-role.ts` | scanner passa a detectar atribuições literais de segredos operacionais | guard-rail local/CI |
 
 Nenhuma tabela, coluna, constraint, índice, policy, função SQL, trigger, view, enum, extensão, privilégio, bucket, job ou registro foi alterado.
 

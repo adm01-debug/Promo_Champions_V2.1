@@ -1,35 +1,29 @@
-// Edge function temporária para migração de banco.
-// Cole em: Cloud > Edge Functions > migrate-helper > View code
-// Após a migração, remova esta função.
+import { corsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
-const ACCESS_KEY = "b15fba19d3e725bf4242ac1139e948ca20f91b6dda06c389";
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-access-key",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-};
-
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
-  const key = req.headers.get("x-access-key");
-  if (key !== ACCESS_KEY) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...cors, "Content-Type": "application/json" } });
-
-  const url = new URL(req.url);
-  const action = url.searchParams.get("action") || "ping";
-
-  try {
-    if (action === "ping") {
-      return new Response(JSON.stringify({ ok: true, project_ref: Deno.env.get("SUPABASE_URL") }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-    if (action === "credentials") {
-      return new Response(JSON.stringify({
-        url: Deno.env.get("SUPABASE_URL"),
-        service_role: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
-        db_url: Deno.env.get("SUPABASE_DB_URL"),
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-    return new Response(JSON.stringify({ error: "unknown_action" }), { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
+/**
+ * Tombstone da função temporária de migração.
+ *
+ * A implementação anterior expunha credenciais administrativas mediante uma
+ * chave literal versionada. O helper foi aposentado no V2 e não possui
+ * consumidores no repositório; o diretório é mantido apenas para que qualquer
+ * implantação residual falhe de forma explícita até a remoção remota ser
+ * autorizada e confirmada pelo operador.
+ */
+Deno.serve(withRequestId("migrate-helper", async (req, _ctx) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
-});
+
+  return new Response(
+    JSON.stringify({ error: "migrate_helper_retired" }),
+    {
+      status: 410,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+      },
+    },
+  );
+}));
