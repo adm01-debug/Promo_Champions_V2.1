@@ -120,10 +120,10 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 2 | Congelar deploys destrutivos (migrations, deleções, grants, deploy não emergencial) | janela de mudança registrada | autorização operacional | 🔶 | Decisão do operador |
 | 3 | Confirmar a função de cada projeto (origem=catálogo? destino=CRM? réplica?) | ADR de topologia | decisão do proprietário | 🔶 | Aguarda decisão |
 | 4 | Desativar migrate-helper na origem (sem chamar credentials) | rota 404 + evidência de deploy | autorização explícita (Edge implantada) | 🔒 | Origem inacessível; nota: seção removida do `config.toml` em `d150ec2ee`, arquivo segue versionado (§3.1) |
-| 5 | Rotacionar a chave fixa da migrate-helper | chave antiga rejeitada | autorização de segredo | 🔒 | Credencial ainda versionada em `main` (§3.1 #1) |
+| 5 | Rotacionar a chave fixa da migrate-helper — **após inventário nominal de consumidores legítimos** (canônica L661: mapear quem depende da credencial antes de invalidar) | chave antiga rejeitada + inventário registrado | autorização de segredo | 🔒 | Credencial ainda versionada em `main` (§3.1 #1) |
 | 6 | Rotacionar service_role do destino (presente nos 12 scripts) + atualizar consumidores via cofre de segredos | chave antiga rejeitada + smoke autorizado | autorização de segredo/janela | 🔒 | Segredo confirmado no histórico de `main` (§3.2) |
 | 7 | Rotacionar credenciais potencialmente exfiltráveis da origem | credenciais antigas rejeitadas | autorização de segredo/janela | 🔒 | Depende de logs da origem |
-| 8 | Investigar uso indevido (Auth, API, Edge, PostgREST, banco; LGPD) | relatório de impacto | acesso a logs | 🔒 | Aguarda acesso |
+| 8 | Investigar uso indevido (Auth, API, Edge, PostgREST, banco; LGPD) — **janela = período de exposição completo** (desde a primeira versão do segredo, não a janela padrão dos painéis) com **preservação/custódia das evidências** (canônica L664) | relatório de impacto | acesso a logs | 🔒 | Aguarda acesso |
 | 9 | Bloquear login WebAuthn (login-options/login-verify) até verificação criptográfica completa | feature flag/rota bloqueada | autorização de runtime | 🔒 | Aguarda autorização |
 | 10 | Criar scorecard de prontidão real (substituir "10/10") | painel baseline vermelho/amarelo/verde | nenhum | 🔵 | Esta matriz é o embrião do scorecard |
 
@@ -199,7 +199,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 54 | Isolar todos os mocks produtivos (dados reais ou modo DEMO não persistente com banner) | catálogo dos 15 casos e testes | decisão produto por módulo | 🔶 | Alvos reais corrigidos em P0-005 (§3) |
 | 55 | Consertar assinatura digital (provedor/e-mail, callbacks assinados, estado verificável) | fluxo E2E em staging | custo/provedor | 🔒 | Aguarda decisão de provedor |
 | 56 | Consertar contratos do frontend (auth_users_view, orders→profiles; regenerar tipos; remover casts) | testes de Configurações e histórico | possível DDL | 🔒 | Regenerar tipos exige acesso (etapa 16) |
-| 57 | Ligar lead routing ao backend (auto_assign_lead consumido; round-robin transacional) | teste concorrente multiusuário | autorização RPC/trigger | 🔒 | Aguarda acesso + autorização |
+| 57 | Ligar lead routing ao backend (auto_assign_lead consumido; round-robin transacional; **sem N+1** — agregação em lote/RPC; hoje `src/hooks/useLeadRouting.ts:118-131` executa 2 consultas por vendedor em `Promise.all`) | teste concorrente multiusuário | autorização RPC/trigger | 🔒 | Aguarda acesso + autorização |
 | 58 | Corrigir navegação de pedidos (criar /meus-pedidos ou ajustar retorno; separar real de demo) | E2E de lista→detalhe→volta | nenhum | ⬜ | Executável repo-local (frontend) |
 | 59 | Resolver privacidade da rota espectador (campos públicos, pseudonimização, grants; link seguro/expirável) | teste anon e privacy review | decisão de negócio/RLS | 🔶 | Aguarda decisão |
 | 60 | Unificar semântica de venda ganha (completed/won/closed; KPIs/LTV/Edge/DB) | contrato e fixtures canônicas | decisão de negócio | 🔶 | Aguarda decisão |
@@ -231,7 +231,7 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 76 | Tornar jobs observáveis (owner, SLA, timeout, idempotência, retry, alerta — 137 jobs) | catálogo e zero falha silenciosa | mudança de job autorizada | 🔒 | Idem |
 | 77 | Implementar concorrência segura (locks/constraints/idempotency: prêmio, lead routing, cadências, quotes, workflows, webhooks) | testes de corrida | possível DDL | ⬜ | Testes de corrida repo-local; constraints exigem DDL |
 | 78 | Definir retenção de auditoria e telemetria (segurança/negócio/debug; LGPD) | política e jobs testados | aprovação jurídica/negócio | 🔶 | Aguarda decisão |
-| 79 | Criar SLOs e tracing ponta a ponta (request_id browser→Edge→PostgREST/provider; métricas RED) | dashboards e runbook | infraestrutura | 🔒 | Aguarda infraestrutura |
+| 79 | Criar SLOs e tracing ponta a ponta (request_id browser→Edge→PostgREST/provider; métricas RED) + **alertas acionáveis** (thresholds, destino e resposta — canônica L756) | dashboards, alertas e runbook | infraestrutura | 🔒 | Aguarda infraestrutura |
 | 80 | Testar backup e restauração (PITR, Storage, secrets, migrations; restore drill isolado) | RPO/RTO medidos | ambiente/custo | 🔒 | Aguarda ambiente |
 
 ### Fase I — qualidade e segurança contínuas
@@ -245,9 +245,9 @@ Numeração, títulos, saídas e gates reproduzem a fonte canônica (linhas 651�
 | 85 | Expandir acessibilidade (174 rotas por amostragem; remover supressões justificadas; nomear 82 botões) | gates de axe/teclado/leitor de tela | nenhum | ⬜ | Parcialmente repo-local; **denominador de execução = 175 rotas no HEAD (recontagem v2.1 — §9.3, Codex L218)** |
 | 86 | Automatizar testes Edge (por entrypoint: contratos, auth negativa, CORS, SSRF, webhooks, service-role) | cobertura por função | ambiente isolado | 🔒 | Aguarda ambiente |
 | 87 | Endurecer a cadeia de suprimentos (15 vulnerabilidades, fixar Deno/npm, SBOM, Dependabot, gitleaks em pre-receive/CI) | zero crítica/alta sem aceite | upgrades avaliados | ⬜ | Parcialmente repo-local; config de gitleaks resolve divergência de contagens (§3.2) |
-| 88 | Endurecer CSP e armazenamento do navegador (remover unsafe-eval/inline progressivamente; reduzir JWT persistido) | CSP report-only→enforced | plano de compatibilidade | ⬜ | Plano é repo-local |
+| 88 | Endurecer CSP e armazenamento do navegador (remover unsafe-eval/inline progressivamente; reduzir **todo dado sensível persistido** — JWTs e valores não-JWT, ex. histórico de consultas `src/hooks/nlq/useNLQ.ts` e filtros por cliente `ClientPurchaseHistory.tsx`; canônica L768) | CSP report-only→enforced | plano de compatibilidade | ⬜ | Plano é repo-local |
 | 89 | Definir orçamentos de desempenho (chunks, LCP/INP/CLS, consultas, memória, PWA; detalhar por ponto crítico medido) | gate de regressão | nenhum | ⬜ | **Lote 1** (§6) — **não** é "criar npm run ci" (erro da v1 corrigido; §9, Codex-9) |
-| 90 | Executar carga e caos controlados (rate limits, retries, DLQ, providers fora, DB lento; nunca em produção sem janela) | relatório e capacidade | ambiente/custo | 🔒 | Aguarda ambiente |
+| 90 | Executar carga e caos controlados (rate limits, retries, DLQ, providers fora, DB lento, **concorrência** — contenção e corridas nos fluxos de prêmio/roteamento/quotes/webhooks; nunca em produção sem janela) | relatório e capacidade | ambiente/custo | 🔒 | Aguarda ambiente |
 
 ### Fase J — limpeza governada e liberação
 
@@ -377,7 +377,7 @@ Consolidação das correções exigidas pelo operador à v1 (15 pontos) e das 9 
 | C-8 | #3889994578 (P2) | Aceite de testes com falhas remanescentes contradiz a etapa 82 | §6 etapa 82: etapa permanece pendente até `vitest run` verde |
 | C-9 | #3889994580 (P2) | `npm run ci` proposto sem `typecheck` | §6: agregador inclui `typecheck` e deixa de ser apresentado como etapa canônica |
 
-### 9.3 Threads de revisão deste PR #69 — veredictos e correções (36 registros em 4 rodadas)
+### 9.3 Threads de revisão deste PR #69 — veredictos e correções (40 registros em 5 rodadas)
 
 Todas as threads foram verificadas contra o código antes da correção; nenhuma resposta é "por cortesia".
 
@@ -415,11 +415,11 @@ Todas as threads foram verificadas contra o código antes da correção; nenhuma
 
 | # | Exigência do operador | Ação v2.2 | Evidência |
 |---|---|---|---|
-| 1 | Responder nominalmente os comentários Codex/CodeRabbit | **36 threads em 4 rodadas** (§9.3): 14 na v2.1 + 2 na v2.2 + 4 na v2.2.1 + 16 na v2.2.2 — todas respondidas e resolvidas; veredictos registrados | Threads do PR |
+| 1 | Responder nominalmente os comentários Codex/CodeRabbit | **40 registros em 5 rodadas** (§9.3): 14 na v2.1 + 2 na v2.2 + 4 na v2.2.1 + 16 na v2.2.2 + 4 na v2.2.3 — todas respondidas e resolvidas; veredictos registrados | Threads do PR |
 | 2 | Triagem histórica: total 32; tabela fechando; migrations = 10; classificar as 5 omitidas | Tabela §3.2 reescrita por **ocorrências históricas** (12+3+10+2+3+2=32); as 5 extras das migrations classificadas como re-aparições dos mesmos tokens | §3.2 |
 | 3 | Separar comandos HEAD (`dir` em checkout fixado) × histórico (`--full-history ce5dd16`); registrar versão/config/commit; rejeitar `--all` | Feito em §3.1 e §10; gitleaks **8.30.1**, **sem config própria**, commit `ce5dd16`; `--all` marcado como não estável | §3.1, §10 |
 | 4 | P0-005: remover FollowUpAudit; 5 caminhos nominais; busca só em `src`/`supabase`; sem alegar zero na árvore | Feito (v2.2) | §3, P0-005 |
-| 5 | Etapa 14: saída/gate canônicos; aguardando decisão | Restaurado; estado 🔒 "Aguarda decisão de topologia" | §4 |
+| 5 | Etapa 14: saída/gate canônicos; aguardando decisão | Restaurado; estado 🔶 "Aguarda decisão de topologia" | §4 |
 | 6 | D-02: 592×2.354 → 595/586; remover 263/275 | Feito (D-05 esclarecida na v2.2.2: suspeita de banco errado aplica-se apenas à linha de base 26/08) | §8 |
 | 7 | Revalidar Lote 1; reexecutar e registrar; estados 81/82; recontar Deno antes de manter 7+33 | Reexecutado (lint/tsc/vitest verdes — §6/§11); Deno recontado: 7 parser + 158 resolução npm + 5 ok; "33" marcada como linha de base a revalidar em ambiente dedicado | §6, §11 |
 | 8 | Etapa 42: permitir `retry.ts`; nomear os 5 consumidores; sem "somente etapa 41" | Feito — 5 consumidores nominais | §6 |
@@ -457,7 +457,8 @@ python3 -c "import re,collections; s=open('src/routes/AppRoutes.tsx').read(); o=
 # Varredura de segredos — HEAD (8 achados) e histórico completo (32 achados)
 # Baseline fixado (v2.2.2) — checkout limpo do commit; gitleaks 8.30.1; sem config própria
 git worktree add <dir> ce5dd167954f6ef20855c31a02675657f1169e32 --detach
-# Isolamento de config (v2.2.2): unset GITLEAKS_CONFIG GITLEAKS_CONFIG_TOML; confirmar ausência de <dir>/.gitleaks.toml (verificado: ausente; 0 vars de ambiente)
+unset GITLEAKS_CONFIG GITLEAKS_CONFIG_TOML
+test ! -e <dir>/.gitleaks.toml || { echo 'config inesperada no alvo'; exit 1; }   # executáveis antes das varreduras (verificado nesta execução)
 # Pré-condições: raso? fsck?
 [ "$(git -C <dir> rev-parse --is-shallow-repository)" = false ] || git -C <dir> fetch --unshallow   # verificado: false (não raso)
 git -C <dir> fsck --full --no-reflogs    # código de saída 0 (verificado neste clone)
