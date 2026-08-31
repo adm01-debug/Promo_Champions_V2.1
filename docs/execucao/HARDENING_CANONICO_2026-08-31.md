@@ -96,17 +96,17 @@ tratado em profiling próprio, sem criar índice cosmético.
 - policies de áudio e snapshots passam de `public` para `authenticated`;
 - a policy de export é renomeada para refletir o comportamento real.
 
-### Contratos de negócio pendentes no banco
+### Contratos de negócio conciliados no banco
 
-As migrations já versionadas abaixo foram incluídas na simulação e devem ser
-aplicadas antes deste lote porque estão ausentes no catálogo vivo:
+As migrations já versionadas abaixo foram simuladas e aplicadas no catálogo
+canônico na mesma transação do hardening:
 
 - `20260827000001_harden_webhooks_portfolio_and_idempotency.sql`;
 - `20260830000001_secure_prize_wheel_spins.sql`;
 - `20260830000002_harden_lead_routing.sql`.
 
-A migration da leaderboard de corrida já está aplicada/equivalente; sua
-execução idempotente também foi simulada para permitir registro fiel no ledger.
+A migration `20260830000000_fix_race_leaderboard_status.sql`, antes apenas
+equivalente no catálogo, foi executada idempotentemente e registrada no ledger.
 
 ## Gate de Edge Functions
 
@@ -121,6 +121,61 @@ O Supabase CLI retorna HTTP 403 ao listar ou implantar functions no projeto. O
 MCP canônico possui ping/invoke, mas não oferece operação de deploy. Assim, o
 deploy das Edge Functions continua tecnicamente bloqueado por privilégio de
 Management API; não será declarado como concluído por presença no GitHub.
+
+## Estado real pós-implantação — 2026-08-31 11:28 BRT
+
+### GitHub
+
+- PR #82 mergeado por squash na `main`: commit
+  `5cb3527245b9783c01213965e872add4a57d6380`;
+- PR #69 do Cline mergeado por squash na `main`: commit
+  `c14fe9f0a255a6f0fce12172817cccd40055ebd9`;
+- `origin/main` verificada contendo ambos os commits e todos os artefatos;
+- branches remotas dos dois PRs removidas após o merge;
+- workflows de push `CI`, `Cron Monitoring Regression`,
+  `Edge Functions Bundle Check` e `Edge Functions X-Request-Id Lint` aprovados.
+
+### Banco canônico
+
+Sete migrations foram aplicadas por `supabase_db_transaction` numa única
+transação, protegida por advisory lock, com inserção do SQL integral em
+`supabase_migrations.schema_migrations`:
+
+1. `20260827000001`;
+2. `20260830000000`;
+3. `20260830000001`;
+4. `20260830000002`;
+5. `20260831130000`;
+6. `20260831130001`;
+7. `20260831130002`.
+
+Os sete hashes MD5 do `statements[1]` no ledger coincidiram byte a byte com os
+sete arquivos do commit publicado. Uma matriz de 22 pós-condições retornou
+`true` em todos os campos: identidade/versão do banco, ledger, views
+`security_invoker`, bloqueios de `anon`, ACLs das RPCs, objetos de negócio,
+13 índices, buckets, funções qualificadas, leaderboard e remoção das policies
+inseguras.
+
+A suíte adversarial por role foi reexecutada no estado vivo com rollback:
+isolamento por IP, IP inválido, ataque distribuído, SELECT/DELETE/claims
+negativos e hard delete sem identidade passaram. O smoke de
+`detect_slow_queries`, retenção, detecção de cron travado e matchmaking semanal
+também passou como `service_role` com rollback. Não restaram linhas sintéticas,
+locks pendentes ou índices inválidos.
+
+O disparo de `detect_slow_queries_hourly` das 14:20 UTC registrou uma falha de
+resolução de `digest`; a chamada atual do mesmo comando
+`detect_slow_queries(500, 100)` foi reproduzida depois da implantação e passou
+em rollback. A próxima execução agendada deve ser observada para comprovar o
+fechamento operacional, sem apagar a falha histórica.
+
+### Pendência deliberada
+
+`20260831130003_fix_campaign_health_cron.sql` permanece ausente do ledger e do
+catálogo por decisão segura. O trigger antigo foi preservado porque o deploy da
+Edge `campaign-health-alert` compatível com `X-Cron-Secret` continua bloqueado:
+o CLI retorna HTTP 403 por falta de privilégio na Management API. Aplicar a
+migration antes da Edge inverteria a ordem e interromperia os alertas.
 
 ## Evidências locais
 
