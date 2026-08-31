@@ -21994,6 +21994,14 @@ export type Database = {
           total_sales: number
         }[]
       }
+      get_login_lockout_status: {
+        Args: { p_email: string }
+        Returns: {
+          attempts: number
+          last_failed_at: string | null
+          lockout_until: string | null
+        }[]
+      }
       get_mfa_status: {
         Args: never
         Returns: {
@@ -22254,6 +22262,14 @@ export type Database = {
         }
         Returns: string
       }
+      record_failed_login_attempt: {
+        Args: {
+          p_email: string
+          p_failure_reason?: string | null
+          p_user_agent?: string | null
+        }
+        Returns: undefined
+      }
       record_engagement_signal: {
         Args: {
           _contact_id: string
@@ -22278,6 +22294,10 @@ export type Database = {
           _to: string
         }
         Returns: string
+      }
+      record_successful_login_attempt: {
+        Args: { p_user_agent?: string | null }
+        Returns: undefined
       }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }

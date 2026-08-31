@@ -10,7 +10,24 @@ Deno.test("campaign-health-alert exige POST e autorização interna ou de gestã
     /req\.method\s*!==\s*["']POST["']/.test(source),
     "o processador deve aceitar apenas POST",
   );
-  assert(source.includes("isInternalServiceRequest(req)"), "cron deve provar service_role");
-  assert(source.includes("isAdminOrManagerRequest(req)"), "execução manual deve validar gestão");
-  assert(/error:\s*["']forbidden["']/.test(source), "vendedor comum deve ser negado");
+  assert(
+    source.includes("isInternalServiceRequest(req)"),
+    "cron deve provar service_role",
+  );
+  assert(
+    source.includes("isCronSecretRequest(req, supabaseUrl, serviceRoleKey)"),
+    "pg_cron deve usar segredo compartilhado",
+  );
+  assert(
+    source.includes("isExpectedSharedSecret"),
+    "segredo do cron deve ter comparação constante",
+  );
+  assert(
+    source.includes("isAdminOrManagerRequest(req)"),
+    "execução manual deve validar gestão",
+  );
+  assert(
+    /error:\s*["']forbidden["']/.test(source),
+    "vendedor comum deve ser negado",
+  );
 });

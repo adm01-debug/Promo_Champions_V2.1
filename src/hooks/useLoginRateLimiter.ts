@@ -2,7 +2,6 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const MAX_ATTEMPTS = 5;
-const BASE_LOCKOUT_SECONDS = 30;
 
 interface LockoutStatus {
   isLocked: boolean;
@@ -15,31 +14,6 @@ interface LoginAttemptResult {
   lockoutStatus: LockoutStatus;
 }
 
-const calculateLockoutDuration = (failedSeries: number): number => {
-  return BASE_LOCKOUT_SECONDS * Math.pow(2, failedSeries - 1);
-};
-
-// Fetch real client IP from edge function
-const fetchClientIp = async (): Promise<string | null> => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-client-ip`,
-      {
-        method: "GET",
-        headers: {
-          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data.ip !== "unknown" ? data.ip : null;
-  } catch {
-    return null;
-  }
-};
-
 export function useLoginRateLimiter() {
   const [lockoutStatus, setLockoutStatus] = useState<LockoutStatus>({
     isLocked: false,
@@ -49,15 +23,10 @@ export function useLoginRateLimiter() {
 
   const checkLoginAttempts = useCallback(async (email: string): Promise<LoginAttemptResult> => {
     const normalizedEmail = email.toLowerCase().trim();
-    
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    
-    const { data: attempts, error } = await supabase
-      .from("login_attempts")
-      .select("*")
-      .eq("email", normalizedEmail)
-      .gte("created_at", twentyFourHoursAgo)
-      .order("created_at", { ascending: false });
+
+    const { data, error } = await supabase.rpc("get_login_lockout_status", {
+      p_email: normalizedEmail,
+    });
 
     if (error) {
       if (import.meta.env.DEV) {
@@ -66,45 +35,19 @@ export function useLoginRateLimiter() {
       return { canAttempt: true, lockoutStatus: { isLocked: false, remainingSeconds: 0, attempts: 0 } };
     }
 
-    let consecutiveFailures = 0;
-
-    for (const attempt of attempts || []) {
-      if (attempt.success) {
-        break;
-      }
-      consecutiveFailures++;
-    }
-
-    if (consecutiveFailures < MAX_ATTEMPTS) {
-      const status = { isLocked: false, remainingSeconds: 0, attempts: consecutiveFailures };
-      setLockoutStatus(status);
-      return { canAttempt: true, lockoutStatus: status };
-    }
-
-    const failedSeries = Math.floor(consecutiveFailures / MAX_ATTEMPTS);
-    const lockoutDuration = calculateLockoutDuration(failedSeries);
-
-    const lastFailedAttempt = attempts?.[0];
-    if (!lastFailedAttempt) {
-      const status = { isLocked: false, remainingSeconds: 0, attempts: 0 };
-      setLockoutStatus(status);
-      return { canAttempt: true, lockoutStatus: status };
-    }
-
-    const lastAttemptTime = new Date(lastFailedAttempt.created_at ?? Date.now());
-    const lockoutEndTime = new Date(lastAttemptTime.getTime() + lockoutDuration * 1000);
-    const now = new Date();
-
-    if (now < lockoutEndTime) {
-      const remainingSeconds = Math.ceil((lockoutEndTime.getTime() - now.getTime()) / 1000);
-      const status = { isLocked: true, remainingSeconds, attempts: consecutiveFailures };
-      setLockoutStatus(status);
-      return { canAttempt: false, lockoutStatus: status };
-    }
-
-    const status = { isLocked: false, remainingSeconds: 0, attempts: consecutiveFailures };
+    const row = data?.[0];
+    const attempts = row?.attempts ?? 0;
+    const lockoutEnd = row?.lockout_until ? Date.parse(row.lockout_until) : Number.NaN;
+    const remainingSeconds = Number.isFinite(lockoutEnd)
+      ? Math.max(0, Math.ceil((lockoutEnd - Date.now()) / 1000))
+      : 0;
+    const status = {
+      isLocked: remainingSeconds > 0,
+      remainingSeconds,
+      attempts,
+    };
     setLockoutStatus(status);
-    return { canAttempt: true, lockoutStatus: status };
+    return { canAttempt: !status.isLocked, lockoutStatus: status };
   }, []);
 
   const recordLoginAttempt = useCallback(async (
@@ -113,17 +56,20 @@ export function useLoginRateLimiter() {
     failureReason?: string
   ): Promise<void> => {
     const normalizedEmail = email.toLowerCase().trim();
-    
-    // Fetch real IP address from edge function
-    const clientIp = await fetchClientIp();
 
-    await supabase.from("login_attempts").insert({
-      email: normalizedEmail,
-      success,
-      failure_reason: failureReason || null,
-      ip_address: clientIp,
-      user_agent: navigator.userAgent,
-    });
+    const { error } = success
+      ? await supabase.rpc("record_successful_login_attempt", {
+          p_user_agent: navigator.userAgent,
+        })
+      : await supabase.rpc("record_failed_login_attempt", {
+          p_email: normalizedEmail,
+          p_failure_reason: failureReason || null,
+          p_user_agent: navigator.userAgent,
+        });
+
+    if (error && import.meta.env.DEV) {
+      console.error("Erro ao registrar tentativa de login:", error);
+    }
 
     if (!success) {
       await checkLoginAttempts(normalizedEmail);

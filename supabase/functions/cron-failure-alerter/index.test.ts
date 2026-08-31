@@ -17,7 +17,7 @@ import {
   assertNotEquals,
 } from "jsr:@std/assert";
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
-const ANON = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
+const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 // Chama uma RPC via PostgREST — evita dependência npm no runner de tests.
 async function rpc<T = unknown>(fn: string, params: Record<string, unknown>): Promise<{
@@ -27,8 +27,8 @@ async function rpc<T = unknown>(fn: string, params: Record<string, unknown>): Pr
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
     method: "POST",
     headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
+      apikey: SERVICE_ROLE,
+      Authorization: `Bearer ${SERVICE_ROLE}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(params),
@@ -292,8 +292,8 @@ Deno.test("E2E — cron-failure-alerter responde 200 com envelope válido", asyn
   const res = await fetch(`${SUPABASE_URL}/functions/v1/cron-failure-alerter?since_minutes=30`, {
     method: "POST",
     headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
+      apikey: SERVICE_ROLE,
+      Authorization: `Bearer ${SERVICE_ROLE}`,
       "Content-Type": "application/json",
     },
     body: "{}",
@@ -311,7 +311,11 @@ Deno.test("E2E — chamadas consecutivas são idempotentes (mesma janela, sem no
   const call = async () => {
     const r = await fetch(`${SUPABASE_URL}/functions/v1/cron-failure-alerter?since_minutes=5`, {
       method: "POST",
-      headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, "Content-Type": "application/json" },
+      headers: {
+        apikey: SERVICE_ROLE,
+        Authorization: `Bearer ${SERVICE_ROLE}`,
+        "Content-Type": "application/json",
+      },
       body: "{}",
     });
     return JSON.parse(await r.text()) as { ok: boolean; failures: number; notified: number };
@@ -331,4 +335,3 @@ Deno.test("E2E — OPTIONS preflight retorna CORS headers", async () => {
   assertEquals(res.status, 200);
   assert(res.headers.get("access-control-allow-origin") !== null, "CORS ausente");
 });
-
