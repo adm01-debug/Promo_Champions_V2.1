@@ -99,12 +99,18 @@ export async function querySalesMetric(
   supabase: SupabaseClient,
   args: ResolverArgs
 ): Promise<ResolverResult> {
-  const metric = SAFE_METRICS.has(args?.metric) ? args.metric : 'revenue';
+  const metricCandidate = args.metric;
+  const metric = metricCandidate && SAFE_METRICS.has(metricCandidate)
+    ? metricCandidate
+    : 'revenue';
   const now = new Date();
   const defaultStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
   const period_start = clampDate(args?.period_start, defaultStart);
   const period_end = clampDate(args?.period_end, now.toISOString());
-  const group_by = SAFE_GROUP_BY.has(args?.group_by) ? args.group_by : null;
+  const groupByCandidate = args.group_by;
+  const group_by = groupByCandidate && SAFE_GROUP_BY.has(groupByCandidate)
+    ? groupByCandidate
+    : null;
   const filters = args?.filters ?? {};
 
   let q = supabase

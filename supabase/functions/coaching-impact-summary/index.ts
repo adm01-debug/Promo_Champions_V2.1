@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 
 interface ImpactRow {
   session_id: string;
@@ -20,8 +20,14 @@ interface ImpactRow {
   delta_ticket: number;
 }
 
-Deno.serve(withRequestId('coaching-impact-summary', async (req, _ctx) => {
+Deno.serve(withRequestId("coaching-impact-summary", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "method_not_allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const supabase = createClient(

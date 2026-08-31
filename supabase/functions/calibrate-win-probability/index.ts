@@ -1,6 +1,7 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 
 
 
@@ -30,10 +31,29 @@ function blendProbability(baseline: number, winRate: number, confidence: number)
   return Math.max(0, Math.min(100, Math.round(w * 100) / 100));
 }
 
-Deno.serve(withRequestId('calibrate-win-probability', async (req, _ctx) => {
+Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "method_not_allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
+    const caller = await getUserClient(req);
+    const { data: isManager, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -172,6 +192,12 @@ Deno.serve(withRequestId('calibrate-win-probability', async (req, _ctx) => {
     );
   } catch (e) {
     console.error("calibrate-win-probability error:", e);
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

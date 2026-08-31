@@ -1,22 +1,19 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 
-Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
+Deno.serve(withRequestId("calculate-committee-coverage", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const caller = await getUserClient(req);
 
     const { sale_id } = await req.json();
     if (!sale_id) {
@@ -25,7 +22,9 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
       });
     }
 
-    const { data: sale } = await supabase
+    // A consulta com o JWT do chamador aplica RLS e prova acesso ao negócio
+    // antes de qualquer operação com service_role.
+    const { data: sale } = await caller.client
       .from("sales")
       .select("id, salesperson_id")
       .eq("id", sale_id)
@@ -35,6 +34,11 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
 
     const { data: sp } = await supabase
       .from("salespeople")
@@ -104,6 +108,11 @@ Deno.serve(withRequestId('calculate-committee-coverage', async (req, _ctx) => {
     });
   } catch (e) {
     console.error("calculate-committee-coverage error:", e);
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

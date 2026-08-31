@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
@@ -71,10 +72,31 @@ function getDeclaredProbability(sale: Sale): number {
   return STAGE_DEFAULT_PROB[stage] ?? 30;
 }
 
-Deno.serve(async req => {
+async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
+  const caller = await getUserClient(req);
+  const { data, error } = await caller.client.rpc('is_admin_or_manager' as never, {
+    _user_id: caller.userId,
+  } as never);
+  if (error) throw error;
+  return Boolean(data);
+}
+
+Deno.serve(withRequestId('calibrate-win-probabilities', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
+    if (!(await isAdminOrManagerRequest(req))) {
+      return new Response(JSON.stringify({ error: 'forbidden' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
     const since = new Date(Date.now() - 180 * 86400_000).toISOString();
 
@@ -139,7 +161,7 @@ Deno.serve(async req => {
 
     const { data: allBuckets } = await supabase
       .from('win_calibration_buckets')
-      .select('stage, segment, bucket_min, actual_win_rate, sample_size')
+      .select('stage, segment, bucket_min, bucket_max, actual_win_rate, sample_size')
       .limit(1000);
     const bucketMap = new Map<string, CalibrationBucket>();
     for (const b of allBuckets ?? []) {
@@ -196,6 +218,12 @@ Deno.serve(async req => {
     );
   } catch (err) {
     console.error('calibrate-win-probabilities error:', err);
+    if (err instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     return new Response(
       JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -9,6 +9,7 @@
 //   EDGE_RETRY_ALERT_WINDOW_HOURS (opcional, default 24)
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
@@ -58,8 +59,14 @@ async function postSlack(webhook: string, text: string, requestId: string | null
   );
 }
 
-Deno.serve(withRequestId(async (req, ctx) => {
+Deno.serve(withRequestId("edge-retry-threshold-alert", async (req, ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "method_not_allowed", request_id: ctx.requestId }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
 
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -70,9 +77,39 @@ Deno.serve(withRequestId(async (req, ctx) => {
   if (!url || !key) {
     return new Response(
       JSON.stringify({ error: "missing_env", request_id: ctx.requestId }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
+
+  const client = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  try {
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await client
+        .from("_internal_secrets")
+        .select("value")
+        .eq("key", "coaching_cron_secret")
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) {
+      return new Response(
+        JSON.stringify({ error: "unauthorized", request_id: ctx.requestId }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+  } catch (error) {
+    ctx.log("error", "cron_authorization_unavailable", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return new Response(
+      JSON.stringify({ error: "authorization_unavailable", request_id: ctx.requestId }),
+      { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   if (!webhook) {
     ctx.log("warn", "slack_webhook_missing");
     return new Response(
@@ -80,10 +117,6 @@ Deno.serve(withRequestId(async (req, ctx) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-
-  const client = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
 
   const since = new Date(Date.now() - windowH * 60 * 60 * 1000).toISOString();
   const { data, error } = await client

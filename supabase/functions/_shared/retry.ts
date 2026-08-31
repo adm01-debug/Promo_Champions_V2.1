@@ -84,7 +84,11 @@ export class RetryError extends Error {
   }
 }
 
-const DEFAULTS: Required<Omit<RetryConfig, "isRetryable" | "onRetry" | "signal">> = {
+type RetryDefaults = Required<
+  Pick<RetryConfig, "maxAttempts" | "baseDelayMs" | "maxDelayMs" | "timeoutMs">
+>;
+
+const DEFAULTS: RetryDefaults = {
   maxAttempts: 3,
   baseDelayMs: 250,
   maxDelayMs: 8000,

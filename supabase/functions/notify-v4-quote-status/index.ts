@@ -1,13 +1,12 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabaseUrl = Deno.env.get("SUPABASE_URL");
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const callbackUrl = Deno.env.get("V4_CALLBACK_URL") ?? "";
 const callbackApiKey = Deno.env.get("V4_CALLBACK_API_KEY") ?? "";
-if (!callbackUrl) throw new Error("V4_CALLBACK_URL is not configured");
-if (!callbackApiKey) throw new Error("V4_CALLBACK_API_KEY is not configured");
 
 const MAX_ATTEMPTS = 5;
 const BASE_BACKOFF_MS = 30_000;
@@ -53,8 +52,47 @@ async function postWithTimeout(url: string, payload: unknown, apiKey: string): P
 
 Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "method_not_allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    log("error", "supabase_service_credentials_missing");
+    return new Response(JSON.stringify({ error: "service_not_configured" }), {
+      status: 503,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  try {
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await supabase
+        .from("_internal_secrets")
+        .select("value")
+        .eq("key", "coaching_cron_secret")
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  } catch (error) {
+    log("error", "cron_authorization_unavailable", {
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+      status: 503,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   // Guarda de configuração: sem secrets, apenas conta o backlog e retorna
   if (!callbackUrl || !callbackApiKey) {
@@ -107,7 +145,7 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
     latency: number;
     exhausted: boolean;
     nextRetry: string;
-    item: typeof (items ?? [])[number];
+    item: NonNullable<typeof items>[number];
   };
   const outcomes: ItemOutcome[] = [];
 

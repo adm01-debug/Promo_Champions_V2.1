@@ -233,3 +233,39 @@ Deno.test("crons privilegiados de churn e fila usam segredo interno", async () =
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
 });
+
+Deno.test("crons Edge operacionais usam allowlist e segredo interno", async () => {
+  const sql = await readMigration(
+    "20260831170000_secure_operational_edge_crons.sql",
+  );
+
+  const endpoints = [
+    "notify-v4-quote-status",
+    "check-v4-callback-alerts",
+    "cron-failure-alerter",
+    "process-call-recording-ingest",
+    "edge-retry-threshold-alert",
+  ];
+  for (const endpoint of endpoints) {
+    assertMatch(sql, new RegExp(`'${endpoint}'`, "i"));
+    assertMatch(
+      sql,
+      new RegExp(
+        `trigger_internal_edge_job\\(''${endpoint}''\\)`,
+        "i",
+      ),
+    );
+  }
+
+  assertMatch(sql, /p_function_name\s*=\s*ANY\s*\(ARRAY/i);
+  assertMatch(sql, /FROM\s+public\._internal_secrets\s+AS\s+s/i);
+  assertMatch(sql, /'X-Cron-Secret',\s*v_cron_secret/i);
+  assertMatch(sql, /SET\s+search_path\s*=\s*public,\s*net/i);
+  assertMatch(
+    sql,
+    /REVOKE\s+ALL\s+ON\s+FUNCTION\s+public\.trigger_internal_edge_job\(text\)/i,
+  );
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});

@@ -9,6 +9,21 @@ verify_jwt = false
 [functions.generate-urgent-client-tasks]
 verify_jwt = false
 
+[functions.notify-v4-quote-status]
+verify_jwt = false
+
+[functions.check-v4-callback-alerts]
+verify_jwt = false
+
+[functions.cron-failure-alerter]
+verify_jwt = false
+
+[functions.process-call-recording-ingest]
+verify_jwt = false
+
+[functions.edge-retry-threshold-alert]
+verify_jwt = false
+
 [functions.log-web-vitals]
 verify_jwt = false
 
