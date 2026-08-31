@@ -139,6 +139,10 @@ No último head concluído antes da atualização concorrente do Cline (`dc147dc
 
 Durante esta reconciliação, o Cline publicou o head `86e7fada`; os jobs Lighthouse e E2E desse novo head ainda estavam pendentes no snapshot. Como o novo commit continua restrito ao mesmo Markdown e não altera o workflow nem inicia o preview, ele não corrige a causa técnica do Lighthouse.
 
+Este follow-up corrige a causa de infraestrutura conforme o contrato oficial do Lighthouse CI: `collect.staticDistDir` aponta para `./dist` e `collect.isSinglePageApplication` habilita o fallback para `index.html`. O LHCI passa a iniciar seu servidor estático, em vez de tentar acessar uma porta sem processo escutando. Os thresholds continuam inalterados.
+
+A validação local executou três coletas completas e comprovou que o servidor estático funciona. As assertions então falharam por problemas reais/ambientais, não por conexão recusada: 7 erros e 8 avisos. O build de CI não recebe `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`, portanto a aplicação renderiza a tela de falha de inicialização; essa tela usa `role="alert"` num elemento incompatível e registra erro no console. Nesse estado, performance (0,68–0,69), FCP (3,60–3,70 s), LCP (6,42–6,61 s), JavaScript/CSS não utilizados e source maps ausentes não medem o fluxo real autenticado. Os budgets não foram relaxados para produzir um verde artificial. O próximo gate é fornecer configuração pública de teste via secrets do GitHub Actions e repetir o Lighthouse sobre uma página funcional.
+
 O PR #69 modifica apenas `docs/execucao/STATUS_100_ETAPAS_2026-08-30.md`; não implanta código, migrations ou Edge Functions.
 
 ## 7. Correções deste follow-up
@@ -151,6 +155,7 @@ O PR #69 modifica apenas `docs/execucao/STATUS_100_ETAPAS_2026-08-30.md`; não i
 | `supabase/functions/migrate-helper/index.ts` | implementação aposentada convertida em tombstone `410`, sem leitura/exposição de credenciais | redução de superfície P0; função não apagada |
 | `supabase/functions/migrate-helper/security_test.ts` | regressão impede reativação silenciosa da superfície administrativa | somente teste |
 | `scripts/security/check-no-committed-service-role.ts` | scanner passa a detectar atribuições literais de segredos operacionais | guard-rail local/CI |
+| `.lighthouserc.json` | LHCI passa a servir o build `dist` com fallback SPA | corrige infraestrutura; budgets não foram relaxados |
 
 Nenhuma tabela, coluna, constraint, índice, policy, função SQL, trigger, view, enum, extensão, privilégio, bucket, job ou registro foi alterado.
 
