@@ -17,7 +17,7 @@ A segurança do SalesPro é levada muito a sério. Se você descobrir uma vulner
 
 **NÃO** abra uma issue pública. Em vez disso:
 
-1. **Envie um e-mail** para a equipe de segurança (configure um e-mail de segurança)
+1. **Envie um e-mail** para a equipe de segurança: **ti@promobrindes.com.br**
 2. **Inclua** uma descrição detalhada da vulnerabilidade
 3. **Forneça** passos para reproduzir o problema
 4. **Aguarde** nossa resposta (geralmente dentro de 48 horas)
@@ -45,12 +45,12 @@ Para nos ajudar a resolver o problema rapidamente, inclua:
 
 ### ⏱️ Tempo de Resposta Esperado
 
-| Etapa | Tempo Estimado |
-|-------|----------------|
-| Primeira resposta | 48 horas |
-| Confirmação da vulnerabilidade | 5-7 dias |
-| Desenvolvimento do patch | 7-30 dias (dependendo da complexidade) |
-| Release do patch | Assim que possível após desenvolvimento |
+| Etapa                          | Tempo Estimado                          |
+| ------------------------------ | --------------------------------------- |
+| Primeira resposta              | 48 horas                                |
+| Confirmação da vulnerabilidade | 5-7 dias                                |
+| Desenvolvimento do patch       | 7-30 dias (dependendo da complexidade)  |
+| Release do patch               | Assim que possível após desenvolvimento |
 
 ### 🏆 Reconhecimento
 
@@ -102,17 +102,20 @@ CREATE POLICY "team_isolation" ON deals
 ### Variáveis de Ambiente
 
 Nunca exponha:
+
 - `SUPABASE_SERVICE_ROLE_KEY`
 - Chaves de API de terceiros
 - Secrets de produção
 
 Use apenas:
+
 - `VITE_SUPABASE_URL` (público)
 - `VITE_SUPABASE_ANON_KEY` (público)
 
 ### Headers de Segurança
 
 Configurar headers apropriados:
+
 - `Content-Security-Policy`
 - `X-Frame-Options`
 - `X-Content-Type-Options`
@@ -138,6 +141,7 @@ npm outdated
 ### Dependabot
 
 O repositório está configurado com Dependabot para:
+
 - Atualizar dependências automaticamente
 - Criar PRs para atualizações de segurança
 - Manter o projeto seguro
@@ -152,6 +156,7 @@ O repositório está configurado com Dependabot para:
 ## Contato
 
 Para questões de segurança urgentes:
+
 - **Email**: [Configure um e-mail de segurança]
 - **Issue privada**: Use GitHub Security Advisories
 
