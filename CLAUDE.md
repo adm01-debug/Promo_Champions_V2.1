@@ -7,19 +7,27 @@
 
 ## 1. Banco de dados OFICIAL
 
-| O que | Valor |
-|---|---|
-| Projeto Supabase | `rapjswienfhkobhlamxb` (Cloud) |
-| URL | `https://rapjswienfhkobhlamxb.supabase.co` |
-| Dashboard | https://supabase.com/dashboard/project/rapjswienfhkobhlamxb |
-| MCP para SQL | `MCP - SUPABASE / LOVABLE CLOUD - PROMO CHAMPIONS V2` |
-| Migrations | **595+** (timestamp YYYYMMDDHHmmss) |
+| O que            | Valor                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| Projeto Supabase | `usyxfpqlsspldubptrdl` (Cloud)                              |
+| URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                  |
+| Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl |
+| MCP para SQL     | `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP`                         |
+| Migrations       | **595+** (timestamp YYYYMMDDHHmmss)                         |
+
+> Corrigido em 2026-09-02: o ref `rapjswienfhkobhlamxb` citado aqui anteriormente estava
+> desatualizado (`supabase/config.toml` foi repontado para `usyxfpqlsspldubptrdl` em 30/08,
+> um dia depois deste arquivo ter sido escrito). Confirmado com prova direta via
+> `_internal_secrets.functions_base_url` no banco vivo, que retorna
+> `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1`.
 
 ### Bancos que NAO sao deste projeto
+
 - Supabase self-hosted VPS AtomicaBR
 - Qualquer outro projeto Supabase da lista do usuário
 
 ### Regras de migration
+
 1. Usar `db_query` no MCP com DDL direto — NÃO usar `supabase_apply_migration`.
 2. `migrate-helper` edge function foi removida (security: expunha service_role).
 3. Versão = timestamp estritamente crescente. Conferir `SELECT max(version)` antes.
@@ -31,21 +39,22 @@
 
 ## 2. Stack
 
-| Camada | Tech |
-|---|---|
-| Frontend | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Router |
-| Backend | Supabase Cloud (Postgres + RLS + Auth + Edge Functions Deno) |
-| Testes | Vitest + Testing Library, Playwright E2E |
-| Mapas | Leaflet + react-leaflet (clusters de clientes) |
-| Workflows visuais | @xyflow/react |
-| Export | Excel/PDF (xlsx, pdf-lib) |
-| Deploy | Lovable Cloud |
+| Camada            | Tech                                                                              |
+| ----------------- | --------------------------------------------------------------------------------- |
+| Frontend          | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Router |
+| Backend           | Supabase Cloud (Postgres + RLS + Auth + Edge Functions Deno)                      |
+| Testes            | Vitest + Testing Library, Playwright E2E                                          |
+| Mapas             | Leaflet + react-leaflet (clusters de clientes)                                    |
+| Workflows visuais | @xyflow/react                                                                     |
+| Export            | Excel/PDF (xlsx, pdf-lib)                                                         |
+| Deploy            | Lovable Cloud                                                                     |
 
 ---
 
 ## 3. Três camadas funcionais
 
 ### 3.1 Operação de venda (CRM core)
+
 - Contas e negócios: `AccountDetail`, deal health, win probability calibrada
 - Pipeline: board Kanban, stage conversion, stuck deals, SLA de leads (`check-lead-sla`)
 - Pedidos: `AcompanhamentoPedidos`, `AcompanhamentoPedidoDetalhe`
@@ -56,6 +65,7 @@
 - Customer Success: `customer-success-360`, `customer-success-hub`, `renewal-automation`, `expansion-detector`
 
 ### 3.2 IA e coaching
+
 - Análise de chamadas: `analyze-call`, `diarize-call-recording`, `transcribe-call-recording`
 - Qualidade de vendas: `analyze-objection-handling`, `analyze-question-quality`, `analyze-sentiment-timeline`, `analyze-skill-gaps`, `analyze-win-loss`
 - Coaching: `coaching-intelligence`, `coaching-session-prep`, `coaching-impact-summary`, `salesperson-coaching`, `generate-loss-coaching`, `extract-coaching-actions`, `detect-coaching-opportunities`
@@ -66,6 +76,7 @@
 - Busca semântica: `semantic-search`, `semantic-search-universal`, `semantic-index-entity`, `nlq-query`
 
 ### 3.3 Gamificação de vendas
+
 - Arena competitiva: `RaceArena.tsx`, `race-commentary`, `start-race-season`, `rotate-daily-challenges`
 - Power-ups: `collect-race-powerup`, `process-race-event`
 - Ranking: `ranking-api`, `notify-ranking-position`, `RankingCompetitivo.tsx`
@@ -110,15 +121,15 @@ Grupos por domínio:
 
 ## 5. Integracoes externas
 
-| Serviço | Edge function(s) |
-|---|---|
-| **Twilio** (voz, dialer) | twilio-call-status, twilio-call-twiml, twilio-click-to-call |
-| **ElevenLabs** (STT/TTS/voice) | elevenlabs-stt, elevenlabs-tts, elevenlabs-voice |
-| **Bitrix24** | bitrix24-oauth, bitrix24-sync |
-| **Email transacional** | send-transactional-email, email-bulk-send |
-| **WhatsApp multichannel** | send-multichannel-message (via Evolution) |
-| **Semantic/NLQ** | semantic-search, nlq-query |
-| **WebAuthn** (passkeys) | webauthn |
+| Serviço                        | Edge function(s)                                            |
+| ------------------------------ | ----------------------------------------------------------- |
+| **Twilio** (voz, dialer)       | twilio-call-status, twilio-call-twiml, twilio-click-to-call |
+| **ElevenLabs** (STT/TTS/voice) | elevenlabs-stt, elevenlabs-tts, elevenlabs-voice            |
+| **Bitrix24**                   | bitrix24-oauth, bitrix24-sync                               |
+| **Email transacional**         | send-transactional-email, email-bulk-send                   |
+| **WhatsApp multichannel**      | send-multichannel-message (via Evolution)                   |
+| **Semantic/NLQ**               | semantic-search, nlq-query                                  |
+| **WebAuthn** (passkeys)        | webauthn                                                    |
 
 ---
 
@@ -169,5 +180,6 @@ This project has a knowledge graph at graphify-out/.
 git rev-parse --short HEAD
 grep "Built from commit" graphify-out/GRAPH_REPORT.md
 ```
+
 Se divergirem, auto-sync N8N corrige em até 15 min.
 Forçar rebuild: `graphify update . --force`
