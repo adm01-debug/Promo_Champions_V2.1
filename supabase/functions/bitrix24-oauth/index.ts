@@ -2,7 +2,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { withEdgeCircuitBreaker } from '../_shared/circuit-breaker.ts';
+import {
+  withEdgeCircuitBreaker,
+  CircuitBreakerOpenError,
+} from '../_shared/circuit-breaker.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -216,6 +219,18 @@ Deno.serve(
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } catch (error) {
+      if (error instanceof CircuitBreakerOpenError) {
+        return new Response(
+          JSON.stringify({
+            error: 'circuit_open',
+            message: 'Bitrix24 temporariamente indisponível',
+          }),
+          {
+            status: 503,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
       console.error('Bitrix24 OAuth error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return new Response(JSON.stringify({ error: errorMessage }), {
