@@ -3,7 +3,10 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { withEdgeCircuitBreaker } from '../_shared/circuit-breaker.ts';
+import {
+  withEdgeCircuitBreaker,
+  CircuitBreakerOpenError,
+} from '../_shared/circuit-breaker.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -440,6 +443,7 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
           syncedCount++;
         }
       } catch (error) {
+        if (error instanceof CircuitBreakerOpenError) throw error;
         console.error(`Error syncing client ${client.id} to Bitrix24:`, error);
       }
     }
@@ -529,6 +533,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
 
         syncedCount++;
       } catch (error) {
+        if (error instanceof CircuitBreakerOpenError) throw error;
         console.error(`Error syncing sale ${sale.id} to Bitrix24:`, error);
       }
     }
@@ -646,6 +651,22 @@ Deno.serve(
         });
       } catch (logError) {
         console.error('Error logging sync failure:', logError);
+      }
+
+      if (error instanceof CircuitBreakerOpenError) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'circuit_open',
+            message: 'Bitrix24 temporariamente indisponível',
+            duration_ms: durationMs,
+            timestamp: new Date().toISOString(),
+          }),
+          {
+            status: 503,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
       }
 
       return new Response(

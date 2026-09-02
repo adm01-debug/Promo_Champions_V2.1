@@ -162,5 +162,5 @@ Para questões de segurança urgentes:
 
 ---
 
-**Última atualização**: 19 de Janeiro de 2026  
+**Última atualização**: 02 de Setembro de 2026  
 **Mantenedor**: @adm01-debug
