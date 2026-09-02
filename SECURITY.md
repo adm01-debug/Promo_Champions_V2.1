@@ -157,7 +157,7 @@ O repositório está configurado com Dependabot para:
 
 Para questões de segurança urgentes:
 
-- **Email**: [Configure um e-mail de segurança]
+- **Email**: ti@promobrindes.com.br
 - **Issue privada**: Use GitHub Security Advisories
 
 ---

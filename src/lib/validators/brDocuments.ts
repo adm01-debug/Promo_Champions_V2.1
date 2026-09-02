@@ -1,6 +1,7 @@
 // Validação de dígito verificador de CPF e CNPJ (módulo 11), sem dependência externa.
 
 function onlyDigits(value: string): string {
+  if (typeof value !== 'string') return '';
   return value.replace(/\D/g, '');
 }
 
