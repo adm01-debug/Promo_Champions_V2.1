@@ -1,8 +1,9 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from "../_shared/request-id.ts";
-import { chunkedIn } from "../_shared/chunked-in.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { withRequestId } from '../_shared/request-id.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { withEdgeCircuitBreaker } from '../_shared/circuit-breaker.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -96,14 +97,22 @@ async function bitrixApiCall(
   }
 
   const url = `https://${BITRIX24_DOMAIN}/rest/${method}`;
-  const response = await fetchWithTimeout(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
+  const response = await withEdgeCircuitBreaker(
+    'bitrix24:api',
+    async () => {
+      const r = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(params),
+      });
+      if (r.status >= 500) throw new Error(`bitrix24_5xx_${r.status}`);
+      return r;
     },
-    body: JSON.stringify(params),
-  });
+    { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 35_000 }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -138,13 +147,13 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
 
     // Batch lookup: one query to find all existing ICP records for these Bitrix IDs
     const bitrixIds = companies.map(c => c.ID);
-    const existingIcpList = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+    const existingIcpList = await chunkedIn<{
+      client_id: string | null;
+      bitrix_id: string | null;
+    }>(
       bitrixIds,
-      (chunk) =>
-        supabase
-          .from('icp_data')
-          .select('client_id, bitrix_id')
-          .in('bitrix_id', chunk),
+      chunk =>
+        supabase.from('icp_data').select('client_id, bitrix_id').in('bitrix_id', chunk),
       { parallel: true, label: 'bitrix24-sync.icp_by_bitrix' }
     );
 
@@ -216,7 +225,8 @@ async function syncCompaniesToCRM(supabase: SupabaseClient): Promise<number> {
           .map((company, i) => {
             const clientId = insertedClients[i]?.id;
             if (!clientId) return null;
-            const ramoAtividade = (company[BITRIX_FIELD_RAMO_ATIVIDADE] as string) || null;
+            const ramoAtividade =
+              (company[BITRIX_FIELD_RAMO_ATIVIDADE] as string) || null;
             const grupoNicho = (company[BITRIX_FIELD_NICHO_SEGMENTO] as string) || null;
             return {
               client_id: clientId,
@@ -278,14 +288,14 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
       type IcpJoinRow = { bitrix_id: string | null; clients: { name: string } | null };
       const icpRows = await chunkedIn<IcpJoinRow>(
         companyIds,
-        (chunk) =>
+        chunk =>
           supabase
             .from('icp_data')
             .select('bitrix_id, clients!inner(name)')
             .in('bitrix_id', chunk),
         { parallel: true, label: 'bitrix24-sync.deals_client_names' }
       );
-      icpRows.forEach((row) => {
+      icpRows.forEach(row => {
         if (row.bitrix_id && row.clients?.name) {
           clientNameByBitrixId.set(row.bitrix_id, row.clients.name);
         }
@@ -293,17 +303,25 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
     }
 
     // Batch lookup: pre-fetch all existing sales matching client names in this sync
-    const allClientNames = [...new Set(deals.map(d =>
-      (d.COMPANY_ID && clientNameByBitrixId.get(d.COMPANY_ID)) || d.TITLE
-    ))];
-    const existingSalesRows = allClientNames.length > 0
-      ? await chunkedIn<{ id: string; client_name: string; product_name: string }>(
-          allClientNames,
-          (chunk) =>
-            supabase.from('sales').select('id, client_name, product_name').in('client_name', chunk),
-          { parallel: true, label: 'bitrix24-sync.existing_deals_by_client' }
+    const allClientNames = [
+      ...new Set(
+        deals.map(
+          d => (d.COMPANY_ID && clientNameByBitrixId.get(d.COMPANY_ID)) || d.TITLE
         )
-      : [];
+      ),
+    ];
+    const existingSalesRows =
+      allClientNames.length > 0
+        ? await chunkedIn<{ id: string; client_name: string; product_name: string }>(
+            allClientNames,
+            chunk =>
+              supabase
+                .from('sales')
+                .select('id, client_name, product_name')
+                .in('client_name', chunk),
+            { parallel: true, label: 'bitrix24-sync.existing_deals_by_client' }
+          )
+        : [];
 
     const existingSaleMap = new Map<string, string>();
     existingSalesRows.forEach(s => {
@@ -324,7 +342,10 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
 
       if (existingId) {
         updateOps.push(
-          supabase.from('sales').update({ amount, status, updated_at: syncNow }).eq('id', existingId)
+          supabase
+            .from('sales')
+            .update({ amount, status, updated_at: syncNow })
+            .eq('id', existingId)
         );
       } else {
         insertRows.push({
@@ -338,7 +359,9 @@ async function syncDealsFromBitrix(supabase: SupabaseClient): Promise<number> {
     }
 
     await Promise.all([
-      insertRows.length > 0 ? supabase.from('sales').insert(insertRows) : Promise.resolve(),
+      insertRows.length > 0
+        ? supabase.from('sales').insert(insertRows)
+        : Promise.resolve(),
       ...updateOps,
     ]);
 
@@ -365,7 +388,7 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient): Promise<number> 
 
     const icpDataList = await chunkedIn<IcpData>(
       clientIds,
-      (chunk) =>
+      chunk =>
         supabase
           .from('icp_data')
           .select(
@@ -457,19 +480,18 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
     if (clientNames.length > 0) {
       const clientRows = await chunkedIn<{ id: string; name: string }>(
         clientNames,
-        (chunk) =>
-          supabase
-            .from('clients')
-            .select('id, name')
-            .in('name', chunk),
+        chunk => supabase.from('clients').select('id, name').in('name', chunk),
         { parallel: true, label: 'bitrix24-sync.clients_by_name' }
       );
 
       if (clientRows.length) {
         const clientIds = clientRows.map(c => c.id);
-        const icpRows = await chunkedIn<{ client_id: string | null; bitrix_id: string | null }>(
+        const icpRows = await chunkedIn<{
+          client_id: string | null;
+          bitrix_id: string | null;
+        }>(
           clientIds,
-          (chunk) =>
+          chunk =>
             supabase
               .from('icp_data')
               .select('client_id, bitrix_id')
@@ -479,7 +501,8 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
 
         const bitrixIdByClientId = new Map<string, string>();
         icpRows.forEach(icp => {
-          if (icp.client_id && icp.bitrix_id) bitrixIdByClientId.set(icp.client_id, icp.bitrix_id);
+          if (icp.client_id && icp.bitrix_id)
+            bitrixIdByClientId.set(icp.client_id, icp.bitrix_id);
         });
         clientRows.forEach(c => {
           const bitrixId = bitrixIdByClientId.get(c.id);
@@ -491,7 +514,9 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
     let syncedCount = 0;
     for (const sale of sales) {
       try {
-        const companyId = sale.client_name ? bitrixIdByClientName.get(sale.client_name) : undefined;
+        const companyId = sale.client_name
+          ? bitrixIdByClientName.get(sale.client_name)
+          : undefined;
 
         await bitrixApiCall('crm.deal.add', {
           fields: {
@@ -516,123 +541,125 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
   }
 }
 
-Deno.serve(withRequestId('bitrix24-sync', async (req, _ctx) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  const startTime = Date.now();
-
-  try {
-    if (!BITRIX24_DOMAIN || !BITRIX24_CLIENT_ID || !BITRIX24_CLIENT_SECRET) {
-      throw new Error('Bitrix24 credentials not configured');
+Deno.serve(
+  withRequestId('bitrix24-sync', async (req, _ctx) => {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase credentials not configured');
-    }
+    const startTime = Date.now();
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-    const body = await req.json().catch(() => ({}));
-    const action = body.action || 'sync-all';
-    const triggeredBy = body.triggered_by || 'manual';
-
-    let result: Record<string, number> = {
-      companiesFromBitrix: 0,
-      dealsFromBitrix: 0,
-      companiesToBitrix: 0,
-      dealsToBitrix: 0,
-    };
-
-    switch (action) {
-      case 'sync-companies-from-bitrix':
-        result.companiesFromBitrix = await syncCompaniesToCRM(supabase);
-        break;
-      case 'sync-companies-to-bitrix':
-        result.companiesToBitrix = await syncCompaniesToBitrix(supabase);
-        break;
-      case 'sync-deals-from-bitrix':
-        result.dealsFromBitrix = await syncDealsFromBitrix(supabase);
-        break;
-      case 'sync-deals-to-bitrix':
-        result.dealsToBitrix = await syncDealsToBitrix(supabase);
-        break;
-      case 'sync-all':
-      default:
-        result = {
-          companiesFromBitrix: await syncCompaniesToCRM(supabase),
-          dealsFromBitrix: await syncDealsFromBitrix(supabase),
-          companiesToBitrix: await syncCompaniesToBitrix(supabase),
-          dealsToBitrix: await syncDealsToBitrix(supabase),
-        };
-        break;
-    }
-
-    const durationMs = Date.now() - startTime;
-
-    // Log successful sync
-    await logSyncResult(supabase, {
-      sync_type: action,
-      status: 'success',
-      companies_from_bitrix: result.companiesFromBitrix,
-      companies_to_bitrix: result.companiesToBitrix,
-      deals_from_bitrix: result.dealsFromBitrix,
-      deals_to_bitrix: result.dealsToBitrix,
-      duration_ms: durationMs,
-      triggered_by: triggeredBy,
-    });
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Bitrix24 sync completed',
-        result,
-        duration_ms: durationMs,
-        timestamp: new Date().toISOString(),
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    const durationMs = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-    console.error('Bitrix24 sync error:', error);
-
-    // Log failed sync
     try {
-      const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-      const body = await req
-        .clone()
-        .json()
-        .catch(() => ({}));
-
-      await logSyncResult(supabase, {
-        sync_type: body.action || 'sync-all',
-        status: 'error',
-        companies_from_bitrix: 0,
-        companies_to_bitrix: 0,
-        deals_from_bitrix: 0,
-        deals_to_bitrix: 0,
-        error_message: errorMessage,
-        duration_ms: durationMs,
-        triggered_by: body.triggered_by || 'manual',
-      });
-    } catch (logError) {
-      console.error('Error logging sync failure:', logError);
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: errorMessage,
-        duration_ms: durationMs,
-        timestamp: new Date().toISOString(),
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      if (!BITRIX24_DOMAIN || !BITRIX24_CLIENT_ID || !BITRIX24_CLIENT_SECRET) {
+        throw new Error('Bitrix24 credentials not configured');
       }
-    );
-  }
-}));
+
+      if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error('Supabase credentials not configured');
+      }
+
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+      const body = await req.json().catch(() => ({}));
+      const action = body.action || 'sync-all';
+      const triggeredBy = body.triggered_by || 'manual';
+
+      let result: Record<string, number> = {
+        companiesFromBitrix: 0,
+        dealsFromBitrix: 0,
+        companiesToBitrix: 0,
+        dealsToBitrix: 0,
+      };
+
+      switch (action) {
+        case 'sync-companies-from-bitrix':
+          result.companiesFromBitrix = await syncCompaniesToCRM(supabase);
+          break;
+        case 'sync-companies-to-bitrix':
+          result.companiesToBitrix = await syncCompaniesToBitrix(supabase);
+          break;
+        case 'sync-deals-from-bitrix':
+          result.dealsFromBitrix = await syncDealsFromBitrix(supabase);
+          break;
+        case 'sync-deals-to-bitrix':
+          result.dealsToBitrix = await syncDealsToBitrix(supabase);
+          break;
+        case 'sync-all':
+        default:
+          result = {
+            companiesFromBitrix: await syncCompaniesToCRM(supabase),
+            dealsFromBitrix: await syncDealsFromBitrix(supabase),
+            companiesToBitrix: await syncCompaniesToBitrix(supabase),
+            dealsToBitrix: await syncDealsToBitrix(supabase),
+          };
+          break;
+      }
+
+      const durationMs = Date.now() - startTime;
+
+      // Log successful sync
+      await logSyncResult(supabase, {
+        sync_type: action,
+        status: 'success',
+        companies_from_bitrix: result.companiesFromBitrix,
+        companies_to_bitrix: result.companiesToBitrix,
+        deals_from_bitrix: result.dealsFromBitrix,
+        deals_to_bitrix: result.dealsToBitrix,
+        duration_ms: durationMs,
+        triggered_by: triggeredBy,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Bitrix24 sync completed',
+          result,
+          duration_ms: durationMs,
+          timestamp: new Date().toISOString(),
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      const durationMs = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      console.error('Bitrix24 sync error:', error);
+
+      // Log failed sync
+      try {
+        const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+        const body = await req
+          .clone()
+          .json()
+          .catch(() => ({}));
+
+        await logSyncResult(supabase, {
+          sync_type: body.action || 'sync-all',
+          status: 'error',
+          companies_from_bitrix: 0,
+          companies_to_bitrix: 0,
+          deals_from_bitrix: 0,
+          deals_to_bitrix: 0,
+          error_message: errorMessage,
+          duration_ms: durationMs,
+          triggered_by: body.triggered_by || 'manual',
+        });
+      } catch (logError) {
+        console.error('Error logging sync failure:', logError);
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: errorMessage,
+          duration_ms: durationMs,
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+  })
+);
