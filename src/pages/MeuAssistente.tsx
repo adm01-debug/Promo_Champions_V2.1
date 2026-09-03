@@ -159,9 +159,10 @@ const HubInner: FC = () => {
                 <span className="text-sm font-semibold">Conversa com o Coach</span>
               </div>
 
-              { }
+              {}
               <ScrollArea
                 className="flex-1 px-4 py-3"
+                // eslint-disable-next-line no-restricted-syntax
                 ref={chatRef as unknown as React.Ref<HTMLDivElement>}
               >
                 {messages.length === 0 ? (

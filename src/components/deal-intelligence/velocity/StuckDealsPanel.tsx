@@ -67,8 +67,8 @@ export function StuckDealsPanel() {
           </div>
         ) : (
           <div className="space-y-2 max-h-[500px] overflow-y-auto">
-            { }
-            {(
+            { 
+            (
               data as unknown as Array<{
                 id: string;
                 sales?: {

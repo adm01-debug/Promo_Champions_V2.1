@@ -280,8 +280,9 @@ const FollowUpInteligente = memo(() => {
         const key = v.replace(/{{|}}/g, '');
         message = message.replace(
           v,
-           
+
           String(
+            // eslint-disable-next-line no-restricted-syntax
             (lead as unknown as Record<string, string | number | undefined>)[key] || ''
           )
         );
@@ -599,9 +600,10 @@ const FollowUpInteligente = memo(() => {
                         const vars = template.match(/{{(.*?)}}/g) || [];
                         vars.forEach(v => {
                           const key = v.replace(/{{|}}/g, '');
-                           
+
                           msg = msg.replace(
                             v,
+                            // eslint-disable-next-line no-restricted-syntax
                             (
                               currentLeadForWA as unknown as Record<
                                 string,

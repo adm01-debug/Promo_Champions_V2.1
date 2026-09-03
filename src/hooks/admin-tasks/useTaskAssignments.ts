@@ -32,11 +32,14 @@ export const useTaskAssignments = (filters?: { mine?: boolean; userId?: string }
     queryFn: async () => {
       let q = supabase
         .from('task_assignments')
-        .select('*, catalog:task_catalog(title, description, difficulty, xp_reward, category)')
+        .select(
+          '*, catalog:task_catalog(title, description, difficulty, xp_reward, category)'
+        )
         .order('created_at', { ascending: false });
       if (filters?.userId) q = q.eq('assigned_to', filters.userId);
       const { data, error } = await q;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as TaskAssignmentRecord[];
     },
   });
@@ -49,7 +52,7 @@ export const useTaskAssignments = (filters?: { mine?: boolean; userId?: string }
     }) => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error('Não autenticado');
-      const rows = input.assigned_to_list.map((uid) => ({
+      const rows = input.assigned_to_list.map(uid => ({
         catalog_id: input.catalog_id,
         assigned_to: uid,
         assigned_by: u.user!.id,
@@ -66,7 +69,11 @@ export const useTaskAssignments = (filters?: { mine?: boolean; userId?: string }
   });
 
   const updateStatus = useMutation({
-    mutationFn: async (input: { id: string; status: TaskAssignmentStatus; note?: string }) => {
+    mutationFn: async (input: {
+      id: string;
+      status: TaskAssignmentStatus;
+      note?: string;
+    }) => {
       const { error } = await supabase
         .from('task_assignments')
         .update({ status: input.status, submission_note: input.note ?? null })

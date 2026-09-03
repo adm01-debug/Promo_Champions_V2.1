@@ -131,8 +131,8 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
         <div className="relative h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              { }
               {React.createElement(
+                // eslint-disable-next-line no-restricted-syntax
                 Pie as unknown as React.ComponentType<Record<string, unknown>>,
                 {
                   activeIndex,

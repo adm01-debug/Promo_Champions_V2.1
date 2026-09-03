@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
 import {
   Area,
   AreaChart,
@@ -10,23 +10,22 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, TrendingUp, AlertTriangle } from "lucide-react";
-import { useSentimentTimeline, useAnalyzeSentiment } from "@/hooks/conversational/useSentimentTimeline";
+} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, TrendingUp, AlertTriangle } from 'lucide-react';
 import {
-  detectShifts,
-  formatTimestamp,
-  type SentimentSegment,
-} from "./sentimentHelpers";
-import type { RechartsTooltipProps } from "@/types/recharts";
-import { severityHexColor, type CriticalMoment } from "./criticalMomentsHelpers";
-import type { Intent } from "./IntentTracker";
-import { Badge } from "@/components/ui/badge";
-import { BattleCardSuggestion } from "./BattleCardSuggestion";
-import { motion, AnimatePresence } from "framer-motion";
+  useSentimentTimeline,
+  useAnalyzeSentiment,
+} from '@/hooks/conversational/useSentimentTimeline';
+import { detectShifts, formatTimestamp, type SentimentSegment } from './sentimentHelpers';
+import type { RechartsTooltipProps } from '@/types/recharts';
+import { severityHexColor, type CriticalMoment } from './criticalMomentsHelpers';
+import type { Intent } from './IntentTracker';
+import { Badge } from '@/components/ui/badge';
+import { BattleCardSuggestion } from './BattleCardSuggestion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   recordingId: string;
@@ -39,6 +38,7 @@ interface Props {
 
 const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (!active || !payload?.length) return null;
+  // eslint-disable-next-line no-restricted-syntax
   const p = payload[0].payload as unknown as SentimentSegment;
   return (
     <div className="rounded-md border bg-popover px-3 py-2 text-xs shadow-md max-w-xs">
@@ -53,21 +53,26 @@ const ChartTooltip = ({ active, payload }: RechartsTooltipProps) => {
   );
 };
 
-export const SentimentTimelineChart = ({ 
-  recordingId, 
-  currentTime, 
-  onSeek, 
-  moments, 
+export const SentimentTimelineChart = ({
+  recordingId,
+  currentTime,
+  onSeek,
+  moments,
   intents = [],
-  hideTitle = false
+  hideTitle = false,
 }: Props) => {
   const { data: timeline, isLoading } = useSentimentTimeline(recordingId);
   const analyze = useAnalyzeSentiment();
-  const [selectedShift, setSelectedShift] = useState<{ start_sec: number, text?: string } | null>(null);
+  const [selectedShift, setSelectedShift] = useState<{
+    start_sec: number;
+    text?: string;
+  } | null>(null);
 
   const shifts = useMemo(() => (timeline ? detectShifts(timeline) : []), [timeline]);
 
-  const handleClick = (e: { activePayload?: Array<{ payload?: { start_sec: number; excerpt?: string } }> }) => {
+  const handleClick = (e: {
+    activePayload?: Array<{ payload?: { start_sec: number; excerpt?: string } }>;
+  }) => {
     const seg = e?.activePayload?.[0]?.payload;
     if (seg) {
       if (onSeek) onSeek(seg.start_sec);
@@ -79,7 +84,12 @@ export const SentimentTimelineChart = ({
   };
 
   return (
-    <Card className={cn("glass overflow-hidden", hideTitle && "border-none bg-transparent shadow-none")}>
+    <Card
+      className={cn(
+        'glass overflow-hidden',
+        hideTitle && 'border-none bg-transparent shadow-none'
+      )}
+    >
       {!hideTitle && (
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <CardTitle className="text-section-title text-sm flex items-center gap-2">
@@ -94,11 +104,15 @@ export const SentimentTimelineChart = ({
             className="gap-1.5 h-7 text-xs"
           >
             <Sparkles className="h-3 w-3" />
-            {analyze.isPending ? "Analisando..." : timeline?.length ? "Reanalisar" : "Analisar"}
+            {analyze.isPending
+              ? 'Analisando...'
+              : timeline?.length
+                ? 'Reanalisar'
+                : 'Analisar'}
           </Button>
         </CardHeader>
       )}
-      <CardContent className={cn(hideTitle && "p-0")}>
+      <CardContent className={cn(hideTitle && 'p-0')}>
         {isLoading ? (
           <Skeleton className="h-40 w-full" />
         ) : !timeline?.length ? (
@@ -107,22 +121,42 @@ export const SentimentTimelineChart = ({
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={timeline} onClick={handleClick} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
+            <AreaChart
+              data={timeline}
+              onClick={handleClick}
+              margin={{ top: 6, right: 8, left: -16, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="sentGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--status-success))" stopOpacity={0.55} />
-                  <stop offset="50%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0.15} />
-                  <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.55} />
+                  <stop
+                    offset="0%"
+                    stopColor="hsl(var(--status-success))"
+                    stopOpacity={0.55}
+                  />
+                  <stop
+                    offset="50%"
+                    stopColor="hsl(var(--muted-foreground))"
+                    stopOpacity={0.15}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="hsl(var(--destructive))"
+                    stopOpacity={0.55}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="start_sec"
-                tickFormatter={(v) => formatTimestamp(Number(v))}
+                tickFormatter={v => formatTimestamp(Number(v))}
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={10}
               />
-              <YAxis domain={[-1, 1]} stroke="hsl(var(--muted-foreground))" fontSize={10} />
+              <YAxis
+                domain={[-1, 1]}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={10}
+              />
               <Tooltip content={<ChartTooltip />} />
               <ReferenceLine y={0} stroke="hsl(var(--border))" />
               <Area
@@ -133,8 +167,12 @@ export const SentimentTimelineChart = ({
                 strokeWidth={2}
                 isAnimationActive={false}
               />
-              {typeof currentTime === "number" && currentTime > 0 && (
-                <ReferenceLine x={currentTime} stroke="hsl(var(--primary))" strokeDasharray="2 2" />
+              {typeof currentTime === 'number' && currentTime > 0 && (
+                <ReferenceLine
+                  x={currentTime}
+                  stroke="hsl(var(--primary))"
+                  strokeDasharray="2 2"
+                />
               )}
               {shifts.map((s, i) => (
                 <ReferenceDot
@@ -148,8 +186,8 @@ export const SentimentTimelineChart = ({
                 />
               ))}
               {(moments ?? [])
-                .filter((m) => m.severity === "high" || m.severity === "critical")
-                .map((m) => (
+                .filter(m => m.severity === 'high' || m.severity === 'critical')
+                .map(m => (
                   <ReferenceLine
                     key={m.id}
                     x={m.timestamp_sec}
@@ -174,7 +212,7 @@ export const SentimentTimelineChart = ({
         )}
         <AnimatePresence>
           {selectedShift && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -182,23 +220,35 @@ export const SentimentTimelineChart = ({
             >
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="size-4 text-destructive" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-destructive">Sentimento Shift Detectado</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-destructive">
+                  Sentimento Shift Detectado
+                </span>
               </div>
               <p className="text-xs italic text-muted-foreground mb-3 leading-relaxed">
-                "{selectedShift.text || "Ponto de inflexão na conversa detectado. Possível sinal de atrito ou mudança de interesse."}"
+                "
+                {selectedShift.text ||
+                  'Ponto de inflexão na conversa detectado. Possível sinal de atrito ou mudança de interesse.'}
+                "
               </p>
-              
-              <BattleCardSuggestion battleCardId="mock-id" competitorName="Concorrente Direto" />
+
+              <BattleCardSuggestion
+                battleCardId="mock-id"
+                competitorName="Concorrente Direto"
+              />
             </motion.div>
           )}
         </AnimatePresence>
 
         {shifts.length > 0 && !selectedShift && (
           <div className="mt-2 text-[11px] text-muted-foreground flex items-center gap-2">
-            <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 border-primary/30 text-primary">
+            <Badge
+              variant="outline"
+              className="text-[9px] px-1 py-0 h-4 border-primary/30 text-primary"
+            >
               {shifts.length}
             </Badge>
-            Virada{shifts.length === 1 ? "" : "s"} de sentimento detectada{shifts.length === 1 ? "" : "s"}. Clique para analisar.
+            Virada{shifts.length === 1 ? '' : 's'} de sentimento detectada
+            {shifts.length === 1 ? '' : 's'}. Clique para analisar.
           </div>
         )}
       </CardContent>

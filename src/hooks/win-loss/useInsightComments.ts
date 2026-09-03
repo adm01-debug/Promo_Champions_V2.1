@@ -33,7 +33,7 @@ export function useInsightComments(insightId: string | null) {
     queryFn: async (): Promise<InsightComment[]> => {
       if (!insightId) return [];
 
-      const { data, error } = await  
+      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
       (
         supabase as unknown as {
           from: (t: string) => {
@@ -123,7 +123,7 @@ export function useInsightComments(insightId: string | null) {
       const uid = userRes.user?.id;
       if (!uid) throw new Error('Não autenticado');
 
-      const { error } = await  
+      const { error } = await // eslint-disable-next-line no-restricted-syntax
       (
         supabase as unknown as {
           from: (t: string) => {
@@ -146,7 +146,7 @@ export function useInsightComments(insightId: string | null) {
 
   const deleteMutation = useMutation({
     mutationFn: async (commentId: string) => {
-      const { error } = await  
+      const { error } = await // eslint-disable-next-line no-restricted-syntax
       (
         supabase as unknown as {
           from: (t: string) => {

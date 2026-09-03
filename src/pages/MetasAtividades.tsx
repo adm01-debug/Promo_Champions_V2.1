@@ -351,7 +351,7 @@ export default function MetasAtividades() {
                                     ).getBoundingClientRect();
                                     handleStatInteraction(
                                       {
-                                         
+                                        // eslint-disable-line no-restricted-syntax
                                         clientX: rect.left + rect.width / 2,
                                         clientY: rect.top + rect.height / 2,
                                       } as unknown as import('react').MouseEvent,

@@ -33,7 +33,8 @@ export function useUserDashboardLayout() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return [...DEFAULT_LAYOUT];
 
-      const { data } = await (
+      const { data } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -66,7 +67,8 @@ export function useUserDashboardLayout() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error('Não autenticado');
 
-      const { error } = await (
+      const { error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             upsert: (p: Record<string, unknown>) => Promise<{ error: Error | null }>;

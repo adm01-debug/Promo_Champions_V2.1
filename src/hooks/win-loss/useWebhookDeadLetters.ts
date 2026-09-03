@@ -33,7 +33,8 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = 'pending') {
     queryKey: ['winloss-dead-letters', status],
     staleTime: 15_000,
     queryFn: async (): Promise<DeadLetter[]> => {
-      const { data, error } = await (
+      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {

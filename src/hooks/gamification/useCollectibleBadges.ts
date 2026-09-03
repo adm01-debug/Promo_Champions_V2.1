@@ -53,8 +53,9 @@ export function useCollectibleBadges(salespersonId?: string) {
         .eq('salesperson_id', salespersonId)
         .order('earned_at', { ascending: false });
       if (error) throw error;
-      return (data || []).map((eb) => ({
+      return (data || []).map(eb => ({
         ...eb,
+        // eslint-disable-next-line no-restricted-syntax
         badge: eb.badge as unknown as CollectibleBadge,
       })) as EarnedBadge[];
     },
@@ -70,7 +71,7 @@ export function useCollectibleBadges(salespersonId?: string) {
       if (error) throw error;
 
       const countMap = new Map<string, number>();
-      (data || []).forEach((r) => {
+      (data || []).forEach(r => {
         countMap.set(r.salesperson_id, (countMap.get(r.salesperson_id) || 0) + 1);
       });
 
@@ -88,15 +89,20 @@ export function useCollectibleBadges(salespersonId?: string) {
   const { badgesByCategory, earnedIds } = useMemo(() => {
     const ids = new Set(earnedBadges.data?.map(e => e.badge_id) || []);
 
-    const byCategory = (allBadges.data || []).reduce((acc, badge) => {
-      if (!acc[badge.category]) acc[badge.category] = [];
-      acc[badge.category].push({ ...badge, earned: ids.has(badge.id) });
-      return acc;
-    }, {} as Record<string, (CollectibleBadge & { earned: boolean })[]>);
+    const byCategory = (allBadges.data || []).reduce(
+      (acc, badge) => {
+        if (!acc[badge.category]) acc[badge.category] = [];
+        acc[badge.category].push({ ...badge, earned: ids.has(badge.id) });
+        return acc;
+      },
+      {} as Record<string, (CollectibleBadge & { earned: boolean })[]>
+    );
 
     // Sort each category by rarity
     Object.values(byCategory).forEach(badges => {
-      badges.sort((a, b) => (RARITY_ORDER[a.rarity] ?? 99) - (RARITY_ORDER[b.rarity] ?? 99));
+      badges.sort(
+        (a, b) => (RARITY_ORDER[a.rarity] ?? 99) - (RARITY_ORDER[b.rarity] ?? 99)
+      );
     });
 
     return { badgesByCategory: byCategory, earnedIds: ids };

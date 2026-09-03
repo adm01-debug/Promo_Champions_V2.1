@@ -28,7 +28,8 @@ export function useSentimentTrend() {
       const since = new Date();
       since.setMonth(since.getMonth() - 18);
 
-      const { data: recs } = await (
+      const { data: recs } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {

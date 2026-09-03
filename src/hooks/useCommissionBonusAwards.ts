@@ -53,9 +53,12 @@ export function useCommissionBonusAwards(opts?: {
       if (error) throw error;
 
       return (data ?? []).map((r: Record<string, unknown>) => ({
+        // eslint-disable-next-line no-restricted-syntax
         ...(r as unknown as CommissionBonusAward),
-        bonus_name: ((r.commission_bonuses as { name?: string } | null) ?? null)?.name ?? null,
-        salesperson_name: ((r.salespeople as { name?: string } | null) ?? null)?.name ?? null,
+        bonus_name:
+          ((r.commission_bonuses as { name?: string } | null) ?? null)?.name ?? null,
+        salesperson_name:
+          ((r.salespeople as { name?: string } | null) ?? null)?.name ?? null,
       }));
     },
   });
@@ -145,7 +148,10 @@ export function useDeleteAward() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('commission_bonus_awards').delete().eq('id', id);
+      const { error } = await supabase
+        .from('commission_bonus_awards')
+        .delete()
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

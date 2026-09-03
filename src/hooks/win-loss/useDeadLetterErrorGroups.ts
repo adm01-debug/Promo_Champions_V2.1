@@ -17,7 +17,8 @@ export function useDeadLetterErrorGroups() {
     queryKey: ['winloss-dead-letter-error-groups'],
     staleTime: 30_000,
     queryFn: async () => {
-      const { data, error } = await (
+      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {

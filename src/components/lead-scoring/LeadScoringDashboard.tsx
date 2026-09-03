@@ -214,7 +214,9 @@ export function LeadScoringDashboard() {
         'Factors',
       ];
       const csvCell = (v: string | number) =>
-        typeof v === 'number' ? String(v) : `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
+        typeof v === 'number'
+          ? String(v)
+          : `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
 
       const rankingRows = filteredLeads.map((l, i) => [
         i + 1,
@@ -291,9 +293,7 @@ export function LeadScoringDashboard() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
             </div>
             <div>
-              <h1 className="text-page-title italic uppercase">
-                Lead Intelligence
-              </h1>
+              <h1 className="text-page-title italic uppercase">Lead Intelligence</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
@@ -344,9 +344,7 @@ export function LeadScoringDashboard() {
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
           </div>
           <div>
-            <h1 className="text-page-title uppercase italic">
-              Lead Intelligence
-            </h1>
+            <h1 className="text-page-title uppercase italic">Lead Intelligence</h1>
             <div className="flex items-center gap-3 mt-1">
               <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">
                 Scoring Engine v4.0
@@ -963,6 +961,7 @@ export function LeadScoringDashboard() {
                                     <FactorBar
                                       label="Deal Momentum"
                                       value={
+                                         
                                         (
                                           lead.factors as unknown as Record<
                                             string,
@@ -979,6 +978,7 @@ export function LeadScoringDashboard() {
                                   <FactorBar
                                     label="Firmographics"
                                     value={
+                                      // eslint-disable-next-line no-restricted-syntax
                                       (lead.factors as unknown as Record<string, number>)
                                         .companySize
                                     }
@@ -987,6 +987,7 @@ export function LeadScoringDashboard() {
                                   <FactorBar
                                     label="ICP Fit"
                                     value={
+                                      // eslint-disable-next-line no-restricted-syntax
                                       (lead.factors as unknown as Record<string, number>)
                                         .industry
                                     }
@@ -995,6 +996,7 @@ export function LeadScoringDashboard() {
                                   <FactorBar
                                     label="Engajamento"
                                     value={
+                                      // eslint-disable-next-line no-restricted-syntax
                                       (lead.factors as unknown as Record<string, number>)
                                         .engagement
                                     }

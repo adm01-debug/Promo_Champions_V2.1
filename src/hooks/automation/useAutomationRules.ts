@@ -42,6 +42,7 @@ export const useAutomationRules = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as AutomationRule[];
     },
     staleTime: 60 * 1000,
@@ -61,6 +62,7 @@ export const useAutomationLogs = (workflowId?: string, limit = 100) => {
       if (workflowId) q = q.eq('workflow_id', workflowId);
       const { data, error } = await q;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as AutomationRunLog[];
     },
     staleTime: 60 * 1000,

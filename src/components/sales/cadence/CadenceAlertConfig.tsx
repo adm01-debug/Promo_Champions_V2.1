@@ -69,6 +69,7 @@ export function CadenceAlertConfig() {
     if (error) {
       toast.error('Erro ao carregar templates');
     } else {
+      // eslint-disable-next-line no-restricted-syntax
       setTemplates((data || []) as unknown as AlertTemplate[]);
     }
     setLoading(false);
@@ -102,7 +103,9 @@ export function CadenceAlertConfig() {
       setEditingId(null);
       fetchTemplates();
     } catch (error) {
-      toast.error('Erro ao salvar: ' + (error instanceof Error ? error.message : String(error)));
+      toast.error(
+        'Erro ao salvar: ' + (error instanceof Error ? error.message : String(error))
+      );
     }
   };
 

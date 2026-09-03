@@ -145,6 +145,7 @@ export function useScheduledSends(status: ScheduledSend['status'] | 'all' = 'pen
         .order('scheduled_for', { ascending: true })
         .limit(200);
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as ScheduledSend[];
     },
   });

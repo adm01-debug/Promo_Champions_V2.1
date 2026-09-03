@@ -18,7 +18,11 @@ interface EvaluationContext {
 }
 
 const BRL0 = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(n);
 
 /**
  * Pure evaluator — no I/O. Testable in isolation.
@@ -27,7 +31,7 @@ const BRL0 = (n: number) =>
  */
 export function evaluateBonus(
   bonus: CommissionBonus,
-  ctx: EvaluationContext,
+  ctx: EvaluationContext
 ): EligibleBonus | null {
   if (!bonus.is_active) return null;
   if (bonus.salesperson_id && bonus.salesperson_id !== ctx.salespersonId) return null;
@@ -50,7 +54,9 @@ export function evaluateBonus(
       reason: achieved
         ? `Marco de ${BRL0(milestone)} atingido`
         : `${BRL0(ctx.mtdRevenue)} de ${BRL0(milestone)} · faltam ${BRL0(Math.max(0, milestone - ctx.mtdRevenue))}`,
-      remainingLabel: achieved ? undefined : BRL0(Math.max(0, milestone - ctx.mtdRevenue)),
+      remainingLabel: achieved
+        ? undefined
+        : BRL0(Math.max(0, milestone - ctx.mtdRevenue)),
     };
   }
 
@@ -135,10 +141,11 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
 
       if (bonusesRes.error) throw bonusesRes.error;
 
+      // eslint-disable-next-line no-restricted-syntax
       const bonuses = (bonusesRes.data ?? []) as unknown as CommissionBonus[];
       const mtdRevenue = (salesRes.data ?? []).reduce(
         (acc, r: { amount: number | string | null }) => acc + Number(r.amount ?? 0),
-        0,
+        0
       );
       const currentStreak = Number(streakRes.data?.current_streak ?? 0);
       const totalSalesCount = allSalesRes.count ?? 0;
@@ -152,14 +159,16 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
       };
 
       return bonuses
-        .map((b) => evaluateBonus(b, ctx))
+        .map(b => evaluateBonus(b, ctx))
         .filter((b): b is EligibleBonus => b !== null);
     },
   });
 }
 
 /** Agrupa por tipo p/ UI. Função pura — memoize no call-site via useMemo se necessário. */
-export function groupBonusesByType(bonuses: EligibleBonus[]): Map<BonusType, EligibleBonus[]> {
+export function groupBonusesByType(
+  bonuses: EligibleBonus[]
+): Map<BonusType, EligibleBonus[]> {
   const map = new Map<BonusType, EligibleBonus[]>();
   for (const b of bonuses) {
     const arr = map.get(b.bonus_type) ?? [];

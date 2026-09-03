@@ -42,6 +42,7 @@ export const useClientPortfolio = (salespersonId?: string) => {
 
       const { data, error } = await query;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as ClientPortfolioItem[];
     },
   });

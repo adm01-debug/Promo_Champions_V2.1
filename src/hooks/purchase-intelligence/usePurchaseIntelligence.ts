@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface HeatmapCell {
   client_id: string;
@@ -38,7 +38,7 @@ export interface PurchaseIntelligence {
     churn_risk_score: number;
     risk_reasons: string[];
     recommended_action: string;
-    best_contact_window: "morning" | "afternoon" | "evening";
+    best_contact_window: 'morning' | 'afternoon' | 'evening';
     pattern_insight: string;
   } | null;
   ai_error?: string;
@@ -47,9 +47,9 @@ export interface PurchaseIntelligence {
 
 export function usePurchaseHeatmap(clientId?: string, months = 24) {
   return useQuery({
-    queryKey: ["purchase-heatmap", clientId ?? "all", months],
+    queryKey: ['purchase-heatmap', clientId ?? 'all', months],
     queryFn: async (): Promise<HeatmapCell[]> => {
-      const { data, error } = await supabase.rpc("get_client_purchase_heatmap", {
+      const { data, error } = await supabase.rpc('get_client_purchase_heatmap', {
         _client_id: clientId,
         _months: months,
       });
@@ -63,20 +63,24 @@ export function usePurchaseHeatmap(clientId?: string, months = 24) {
 
 export function usePurchaseIntelligence(clientId?: string, withAI = true) {
   return useQuery({
-    queryKey: ["purchase-intelligence", clientId, withAI],
+    queryKey: ['purchase-intelligence', clientId, withAI],
     queryFn: async (): Promise<PurchaseIntelligence | null> => {
       if (!clientId) return null;
       if (withAI) {
-        const { data, error } = await supabase.functions.invoke("purchase-intelligence-forecast", {
-          body: { client_id: clientId },
-        });
+        const { data, error } = await supabase.functions.invoke(
+          'purchase-intelligence-forecast',
+          {
+            body: { client_id: clientId },
+          }
+        );
         if (error) throw error;
         return data as PurchaseIntelligence;
       }
-      const { data, error } = await supabase.rpc("get_purchase_intelligence_summary", {
+      const { data, error } = await supabase.rpc('get_purchase_intelligence_summary', {
         _client_id: clientId,
       });
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return data as unknown as PurchaseIntelligence;
     },
     enabled: !!clientId,
@@ -97,12 +101,13 @@ export interface SeasonalityCell {
 
 export function useGlobalSeasonality() {
   return useQuery({
-    queryKey: ["purchase-seasonality"],
+    queryKey: ['purchase-seasonality'],
     queryFn: async (): Promise<SeasonalityCell[]> => {
       const { data, error } = await supabase
-        .from("client_purchase_seasonality" as never)
-        .select("*");
+        .from('client_purchase_seasonality' as never)
+        .select('*');
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as SeasonalityCell[];
     },
     staleTime: 30 * 60_000,

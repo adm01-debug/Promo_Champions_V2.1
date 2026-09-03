@@ -23,7 +23,8 @@ export function useWebhookAlerts(subscriptionId?: string | null) {
     queryFn: async (): Promise<WebhookAlert[]> => {
       const since = new Date(Date.now() - RECENT_HOURS * 60 * 60 * 1000).toISOString();
 
-      const query = (
+      const query = // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {

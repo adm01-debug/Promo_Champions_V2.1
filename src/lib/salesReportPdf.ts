@@ -175,8 +175,8 @@ function addTeamRanking(
     styles: { cellPadding: 2 },
   });
 
-   
   return (
+    // eslint-disable-next-line no-restricted-syntax
     (doc as unknown as Record<string, { finalY: number }>).lastAutoTable?.finalY + 8 ||
     startY + 60
   );

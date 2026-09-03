@@ -1,12 +1,16 @@
-import { FC } from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Sparkles } from "lucide-react";
-import { useDealHealthBatch, useRecalculateDealHealth, type HealthTier } from "@/hooks/deal-intelligence/useDealHealth";
-import { HealthKpiCards } from "./HealthKpiCards";
-import { HealthDistributionChart } from "./HealthDistributionChart";
-import { CriticalDealsTable } from "./CriticalDealsTable";
+import { FC } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RefreshCw, Sparkles } from 'lucide-react';
+import {
+  useDealHealthBatch,
+  useRecalculateDealHealth,
+  type HealthTier,
+} from '@/hooks/deal-intelligence/useDealHealth';
+import { HealthKpiCards } from './HealthKpiCards';
+import { HealthDistributionChart } from './HealthDistributionChart';
+import { CriticalDealsTable } from './CriticalDealsTable';
 
 interface BatchRow {
   id: string;
@@ -29,6 +33,7 @@ export const DealHealthHub: FC = () => {
   const { data, isLoading } = useDealHealthBatch();
   const recalc = useRecalculateDealHealth();
 
+  // eslint-disable-next-line no-restricted-syntax
   const rows = (data || []) as unknown as BatchRow[];
   const avgScore = rows.length
     ? Math.round(rows.reduce((acc, r) => acc + r.health_score, 0) / rows.length)
@@ -38,7 +43,9 @@ export const DealHealthHub: FC = () => {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24" />)}
+          {[0, 1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-24" />
+          ))}
         </div>
         <Skeleton className="h-64" />
         <Skeleton className="h-72" />
@@ -60,7 +67,10 @@ export const DealHealthHub: FC = () => {
             Saúde do Pipeline
           </h2>
           <p className="text-sm text-muted-foreground">
-            {rows.length} deals analisados · Score médio <span className="font-semibold text-foreground tabular-nums">{avgScore}/100</span>
+            {rows.length} deals analisados · Score médio{' '}
+            <span className="font-semibold text-foreground tabular-nums">
+              {avgScore}/100
+            </span>
           </p>
         </div>
         <Button
@@ -70,7 +80,9 @@ export const DealHealthHub: FC = () => {
           disabled={recalc.isPending}
           className="gap-2"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${recalc.isPending ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-3.5 w-3.5 ${recalc.isPending ? 'animate-spin' : ''}`}
+          />
           Recalcular Tudo
         </Button>
       </div>

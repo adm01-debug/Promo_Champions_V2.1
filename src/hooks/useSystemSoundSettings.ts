@@ -86,6 +86,7 @@ export function useSystemSoundSettings() {
       try {
         const audioContext = new (
           window.AudioContext ||
+          // eslint-disable-next-line no-restricted-syntax
           (window as unknown as { webkitAudioContext?: typeof AudioContext })
             .webkitAudioContext
         )();
@@ -169,6 +170,7 @@ export function useSystemSoundSettings() {
     try {
       const audioContext = new (
         window.AudioContext ||
+        // eslint-disable-next-line no-restricted-syntax
         (window as unknown as { webkitAudioContext?: typeof AudioContext })
           .webkitAudioContext
       )();

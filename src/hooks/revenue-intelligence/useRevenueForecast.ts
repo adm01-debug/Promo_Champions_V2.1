@@ -75,6 +75,7 @@ export function useRevenueForecast(
       q = ownerId ? q.eq('owner_id', ownerId) : q.is('owner_id', null);
       const { data, error } = await q.maybeSingle();
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data as unknown as RevenueForecastRow | null) ?? null;
     },
     staleTime: 60_000,

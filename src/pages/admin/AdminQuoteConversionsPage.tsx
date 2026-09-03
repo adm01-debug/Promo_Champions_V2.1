@@ -129,8 +129,8 @@ export default function AdminQuoteConversionsPage() {
     }
     setTrailLoading(true);
     try {
-      // eslint-disable-next-line no-restricted-syntax
-      const { data, error } = await (
+      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase.rpc as unknown as (
           fn: string,
           args: Record<string, unknown>

@@ -71,9 +71,9 @@ describe('classifyPasswordError', () => {
   });
 
   it('trata code undefined como string vazia', () => {
-     
     const r = classifyPasswordError({
       message: 'weak_password',
+      // eslint-disable-next-line no-restricted-syntax
       code: undefined as unknown as string,
     });
     expect(r.kind).toBe('unknown');

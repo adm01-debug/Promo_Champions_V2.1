@@ -1,7 +1,16 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { BarChart3, Trophy, Target } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { RechartsTooltipProps } from "@/types/recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
+import { BarChart3, Trophy, Target } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 interface SalespersonData {
   id: string;
@@ -18,26 +27,29 @@ interface SalesChartProps {
 // Custom tooltip content component (not using forwardRef since Recharts Tooltip handles the wrapper)
 const CustomTooltipContent = ({ active, payload }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
+    // eslint-disable-next-line no-restricted-syntax
     const data = payload[0].payload as unknown as SalespersonData;
     return (
       <div className="glass rounded-xl p-4 border border-border/50 shadow-xl animate-fade-in">
         <p className="font-semibold text-sm gradient-text">{data.name}</p>
         <div className="mt-2 space-y-1">
           <p className="text-xs text-muted-foreground flex justify-between gap-4">
-            Vendas: 
+            Vendas:
             <span className="text-foreground font-medium">
-              R$ {data.totalSales.toLocaleString("pt-BR")}
+              R$ {data.totalSales.toLocaleString('pt-BR')}
             </span>
           </p>
           <p className="text-xs text-muted-foreground flex justify-between gap-4">
-            Meta: 
+            Meta:
             <span className="text-foreground font-medium">
-              R$ {data.goalAmount.toLocaleString("pt-BR")}
+              R$ {data.goalAmount.toLocaleString('pt-BR')}
             </span>
           </p>
           <p className="text-xs text-muted-foreground flex justify-between gap-4">
-            Progresso: 
-            <span className={`font-medium ${data.goalProgress >= 100 ? "text-status-success" : "text-foreground"}`}>
+            Progresso:
+            <span
+              className={`font-medium ${data.goalProgress >= 100 ? 'text-status-success' : 'text-foreground'}`}
+            >
               {data.goalProgress.toFixed(1)}%
             </span>
           </p>
@@ -49,9 +61,9 @@ const CustomTooltipContent = ({ active, payload }: RechartsTooltipProps) => {
 };
 
 export function SalesChart({ salespeople }: SalesChartProps) {
-  const chartData = salespeople.map((sp) => ({
+  const chartData = salespeople.map(sp => ({
     ...sp,
-    shortName: sp.name.split(" ")[0],
+    shortName: sp.name.split(' ')[0],
   }));
 
   return (
@@ -63,51 +75,72 @@ export function SalesChart({ salespeople }: SalesChartProps) {
           </div>
           <div>
             <span className="gradient-text">Vendas por Vendedor</span>
-            <p className="text-xs text-muted-foreground font-normal mt-0.5">Comparativo de vendas vs meta mensal</p>
+            <p className="text-xs text-muted-foreground font-normal mt-0.5">
+              Comparativo de vendas vs meta mensal
+            </p>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px] animate-fade-in">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+            >
               <defs>
                 <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1}/>
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
                 </linearGradient>
                 <linearGradient id="successGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--status-success))" stopOpacity={1}/>
-                  <stop offset="100%" stopColor="hsl(var(--status-success))" stopOpacity={0.6}/>
+                  <stop
+                    offset="0%"
+                    stopColor="hsl(var(--status-success))"
+                    stopOpacity={1}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="hsl(var(--status-success))"
+                    stopOpacity={0.6}
+                  />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-              <XAxis 
-                dataKey="shortName" 
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
+                opacity={0.3}
+              />
+              <XAxis
+                dataKey="shortName"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                axisLine={{ stroke: 'hsl(var(--border))' }}
                 tickLine={false}
               />
-              <YAxis 
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+              <YAxis
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                axisLine={{ stroke: 'hsl(var(--border))' }}
                 tickLine={false}
-                tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                tickFormatter={value => `${(value / 1000).toFixed(0)}k`}
               />
-              <Tooltip content={CustomTooltipContent as never} cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }} />
-              <Bar 
-                dataKey="totalSales" 
-                radius={[8, 8, 0, 0]}
-                maxBarSize={60}
-              >
+              <Tooltip
+                content={CustomTooltipContent as never}
+                cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+              />
+              <Bar dataKey="totalSales" radius={[8, 8, 0, 0]} maxBarSize={60}>
                 {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry.goalProgress >= 100 ? "url(#successGradient)" : "url(#barGradient)"}
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      entry.goalProgress >= 100
+                        ? 'url(#successGradient)'
+                        : 'url(#barGradient)'
+                    }
                     style={{
-                      filter: entry.goalProgress >= 100 
-                        ? "drop-shadow(0 4px 12px hsl(var(--status-success) / 0.3))" 
-                        : "drop-shadow(0 4px 12px hsl(var(--primary) / 0.2))"
+                      filter:
+                        entry.goalProgress >= 100
+                          ? 'drop-shadow(0 4px 12px hsl(var(--status-success) / 0.3))'
+                          : 'drop-shadow(0 4px 12px hsl(var(--primary) / 0.2))',
                     }}
                   />
                 ))}

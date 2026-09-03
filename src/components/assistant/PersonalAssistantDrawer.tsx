@@ -150,9 +150,10 @@ export const PersonalAssistantDrawer: FC = () => {
           )}
         </AnimatePresence>
 
-        { }
+        {}
         <ScrollArea
           className="flex-1 px-4 py-3"
+          // eslint-disable-next-line no-restricted-syntax
           ref={scrollRef as unknown as React.Ref<HTMLDivElement>}
         >
           <section className="mb-4">

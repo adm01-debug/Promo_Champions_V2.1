@@ -44,7 +44,8 @@ export function useInsightTaskCreation() {
         source_insight_id: insightId,
       };
 
-      const { error } = await (
+      const { error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             insert: (r: Record<string, unknown>) => Promise<{ error: Error | null }>;

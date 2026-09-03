@@ -37,6 +37,7 @@ const fetchPeriodData = async (startDate: Date, endDate: Date): Promise<KPIData>
     });
 
     if (error) throw error;
+    // eslint-disable-next-line no-restricted-syntax
     return data as unknown as KPIData;
   } catch (error) {
     captureException(error, 'fetchPeriodData');
@@ -137,6 +138,7 @@ export const useDetailedKPIs = () => {
           prev_conversion,
           avg_closing_days,
           return_rate,
+          // eslint-disable-next-line no-restricted-syntax
         } = data as unknown as {
           current_avg_ticket: number;
           prev_avg_ticket: number;

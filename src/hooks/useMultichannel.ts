@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export type Channel = 'whatsapp' | 'email' | 'linkedin' | 'sms' | 'phone';
-export type InteractionStatus = 'sent' | 'delivered' | 'read' | 'replied' | 'failed' | 'scheduled';
+export type InteractionStatus =
+  'sent' | 'delivered' | 'read' | 'replied' | 'failed' | 'scheduled';
 export type Direction = 'inbound' | 'outbound';
 
 export interface MessageTemplate {
@@ -50,6 +51,7 @@ export const useMessageTemplates = (channel?: Channel) => {
 
       const { data, error } = await query;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as MessageTemplate[];
     },
   });
@@ -139,6 +141,7 @@ export const useChannelInteractions = (filters?: {
 
       const { data, error } = await query;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as ChannelInteraction[];
     },
   });
@@ -209,7 +212,11 @@ export const useChannelStats = (days = 30) => {
         .gte('created_at', since.toISOString());
 
       if (error) throw error;
-      const interactions = (data || []) as unknown as Pick<ChannelInteraction, 'channel' | 'direction' | 'status' | 'created_at'>[];
+      // eslint-disable-next-line no-restricted-syntax
+      const interactions = (data || []) as unknown as Pick<
+        ChannelInteraction,
+        'channel' | 'direction' | 'status' | 'created_at'
+      >[];
 
       const channels: Channel[] = ['whatsapp', 'email', 'linkedin', 'sms', 'phone'];
       const stats = channels.map(ch => {
@@ -221,9 +228,13 @@ export const useChannelStats = (days = 30) => {
           inbound: chData.filter(i => i.direction === 'inbound').length,
           replied: chData.filter(i => i.status === 'replied').length,
           failed: chData.filter(i => i.status === 'failed').length,
-          responseRate: chData.length > 0
-            ? Math.round((chData.filter(i => i.status === 'replied').length / chData.length) * 100)
-            : 0,
+          responseRate:
+            chData.length > 0
+              ? Math.round(
+                  (chData.filter(i => i.status === 'replied').length / chData.length) *
+                    100
+                )
+              : 0,
         };
       });
 

@@ -21,7 +21,9 @@ export function useSavedFilters(entityType: string) {
   const { data: filters = [], isLoading } = useQuery({
     queryKey: ['saved-filters', entityType],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return [];
 
       const { data, error } = await supabase
@@ -43,8 +45,18 @@ export function useSavedFilters(entityType: string) {
   const defaultFilter = filters.find(f => f.is_default) || null;
 
   const saveFilter = useMutation({
-    mutationFn: async ({ name, filterValues, isDefault = false }: { name: string; filterValues: Record<string, unknown>; isDefault?: boolean }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+    mutationFn: async ({
+      name,
+      filterValues,
+      isDefault = false,
+    }: {
+      name: string;
+      filterValues: Record<string, unknown>;
+      isDefault?: boolean;
+    }) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Não autenticado');
 
       const { data, error } = await supabase
@@ -52,6 +64,7 @@ export function useSavedFilters(entityType: string) {
         .insert({
           name,
           entity_type: entityType,
+          // eslint-disable-next-line no-restricted-syntax
           filters: filterValues as unknown as Json,
           is_default: isDefault,
           user_id: user.id,
@@ -70,16 +83,23 @@ export function useSavedFilters(entityType: string) {
   });
 
   const updateFilter = useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string; name?: string; filters?: Record<string, unknown>; is_default?: boolean }) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: {
+      id: string;
+      name?: string;
+      filters?: Record<string, unknown>;
+      is_default?: boolean;
+    }) => {
       const payload: TableUpdate<'saved_filters'> = {};
       if (updates.name !== undefined) payload.name = updates.name;
-      if (updates.filters !== undefined) payload.filters = updates.filters as unknown as Json;
+      // eslint-disable-next-line no-restricted-syntax
+      if (updates.filters !== undefined)
+        payload.filters = updates.filters as unknown as Json;
       if (updates.is_default !== undefined) payload.is_default = updates.is_default;
 
-      const { error } = await supabase
-        .from('saved_filters')
-        .update(payload)
-        .eq('id', id);
+      const { error } = await supabase.from('saved_filters').update(payload).eq('id', id);
 
       if (error) throw error;
     },
@@ -92,10 +112,7 @@ export function useSavedFilters(entityType: string) {
 
   const deleteFilter = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('saved_filters')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('saved_filters').delete().eq('id', id);
 
       if (error) throw error;
     },

@@ -39,8 +39,8 @@ export function WeakCoverageDealsTable({
           </p>
         ) : (
           <div className="space-y-2">
-            { }
-            {(
+            { 
+            (
               data as unknown as Array<{
                 id: string;
                 sale_id: string;

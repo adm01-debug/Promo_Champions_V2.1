@@ -8,13 +8,7 @@ import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 
 // Types matching database schema
 export type ActivityType =
-  | 'call'
-  | 'email'
-  | 'meeting'
-  | 'linkedin'
-  | 'whatsapp'
-  | 'note'
-  | 'other';
+  'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
 export type ActivityOutcome =
   | 'connected'
   | 'no_answer'
@@ -353,6 +347,7 @@ export const useSDRLeaderboard = () => {
       (data || []).forEach(a => {
         const id = a.salesperson_id;
         if (!id) return;
+        // eslint-disable-next-line no-restricted-syntax
         const salespeople = a.salespeople as unknown as {
           name: string;
           avatar_url: string | null;

@@ -1,16 +1,22 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { History, AlertTriangle, Settings2, Check, X, Calendar } from "lucide-react";
-import { subDays, subMonths, startOfDay } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import { AlertHistoryItem } from "./AlertHistoryItem";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { History, AlertTriangle, Settings2, Check, X, Calendar } from 'lucide-react';
+import { subDays, subMonths, startOfDay } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import { AlertHistoryItem } from './AlertHistoryItem';
 
 interface SDRDetail {
   id: string;
@@ -31,28 +37,27 @@ interface SDRAlertHistoryItem {
   admin_emails: string[];
 }
 
-type PeriodFilter = "7d" | "30d" | "90d" | "all";
+type PeriodFilter = '7d' | '30d' | '90d' | 'all';
 
 export function SDRAlertHistory() {
   const [isEditingThreshold, setIsEditingThreshold] = useState(false);
   const [isEditingRejection, setIsEditingRejection] = useState(false);
-  const [thresholdValue, setThresholdValue] = useState("3");
-  const [rejectionThreshold, setRejectionThreshold] = useState("30");
-  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>("30d");
+  const [thresholdValue, setThresholdValue] = useState('3');
+  const [rejectionThreshold, setRejectionThreshold] = useState('30');
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('30d');
   const queryClient = useQueryClient();
-
 
   // Get current threshold from notification_preferences
   const { data: preferences } = useQuery({
-    queryKey: ["notification-preferences-threshold"],
+    queryKey: ['notification-preferences-threshold'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("notification_preferences")
-        .select("consecutive_days_threshold")
+        .from('notification_preferences')
+        .select('consecutive_days_threshold')
         .limit(1)
         .single();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error && error.code !== 'PGRST116') throw error;
       return data?.consecutive_days_threshold || 3;
     },
     staleTime: 60000,
@@ -68,29 +73,29 @@ export function SDRAlertHistory() {
   const updateThresholdMutation = useMutation({
     mutationFn: async (newThreshold: number) => {
       const { error } = await supabase
-        .from("notification_preferences")
+        .from('notification_preferences')
         .update({ consecutive_days_threshold: newThreshold })
-        .neq("id", "00000000-0000-0000-0000-000000000000"); // Update all rows
-      
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Update all rows
+
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Threshold atualizado");
+      toast.success('Threshold atualizado');
       setIsEditingThreshold(false);
-      queryClient.invalidateQueries({ queryKey: ["notification-preferences-threshold"] });
+      queryClient.invalidateQueries({ queryKey: ['notification-preferences-threshold'] });
     },
     onError: (error: Error) => {
-      toast.error("Erro ao atualizar threshold", { description: error.message });
+      toast.error('Erro ao atualizar threshold', { description: error.message });
     },
   });
 
   const getDateFilter = () => {
     switch (periodFilter) {
-      case "7d":
+      case '7d':
         return startOfDay(subDays(new Date(), 7)).toISOString();
-      case "30d":
+      case '30d':
         return startOfDay(subDays(new Date(), 30)).toISOString();
-      case "90d":
+      case '90d':
         return startOfDay(subMonths(new Date(), 3)).toISOString();
       default:
         return null;
@@ -98,17 +103,17 @@ export function SDRAlertHistory() {
   };
 
   const { data: history, isLoading } = useQuery({
-    queryKey: ["sdr-alert-history", periodFilter],
+    queryKey: ['sdr-alert-history', periodFilter],
     queryFn: async () => {
       let query = supabase
-        .from("sdr_alert_history")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('sdr_alert_history')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(50);
 
       const dateFilter = getDateFilter();
       if (dateFilter) {
-        query = query.gte("created_at", dateFilter);
+        query = query.gte('created_at', dateFilter);
       }
 
       const { data, error } = await query;
@@ -116,7 +121,10 @@ export function SDRAlertHistory() {
       if (error) throw error;
       return (data || []).map(item => ({
         ...item,
-        sdr_details: (Array.isArray(item.sdr_details) ? item.sdr_details : []) as unknown as SDRDetail[],
+        // eslint-disable-next-line no-restricted-syntax
+        sdr_details: (Array.isArray(item.sdr_details)
+          ? item.sdr_details
+          : []) as unknown as SDRDetail[],
       })) as SDRAlertHistoryItem[];
     },
     staleTime: 60000,
@@ -125,7 +133,7 @@ export function SDRAlertHistory() {
   const handleSaveThreshold = () => {
     const value = parseInt(thresholdValue);
     if (isNaN(value) || value < 1 || value > 30) {
-      toast.error("Valor inválido", { description: "Insira um número entre 1 e 30" });
+      toast.error('Valor inválido', { description: 'Insira um número entre 1 e 30' });
       return;
     }
     updateThresholdMutation.mutate(value);
@@ -158,7 +166,7 @@ export function SDRAlertHistory() {
             </div>
             Histórico de Alertas SDR
           </CardTitle>
-          
+
           <div className="flex flex-wrap items-center gap-3">
             {/* Rejection Threshold Editor */}
             {isEditingRejection ? (
@@ -168,7 +176,7 @@ export function SDRAlertHistory() {
                   min={1}
                   max={100}
                   value={rejectionThreshold}
-                  onChange={(e) => setRejectionThreshold(e.target.value)}
+                  onChange={e => setRejectionThreshold(e.target.value)}
                   className="w-12 h-7 text-[10px] text-center"
                 />
                 <span className="text-[10px] text-muted-foreground">% Rejeição</span>
@@ -178,7 +186,7 @@ export function SDRAlertHistory() {
                   aria-label="Salvar limite de rejeição"
                   className="h-6 w-6"
                   onClick={() => {
-                    toast.success("Limite de rejeição atualizado");
+                    toast.success('Limite de rejeição atualizado');
                     setIsEditingRejection(false);
                   }}
                 >
@@ -208,7 +216,10 @@ export function SDRAlertHistory() {
             )}
 
             {/* Period Filter */}
-            <Select value={periodFilter} onValueChange={(v) => setPeriodFilter(v as PeriodFilter)}>
+            <Select
+              value={periodFilter}
+              onValueChange={v => setPeriodFilter(v as PeriodFilter)}
+            >
               <SelectTrigger className="w-[120px] h-8 text-xs">
                 <Calendar className="h-3 w-3 mr-1" />
                 <SelectValue />
@@ -229,7 +240,7 @@ export function SDRAlertHistory() {
                   min={1}
                   max={30}
                   value={thresholdValue}
-                  onChange={(e) => setThresholdValue(e.target.value)}
+                  onChange={e => setThresholdValue(e.target.value)}
                   className="w-14 h-8 text-xs text-center"
                 />
                 <span className="text-xs text-muted-foreground">dias</span>
@@ -244,7 +255,8 @@ export function SDRAlertHistory() {
                   <Check className="h-3.5 w-3.5 text-success" />
                 </Button>
                 <Button
-                  size="icon" aria-label="Confirmar"
+                  size="icon"
+                  aria-label="Confirmar"
                   variant="ghost"
                   className="h-7 w-7"
                   onClick={() => {
@@ -282,7 +294,7 @@ export function SDRAlertHistory() {
         ) : (
           <ScrollArea className="h-[300px] pr-4">
             <div className="space-y-3">
-              {history.map((item) => (
+              {history.map(item => (
                 <AlertHistoryItem key={item.id} item={item} />
               ))}
             </div>

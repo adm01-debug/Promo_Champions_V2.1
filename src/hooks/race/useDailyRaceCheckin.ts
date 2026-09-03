@@ -8,7 +8,12 @@ export interface DailyCheckinResult {
   already_checked_in_today: boolean;
   streak_days: number;
   previous_streak: number;
-  today: { rank: number; progress: number; total_sales: number; deals_count: number } | null;
+  today: {
+    rank: number;
+    progress: number;
+    total_sales: number;
+    deals_count: number;
+  } | null;
   previous: {
     date: string;
     rank: number;
@@ -16,7 +21,12 @@ export interface DailyCheckinResult {
     total_sales: number;
     deals_count: number;
   } | null;
-  delta: { rank: number; progress: number; total_sales: number; deals_count: number } | null;
+  delta: {
+    rank: number;
+    progress: number;
+    total_sales: number;
+    deals_count: number;
+  } | null;
 }
 
 interface Opts {
@@ -48,6 +58,7 @@ export function useDailyRaceCheckin({ seasonId, salespersonId, enabled = true }:
         _salesperson_id: salespersonId,
       });
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       const parsed = rpcData as unknown as DailyCheckinResult;
       setData(parsed);
       setOpen(true);

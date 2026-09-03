@@ -63,7 +63,8 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
       // we cast the builder to keep the file type-safe without touching the
       // auto-generated types module.
 
-      const q = (
+      const q = // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {

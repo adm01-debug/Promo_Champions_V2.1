@@ -32,13 +32,17 @@ export function useKudos() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('kudos')
-        .select('*, from:from_salesperson_id(name, avatar_url), to:to_salesperson_id(name, avatar_url)')
+        .select(
+          '*, from:from_salesperson_id(name, avatar_url), to:to_salesperson_id(name, avatar_url)'
+        )
         .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(30);
       if (error) throw error;
-      return (data || []).map((k) => {
+      return (data || []).map(k => {
+        // eslint-disable-next-line no-restricted-syntax
         const from = k.from as unknown as Record<string, string> | null;
+        // eslint-disable-next-line no-restricted-syntax
         const to = k.to as unknown as Record<string, string> | null;
         return {
           ...k,
@@ -54,16 +58,30 @@ export function useKudos() {
   useEffect(() => {
     const channel = supabase
       .channel('kudos-rt')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'kudos' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['kudos'] });
-      })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'kudos' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['kudos'] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [queryClient]);
 
   const sendKudos = useMutation({
-    mutationFn: async ({ fromId, toId, message, type = 'recognition' }: {
-      fromId: string; toId: string; message: string; type?: string;
+    mutationFn: async ({
+      fromId,
+      toId,
+      message,
+      type = 'recognition',
+    }: {
+      fromId: string;
+      toId: string;
+      message: string;
+      type?: string;
     }) => {
       const { error } = await supabase.from('kudos').insert({
         from_salesperson_id: fromId,

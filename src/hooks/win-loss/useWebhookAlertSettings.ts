@@ -26,7 +26,8 @@ export function useWebhookAlertSettings() {
     queryFn: async () => {
       // Cast: the auto-generated types module doesn't yet include this table.
 
-      const { data, error } = await (
+      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -59,7 +60,8 @@ export function useWebhookAlertSettings() {
       const id = query.data?.id;
       if (!id) throw new Error('Configurações não encontradas. Recarregue a página.');
 
-      const { error } = await (
+      const { error } = await // eslint-disable-next-line no-restricted-syntax
+      (
         supabase as unknown as {
           from: (t: string) => {
             update: (v: WebhookAlertSettingsInput) => {

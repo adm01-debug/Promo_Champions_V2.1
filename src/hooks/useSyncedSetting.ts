@@ -101,6 +101,7 @@ export function useSyncedSetting<T>(opts: Options<T>) {
             {
               user_id: userId,
               key: opts.key,
+              // eslint-disable-next-line no-restricted-syntax
               value: next as unknown as import('@/integrations/supabase/types').Json,
               updated_at: updatedAt,
             },

@@ -10,7 +10,8 @@ export interface DeadLettersCounts {
 }
 
 async function countByStatus(status: DeadLetterStatus): Promise<number> {
-  const { count, error } = await (
+  const { count, error } = await // eslint-disable-next-line no-restricted-syntax
+  (
     supabase as unknown as {
       from: (t: string) => {
         select: (
