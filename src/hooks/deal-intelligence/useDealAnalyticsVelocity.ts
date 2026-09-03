@@ -50,15 +50,24 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
       const saleIds = (sales || []).map(s => s.id);
 
       // Get stage history
-      type StageRow = { sale_id: string | null; stage: string; entered_at: string; exited_at: string | null };
-      const stageHistory = saleIds.length > 0 ? await chunkedIn<StageRow>(
-        saleIds,
-        (chunk) => supabase
-          .from('deal_stage_history')
-          .select('sale_id, stage, entered_at, exited_at')
-          .in('sale_id', chunk as string[]) as unknown as PostgrestLike<StageRow>,
-        { parallel: true, label: 'deal-velocity.stage-history' },
-      ) : [];
+      type StageRow = {
+        sale_id: string | null;
+        stage: string;
+        entered_at: string;
+        exited_at: string | null;
+      };
+      const stageHistory =
+        saleIds.length > 0
+          ? await chunkedIn<StageRow>(
+              saleIds,
+              chunk =>
+                supabase // eslint-disable-line no-restricted-syntax
+                  .from('deal_stage_history')
+                  .select('sale_id, stage, entered_at, exited_at')
+                  .in('sale_id', chunk as string[]) as unknown as PostgrestLike<StageRow>,
+              { parallel: true, label: 'deal-velocity.stage-history' }
+            )
+          : [];
 
       // Calculate velocities per stage
       const stageMap = new Map<string, number[]>();
@@ -104,11 +113,15 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
 
       const overallAverage =
         dealDurations.length > 0
-          ? Math.round(dealDurations.reduce((sum, d) => sum + d, 0) / dealDurations.length)
+          ? Math.round(
+              dealDurations.reduce((sum, d) => sum + d, 0) / dealDurations.length
+            )
           : 0;
 
       const totalAvgDays =
-        stages.length > 0 ? stages.reduce((sum, s) => sum + s.avgDays, 0) : overallAverage;
+        stages.length > 0
+          ? stages.reduce((sum, s) => sum + s.avgDays, 0)
+          : overallAverage;
 
       const bottlenecks = stages.filter(s => s.bottleneck).map(s => s.stage);
 

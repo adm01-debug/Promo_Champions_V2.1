@@ -33,7 +33,8 @@ export function useInsightComments(insightId: string | null) {
     queryFn: async (): Promise<InsightComment[]> => {
       if (!insightId) return [];
 
-      const { data, error } = await (
+      const { data, error } = await  
+      (
         supabase as unknown as {
           from: (t: string) => {
             select: (s: string) => {
@@ -67,10 +68,9 @@ export function useInsightComments(insightId: string | null) {
       }>(
         authorIds,
         chunk =>
-          supabase
+          supabase // eslint-disable-line no-restricted-syntax
             .from('salespeople_public')
             .select('id, name, avatar_url')
-
             .in('id', chunk as string[]) as unknown as PostgrestLike<{
             id: string | null;
             name: string | null;
@@ -123,7 +123,8 @@ export function useInsightComments(insightId: string | null) {
       const uid = userRes.user?.id;
       if (!uid) throw new Error('Não autenticado');
 
-      const { error } = await (
+      const { error } = await  
+      (
         supabase as unknown as {
           from: (t: string) => {
             insert: (row: Record<string, unknown>) => Promise<{ error: Error | null }>;
@@ -145,7 +146,8 @@ export function useInsightComments(insightId: string | null) {
 
   const deleteMutation = useMutation({
     mutationFn: async (commentId: string) => {
-      const { error } = await (
+      const { error } = await  
+      (
         supabase as unknown as {
           from: (t: string) => {
             delete: () => {

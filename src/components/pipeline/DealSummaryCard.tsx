@@ -52,7 +52,8 @@ function generateLocalSummary(deal: {
   }
 
   if (daysSince > 7) risks.push(`Sem atualização há ${daysSince} dias`);
-  if ((deal.amount ?? 0) > 50000 && daysSince > 5) risks.push('Deal de alto valor estagnado');
+  if ((deal.amount ?? 0) > 50000 && daysSince > 5)
+    risks.push('Deal de alto valor estagnado');
   if (totalDays > 60) risks.push('Ciclo de venda acima da média');
 
   return { summary, next_steps, risks };
@@ -63,18 +64,29 @@ export const useDealSummaries = (dealIds: string[]) => {
     queryKey: ['deal-summaries', dealIds],
     queryFn: async () => {
       if (!dealIds.length) return [];
-      type SaleRow = { id: string; client_name: string; amount: number | null; status: string; created_at: string; updated_at: string };
+      type SaleRow = {
+        id: string;
+        client_name: string;
+        amount: number | null;
+        status: string;
+        created_at: string;
+        updated_at: string;
+      };
       const data = await chunkedIn<SaleRow>(
         dealIds,
-        (chunk) => supabase
-          .from('sales')
-          .select('id, client_name, amount, status, created_at, updated_at')
-          .in('id', chunk as string[]) as unknown as PostgrestLike<SaleRow>,
-        { parallel: true, label: 'deal-summaries' },
+        chunk =>
+          supabase // eslint-disable-line no-restricted-syntax
+            .from('sales')
+            .select('id, client_name, amount, status, created_at, updated_at')
+            .in('id', chunk as string[]) as unknown as PostgrestLike<SaleRow>,
+        { parallel: true, label: 'deal-summaries' }
       );
 
       return data.map(d => {
-        const { summary, next_steps, risks } = generateLocalSummary({ ...d, amount: d.amount ?? 0 });
+        const { summary, next_steps, risks } = generateLocalSummary({
+          ...d,
+          amount: d.amount ?? 0,
+        });
         const daysSince = Math.floor(
           (Date.now() - new Date(d.updated_at).getTime()) / 86400000
         );

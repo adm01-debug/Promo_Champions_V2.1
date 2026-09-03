@@ -4,13 +4,7 @@ import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { format } from 'date-fns';
 
 export type ActionType =
-  | 'email'
-  | 'call'
-  | 'linkedin'
-  | 'whatsapp'
-  | 'meeting'
-  | 'task'
-  | 'other';
+  'email' | 'call' | 'linkedin' | 'whatsapp' | 'meeting' | 'task' | 'other';
 export type CadenceStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 export type CadenceTaskStatus = 'pending' | 'completed' | 'skipped';
 
@@ -131,15 +125,24 @@ export function useActiveCadencesBySaleIds(saleIds: string[]) {
     queryKey: ['active-cadences-by-sales', saleIds],
     enabled: saleIds.length > 0,
     queryFn: async () => {
-      type Row = { sale_id: string | null; status: string; current_step: number; cadence: { name: string } | null };
+      type Row = {
+        sale_id: string | null;
+        status: string;
+        current_step: number;
+        cadence: { name: string } | null;
+      };
       const data = await chunkedIn<Row>(
         saleIds,
-        (chunk) => supabase
-          .from('prospect_cadences')
-          .select(`sale_id, status, current_step, cadence:cadences(name)`)
-          .in('sale_id', chunk as string[])
-          .in('status', ['active', 'paused']) as unknown as PromiseLike<{ data: Row[] | null; error: { message?: string } | null }>,
-        { parallel: true, label: 'active-cadences-by-sales' },
+        chunk =>
+          supabase // eslint-disable-line no-restricted-syntax
+            .from('prospect_cadences')
+            .select(`sale_id, status, current_step, cadence:cadences(name)`)
+            .in('sale_id', chunk as string[])
+            .in('status', ['active', 'paused']) as unknown as PromiseLike<{
+            data: Row[] | null;
+            error: { message?: string } | null;
+          }>,
+        { parallel: true, label: 'active-cadences-by-sales' }
       );
 
       const cadenceMap: Record<

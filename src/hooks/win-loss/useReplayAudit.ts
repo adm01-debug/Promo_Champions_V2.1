@@ -57,12 +57,11 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
       const data = await chunkedIn<unknown>(
         deadLetterIds,
         chunk =>
-          supabase
+          supabase // eslint-disable-line no-restricted-syntax
             .from('winloss_webhook_replay_audit')
             .select('*')
             .in('dead_letter_id', chunk as string[])
             .order('created_at', { ascending: false })
-
             .limit(500) as unknown as PromiseLike<{
             data: unknown[] | null;
             error: { message?: string } | null;

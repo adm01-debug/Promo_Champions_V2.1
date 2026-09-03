@@ -351,6 +351,7 @@ export default function MetasAtividades() {
                                     ).getBoundingClientRect();
                                     handleStatInteraction(
                                       {
+                                         
                                         clientX: rect.left + rect.width / 2,
                                         clientY: rect.top + rect.height / 2,
                                       } as unknown as import('react').MouseEvent,

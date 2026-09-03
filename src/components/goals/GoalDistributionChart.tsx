@@ -33,8 +33,17 @@ interface ActiveShapeProps {
 }
 
 const renderActiveShape = (props: unknown) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload: _payload, value } =
-    props as ActiveShapeProps;
+  const {
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+    payload: _payload,
+    value,
+  } = props as ActiveShapeProps;
   return (
     <g>
       <text
@@ -122,32 +131,36 @@ export const GoalDistributionChart: FC<GoalDistributionChartProps> = ({
         <div className="relative h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              {React.createElement(Pie as unknown as React.ComponentType<Record<string, unknown>>, {
-                activeIndex,
-                activeShape: renderActiveShape,
-                data,
-                cx: '50%',
-                cy: '50%',
-                innerRadius: 65,
-                outerRadius: 85,
-                paddingAngle: 6,
-                dataKey: 'value',
-                stroke: 'none',
-                onMouseEnter: (_: unknown, index: number) => setActiveIndex(index),
-                children: data.map((entry, i) => (
-                  <Cell
-                    key={i}
-                    fill={entry.color}
-                    className="transition-all duration-300 outline-none"
-                    style={{
-                      filter:
-                        activeIndex === i
-                          ? `drop-shadow(0 0 8px ${entry.color})`
-                          : 'none',
-                    }}
-                  />
-                )),
-              })}
+              { }
+              {React.createElement(
+                Pie as unknown as React.ComponentType<Record<string, unknown>>,
+                {
+                  activeIndex,
+                  activeShape: renderActiveShape,
+                  data,
+                  cx: '50%',
+                  cy: '50%',
+                  innerRadius: 65,
+                  outerRadius: 85,
+                  paddingAngle: 6,
+                  dataKey: 'value',
+                  stroke: 'none',
+                  onMouseEnter: (_: unknown, index: number) => setActiveIndex(index),
+                  children: data.map((entry, i) => (
+                    <Cell
+                      key={i}
+                      fill={entry.color}
+                      className="transition-all duration-300 outline-none"
+                      style={{
+                        filter:
+                          activeIndex === i
+                            ? `drop-shadow(0 0 8px ${entry.color})`
+                            : 'none',
+                      }}
+                    />
+                  )),
+                }
+              )}
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
