@@ -39,8 +39,16 @@ jobs:
         id: env-check
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            echo "::warning::Integration-test secrets absent — skipping live suite"
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              # PRs de fork/Dependabot não recebem secrets — skip legítimo e visível.
+              echo "::warning::Integration-test secrets absent — skipping live suite"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              # Em schedule/push/dispatch os secrets DEVEM existir; ausência é
+              # configuração quebrada, não motivo para um verde silencioso.
+              echo "::error::Integration-test secrets absent on ${{ github.event_name }} — fix repo secrets"
+              exit 1
+            fi
           fi
 
       - name: Run Deno regression suite (13 tests)

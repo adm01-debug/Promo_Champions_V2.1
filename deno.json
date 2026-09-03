@@ -1,15 +1,16 @@
 {
   "tasks": {
-    "check": "deno check src/main.ts"
+    "check": "deno check src/main.ts",
+    "lint:functions": "deno lint"
   },
   "lint": {
-    "files": {
-      "include": ["src"]
+    "include": ["supabase/functions"],
+    "rules": {
+      "tags": ["recommended"],
+      "exclude": ["require-await"]
     }
   },
   "fmt": {
-    "files": {
-      "include": ["src"]
-    }
+    "include": ["supabase/functions"]
   }
 }

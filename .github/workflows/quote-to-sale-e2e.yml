@@ -53,7 +53,11 @@ jobs:
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
           if [ -z "$E2E_TEST_EMAIL" ]; then
-            echo "::warning::E2E_TEST_EMAIL ausente (fork) — pulando invariantes"
+            if [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ] && [ "${{ github.actor }}" != "dependabot[bot]" ]; then
+              echo "::error::E2E_TEST_EMAIL ausente em PR interna — secrets do repo quebrados"
+              exit 1
+            fi
+            echo "::warning::E2E_TEST_EMAIL ausente (fork/dependabot) — pulando invariantes"
             exit 0
           fi
           npx tsx scripts/verify-quote-to-sale-invariants.ts
@@ -79,8 +83,12 @@ jobs:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
         run: |
           if [ -z "$E2E_TEST_EMAIL" ]; then
+            if [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ] && [ "${{ github.actor }}" != "dependabot[bot]" ]; then
+              echo "::error::E2E_TEST_EMAIL ausente em PR interna — secrets do repo quebrados"
+              exit 1
+            fi
             echo "run=false" >> $GITHUB_OUTPUT
-            echo "::warning::E2E_TEST_EMAIL ausente — E2E pulada (compat com forks)"
+            echo "::warning::E2E_TEST_EMAIL ausente (fork/dependabot) — E2E pulada"
           else
             echo "run=true" >> $GITHUB_OUTPUT
           fi

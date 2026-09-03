@@ -15,7 +15,14 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
-    
+    ignore:
+      # Preso à linha do vitest 1.x até o upgrade coordenado vitest@3 +
+      # coverage-v8 (PR #88 reverteu um bump de major incompatível).
+      - dependency-name: "@vitest/coverage-v8"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
