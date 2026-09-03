@@ -47,9 +47,9 @@ export function useSecurityAlertSoundSettings() {
     (soundType: SecurityAlertSoundType = selectedSound) => {
       if (soundType === 'none' || volume === 0) return;
 
-      // eslint-disable-next-line no-restricted-syntax
       const AudioCtx =
         window.AudioContext ||
+        // eslint-disable-next-line no-restricted-syntax
         (window as unknown as { webkitAudioContext: typeof AudioContext })
           .webkitAudioContext;
       const audioContext = new AudioCtx();

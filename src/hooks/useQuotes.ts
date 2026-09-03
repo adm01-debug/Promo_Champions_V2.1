@@ -338,8 +338,8 @@ export function useConvertQuoteToSale() {
       }
 
       const t0 = performance.now();
-      // eslint-disable-next-line no-restricted-syntax
-      const { data, error } = await (
+      const { data, error } = await  
+      (
         supabase.rpc as unknown as (
           fn: string,
           args: Record<string, unknown>

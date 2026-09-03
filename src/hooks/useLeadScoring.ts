@@ -195,9 +195,9 @@ export const useLeadScoring = (leadId?: string) => {
               labels: bestLabels,
               bestDealId,
               trend: trendMap.get(bestDealId || '') || [],
-              // eslint-disable-next-line no-restricted-syntax
               churnRisk: bestDealId
-                ? (riskMap.get(bestDealId) as unknown as ChurnRisk)
+                ? // eslint-disable-next-line no-restricted-syntax
+                  (riskMap.get(bestDealId) as unknown as ChurnRisk)
                 : undefined,
             };
           }

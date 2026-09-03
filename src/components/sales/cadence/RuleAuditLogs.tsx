@@ -48,8 +48,8 @@ export function RuleAuditLogs() {
           table: 'intent_audit_logs',
         },
         payload => {
-          // eslint-disable-next-line no-restricted-syntax
           setLogs(prev =>
+            // eslint-disable-next-line no-restricted-syntax
             [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50)
           );
         }

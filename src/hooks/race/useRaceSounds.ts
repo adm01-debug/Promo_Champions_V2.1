@@ -28,9 +28,9 @@ export function useRaceSounds() {
   const ensureCtx = useCallback(() => {
     if (typeof window === 'undefined') return null;
     if (!ctxRef.current) {
-      // eslint-disable-next-line no-restricted-syntax
       const Ctor =
         window.AudioContext ||
+        // eslint-disable-next-line no-restricted-syntax
         (window as unknown as { webkitAudioContext: typeof AudioContext })
           .webkitAudioContext;
       if (!Ctor) return null;

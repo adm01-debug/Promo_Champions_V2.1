@@ -94,8 +94,8 @@ export function useSavedFilters(entityType: string) {
     }) => {
       const payload: TableUpdate<'saved_filters'> = {};
       if (updates.name !== undefined) payload.name = updates.name;
-      // eslint-disable-next-line no-restricted-syntax
       if (updates.filters !== undefined)
+        // eslint-disable-next-line no-restricted-syntax
         payload.filters = updates.filters as unknown as Json;
       if (updates.is_default !== undefined) payload.is_default = updates.is_default;
 

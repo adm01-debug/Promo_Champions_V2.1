@@ -26,9 +26,9 @@ export const useCreateClient = () => {
   const { index } = useIndexEntity();
 
   return useMutation({
-    // eslint-disable-next-line no-restricted-syntax
     mutationFn: (input: TableInsert<'clients'>) =>
       clientService.createClient(
+        // eslint-disable-next-line no-restricted-syntax
         input as unknown as Partial<Client> & Record<string, unknown>
       ),
     onSuccess: data => {
@@ -46,9 +46,9 @@ export const useUpdateClient = () => {
 
   return useMutation({
     mutationFn: ({ id, ...updates }: { id: string } & TableUpdate<'clients'>) =>
-      // eslint-disable-next-line no-restricted-syntax
       clientService.updateClient(
         id,
+        // eslint-disable-next-line no-restricted-syntax
         updates as unknown as Partial<Client> & Record<string, unknown>
       ),
     onMutate: async newData => {

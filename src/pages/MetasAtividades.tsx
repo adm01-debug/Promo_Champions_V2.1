@@ -350,8 +350,8 @@ export default function MetasAtividades() {
                                       e.currentTarget as HTMLElement
                                     ).getBoundingClientRect();
                                     handleStatInteraction(
+                                      // eslint-disable-next-line no-restricted-syntax
                                       {
-                                        // eslint-disable-line no-restricted-syntax
                                         clientX: rect.left + rect.width / 2,
                                         clientY: rect.top + rect.height / 2,
                                       } as unknown as import('react').MouseEvent,

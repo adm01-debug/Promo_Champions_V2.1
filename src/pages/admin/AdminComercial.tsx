@@ -261,8 +261,8 @@ export default function AdminComercial() {
               from: request.old_values as Record<string, Json>,
               to: request.new_values as Record<string, Json>,
             },
+            // eslint-disable-next-line no-restricted-syntax
             metadata: {
-              // eslint-disable-line no-restricted-syntax
               approval_request_id: requestId,
               justification,
             } as unknown as Json,
