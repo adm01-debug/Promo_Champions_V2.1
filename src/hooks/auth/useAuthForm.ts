@@ -1,42 +1,60 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useLoginRateLimiter } from "@/hooks/useLoginRateLimiter";
-import { toast } from "sonner";
-import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLoginRateLimiter } from '@/hooks/useLoginRateLimiter';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable/index';
 
-const emailSchema = z.string().email("Email inválido");
-const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
+const emailSchema = z.string().email('Email inválido');
+const passwordSchema = z.string().min(8, 'Senha deve ter pelo menos 8 caracteres');
 
 export function useAuthForm() {
   const [showPwd, setShowPwd] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [isResetLoading, setIsResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+
+  // MFA state
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaFactorId, setMfaFactorId] = useState('');
+  const [mfaChallengeId, setMfaChallengeId] = useState('');
+  const [isMfaLoading, setIsMfaLoading] = useState(false);
+
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || "/";
-  const { lockoutStatus, checkLoginAttempts, recordLoginAttempt, formatRemainingTime, MAX_ATTEMPTS } = useLoginRateLimiter();
+  const redirectTo =
+    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || '/';
+  const {
+    lockoutStatus,
+    checkLoginAttempts,
+    recordLoginAttempt,
+    formatRemainingTime,
+    MAX_ATTEMPTS,
+  } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
 
-  useEffect(() => { if (user) navigate(redirectTo, { replace: true }); }, [user, navigate, redirectTo]);
+  useEffect(() => {
+    if (user) navigate(redirectTo, { replace: true });
+  }, [user, navigate, redirectTo]);
 
   useEffect(() => {
-    if (loginEmail && emailSchema.safeParse(loginEmail).success) checkLoginAttempts(loginEmail);
+    if (loginEmail && emailSchema.safeParse(loginEmail).success)
+      checkLoginAttempts(loginEmail);
   }, [loginEmail, checkLoginAttempts]);
 
   useEffect(() => {
     if (lockoutStatus.isLocked && lockoutStatus.remainingSeconds > 0) {
       setCountdown(lockoutStatus.remainingSeconds);
       const i = setInterval(() => {
-        setCountdown((p) => {
+        setCountdown(p => {
           if (p <= 1) {
             clearInterval(i);
             if (loginEmail) checkLoginAttempts(loginEmail);
@@ -48,7 +66,12 @@ export function useAuthForm() {
       return () => clearInterval(i);
     }
     return undefined;
-  }, [lockoutStatus.isLocked, lockoutStatus.remainingSeconds, loginEmail, checkLoginAttempts]);
+  }, [
+    lockoutStatus.isLocked,
+    lockoutStatus.remainingSeconds,
+    loginEmail,
+    checkLoginAttempts,
+  ]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,9 +85,12 @@ export function useAuthForm() {
       }
     }
 
-    const { canAttempt, lockoutStatus: currentLockout } = await checkLoginAttempts(loginEmail);
+    const { canAttempt, lockoutStatus: currentLockout } =
+      await checkLoginAttempts(loginEmail);
     if (!canAttempt) {
-      toast.error(`Conta bloqueada. Aguarde ${formatRemainingTime(currentLockout.remainingSeconds)}.`);
+      toast.error(
+        `Conta bloqueada. Aguarde ${formatRemainingTime(currentLockout.remainingSeconds)}.`
+      );
       return;
     }
     setIsLoading(true);
@@ -72,55 +98,116 @@ export function useAuthForm() {
     setIsLoading(false);
     if (error) {
       await recordLoginAttempt(loginEmail, false, error.message);
-      if (error.message.includes("Invalid login credentials")) {
+      if (error.message.includes('Invalid login credentials')) {
         const left = MAX_ATTEMPTS - (lockoutStatus.attempts + 1);
-        toast.error(left > 0 ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? "s" : ""} restante${left !== 1 ? "s" : ""}.` : "Credenciais inválidas. Conta bloqueada.");
+        toast.error(
+          left > 0
+            ? `Credenciais inválidas. ${left} tentativa${left !== 1 ? 's' : ''} restante${left !== 1 ? 's' : ''}.`
+            : 'Credenciais inválidas. Conta bloqueada.'
+        );
       } else toast.error(error.message);
     } else {
+      // Check if MFA upgrade is required (AAL1 → AAL2)
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+        const { data: factorsData } = await supabase.auth.mfa.listFactors();
+        const totpFactor = factorsData?.totp?.[0];
+        if (totpFactor) {
+          const { data: challengeData, error: challengeError } =
+            await supabase.auth.mfa.challenge({ factorId: totpFactor.id });
+          if (!challengeError && challengeData) {
+            setMfaFactorId(totpFactor.id);
+            setMfaChallengeId(challengeData.id);
+            setMfaRequired(true);
+            return;
+          }
+        }
+      }
       await recordLoginAttempt(loginEmail, true);
-      toast.success("Bem-vindo de volta, campeão! 🏆");
+      toast.success('Bem-vindo de volta, campeão! 🏆');
+      navigate(redirectTo, { replace: true });
+    }
+  };
+
+  const handleMfaVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsMfaLoading(true);
+    const { error } = await supabase.auth.mfa.verify({
+      factorId: mfaFactorId,
+      challengeId: mfaChallengeId,
+      code: mfaCode.replace(/\s/g, ''),
+    });
+    setIsMfaLoading(false);
+    if (error) {
+      toast.error('Código MFA inválido. Tente novamente.');
+    } else {
+      await recordLoginAttempt(loginEmail, true);
+      toast.success('Bem-vindo de volta, campeão! 🏆');
       navigate(redirectTo, { replace: true });
     }
   };
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    try { emailSchema.parse(resetEmail); } catch (err) { if (err instanceof z.ZodError) { toast.error(err.issues[0].message); return; } }
+    try {
+      emailSchema.parse(resetEmail);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast.error(err.issues[0].message);
+        return;
+      }
+    }
     setIsResetLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, { redirectTo: `${window.location.origin}/reset-password` });
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
     setIsResetLoading(false);
-    if (error) toast.error("Erro ao enviar recuperação.");
-    else { toast.success("Email enviado!"); setResetDialogOpen(false); setResetEmail(""); }
+    if (error) toast.error('Erro ao enviar recuperação.');
+    else {
+      toast.success('Email enviado!');
+      setResetDialogOpen(false);
+      setResetEmail('');
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-      if (error) toast.error("Erro Google.");
-    }
-    catch {
-      toast.error("Erro Google.");
-    }
-    finally {
+      const { error } = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: window.location.origin,
+      });
+      if (error) toast.error('Erro Google.');
+    } catch {
+      toast.error('Erro Google.');
+    } finally {
       setIsGoogleLoading(false);
     }
   };
 
   return {
-    showPwd, setShowPwd,
+    showPwd,
+    setShowPwd,
     isLoading,
     isGoogleLoading,
-    loginEmail, setLoginEmail,
-    loginPassword, setLoginPassword,
-    resetEmail, setResetEmail,
+    loginEmail,
+    setLoginEmail,
+    loginPassword,
+    setLoginPassword,
+    resetEmail,
+    setResetEmail,
     isResetLoading,
-    resetDialogOpen, setResetDialogOpen,
+    resetDialogOpen,
+    setResetDialogOpen,
     countdown,
     lockoutStatus,
     handleAuth,
     handlePasswordReset,
     handleGoogleSignIn,
-    isLoginDisabled: isLoading || (lockoutStatus.isLocked && countdown > 0)
+    isLoginDisabled: isLoading || (lockoutStatus.isLocked && countdown > 0),
+    mfaRequired,
+    mfaCode,
+    setMfaCode,
+    isMfaLoading,
+    handleMfaVerify,
   };
 }
