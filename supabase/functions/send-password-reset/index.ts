@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface PasswordResetRequest {
@@ -9,9 +9,9 @@ interface PasswordResetRequest {
 }
 
 Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Promise<Response> => {
-  // Handle CORS preflight requests
+  const cors = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: cors });
   }
 
   try {
@@ -158,7 +158,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       JSON.stringify({ success: true, message: "Password reset email sent" }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json", ...cors },
       }
     );
   } catch (error: unknown) {
@@ -168,7 +168,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       JSON.stringify({ error: message }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json", ...cors },
       }
     );
   }

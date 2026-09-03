@@ -1,9 +1,9 @@
 import { delay } from "https://deno.land/std@0.224.0/async/delay.ts";
 
 const TARGET_URLS = [
-  "https://rapjswienfhkobhlamxb.supabase.co/functions/v1/lead-scoring",
-  "https://rapjswienfhkobhlamxb.supabase.co/functions/v1/execute-workflow",
-  "https://rapjswienfhkobhlamxb.supabase.co/functions/v1/ai-copilot",
+  "https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/lead-scoring",
+  "https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/execute-workflow",
+  "https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/ai-copilot",
 ];
 
 async function runLoadTest(concurrency: number, iterations: number) {

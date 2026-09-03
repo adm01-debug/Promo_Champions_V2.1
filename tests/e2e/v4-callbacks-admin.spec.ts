@@ -4,7 +4,7 @@ import { test, expect, request } from "@playwright/test";
 // dispatcher em produção (secrets V4_CALLBACK_URL/API_KEY já configurados).
 
 const SUPABASE_URL =
-  process.env.VITE_SUPABASE_URL ?? "https://rapjswienfhkobhlamxb.supabase.co";
+  process.env.VITE_SUPABASE_URL ?? "https://usyxfpqlsspldubptrdl.supabase.co";
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "";
 
 test.describe("Admin V4 Callbacks", () => {
