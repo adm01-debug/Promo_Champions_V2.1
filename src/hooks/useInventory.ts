@@ -35,7 +35,10 @@ export function useInventoryLevels() {
       const { data, error } = await supabase
         .from("inventory_levels")
         .select("*, products(name)")
-        .order("updated_at", { ascending: false });
+        .order("updated_at", { ascending: false })
+        // Estoque renderiza a lista completa (2×) sem virtualização — janela
+        // explícita alinhada ao useStockMovements logo abaixo.
+        .limit(500);
       if (error) throw error;
       return data as InventoryLevel[];
     },

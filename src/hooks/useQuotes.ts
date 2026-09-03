@@ -82,7 +82,10 @@ export function useQuotes(statusFilter?: string) {
       let query = supabase
         .from('quotes')
         .select(`*, salespeople:created_by (name), sales:sale_id (client_name, product_name, status)`)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        // Janela explícita: a página renderiza a lista inteira sem paginação;
+        // sem limite, o teto de 1000 linhas do PostgREST truncava silencioso.
+        .limit(500);
 
       if (statusFilter && statusFilter !== 'all') {
         query = query.eq('status', statusFilter);

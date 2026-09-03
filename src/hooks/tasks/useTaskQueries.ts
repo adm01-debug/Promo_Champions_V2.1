@@ -18,7 +18,14 @@ export const useTasks = (userId?: string) => {
   return useQuery<TaskRecord[]>({
     queryKey: ['tasks', userId],
     queryFn: async (): Promise<TaskRecord[]> => {
-      let query = supabase.from('tasks').select(TASK_SELECT).order('due_date', { ascending: true });
+      // Mesmo padrão de useActivities (limit 1000): sem janela, o histórico
+      // completo de tarefas concluídas viria junto e o PostgREST truncaria
+      // silenciosamente em 1000 de qualquer forma.
+      let query = supabase
+        .from('tasks')
+        .select(TASK_SELECT)
+        .order('due_date', { ascending: true })
+        .limit(1000);
 
       if (userId) {
         query = query.eq('salesperson_id', userId);

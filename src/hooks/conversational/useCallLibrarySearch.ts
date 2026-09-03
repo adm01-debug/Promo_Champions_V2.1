@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 export interface CallLibraryResult {
   id: string;
@@ -11,15 +11,6 @@ export interface CallLibraryResult {
   status: string;
   rank: number;
   snippet: string;
-}
-
-export function useDebouncedValue<T>(value: T, delay = 350): T {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-  return debounced;
 }
 
 export function useSearchCallLibrary(query: string, limit = 20) {

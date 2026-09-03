@@ -92,6 +92,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
+          // O preload-helper do Vite (módulo virtual, fora de node_modules) é
+          // dependência estática do entry para todo import() dinâmico. Sem esta
+          // regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de
+          // jspdf para o caminho crítico por causa de uma função de ~20 linhas.
+          if (id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) {
+            return 'vendor-core';
+          }
           if (!id.includes('node_modules')) return;
           // Core framework — match react/react-dom/scheduler/router anywhere in the dep tree
           // so nested copies don't end up in another chunk and break React.forwardRef resolution.
@@ -115,7 +122,11 @@ export default defineConfig({
           if (id.includes('date-fns')) return 'vendor-date';
           if (id.includes('lucide-react')) return 'vendor-icons';
           if (id.includes('zod') || id.includes('react-hook-form') || id.includes('@hookform')) return 'vendor-forms';
-          if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-') || id.includes('micromark') || id.includes('mdast-') || id.includes('hast-') || id.includes('unified') || id.includes('unist-')) return 'vendor-markdown';
+          // Subgrafo markdown COMPLETO num chunk só: vfile & cia. caíam no
+          // fallback 'vendor' enquanto unist-util-* ia para vendor-markdown,
+          // criando a aresta estática vendor → vendor-markdown que puxava o
+          // chunk markdown para o preload do entry.
+          if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-') || id.includes('micromark') || id.includes('mdast-') || id.includes('hast-') || id.includes('unified') || id.includes('unist-') || id.includes('/vfile') || id.includes('estree-util-') || id.includes('/bail/') || id.includes('/trough/') || id.includes('is-plain-obj') || id.includes('devlop') || id.includes('decode-named-character-reference') || id.includes('character-entities') || id.includes('property-information') || id.includes('space-separated-tokens') || id.includes('comma-separated-tokens') || id.includes('/zwitch/') || id.includes('longest-streak') || id.includes('/ccount/') || id.includes('markdown-table') || id.includes('trim-lines') || id.includes('html-url-attributes') || id.includes('style-to-js') || id.includes('style-to-object') || id.includes('inline-style-parser')) return 'vendor-markdown';
           if (id.includes('papaparse') || id.includes('fuse.js')) return 'vendor-data-utils';
           if (id.includes('canvas-confetti')) return 'vendor-confetti';
           if (id.includes('cmdk') || id.includes('embla-carousel') || id.includes('vaul') || id.includes('input-otp') || id.includes('react-day-picker') || id.includes('react-resizable-panels') || id.includes('react-window') || id.includes('react-intersection-observer')) return 'vendor-ui-extras';

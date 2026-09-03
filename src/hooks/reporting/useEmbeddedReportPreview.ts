@@ -8,7 +8,9 @@ export function useEmbeddedReportPreview(token: string | undefined) {
     queryKey: ["embedded-report", token],
     queryFn: async (): Promise<EmbeddedReportPayload> => {
       if (!token) throw new Error("Token ausente");
-      const res = await fetch(`${FN_URL}?token=${encodeURIComponent(token)}`);
+      // Token via header, não via query string — URLs vazam em access logs,
+      // Referer e histórico de proxy. A function mantém ?token= por compat.
+      const res = await fetch(FN_URL, { headers: { "X-Embed-Token": token } });
       const json = await res.json();
       if (!res.ok || !json?.ok) {
         throw new Error(json?.error ?? "Falha ao carregar relatório");
