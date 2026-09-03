@@ -27,6 +27,7 @@ export function useSentimentTrend() {
     queryFn: async (): Promise<SentimentTrendPoint[]> => {
       const since = new Date();
       since.setMonth(since.getMonth() - 18);
+
       const { data: recs } = await (
         supabase as unknown as {
           from: (t: string) => {
@@ -59,8 +60,12 @@ export function useSentimentTrend() {
       if (saleIds.length) {
         const sales = await chunkedIn<SaleRow>(
           saleIds,
-          (chunk) => supabase.from('sales').select('id, status').in('id', chunk as string[]),
-          { parallel: true, label: 'sentiment.sales' },
+          chunk =>
+            supabase
+              .from('sales')
+              .select('id, status')
+              .in('id', chunk as string[]),
+          { parallel: true, label: 'sentiment.sales' }
         );
         sales.forEach(s => saleStatus.set(s.id, s.status ?? ''));
       }

@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { WinLossFilterState } from "@/components/win-loss/winLossFiltersHelpers";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
-import { useWLKpis, type WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { WinLossFilterState } from '@/components/win-loss/winLossFiltersHelpers';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
+import { useWLKpis, type WLKpis } from '@/hooks/win-loss/useWinLossAggregations';
 
 /**
  * Busca KPIs da janela equivalente IMEDIATAMENTE anterior (mesma duração).
@@ -10,7 +10,14 @@ import { useWLKpis, type WLKpis } from "@/hooks/win-loss/useWinLossAggregations"
  */
 export const usePreviousPeriodKpis = (filters: WinLossFilterState) => {
   return useQuery({
-    queryKey: ["wl-prev-period", filters.period, filters.segments, filters.salespersonIds, filters.minAmount, filters.maxAmount],
+    queryKey: [
+      'wl-prev-period',
+      filters.period,
+      filters.segments,
+      filters.salespersonIds,
+      filters.minAmount,
+      filters.maxAmount,
+    ],
     queryFn: async (): Promise<WLAnalysisRow[]> => {
       const now = new Date();
       const start = new Date(now);
@@ -19,18 +26,20 @@ export const usePreviousPeriodKpis = (filters: WinLossFilterState) => {
       end.setDate(end.getDate() - filters.period);
 
       let q = supabase
-        .from("win_loss_analyses")
-        .select("id,sale_id,outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment,analyzed_at")
-        .gte("analyzed_at", start.toISOString())
-        .lt("analyzed_at", end.toISOString())
+        .from('win_loss_analyses')
+        .select(
+          'id,sale_id,outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment,analyzed_at'
+        )
+        .gte('analyzed_at', start.toISOString())
+        .lt('analyzed_at', end.toISOString())
         .limit(2000);
-      if (filters.segments.length) q = q.in("segment", filters.segments);
-      if (filters.minAmount != null) q = q.gte("amount", filters.minAmount);
-      if (filters.maxAmount != null) q = q.lte("amount", filters.maxAmount);
+      if (filters.segments.length) q = q.in('segment', filters.segments);
+      if (filters.minAmount != null) q = q.gte('amount', filters.minAmount);
+      if (filters.maxAmount != null) q = q.lte('amount', filters.maxAmount);
 
       const { data, error } = await q;
       if (error) throw error;
-      return (data ?? []) as unknown as WLAnalysisRow[];
+      return (data ?? []) as WLAnalysisRow[];
     },
     staleTime: 60_000,
   });
@@ -57,7 +66,9 @@ export const computeKpiDelta = (current: WLKpis, previous: WLKpis): KpiDelta => 
   };
 };
 
-export const usePreviousKpisComputed = (filters: WinLossFilterState): { kpis: WLKpis; isLoading: boolean } => {
+export const usePreviousKpisComputed = (
+  filters: WinLossFilterState
+): { kpis: WLKpis; isLoading: boolean } => {
   const { data = [], isLoading } = usePreviousPeriodKpis(filters);
   const kpis = useWLKpis(data);
   return { kpis, isLoading };

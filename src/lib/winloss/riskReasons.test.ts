@@ -9,7 +9,7 @@ import {
 
 describe('getReasonKindMeta', () => {
   it('todos os códigos retornam meta com label + variant', () => {
-    RISK_REASON_CODES.forEach((code) => {
+    RISK_REASON_CODES.forEach(code => {
       const meta = getReasonKindMeta(code);
       expect(meta.label).toBe(RISK_REASON_LABELS[code]);
       expect(meta.icon).toBeDefined();
@@ -33,7 +33,9 @@ describe('getReasonKindMeta', () => {
 
 describe('inferReasonCode', () => {
   it('classifica estagnação severa quando menciona "média de loss"', () => {
-    expect(inferReasonCode('45 dias sem atualização (média de loss = 30)')).toBe('STAGNATION_HIGH');
+    expect(inferReasonCode('45 dias sem atualização (média de loss = 30)')).toBe(
+      'STAGNATION_HIGH'
+    );
   });
 
   it('classifica estagnação leve', () => {
@@ -41,7 +43,9 @@ describe('inferReasonCode', () => {
   });
 
   it('detecta ticket alinhado', () => {
-    expect(inferReasonCode('Ticket alinhado com perdas históricas')).toBe('AMOUNT_ALIGNED');
+    expect(inferReasonCode('Ticket alinhado com perdas históricas')).toBe(
+      'AMOUNT_ALIGNED'
+    );
   });
 
   it('detecta estágio travado', () => {
@@ -49,7 +53,9 @@ describe('inferReasonCode', () => {
   });
 
   it('detecta pressão competitiva', () => {
-    expect(inferReasonCode('Pressão competitiva de concorrente X')).toBe('COMPETITOR_PRESSURE');
+    expect(inferReasonCode('Pressão competitiva de concorrente X')).toBe(
+      'COMPETITOR_PRESSURE'
+    );
   });
 
   it('fallback CROSSED_SIGNALS para mensagem desconhecida', () => {
@@ -58,14 +64,16 @@ describe('inferReasonCode', () => {
   });
 
   it('trata null/undefined via fallback ?? "" (linha 92)', () => {
+    // eslint-disable-next-line no-restricted-syntax
     expect(inferReasonCode(null as unknown as string)).toBe('CROSSED_SIGNALS');
+    // eslint-disable-next-line no-restricted-syntax
     expect(inferReasonCode(undefined as unknown as string)).toBe('CROSSED_SIGNALS');
   });
 });
 
 describe('isRiskReasonCode', () => {
   it('true para códigos válidos', () => {
-    RISK_REASON_CODES.forEach((c) => expect(isRiskReasonCode(c)).toBe(true));
+    RISK_REASON_CODES.forEach(c => expect(isRiskReasonCode(c)).toBe(true));
   });
 
   it('false para valores inválidos', () => {

@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { WebhookStatsWindow } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { WebhookStatsWindow } from '@/hooks/win-loss/useWebhookDeliveryStats';
 
 const WINDOW_HOURS: Record<WebhookStatsWindow, number> = {
-  "24h": 24,
-  "7d": 24 * 7,
-  "30d": 24 * 30,
+  '24h': 24,
+  '7d': 24 * 7,
+  '30d': 24 * 30,
 };
 
 export interface SubscriptionLatestRow {
@@ -40,26 +40,26 @@ interface RawRow {
  * Aggregates the most recent delivery per subscription within the window,
  * plus total/failure counts to surface bottlenecks at a glance.
  */
-export function useWebhookSubscriptionLatest(windowKey: WebhookStatsWindow = "7d") {
+export function useWebhookSubscriptionLatest(windowKey: WebhookStatsWindow = '7d') {
   return useQuery({
-    queryKey: ["winloss-webhook-subscription-latest", windowKey],
+    queryKey: ['winloss-webhook-subscription-latest', windowKey],
     staleTime: 30_000,
     queryFn: async (): Promise<SubscriptionLatestRow[]> => {
       const since = new Date(
-        Date.now() - WINDOW_HOURS[windowKey] * 60 * 60 * 1000,
+        Date.now() - WINDOW_HOURS[windowKey] * 60 * 60 * 1000
       ).toISOString();
 
       const { data, error } = await supabase
-        .from("winloss_webhook_deliveries")
+        .from('winloss_webhook_deliveries')
         .select(
-          "subscription_id, event, attempt, status, succeeded, duration_ms, error_message, request_id, created_at, winloss_webhook_subscriptions(url)",
+          'subscription_id, event, attempt, status, succeeded, duration_ms, error_message, request_id, created_at, winloss_webhook_subscriptions(url)'
         )
-        .gte("created_at", since)
-        .order("created_at", { ascending: false })
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
         .limit(2000);
 
       if (error) throw error;
-      const rows = (data ?? []) as unknown as RawRow[];
+      const rows = (data ?? []) as RawRow[];
 
       const map = new Map<string, SubscriptionLatestRow>();
       for (const r of rows) {

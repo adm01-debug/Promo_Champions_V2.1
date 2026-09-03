@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { chunkedIn } from "@/lib/supabase/chunkedIn";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import {
   periodSinceISO,
   type WinLossFilterState,
-} from "@/components/win-loss/winLossFiltersHelpers";
+} from '@/components/win-loss/winLossFiltersHelpers';
 
 export interface WLAnalysisRow {
   id: string;
   sale_id: string;
-  outcome: "won" | "lost";
+  outcome: 'won' | 'lost';
   primary_reason: string | null;
   competitor: string | null;
   lost_stage: string | null;
@@ -21,34 +21,40 @@ export interface WLAnalysisRow {
 
 export const useFilteredWinLossAnalyses = (filters: WinLossFilterState) =>
   useQuery({
-    queryKey: ["wl-analyses-filtered", filters],
+    queryKey: ['wl-analyses-filtered', filters],
     queryFn: async () => {
       let q = supabase
-        .from("win_loss_analyses")
-        .select("id,sale_id,outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment,analyzed_at")
-        .gte("analyzed_at", periodSinceISO(filters.period))
-        .order("analyzed_at", { ascending: false })
+        .from('win_loss_analyses')
+        .select(
+          'id,sale_id,outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment,analyzed_at'
+        )
+        .gte('analyzed_at', periodSinceISO(filters.period))
+        .order('analyzed_at', { ascending: false })
         .limit(2000);
 
-      if (filters.segments.length) q = q.in("segment", filters.segments);
-      if (filters.minAmount != null) q = q.gte("amount", filters.minAmount);
-      if (filters.maxAmount != null) q = q.lte("amount", filters.maxAmount);
+      if (filters.segments.length) q = q.in('segment', filters.segments);
+      if (filters.minAmount != null) q = q.gte('amount', filters.minAmount);
+      if (filters.maxAmount != null) q = q.lte('amount', filters.maxAmount);
 
       const { data, error } = await q;
       if (error) throw error;
-      let rows = (data ?? []) as unknown as WLAnalysisRow[];
+      let rows = (data ?? []) as WLAnalysisRow[];
 
       // Salesperson filter via sales join (small N — client filter to keep query simple)
       if (filters.salespersonIds.length && rows.length) {
         const sales = await chunkedIn<{ id: string; salesperson_id: string | null }>(
-          rows.map((r) => r.sale_id),
-          (chunk) => supabase.from("sales").select("id,salesperson_id").in("id", chunk as string[]),
-          { parallel: true, label: "wl.sales" },
+          rows.map(r => r.sale_id),
+          chunk =>
+            supabase
+              .from('sales')
+              .select('id,salesperson_id')
+              .in('id', chunk as string[]),
+          { parallel: true, label: 'wl.sales' }
         );
         const allow = new Set(
           sales
-            .filter(s => filters.salespersonIds.includes(s.salesperson_id ?? ""))
-            .map(s => s.id),
+            .filter(s => filters.salespersonIds.includes(s.salesperson_id ?? ''))
+            .map(s => s.id)
         );
         rows = rows.filter(r => allow.has(r.sale_id));
       }
@@ -59,12 +65,12 @@ export const useFilteredWinLossAnalyses = (filters: WinLossFilterState) =>
 
 export const useWinLossSegments = () =>
   useQuery({
-    queryKey: ["wl-segments"],
+    queryKey: ['wl-segments'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("win_loss_analyses")
-        .select("segment")
-        .not("segment", "is", null)
+        .from('win_loss_analyses')
+        .select('segment')
+        .not('segment', 'is', null)
         .limit(500);
       if (error) throw error;
       return Array.from(new Set((data ?? []).map(r => r.segment as string))).sort();
@@ -74,12 +80,12 @@ export const useWinLossSegments = () =>
 
 export const useActiveSalespeople = () =>
   useQuery({
-    queryKey: ["wl-salespeople"],
+    queryKey: ['wl-salespeople'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("salespeople_public")
-        .select("id,name")
-        .order("name");
+        .from('salespeople_public')
+        .select('id,name')
+        .order('name');
       if (error) throw error;
       return (data ?? []) as { id: string; name: string }[];
     },

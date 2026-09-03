@@ -22,7 +22,10 @@ export async function exportToPDF<T extends Record<string, unknown>>(
 
   const options: UserOptions = {
     head: [cols.map(c => c.header)],
-    body: data.map(row => cols.map(c => row[c.dataKey])) as unknown as UserOptions['body'],
+    // eslint-disable-next-line no-restricted-syntax
+    body: data.map(row =>
+      cols.map(c => row[c.dataKey])
+    ) as unknown as UserOptions['body'],
     startY: 30,
   };
 

@@ -16,10 +16,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  CartesianGrid,
+} from 'recharts';
 
 interface MetricRow {
   day: string;
@@ -73,7 +89,7 @@ export default function AdminQuoteConversionsPage() {
         .select('*')
         .limit(30);
       if (error) throw error;
-      return (data ?? []) as unknown as MetricRow[];
+      return (data ?? []) as MetricRow[];
     },
     staleTime: 60_000,
   });
@@ -87,7 +103,7 @@ export default function AdminQuoteConversionsPage() {
         .order('occurred_at', { ascending: false })
         .limit(100);
       if (error) throw error;
-      return (data ?? []) as unknown as HistoryRow[];
+      return (data ?? []) as HistoryRow[];
     },
     staleTime: 30_000,
   });
@@ -113,12 +129,15 @@ export default function AdminQuoteConversionsPage() {
     }
     setTrailLoading(true);
     try {
-      const { data, error } = await (supabase.rpc as unknown as (
-        fn: string,
-        args: Record<string, unknown>,
-      ) => Promise<{ data: unknown; error: { message: string } | null }>)(
+      // eslint-disable-next-line no-restricted-syntax
+      const { data, error } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>
+        ) => Promise<{ data: unknown; error: { message: string } | null }>
+      )(
         'fn_admin_conversion_trail',
-        trailKind === 'quote_id' ? { _quote_id: value } : { _sale_id: value },
+        trailKind === 'quote_id' ? { _quote_id: value } : { _sale_id: value }
       );
       if (error) throw new Error(error.message);
       setTrailData(data);
@@ -136,28 +155,36 @@ export default function AdminQuoteConversionsPage() {
     () =>
       [...(metricsQ.data ?? [])]
         .reverse()
-        .map((r) => ({ day: r.day, sucesso: r.successes, erro: r.failures })),
-    [metricsQ.data],
+        .map(r => ({ day: r.day, sucesso: r.successes, erro: r.failures })),
+    [metricsQ.data]
   );
 
   return (
     <div className="container mx-auto space-y-6 p-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Conversões Orçamento → Venda</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Conversões Orçamento → Venda
+        </h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Observabilidade da RPC <code>fn_convert_quote_to_sale</code> — sucesso, erro, latência
-          e correlação por <code>X-Request-Id</code>.
+          Observabilidade da RPC <code>fn_convert_quote_to_sale</code> — sucesso, erro,
+          latência e correlação por <code>X-Request-Id</code>.
         </p>
       </header>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">Tentativas (30d)</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{kpis.attempts}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Tentativas (30d)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{kpis.attempts}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">Taxa de sucesso</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Taxa de sucesso</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {kpis.rate == null ? '—' : `${kpis.rate.toFixed(1)}%`}
@@ -168,24 +195,34 @@ export default function AdminQuoteConversionsPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">Latência (hoje)</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Latência (hoje)</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatMs(kpis.p50)}</div>
             <div className="text-muted-foreground text-xs">p95: {formatMs(kpis.p95)}</div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium">Reuso / Idempotência</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Reuso / Idempotência</CardTitle>
+          </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{kpis.reused} / {kpis.idem}</div>
-            <div className="text-muted-foreground text-xs">pedidos reusados / chamadas idempotentes</div>
+            <div className="text-2xl font-bold">
+              {kpis.reused} / {kpis.idem}
+            </div>
+            <div className="text-muted-foreground text-xs">
+              pedidos reusados / chamadas idempotentes
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Chart diário */}
       <Card>
-        <CardHeader><CardTitle>Sucesso vs Erro por dia</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Sucesso vs Erro por dia</CardTitle>
+        </CardHeader>
         <CardContent style={{ height: 280 }}>
           {metricsQ.isLoading ? (
             <Skeleton className="h-full w-full" />
@@ -207,12 +244,14 @@ export default function AdminQuoteConversionsPage() {
 
       {/* Trilha por ID */}
       <Card>
-        <CardHeader><CardTitle>Trilha completa por ID</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Trilha completa por ID</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={trailKind}
-              onChange={(e) => setTrailKind(e.target.value as 'quote_id' | 'sale_id')}
+              onChange={e => setTrailKind(e.target.value as 'quote_id' | 'sale_id')}
               className="border-input bg-background text-foreground h-9 rounded-md border px-2 text-sm"
             >
               <option value="quote_id">quote_id</option>
@@ -220,7 +259,7 @@ export default function AdminQuoteConversionsPage() {
             </select>
             <Input
               value={trailInput}
-              onChange={(e) => setTrailInput(e.target.value)}
+              onChange={e => setTrailInput(e.target.value)}
               placeholder="UUID"
               className="max-w-md"
             />
@@ -238,7 +277,9 @@ export default function AdminQuoteConversionsPage() {
 
       {/* Histórico */}
       <Card>
-        <CardHeader><CardTitle>Histórico (últimas 100 tentativas)</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Histórico (últimas 100 tentativas)</CardTitle>
+        </CardHeader>
         <CardContent>
           {historyQ.isLoading ? (
             <Skeleton className="h-64 w-full" />
@@ -258,14 +299,16 @@ export default function AdminQuoteConversionsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {(historyQ.data ?? []).map((r) => (
+                  {(historyQ.data ?? []).map(r => (
                     <TableRow key={r.audit_id}>
                       <TableCell className="whitespace-nowrap text-xs">
                         {new Date(r.occurred_at).toLocaleString('pt-BR')}
                       </TableCell>
                       <TableCell className="text-xs">
                         <div className="font-medium">{r.quote_client ?? '—'}</div>
-                        <div className="text-muted-foreground">{r.quote_title ?? '—'}</div>
+                        <div className="text-muted-foreground">
+                          {r.quote_title ?? '—'}
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap font-mono text-xs">
                         {r.order_number ?? '—'}
@@ -285,11 +328,16 @@ export default function AdminQuoteConversionsPage() {
                       <TableCell className="whitespace-nowrap text-xs">
                         {formatMs(r.latency_ms)}
                       </TableCell>
-                      <TableCell className="max-w-[140px] truncate font-mono text-xs" title={r.request_id ?? ''}>
+                      <TableCell
+                        className="max-w-[140px] truncate font-mono text-xs"
+                        title={r.request_id ?? ''}
+                      >
                         {r.request_id ?? '—'}
                       </TableCell>
                       <TableCell className="max-w-[220px] text-xs text-destructive">
-                        {r.error_code ? `[${r.error_code}] ${r.error_message ?? ''}` : '—'}
+                        {r.error_code
+                          ? `[${r.error_code}] ${r.error_message ?? ''}`
+                          : '—'}
                       </TableCell>
                     </TableRow>
                   ))}

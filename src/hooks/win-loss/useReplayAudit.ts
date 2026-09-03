@@ -36,7 +36,7 @@ export function useReplayAuditForDeadLetter(deadLetterId: string | null | undefi
         .limit(50);
 
       if (error) throw error;
-      return (data || []) as unknown as ReplayAuditEntry[];
+      return (data || []) as ReplayAuditEntry[];
     },
   });
 }
@@ -56,14 +56,20 @@ export function useLatestReplayAuditByDeadLetters(deadLetterIds: string[]) {
     queryFn: async (): Promise<Map<string, ReplayAuditEntry>> => {
       const data = await chunkedIn<unknown>(
         deadLetterIds,
-        (chunk) => supabase
-          .from('winloss_webhook_replay_audit')
-          .select('*')
-          .in('dead_letter_id', chunk as string[])
-          .order('created_at', { ascending: false })
-          .limit(500) as unknown as PromiseLike<{ data: unknown[] | null; error: { message?: string } | null }>,
-        { parallel: true, label: 'winloss-replay-audit' },
+        chunk =>
+          supabase
+            .from('winloss_webhook_replay_audit')
+            .select('*')
+            .in('dead_letter_id', chunk as string[])
+            .order('created_at', { ascending: false })
+
+            .limit(500) as unknown as PromiseLike<{
+            data: unknown[] | null;
+            error: { message?: string } | null;
+          }>,
+        { parallel: true, label: 'winloss-replay-audit' }
       );
+      // eslint-disable-next-line no-restricted-syntax
       const entries = data as unknown as ReplayAuditEntry[];
       const map = new Map<string, ReplayAuditEntry>();
       for (const r of entries) {

@@ -1,26 +1,26 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
-import ReactMarkdown from "react-markdown";
-import { Bot, Send, Loader2, Sparkles, RefreshCw } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/atoms/skeleton";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { useAuth } from "@/contexts/AuthContext";
-import { usePersonalAssistant } from "@/hooks/assistant/usePersonalAssistant";
-import { RunRateProjectionCard } from "@/components/vendedor/RunRateProjectionCard";
-import { BriefingHistoryTimeline } from "@/components/assistant/BriefingHistoryTimeline";
-import { cn } from "@/lib/utils";
+import { FC, useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import { Bot, Send, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/atoms/skeleton';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePersonalAssistant } from '@/hooks/assistant/usePersonalAssistant';
+import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
+import { BriefingHistoryTimeline } from '@/components/assistant/BriefingHistoryTimeline';
+import { cn } from '@/lib/utils';
 
 const SUGGESTED = [
-  "Quais deals eu deveria priorizar hoje?",
-  "Como retomar um cliente parado há mais de 10 dias?",
-  "Me dê uma dica de fechamento baseada no meu histórico.",
-  "Qual objeção estou perdendo mais e como responder?",
+  'Quais deals eu deveria priorizar hoje?',
+  'Como retomar um cliente parado há mais de 10 dias?',
+  'Me dê uma dica de fechamento baseada no meu histórico.',
+  'Qual objeção estou perdendo mais e como responder?',
 ];
 
 const HubInner: FC = () => {
@@ -36,7 +36,7 @@ const HubInner: FC = () => {
     error,
   } = usePersonalAssistant(salespersonId);
 
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,18 +45,18 @@ const HubInner: FC = () => {
   }, [salespersonId]);
 
   useEffect(() => {
-    chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
+    chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isStreaming) return;
     const msg = input.trim();
-    setInput("");
+    setInput('');
     void sendMessage(msg);
   };
 
-  const displayName = salesperson?.name?.split(" ")[0] ?? "Vendedor";
+  const displayName = salesperson?.name?.split(' ')[0] ?? 'Vendedor';
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-6">
@@ -69,7 +69,11 @@ const HubInner: FC = () => {
       </Helmet>
 
       <div className="max-w-[1400px] mx-auto space-y-4">
-        <motion.header initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3">
+        <motion.header
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3"
+        >
           <div className="h-10 w-10 rounded-xl bg-primary/15 flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
@@ -82,8 +86,16 @@ const HubInner: FC = () => {
           <Badge variant="outline" className="border-primary/30 text-primary">
             IA em streaming
           </Badge>
-          <Button size="sm" variant="outline" onClick={() => void refreshBriefing()} disabled={isBriefingLoading} className="gap-1.5">
-            <RefreshCw className={cn("h-3.5 w-3.5", isBriefingLoading && "animate-spin")} />
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => void refreshBriefing()}
+            disabled={isBriefingLoading}
+            className="gap-1.5"
+          >
+            <RefreshCw
+              className={cn('h-3.5 w-3.5', isBriefingLoading && 'animate-spin')}
+            />
             Atualizar
           </Button>
         </motion.header>
@@ -104,10 +116,12 @@ const HubInner: FC = () => {
                   <Skeleton className="h-3 w-8/12" />
                 </div>
               ) : error ? (
-                <p className="text-sm text-destructive">Não consegui gerar o briefing. Tente novamente.</p>
+                <p className="text-sm text-destructive">
+                  Não consegui gerar o briefing. Tente novamente.
+                </p>
               ) : (
                 <div className="prose prose-sm dark:prose-invert max-w-none text-sm">
-                  <ReactMarkdown>{briefing || "_Aguardando…_"}</ReactMarkdown>
+                  <ReactMarkdown>{briefing || '_Aguardando…_'}</ReactMarkdown>
                 </div>
               )}
             </Card>
@@ -116,7 +130,6 @@ const HubInner: FC = () => {
             <BriefingHistoryTimeline salespersonId={salespersonId} />
           </div>
 
-
           {/* Coluna central — Sugestões / prioridades derivadas do briefing */}
           <div className="lg:col-span-3">
             <Card className="p-4 h-full">
@@ -124,7 +137,7 @@ const HubInner: FC = () => {
                 Perguntas sugeridas
               </div>
               <div className="space-y-2">
-                {SUGGESTED.map((q) => (
+                {SUGGESTED.map(q => (
                   <button
                     key={q}
                     onClick={() => void sendMessage(q)}
@@ -146,24 +159,32 @@ const HubInner: FC = () => {
                 <span className="text-sm font-semibold">Conversa com o Coach</span>
               </div>
 
-              <ScrollArea className="flex-1 px-4 py-3" ref={chatRef as unknown as React.Ref<HTMLDivElement>}>
+              { }
+              <ScrollArea
+                className="flex-1 px-4 py-3"
+                ref={chatRef as unknown as React.Ref<HTMLDivElement>}
+              >
                 {messages.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-10">
                     Pergunte algo ao seu coach. Ele já sabe suas metas, deals e gaps.
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {messages.map((m) => (
+                    {messages.map(m => (
                       <div
                         key={m.id}
                         className={cn(
-                          "rounded-lg px-3 py-2 text-sm",
-                          m.role === "user"
-                            ? "bg-primary/10 ml-8"
-                            : "bg-muted/50 mr-8 prose prose-sm dark:prose-invert max-w-none",
+                          'rounded-lg px-3 py-2 text-sm',
+                          m.role === 'user'
+                            ? 'bg-primary/10 ml-8'
+                            : 'bg-muted/50 mr-8 prose prose-sm dark:prose-invert max-w-none'
                         )}
                       >
-                        {m.role === "user" ? m.content : <ReactMarkdown>{m.content || "…"}</ReactMarkdown>}
+                        {m.role === 'user' ? (
+                          m.content
+                        ) : (
+                          <ReactMarkdown>{m.content || '…'}</ReactMarkdown>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -174,13 +195,23 @@ const HubInner: FC = () => {
                 <div className="flex items-center gap-2 bg-muted/40 border rounded-xl px-3 py-2 focus-within:border-primary/50">
                   <input
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={e => setInput(e.target.value)}
                     placeholder="Pergunte algo…"
                     className="flex-1 text-sm bg-transparent outline-none"
                     disabled={isStreaming}
                   />
-                  <Button type="submit" size="icon" variant="ghost" disabled={!input.trim() || isStreaming} aria-label="Enviar">
-                    {isStreaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  <Button
+                    type="submit"
+                    size="icon"
+                    variant="ghost"
+                    disabled={!input.trim() || isStreaming}
+                    aria-label="Enviar"
+                  >
+                    {isStreaming ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </form>

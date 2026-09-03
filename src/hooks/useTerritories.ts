@@ -31,11 +31,13 @@ export function useTerritories() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sales_territories')
-        .select('*, salespeople!sales_territories_current_owner_id_fkey(id, name, avatar_url)')
+        .select(
+          '*, salespeople!sales_territories_current_owner_id_fkey(id, name, avatar_url)'
+        )
         .order('total_revenue', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((t) => ({
+      return (data || []).map(t => ({
         ...t,
         owner: (t as Record<string, unknown>).salespeople || null,
         salespeople: undefined,
@@ -56,11 +58,11 @@ export function useTerritoryHistory(territoryId?: string) {
         .order('conquered_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((h) => ({
+      return (data || []).map(h => ({
         ...h,
-        salesperson: (h as unknown as Record<string, unknown>).salespeople || null,
+        salesperson: (h as Record<string, unknown>).salespeople || null,
         salespeople: undefined,
-      })) as unknown as TerritoryHistory[];
+      })) as TerritoryHistory[];
     },
     enabled: !!territoryId,
   });

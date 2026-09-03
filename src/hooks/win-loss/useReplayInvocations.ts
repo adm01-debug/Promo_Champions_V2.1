@@ -32,7 +32,7 @@ export function useReplayInvocations(limit = 100) {
         .limit(limit);
 
       if (error) throw error;
-      return (data || []) as unknown as ReplayInvocation[];
+      return (data || []) as ReplayInvocation[];
     },
   });
 }

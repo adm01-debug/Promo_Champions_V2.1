@@ -2,9 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type WebhookAlertKind =
-  | 'consecutive_failures'
-  | 'high_retry_rate'
-  | 'attempts_exhausted';
+  'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
 
 export interface WebhookAlert {
   id: string;
@@ -24,6 +22,7 @@ export function useWebhookAlerts(subscriptionId?: string | null) {
     refetchInterval: 60_000,
     queryFn: async (): Promise<WebhookAlert[]> => {
       const since = new Date(Date.now() - RECENT_HOURS * 60 * 60 * 1000).toISOString();
+
       const query = (
         supabase as unknown as {
           from: (t: string) => {

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ScriptVariantStats {
   variant: string;
@@ -37,7 +37,7 @@ function chiSquare2x2(a: ScriptVariantStats, b: ScriptVariantStats): number | nu
   const expectedBWin = (b.total * totalWins) / total;
   const expectedBLoss = (b.total * totalLosses) / total;
 
-  const term = (o: number, e: number) => (e === 0 ? 0 : ((o - e) ** 2) / e);
+  const term = (o: number, e: number) => (e === 0 ? 0 : (o - e) ** 2 / e);
   return (
     term(a.wins, expectedAWin) +
     term(a.losses, expectedALoss) +
@@ -48,24 +48,30 @@ function chiSquare2x2(a: ScriptVariantStats, b: ScriptVariantStats): number | nu
 
 export function useScriptABTest() {
   return useQuery({
-    queryKey: ["wl-script-ab"],
+    queryKey: ['wl-script-ab'],
     queryFn: async (): Promise<ScriptABResult> => {
       const { data, error } = await supabase
-        .from("sales")
-        .select("status, script_variant")
-        .not("script_variant", "is", null)
-        .in("status", ["won", "lost"])
+        .from('sales')
+        .select('status, script_variant')
+        .not('script_variant', 'is', null)
+        .in('status', ['won', 'lost'])
         .limit(2000);
 
       if (error) throw error;
-      const rows = (data ?? []) as unknown as SaleRow[];
+      const rows = (data ?? []) as SaleRow[];
 
       const map = new Map<string, ScriptVariantStats>();
-      rows.forEach((r) => {
-        const v = r.script_variant ?? "—";
-        const cur = map.get(v) ?? { variant: v, total: 0, wins: 0, losses: 0, winRate: 0 };
-        if (r.status === "won") cur.wins++;
-        else if (r.status === "lost") cur.losses++;
+      rows.forEach(r => {
+        const v = r.script_variant ?? '—';
+        const cur = map.get(v) ?? {
+          variant: v,
+          total: 0,
+          wins: 0,
+          losses: 0,
+          winRate: 0,
+        };
+        if (r.status === 'won') cur.wins++;
+        else if (r.status === 'lost') cur.losses++;
         cur.total = cur.wins + cur.losses;
         cur.winRate = cur.total ? (cur.wins / cur.total) * 100 : 0;
         map.set(v, cur);

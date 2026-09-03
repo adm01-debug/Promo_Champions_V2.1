@@ -67,7 +67,9 @@ function kpis(doc: jsPDF, data: SalesReportData, startY: number): number {
     {
       label: 'Markup médio',
       value:
-        data.current.markupSample > 0 ? `${data.current.avgMarkup.toFixed(1)}%` : 'Sem custo',
+        data.current.markupSample > 0
+          ? `${data.current.avgMarkup.toFixed(1)}%`
+          : 'Sem custo',
       delta: data.current.avgMarkupDelta,
     },
   ];
@@ -216,7 +218,8 @@ export async function generateSalesReportPdf(
     doc.setFontSize(12);
     doc.text('Ranking de rentabilidade por vendedor', 14, 138);
 
-    const safeMinSample = Number.isFinite(minSample) && minSample > 0 ? Math.floor(minSample) : 1;
+    const safeMinSample =
+      Number.isFinite(minSample) && minSample > 0 ? Math.floor(minSample) : 1;
     const rankingRows = data.markupRanking.filter(r => r.sample >= safeMinSample);
     const hiddenCount = data.markupRanking.length - rankingRows.length;
 
@@ -251,7 +254,9 @@ export async function generateSalesReportPdf(
       });
 
       const afterY =
-        (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 142;
+        // eslint-disable-next-line no-restricted-syntax
+        (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable
+          ?.finalY ?? 142;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(120, 120, 120);
@@ -263,9 +268,6 @@ export async function generateSalesReportPdf(
       );
       doc.setTextColor(...BRAND_DARK);
     }
-
-
-
 
     // ===== Page 4 — Top products + status =====
 
