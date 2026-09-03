@@ -80,7 +80,7 @@
     "framer-motion": "^11.0.0",
     "fuse.js": "^7.4.1",
     "html-to-image": "^1.11.13",
-    "input-otp": "^1.2.4",
+    "input-otp": "^1.5.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "leaflet": "^1.9.4",
