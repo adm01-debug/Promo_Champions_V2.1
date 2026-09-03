@@ -14,10 +14,18 @@ export const useMFA = () => {
   const [status, setStatus] = useState<MFAStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  // Códigos de recuperação retornados pelas RPCs (verify_and_enable_totp /
+  // regenerate_backup_codes) — só existem em memória, nesta sessão, para o
+  // usuário copiar. Antes eram descartados: quem ativava MFA nunca os via.
+  const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
 
   // Fetch MFA status via secure RPC (no secrets exposed)
   const fetchStatus = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      // Sem usuário resolvido não há o que carregar — não deixar o skeleton preso.
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const { data, error } = await supabase.rpc('get_mfa_status');
@@ -76,6 +84,7 @@ export const useMFA = () => {
       const result = data as { success: boolean; backup_codes?: string[]; error?: string };
       
       if (result.success) {
+        setBackupCodes(result.backup_codes ?? null);
         await fetchStatus();
         toast.success('TOTP ativado com sucesso!');
         return true;
@@ -216,6 +225,7 @@ export const useMFA = () => {
     try {
       const { data, error } = await supabase.rpc('regenerate_backup_codes');
       if (error) throw error;
+      setBackupCodes((data as string[] | null) ?? null);
       await fetchStatus();
       toast.success('Códigos de backup regenerados');
       return data as string[];
@@ -255,7 +265,7 @@ export const useMFA = () => {
       sms_enabled: status.sms_enabled,
       preferred_method: status.preferred_method,
       totp_secret: null as string | null,
-      backup_codes: null as string[] | null,
+      backup_codes: backupCodes,
     } : null,
     attempts: [] as string[],
     isLoading,

@@ -53,7 +53,9 @@ jobs:
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
           if [ -z "$E2E_TEST_EMAIL" ]; then
-            echo "::warning::E2E_TEST_EMAIL ausente (fork) — pulando invariantes"
+            # Secrets de E2E ainda não existem no repositório — skip visível.
+            # Ao criá-los, endurecer para exit 1 em PR interna (anti verde falso).
+            echo "::warning::E2E_TEST_EMAIL ausente — invariantes SKIPPED, not validated"
             exit 0
           fi
           npx tsx scripts/verify-quote-to-sale-invariants.ts
@@ -79,8 +81,9 @@ jobs:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
         run: |
           if [ -z "$E2E_TEST_EMAIL" ]; then
+            # Secrets de E2E ainda não existem no repositório — skip visível.
             echo "run=false" >> $GITHUB_OUTPUT
-            echo "::warning::E2E_TEST_EMAIL ausente — E2E pulada (compat com forks)"
+            echo "::warning::E2E_TEST_EMAIL ausente — E2E SKIPPED, not validated"
           else
             echo "run=true" >> $GITHUB_OUTPUT
           fi

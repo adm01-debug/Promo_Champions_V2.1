@@ -39,7 +39,11 @@ jobs:
         id: env-check
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            echo "::warning::Integration-test secrets absent — skipping live suite"
+            # O repositório ainda NÃO tem os secrets SUPABASE_URL/SUPABASE_ANON_KEY
+            # configurados (verificado 2026-09-03). Falhar aqui viraria vermelho
+            # diário permanente; quando os secrets forem criados, endurecer este
+            # ramo (exit 1 fora de pull_request) para eliminar o verde silencioso.
+            echo "::warning::Integration-test secrets absent (${{ github.event_name }}) — live suite SKIPPED, not validated"
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 

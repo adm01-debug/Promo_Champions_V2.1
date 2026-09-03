@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
   WebhookContracts,
@@ -6,6 +6,7 @@ import {
 } from '../_shared/webhook-validator.ts';
 
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {

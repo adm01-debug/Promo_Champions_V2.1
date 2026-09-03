@@ -47,6 +47,7 @@ function useDeadLetterById(id: string | null) {
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
+      // eslint-disable-next-line no-restricted-syntax
       const row = data as unknown as DeadLetterByIdRow & {
         winloss_webhook_subscriptions: { url: string } | null;
       };

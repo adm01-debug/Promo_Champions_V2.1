@@ -35,16 +35,18 @@ export const useWinLossAnalysis = () => {
     queryFn: async () => {
       const { data: outcomes, error } = await supabase
         .from('deal_outcomes')
-        .select(`
+        .select(
+          `
           id, outcome, reason, notes, created_at,
           sales (product_name, amount, client_name),
           salespeople (name)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const typedOutcomes = (outcomes || []) as unknown as WinLossDetail[];
+      const typedOutcomes = (outcomes || []) as WinLossDetail[];
       const wins = typedOutcomes.filter(o => o.outcome === 'won');
       const losses = typedOutcomes.filter(o => o.outcome === 'lost');
       const total = wins.length + losses.length;
@@ -72,11 +74,16 @@ export const useWinLossAnalysis = () => {
         salespersonMap.set(name, existing);
       });
 
-      const bySalesperson = Array.from(salespersonMap.entries()).map(([name, data]) => ({
-        name,
-        ...data,
-        winRate: (data.wins + data.losses) > 0 ? Math.round((data.wins / (data.wins + data.losses)) * 100) : 0
-      })).sort((a, b) => b.wins - a.wins);
+      const bySalesperson = Array.from(salespersonMap.entries())
+        .map(([name, data]) => ({
+          name,
+          ...data,
+          winRate:
+            data.wins + data.losses > 0
+              ? Math.round((data.wins / (data.wins + data.losses)) * 100)
+              : 0,
+        }))
+        .sort((a, b) => b.wins - a.wins);
 
       // Group by Product
       const productMap = new Map<string, { wins: number; losses: number }>();
@@ -88,11 +95,16 @@ export const useWinLossAnalysis = () => {
         productMap.set(name, existing);
       });
 
-      const byProduct = Array.from(productMap.entries()).map(([name, data]) => ({
-        name,
-        ...data,
-        winRate: (data.wins + data.losses) > 0 ? Math.round((data.wins / (data.wins + data.losses)) * 100) : 0
-      })).sort((a, b) => b.wins - a.wins);
+      const byProduct = Array.from(productMap.entries())
+        .map(([name, data]) => ({
+          name,
+          ...data,
+          winRate:
+            data.wins + data.losses > 0
+              ? Math.round((data.wins / (data.wins + data.losses)) * 100)
+              : 0,
+        }))
+        .sort((a, b) => b.wins - a.wins);
 
       // Monthly trend
       const monthlyMap = new Map<string, { wins: number; losses: number }>();
@@ -119,7 +131,7 @@ export const useWinLossAnalysis = () => {
         monthlyTrend,
         details: typedOutcomes,
         bySalesperson,
-        byProduct
+        byProduct,
       };
     },
     staleTime: 1000 * 60 * 5,

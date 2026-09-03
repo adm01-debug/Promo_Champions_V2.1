@@ -21,6 +21,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       try {
         audioCtxRef.current = new (
           window.AudioContext ||
+          // eslint-disable-next-line no-restricted-syntax
           (window as unknown as { webkitAudioContext: typeof AudioContext })
             .webkitAudioContext
         )();

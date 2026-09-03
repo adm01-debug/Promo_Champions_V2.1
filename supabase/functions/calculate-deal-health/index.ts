@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
@@ -377,7 +377,8 @@ async function processOne(supabase: SupabaseClient, saleId: string) {
   return { saleId, score: result.score, tier };
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -389,6 +390,22 @@ Deno.serve(async req => {
     const { sale_id, batch } = body || {};
 
     if (sale_id) {
+      // Mesmo gate do branch batch: exigir usuário real. Antes, este branch
+      // rodava IA + upsert com service_role para qualquer chamada que passasse
+      // no gateway, sem identidade nenhuma.
+      const authHeader = req.headers.get('Authorization') || '';
+      const userClient = createClient(url, Deno.env.get('SUPABASE_ANON_KEY')!, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const {
+        data: { user },
+      } = await userClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const result = await processOne(supabase, sale_id);
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -429,13 +446,15 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error(e);
+    ctx.log('error', 'calculate_deal_health_failed', {
+      error: e instanceof Error ? e.message : String(e),
+    });
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
+      JSON.stringify({ error: 'internal_error' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }
-});
+}));

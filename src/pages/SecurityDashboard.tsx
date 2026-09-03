@@ -25,6 +25,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GeoBlockingMap } from '@/components/security/GeoBlockingMap';
+import { MFASetup } from '@/components/security/MFASetup';
 
 const SecurityDashboard = () => {
   const { data: stats, isLoading: statsLoading } = useSecurityStats();
@@ -259,6 +260,10 @@ const SecurityDashboard = () => {
               </Card>
             </motion.div>
           </div>
+
+          <motion.div variants={itemVariants} className="mt-6">
+            <MFASetup />
+          </motion.div>
         </div>
       </PageTransition>
     </>

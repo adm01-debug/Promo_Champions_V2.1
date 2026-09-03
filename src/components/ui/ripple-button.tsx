@@ -11,7 +11,8 @@ const rippleButtonVariants = cva(
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
@@ -31,7 +32,8 @@ const rippleButtonVariants = cva(
 );
 
 export interface RippleButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof rippleButtonVariants> {
   asChild?: boolean;
 }
@@ -79,9 +81,16 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
     if (asChild) {
       return (
         <span
+          // eslint-disable-next-line no-restricted-syntax
           onClick={handleClick as unknown as React.MouseEventHandler<HTMLSpanElement>}
-          className={cn(rippleButtonVariants({ variant, size }), 'relative overflow-hidden', className)}
+          className={cn(
+            rippleButtonVariants({ variant, size }),
+            'relative overflow-hidden',
+            className
+          )}
+          // eslint-disable-next-line no-restricted-syntax
           ref={ref as unknown as React.Ref<HTMLSpanElement>}
+          // eslint-disable-next-line no-restricted-syntax
           {...(props as unknown as React.HTMLAttributes<HTMLSpanElement>)}
         >
           {ripples.map(r => (

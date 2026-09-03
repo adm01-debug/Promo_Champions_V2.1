@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
@@ -24,6 +24,7 @@ function buildMessage(rank: number, totalSales: number, gapToFirst: number, gapT
 }
 
 Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {

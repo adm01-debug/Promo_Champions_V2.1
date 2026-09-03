@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -8,6 +8,7 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 interface AnalysisRow { id: string; sale_id: string; outcome: string; primary_reason: string | null; competitor: string | null; lost_stage: string | null; segment: string | null; amount: number | null }
 
 Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {

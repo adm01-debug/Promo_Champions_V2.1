@@ -58,14 +58,16 @@ export async function logCircuitEvent(
   failureCount?: number
 ): Promise<void> {
   try {
-    await supabase.from('circuit_breaker_events').insert([{
-      circuit_name: circuitName,
-      event_type: eventType,
-      previous_state: previousState || null,
-      new_state: newState || null,
-      failure_count: failureCount || 0,
-      details: {},
-    }]);
+    await supabase.from('circuit_breaker_events').insert([
+      {
+        circuit_name: circuitName,
+        event_type: eventType,
+        previous_state: previousState || null,
+        new_state: newState || null,
+        failure_count: failureCount || 0,
+        details: {},
+      },
+    ]);
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('[CircuitBreaker] Failed to log event:', error);
@@ -107,7 +109,7 @@ export function withCircuitBreaker<T>(
   }
 
   return fn()
-    .then((result) => {
+    .then(result => {
       if (circuit.state === 'HALF_OPEN') {
         circuit.state = 'CLOSED';
         circuit.failures = 0;
@@ -121,7 +123,7 @@ export function withCircuitBreaker<T>(
       }
       return result;
     })
-    .catch((error) => {
+    .catch(error => {
       circuit.failures += 1;
       circuit.lastFailure = Date.now();
 
@@ -133,19 +135,35 @@ export function withCircuitBreaker<T>(
             logCircuitEvent(circuitName, 'opened', 'HALF_OPEN', 'OPEN', circuit.failures);
           }
         } else if (persistEvents) {
-          logCircuitEvent(circuitName, 'failure', 'HALF_OPEN', 'HALF_OPEN', circuit.failures);
+          logCircuitEvent(
+            circuitName,
+            'failure',
+            'HALF_OPEN',
+            'HALF_OPEN',
+            circuit.failures
+          );
         }
       } else if (circuit.failures >= failureThreshold) {
         circuit.state = 'OPEN';
         if (import.meta.env.DEV) {
-          console.warn(`[CircuitBreaker] "${circuitName}" opened after ${circuit.failures} failures`);
+          console.warn(
+            `[CircuitBreaker] "${circuitName}" opened after ${circuit.failures} failures`
+          );
         }
-        toast.warning(`Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s...`);
+        toast.warning(
+          `Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s...`
+        );
         if (persistEvents) {
           logCircuitEvent(circuitName, 'opened', previousState, 'OPEN', circuit.failures);
         }
       } else if (persistEvents) {
-        logCircuitEvent(circuitName, 'failure', circuit.state, circuit.state, circuit.failures);
+        logCircuitEvent(
+          circuitName,
+          'failure',
+          circuit.state,
+          circuit.state,
+          circuit.failures
+        );
       }
 
       throw error;
@@ -190,6 +208,7 @@ export function resetAllCircuits(): void {
 
 // Expose for debugging in development
 if (typeof window !== 'undefined' && import.meta.env.DEV) {
+  // eslint-disable-next-line no-restricted-syntax
   (window as unknown as { __circuitBreakers: unknown }).__circuitBreakers = {
     getAll: getAllCircuitStates,
     reset: resetCircuit,

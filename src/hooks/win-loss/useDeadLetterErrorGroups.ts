@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { classifyDeadLetterError } from "./classifyDeadLetterError";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { classifyDeadLetterError } from './classifyDeadLetterError';
 
 export interface DeadLetterErrorGroupOption {
   key: string;
@@ -14,32 +14,48 @@ export interface DeadLetterErrorGroupOption {
  */
 export function useDeadLetterErrorGroups() {
   return useQuery<DeadLetterErrorGroupOption[]>({
-    queryKey: ["winloss-dead-letter-error-groups"],
+    queryKey: ['winloss-dead-letter-error-groups'],
     staleTime: 30_000,
     queryFn: async () => {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (col: string, v: string) => {
-              order: (c: string, o: { ascending: boolean }) => {
-                limit: (n: number) => Promise<{
-                  data: Array<{ last_status: number | null; last_error: string | null }> | null;
-                  error: Error | null;
-                }>;
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
+        supabase as unknown as {
+          from: (t: string) => {
+            select: (c: string) => {
+              eq: (
+                col: string,
+                v: string
+              ) => {
+                order: (
+                  c: string,
+                  o: { ascending: boolean }
+                ) => {
+                  limit: (n: number) => Promise<{
+                    data: Array<{
+                      last_status: number | null;
+                      last_error: string | null;
+                    }> | null;
+                    error: Error | null;
+                  }>;
+                };
               };
             };
           };
-        };
-      })
-        .from("winloss_webhook_dead_letters")
-        .select("last_status,last_error")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false })
+        }
+      )
+        .from('winloss_webhook_dead_letters')
+        .select('last_status,last_error')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
         .limit(500);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       const map = new Map<string, { label: string; count: number }>();
       for (const r of data ?? []) {
-        const g = classifyDeadLetterError({ last_status: r.last_status, last_error: r.last_error });
+        const g = classifyDeadLetterError({
+          last_status: r.last_status,
+          last_error: r.last_error,
+        });
         const entry = map.get(g.key);
         if (entry) entry.count += 1;
         else map.set(g.key, { label: g.label, count: 1 });

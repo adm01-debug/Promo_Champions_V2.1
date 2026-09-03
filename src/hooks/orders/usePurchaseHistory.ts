@@ -50,6 +50,7 @@ export function usePurchaseHistory(clientId?: string) {
       // In a real scenario, orders would be linked to clients.
       // Assuming a 'client_id' field exists in 'orders' table.
       // We'll also fetch items and seller info.
+      // eslint-disable-next-line no-restricted-syntax
       const { data, error } = await (supabase as unknown as PurchaseHistoryQuery)
         .from('orders')
         .select(
@@ -68,16 +69,14 @@ export function usePurchaseHistory(clientId?: string) {
         return [];
       }
 
-      return (data || []).map(
-        (order: RawPurchaseOrder): OrderWithDetails => ({
-          ...order,
-          items: order.items ?? [],
-          seller_name: order.profiles?.display_name || 'Sistema',
-          // Mocking some fields if they don't exist yet to fulfill the "Intelligence" requirement
-          discount_amount: order.discount_amount || 0,
-          category: order.items?.[0]?.product_name?.split(' ')[0] || 'Geral',
-        })
-      );
+      return (data || []).map((order: RawPurchaseOrder): OrderWithDetails => ({
+        ...order,
+        items: order.items ?? [],
+        seller_name: order.profiles?.display_name || 'Sistema',
+        // Mocking some fields if they don't exist yet to fulfill the "Intelligence" requirement
+        discount_amount: order.discount_amount || 0,
+        category: order.items?.[0]?.product_name?.split(' ')[0] || 'Geral',
+      }));
     },
   });
 }

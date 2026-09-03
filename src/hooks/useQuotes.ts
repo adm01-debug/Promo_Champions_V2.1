@@ -53,7 +53,9 @@ export interface QuoteItem {
 
 /** Parse the items JSON string into typed array */
 /** Parse the items into typed array */
-export function parseQuoteItems(items: QuoteItem[] | string | null | unknown): QuoteItem[] {
+export function parseQuoteItems(
+  items: QuoteItem[] | string | null | unknown
+): QuoteItem[] {
   if (!items) return [];
   if (typeof items === 'string') {
     try {
@@ -81,8 +83,13 @@ export function useQuotes(statusFilter?: string) {
     queryFn: async () => {
       let query = supabase
         .from('quotes')
-        .select(`*, salespeople:created_by (name), sales:sale_id (client_name, product_name, status)`)
-        .order('created_at', { ascending: false });
+        .select(
+          `*, salespeople:created_by (name), sales:sale_id (client_name, product_name, status)`
+        )
+        .order('created_at', { ascending: false })
+        // Janela explícita: a página renderiza a lista inteira sem paginação;
+        // sem limite, o teto de 1000 linhas do PostgREST truncava silencioso.
+        .limit(500);
 
       if (statusFilter && statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
@@ -90,6 +97,7 @@ export function useQuotes(statusFilter?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as Quote[];
     },
   });
@@ -116,7 +124,9 @@ export function useQuoteSummary() {
         const diff = new Date(q.valid_until).getTime() - now.getTime();
         return diff <= 3 * 24 * 60 * 60 * 1000; // ≤ 3 days (including expired)
       }).length;
-      const totalValue = quotes.filter(q => q.status === 'approved').reduce((s, q) => s + Number(q.total_value), 0);
+      const totalValue = quotes
+        .filter(q => q.status === 'approved')
+        .reduce((s, q) => s + Number(q.total_value), 0);
 
       return { total, draft, sent, approved, rejected, expiringSoon, totalValue };
     },
@@ -145,9 +155,14 @@ export function useCreateQuote() {
     mutationFn: async (input: CreateQuoteInput) => {
       const payload = insertPayload('quotes', {
         ...input,
+        // eslint-disable-next-line no-restricted-syntax
         items: input.items as unknown as import('@/integrations/supabase/types').Json,
       });
-      const { data, error } = await supabase.from('quotes').insert([payload]).select().single();
+      const { data, error } = await supabase
+        .from('quotes')
+        .insert([payload])
+        .select()
+        .single();
       if (error) throw error;
       return data;
     },
@@ -163,7 +178,15 @@ export function useCreateQuote() {
 export function useUpdateQuoteStatus() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status, rejection_reason }: { id: string; status: string; rejection_reason?: string }) => {
+    mutationFn: async ({
+      id,
+      status,
+      rejection_reason,
+    }: {
+      id: string;
+      status: string;
+      rejection_reason?: string;
+    }) => {
       const updates: TableUpdate<'quotes'> = { status };
       if (status === 'sent') updates.sent_at = new Date().toISOString();
       if (status === 'approved') updates.approved_at = new Date().toISOString();
@@ -172,7 +195,12 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { data: quote, error } = await supabase.from('quotes').update(updates).eq('id', id).select('sale_id').single();
+      const { data: quote, error } = await supabase
+        .from('quotes')
+        .update(updates)
+        .eq('id', id)
+        .select('sale_id')
+        .single();
       if (error) throw error;
 
       // Sincronização automática com pipeline
@@ -184,7 +212,10 @@ export function useUpdateQuoteStatus() {
         if (status === 'expired') newPipelineStatus = 'closed';
 
         if (newPipelineStatus) {
-          await supabase.from('sales').update({ status: newPipelineStatus }).eq('id', quote.sale_id);
+          await supabase
+            .from('sales')
+            .update({ status: newPipelineStatus })
+            .eq('id', quote.sale_id);
         }
       }
     },
@@ -224,7 +255,7 @@ export function useDealsForQuotes() {
         .select('id, client_name, product_name, status')
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -307,13 +338,17 @@ export function useConvertQuoteToSale() {
       }
 
       const t0 = performance.now();
-      const { data, error } = await (supabase.rpc as unknown as (
-        fn: string,
-        args: Record<string, unknown>,
-      ) => Promise<{ data: ConvertQuoteResult | null; error: { message: string } | null }>)(
-        'fn_convert_quote_to_sale',
-        { _quote_id: quoteId },
-      );
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>
+        ) => Promise<{
+          data: ConvertQuoteResult | null;
+          error: { message: string } | null;
+        }>
+      )('fn_convert_quote_to_sale', { _quote_id: quoteId });
+      /* eslint-enable no-restricted-syntax */
       const latencyMs = Math.round(performance.now() - t0);
 
       if (error || !data) {
@@ -348,7 +383,7 @@ export function useConvertQuoteToSale() {
 
       return data;
     },
-    onSuccess: (result) => {
+    onSuccess: result => {
       qc.invalidateQueries({ queryKey: ['quotes'] });
       qc.invalidateQueries({ queryKey: ['quotes-summary'] });
       qc.invalidateQueries({ queryKey: ['sales'] });
@@ -360,7 +395,7 @@ export function useConvertQuoteToSale() {
         toast.success(
           result.order_number
             ? `Convertido em venda • Pedido ${result.order_number}`
-            : 'Orçamento convertido em venda',
+            : 'Orçamento convertido em venda'
         );
       }
     },
@@ -370,6 +405,3 @@ export function useConvertQuoteToSale() {
     },
   });
 }
-
-
-

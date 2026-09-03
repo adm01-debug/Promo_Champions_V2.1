@@ -1,6 +1,10 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  UseMutationResult,
+} from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { withCircuitBreaker, CircuitBreakerError } from "@/hooks/useCircuitBreaker";
+import { withCircuitBreaker, CircuitBreakerError } from '@/hooks/useCircuitBreaker';
 
 interface RetryConfig {
   maxRetries?: number;
@@ -40,7 +44,7 @@ export function calculateBackoffDelay(
   baseDelay: number,
   maxDelay: number,
   multiplier: number,
-  rand: () => number = Math.random,
+  rand: () => number = Math.random
 ): number {
   const exponentialDelay = baseDelay * Math.pow(multiplier, attemptNumber - 1);
   const jitter = rand() * JITTER_FACTOR * exponentialDelay;
@@ -55,22 +59,31 @@ export function isRetryableError(error: Error): boolean {
   }
 
   const message = error.message.toLowerCase();
-  
+
   // Network errors
-  if (message.includes('network') || message.includes('fetch') || message.includes('timeout')) {
+  if (
+    message.includes('network') ||
+    message.includes('fetch') ||
+    message.includes('timeout')
+  ) {
     return true;
   }
-  
+
   // Server errors (5xx)
-  if (message.includes('500') || message.includes('502') || message.includes('503') || message.includes('504')) {
+  if (
+    message.includes('500') ||
+    message.includes('502') ||
+    message.includes('503') ||
+    message.includes('504')
+  ) {
     return true;
   }
-  
+
   // Rate limiting
   if (message.includes('429') || message.includes('rate limit')) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -106,7 +119,12 @@ export async function withRetry<T>(
         throw lastError;
       }
 
-      const delay = calculateBackoffDelay(attempt, baseDelay, maxDelay, backoffMultiplier);
+      const delay = calculateBackoffDelay(
+        attempt,
+        baseDelay,
+        maxDelay,
+        backoffMultiplier
+      );
 
       if (onRetry) {
         onRetry(attempt, lastError, delay);
@@ -135,24 +153,30 @@ export function useRetryMutation<TData, TError extends Error, TVariables, TConte
     showRetryToast?: boolean;
   }
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const { retryConfig, circuitBreaker, showRetryToast = true, ...mutationOptions } = options || {};
+  const {
+    retryConfig,
+    circuitBreaker,
+    showRetryToast = true,
+    ...mutationOptions
+  } = options || {};
 
   const wrappedMutationFn = async (variables: TVariables): Promise<TData> => {
-    const executeWithRetry = () => withRetry(
-      () => mutationFn(variables),
-      {
+    const executeWithRetry = () =>
+      withRetry(() => mutationFn(variables), {
         ...retryConfig,
         onRetry: (attempt, error, delay) => {
           retryConfig?.onRetry?.(attempt, error, delay);
-          
+
           if (showRetryToast) {
-            toast.info(`Tentativa ${attempt} falhou. Tentando novamente em ${Math.round(delay / 1000)}s...`, {
-              duration: delay,
-            });
+            toast.info(
+              `Tentativa ${attempt} falhou. Tentando novamente em ${Math.round(delay / 1000)}s...`,
+              {
+                duration: delay,
+              }
+            );
           }
         },
-      }
-    );
+      });
 
     // Wrap with circuit breaker if enabled
     if (circuitBreaker?.enabled && circuitBreaker.name) {
@@ -195,6 +219,7 @@ export function getGlobalRetryConfig(): RetryConfig {
 
 // Expose for debugging in development
 if (typeof window !== 'undefined' && import.meta.env.DEV) {
+  // eslint-disable-next-line no-restricted-syntax
   (window as unknown as { __retryConfig: unknown }).__retryConfig = {
     configure: configureGlobalRetry,
     getConfig: getGlobalRetryConfig,

@@ -10,7 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Phone, Mail, Calendar, TrendingUp, Users, Percent, Download, Filter } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  Calendar,
+  TrendingUp,
+  Users,
+  Percent,
+  Download,
+  Filter,
+} from 'lucide-react';
 import {
   useSalespersonActivityReport,
   useActivityTrend,
@@ -27,12 +36,7 @@ import { toast } from 'sonner';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
 type OutcomeFilter =
-  | 'all'
-  | 'connected'
-  | 'scheduled'
-  | 'qualified'
-  | 'no_answer'
-  | 'not_interested';
+  'all' | 'connected' | 'scheduled' | 'qualified' | 'no_answer' | 'not_interested';
 
 const outcomeLabels: Record<OutcomeFilter, string> = {
   all: 'Todos os outcomes',
@@ -136,6 +140,7 @@ export default function RelatorioAtividades() {
     }
 
     exportToCSV(
+      // eslint-disable-next-line no-restricted-syntax
       filteredSalespeople as unknown as Record<string, unknown>[],
       `relatorio-atividades-${outcomeFilter !== 'all' ? outcomeFilter + '-' : ''}${getLocalISODate()}`,
       [

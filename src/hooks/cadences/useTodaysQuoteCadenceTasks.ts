@@ -55,6 +55,7 @@ export function useTodaysQuoteCadenceTasks() {
 
       if (error) throw error;
 
+      // eslint-disable-next-line no-restricted-syntax
       const tasks = (data ?? []) as unknown as TodaysQuoteCadenceTask[];
       return { count: tasks.length, tasks };
     },

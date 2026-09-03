@@ -40,6 +40,7 @@ interface CategoryData {
 
 const CustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (!active || !payload?.length) return null;
+  // eslint-disable-next-line no-restricted-syntax
   const data = payload[0].payload as unknown as CategoryData;
   return (
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">

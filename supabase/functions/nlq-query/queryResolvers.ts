@@ -1,5 +1,4 @@
 // Pure resolvers for whitelisted NLQ tools. Uses caller's Supabase client (RLS applied).
-// deno-lint-ignore-file no-explicit-any
 import { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 

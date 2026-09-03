@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { CACHE_TIMES } from "@/constants";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { CACHE_TIMES } from '@/constants';
+import { toast } from 'sonner';
 
 export interface StageConversionMetric {
   id: string;
@@ -22,22 +22,23 @@ export interface StageBottleneckInsight {
   id: string;
   stage: string;
   owner_id: string | null;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   conversion_rate: number;
   top_loss_reasons: { reason: string; count: number }[];
-  recommendations: { title: string; action: string; impact: "low" | "medium" | "high" }[];
+  recommendations: { title: string; action: string; impact: 'low' | 'medium' | 'high' }[];
   ai_summary: string | null;
   calculated_at: string;
 }
 
 export const useStageConversion = (ownerId?: string | null) => {
   return useQuery({
-    queryKey: ["stage-conversion", ownerId ?? "global"],
+    queryKey: ['stage-conversion', ownerId ?? 'global'],
     queryFn: async () => {
-      let q = supabase.from("stage_conversion_metrics").select("*").order("from_stage");
-      q = ownerId ? q.eq("owner_id", ownerId) : q.is("owner_id", null);
+      let q = supabase.from('stage_conversion_metrics').select('*').order('from_stage');
+      q = ownerId ? q.eq('owner_id', ownerId) : q.is('owner_id', null);
       const { data, error } = await q;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as StageConversionMetric[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
@@ -46,12 +47,13 @@ export const useStageConversion = (ownerId?: string | null) => {
 
 export const useStageBottlenecks = (ownerId?: string | null) => {
   return useQuery({
-    queryKey: ["stage-bottlenecks", ownerId ?? "global"],
+    queryKey: ['stage-bottlenecks', ownerId ?? 'global'],
     queryFn: async () => {
-      let q = supabase.from("stage_bottleneck_insights").select("*").order("severity");
-      q = ownerId ? q.eq("owner_id", ownerId) : q.is("owner_id", null);
+      let q = supabase.from('stage_bottleneck_insights').select('*').order('severity');
+      q = ownerId ? q.eq('owner_id', ownerId) : q.is('owner_id', null);
       const { data, error } = await q;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data || []) as unknown as StageBottleneckInsight[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
@@ -62,17 +64,20 @@ export const useAnalyzeStageConversion = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (vars: { owner_id?: string | null; days?: number } = {}) => {
-      const { data, error } = await supabase.functions.invoke("analyze-stage-conversion", {
-        body: { owner_id: vars.owner_id ?? null, days: vars.days ?? 90 },
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'analyze-stage-conversion',
+        {
+          body: { owner_id: vars.owner_id ?? null, days: vars.days ?? 90 },
+        }
+      );
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      toast.success("Análise de conversão atualizada");
-      qc.invalidateQueries({ queryKey: ["stage-conversion"] });
-      qc.invalidateQueries({ queryKey: ["stage-bottlenecks"] });
+      toast.success('Análise de conversão atualizada');
+      qc.invalidateQueries({ queryKey: ['stage-conversion'] });
+      qc.invalidateQueries({ queryKey: ['stage-bottlenecks'] });
     },
-    onError: () => toast.error("Erro ao analisar conversão"),
+    onError: () => toast.error('Erro ao analisar conversão'),
   });
 };

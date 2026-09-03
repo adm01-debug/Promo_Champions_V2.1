@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
@@ -58,6 +58,7 @@ function evalAccount(
 
 Deno.serve(
   withRequestId('expansion-detector', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
     try {

@@ -62,6 +62,8 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
       // the new `suppressed` / `suppress_reason` columns we just added, so
       // we cast the builder to keep the file type-safe without touching the
       // auto-generated types module.
+
+      /* eslint-disable no-restricted-syntax */
       const q = (
         supabase as unknown as {
           from: (t: string) => {
@@ -131,13 +133,20 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
           'id, subscription_id, kind, request_id, fired_at, suppressed, suppress_reason, details, winloss_webhook_subscriptions(url)'
         )
         .gte('fired_at', since);
+      /* eslint-enable no-restricted-syntax */
 
       // chained eq filters — apply only those provided
 
       type ChainStep = {
         eq: (c: string, v: string | boolean) => ChainStep;
-        order: (c: string, o: { ascending: boolean }) => { limit: (n: number) => Promise<{ data: RawRow[] | null; error: Error | null }> };
+        order: (
+          c: string,
+          o: { ascending: boolean }
+        ) => {
+          limit: (n: number) => Promise<{ data: RawRow[] | null; error: Error | null }>;
+        };
       };
+      // eslint-disable-next-line no-restricted-syntax
       let chain = q as unknown as ChainStep;
       if (filters.subscriptionId)
         chain = chain.eq('subscription_id', filters.subscriptionId);
@@ -150,19 +159,17 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
         .limit(limit);
       if (error) throw error;
 
-      return (data ?? []).map(
-        (r: RawRow): WebhookAlertHistoryRow => ({
-          id: r.id,
-          subscription_id: r.subscription_id,
-          subscription_url: r.winloss_webhook_subscriptions?.url ?? null,
-          kind: r.kind,
-          request_id: r.request_id,
-          fired_at: r.fired_at,
-          suppressed: r.suppressed === true,
-          suppress_reason: r.suppress_reason,
-          details: r.details ?? {},
-        })
-      );
+      return (data ?? []).map((r: RawRow): WebhookAlertHistoryRow => ({
+        id: r.id,
+        subscription_id: r.subscription_id,
+        subscription_url: r.winloss_webhook_subscriptions?.url ?? null,
+        kind: r.kind,
+        request_id: r.request_id,
+        fired_at: r.fired_at,
+        suppressed: r.suppressed === true,
+        suppress_reason: r.suppress_reason,
+        details: r.details ?? {},
+      }));
     },
   });
 }

@@ -90,7 +90,9 @@ export default function AdminComercial() {
         .select('*')
         .eq('month', currentMonthDate);
       if (error) throw error;
+      /* eslint-disable no-restricted-syntax */
       return (data || []) as unknown as CommissionConfig[];
+      /* eslint-enable no-restricted-syntax */
     },
   });
 
@@ -102,7 +104,7 @@ export default function AdminComercial() {
         .select('*')
         .eq('month', currentMonthDate);
       if (error) throw error;
-      return (data || []) as unknown as CommercialGoal[];
+      return (data || []) as CommercialGoal[];
     },
   });
 
@@ -122,9 +124,9 @@ export default function AdminComercial() {
           .select('*')
           .is('month', null)
           .order('created_at', { ascending: true });
-        return (defaultRules || []) as unknown as ScoringRule[];
+        return (defaultRules || []) as ScoringRule[];
       }
-      return data as unknown as ScoringRule[];
+      return data as ScoringRule[];
     },
   });
 
@@ -136,7 +138,7 @@ export default function AdminComercial() {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return (data || []) as unknown as ApprovalRequest[];
+      return (data || []) as ApprovalRequest[];
     },
   });
 
@@ -150,7 +152,9 @@ export default function AdminComercial() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
+      /* eslint-disable no-restricted-syntax */
       return (data || []) as unknown as AuditLog[];
+      /* eslint-enable no-restricted-syntax */
     },
   });
 
@@ -261,6 +265,7 @@ export default function AdminComercial() {
               from: request.old_values as Record<string, Json>,
               to: request.new_values as Record<string, Json>,
             },
+            // eslint-disable-next-line no-restricted-syntax
             metadata: {
               approval_request_id: requestId,
               justification,
@@ -414,7 +419,9 @@ export default function AdminComercial() {
                   className="bg-muted/20 border-border/20 group hover:border-primary/40 transition-all"
                 >
                   <CardHeader>
-                    <CardTitle className="text-section-title text-sm">{rule.label}</CardTitle>
+                    <CardTitle className="text-section-title text-sm">
+                      {rule.label}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">

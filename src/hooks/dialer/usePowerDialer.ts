@@ -48,6 +48,7 @@ export const useDialerQueues = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as DialerQueue[];
     },
   });
@@ -65,6 +66,7 @@ export const useQueueItems = (queueId: string | null) => {
         .order('queue_position', { ascending: true })
         .limit(100);
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as DialerQueueItem[];
     },
   });
@@ -75,9 +77,19 @@ export const useQueueStats = (queueId: string | null) => {
     queryKey: ['dialer-queue-stats', queueId],
     enabled: !!queueId,
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_dialer_queue_stats', { _queue_id: queueId! });
+      const { data, error } = await supabase.rpc('get_dialer_queue_stats', {
+        _queue_id: queueId!,
+      });
       if (error) throw error;
-      return (data?.[0] ?? { pending_count: 0, calling_count: 0, done_count: 0, skipped_count: 0, snoozed_count: 0 });
+      return (
+        data?.[0] ?? {
+          pending_count: 0,
+          calling_count: 0,
+          done_count: 0,
+          skipped_count: 0,
+          snoozed_count: 0,
+        }
+      );
     },
   });
 };
@@ -85,15 +97,25 @@ export const useQueueStats = (queueId: string | null) => {
 export const useCreateQueue = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { name: string; priority_strategy: DialerQueue['priority_strategy']; filter?: Record<string, unknown> }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+    mutationFn: async (payload: {
+      name: string;
+      priority_strategy: DialerQueue['priority_strategy'];
+      filter?: Record<string, unknown>;
+    }) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
-      const { data, error } = await supabase.from('dialer_queues').insert({
-        owner_id: user.id,
-        name: payload.name,
-        priority_strategy: payload.priority_strategy,
-        filter: (payload.filter ?? {}) as never,
-      }).select().single();
+      const { data, error } = await supabase
+        .from('dialer_queues')
+        .insert({
+          owner_id: user.id,
+          name: payload.name,
+          priority_strategy: payload.priority_strategy,
+          filter: (payload.filter ?? {}) as never,
+        })
+        .select()
+        .single();
       if (error) throw error;
       return data;
     },
@@ -118,9 +140,13 @@ export const useRebuildQueue = () => {
       qc.invalidateQueries({ queryKey: ['dialer-queue-items', queueId] });
       qc.invalidateQueries({ queryKey: ['dialer-queue-stats', queueId] });
       qc.invalidateQueries({ queryKey: ['dialer-queues'] });
-      toast({ title: 'Fila reconstruída', description: `${data.items_built} itens enfileirados` });
+      toast({
+        title: 'Fila reconstruída',
+        description: `${data.items_built} itens enfileirados`,
+      });
     },
-    onError: (err: Error) => toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
+    onError: (err: Error) =>
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
   });
 };
 
@@ -128,9 +154,16 @@ export const useNextItem = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (queueId: string) => {
-      const { data, error } = await supabase.rpc('next_dialer_item', { _queue_id: queueId });
+      const { data, error } = await supabase.rpc('next_dialer_item', {
+        _queue_id: queueId,
+      });
       if (error) throw error;
-      return (data?.[0] ?? null) as { item_id: string; sale_id: string; score: number; queue_position: number } | null;
+      return (data?.[0] ?? null) as {
+        item_id: string;
+        sale_id: string;
+        score: number;
+        queue_position: number;
+      } | null;
     },
     onSuccess: (_d, queueId) => {
       qc.invalidateQueries({ queryKey: ['dialer-queue-items', queueId] });
@@ -151,19 +184,28 @@ export const useLogCall = () => {
       notes?: string | null;
       next_action_at?: string | null;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
-      const { data, error } = await supabase.from('call_logs').insert({
-        owner_id: user.id,
-        ...payload,
-      }).select().single();
+      const { data, error } = await supabase
+        .from('call_logs')
+        .insert({
+          owner_id: user.id,
+          ...payload,
+        })
+        .select()
+        .single();
       if (error) throw error;
 
       if (payload.queue_item_id) {
-        await supabase.from('dialer_queue_items').update({
-          status: 'done',
-          completed_at: new Date().toISOString(),
-        }).eq('id', payload.queue_item_id);
+        await supabase
+          .from('dialer_queue_items')
+          .update({
+            status: 'done',
+            completed_at: new Date().toISOString(),
+          })
+          .eq('id', payload.queue_item_id);
       }
       return data;
     },
@@ -173,7 +215,8 @@ export const useLogCall = () => {
       qc.invalidateQueries({ queryKey: ['call-logs'] });
       toast({ title: 'Chamada registrada' });
     },
-    onError: (err: Error) => toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
+    onError: (err: Error) =>
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
   });
 };
 
@@ -182,9 +225,13 @@ export const useSnoozeItem = () => {
   return useMutation({
     mutationFn: async (payload: { item_id: string; snooze_minutes: number }) => {
       const until = new Date(Date.now() + payload.snooze_minutes * 60_000).toISOString();
-      const { error } = await supabase.from('dialer_queue_items').update({
-        status: 'snoozed', snooze_until: until,
-      }).eq('id', payload.item_id);
+      const { error } = await supabase
+        .from('dialer_queue_items')
+        .update({
+          status: 'snoozed',
+          snooze_until: until,
+        })
+        .eq('id', payload.item_id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -207,6 +254,7 @@ export const useCallLogsForSale = (saleId: string | null) => {
         .order('created_at', { ascending: false })
         .limit(5);
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as CallLog[];
     },
   });

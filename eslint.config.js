@@ -51,6 +51,14 @@ export default tseslint.config(
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      // Discourage double-cast `as unknown as T` — it bypasses TypeScript safety.
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'TSAsExpression > TSAsExpression[typeAnnotation.type="TSUnknownKeyword"]',
+          message: 'Avoid `as unknown as T`; prefer a narrower type assertion or proper typing.',
+        },
+      ],
     },
   },
   // Logging is legitimate in build scripts and test suites

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CadenceComparisonRow {
   cadence_id: string;
@@ -24,18 +24,21 @@ interface RawRow {
 
 export function useQuoteCadenceComparison() {
   return useQuery({
-    queryKey: ["quote-cadence-comparison"],
+    queryKey: ['quote-cadence-comparison'],
     queryFn: async (): Promise<CadenceComparisonRow[]> => {
       const { data, error } = await supabase
-        .from("prospect_cadences")
-        .select(`
+        .from('prospect_cadences')
+        .select(
+          `
           id, status, started_at, completed_at,
           cadence:cadences(id, name),
           quote:quotes(status)
-        `)
-        .not("quote_id", "is", null);
+        `
+        )
+        .not('quote_id', 'is', null);
       if (error) throw error;
 
+      // eslint-disable-next-line no-restricted-syntax
       const rows = (data ?? []) as unknown as RawRow[];
       const grouped = new Map<string, RawRow[]>();
       for (const r of rows) {
@@ -48,26 +51,29 @@ export function useQuoteCadenceComparison() {
       const out: CadenceComparisonRow[] = [];
       for (const [cid, items] of grouped) {
         const total = items.length;
-        const active = items.filter((i) => i.status === "active").length;
-        const completed = items.filter((i) => i.status === "completed").length;
-        const cancelled = items.filter((i) => i.status === "cancelled").length;
-        const approved = items.filter((i) => i.quote?.status === "approved").length;
+        const active = items.filter(i => i.status === 'active').length;
+        const completed = items.filter(i => i.status === 'completed').length;
+        const cancelled = items.filter(i => i.status === 'cancelled').length;
+        const approved = items.filter(i => i.quote?.status === 'approved').length;
         const finished = completed + cancelled;
-        const conversion_rate = finished > 0 ? Math.round((approved / finished) * 100) : 0;
+        const conversion_rate =
+          finished > 0 ? Math.round((approved / finished) * 100) : 0;
 
         const durations = items
-          .filter((i) => i.completed_at && i.started_at)
-          .map((i) => {
+          .filter(i => i.completed_at && i.started_at)
+          .map(i => {
             const a = new Date(i.started_at!).getTime();
             const b = new Date(i.completed_at!).getTime();
             return (b - a) / (1000 * 60 * 60 * 24);
           });
         const avg_days_to_complete =
-          durations.length > 0 ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length) : 0;
+          durations.length > 0
+            ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+            : 0;
 
         out.push({
           cadence_id: cid,
-          cadence_name: items[0].cadence?.name ?? "—",
+          cadence_name: items[0].cadence?.name ?? '—',
           total_enrolled: total,
           active,
           completed,

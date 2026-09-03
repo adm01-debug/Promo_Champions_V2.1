@@ -224,8 +224,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       if (!orderSearch) return true;
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || '';
-      const accountName =
-        accountById.get(o.account_id)?.name.toLowerCase() || '';
+      const accountName = accountById.get(o.account_id)?.name.toLowerCase() || '';
       return orderNum.includes(search) || accountName.includes(search);
     });
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
@@ -319,6 +318,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   const exportCSV = () => {
     const sanitizedAccounts = accounts.map(acc => {
       const safe: Record<string, unknown> = {};
+      // eslint-disable-next-line no-restricted-syntax
       for (const [k, v] of Object.entries(acc as unknown as Record<string, unknown>)) {
         safe[k] = typeof v === 'string' ? sanitizeCsvCell(v) : v;
       }
@@ -349,9 +349,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-page-title uppercase italic">
-            Customer Success 360
-          </h1>
+          <h1 className="text-page-title uppercase italic">Customer Success 360</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Health, retenção, expansão e adoção em uma visão consolidada
           </p>

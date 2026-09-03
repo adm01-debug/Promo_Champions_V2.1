@@ -1,12 +1,17 @@
-
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { GitBranch, Zap, Clock, Info, Search } from "lucide-react";
-import { format } from "date-fns";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { GitBranch, Zap, Clock, Info, Search } from 'lucide-react';
+import { format } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
 interface AuditLogEntry {
   id: string;
@@ -27,11 +32,11 @@ interface AuditLogEntry {
 export function RuleAuditLogs() {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [_loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchLogs();
-    
+
     // Setup real-time subscription
     const channel = supabase
       .channel('schema-db-changes')
@@ -40,10 +45,13 @@ export function RuleAuditLogs() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'intent_audit_logs'
+          table: 'intent_audit_logs',
         },
-        (payload) => {
-          setLogs(prev => [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50));
+        payload => {
+          setLogs(prev =>
+            // eslint-disable-next-line no-restricted-syntax
+            [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50)
+          );
         }
       )
       .subscribe();
@@ -55,20 +63,22 @@ export function RuleAuditLogs() {
 
   const fetchLogs = async () => {
     const { data, error } = await supabase
-      .from("intent_audit_logs")
-      .select("*, leads:lead_id(client_name)")
-      .order("created_at", { ascending: false })
+      .from('intent_audit_logs')
+      .select('*, leads:lead_id(client_name)')
+      .order('created_at', { ascending: false })
       .limit(50);
-    
+
     if (!error) {
+      // eslint-disable-next-line no-restricted-syntax
       setLogs((data as unknown as AuditLogEntry[]) || []);
     }
     setLoading(false);
   };
 
-  const filteredLogs = logs.filter(log => 
-    log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (log.leads?.client_name || "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredLogs = logs.filter(
+    log =>
+      log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.leads?.client_name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -88,7 +98,7 @@ export function RuleAuditLogs() {
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
             <Input
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               placeholder="Filtrar por lead ou evento..."
               className="h-8 pl-7 text-xs bg-muted/30"
             />
@@ -98,8 +108,11 @@ export function RuleAuditLogs() {
       <CardContent>
         <ScrollArea className="h-[600px] pr-4">
           <div className="space-y-3">
-            {filteredLogs.map((log) => (
-              <div key={log.id} className="p-4 rounded-xl border border-border/30 bg-muted/10 space-y-3 animate-in fade-in slide-in-from-right-2">
+            {filteredLogs.map(log => (
+              <div
+                key={log.id}
+                className="p-4 rounded-xl border border-border/30 bg-muted/10 space-y-3 animate-in fade-in slide-in-from-right-2"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-background border border-border/40">
@@ -107,17 +120,26 @@ export function RuleAuditLogs() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold">{log.leads?.client_name || "Lead"}</span>
-                        <Badge variant="outline" className="text-[9px] uppercase">{log.event_type}</Badge>
+                        <span className="text-xs font-bold">
+                          {log.leads?.client_name || 'Lead'}
+                        </span>
+                        <Badge variant="outline" className="text-[9px] uppercase">
+                          {log.event_type}
+                        </Badge>
                       </div>
                       <p className="text-[10px] text-muted-foreground">
-                        {format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss")}
+                        {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss')}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary">
-                      {log.details?.transitioned ? "Transição de Etapa" : "Gatilho de Intenção"}
+                    <Badge
+                      variant="secondary"
+                      className="text-[9px] bg-primary/10 text-primary"
+                    >
+                      {log.details?.transitioned
+                        ? 'Transição de Etapa'
+                        : 'Gatilho de Intenção'}
                     </Badge>
                   </div>
                 </div>
@@ -128,7 +150,9 @@ export function RuleAuditLogs() {
                       <Info className="h-2.5 w-2.5" /> Motivo / Regra Aplicada
                     </span>
                     <p className="text-xs italic bg-background/50 p-2 rounded border border-border/20">
-                      {log.rule_applied?.reason || log.details?.reason || "Processamento de rotina baseado no histórico de cliques."}
+                      {log.rule_applied?.reason ||
+                        log.details?.reason ||
+                        'Processamento de rotina baseado no histórico de cliques.'}
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -138,18 +162,24 @@ export function RuleAuditLogs() {
                     <div className="flex flex-wrap gap-1">
                       {log.details?.transitioned ? (
                         <Badge variant="default" className="text-[9px] h-5">
-                          {log.details.old_stage} {"->"} {log.details.new_stage}
+                          {log.details.old_stage} {'->'} {log.details.new_stage}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-[9px] h-5">
                           Log registrado ({log.details?.event_count || 1}x)
                         </Badge>
                       )}
-                      {log.details?.planned_actions?.map((action: string, idx: number) => (
-                        <Badge key={idx} variant="secondary" className="text-[9px] h-5 bg-green-500/10 text-green-600 border-green-500/20">
-                          +{action}
-                        </Badge>
-                      ))}
+                      {log.details?.planned_actions?.map(
+                        (action: string, idx: number) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="text-[9px] h-5 bg-green-500/10 text-green-600 border-green-500/20"
+                          >
+                            +{action}
+                          </Badge>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>

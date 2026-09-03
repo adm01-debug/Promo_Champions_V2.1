@@ -49,6 +49,7 @@ describe('useDashboardKPIsPeriod', () => {
 
     type QueryResult = { data: Record<string, unknown>[]; error: null };
 
+    // eslint-disable-next-line no-restricted-syntax
     (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (table: string) => ({
         select: vi.fn().mockReturnThis(),

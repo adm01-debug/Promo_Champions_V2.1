@@ -68,7 +68,11 @@ describe('evaluateBonus', () => {
   });
 
   it('malformed trigger: does not throw', () => {
-    const b = { ...base, trigger_condition: { milestone_amount: 'x' as unknown as number } };
+    const b = {
+      ...base,
+      // eslint-disable-next-line no-restricted-syntax
+      trigger_condition: { milestone_amount: 'x' as unknown as number },
+    };
     expect(() => evaluateBonus(b, ctx)).not.toThrow();
     expect(evaluateBonus(b, ctx)?.achieved).toBe(true);
   });

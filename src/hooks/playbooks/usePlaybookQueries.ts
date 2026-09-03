@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { chunkedIn } from "@/lib/supabase/chunkedIn";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 export interface PlaybookItem {
   id: string;
@@ -32,25 +32,25 @@ export interface PlaybookProgress {
 
 export const usePlaybooks = () => {
   return useQuery({
-    queryKey: ["playbooks"],
+    queryKey: ['playbooks'],
     queryFn: async () => {
       const { data: playbooks, error: playbooksError } = await supabase
-        .from("playbooks")
-        .select("*")
-        .order("stage");
+        .from('playbooks')
+        .select('*')
+        .order('stage');
 
       if (playbooksError) throw playbooksError;
 
       const { data: items, error: itemsError } = await supabase
-        .from("playbook_items")
-        .select("*")
-        .order("item_order");
+        .from('playbook_items')
+        .select('*')
+        .order('item_order');
 
       if (itemsError) throw itemsError;
 
-      const playbooksWithItems = (playbooks as Playbook[]).map((playbook) => ({
+      const playbooksWithItems = (playbooks as Playbook[]).map(playbook => ({
         ...playbook,
-        items: (items as PlaybookItem[]).filter((item) => item.playbook_id === playbook.id),
+        items: (items as PlaybookItem[]).filter(item => item.playbook_id === playbook.id),
       }));
 
       return playbooksWithItems;
@@ -60,30 +60,34 @@ export const usePlaybooks = () => {
 
 export const usePlaybooksByStage = (stage: string) => {
   return useQuery({
-    queryKey: ["playbooks", stage],
+    queryKey: ['playbooks', stage],
     queryFn: async () => {
       const { data: playbooks, error: playbooksError } = await supabase
-        .from("playbooks")
-        .select("*")
-        .eq("stage", stage);
+        .from('playbooks')
+        .select('*')
+        .eq('stage', stage);
 
       if (playbooksError) throw playbooksError;
       if (!playbooks || playbooks.length === 0) return [];
 
-      const playbookIds = playbooks.map((p) => p.id);
+      const playbookIds = playbooks.map(p => p.id);
       const items = await chunkedIn<PlaybookItem>(
         playbookIds,
-        (chunk) => supabase
-          .from("playbook_items")
-          .select("*")
-          .in("playbook_id", chunk as string[])
-          .order("item_order") as unknown as PromiseLike<{ data: PlaybookItem[] | null; error: { message?: string } | null }>,
-        { parallel: true, label: "playbooks.items" },
+        chunk =>
+          supabase // eslint-disable-line no-restricted-syntax
+            .from('playbook_items')
+            .select('*')
+            .in('playbook_id', chunk as string[])
+            .order('item_order') as unknown as PromiseLike<{
+            data: PlaybookItem[] | null;
+            error: { message?: string } | null;
+          }>,
+        { parallel: true, label: 'playbooks.items' }
       );
 
-      return (playbooks as Playbook[]).map((playbook) => ({
+      return (playbooks as Playbook[]).map(playbook => ({
         ...playbook,
-        items: (items as PlaybookItem[]).filter((item) => item.playbook_id === playbook.id),
+        items: (items as PlaybookItem[]).filter(item => item.playbook_id === playbook.id),
       }));
     },
     enabled: !!stage,
@@ -92,12 +96,12 @@ export const usePlaybooksByStage = (stage: string) => {
 
 export const useDealPlaybookProgress = (saleId: string) => {
   return useQuery({
-    queryKey: ["playbook-progress", saleId],
+    queryKey: ['playbook-progress', saleId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("playbook_progress")
-        .select("*")
-        .eq("sale_id", saleId);
+        .from('playbook_progress')
+        .select('*')
+        .eq('sale_id', saleId);
 
       if (error) throw error;
       return data as PlaybookProgress[];
@@ -108,17 +112,17 @@ export const useDealPlaybookProgress = (saleId: string) => {
 
 export const usePlaybookAdherence = () => {
   return useQuery({
-    queryKey: ["playbook-adherence"],
+    queryKey: ['playbook-adherence'],
     queryFn: async () => {
       const { data: progress, error: progressError } = await supabase
-        .from("playbook_progress")
-        .select("*");
+        .from('playbook_progress')
+        .select('*');
 
       if (progressError) throw progressError;
 
       const { data: items, error: itemsError } = await supabase
-        .from("playbook_items")
-        .select("*");
+        .from('playbook_items')
+        .select('*');
 
       if (itemsError) throw itemsError;
 
@@ -127,18 +131,26 @@ export const usePlaybookAdherence = () => {
 
       // Group by playbook_item_id to find most/least completed
       const completionMap = new Map<string, number>();
-      progress?.forEach((p) => {
-        completionMap.set(p.playbook_item_id, (completionMap.get(p.playbook_item_id) || 0) + 1);
+      progress?.forEach(p => {
+        completionMap.set(
+          p.playbook_item_id,
+          (completionMap.get(p.playbook_item_id) || 0) + 1
+        );
       });
 
-      const itemCompletionRates = items?.map((item) => ({
-        itemId: item.id,
-        content: item.content,
-        completions: completionMap.get(item.id) || 0,
-      })) || [];
+      const itemCompletionRates =
+        items?.map(item => ({
+          itemId: item.id,
+          content: item.content,
+          completions: completionMap.get(item.id) || 0,
+        })) || [];
 
-      const mostCompleted = [...itemCompletionRates].sort((a, b) => b.completions - a.completions).slice(0, 5);
-      const leastCompleted = [...itemCompletionRates].sort((a, b) => a.completions - b.completions).slice(0, 5);
+      const mostCompleted = [...itemCompletionRates]
+        .sort((a, b) => b.completions - a.completions)
+        .slice(0, 5);
+      const leastCompleted = [...itemCompletionRates]
+        .sort((a, b) => a.completions - b.completions)
+        .slice(0, 5);
 
       return {
         totalItems,

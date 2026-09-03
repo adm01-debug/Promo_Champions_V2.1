@@ -81,6 +81,7 @@ export function useEmailMetrics(days: number = 30) {
         .gte('created_at', startDate.toISOString());
 
       const emailLogs = (logs || []) as EmailLog[];
+      // eslint-disable-next-line no-restricted-syntax
       const trackingEvents = (events || []) as unknown as TrackingEvent[];
 
       const totalSent = emailLogs.filter(l => l.status === 'sent').length;

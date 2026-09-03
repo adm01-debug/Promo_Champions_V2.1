@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface WebhookAlertSettings {
   id: string;
@@ -12,9 +12,9 @@ export interface WebhookAlertSettings {
   updated_at: string;
 }
 
-export type WebhookAlertSettingsInput = Omit<WebhookAlertSettings, "id" | "updated_at">;
+export type WebhookAlertSettingsInput = Omit<WebhookAlertSettings, 'id' | 'updated_at'>;
 
-const QUERY_KEY = ["winloss-alert-settings"] as const;
+const QUERY_KEY = ['winloss-alert-settings'] as const;
 
 /** Loads (and lets admins update) the singleton row with the alert thresholds. */
 export function useWebhookAlertSettings() {
@@ -25,19 +25,32 @@ export function useWebhookAlertSettings() {
     staleTime: 30_000,
     queryFn: async () => {
       // Cast: the auto-generated types module doesn't yet include this table.
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            eq: (c: string, v: boolean) => {
-              maybeSingle: () => Promise<{ data: WebhookAlertSettings | null; error: Error | null }>;
+
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
+        supabase as unknown as {
+          from: (t: string) => {
+            select: (c: string) => {
+              eq: (
+                c: string,
+                v: boolean
+              ) => {
+                maybeSingle: () => Promise<{
+                  data: WebhookAlertSettings | null;
+                  error: Error | null;
+                }>;
+              };
             };
           };
-        };
-      })
-        .from("winloss_alert_settings")
-        .select("id, consecutive_failures, retry_rate_threshold, window_minutes, min_deliveries, suppress_minutes, max_attempts, updated_at")
-        .eq("singleton", true)
+        }
+      )
+        .from('winloss_alert_settings')
+        .select(
+          'id, consecutive_failures, retry_rate_threshold, window_minutes, min_deliveries, suppress_minutes, max_attempts, updated_at'
+        )
+        .eq('singleton', true)
         .maybeSingle();
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       return data;
     },
@@ -46,17 +59,22 @@ export function useWebhookAlertSettings() {
   const mutation = useMutation({
     mutationFn: async (input: WebhookAlertSettingsInput) => {
       const id = query.data?.id;
-      if (!id) throw new Error("Configurações não encontradas. Recarregue a página.");
-      const { error } = await (supabase as unknown as {
-        from: (t: string) => {
-          update: (v: WebhookAlertSettingsInput) => {
-            eq: (c: string, v: string) => Promise<{ error: Error | null }>;
+      if (!id) throw new Error('Configurações não encontradas. Recarregue a página.');
+
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
+        supabase as unknown as {
+          from: (t: string) => {
+            update: (v: WebhookAlertSettingsInput) => {
+              eq: (c: string, v: string) => Promise<{ error: Error | null }>;
+            };
           };
-        };
-      })
-        .from("winloss_alert_settings")
+        }
+      )
+        .from('winloss_alert_settings')
         .update(input)
-        .eq("id", id);
+        .eq('id', id);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {

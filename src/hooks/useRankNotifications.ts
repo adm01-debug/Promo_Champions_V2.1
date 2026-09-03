@@ -27,7 +27,8 @@ export function useRankNotifications(salespersonId?: string) {
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      return (data || []).map((n) => {
+      return (data || []).map(n => {
+        // eslint-disable-next-line no-restricted-syntax
         const overtaker = n.overtaker as unknown as Record<string, string> | null;
         return {
           ...n,
@@ -46,16 +47,22 @@ export function useRankNotifications(salespersonId?: string) {
     if (!salespersonId) return;
     const channel = supabase
       .channel('rank-changes-rt')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'rank_change_notifications',
-        filter: `salesperson_id=eq.${salespersonId}`,
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['rank-notifications'] });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'rank_change_notifications',
+          filter: `salesperson_id=eq.${salespersonId}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['rank-notifications'] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [salespersonId, queryClient]);
 
   const markAsRead = useMutation({

@@ -1,23 +1,45 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, RefreshCw, Search } from "lucide-react";
-import { useStuckDeals, useDetectStuckDeals } from "@/hooks/deal-intelligence/useStageVelocity";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertTriangle, RefreshCw, Search } from 'lucide-react';
+import {
+  useStuckDeals,
+  useDetectStuckDeals,
+} from '@/hooks/deal-intelligence/useStageVelocity';
 import {
   formatHours,
   severityClasses,
   severityLabel,
   stageLabel,
   type StageSeverity,
-} from "./velocityHelpers";
+} from './velocityHelpers';
 
 const formatBRL = (n: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(n);
 
 export function StuckDealsPanel() {
   const { data, isLoading } = useStuckDeals(15);
   const detect = useDetectStuckDeals();
+  /* eslint-disable no-restricted-syntax */
+  const typedRows = (data ?? []) as unknown as Array<{
+    id: string;
+    sales?: {
+      client_name?: string | null;
+      product_name?: string | null;
+      amount?: number | null;
+    } | null;
+    severity: string;
+    current_stage: string;
+    hours_in_stage: number;
+    baseline_p75: number;
+    recommendation?: string | null;
+  }>;
+  /* eslint-enable no-restricted-syntax */
 
   return (
     <Card variant="elevated" className="glass border-border/40">
@@ -34,7 +56,9 @@ export function StuckDealsPanel() {
             disabled={detect.isPending}
             className="gap-1.5"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${detect.isPending ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${detect.isPending ? 'animate-spin' : ''}`}
+            />
             Detectar
           </Button>
         </div>
@@ -49,12 +73,16 @@ export function StuckDealsPanel() {
         ) : !data?.length ? (
           <div className="text-center py-8">
             <Search className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground">Nenhum deal preso identificado.</p>
-            <p className="text-xs text-muted-foreground mt-1">Clique em "Detectar" para rodar a análise.</p>
+            <p className="text-sm text-muted-foreground">
+              Nenhum deal preso identificado.
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Clique em "Detectar" para rodar a análise.
+            </p>
           </div>
         ) : (
           <div className="space-y-2 max-h-[500px] overflow-y-auto">
-            {(data as unknown as Array<{ id: string; sales?: { client_name?: string | null; product_name?: string | null; amount?: number | null } | null; severity: string; current_stage: string; hours_in_stage: number; baseline_p75: number; recommendation?: string | null }>).map((row) => {
+            {typedRows.map(row => {
               const sale = row.sales;
               const severity = row.severity as StageSeverity;
               return (
@@ -64,12 +92,18 @@ export function StuckDealsPanel() {
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0 flex-1">
-                      <div className="font-medium text-sm truncate">{sale?.client_name || "—"}</div>
+                      <div className="font-medium text-sm truncate">
+                        {sale?.client_name || '—'}
+                      </div>
                       <div className="text-xs text-muted-foreground truncate">
-                        {sale?.product_name || "—"} · {formatBRL(Number(sale?.amount || 0))}
+                        {sale?.product_name || '—'} ·{' '}
+                        {formatBRL(Number(sale?.amount || 0))}
                       </div>
                     </div>
-                    <Badge variant="outline" className={`text-[10px] shrink-0 ${severityClasses(severity)}`}>
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] shrink-0 ${severityClasses(severity)}`}
+                    >
                       {severityLabel(severity)}
                     </Badge>
                   </div>
@@ -80,11 +114,15 @@ export function StuckDealsPanel() {
                     </div>
                     <div>
                       <div className="text-muted-foreground">No estágio</div>
-                      <div className="font-medium tabular-nums">{formatHours(row.hours_in_stage)}</div>
+                      <div className="font-medium tabular-nums">
+                        {formatHours(row.hours_in_stage)}
+                      </div>
                     </div>
                     <div>
                       <div className="text-muted-foreground">Baseline p75</div>
-                      <div className="font-medium tabular-nums">{formatHours(row.baseline_p75)}</div>
+                      <div className="font-medium tabular-nums">
+                        {formatHours(row.baseline_p75)}
+                      </div>
                     </div>
                   </div>
                   {row.recommendation && (

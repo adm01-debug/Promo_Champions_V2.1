@@ -3,7 +3,7 @@
 // containing their top-5 at-risk deals. Idempotent: skips salespeople who
 // already received today's digest (created_at::date = today, type = same).
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
@@ -75,6 +75,7 @@ async function postSlack(text: string, requestId?: string | null): Promise<Slack
 }
 
 Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   const startedAt = Date.now();

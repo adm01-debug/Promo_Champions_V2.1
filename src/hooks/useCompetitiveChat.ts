@@ -26,7 +26,7 @@ export function useCompetitiveChat(squadId?: string | null) {
         .select('*, sender:salesperson_id(name, avatar_url)')
         .order('created_at', { ascending: false })
         .limit(50);
-      
+
       if (squadId) {
         query = query.eq('squad_id', squadId);
       } else {
@@ -35,16 +35,20 @@ export function useCompetitiveChat(squadId?: string | null) {
 
       const { data, error } = await query;
       if (error) throw error;
-      
-      return (data || []).map((m) => {
-        const sender = m.sender as unknown as Record<string, string> | null;
-        return {
-          ...m,
-          sender_name: sender?.name || 'Anônimo',
-          sender_avatar: sender?.avatar_url,
-          reactions: (m.reactions as unknown as Record<string, string[]>) || {},
-        };
-      }).reverse() as ChatMessage[];
+
+      return (data || [])
+        .map(m => {
+          // eslint-disable-next-line no-restricted-syntax
+          const sender = m.sender as unknown as Record<string, string> | null;
+          return {
+            ...m,
+            sender_name: sender?.name || 'Anônimo',
+            sender_avatar: sender?.avatar_url,
+            // eslint-disable-next-line no-restricted-syntax
+            reactions: (m.reactions as unknown as Record<string, string[]>) || {},
+          };
+        })
+        .reverse() as ChatMessage[];
     },
     refetchInterval: 30000,
     staleTime: 15000,
@@ -54,43 +58,58 @@ export function useCompetitiveChat(squadId?: string | null) {
   useEffect(() => {
     const channel = supabase
       .channel(`competitive-chat-rt-${squadId || 'global'}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'competitive_chat_messages',
-        filter: squadId ? `squad_id=eq.${squadId}` : `squad_id=is.null`
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'competitive_chat_messages',
+          filter: squadId ? `squad_id=eq.${squadId}` : `squad_id=is.null`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [queryClient, squadId]);
 
   const sendMessage = useMutation({
-    mutationFn: async ({ salespersonId, message, type = 'chat', targetId, matchupId }: {
+    mutationFn: async ({
+      salespersonId,
+      message,
+      type = 'chat',
+      targetId,
+      matchupId,
+    }: {
       salespersonId: string;
       message: string;
       type?: string;
       targetId?: string;
       matchupId?: string;
     }) => {
-      const { error } = await supabase
-        .from('competitive_chat_messages')
-        .insert({
-          salesperson_id: salespersonId,
-          message,
-          message_type: type,
-          target_salesperson_id: targetId || null,
-          matchup_id: matchupId || null,
-          squad_id: squadId || null,
-        });
+      const { error } = await supabase.from('competitive_chat_messages').insert({
+        salesperson_id: salespersonId,
+        message,
+        message_type: type,
+        target_salesperson_id: targetId || null,
+        matchup_id: matchupId || null,
+        squad_id: squadId || null,
+      });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['competitive-chat', squadId] }),
   });
 
   const addReaction = useMutation({
-    mutationFn: async ({ messageId, salespersonId, emoji }: {
+    mutationFn: async ({
+      messageId,
+      salespersonId,
+      emoji,
+    }: {
       messageId: string;
       salespersonId: string;
       emoji: string;
@@ -101,10 +120,10 @@ export function useCompetitiveChat(squadId?: string | null) {
         .select('reactions')
         .eq('id', messageId)
         .single();
-      
+
       const reactions = (msg?.reactions as Record<string, string[]>) || {};
       if (!reactions[emoji]) reactions[emoji] = [];
-      
+
       const idx = reactions[emoji].indexOf(salespersonId);
       if (idx >= 0) {
         reactions[emoji].splice(idx, 1);

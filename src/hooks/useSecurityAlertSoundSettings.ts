@@ -43,64 +43,80 @@ export function useSecurityAlertSoundSettings() {
     localStorage.setItem(VOLUME_STORAGE_KEY, volume.toString());
   }, [volume]);
 
-  const playSound = useCallback((soundType: SecurityAlertSoundType = selectedSound) => {
-    if (soundType === 'none' || volume === 0) return;
+  const playSound = useCallback(
+    (soundType: SecurityAlertSoundType = selectedSound) => {
+      if (soundType === 'none' || volume === 0) return;
 
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const audioContext = new AudioCtx();
-    const now = audioContext.currentTime;
-    
-    const playNote = (freq: number, startTime: number, duration: number, baseGain = 0.4, type: OscillatorType = 'square') => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = freq;
-      oscillator.type = type;
-      
-      const adjustedGain = baseGain * volume;
-      gainNode.gain.setValueAtTime(adjustedGain, startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-      
-      oscillator.start(startTime);
-      oscillator.stop(startTime + duration);
-    };
+      const AudioCtx =
+        window.AudioContext ||
+        // eslint-disable-next-line no-restricted-syntax
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      const audioContext = new AudioCtx();
+      const now = audioContext.currentTime;
 
-    switch (soundType) {
-      case 'alarm':
-        playNote(880, now, 0.15);
-        playNote(660, now + 0.15, 0.15);
-        playNote(880, now + 0.3, 0.15);
-        playNote(660, now + 0.45, 0.2);
-        break;
-      
-      case 'siren':
-        playNote(800, now, 0.2, 0.35, 'sawtooth');
-        playNote(600, now + 0.2, 0.2, 0.35, 'sawtooth');
-        playNote(800, now + 0.4, 0.2, 0.35, 'sawtooth');
-        playNote(600, now + 0.6, 0.2, 0.35, 'sawtooth');
-        break;
-      
-      case 'beep':
-        playNote(1000, now, 0.1, 0.3, 'sine');
-        playNote(1000, now + 0.15, 0.1, 0.3, 'sine');
-        playNote(1000, now + 0.3, 0.1, 0.3, 'sine');
-        playNote(1000, now + 0.45, 0.15, 0.35, 'sine');
-        break;
-      
-      case 'urgent':
-        playNote(200, now, 0.3, 0.5, 'square');
-        playNote(150, now + 0.3, 0.3, 0.5, 'square');
-        playNote(200, now + 0.6, 0.25, 0.4, 'square');
-        break;
-    }
-  }, [selectedSound, volume]);
+      const playNote = (
+        freq: number,
+        startTime: number,
+        duration: number,
+        baseGain = 0.4,
+        type: OscillatorType = 'square'
+      ) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
 
-  const previewSound = useCallback((soundType: SecurityAlertSoundType) => {
-    playSound(soundType);
-  }, [playSound]);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = freq;
+        oscillator.type = type;
+
+        const adjustedGain = baseGain * volume;
+        gainNode.gain.setValueAtTime(adjustedGain, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      };
+
+      switch (soundType) {
+        case 'alarm':
+          playNote(880, now, 0.15);
+          playNote(660, now + 0.15, 0.15);
+          playNote(880, now + 0.3, 0.15);
+          playNote(660, now + 0.45, 0.2);
+          break;
+
+        case 'siren':
+          playNote(800, now, 0.2, 0.35, 'sawtooth');
+          playNote(600, now + 0.2, 0.2, 0.35, 'sawtooth');
+          playNote(800, now + 0.4, 0.2, 0.35, 'sawtooth');
+          playNote(600, now + 0.6, 0.2, 0.35, 'sawtooth');
+          break;
+
+        case 'beep':
+          playNote(1000, now, 0.1, 0.3, 'sine');
+          playNote(1000, now + 0.15, 0.1, 0.3, 'sine');
+          playNote(1000, now + 0.3, 0.1, 0.3, 'sine');
+          playNote(1000, now + 0.45, 0.15, 0.35, 'sine');
+          break;
+
+        case 'urgent':
+          playNote(200, now, 0.3, 0.5, 'square');
+          playNote(150, now + 0.3, 0.3, 0.5, 'square');
+          playNote(200, now + 0.6, 0.25, 0.4, 'square');
+          break;
+      }
+    },
+    [selectedSound, volume]
+  );
+
+  const previewSound = useCallback(
+    (soundType: SecurityAlertSoundType) => {
+      playSound(soundType);
+    },
+    [playSound]
+  );
 
   return {
     selectedSound,

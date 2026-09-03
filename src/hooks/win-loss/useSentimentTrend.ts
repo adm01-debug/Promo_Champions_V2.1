@@ -27,6 +27,8 @@ export function useSentimentTrend() {
     queryFn: async (): Promise<SentimentTrendPoint[]> => {
       const since = new Date();
       since.setMonth(since.getMonth() - 18);
+
+      /* eslint-disable no-restricted-syntax */
       const { data: recs } = await (
         supabase as unknown as {
           from: (t: string) => {
@@ -49,6 +51,7 @@ export function useSentimentTrend() {
         .select('recorded_at, sentiment_score, sale_id')
         .gte('recorded_at', since.toISOString())
         .not('sentiment_score', 'is', null);
+      /* eslint-enable no-restricted-syntax */
       const rows = recs ?? [];
       if (!rows.length) return [];
 
@@ -59,8 +62,12 @@ export function useSentimentTrend() {
       if (saleIds.length) {
         const sales = await chunkedIn<SaleRow>(
           saleIds,
-          (chunk) => supabase.from('sales').select('id, status').in('id', chunk as string[]),
-          { parallel: true, label: 'sentiment.sales' },
+          chunk =>
+            supabase
+              .from('sales')
+              .select('id, status')
+              .in('id', chunk as string[]),
+          { parallel: true, label: 'sentiment.sales' }
         );
         sales.forEach(s => saleStatus.set(s.id, s.status ?? ''));
       }

@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface ScoringFactors {
@@ -12,6 +12,7 @@ interface ScoringFactors {
 }
 
 Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }

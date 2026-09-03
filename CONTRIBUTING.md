@@ -5,13 +5,13 @@ Obrigado pelo interesse em contribuir! 🏆
 ## Setup de Desenvolvimento
 
 1. Fork o repositório
-2. Clone seu fork: `git clone https://github.com/SEU_USER/promo-champions-v2.git`
-3. Instale dependências: `bun install` (recomendado) ou `npm install`
+2. Clone seu fork: `git clone https://github.com/SEU_USER/Promo_Champions_V2.1.git`
+3. Instale dependências: `npm ci` (canônico — o CI usa npm e o lockfile é `package-lock.json`)
 4. Configure variáveis: `cp .env.example .env` (preencha credenciais Supabase)
 5. Inicie Supabase local: `supabase start`
 6. Crie uma branch: `git checkout -b feature/minha-feature`
 7. Faça suas alterações
-8. Execute testes: `bun test`
+8. Execute testes: `npm run test`
 9. Commit seguindo Conventional Commits com scopes do projeto
 10. Push: `git push origin feature/minha-feature`
 11. Abra um Pull Request
@@ -28,7 +28,7 @@ Exemplo: `fix(bi): corrigir classificação ABC com receita zero`
 
 ## Estilo de Código
 
-- **TypeScript** modo estrito (`noImplicitAny`, `noUncheckedIndexedAccess`)
+- **TypeScript** modo estrito (`strict: true` + `noImplicitReturns` + `noFallthroughCasesInSwitch`)
 - **ESLint** + **Prettier** (formatar antes de commitar)
 - **Tailwind-first**: sempre prefira classes Tailwind, evite `style={{}}` inline
 - **Componentes**: `PascalCase` com `displayName` e `forwardRef`
@@ -39,9 +39,9 @@ Exemplo: `fix(bi): corrigir classificação ABC com receita zero`
 
 ## Testes
 
-- **Unitários**: Vitest (`bun test`)
-- **E2E**: Playwright (`bun test:e2e`)
-- **Cobertura**: mínimo 70% linhas, 60% branches
+- **Unitários**: Vitest (`npm run test`)
+- **E2E**: Playwright (`npm run test:e2e`)
+- **Cobertura**: thresholds em `vitest.config.ts` (85% linhas / 75% branches sobre os arquivos instrumentados em `coverage.include`)
 - Adicione testes para novas features e correções de bugs
 
 ## Processo de Pull Request

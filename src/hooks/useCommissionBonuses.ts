@@ -35,6 +35,7 @@ export function useCommissionBonuses() {
         .order('priority', { ascending: false })
         .order('created_at', { ascending: false });
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as CommissionBonus[];
     },
   });

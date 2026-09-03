@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -51,6 +51,7 @@ async function postWithTimeout(url: string, payload: unknown, apiKey: string): P
 }
 
 Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "method_not_allowed" }), {

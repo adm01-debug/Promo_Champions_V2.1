@@ -30,6 +30,7 @@ describe('isValidCPF', () => {
     }
   );
 
+  // eslint-disable-next-line no-restricted-syntax
   it.each([null, undefined] as unknown as string[])(
     'degrada para false em vez de lançar exceção para %s',
     value => {
@@ -67,6 +68,7 @@ describe('isValidCNPJ', () => {
     }
   );
 
+  // eslint-disable-next-line no-restricted-syntax
   it.each([null, undefined] as unknown as string[])(
     'degrada para false em vez de lançar exceção para %s',
     value => {

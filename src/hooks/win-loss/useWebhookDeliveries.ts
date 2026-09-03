@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { validateReplayIds } from "./validateReplayIds";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { validateReplayIds } from './validateReplayIds';
 
 export interface WebhookDelivery {
   id: string;
@@ -20,24 +20,26 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
   const qc = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["winloss-webhook-deliveries", subscriptionId, limit],
+    queryKey: ['winloss-webhook-deliveries', subscriptionId, limit],
     enabled: !!subscriptionId,
     staleTime: 15_000,
     queryFn: async (): Promise<WebhookDelivery[]> => {
       if (!subscriptionId) return [];
-      
+
       const { data, error } = await supabase
-        .from("winloss_webhook_deliveries")
-        .select("id, subscription_id, event, attempt, status, error_message, duration_ms, succeeded, created_at, payload")
-        .eq("subscription_id", subscriptionId)
-        .order("created_at", { ascending: false })
+        .from('winloss_webhook_deliveries')
+        .select(
+          'id, subscription_id, event, attempt, status, error_message, duration_ms, succeeded, created_at, payload'
+        )
+        .eq('subscription_id', subscriptionId)
+        .order('created_at', { ascending: false })
         .limit(limit);
 
       if (error) {
-        console.error("Error fetching deliveries:", error);
+        console.error('Error fetching deliveries:', error);
         throw error;
       }
-      return ((data ?? []) as unknown as WebhookDelivery[]);
+      return (data ?? []) as WebhookDelivery[];
     },
   });
 
@@ -45,33 +47,39 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
     mutationFn: async (deliveryIds: string[]) => {
       const validation = validateReplayIds(deliveryIds);
       if (validation.ok !== true) throw new Error(validation.message);
-      const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
+      const { data, error } = await supabase.functions.invoke('winloss-webhook-replay', {
         body: { delivery_ids: validation.ids },
       });
       if (error) throw error;
       return data as {
         requestId: string;
-        source: "delivery";
-        results: Array<{ id: string; succeeded: boolean; status: number; error: string | null; skipped?: boolean }>;
+        source: 'delivery';
+        results: Array<{
+          id: string;
+          succeeded: boolean;
+          status: number;
+          error: string | null;
+          skipped?: boolean;
+        }>;
       };
     },
-    onSuccess: (data) => {
-      const ok = data.results.filter((r) => r.succeeded).length;
-      const skipped = data.results.filter((r) => r.skipped).length;
+    onSuccess: data => {
+      const ok = data.results.filter(r => r.succeeded).length;
+      const skipped = data.results.filter(r => r.skipped).length;
       const fail = data.results.length - ok - skipped;
-      const parts = [`${ok} sucesso`, `${fail} falha${fail === 1 ? "" : "s"}`];
-      if (skipped) parts.push(`${skipped} já entregue${skipped === 1 ? "" : "s"}`);
+      const parts = [`${ok} sucesso`, `${fail} falha${fail === 1 ? '' : 's'}`];
+      if (skipped) parts.push(`${skipped} já entregue${skipped === 1 ? '' : 's'}`);
       const reqId = data.requestId;
-      const summary = `Reenvio: ${parts.join(" · ")}`;
+      const summary = `Reenvio: ${parts.join(' · ')}`;
       const opts = reqId
         ? {
             description: `requestId: ${reqId}`,
             action: {
-              label: "Copiar requestId",
+              label: 'Copiar requestId',
               onClick: () => {
                 void navigator.clipboard?.writeText(reqId).then(
-                  () => toast.success("requestId copiado"),
-                  () => toast.error("Falha ao copiar"),
+                  () => toast.success('requestId copiado'),
+                  () => toast.error('Falha ao copiar')
                 );
               },
             },
@@ -79,14 +87,13 @@ export function useWebhookDeliveries(subscriptionId: string | null, limit = 20) 
         : undefined;
       if (ok > 0) toast.success(summary, opts);
       else toast.error(summary, opts);
-      qc.invalidateQueries({ queryKey: ["winloss-webhook-deliveries"] });
+      qc.invalidateQueries({ queryKey: ['winloss-webhook-deliveries'] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao reenviar"),
+    onError: e => toast.error(e instanceof Error ? e.message : 'Erro ao reenviar'),
   });
 
   return Object.assign(query, {
     replay: replay.mutateAsync,
     isReplaying: replay.isPending,
-
   });
 }

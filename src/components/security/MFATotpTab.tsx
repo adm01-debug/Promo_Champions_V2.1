@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +28,35 @@ export const MFATotpTab = React.memo(function MFATotpTab({
 }: MFATotpTabProps) {
   const [totpCode, setTotpCode] = useState('');
   const [isSettingUp, setIsSettingUp] = useState(false);
+  // QR gerado LOCALMENTE (lib qrcode → data URI). O otpauth:// contém o
+  // segredo TOTP — nunca pode sair para um serviço externo de QR.
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrFailed, setQrFailed] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    setQrFailed(false);
+    if (!qrCodeUrl) {
+      setQrDataUrl(null);
+      return undefined;
+    }
+    import('qrcode')
+      .then(QRCode => QRCode.toDataURL(qrCodeUrl, { width: 200, margin: 1 }))
+      .then(url => {
+        if (mounted) setQrDataUrl(url);
+      })
+      .catch(() => {
+        if (mounted) {
+          setQrDataUrl(null);
+          setQrFailed(true);
+        }
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [qrCodeUrl]);
+
+  const manualSecret = qrCodeUrl ? (/[?&]secret=([A-Z2-7]+)/i.exec(qrCodeUrl)?.[1] ?? null) : null;
 
   const handleInit = async () => {
     setIsSettingUp(true);
@@ -72,15 +101,25 @@ export const MFATotpTab = React.memo(function MFATotpTab({
     return (
       <div className="space-y-4">
         <div className="flex justify-center p-4 bg-background rounded-lg">
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeUrl)}`}
-            alt="QR Code TOTP"
-            className="w-48 h-48"
-          />
+          {qrDataUrl ? (
+            <img src={qrDataUrl} alt="QR Code TOTP" className="w-48 h-48" />
+          ) : (
+            <div className="w-48 h-48 flex items-center justify-center text-xs text-muted-foreground text-center px-4">
+              {qrFailed
+                ? 'Não foi possível gerar o QR — use a chave manual abaixo'
+                : 'Gerando QR code…'}
+            </div>
+          )}
         </div>
         <p className="text-sm text-muted-foreground text-center">
           Escaneie o QR code com seu app autenticador (Google Authenticator, Authy, etc.)
         </p>
+        {manualSecret && (
+          <p className="text-xs text-muted-foreground text-center">
+            Ou digite a chave manualmente:{' '}
+            <code className="font-mono select-all break-all">{manualSecret}</code>
+          </p>
+        )}
         <div className="space-y-2">
           <Label>Digite o código de 6 dígitos</Label>
           <div className="flex gap-2">

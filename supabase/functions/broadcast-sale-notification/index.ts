@@ -1,5 +1,5 @@
 import { Resend } from 'npm:resend@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
@@ -8,6 +8,7 @@ if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
 const resend = new Resend(RESEND_API_KEY);
 
 Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }

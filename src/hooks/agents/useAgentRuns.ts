@@ -1,20 +1,20 @@
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { AgentRun } from "@/components/agents/agentHelpers";
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { AgentRun } from '@/components/agents/agentHelpers';
 
 export function useAgentRuns(limit = 50) {
   const qc = useQueryClient();
 
   useEffect(() => {
     const ch = supabase
-      .channel("ai_agent_runs_feed")
+      .channel('ai_agent_runs_feed')
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "ai_agent_runs" },
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'ai_agent_runs' },
         () => {
-          qc.invalidateQueries({ queryKey: ["agent-runs"] });
-        },
+          qc.invalidateQueries({ queryKey: ['agent-runs'] });
+        }
       )
       .subscribe();
     return () => {
@@ -23,14 +23,15 @@ export function useAgentRuns(limit = 50) {
   }, [qc]);
 
   return useQuery<AgentRun[]>({
-    queryKey: ["agent-runs", limit],
+    queryKey: ['agent-runs', limit],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("ai_agent_runs")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('ai_agent_runs')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(limit);
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as AgentRun[];
     },
     staleTime: 5_000,

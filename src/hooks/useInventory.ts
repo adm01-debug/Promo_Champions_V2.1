@@ -32,6 +32,10 @@ export function useInventoryLevels() {
   return useQuery({
     queryKey: ["inventory_levels"],
     queryFn: async () => {
+      // SEM .limit deliberadamente: Estoque.tsx calcula criticalCount/lowCount/
+      // totalItems sobre este array; truncar aqui faria os KPIs mentirem
+      // (justamente descartando o estoque parado, o mais propenso a ruptura).
+      // O fix real (agregados server-side) está registrado como follow-up.
       const { data, error } = await supabase
         .from("inventory_levels")
         .select("*, products(name)")

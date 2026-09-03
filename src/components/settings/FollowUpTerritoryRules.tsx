@@ -25,6 +25,7 @@ import { useUserRoles } from '@/hooks/useUserRoles';
 
 // These tables/views are not present in the generated Supabase types yet.
 // Use an untyped client view so we can query them without leaking `any` into the code.
+// eslint-disable-next-line no-restricted-syntax
 const db = supabase as unknown as SupabaseClient;
 
 interface TerritoryRule {

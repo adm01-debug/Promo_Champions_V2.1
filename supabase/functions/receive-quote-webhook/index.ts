@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateWebhookPayload, WebhookContracts, createValidationErrorResponse } from "../_shared/webhook-validator.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -77,6 +77,7 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

@@ -25,6 +25,7 @@ export function useCampaignHealthAlerts(limit = 20) {
         .order('created_at', { ascending: false })
         .limit(limit);
       if (error) throw new Error(error.message);
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as CampaignHealthAlert[];
     },
   });

@@ -1,8 +1,7 @@
 // NLQ — Natural Language Queries against CRM data via Lovable AI tool calling.
 // Auth required (verify_jwt = true). Uses caller JWT so RLS applies.
-// deno-lint-ignore-file no-explicit-any
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { validateString, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
@@ -149,6 +148,7 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
 }
 
 Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'method_not_allowed' }), {

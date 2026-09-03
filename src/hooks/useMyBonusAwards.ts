@@ -57,9 +57,11 @@ export function useMyBonusAwards(opts: UseMyBonusAwardsOptions) {
       const { data, count, error } = await q;
       if (error) throw error;
 
-      const rows: MyAwardRow[] = (data ?? []).map((r) => {
-        const rel = (r as { commission_bonuses?: { name?: string } | null }).commission_bonuses;
+      const rows: MyAwardRow[] = (data ?? []).map(r => {
+        const rel = (r as { commission_bonuses?: { name?: string } | null })
+          .commission_bonuses;
         return {
+          // eslint-disable-next-line no-restricted-syntax
           ...(r as unknown as CommissionBonusAward),
           bonus_name: rel?.name ?? null,
         };
@@ -100,9 +102,11 @@ export async function fetchAllMyBonusAwards(opts: {
 
     const { data, error } = await q;
     if (error) throw error;
-    const batch = (data ?? []).map((r) => {
-      const rel = (r as { commission_bonuses?: { name?: string } | null }).commission_bonuses;
+    const batch = (data ?? []).map(r => {
+      const rel = (r as { commission_bonuses?: { name?: string } | null })
+        .commission_bonuses;
       return {
+        // eslint-disable-next-line no-restricted-syntax
         ...(r as unknown as CommissionBonusAward),
         bonus_name: rel?.name ?? null,
       };

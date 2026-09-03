@@ -39,7 +39,7 @@ function getTelemetryClient(): SupabaseInsertClient | null {
     const key = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!url || !key) return null;
     // Dynamic import via npm specifier (Deno-only). No-op no ambiente de testes puros.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // deno-lint-ignore no-explicit-any -- cache em globalThis compartilhado entre isolates de teste
     const g = globalThis as any;
     if (!g.__retryTelemetryInit) {
       g.__retryTelemetryInit = import("npm:@supabase/supabase-js@2.49.4")

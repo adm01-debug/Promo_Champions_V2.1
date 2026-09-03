@@ -44,6 +44,7 @@ export function useQuoteCadences(quoteId?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
+      // eslint-disable-next-line no-restricted-syntax
       return (data ?? []) as unknown as QuoteCadenceRow[];
     },
   });
@@ -90,7 +91,8 @@ export function useQuoteCadenceStats() {
         const q = r.quote as { status?: string } | null;
         return q?.status === 'approved';
       }).length;
-      const conversionRate = finished.length > 0 ? Math.round((won / finished.length) * 100) : 0;
+      const conversionRate =
+        finished.length > 0 ? Math.round((won / finished.length) * 100) : 0;
 
       return {
         activeFollowUps: active ?? 0,

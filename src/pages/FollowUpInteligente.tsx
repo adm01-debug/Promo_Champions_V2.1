@@ -18,7 +18,11 @@ import { getLocalISODate } from '@/utils/dateHelpers';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useUserRoles } from '@/hooks/useUserRoles';
-import { useFollowUpLeads, useFollowUpSettings, useFollowUpAuditLogs } from '@/hooks/follow-up/useFollowUpData';
+import {
+  useFollowUpLeads,
+  useFollowUpSettings,
+  useFollowUpAuditLogs,
+} from '@/hooks/follow-up/useFollowUpData';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { FollowUpHeader } from '@/components/follow-up/FollowUpHeader';
@@ -117,7 +121,11 @@ const FollowUpInteligente = memo(() => {
                 ? 'email'
                 : 'follow_up',
           priority:
-            lead.temperature === 'frozen' ? 'high' : lead.temperature === 'cold' ? 'medium' : 'low',
+            lead.temperature === 'frozen'
+              ? 'high'
+              : lead.temperature === 'cold'
+                ? 'medium'
+                : 'low',
           due_date: getLocalISODate(),
           sale_id: lead.id,
           salesperson_id: salesperson?.id,
@@ -153,13 +161,17 @@ const FollowUpInteligente = memo(() => {
       const tasks = leadsToProcess.map(lead => ({
         title: `Follow-up: ${lead.client_name}`,
         description: lead.suggested_action,
-        task_type: lead.suggested_channel === 'call' ? ('call' as const) : ('follow_up' as const),
+        task_type:
+          lead.suggested_channel === 'call' ? ('call' as const) : ('follow_up' as const),
         priority: lead.temperature === 'frozen' ? ('high' as const) : ('medium' as const),
         due_date: getLocalISODate(),
         sale_id: lead.id,
         salesperson_id: salesperson?.id,
       }));
-      const { data: insertedTasks, error } = await supabase.from('tasks').insert(tasks).select();
+      const { data: insertedTasks, error } = await supabase
+        .from('tasks')
+        .insert(tasks)
+        .select();
       if (error) throw error;
 
       if (insertedTasks) {
@@ -189,11 +201,15 @@ const FollowUpInteligente = memo(() => {
 
   const filteredLeads = useMemo(() => {
     let result =
-      filterTemp === 'all' ? coldLeads : coldLeads.filter(l => l.temperature === filterTemp);
+      filterTemp === 'all'
+        ? coldLeads
+        : coldLeads.filter(l => l.temperature === filterTemp);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
-        l => l.client_name?.toLowerCase().includes(q) || l.product_name?.toLowerCase().includes(q)
+        l =>
+          l.client_name?.toLowerCase().includes(q) ||
+          l.product_name?.toLowerCase().includes(q)
       );
     }
     return result;
@@ -213,7 +229,9 @@ const FollowUpInteligente = memo(() => {
 
   const handleSelectCritical = useCallback(() => {
     const criticalIds = new Set(
-      coldLeads.filter(l => l.temperature === 'cold' || l.temperature === 'frozen').map(l => l.id)
+      coldLeads
+        .filter(l => l.temperature === 'cold' || l.temperature === 'frozen')
+        .map(l => l.id)
     );
     setSelectedLeads(criticalIds);
   }, [coldLeads]);
@@ -226,6 +244,7 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
+      // eslint-disable-next-line no-restricted-syntax
       .filter(v => !(lead as unknown as Record<string, string | number | undefined>)[v]);
     return missing;
   }, []);
@@ -261,7 +280,11 @@ const FollowUpInteligente = memo(() => {
         const key = v.replace(/{{|}}/g, '');
         message = message.replace(
           v,
-          String((lead as unknown as Record<string, string | number | undefined>)[key] || '')
+
+          String(
+            // eslint-disable-next-line no-restricted-syntax
+            (lead as unknown as Record<string, string | number | undefined>)[key] || ''
+          )
         );
       });
 
@@ -284,7 +307,8 @@ const FollowUpInteligente = memo(() => {
   const handleReactivate = useMutation({
     mutationFn: async () => {
       if (!reactivateLead) return;
-      if (!isAdmin) throw new Error('Apenas administradores podem reativar leads Classe A.');
+      if (!isAdmin)
+        throw new Error('Apenas administradores podem reativar leads Classe A.');
 
       await logAction.mutateAsync({
         saleId: reactivateLead.id,
@@ -350,7 +374,10 @@ const FollowUpInteligente = memo(() => {
 
             <FollowUpStatsGrid leads={coldLeads} onFilterChange={setFilterTemp} />
 
-            <FollowUpValueAtRisk leads={coldLeads} onSelectCritical={handleSelectCritical} />
+            <FollowUpValueAtRisk
+              leads={coldLeads}
+              onSelectCritical={handleSelectCritical}
+            />
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -474,7 +501,16 @@ const FollowUpInteligente = memo(() => {
                   Nenhuma ação registrada para este lead.
                 </p>
               )}
-              {(auditLogs as Array<{ id: string; action_type: string; created_at: string; details: unknown; user_name?: string | null; status?: string | null }>).map((log) => (
+              {(
+                auditLogs as Array<{
+                  id: string;
+                  action_type: string;
+                  created_at: string;
+                  details: unknown;
+                  user_name?: string | null;
+                  status?: string | null;
+                }>
+              ).map(log => (
                 <div
                   key={log.id}
                   className="flex gap-3 border-l-2 border-primary/20 pl-4 py-1 relative"
@@ -492,17 +528,23 @@ const FollowUpInteligente = memo(() => {
                               : log.action_type}
                       </span>
                       <span className="text-[10px] text-muted-foreground uppercase font-black">
-                        {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
+                          locale: ptBR,
+                        })}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
+                      {typeof log.details === 'string'
+                        ? log.details
+                        : JSON.stringify(log.details)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="h-4 w-4 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold">
                         {log.user_name?.substring(0, 2).toUpperCase() || 'UN'}
                       </div>
-                      <span className="text-[10px] font-medium">{log.user_name || 'Sistema'}</span>
+                      <span className="text-[10px] font-medium">
+                        {log.user_name || 'Sistema'}
+                      </span>
                       {log.status && (
                         <Badge
                           variant="outline"
@@ -558,7 +600,18 @@ const FollowUpInteligente = memo(() => {
                         const vars = template.match(/{{(.*?)}}/g) || [];
                         vars.forEach(v => {
                           const key = v.replace(/{{|}}/g, '');
-                          msg = msg.replace(v, (currentLeadForWA as unknown as Record<string, string | undefined>)[key] || `[${key}?]`);
+
+                          /* eslint-disable no-restricted-syntax */
+                          msg = msg.replace(
+                            v,
+                            (
+                              currentLeadForWA as unknown as Record<
+                                string,
+                                string | undefined
+                              >
+                            )[key] || `[${key}?]`
+                          );
+                          /* eslint-enable no-restricted-syntax */
                         });
                         return msg;
                       })()}

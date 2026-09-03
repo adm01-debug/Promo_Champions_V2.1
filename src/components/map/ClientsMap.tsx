@@ -33,16 +33,15 @@ import { toast } from 'sonner';
 // Fix default marker icon
 // @ts-expect-error - _getIconUrl is an internal Leaflet property not in the type definitions
 delete L.Icon.Default.prototype._getIconUrl;
+// Ícones self-hosted (public/map/) — sem dependência de cdnjs nem de
+// raw.githubusercontent.com em runtime de produção.
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+  iconRetinaUrl: '/map/marker-icon-2x.png',
+  iconUrl: '/map/marker-icon.png',
+  shadowUrl: '/map/marker-shadow.png',
 });
 
-const SHADOW_URL =
-  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png';
+const SHADOW_URL = '/map/marker-shadow.png';
 const MARKER_OPTS = {
   iconSize: [25, 41] as [number, number],
   iconAnchor: [12, 41] as [number, number],
@@ -52,20 +51,17 @@ const MARKER_OPTS = {
 
 const greenIcon = new L.Icon({
   ...MARKER_OPTS,
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  iconUrl: '/map/marker-icon-green.png',
   shadowUrl: SHADOW_URL,
 });
 const goldIcon = new L.Icon({
   ...MARKER_OPTS,
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
+  iconUrl: '/map/marker-icon-gold.png',
   shadowUrl: SHADOW_URL,
 });
 const redIcon = new L.Icon({
   ...MARKER_OPTS,
-  iconUrl:
-    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  iconUrl: '/map/marker-icon-red.png',
   shadowUrl: SHADOW_URL,
 });
 

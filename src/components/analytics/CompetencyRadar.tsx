@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   RadarChart,
   PolarGrid,
@@ -8,13 +8,13 @@ import {
   Radar,
   ResponsiveContainer,
   Tooltip,
-} from "recharts";
-import { Brain, TrendingUp, TrendingDown, Target, BarChart3 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { RechartsTooltipProps } from "@/types/recharts";
+} from 'recharts';
+import { Brain, TrendingUp, TrendingDown, Target, BarChart3 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 export interface CompetencyData {
   area: string;
@@ -33,25 +33,25 @@ interface CompetencyRadarProps {
 }
 
 const DEFAULT_DATA: CompetencyData[] = [
-  { area: "Prospecção", value: 72, maxValue: 100, previousValue: 65 },
-  { area: "Negociação", value: 85, maxValue: 100, previousValue: 80 },
-  { area: "Fechamento", value: 60, maxValue: 100, previousValue: 55 },
-  { area: "Follow-up", value: 90, maxValue: 100, previousValue: 85 },
-  { area: "Qualificação", value: 78, maxValue: 100, previousValue: 70 },
-  { area: "Apresentação", value: 65, maxValue: 100, previousValue: 62 },
+  { area: 'Prospecção', value: 72, maxValue: 100, previousValue: 65 },
+  { area: 'Negociação', value: 85, maxValue: 100, previousValue: 80 },
+  { area: 'Fechamento', value: 60, maxValue: 100, previousValue: 55 },
+  { area: 'Follow-up', value: 90, maxValue: 100, previousValue: 85 },
+  { area: 'Qualificação', value: 78, maxValue: 100, previousValue: 70 },
+  { area: 'Apresentação', value: 65, maxValue: 100, previousValue: 62 },
 ];
-
 
 const renderCustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
+    // eslint-disable-next-line no-restricted-syntax
     const data = payload[0].payload as unknown as CompetencyData;
     const percentage = Math.round((data.value / data.maxValue) * 100);
     const status =
       percentage >= 70
-        ? { label: "Excelente", color: "text-success" }
+        ? { label: 'Excelente', color: 'text-success' }
         : percentage >= 40
-        ? { label: "Em Desenvolvimento", color: "text-warning" }
-        : { label: "Gap Identificado", color: "text-destructive" };
+          ? { label: 'Em Desenvolvimento', color: 'text-warning' }
+          : { label: 'Gap Identificado', color: 'text-destructive' };
 
     return (
       <div className="bg-popover border rounded-lg p-3 shadow-lg">
@@ -59,11 +59,12 @@ const renderCustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
           {data.icon} {data.area}
         </p>
         <p className="text-xs text-muted-foreground">
-          Nível: <span className="font-medium">{data.value}/{data.maxValue}</span>
+          Nível:{' '}
+          <span className="font-medium">
+            {data.value}/{data.maxValue}
+          </span>
         </p>
-        <p className={cn("text-xs font-medium", status.color)}>
-          Status: {status.label}
-        </p>
+        <p className={cn('text-xs font-medium', status.color)}>Status: {status.label}</p>
       </div>
     );
   }
@@ -72,7 +73,7 @@ const renderCustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
 
 export function CompetencyRadar({
   data: externalData,
-  title = "Radar de Competências",
+  title = 'Radar de Competências',
   showDetails = true,
   compact = false,
   className,
@@ -80,7 +81,7 @@ export function CompetencyRadar({
   const [showComparison, setShowComparison] = useState(false);
   const data = externalData || DEFAULT_DATA;
 
-  const chartData = data.map((d) => ({
+  const chartData = data.map(d => ({
     subject: d.area,
     value: d.value,
     maxValue: d.maxValue,
@@ -95,7 +96,7 @@ export function CompetencyRadar({
   );
 
   const _improvements = data.filter(
-    (d) => d.previousValue && d.value > d.previousValue
+    d => d.previousValue && d.value > d.previousValue
   ).length;
 
   return (
@@ -108,13 +109,15 @@ export function CompetencyRadar({
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge
-              variant={avgScore >= 70 ? "default" : avgScore >= 40 ? "secondary" : "destructive"}
+              variant={
+                avgScore >= 70 ? 'default' : avgScore >= 40 ? 'secondary' : 'destructive'
+              }
               className="text-[10px]"
             >
               <Target className="h-3 w-3 mr-1" />
               {avgScore}% média
             </Badge>
-            {data.some((d) => d.previousValue !== undefined) && (
+            {data.some(d => d.previousValue !== undefined) && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -122,7 +125,7 @@ export function CompetencyRadar({
                 onClick={() => setShowComparison(!showComparison)}
               >
                 <BarChart3 className="h-3 w-3 mr-1" />
-                {showComparison ? "Esconder" : "Comparar"}
+                {showComparison ? 'Esconder' : 'Comparar'}
               </Button>
             )}
           </div>
@@ -133,21 +136,18 @@ export function CompetencyRadar({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={compact ? "h-48" : "h-64"}
+          className={compact ? 'h-48' : 'h-64'}
         >
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
-              <PolarGrid
-                stroke="hsl(var(--border))"
-                strokeDasharray="3 3"
-              />
+              <PolarGrid stroke="hsl(var(--border))" strokeDasharray="3 3" />
               <PolarAngleAxis
                 dataKey="subject"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
               />
               <PolarRadiusAxis
                 angle={90}
-                domain={[0, "dataMax"]}
+                domain={[0, 'dataMax']}
                 tick={false}
                 axisLine={false}
               />
@@ -181,9 +181,7 @@ export function CompetencyRadar({
           <div className="grid grid-cols-2 gap-2 mt-3">
             {data.map((item, index) => {
               const percentage = Math.round((item.value / item.maxValue) * 100);
-              const change = item.previousValue
-                ? item.value - item.previousValue
-                : 0;
+              const change = item.previousValue ? item.value - item.previousValue : 0;
 
               return (
                 <motion.div
@@ -199,12 +197,19 @@ export function CompetencyRadar({
                     <p className="text-muted-foreground">{percentage}%</p>
                   </div>
                   {change !== 0 && (
-                    <span className={cn(
-                      "flex items-center gap-0.5",
-                      change > 0 ? "text-success" : "text-destructive"
-                    )}>
-                      {change > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                      {change > 0 ? "+" : ""}{change}
+                    <span
+                      className={cn(
+                        'flex items-center gap-0.5',
+                        change > 0 ? 'text-success' : 'text-destructive'
+                      )}
+                    >
+                      {change > 0 ? (
+                        <TrendingUp className="h-3 w-3" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3" />
+                      )}
+                      {change > 0 ? '+' : ''}
+                      {change}
                     </span>
                   )}
                 </motion.div>

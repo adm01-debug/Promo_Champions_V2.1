@@ -17,7 +17,7 @@
 // esta função a cada 5 minutos.
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
@@ -73,6 +73,7 @@ async function postSlack(webhook: string, text: string, blocks?: unknown, reques
 }
 
 Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

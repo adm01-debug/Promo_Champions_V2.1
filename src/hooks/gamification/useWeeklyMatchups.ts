@@ -38,11 +38,13 @@ export function useWeeklyMatchups() {
       type SpRef = { id: string; name: string; avatar_url: string | null };
       return (data || []).map(m => ({
         id: m.id,
+        // eslint-disable-next-line no-restricted-syntax
         salesperson_a: (m.sp_a as unknown as SpRef) || {
           id: m.salesperson_a_id,
           name: 'Vendedor A',
           avatar_url: null,
         },
+        // eslint-disable-next-line no-restricted-syntax
         salesperson_b: (m.sp_b as unknown as SpRef) || {
           id: m.salesperson_b_id,
           name: 'Vendedor B',

@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { evaluateAlerts, type AlertContext } from "./alerts.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -17,6 +17,7 @@ function log(level: "info" | "warn" | "error", event: string, data: Record<strin
 }
 
 Deno.serve(withRequestId("check-v4-callback-alerts", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "method_not_allowed" }), {

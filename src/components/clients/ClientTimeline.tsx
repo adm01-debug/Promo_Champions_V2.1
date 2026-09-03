@@ -129,6 +129,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .limit(100);
 
         if (actError) throw actError;
+        // eslint-disable-next-line no-restricted-syntax
         activities = (actData || []) as unknown as ActivityRow[];
       } else {
         const { data: actData, error: actError } = await supabase
@@ -138,6 +139,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .order('created_at', { ascending: false })
           .limit(100);
 
+        // eslint-disable-next-line no-restricted-syntax
         if (!actError) activities = (actData || []) as unknown as ActivityRow[];
       }
 
@@ -150,6 +152,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
         created_at: string;
         metadata?: { outcome?: string };
       };
+      // eslint-disable-next-line no-restricted-syntax
       ((interactions as unknown as InteractionRow[]) || []).forEach(int => {
         timelineEvents.push({
           id: int.id,

@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import {
   authenticateMultichannelStatusWebhook,
   verifyMetaWebhookHandshake,
@@ -105,6 +106,15 @@ Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
   if (req.method !== "POST") {
     return json({ ok: false, error: "method_not_allowed" }, 405);
   }
+
+  // Proteção de volume antes do trabalho de HMAC/parse (assinatura já barra
+  // conteúdo forjado; isto barra flood).
+  const limited = enforceRateLimit(req, {
+    name: "multichannel-status-webhook",
+    limit: 300,
+    windowSeconds: 60,
+  });
+  if (limited) return limited;
 
   const rawBody = await readUtf8BodyWithinLimit(
     req,
