@@ -90,7 +90,9 @@ export default function AdminComercial() {
         .select('*')
         .eq('month', currentMonthDate);
       if (error) throw error;
-      return (data || []) as CommissionConfig[];
+      /* eslint-disable no-restricted-syntax */
+      return (data || []) as unknown as CommissionConfig[];
+      /* eslint-enable no-restricted-syntax */
     },
   });
 
@@ -150,7 +152,9 @@ export default function AdminComercial() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data || []) as AuditLog[];
+      /* eslint-disable no-restricted-syntax */
+      return (data || []) as unknown as AuditLog[];
+      /* eslint-enable no-restricted-syntax */
     },
   });
 

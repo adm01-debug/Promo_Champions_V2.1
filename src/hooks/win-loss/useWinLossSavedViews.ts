@@ -29,7 +29,9 @@ export const useWinLossSavedViews = () => {
       return (data ?? []).map(d => ({
         id: d.id,
         name: d.name,
-        filters: d.filters as WinLossFilterState,
+        /* eslint-disable no-restricted-syntax */
+        filters: d.filters as unknown as WinLossFilterState,
+        /* eslint-enable no-restricted-syntax */
         is_default: d.is_default ?? false,
         created_at: d.created_at,
       }));

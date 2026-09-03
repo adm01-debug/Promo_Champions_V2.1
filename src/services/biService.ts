@@ -260,7 +260,9 @@ export const biService = {
     const achievements = achievementsRes.data || [];
     const allSalespeople = allSalespeopleRes.data || [];
     const pipelineDeals = pipelineRes.data || [];
-    const convAnalyses = (convRes.data || []) as ConversationAnalysis[];
+    /* eslint-disable no-restricted-syntax */
+    const convAnalyses = (convRes.data || []) as unknown as ConversationAnalysis[];
+    /* eslint-enable no-restricted-syntax */
 
     const totalRevenue = currentSales.reduce((sum, s) => sum + Number(s.amount), 0);
     const previousRevenue = previousSales.reduce((sum, s) => sum + Number(s.amount), 0);

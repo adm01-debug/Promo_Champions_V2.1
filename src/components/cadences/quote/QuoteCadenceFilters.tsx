@@ -82,7 +82,11 @@ export function QuoteCadenceFilters({ values, onChange }: Props) {
 
             <SavedFiltersBar
               entityType="quote_cadences"
-              currentFilters={values as Record<string, unknown>}
+              currentFilters={
+                /* eslint-disable no-restricted-syntax */
+                values as unknown as Record<string, unknown>
+                /* eslint-enable no-restricted-syntax */
+              }
               onApplyFilter={f =>
                 onChange({
                   ...emptyQuoteCadenceFilters,

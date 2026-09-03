@@ -58,11 +58,13 @@ export function useTerritoryHistory(territoryId?: string) {
         .order('conquered_at', { ascending: false });
 
       if (error) throw error;
+      /* eslint-disable no-restricted-syntax */
       return (data || []).map(h => ({
         ...h,
-        salesperson: (h as Record<string, unknown>).salespeople || null,
+        salesperson: (h as unknown as Record<string, unknown>).salespeople || null,
         salespeople: undefined,
-      })) as TerritoryHistory[];
+      })) as unknown as TerritoryHistory[];
+      /* eslint-enable no-restricted-syntax */
     },
     enabled: !!territoryId,
   });

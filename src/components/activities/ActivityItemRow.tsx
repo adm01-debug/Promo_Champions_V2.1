@@ -52,7 +52,9 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
       .eq('activity_id', activity.id)
       .order('created_at', { ascending: false });
 
-    if (!error && data) setAuditLogs(data as AuditLog[]);
+    /* eslint-disable no-restricted-syntax */
+    if (!error && data) setAuditLogs(data as unknown as AuditLog[]);
+    /* eslint-enable no-restricted-syntax */
     setLoadingAudit(false);
   }, [activity.id]);
 

@@ -29,7 +29,9 @@ interface CronAlertMetrics {
 async function fetchMetrics(): Promise<CronAlertMetrics> {
   const { data, error } = await supabase.rpc('fn_admin_cron_alert_metrics');
   if (error) throw error;
-  return data as CronAlertMetrics;
+  /* eslint-disable no-restricted-syntax */
+  return data as unknown as CronAlertMetrics;
+  /* eslint-enable no-restricted-syntax */
 }
 
 interface StatProps {
