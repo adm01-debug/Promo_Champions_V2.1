@@ -1,6 +1,15 @@
-import { createContext, useContext, useEffect, useState, useRef, ReactNode, useMemo, useCallback } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Salesperson {
   id: string;
@@ -34,16 +43,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchSalesperson = useCallback(async (authUserId: string, force = false) => {
     if (!force && fetchedRef.current === authUserId) return;
-    
+
     try {
       const { data, error } = await supabase
-        .from("salespeople")
-        .select("id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email")
-        .eq("auth_user_id", authUserId)
+        .from('salespeople')
+        .select(
+          'id, name, email, avatar_url, role, commission_rate, notify_sales_in_app, notify_sales_email'
+        )
+        .eq('auth_user_id', authUserId)
         .maybeSingle();
 
       if (error) throw error;
-      
+
       if (data) {
         setSalesperson(data);
         fetchedRef.current = authUserId;
@@ -53,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         fetchedRef.current = authUserId;
       }
     } catch (error) {
-      console.error("Error fetching salesperson profile:", error);
+      console.error('Error fetching salesperson profile:', error);
       // Reset ref so we can try again on next mount/refresh
       fetchedRef.current = null;
     }
@@ -70,7 +81,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const initSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (!mounted) return;
 
         setSession(session);
@@ -86,22 +99,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (!mounted) return;
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-        
-        if (session?.user) {
-          void fetchSalesperson(session.user.id);
-        } else {
-          setSalesperson(null);
-          fetchedRef.current = null;
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+
+      if (session?.user) {
+        void fetchSalesperson(session.user.id);
+      } else {
+        setSalesperson(null);
+        fetchedRef.current = null;
       }
-    );
+    });
 
     return () => {
       mounted = false;
@@ -120,30 +133,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     fetchedRef.current = null;
-    window.location.href = "/auth";
+    try {
+      await caches.delete('api-cache');
+    } catch {
+      /* SW not available */
+    }
+    window.location.href = '/auth';
   }, []);
 
-  const value = useMemo(() => ({ 
-    user, 
-    session, 
-    salesperson, 
-    isLoading, 
-    refreshSalesperson, 
-    signIn, 
-    signOut 
-  }), [user, session, salesperson, isLoading, refreshSalesperson, signIn, signOut]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      session,
+      salesperson,
+      isLoading,
+      refreshSalesperson,
+      signIn,
+      signOut,
+    }),
+    [user, session, salesperson, isLoading, refreshSalesperson, signIn, signOut]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }

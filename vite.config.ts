@@ -44,22 +44,24 @@ export default defineConfig({
     }),
     // Onda O — bundle-size budget: gera bundle-stats/stats.html + stats.json
     // FORA de dist/ para não estourar o precache do vite-plugin-pwa.
-    process.env.ANALYZE_BUNDLE === '1' && visualizer({
-      filename: 'bundle-stats/stats.html',
-      template: 'treemap',
-      gzipSize: true,
-      brotliSize: true,
-      sourcemap: false,
-      emitFile: false,
-    }),
-    process.env.ANALYZE_BUNDLE === '1' && visualizer({
-      filename: 'bundle-stats/stats.json',
-      template: 'raw-data',
-      gzipSize: true,
-      brotliSize: true,
-      sourcemap: false,
-      emitFile: false,
-    }),
+    process.env.ANALYZE_BUNDLE === '1' &&
+      visualizer({
+        filename: 'bundle-stats/stats.html',
+        template: 'treemap',
+        gzipSize: true,
+        brotliSize: true,
+        sourcemap: false,
+        emitFile: false,
+      }),
+    process.env.ANALYZE_BUNDLE === '1' &&
+      visualizer({
+        filename: 'bundle-stats/stats.json',
+        template: 'raw-data',
+        gzipSize: true,
+        brotliSize: true,
+        sourcemap: false,
+        emitFile: false,
+      }),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -67,13 +69,25 @@ export default defineConfig({
       // zustand@4.5.7 exports map declares .mjs files (import condition) but ships
       // only .js files — Rollup fails to resolve during production build. Point all
       // sub-path imports at the actual ESM files that exist on disk.
-      'zustand/traditional': resolve(__dirname, 'node_modules/zustand/esm/traditional.js'),
+      'zustand/traditional': resolve(
+        __dirname,
+        'node_modules/zustand/esm/traditional.js'
+      ),
       'zustand/shallow': resolve(__dirname, 'node_modules/zustand/esm/shallow.js'),
       'zustand/vanilla': resolve(__dirname, 'node_modules/zustand/esm/vanilla.js'),
       'zustand/middleware': resolve(__dirname, 'node_modules/zustand/esm/middleware.js'),
-      'zustand/middleware/immer': resolve(__dirname, 'node_modules/zustand/esm/middleware/immer.js'),
-      'zustand/vanilla/shallow': resolve(__dirname, 'node_modules/zustand/esm/vanilla/shallow.js'),
-      'zustand/react/shallow': resolve(__dirname, 'node_modules/zustand/esm/react/shallow.js'),
+      'zustand/middleware/immer': resolve(
+        __dirname,
+        'node_modules/zustand/esm/middleware/immer.js'
+      ),
+      'zustand/vanilla/shallow': resolve(
+        __dirname,
+        'node_modules/zustand/esm/vanilla/shallow.js'
+      ),
+      'zustand/react/shallow': resolve(
+        __dirname,
+        'node_modules/zustand/esm/react/shallow.js'
+      ),
       'zustand/context': resolve(__dirname, 'node_modules/zustand/esm/context.js'),
     },
   },
@@ -83,20 +97,28 @@ export default defineConfig({
   esbuild: {
     // Strip console.log/debug in production; keep error/warn (forwarded to errorTracking).
     drop: process.env.NODE_ENV === 'production' ? ['debugger'] : [],
-    pure: process.env.NODE_ENV === 'production' ? ['console.log', 'console.debug', 'console.info'] : [],
+    pure:
+      process.env.NODE_ENV === 'production'
+        ? ['console.log', 'console.debug', 'console.info']
+        : [],
   },
   build: {
     target: 'es2020',
     cssCodeSplit: true,
     chunkSizeWarningLimit: 800,
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
+        manualChunks: id => {
           // O preload-helper do Vite (módulo virtual, fora de node_modules) é
           // dependência estática do entry para todo import() dinâmico. Sem esta
           // regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de
           // jspdf para o caminho crítico por causa de uma função de ~20 linhas.
-          if (id.startsWith('\0vite/') || id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) {
+          if (
+            id.startsWith('\0vite/') ||
+            id.includes('vite/preload-helper') ||
+            id.includes('vite/modulepreload-polyfill')
+          ) {
             return 'vendor';
           }
           if (!id.includes('node_modules')) return;
@@ -116,24 +138,82 @@ export default defineConfig({
           // Heavy & lazy-only libs — isolated so they only load on routes that import them
           if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
           if (id.includes('framer-motion')) return 'vendor-motion';
-          if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('html-to-image')) return 'vendor-pdf';
+          if (
+            id.includes('jspdf') ||
+            id.includes('html2canvas') ||
+            id.includes('html-to-image')
+          )
+            return 'vendor-pdf';
           if (id.includes('xlsx') || id.includes('exceljs')) return 'vendor-excel';
-          if (id.includes('leaflet') || id.includes('react-leaflet')) return 'vendor-maps';
+          if (id.includes('leaflet') || id.includes('react-leaflet'))
+            return 'vendor-maps';
           if (id.includes('@xyflow') || id.includes('reactflow')) return 'vendor-flow';
           if (id.includes('@dnd-kit')) return 'vendor-dnd';
           if (id.includes('date-fns')) return 'vendor-date';
           if (id.includes('lucide-react')) return 'vendor-icons';
-          if (id.includes('zod') || id.includes('react-hook-form') || id.includes('@hookform')) return 'vendor-forms';
+          if (
+            id.includes('zod') ||
+            id.includes('react-hook-form') ||
+            id.includes('@hookform')
+          )
+            return 'vendor-forms';
           // Subgrafo markdown COMPLETO num chunk só: vfile & cia. caíam no
           // fallback 'vendor' enquanto unist-util-* ia para vendor-markdown,
           // criando a aresta estática vendor → vendor-markdown que puxava o
           // chunk markdown para o preload do entry.
-          if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-') || id.includes('micromark') || id.includes('mdast-') || id.includes('hast-') || id.includes('unified') || id.includes('unist-') || id.includes('/vfile') || id.includes('estree-util-') || id.includes('/bail/') || id.includes('/trough/') || id.includes('is-plain-obj') || id.includes('devlop') || id.includes('decode-named-character-reference') || id.includes('character-entities') || id.includes('property-information') || id.includes('space-separated-tokens') || id.includes('comma-separated-tokens') || id.includes('/zwitch/') || id.includes('longest-streak') || id.includes('/ccount/') || id.includes('markdown-table') || id.includes('trim-lines') || id.includes('html-url-attributes') || id.includes('style-to-js') || id.includes('style-to-object') || id.includes('inline-style-parser')) return 'vendor-markdown';
-          if (id.includes('papaparse') || id.includes('fuse.js')) return 'vendor-data-utils';
+          if (
+            id.includes('react-markdown') ||
+            id.includes('remark-') ||
+            id.includes('rehype-') ||
+            id.includes('micromark') ||
+            id.includes('mdast-') ||
+            id.includes('hast-') ||
+            id.includes('unified') ||
+            id.includes('unist-') ||
+            id.includes('/vfile') ||
+            id.includes('estree-util-') ||
+            id.includes('/bail/') ||
+            id.includes('/trough/') ||
+            id.includes('is-plain-obj') ||
+            id.includes('devlop') ||
+            id.includes('decode-named-character-reference') ||
+            id.includes('character-entities') ||
+            id.includes('property-information') ||
+            id.includes('space-separated-tokens') ||
+            id.includes('comma-separated-tokens') ||
+            id.includes('/zwitch/') ||
+            id.includes('longest-streak') ||
+            id.includes('/ccount/') ||
+            id.includes('markdown-table') ||
+            id.includes('trim-lines') ||
+            id.includes('html-url-attributes') ||
+            id.includes('style-to-js') ||
+            id.includes('style-to-object') ||
+            id.includes('inline-style-parser')
+          )
+            return 'vendor-markdown';
+          if (id.includes('papaparse') || id.includes('fuse.js'))
+            return 'vendor-data-utils';
           if (id.includes('canvas-confetti')) return 'vendor-confetti';
-          if (id.includes('cmdk') || id.includes('embla-carousel') || id.includes('vaul') || id.includes('input-otp') || id.includes('react-day-picker') || id.includes('react-resizable-panels') || id.includes('react-window') || id.includes('react-intersection-observer')) return 'vendor-ui-extras';
-          if (id.includes('sonner') || id.includes('next-themes') || id.includes('react-helmet-async')) return 'vendor-ui-utils';
-          if (id.includes('@lovable.dev/cloud-auth-js') || id.includes('web-vitals')) return 'vendor-platform';
+          if (
+            id.includes('cmdk') ||
+            id.includes('embla-carousel') ||
+            id.includes('vaul') ||
+            id.includes('input-otp') ||
+            id.includes('react-day-picker') ||
+            id.includes('react-resizable-panels') ||
+            id.includes('react-window') ||
+            id.includes('react-intersection-observer')
+          )
+            return 'vendor-ui-extras';
+          if (
+            id.includes('sonner') ||
+            id.includes('next-themes') ||
+            id.includes('react-helmet-async')
+          )
+            return 'vendor-ui-utils';
+          if (id.includes('@lovable.dev/cloud-auth-js') || id.includes('web-vitals'))
+            return 'vendor-platform';
           return 'vendor';
         },
       },
