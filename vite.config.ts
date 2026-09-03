@@ -96,7 +96,7 @@ export default defineConfig({
           // dependência estática do entry para todo import() dinâmico. Sem esta
           // regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de
           // jspdf para o caminho crítico por causa de uma função de ~20 linhas.
-          if (id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) {
+          if (id.startsWith('\0vite/') || id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) {
             return 'vendor-core';
           }
           if (!id.includes('node_modules')) return;

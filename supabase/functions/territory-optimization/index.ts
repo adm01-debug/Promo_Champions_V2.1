@@ -79,7 +79,7 @@ function healthFromBalance(
 
 Deno.serve(
   withRequestId('territory-optimization', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     try {

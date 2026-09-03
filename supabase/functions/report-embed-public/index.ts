@@ -5,6 +5,12 @@ const baseCors: Record<string, string> = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-embed-token",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Max-Age": "86400",
+  // Com o token em header, TODOS os embeds compartilham a mesma URL — sem
+  // no-store/Vary, um cache intermediário serviria o relatório do token A
+  // para o token B (vazamento cross-tenant).
+  "Cache-Control": "no-store",
+  "Vary": "X-Embed-Token, Origin",
 };
 
 const SAFE_FIELD = /^[a-zA-Z_][a-zA-Z0-9_]*$/;

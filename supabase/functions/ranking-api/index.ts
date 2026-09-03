@@ -109,7 +109,7 @@ Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
       if (!isValidEmail(email)) {
         return new Response(JSON.stringify({ error: "Campo 'email' com formato inválido" }), { status: 422, headers });
       }
-      if (body.role !== undefined && !VALID_ROLES.has(body.role)) {
+      if (body.role != null && !VALID_ROLES.has(body.role)) {
         return new Response(JSON.stringify({ error: "Campo 'role' inválido (sdr|closer|hybrid)" }), { status: 422, headers });
       }
 
@@ -120,7 +120,7 @@ Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
       }
 
       const { data, error } = await supabase.from("salespeople").insert({
-        name,
+        name: name.trim(),
         email,
         role: body.role || "hybrid",
         is_active: true,

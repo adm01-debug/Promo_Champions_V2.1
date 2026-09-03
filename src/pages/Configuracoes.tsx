@@ -22,6 +22,7 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { FollowUpSettings } from "@/components/settings/FollowUpSettings";
+import { MFASetup } from "@/components/security/MFASetup";
 import { FollowUpTerritoryRules } from "@/components/settings/FollowUpTerritoryRules";
 
 
@@ -165,8 +166,11 @@ export default function Configuracoes() {
           <ThemeCustomizer />
         </TabsContent>
 
-        <TabsContent value="passkeys" className="mt-6">
+        <TabsContent value="passkeys" className="mt-6 space-y-6">
           <PasskeySettings />
+          {/* MFA é per-user (auth.uid nas RPCs) — precisa viver numa rota
+              acessível a todos, não só no /seguranca admin-only. */}
+          <MFASetup />
         </TabsContent>
 
         {isAdmin && (

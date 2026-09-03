@@ -4,7 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 
 Deno.serve(
   withRequestId('push-subscribe', async (req, ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }

@@ -11,7 +11,7 @@ const MAX_TEXT_LENGTH = 2000;
 
 Deno.serve(
   withRequestId('elevenlabs-tts', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });

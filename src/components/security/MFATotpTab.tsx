@@ -31,9 +31,11 @@ export const MFATotpTab = React.memo(function MFATotpTab({
   // QR gerado LOCALMENTE (lib qrcode → data URI). O otpauth:// contém o
   // segredo TOTP — nunca pode sair para um serviço externo de QR.
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrFailed, setQrFailed] = useState(false);
 
   useEffect(() => {
     let mounted = true;
+    setQrFailed(false);
     if (!qrCodeUrl) {
       setQrDataUrl(null);
       return undefined;
@@ -44,7 +46,10 @@ export const MFATotpTab = React.memo(function MFATotpTab({
         if (mounted) setQrDataUrl(url);
       })
       .catch(() => {
-        if (mounted) setQrDataUrl(null);
+        if (mounted) {
+          setQrDataUrl(null);
+          setQrFailed(true);
+        }
       });
     return () => {
       mounted = false;
@@ -100,7 +105,7 @@ export const MFATotpTab = React.memo(function MFATotpTab({
             <img src={qrDataUrl} alt="QR Code TOTP" className="w-48 h-48" />
           ) : (
             <div className="w-48 h-48 flex items-center justify-center text-xs text-muted-foreground text-center px-4">
-              {manualSecret
+              {qrFailed
                 ? 'Não foi possível gerar o QR — use a chave manual abaixo'
                 : 'Gerando QR code…'}
             </div>

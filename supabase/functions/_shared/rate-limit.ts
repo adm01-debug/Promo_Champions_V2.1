@@ -23,6 +23,13 @@ export interface RateLimitConfig {
   windowSeconds: number;
   /** If true, skip limiting when the caller presents an Authorization: Bearer token. */
   bypassAuthenticated?: boolean;
+  /**
+   * Chave explícita do bucket (ex.: user.id após autenticar). Quando ausente,
+   * cai no IP — que em endpoints públicos é derivado de X-Forwarded-For e
+   * portanto spoofável/compartilhado (NAT); para controles que importam,
+   * prefira autenticar primeiro e limitar por identidade.
+   */
+  key?: string;
 }
 
 interface Bucket {
@@ -69,8 +76,8 @@ export function checkRateLimit(req: Request, cfg: RateLimitConfig): RateLimitRes
   // assíncrona e pertence ao middleware da função; este limiter permanece
   // conservador e limita também tokens forjados ou expirados.
 
-  const ip = getClientIp(req);
-  const key = `${cfg.name}:${ip}`;
+  const client = cfg.key ?? getClientIp(req);
+  const key = `${cfg.name}:${client}`;
   const windowMs = cfg.windowSeconds * 1000;
   const cutoff = nowMs - windowMs;
 
@@ -93,7 +100,7 @@ export function checkRateLimit(req: Request, cfg: RateLimitConfig): RateLimitRes
       limit: cfg.limit,
       remaining: 0,
       resetSeconds,
-      clientKey: ip,
+      clientKey: client,
     };
   }
 
@@ -103,7 +110,7 @@ export function checkRateLimit(req: Request, cfg: RateLimitConfig): RateLimitRes
     limit: cfg.limit,
     remaining: cfg.limit - count - 1,
     resetSeconds: cfg.windowSeconds,
-    clientKey: ip,
+    clientKey: client,
   };
 }
 
@@ -121,9 +128,22 @@ export function rateLimitHeaders(r: RateLimitResult): Record<string, string> {
  * Convenience: enforce a limit and return a 429 Response when exceeded.
  * Returns `null` when the request should proceed.
  */
+// Throttle do audit log: sob flood, gravar 1 INSERT por bucket por janela —
+// senão cada 429 vira uma escrita com service_role e o "limiter" amplifica o
+// próprio ataque contra o banco.
+const auditLoggedAt = new Map<string, number>();
+
 export function enforceRateLimit(req: Request, cfg: RateLimitConfig): Response | null {
   const r = checkRateLimit(req, cfg);
   if (r.allowed) return null;
+
+  const auditKey = `${cfg.name}:${r.clientKey}`;
+  const nowMs = Date.now();
+  const lastLogged = auditLoggedAt.get(auditKey) ?? 0;
+  if (nowMs - lastLogged < cfg.windowSeconds * 1000) {
+    return buildRateLimitResponse(r, cfg);
+  }
+  auditLoggedAt.set(auditKey, nowMs);
 
   // Best-effort audit log — never blocks the response.
   const supaUrl = Deno.env.get('SUPABASE_URL');
@@ -154,6 +174,10 @@ export function enforceRateLimit(req: Request, cfg: RateLimitConfig): Response |
     });
   }
 
+  return buildRateLimitResponse(r, cfg);
+}
+
+function buildRateLimitResponse(r: RateLimitResult, cfg: RateLimitConfig): Response {
   return new Response(
     JSON.stringify({
       error: 'rate_limit_exceeded',

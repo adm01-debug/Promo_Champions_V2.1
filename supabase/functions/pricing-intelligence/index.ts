@@ -56,7 +56,7 @@ function pricingHealth(avgDiscount: number, alertRatio: number): string {
 
 Deno.serve(
   withRequestId('pricing-intelligence', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     try {

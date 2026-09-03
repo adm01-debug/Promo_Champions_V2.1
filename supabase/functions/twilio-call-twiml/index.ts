@@ -40,7 +40,17 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
   if (limited) return limited;
 
   // GET da Twilio assina só a URL; POST assina URL + corpo form-urlencoded.
-  const rawBody = req.method === "GET" ? "" : (await readUtf8BodyWithinLimit(req, 64 * 1024)) ?? "";
+  let rawBody = "";
+  if (req.method !== "GET") {
+    const body = await readUtf8BodyWithinLimit(req, 64 * 1024);
+    if (body === null) {
+      return new Response(JSON.stringify({ error: "payload_too_large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    rawBody = body;
+  }
 
   const url = new URL(req.url);
   const ownerId = url.searchParams.get("owner_id");
@@ -52,30 +62,42 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-    const { data } = await admin
+    // ORDER BY obrigatório: um owner tem 2+ linhas twilio (whatsapp + sms);
+    // o click-to-call assina com a MAIS RECENTE — sem a mesma ordenação aqui,
+    // a verificação usaria o token da linha errada e derrubaria a chamada.
+    const { data, error } = await admin
       .from("channel_credentials")
       .select("credentials, from_number")
       .eq("owner_id", ownerId)
       .eq("provider", "twilio")
       .eq("enabled", true)
+      .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
+    if (error) {
+      // Falha de banco não pode virar decisão de auth (503/401 enganoso).
+      ctx.log("error", "credentials_lookup_failed", { detail: error.message });
+      return new Response(JSON.stringify({ error: "internal_error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     const creds = (data?.credentials ?? {}) as Record<string, string>;
     agentPhone = creds.agent_phone || null;
     tenantToken = creds.auth_token || null;
   }
 
+  // Token do tenant tem precedência; o global é só fallback (nunca em paralelo
+  // — senão vira chave-mestra cross-tenant). Sem nenhum, responde igual a
+  // assinatura inválida (não dar oráculo de configuração); o log diferencia.
   const globalToken = Deno.env.get("TWILIO_AUTH_TOKEN") ?? null;
+  const tokens = tenantToken ? [tenantToken] : [globalToken];
   if (!tenantToken && !globalToken) {
     ctx.log("error", "webhook_not_configured", { reason: "no_twilio_auth_token" });
-    return new Response(JSON.stringify({ error: "webhook_not_configured" }), {
-      status: 503,
-      headers: { "Content-Type": "application/json" },
-    });
   }
 
   const signatureOk = await verifyTwilioSignatureAny(
-    [tenantToken, globalToken],
+    tokens,
     candidateUrls(req),
     rawBody,
     req.method === "GET" ? "" : (req.headers.get("content-type") ?? ""),

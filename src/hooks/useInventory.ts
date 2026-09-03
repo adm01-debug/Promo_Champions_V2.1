@@ -32,13 +32,14 @@ export function useInventoryLevels() {
   return useQuery({
     queryKey: ["inventory_levels"],
     queryFn: async () => {
+      // SEM .limit deliberadamente: Estoque.tsx calcula criticalCount/lowCount/
+      // totalItems sobre este array; truncar aqui faria os KPIs mentirem
+      // (justamente descartando o estoque parado, o mais propenso a ruptura).
+      // O fix real (agregados server-side) está registrado como follow-up.
       const { data, error } = await supabase
         .from("inventory_levels")
         .select("*, products(name)")
-        .order("updated_at", { ascending: false })
-        // Estoque renderiza a lista completa (2×) sem virtualização — janela
-        // explícita alinhada ao useStockMovements logo abaixo.
-        .limit(500);
+        .order("updated_at", { ascending: false });
       if (error) throw error;
       return data as InventoryLevel[];
     },

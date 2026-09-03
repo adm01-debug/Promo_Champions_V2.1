@@ -390,6 +390,22 @@ Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
     const { sale_id, batch } = body || {};
 
     if (sale_id) {
+      // Mesmo gate do branch batch: exigir usuário real. Antes, este branch
+      // rodava IA + upsert com service_role para qualquer chamada que passasse
+      // no gateway, sem identidade nenhuma.
+      const authHeader = req.headers.get('Authorization') || '';
+      const userClient = createClient(url, Deno.env.get('SUPABASE_ANON_KEY')!, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const {
+        data: { user },
+      } = await userClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const result = await processOne(supabase, sale_id);
       return new Response(JSON.stringify(result), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

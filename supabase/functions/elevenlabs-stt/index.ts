@@ -11,7 +11,7 @@ const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 
 Deno.serve(
   withRequestId('elevenlabs-stt', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });

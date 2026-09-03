@@ -61,15 +61,24 @@ Deno.serve(withRequestId("twilio-call-status", async (req, ctx) => {
 
     // Sessão primeiro: além do update, ela dá o owner e portanto o auth_token
     // do tenant que originou a chamada (credenciais Twilio são por tenant).
-    const { data: session } = await admin
+    const { data: session, error: sessionErr } = await admin
       .from("twilio_call_sessions")
       .select("*")
       .eq("call_sid", callSid)
       .maybeSingle();
+    if (sessionErr) {
+      // Falha de banco não pode decidir o caminho de auth (503/401 enganoso) —
+      // a Twilio não repete callbacks; 500 sinaliza problema nosso.
+      ctx.log("error", "session_lookup_failed", { detail: sessionErr.message });
+      return new Response(JSON.stringify({ error: "internal_error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     let tenantToken: string | null = null;
     if (session?.owner_id) {
-      const { data: cred } = await admin
+      const { data: cred, error: credErr } = await admin
         .from("channel_credentials")
         .select("credentials")
         .eq("owner_id", session.owner_id)
@@ -78,21 +87,27 @@ Deno.serve(withRequestId("twilio-call-status", async (req, ctx) => {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+      if (credErr) {
+        ctx.log("error", "credentials_lookup_failed", { detail: credErr.message });
+        return new Response(JSON.stringify({ error: "internal_error" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
       tenantToken = (cred?.credentials as Record<string, string> | null)?.auth_token ?? null;
     }
 
+    // Tenant tem precedência; global é só fallback (nunca em paralelo — senão
+    // vira chave-mestra cross-tenant). Sem token nenhum, cai no 401 genérico
+    // abaixo (sem oráculo de configuração); o log diferencia.
     const globalToken = Deno.env.get("TWILIO_AUTH_TOKEN") ?? null;
+    const tokens = tenantToken ? [tenantToken] : [globalToken];
     if (!tenantToken && !globalToken) {
-      // Fail-closed, nunca processar sem poder autenticar (padrão webhook-auth).
       ctx.log("error", "webhook_not_configured", { reason: "no_twilio_auth_token" });
-      return new Response(JSON.stringify({ error: "webhook_not_configured" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json" },
-      });
     }
 
     const signatureOk = await verifyTwilioSignatureAny(
-      [tenantToken, globalToken],
+      tokens,
       candidateUrls(req),
       rawBody,
       req.headers.get("content-type") ?? "",
@@ -119,7 +134,10 @@ Deno.serve(withRequestId("twilio-call-status", async (req, ctx) => {
     const recordingSid = form.get("RecordingSid");
     const price = form.get("Price");
 
-    const update: Record<string, unknown> = { status };
+    // Callbacks de gravação chegam SEM CallStatus — não sobrescrever o estado
+    // real com string vazia.
+    const update: Record<string, unknown> = {};
+    if (status) update.status = status;
     if (duration) update.duration_seconds = parseInt(duration, 10);
     if (recordingUrl) update.recording_url = `${recordingUrl}.mp3`;
     if (recordingSid) update.recording_sid = recordingSid;

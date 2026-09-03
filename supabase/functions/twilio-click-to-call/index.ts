@@ -16,37 +16,53 @@ interface Payload {
 }
 
 // O front envia o telefone cru do banco (account_contacts.phone), muitas vezes
-// com máscara BR. Normaliza para E.164 antes de mandar para a Twilio — e
-// rejeita o que não normalizar (fecha discagem arbitrária/toll fraud com lixo).
+// com máscara BR ou prefixo de tronco ("041..."). Normaliza para E.164 e valida
+// contra a allowlist de DDIs antes de mandar para a Twilio — discagem
+// internacional/premium arbitrária é toll fraud com credencial do tenant.
+const ALLOWED_DIAL_PREFIXES = (Deno.env.get('TWILIO_ALLOWED_DIAL_PREFIXES') ?? '+55')
+  .split(',')
+  .map(p => p.trim())
+  .filter(Boolean);
+
+function isAllowedDestination(e164: string): boolean {
+  return ALLOWED_DIAL_PREFIXES.some(p => e164.startsWith(p));
+}
+
 function normalizeToE164(raw: string): string | null {
   const trimmed = raw.trim();
   const hasPlus = trimmed.startsWith('+');
-  const digits = trimmed.replace(/\D/g, '');
+  let digits = trimmed.replace(/\D/g, '');
   if (!digits) return null;
   if (hasPlus) {
     const candidate = `+${digits}`;
-    return /^\+[1-9]\d{7,14}$/.test(candidate) ? candidate : null;
+    if (!/^\+[1-9]\d{7,14}$/.test(candidate)) return null;
+    // +55: exigir DDD válido (11-99) e comprimento nacional 10-11.
+    if (candidate.startsWith('+55')) {
+      const national = candidate.slice(3);
+      if (!/^[1-9][1-9]\d{8,9}$/.test(national)) return null;
+    }
+    return candidate;
   }
-  // Nacional BR: fixo (10 dígitos) ou celular (11 dígitos) → prefixa +55.
-  if (digits.length === 10 || digits.length === 11) return `+55${digits}`;
+  // Prefixo de tronco nacional ("041 99999-8888") — comum em base importada.
+  if ((digits.length === 11 || digits.length === 12) && digits.startsWith('0')) {
+    digits = digits.slice(1);
+  }
+  // Nacional BR: DDD (11-99) + fixo (8) ou celular (9).
+  if ((digits.length === 10 || digits.length === 11) && /^[1-9][1-9]/.test(digits)) {
+    return `+55${digits}`;
+  }
   // Já com DDI 55 sem o "+".
   if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
-    return `+${digits}`;
+    const national = digits.slice(2);
+    if (/^[1-9][1-9]\d{8,9}$/.test(national)) return `+${digits}`;
   }
   return null;
 }
 
 Deno.serve(
   withRequestId('twilio-click-to-call', async (req, ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
-    const limited = enforceRateLimit(req, {
-      name: 'twilio-click-to-call',
-      limit: 10,
-      windowSeconds: 60,
-    });
-    if (limited) return limited;
 
     try {
       const authHeader = req.headers.get('Authorization');
@@ -73,6 +89,17 @@ Deno.serve(
       }
       const ownerId = userData.user.id;
 
+      // Rate limit POR USUÁRIO, depois de autenticar: por IP era spoofável via
+      // X-Forwarded-For e punia o escritório inteiro atrás de um NAT (o gateway
+      // verify_jwt já barra chamadas sem JWT antes de chegar aqui).
+      const limited = enforceRateLimit(req, {
+        name: 'twilio-click-to-call',
+        limit: 30,
+        windowSeconds: 60,
+        key: ownerId,
+      });
+      if (limited) return limited;
+
       const body = (await req.json()) as Payload;
       if (!body.to_number || typeof body.to_number !== 'string') {
         return new Response(JSON.stringify({ error: 'to_number required' }), {
@@ -87,6 +114,16 @@ Deno.serve(
           JSON.stringify({
             error: 'invalid_to_number',
             message: 'Número inválido — informe DDD + número (BR) ou formato E.164 (+55...)',
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (!isAllowedDestination(toNumber)) {
+        ctx.log('warn', 'blocked_dial_prefix', { prefix: toNumber.slice(0, 4) });
+        return new Response(
+          JSON.stringify({
+            error: 'destination_not_allowed',
+            message: 'Destino fora dos DDIs permitidos (padrão: +55)',
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -136,7 +173,10 @@ Deno.serve(
         From: fromNumber,
         Url: twimlUrl,
         StatusCallback: statusUrl,
-        StatusCallbackEvent: 'initiated ringing answered completed',
+        // Sem 'initiated': o INSERT abaixo já grava status inicial 'initiated',
+        // e o callback initiated corria contra o INSERT (chegava antes da
+        // sessão existir → 401/404 espúrio no twilio-call-status).
+        StatusCallbackEvent: 'ringing answered completed',
         StatusCallbackMethod: 'POST',
         Record: 'true',
       });

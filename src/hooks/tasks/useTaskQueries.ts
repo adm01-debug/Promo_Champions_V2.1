@@ -18,14 +18,17 @@ export const useTasks = (userId?: string) => {
   return useQuery<TaskRecord[]>({
     queryKey: ['tasks', userId],
     queryFn: async (): Promise<TaskRecord[]> => {
-      // Mesmo padrão de useActivities (limit 1000): sem janela, o histórico
-      // completo de tarefas concluídas viria junto e o PostgREST truncaria
-      // silenciosamente em 1000 de qualquer forma.
+      // Janela por DATA, não por limit cego: com order ASC + limit, as 1000
+      // mais ANTIGAS entravam e as tarefas de hoje ficavam de fora (calendário
+      // zerado). Corte: 90 dias para trás (tarefas sem due_date continuam
+      // entrando), tudo dali para frente.
+      const windowStart = new Date(Date.now() - 90 * 86400000).toISOString();
       let query = supabase
         .from('tasks')
         .select(TASK_SELECT)
+        .or(`due_date.gte.${windowStart},due_date.is.null`)
         .order('due_date', { ascending: true })
-        .limit(1000);
+        .limit(2000);
 
       if (userId) {
         query = query.eq('salesperson_id', userId);

@@ -543,7 +543,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
 
 Deno.serve(
   withRequestId('bitrix24-sync', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }

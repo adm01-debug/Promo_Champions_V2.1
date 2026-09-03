@@ -60,7 +60,7 @@ function sanitize(raw: unknown): Sample | null {
 
 Deno.serve(
   withRequestId("log-web-vitals", async (req, ctx) => {
-  const corsHeaders = getCorsHeaders(req);
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
     if (req.method !== "POST") {
       return new Response("Method not allowed", { status: 405, headers: corsHeaders });
