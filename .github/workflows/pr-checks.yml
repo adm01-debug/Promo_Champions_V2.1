@@ -209,6 +209,12 @@ jobs:
         run: npm ci
 
       - name: Build project
+        # Placeholders: src/integrations/supabase/client.ts lança no boot sem
+        # essas envs → tela branca → Lighthouse morria com NO_FCP em toda PR.
+        # Valores falsos bastam para o shell pintar a tela de /auth.
+        env:
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
         run: npm run build
 
       - name: Run Lighthouse CI
