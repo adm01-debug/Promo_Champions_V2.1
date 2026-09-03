@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
@@ -543,6 +543,7 @@ async function syncDealsToBitrix(supabase: SupabaseClient): Promise<number> {
 
 Deno.serve(
   withRequestId('bitrix24-sync', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }

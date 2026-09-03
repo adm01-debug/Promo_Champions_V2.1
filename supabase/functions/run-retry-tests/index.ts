@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 // Executes the test cases declared in supabase/functions/winloss-webhook-dispatcher/retry_test.ts
 // in-process, by overriding the global Deno.test API to capture (instead of run) the registered
@@ -139,6 +139,7 @@ async function captureAndRun(): Promise<{
 }
 
 Deno.serve(withRequestId('run-retry-tests', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {

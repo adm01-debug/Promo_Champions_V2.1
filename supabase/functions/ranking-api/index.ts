@@ -1,7 +1,17 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+
+// Mesmo validador de send-transactional-email: formato são + anti-CRLF.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(email: string): boolean {
+  return typeof email === "string" && email.length <= 254 &&
+    !/[\r\n]/.test(email) && EMAIL_RE.test(email);
+}
+
+const VALID_ROLES = new Set(["sdr", "closer", "hybrid"]);
 
 async function validateToken(token: string) {
   const supabase = createClient(
@@ -21,18 +31,28 @@ function getServiceClient() {
   );
 }
 
-Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
+Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   const headers = { ...corsHeaders, "Content-Type": "application/json" };
 
+  const limited = enforceRateLimit(req, {
+    name: "ranking-api",
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (limited) return limited;
+
   try {
-    const token = req.headers.get("authorization");
-    if (!token) {
+    const rawToken = req.headers.get("authorization");
+    if (!rawToken) {
       return new Response(JSON.stringify({ error: "Token de autenticação ausente" }), { status: 403, headers });
     }
+    // Aceita tanto o token cru quanto o formato padrão "Bearer <token>".
+    const token = rawToken.replace(/^Bearer\s+/i, "");
 
     const tokenData = await validateToken(token);
     if (!tokenData) {
@@ -54,7 +74,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("is_active", true)
         .limit(500);
 
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
 
@@ -66,7 +89,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("id", userId)
         .maybeSingle();
       
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       if (!data) return new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404, headers });
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
@@ -76,6 +102,15 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
       const { name, email } = body;
       if (!name || !email) {
         return new Response(JSON.stringify({ error: "Campos 'name' e 'email' são obrigatórios" }), { status: 400, headers });
+      }
+      if (typeof name !== "string" || name.trim().length === 0 || name.length > 200) {
+        return new Response(JSON.stringify({ error: "Campo 'name' inválido (1-200 caracteres)" }), { status: 422, headers });
+      }
+      if (!isValidEmail(email)) {
+        return new Response(JSON.stringify({ error: "Campo 'email' com formato inválido" }), { status: 422, headers });
+      }
+      if (body.role !== undefined && !VALID_ROLES.has(body.role)) {
+        return new Response(JSON.stringify({ error: "Campo 'role' inválido (sdr|closer|hybrid)" }), { status: 422, headers });
       }
 
       // Check existing
@@ -91,7 +126,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         is_active: true,
       }).select("id, name, email, role").single();
 
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data, message: "Usuário criado com sucesso" }), { status: 200, headers });
     }
 
@@ -106,7 +144,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("id", tokenData.team_id)
         .maybeSingle();
       
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
 
@@ -120,7 +161,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("team_id", tokenData.team_id)
         .limit(200);
 
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
 
@@ -136,7 +180,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("team_id", tokenData.team_id)
         .limit(200);
 
-      if (membersErr) return new Response(JSON.stringify({ error: membersErr.message }), { status: 400, headers });
+      if (membersErr) {
+        ctx.log("error", "db_error", { detail: membersErr.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
 
       const memberIds = (members ?? []).map((m: { salesperson_id: string }) => m.salesperson_id);
       if (memberIds.length === 0) {
@@ -167,7 +214,10 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("is_active", true)
         .limit(100);
 
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
 
@@ -216,7 +266,8 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("id", user.id);
 
       if (updateErr) {
-        return new Response(JSON.stringify({ error: updateErr.message }), { status: 400, headers });
+        ctx.log("error", "db_error", { detail: updateErr.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
       }
 
       // Log the change
@@ -267,7 +318,8 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         }, { onConflict: "salesperson_id,field_id" });
 
       if (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
       }
 
       // Log
@@ -332,14 +384,19 @@ Deno.serve(withRequestId("ranking-api", async (req, _ctx) => {
         .eq("is_active", true)
         .order("name")
         .limit(500);
-      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers });
+      if (error) {
+        ctx.log("error", "db_error", { detail: error.message });
+        return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
+      }
       return new Response(JSON.stringify({ data }), { status: 200, headers });
     }
 
     return new Response(JSON.stringify({ error: `Rota não encontrada: ${route}` }), { status: 404, headers });
 
   } catch (err) {
-    console.error("Ranking API error:", err);
-    return new Response(JSON.stringify({ error: (err as Error).message }), { status: 500, headers });
+    ctx.log("error", "ranking_api_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return new Response(JSON.stringify({ error: "internal_error" }), { status: 500, headers });
   }
 }));

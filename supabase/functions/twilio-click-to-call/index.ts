@@ -1,11 +1,12 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 interface Payload {
   to_number: string;
@@ -14,9 +15,38 @@ interface Payload {
   from_number?: string;
 }
 
+// O front envia o telefone cru do banco (account_contacts.phone), muitas vezes
+// com máscara BR. Normaliza para E.164 antes de mandar para a Twilio — e
+// rejeita o que não normalizar (fecha discagem arbitrária/toll fraud com lixo).
+function normalizeToE164(raw: string): string | null {
+  const trimmed = raw.trim();
+  const hasPlus = trimmed.startsWith('+');
+  const digits = trimmed.replace(/\D/g, '');
+  if (!digits) return null;
+  if (hasPlus) {
+    const candidate = `+${digits}`;
+    return /^\+[1-9]\d{7,14}$/.test(candidate) ? candidate : null;
+  }
+  // Nacional BR: fixo (10 dígitos) ou celular (11 dígitos) → prefixa +55.
+  if (digits.length === 10 || digits.length === 11) return `+55${digits}`;
+  // Já com DDI 55 sem o "+".
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
+    return `+${digits}`;
+  }
+  return null;
+}
+
 Deno.serve(
-  withRequestId('twilio-click-to-call', async (req, _ctx) => {
+  withRequestId('twilio-click-to-call', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+    const limited = enforceRateLimit(req, {
+      name: 'twilio-click-to-call',
+      limit: 10,
+      windowSeconds: 60,
+    });
+    if (limited) return limited;
 
     try {
       const authHeader = req.headers.get('Authorization');
@@ -44,11 +74,22 @@ Deno.serve(
       const ownerId = userData.user.id;
 
       const body = (await req.json()) as Payload;
-      if (!body.to_number) {
+      if (!body.to_number || typeof body.to_number !== 'string') {
         return new Response(JSON.stringify({ error: 'to_number required' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
+      }
+
+      const toNumber = normalizeToE164(body.to_number);
+      if (!toNumber) {
+        return new Response(
+          JSON.stringify({
+            error: 'invalid_to_number',
+            message: 'Número inválido — informe DDD + número (BR) ou formato E.164 (+55...)',
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       // Load Twilio credentials for owner
@@ -91,7 +132,7 @@ Deno.serve(
       const statusUrl = `${supabaseUrl}/functions/v1/twilio-call-status`;
 
       const params = new URLSearchParams({
-        To: body.to_number,
+        To: toNumber,
         From: fromNumber,
         Url: twimlUrl,
         StatusCallback: statusUrl,
@@ -139,12 +180,16 @@ Deno.serve(
 
       const twilioData = await twilioRes.json();
       if (!twilioRes.ok) {
+        // Payload bruto da Twilio só no log; a mensagem dela é útil ao usuário
+        // ("invalid To number"), o resto não sai na resposta.
+        ctx.log('warn', 'twilio_call_create_failed', {
+          status: twilioRes.status,
+          twilio_code: twilioData.code,
+          twilio_message: twilioData.message,
+        });
         return new Response(
-          JSON.stringify({
-            error: twilioData.message || 'Twilio error',
-            details: twilioData,
-          }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: twilioData.message || 'Twilio error' }),
+          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -158,7 +203,7 @@ Deno.serve(
           queue_item_id: body.queue_item_id ?? null,
           call_sid: callSid,
           from_number: fromNumber,
-          to_number: body.to_number,
+          to_number: toNumber,
           status: 'initiated',
           started_at: new Date().toISOString(),
         })
@@ -174,8 +219,10 @@ Deno.serve(
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } catch (e) {
-      console.error('twilio-click-to-call error:', e);
-      return new Response(JSON.stringify({ error: (e as Error).message }), {
+      ctx.log('error', 'twilio_click_to_call_failed', {
+        error: e instanceof Error ? e.message : String(e),
+      });
+      return new Response(JSON.stringify({ error: 'internal_error' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

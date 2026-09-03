@@ -11,7 +11,7 @@
 
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { buildFallbackContent, createSseResponse, isAiDisabledError } from "./fallback.ts";
 import {
@@ -228,6 +228,7 @@ Se não houver nada realmente urgente nem mudança relevante, responda EXATAMENT
 
 Deno.serve(
   withRequestId("personal-assistant-stream", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
     try {

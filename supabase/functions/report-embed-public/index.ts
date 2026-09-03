@@ -3,7 +3,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 
 const baseCors: Record<string, string> = {
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-embed-token",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 };
 
@@ -77,7 +77,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   return parts.join(",") || "*";
 }
 
-Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
+Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
   const reqOrigin = req.headers.get("origin");
 
   if (req.method === "OPTIONS") {
@@ -86,7 +86,9 @@ Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
 
   try {
     const url = new URL(req.url);
-    const token = url.searchParams.get("token");
+    // Preferência: header (não vaza em logs/Referer). Query string mantida
+    // apenas por compatibilidade com embeds já distribuídos.
+    const token = req.headers.get("x-embed-token") ?? url.searchParams.get("token");
 
     if (!token || token.length < 20) {
       return new Response(JSON.stringify({ error: "Token inválido" }), {
@@ -212,7 +214,8 @@ Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
     const { data, error } = await q;
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
+      ctx.log("error", "embed_query_failed", { detail: error.message });
+      return new Response(JSON.stringify({ error: "query_failed" }), {
         status: 400,
         headers: { ...baseCors, "Access-Control-Allow-Origin": corsOrigin, "Content-Type": "application/json" },
       });
@@ -254,9 +257,11 @@ Deno.serve(withRequestId('report-embed-public', async (req, _ctx) => {
       { headers: { ...baseCors, "Access-Control-Allow-Origin": corsOrigin, "Content-Type": "application/json" } },
     );
   } catch (err) {
-    console.error('report-embed-public error:', err);
+    ctx.log("error", "report_embed_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : "Erro desconhecido" }),
+      JSON.stringify({ error: "internal_error" }),
       { status: 500, headers: { ...baseCors, "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" } },
     );
   }

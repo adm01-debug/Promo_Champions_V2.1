@@ -25,6 +25,7 @@ Deno.test("jobs operacionais autenticam antes de acessar dados privilegiados", a
     assertStringIncludes(source, "isAuthorizedCronRequest(req");
     assertMatch(source, /\.eq\(["']key["'],\s*["']coaching_cron_secret["']\)/);
     assertMatch(source, /error:\s*["']unauthorized["']/);
+    // deno-lint-ignore no-control-regex -- o teste procura control chars no source de propósito
     assertNotMatch(source, /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/);
 
     const authGate = executableSource.indexOf("isAuthorizedCronRequest(req");

@@ -2,7 +2,7 @@
 // Modo síncrono (POST manual) OU chamado assincronamente por trigger via pg_net.
 // Auth: se Authorization header presente, valida; senão exige X-Cron-Secret == COACHING_CRON_SECRET.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
@@ -18,6 +18,7 @@ const VALID_CATEGORIES = ['opening','discovery','objection','closing','talk_rati
 const VALID_SEVERITIES = ['info','warning','critical'];
 
 Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {

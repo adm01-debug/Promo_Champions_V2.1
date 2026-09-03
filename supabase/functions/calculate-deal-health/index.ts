@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
@@ -377,7 +377,8 @@ async function processOne(supabase: SupabaseClient, saleId: string) {
   return { saleId, score: result.score, tier };
 }
 
-Deno.serve(async req => {
+Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
@@ -429,13 +430,15 @@ Deno.serve(async req => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error(e);
+    ctx.log('error', 'calculate_deal_health_failed', {
+      error: e instanceof Error ? e.message : String(e),
+    });
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
+      JSON.stringify({ error: 'internal_error' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }
-});
+}));

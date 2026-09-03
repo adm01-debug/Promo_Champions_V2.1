@@ -69,44 +69,6 @@ function resolveTemplateVariables(
   );
 }
 
-async function fetchContactContext(
-  supabase: ServiceClient,
-  contactId: string,
-  contactType: string,
-): Promise<ContactContext> {
-  try {
-    if (contactType === "client") {
-      const { data } = await supabase
-        .from("clients")
-        .select("name, company, phone, email")
-        .eq("id", contactId)
-        .maybeSingle();
-      return {
-        nome: (data as { name?: string } | null)?.name ?? undefined,
-        empresa: (data as { company?: string } | null)?.company ?? undefined,
-        phone: (data as { phone?: string } | null)?.phone ?? undefined,
-        email: (data as { email?: string } | null)?.email ?? undefined,
-      };
-    }
-    if (contactType === "lead") {
-      const { data } = await supabase
-        .from("leads")
-        .select("name, company, position, phone")
-        .eq("id", contactId)
-        .maybeSingle();
-      return {
-        nome: (data as { name?: string } | null)?.name ?? undefined,
-        empresa: (data as { company?: string } | null)?.company ?? undefined,
-        cargo: (data as { position?: string } | null)?.position ?? undefined,
-        phone: (data as { phone?: string } | null)?.phone ?? undefined,
-      };
-    }
-  } catch (_) {
-    // soft-fail
-  }
-  return {};
-}
-
 // Hoisted channel sets — immutable, no reason to rebuild per-iteration
 const MESSAGING_CHANNELS = new Set(["whatsapp", "sms"]);
 const TASK_CHANNELS = new Set(["linkedin", "call", "task"]);

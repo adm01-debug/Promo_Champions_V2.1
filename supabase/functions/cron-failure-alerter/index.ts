@@ -4,7 +4,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateNotificationBatch } from "../_shared/notification-categories.ts";
 
 interface CronFailure {
@@ -17,6 +17,7 @@ interface CronFailure {
 }
 
 Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const { requestId, log } = ctx;

@@ -1,7 +1,7 @@
 // Forecast Narrative — gera explicação em PT-BR do forecast atual usando Lovable AI Gateway.
 // Auth: requer JWT do usuário. Rate-limit: 20 req/min por usuário.
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
@@ -27,6 +27,7 @@ const BRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v ?? 0);
 
 Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {

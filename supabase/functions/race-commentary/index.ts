@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface CommentaryRequest {
@@ -50,6 +50,7 @@ Use nomes próprios. Nunca invente números — use apenas os fornecidos. Portug
 NUNCA inclua hashtags, emojis em excesso (máx 1), ou aspas. Tom: animado, jornalístico.`;
 
 Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {

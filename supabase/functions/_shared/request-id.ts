@@ -77,7 +77,9 @@ export function withRequestId(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       ctx.log("error", "request_failed", { duration_ms: Date.now() - started, error: message });
-      const body = JSON.stringify({ requestId, error: message });
+      // O detalhe fica só no log estruturado acima; a resposta carrega um código
+      // opaco + requestId para correlação (não vazar internals em 500).
+      const body = JSON.stringify({ requestId, error: "internal_error" });
       return new Response(body, {
         status: 500,
         headers: {

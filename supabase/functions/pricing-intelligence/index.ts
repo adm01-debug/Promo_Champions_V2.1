@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
 interface SaleRow {
@@ -56,6 +56,7 @@ function pricingHealth(avgDiscount: number, alertRatio: number): string {
 
 Deno.serve(
   withRequestId('pricing-intelligence', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     try {
@@ -129,7 +130,7 @@ Deno.serve(
         if (discountPct >= discountThreshold) alertedDeals += 1;
 
         const bucket =
-          distribution.find((b, i) => {
+          distribution.find((_b, i) => {
             const meta = DISCOUNT_BUCKETS[i];
             return discountPct >= meta.min && discountPct < meta.max;
           }) ?? distribution[distribution.length - 1];

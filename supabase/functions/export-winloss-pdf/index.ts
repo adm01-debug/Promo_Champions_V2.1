@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
@@ -11,6 +11,7 @@ interface AnalysisRow {
 }
 
 Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   // ── Authentication ────────────────────────────────────────────────────

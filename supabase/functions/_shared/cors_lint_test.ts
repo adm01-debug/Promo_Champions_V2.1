@@ -67,6 +67,10 @@ async function findCorsHeadersDeclarations(): Promise<Declaration[]> {
     const lines = text.split("\n");
     for (let i = 0; i < lines.length; i++) {
       if (DECLARATION_RE.test(lines[i])) {
+        // Shadow local derivado do módulo canônico é a adoção da allowlist
+        // (`const corsHeaders = getCorsHeaders(req);`) — não é um objeto
+        // duplicado que possa divergir. Só objetos próprios são ofensores.
+        if (lines[i].includes("getCorsHeaders(")) continue;
         found.push({ file: rel, line: i + 1, snippet: lines[i].trim() });
       }
     }

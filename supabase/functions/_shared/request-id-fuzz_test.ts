@@ -117,7 +117,9 @@ Deno.test("INV-4 — thrown errors return JSON envelope with matching requestId"
     const body = await res.json() as { requestId: string; error: string };
     assertEquals(header, id);
     assertEquals(body.requestId, id, "body.requestId must equal header");
-    assertEquals(body.error, "simulated_failure");
+    // Contrato de segurança: a resposta 500 carrega um código OPACO; a
+    // mensagem real ("simulated_failure") vai apenas para o log estruturado.
+    assertEquals(body.error, "internal_error");
   }
 });
 

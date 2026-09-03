@@ -189,6 +189,33 @@ export async function verifyTwilioSignature(
   return timingSafeEqual(expected, receivedSignature.trim());
 }
 
+/**
+ * Variante multi-credencial/multi-URL para os webhooks de voz da Twilio
+ * (twilio-call-status / twilio-call-twiml): as chamadas são originadas com
+ * credenciais por tenant (channel_credentials.auth_token), então a assinatura
+ * pode ter sido gerada com o token do tenant OU com o global TWILIO_AUTH_TOKEN;
+ * e a URL canônica pode divergir de req.url atrás do gateway. Aceita se
+ * QUALQUER combinação (token × url) validar. Continua timing-safe por tentativa.
+ */
+export async function verifyTwilioSignatureAny(
+  authTokens: readonly (string | null | undefined)[],
+  urls: readonly string[],
+  rawBody: string,
+  contentType: string,
+  receivedSignature: string | null,
+): Promise<boolean> {
+  if (!receivedSignature) return false;
+  for (const token of authTokens) {
+    if (!token) continue;
+    for (const url of urls) {
+      if (await verifyTwilioSignature(token, url, rawBody, contentType, receivedSignature)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export async function verifyMetaSignature(
   appSecret: string,
   rawBody: string,

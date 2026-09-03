@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
@@ -11,6 +11,7 @@ const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {

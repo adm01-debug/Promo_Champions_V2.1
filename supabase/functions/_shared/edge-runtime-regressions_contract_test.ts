@@ -19,6 +19,7 @@ const readFunction = (name: string) =>
 Deno.test("handlers reparados são parseáveis e usam contrato HTTP explícito", async () => {
   for (const name of names) {
     const source = await readFunction(name);
+    // deno-lint-ignore no-control-regex -- o teste procura control chars no source de propósito
     assertNotMatch(source, /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/);
     assertStringIncludes(source, `withRequestId("${name}"`.replaceAll('"', source.includes(`withRequestId('${name}'`) ? "'" : '"'));
     assertMatch(source, /req\.method\s*!==\s*["']POST["']/);

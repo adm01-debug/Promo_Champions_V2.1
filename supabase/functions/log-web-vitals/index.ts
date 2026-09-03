@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
@@ -60,6 +60,7 @@ function sanitize(raw: unknown): Sample | null {
 
 Deno.serve(
   withRequestId("log-web-vitals", async (req, ctx) => {
+  const corsHeaders = getCorsHeaders(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
     if (req.method !== "POST") {
       return new Response("Method not allowed", { status: 405, headers: corsHeaders });

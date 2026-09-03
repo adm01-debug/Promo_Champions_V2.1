@@ -8,11 +8,12 @@ import {
   collectErrors,
   validationErrorResponse,
 } from '../_shared/validation.ts';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -168,7 +169,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
         outcomes?.filter(o => o.outcome === 'lost').map(o => o.reason) || [];
       const topLossReason =
         lossReasons.length > 0
-          ? lossReasons.reduce((a, b, i, arr) =>
+          ? lossReasons.reduce((a, b, _i, arr) =>
               arr.filter(v => v === a).length >= arr.filter(v => v === b).length ? a : b
             )
           : null;

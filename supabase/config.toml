@@ -40,4 +40,12 @@ verify_jwt = false
 [functions.multichannel-status-webhook]
 verify_jwt = false
 
+# Callbacks de voz da Twilio (sem JWT) — assinatura X-Twilio-Signature
+# verificada no handler contra o token do tenant e/ou TWILIO_AUTH_TOKEN.
+[functions.twilio-call-status]
+verify_jwt = false
+
+[functions.twilio-call-twiml]
+verify_jwt = false
+
 # migrate-helper removido: edge function aposentada no V2 (não deployada no destino; verify_jwt=false é risco de segurança)
