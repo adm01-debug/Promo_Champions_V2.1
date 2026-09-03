@@ -23,8 +23,8 @@ export function useWebhookAlerts(subscriptionId?: string | null) {
     queryFn: async (): Promise<WebhookAlert[]> => {
       const since = new Date(Date.now() - RECENT_HOURS * 60 * 60 * 1000).toISOString();
 
-      const query = // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const query = (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -62,6 +62,7 @@ export function useWebhookAlerts(subscriptionId?: string | null) {
         .from('winloss_webhook_alerts')
         .select('id, subscription_id, kind, details, fired_at')
         .gte('fired_at', since);
+      /* eslint-enable no-restricted-syntax */
 
       const final = subscriptionId
         ? query

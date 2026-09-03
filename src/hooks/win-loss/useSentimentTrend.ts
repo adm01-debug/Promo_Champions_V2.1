@@ -28,8 +28,8 @@ export function useSentimentTrend() {
       const since = new Date();
       since.setMonth(since.getMonth() - 18);
 
-      const { data: recs } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data: recs } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -51,6 +51,7 @@ export function useSentimentTrend() {
         .select('recorded_at, sentiment_score, sale_id')
         .gte('recorded_at', since.toISOString())
         .not('sentiment_score', 'is', null);
+      /* eslint-enable no-restricted-syntax */
       const rows = recs ?? [];
       if (!rows.length) return [];
 

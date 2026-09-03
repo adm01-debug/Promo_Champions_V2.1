@@ -273,8 +273,8 @@ export function useV4Alerts() {
     refetchInterval: 60_000,
     queryFn: async (): Promise<V4Alert[]> => {
       const since = new Date(Date.now() - 24 * 60 * 60_000).toISOString();
-      const { data, error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -300,6 +300,7 @@ export function useV4Alerts() {
         .gte('fired_at', since)
         .order('fired_at', { ascending: false })
         .limit(100);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       return data ?? [];
     },
@@ -311,8 +312,8 @@ export function useV4AlertSettings() {
   const query = useQuery({
     queryKey: ['v4-callback-alert-settings'],
     queryFn: async (): Promise<V4AlertSettings | null> => {
-      const { data, error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -335,6 +336,7 @@ export function useV4AlertSettings() {
         )
         .eq('singleton', true)
         .maybeSingle();
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       return data;
     },
@@ -344,8 +346,8 @@ export function useV4AlertSettings() {
     mutationFn: async (input: V4AlertSettingsInput) => {
       const id = query.data?.id;
       if (!id) throw new Error('Configurações não encontradas.');
-      const { error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             update: (v: V4AlertSettingsInput) => {
@@ -357,6 +359,7 @@ export function useV4AlertSettings() {
         .from('v4_callback_alert_settings')
         .update(input)
         .eq('id', id);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {
@@ -368,8 +371,8 @@ export function useV4AlertSettings() {
 
   const ackMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             update: (v: { acknowledged_at: string }) => {
@@ -381,6 +384,7 @@ export function useV4AlertSettings() {
         .from('v4_callback_alerts')
         .update({ acknowledged_at: new Date().toISOString() })
         .eq('id', id);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['v4-callback-alerts'] }),

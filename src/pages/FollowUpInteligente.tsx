@@ -601,9 +601,9 @@ const FollowUpInteligente = memo(() => {
                         vars.forEach(v => {
                           const key = v.replace(/{{|}}/g, '');
 
+                          /* eslint-disable no-restricted-syntax */
                           msg = msg.replace(
                             v,
-                            // eslint-disable-next-line no-restricted-syntax
                             (
                               currentLeadForWA as unknown as Record<
                                 string,
@@ -611,6 +611,7 @@ const FollowUpInteligente = memo(() => {
                               >
                             )[key] || `[${key}?]`
                           );
+                          /* eslint-enable no-restricted-syntax */
                         });
                         return msg;
                       })()}

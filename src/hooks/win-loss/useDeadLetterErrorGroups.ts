@@ -17,8 +17,8 @@ export function useDeadLetterErrorGroups() {
     queryKey: ['winloss-dead-letter-error-groups'],
     staleTime: 30_000,
     queryFn: async () => {
-      const { data, error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -48,6 +48,7 @@ export function useDeadLetterErrorGroups() {
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
         .limit(500);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       const map = new Map<string, { label: string; count: number }>();
       for (const r of data ?? []) {

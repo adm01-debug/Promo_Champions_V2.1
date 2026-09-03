@@ -25,6 +25,21 @@ const formatBRL = (n: number) =>
 export function StuckDealsPanel() {
   const { data, isLoading } = useStuckDeals(15);
   const detect = useDetectStuckDeals();
+  /* eslint-disable no-restricted-syntax */
+  const typedRows = (data ?? []) as unknown as Array<{
+    id: string;
+    sales?: {
+      client_name?: string | null;
+      product_name?: string | null;
+      amount?: number | null;
+    } | null;
+    severity: string;
+    current_stage: string;
+    hours_in_stage: number;
+    baseline_p75: number;
+    recommendation?: string | null;
+  }>;
+  /* eslint-enable no-restricted-syntax */
 
   return (
     <Card variant="elevated" className="glass border-border/40">
@@ -67,22 +82,7 @@ export function StuckDealsPanel() {
           </div>
         ) : (
           <div className="space-y-2 max-h-[500px] overflow-y-auto">
-            { 
-            (
-              data as unknown as Array<{
-                id: string;
-                sales?: {
-                  client_name?: string | null;
-                  product_name?: string | null;
-                  amount?: number | null;
-                } | null;
-                severity: string;
-                current_stage: string;
-                hours_in_stage: number;
-                baseline_p75: number;
-                recommendation?: string | null;
-              }>
-            ).map(row => {
+            {typedRows.map(row => {
               const sale = row.sales;
               const severity = row.severity as StageSeverity;
               return (

@@ -961,13 +961,14 @@ export function LeadScoringDashboard() {
                                     <FactorBar
                                       label="Deal Momentum"
                                       value={
-                                         
+                                        /* eslint-disable no-restricted-syntax */
                                         (
                                           lead.factors as unknown as Record<
                                             string,
                                             number
                                           >
                                         ).dealValue
+                                        /* eslint-enable no-restricted-syntax */
                                       }
                                       maxValue={25}
                                     />

@@ -63,8 +63,8 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
       // we cast the builder to keep the file type-safe without touching the
       // auto-generated types module.
 
-      const q = // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const q = (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -133,6 +133,7 @@ export function useWebhookAlertHistory(filters: AlertHistoryFilters) {
           'id, subscription_id, kind, request_id, fired_at, suppressed, suppress_reason, details, winloss_webhook_subscriptions(url)'
         )
         .gte('fired_at', since);
+      /* eslint-enable no-restricted-syntax */
 
       // chained eq filters — apply only those provided
 

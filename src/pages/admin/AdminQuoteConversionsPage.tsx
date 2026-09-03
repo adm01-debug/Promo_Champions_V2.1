@@ -129,8 +129,8 @@ export default function AdminQuoteConversionsPage() {
     }
     setTrailLoading(true);
     try {
-      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase.rpc as unknown as (
           fn: string,
           args: Record<string, unknown>
@@ -139,6 +139,7 @@ export default function AdminQuoteConversionsPage() {
         'fn_admin_conversion_trail',
         trailKind === 'quote_id' ? { _quote_id: value } : { _sale_id: value }
       );
+      /* eslint-enable no-restricted-syntax */
       if (error) throw new Error(error.message);
       setTrailData(data);
       toast.success('Trilha carregada');

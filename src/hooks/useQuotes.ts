@@ -338,8 +338,8 @@ export function useConvertQuoteToSale() {
       }
 
       const t0 = performance.now();
-      const { data, error } = await  
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase.rpc as unknown as (
           fn: string,
           args: Record<string, unknown>
@@ -348,6 +348,7 @@ export function useConvertQuoteToSale() {
           error: { message: string } | null;
         }>
       )('fn_convert_quote_to_sale', { _quote_id: quoteId });
+      /* eslint-enable no-restricted-syntax */
       const latencyMs = Math.round(performance.now() - t0);
 
       if (error || !data) {

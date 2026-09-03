@@ -10,8 +10,8 @@ export interface DeadLettersCounts {
 }
 
 async function countByStatus(status: DeadLetterStatus): Promise<number> {
-  const { count, error } = await // eslint-disable-next-line no-restricted-syntax
-  (
+  /* eslint-disable no-restricted-syntax */
+  const { count, error } = await (
     supabase as unknown as {
       from: (t: string) => {
         select: (
@@ -29,6 +29,7 @@ async function countByStatus(status: DeadLetterStatus): Promise<number> {
     .from('winloss_webhook_dead_letters')
     .select('id', { count: 'exact', head: true })
     .eq('status', status);
+  /* eslint-enable no-restricted-syntax */
   if (error) throw error;
   return count ?? 0;
 }

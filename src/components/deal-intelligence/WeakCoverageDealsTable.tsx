@@ -18,6 +18,17 @@ export function WeakCoverageDealsTable({
   onSelectDeal?: (saleId: string) => void;
 }) {
   const { data, isLoading } = useWeakCoverageDeals();
+  /* eslint-disable no-restricted-syntax */
+  const typedRows = (data ?? []) as unknown as Array<{
+    id: string;
+    sale_id: string;
+    coverage_score: number;
+    tier: string;
+    gaps?: string[] | null;
+    risks?: unknown[] | null;
+    sales?: { client_name?: string | null } | null;
+  }>;
+  /* eslint-enable no-restricted-syntax */
 
   return (
     <Card variant="elevated" className="glass border-border/40">
@@ -39,18 +50,7 @@ export function WeakCoverageDealsTable({
           </p>
         ) : (
           <div className="space-y-2">
-            { 
-            (
-              data as unknown as Array<{
-                id: string;
-                sale_id: string;
-                coverage_score: number;
-                tier: string;
-                gaps?: string[] | null;
-                risks?: unknown[] | null;
-                sales?: { client_name?: string | null } | null;
-              }>
-            ).map(row => (
+            {typedRows.map(row => (
               <div
                 key={row.id}
                 className={cn(

@@ -33,8 +33,8 @@ export function useInsightComments(insightId: string | null) {
     queryFn: async (): Promise<InsightComment[]> => {
       if (!insightId) return [];
 
-      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (s: string) => {
@@ -55,6 +55,7 @@ export function useInsightComments(insightId: string | null) {
         .select('id, insight_id, author_id, body, created_at')
         .eq('insight_id', insightId)
         .order('created_at', { ascending: true });
+      /* eslint-enable no-restricted-syntax */
 
       if (error) throw error;
       const rows: RawComment[] = data ?? [];
@@ -123,8 +124,8 @@ export function useInsightComments(insightId: string | null) {
       const uid = userRes.user?.id;
       if (!uid) throw new Error('Não autenticado');
 
-      const { error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             insert: (row: Record<string, unknown>) => Promise<{ error: Error | null }>;
@@ -133,6 +134,7 @@ export function useInsightComments(insightId: string | null) {
       )
         .from(TABLE)
         .insert({ insight_id: insightId, author_id: uid, body: trimmed });
+      /* eslint-enable no-restricted-syntax */
 
       if (error) throw error;
     },
@@ -146,8 +148,8 @@ export function useInsightComments(insightId: string | null) {
 
   const deleteMutation = useMutation({
     mutationFn: async (commentId: string) => {
-      const { error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             delete: () => {
@@ -159,6 +161,7 @@ export function useInsightComments(insightId: string | null) {
         .from(TABLE)
         .delete()
         .eq('id', commentId);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {

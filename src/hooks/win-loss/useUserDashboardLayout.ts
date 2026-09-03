@@ -33,8 +33,8 @@ export function useUserDashboardLayout() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return [...DEFAULT_LAYOUT];
 
-      const { data } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -52,6 +52,7 @@ export function useUserDashboardLayout() {
         .select('layout')
         .eq('user_id', auth.user.id)
         .maybeSingle();
+      /* eslint-enable no-restricted-syntax */
       const stored = data?.layout;
       if (!stored || !Array.isArray(stored) || stored.length === 0)
         return [...DEFAULT_LAYOUT];
@@ -67,8 +68,8 @@ export function useUserDashboardLayout() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error('Não autenticado');
 
-      const { error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             upsert: (p: Record<string, unknown>) => Promise<{ error: Error | null }>;
@@ -77,6 +78,7 @@ export function useUserDashboardLayout() {
       )
         .from('user_winloss_preferences')
         .upsert({ user_id: auth.user.id, layout, updated_at: new Date().toISOString() });
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {

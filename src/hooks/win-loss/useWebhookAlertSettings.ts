@@ -26,8 +26,8 @@ export function useWebhookAlertSettings() {
     queryFn: async () => {
       // Cast: the auto-generated types module doesn't yet include this table.
 
-      const { data, error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { data, error } = await (
         supabase as unknown as {
           from: (t: string) => {
             select: (c: string) => {
@@ -50,6 +50,7 @@ export function useWebhookAlertSettings() {
         )
         .eq('singleton', true)
         .maybeSingle();
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       return data;
     },
@@ -60,8 +61,8 @@ export function useWebhookAlertSettings() {
       const id = query.data?.id;
       if (!id) throw new Error('Configurações não encontradas. Recarregue a página.');
 
-      const { error } = await // eslint-disable-next-line no-restricted-syntax
-      (
+      /* eslint-disable no-restricted-syntax */
+      const { error } = await (
         supabase as unknown as {
           from: (t: string) => {
             update: (v: WebhookAlertSettingsInput) => {
@@ -73,6 +74,7 @@ export function useWebhookAlertSettings() {
         .from('winloss_alert_settings')
         .update(input)
         .eq('id', id);
+      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {
