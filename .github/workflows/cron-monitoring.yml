@@ -27,10 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -39,7 +39,7 @@ jobs:
         id: env-check
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            # O repositório ainda NÃO tem os secrets SUPABASE_URL/SUPABASE_ANON_KEY
+            # O repositório ainda NÃO tem os secrets VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY
             # configurados (verificado 2026-09-03). Falhar aqui viraria vermelho
             # diário permanente; quando os secrets forem criados, endurecer este
             # ramo (exit 1 fora de pull_request) para eliminar o verde silencioso.
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload deno cache on failure
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: deno-logs-${{ github.run_id }}
           path: |

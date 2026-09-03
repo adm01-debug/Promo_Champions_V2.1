@@ -10,6 +10,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 # Um run por ref: push novo na mesma PR cancela o run anterior (economia de
 # minutos — repo privado consome quota de Actions).
@@ -27,10 +28,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -58,10 +59,10 @@ jobs:
       HUSKY: 0
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -82,10 +83,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -105,7 +106,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -127,16 +128,16 @@ jobs:
     # VITE_SUPABASE_PUBLISHABLE_KEY (anon key do dashboard). Sem ela o Vite
     # não sobe (client.ts lança ao iniciar) — skip automático até ser preenchida.
     # NÃO é required check nem alimenta o notify-failure por enquanto.
-    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
     env:
       HUSKY: 0
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -151,7 +152,7 @@ jobs:
         run: |
           if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::VITE_SUPABASE_PUBLISHABLE_KEY ausente — E2E SKIPPED (adicione a anon key do projeto rapjswienfhkobhlamxb nos secrets do repo)"
+            echo "::warning::VITE_SUPABASE_PUBLISHABLE_KEY ausente — E2E SKIPPED (adicione a anon key do projeto usyxfpqlsspldubptrdl nos secrets do repo)"
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
@@ -171,7 +172,7 @@ jobs:
 
       - name: Upload Playwright Report
         if: always() && steps.skip.outputs.run == 'true'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -187,10 +188,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -217,10 +218,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -254,10 +255,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -292,7 +293,7 @@ jobs:
       HUSKY: 0
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -307,9 +308,9 @@ jobs:
             echo "SUPABASE_ACCESS_TOKEN not set — skipping types drift check."
             exit 0
           fi
-          supabase gen types typescript --project-id rapjswienfhkobhlamxb > /tmp/generated_types.ts
+          supabase gen types typescript --project-id usyxfpqlsspldubptrdl > /tmp/generated_types.ts
           if ! diff -q src/integrations/supabase/types.ts /tmp/generated_types.ts > /dev/null 2>&1; then
-            echo "::error::Types are out of sync. Run: supabase gen types typescript --project-id rapjswienfhkobhlamxb > src/integrations/supabase/types.ts"
+            echo "::error::Types are out of sync. Run: supabase gen types typescript --project-id usyxfpqlsspldubptrdl > src/integrations/supabase/types.ts"
             diff src/integrations/supabase/types.ts /tmp/generated_types.ts | head -60
             exit 1
           fi

@@ -83,12 +83,20 @@ Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
 
     if (req.method === "GET" && route.startsWith("user/") && !route.includes("create") && !route.includes("edit")) {
       const userId = route.split("/")[1];
+
+      if (tokenData.team_id) {
+        const { data: membership } = await supabase
+          .from("team_members").select("salesperson_id")
+          .eq("team_id", tokenData.team_id).eq("salesperson_id", userId).maybeSingle();
+        if (!membership) return new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404, headers });
+      }
+
       const { data, error } = await supabase
         .from("salespeople")
         .select("id, name, email, avatar_url, role, score_total, is_active")
         .eq("id", userId)
         .maybeSingle();
-      
+
       if (error) {
         ctx.log("error", "db_error", { detail: error.message });
         return new Response(JSON.stringify({ error: "db_error" }), { status: 400, headers });
@@ -249,6 +257,13 @@ Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
         return new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404, headers });
       }
 
+      if (tokenData.team_id) {
+        const { data: membership } = await supabase
+          .from("team_members").select("salesperson_id")
+          .eq("team_id", tokenData.team_id).eq("salesperson_id", user.id).maybeSingle();
+        if (!membership) return new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404, headers });
+      }
+
       const oldScore = Number(user.score_total) || 0;
       let newScore: number;
 
@@ -295,6 +310,13 @@ Deno.serve(withRequestId("ranking-api", async (req, ctx) => {
 
       if (!fieldid || value === undefined) {
         return new Response(JSON.stringify({ error: "Campos 'fieldid' e 'value' são obrigatórios" }), { status: 400, headers });
+      }
+
+      if (tokenData.team_id) {
+        const { data: membership } = await supabase
+          .from("team_members").select("salesperson_id")
+          .eq("team_id", tokenData.team_id).eq("salesperson_id", userId).maybeSingle();
+        if (!membership) return new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404, headers });
       }
 
       // Get current value

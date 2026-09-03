@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { corsHeaders, getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
 import { normalizeEmail, verifyUnsubscribeToken } from "../_shared/unsubscribe.ts";
@@ -51,7 +51,7 @@ function confirmationPage(email: string, action: string): Response {
 }
 
 Deno.serve(withRequestId("email-unsubscribe", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   if (req.method !== "GET" && req.method !== "POST") {
     return page("Método não suportado", "Use o link recebido no e-mail.", 405);
