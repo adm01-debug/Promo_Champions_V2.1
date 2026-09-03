@@ -12,7 +12,22 @@ import {
   ActionType,
   useUpdateLeadStage,
 } from '@/hooks/useCadences';
-import { Phone, Mail, MessageCircle, Users, MoreHorizontal, Check, SkipForward, Clock, ListTodo, MessageSquare, X, Zap, CheckSquare, RefreshCw } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MessageCircle,
+  Users,
+  MoreHorizontal,
+  Check,
+  SkipForward,
+  Clock,
+  ListTodo,
+  MessageSquare,
+  X,
+  Zap,
+  CheckSquare,
+  RefreshCw,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -165,6 +180,7 @@ export function TodaysCadenceTasks() {
                 client_id: String(prospectCadence.sale_id),
                 event_type: 'interaction',
                 action: 'Call Logged',
+                // eslint-disable-next-line no-restricted-syntax
                 details: { result: callResult, notes: noteText } as unknown as never,
                 created_by: (await supabase.auth.getUser()).data.user?.id,
               },

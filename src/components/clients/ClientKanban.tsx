@@ -71,7 +71,7 @@ export function ClientKanban() {
         )
         .order('updated_at', { ascending: false });
       if (error) throw error;
-      return (data as unknown as PortfolioEntry[]) || [];
+      return (data as PortfolioEntry[]) || [];
     },
   });
 
