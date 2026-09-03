@@ -97,16 +97,18 @@ export default defineConfig({
           // regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de
           // jspdf para o caminho crítico por causa de uma função de ~20 linhas.
           if (id.startsWith('\0vite/') || id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) {
-            return 'vendor-core';
+            return 'vendor';
           }
           if (!id.includes('node_modules')) return;
-          // Core framework — match react/react-dom/scheduler/router anywhere in the dep tree
-          // so nested copies don't end up in another chunk and break React.forwardRef resolution.
-          if (/[\\/]node_modules[\\/](?:\.pnpm[\\/][^\\/]+[\\/]node_modules[\\/])?(react|react-dom|scheduler|react-router|react-router-dom|use-sync-external-store)[\\/]/.test(id)) {
-            return 'vendor-core';
-          }
-          // Radix depends tightly on React — keep in the same chunk to guarantee load order.
-          if (id.includes('@radix-ui/')) return 'vendor-core';
+          // INVARIANTE: react/react-dom/scheduler/router, Radix e o catch-all
+          // vivem TODOS no mesmo chunk eager 'vendor'. Um vendor-core separado
+          // cria ciclo (Radix importa peers fora de @radix-ui — react-remove-scroll,
+          // aria-hidden, @floating-ui — que caem no catch-all, e o catch-all
+          // importa React); a ordem de avaliação do ciclo depende da ordem de
+          // imports do entry e já quebrou o boot com tela branca/NO_FCP
+          // (floating-ui lê React.useLayoutEffect em escopo de módulo antes do
+          // chunk do React inicializar). Como o entry importa ambos de qualquer
+          // forma, fundir não custa nada no caminho crítico.
           // Data layer — supabase-js pulls postgrest/gotrue/realtime/storage/functions as siblings
           if (id.includes('@tanstack/react-query') || id.includes('@supabase/')) {
             return 'vendor-data';
