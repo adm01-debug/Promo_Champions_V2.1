@@ -64,8 +64,11 @@ jobs:
               --allow-read \
               supabase/functions/cron-failure-alerter/index.test.ts
           else
-            echo "::warning::SUPABASE_SERVICE_ROLE_KEY ausente — rodando apenas testes E2E (subset garantidamente verde)"
-            deno test \
+            # index.test.ts usa SUPABASE_SERVICE_ROLE_KEY nos headers HTTP dos testes E2E
+            # para invocar a edge function. A anon key é suficiente para chamar o endpoint
+            # HTTP (a função usa seu próprio service_role internamente).
+            echo "::warning::SUPABASE_SERVICE_ROLE_KEY ausente — rodando apenas testes E2E com anon key como auth"
+            SUPABASE_SERVICE_ROLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" deno test \
               --allow-net \
               --allow-env \
               --allow-read \
