@@ -18,8 +18,11 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: cron-monitoring-${{ github.ref }}
-  cancel-in-progress: true
+  # Isola schedule de push/PR: runs agendados nunca devem ser cancelados por um
+  # push simultâneo (ambos usam github.ref = refs/heads/main, o que causaria
+  # cancelamento silencioso do scheduled run).
+  group: cron-monitoring-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 jobs:
   deno-regression:
