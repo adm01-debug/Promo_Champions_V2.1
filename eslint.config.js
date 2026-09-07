@@ -11,6 +11,8 @@ export default tseslint.config(
       'dist',
       'coverage',
       'node_modules',
+      'playwright-report',
+      'test-results',
       '.lovable',
       'bun.lock',
       'package-lock.json',
