@@ -34,7 +34,9 @@ const BUDGETS_KB = {
   'vendor-ui-extras': 60,
   'vendor-ui-utils': 30,
   'vendor-platform': 20,
-  'vendor': 190,           // catch-all (baseline 163)
+  // React, Radix e o catch-all foram fundidos para eliminar o ciclo que causava
+  // tela branca/NO_FCP. Baseline medido em 2026-09-07: 284,4 KB + ~16% de margem.
+  'vendor': 330,
   // Entry principal (não-vendor)
   '__entry__': 90,
 };

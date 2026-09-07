@@ -71,6 +71,8 @@ function extractFailingImport(stderr: string): string | null {
 /** Strip ANSI escape sequences (color codes) from `deno check` output so
  *  pattern matching isn't broken by `^[[0m` between `TS2440` and `[ERROR]`. */
 function stripAnsi(s: string): string {
+  // A sequência ESC ANSI é intencional para normalizar a saída do subprocesso.
+  // deno-lint-ignore no-control-regex
   return s.replace(/\x1B\[[0-9;]*[A-Za-z]/g, '');
 }
 
@@ -94,7 +96,7 @@ function classifyFailure(stderr: string): 'import' | 'typecheck' {
 
 async function checkFunction(fn: string, indexPath: string): Promise<CheckResult> {
   const cmd = new Deno.Command('deno', {
-    args: ['check', '--quiet', indexPath],
+    args: ['check', '--quiet', '--frozen', '--node-modules-dir=none', indexPath],
     stdout: 'piped',
     stderr: 'piped',
   });

@@ -107,6 +107,15 @@ export default defineConfig({
     cssCodeSplit: true,
     chunkSizeWarningLimit: 800,
     sourcemap: 'hidden',
+    modulePreload: {
+      // O Rollup inclui vendor-pdf/vendor-markdown entre as dependências de
+      // modulepreload das rotas por estarem agrupados em manualChunks compartilhados.
+      // Somente exportações em PDF e o assistente de IA carregado via React.lazy()
+      // precisam deles. Removê-los do preload evita ~193 KB gzip antecipados; os
+      // chunks continuam sendo baixados sob demanda quando o lazy() é resolvido.
+      resolveDependencies: (_filename, deps) =>
+        deps.filter((dep) => !/vendor-(pdf|markdown)-/.test(dep)),
+    },
     rollupOptions: {
       output: {
         manualChunks: id => {

@@ -31,10 +31,10 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.2.x
 
       - name: Lint — block Deno.serve without withRequestId
-        run: deno run --allow-read scripts/lint-request-id.ts
+        run: deno run --frozen --allow-read scripts/lint-request-id.ts
 
       - name: Fuzz — hundreds of X-Request-Id propagation scenarios
-        run: deno test --allow-read supabase/functions/_shared/request-id-fuzz_test.ts
+        run: deno test --frozen --node-modules-dir=none --allow-read supabase/functions/_shared/request-id-fuzz_test.ts

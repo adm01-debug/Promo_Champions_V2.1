@@ -38,6 +38,9 @@ npm-debug.log*
 bun.lockb
 bun.lock
 
+# Estado efêmero gerado pela Supabase CLI (link, versões e cache local)
+supabase/.temp/
+
 # E2E session cache
 tests/e2e/.auth/
 

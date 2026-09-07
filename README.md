@@ -5,7 +5,7 @@ Plataforma gamificada de CRM, BI e inteligência de vendas para equipes comercia
 ## 🚀 Quick Start
 
 ### Pré-requisitos
-- **Node.js** 18+ ou **Bun** 1.0+
+- **Node.js** 22+ ou **Bun** 1.0+
 - **Supabase** (local ou cloud)
 
 ### Setup

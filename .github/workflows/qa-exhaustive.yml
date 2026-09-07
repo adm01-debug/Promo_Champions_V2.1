@@ -24,12 +24,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.2.x
 
       - name: Install deps
         run: npm ci
@@ -39,6 +39,9 @@ jobs:
 
       - name: ESLint
         run: npm run lint
+
+      - name: Complexidade — baseline incremental
+        run: npm run lint:complexity
 
       - name: Dependency Cruiser — ciclos, layer boundaries e imports test→prod
         run: npm run deps:check
@@ -63,12 +66,12 @@ jobs:
 
       - name: Deno — shared guards (retry, cors, fuzz, chunked-in, notification-categories)
         run: |
-          deno test --allow-read --allow-env --allow-net --no-check \
-            --node-modules-dir=auto supabase/functions/_shared/
+          deno test --frozen --allow-read --allow-env --allow-net --no-check \
+            --node-modules-dir=none supabase/functions/_shared/
 
       - name: Deno — dispatcher & edge contract tests
         run: |
-          deno test --allow-read --allow-env --no-check --node-modules-dir=auto \
+          deno test --frozen --allow-read --allow-env --no-check --node-modules-dir=none \
             supabase/functions/lead-scoring/lead-scoring_test.ts \
             supabase/functions/execute-workflow/contracts_test.ts
 

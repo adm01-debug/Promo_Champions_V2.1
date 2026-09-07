@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - PostgreSQL 14+
 - Supabase CLI
 - PM2 (for production)

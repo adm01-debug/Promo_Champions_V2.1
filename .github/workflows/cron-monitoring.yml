@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.2.x
 
       - name: Sanity check env
         id: env-check
@@ -58,7 +58,7 @@ jobs:
           # localmente com .env populado.
           if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
             echo "SERVICE_ROLE presente — rodando suite completa"
-            deno test \
+            deno test --frozen --node-modules-dir=none \
               --allow-net \
               --allow-env \
               --allow-read \
@@ -68,7 +68,7 @@ jobs:
             # para invocar a edge function. A anon key é suficiente para chamar o endpoint
             # HTTP (a função usa seu próprio service_role internamente).
             echo "::warning::SUPABASE_SERVICE_ROLE_KEY ausente — rodando apenas testes E2E com anon key como auth"
-            SUPABASE_SERVICE_ROLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" deno test \
+            SUPABASE_SERVICE_ROLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" deno test --frozen --node-modules-dir=none \
               --allow-net \
               --allow-env \
               --allow-read \
