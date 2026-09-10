@@ -42,8 +42,8 @@ async function routeClientPortfolio({
   const { data, error } = await supabase.rpc('route_unassigned_client_portfolio', {
     p_client_id: clientId,
     p_strategy: strategy,
-    p_salesperson_id: salespersonId ?? null,
-    p_reason: reason ?? null,
+    ...(salespersonId !== undefined && { p_salesperson_id: salespersonId }),
+    ...(reason !== undefined && { p_reason: reason }),
   });
 
   if (error) throw error;

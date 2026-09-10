@@ -10,7 +10,7 @@ export interface Webhook {
   name: string;
   url: string;
   events: string[];
-  secret: string | null;
+  secret: string;
   headers: Record<string, string> | null;
   is_active: boolean;
   failure_count: number;
@@ -19,6 +19,10 @@ export interface Webhook {
   last_failure_at: string | null;
   created_at: string;
 }
+
+type CreateWebhookInput = Omit<Partial<Webhook>, "secret"> & {
+  secret?: string | null;
+};
 
 export interface WebhookDelivery {
   id: string;
@@ -81,7 +85,7 @@ export function useCreateWebhook() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   return useMutation({
-    mutationFn: async (params: Partial<Webhook>) => {
+    mutationFn: async (params: CreateWebhookInput) => {
       if (!user) throw new Error("Not authenticated");
       const { data, error } = await supabase
         .from("webhooks")
@@ -89,7 +93,9 @@ export function useCreateWebhook() {
           name: params.name ?? "Webhook",
           url: params.url ?? "",
           events: params.events ?? [],
-          secret: params.secret,
+          // O banco canônico exige NOT NULL; string vazia mantém o modo sem
+          // assinatura já tratado pela Edge Function de despacho.
+          secret: params.secret ?? "",
           headers: params.headers as Json | undefined,
           is_active: params.is_active,
           created_by: user.id,
