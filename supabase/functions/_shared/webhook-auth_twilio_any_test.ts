@@ -2,7 +2,7 @@
 // pelos webhooks de voz (twilio-call-status / twilio-call-twiml). Gera a
 // assinatura exatamente como a Twilio (HMAC-SHA1 base64 sobre url + params
 // ordenados) e valida aceitação/rejeição.
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "jsr:@std/assert@1";
 import { verifyTwilioSignatureAny } from "./webhook-auth.ts";
 
 async function twilioSign(authToken: string, url: string, form: Record<string, string>): Promise<string> {

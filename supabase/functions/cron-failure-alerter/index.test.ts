@@ -10,12 +10,12 @@
 // rejeitam qualquer id >= 0, garantindo isolamento total dos crons reais.
 //
 // Execução: as credenciais são carregadas do .env raiz via dotenv.
-import "jsr:@std/dotenv/load";
+import "jsr:@std/dotenv@0.225/load";
 import {
   assertEquals,
   assert,
   assertNotEquals,
-} from "jsr:@std/assert";
+} from "jsr:@std/assert@1";
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 

@@ -15,7 +15,7 @@
 //
 // Uso: deno test --allow-read supabase/functions/_shared/request-id-fuzz_test.ts
 
-import { assert, assertEquals, assertMatch, assertNotEquals } from "jsr:@std/assert";
+import { assert, assertEquals, assertMatch, assertNotEquals } from "jsr:@std/assert@1";
 import { getCorsHeaders } from "./cors.ts";
 import { withRequestId } from "./request-id.ts";
 
