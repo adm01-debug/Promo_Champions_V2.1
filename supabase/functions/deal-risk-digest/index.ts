@@ -3,6 +3,7 @@
 // containing their top-5 at-risk deals. Idempotent: skips salespeople who
 // already received today's digest (created_at::date = today, type = same).
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
@@ -77,13 +78,47 @@ async function postSlack(text: string, requestId?: string | null): Promise<Slack
 Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
+      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   const startedAt = Date.now();
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !serviceKey) {
+    console.error('[deal-risk-digest] supabase_service_credentials_missing');
+    return new Response(JSON.stringify({ error: 'service_not_configured' }), {
+      status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   const admin = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+
+  try {
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await admin
+        .from('_internal_secrets')
+        .select('value')
+        .eq('key', 'coaching_cron_secret')
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+  } catch (error) {
+    console.error('[deal-risk-digest] cron_authorization_unavailable', error);
+    return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+      status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   // 1. Pull all at-risk deals with owner (RLS bypassed via service role — required for cross-user cron).
   const { data: risky, error: riskyErr } = await admin
@@ -104,12 +139,9 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
 
   // 2. Group by salesperson, keep top N by lowest score.
   const bySeller = new Map<string, AtRiskDeal[]>();
-  for (const row of (risky ?? []) as Array<{
-    sale_id: string;
-    health_score: number;
-    sales: { id: string; salesperson_id: string; amount: number | null; client_id: string | null };
-  }>) {
-    const sp = row.sales?.salesperson_id;
+  for (const row of risky ?? []) {
+    const sale = Array.isArray(row.sales) ? row.sales[0] : row.sales;
+    const sp = sale?.salesperson_id;
     if (!sp) continue;
     const arr = bySeller.get(sp) ?? [];
     if (arr.length < TOP_N) {
@@ -117,8 +149,8 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
         sale_id: row.sale_id,
         salesperson_id: sp,
         health_score: row.health_score,
-        amount: row.sales.amount,
-        client_id: row.sales.client_id,
+        amount: sale.amount,
+        client_id: sale.client_id,
       });
       bySeller.set(sp, arr);
     }

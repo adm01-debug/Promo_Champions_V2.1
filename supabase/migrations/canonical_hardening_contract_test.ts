@@ -269,3 +269,32 @@ Deno.test("crons Edge operacionais usam allowlist e segredo interno", async () =
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
 });
+
+Deno.test("reconciliação operacional cobre jobs quebrados sem expor segredos", async () => {
+  const sql = await readMigration(
+    "20260910153000_reconcile_operational_edge_crons.sql",
+  );
+
+  for (const [jobName, endpoint] of [
+    ["notify-v4-quote-status-every-5min", "notify-v4-quote-status"],
+    ["check-v4-callback-alerts-every-5min", "check-v4-callback-alerts"],
+    ["cron-failure-alerter-10min", "cron-failure-alerter"],
+    ["process-call-recording-ingest-1min", "process-call-recording-ingest"],
+    ["deal-risk-digest-daily", "deal-risk-digest"],
+    ["email-bulk-retry-15min", "email-bulk-retry"],
+  ]) {
+    assertMatch(sql, new RegExp(`cron\\.unschedule\\('${jobName}'`, "i"));
+    assertMatch(sql, new RegExp(`cron\\.schedule\\([\\s\\S]*'${jobName}'`, "i"));
+    assertMatch(
+      sql,
+      new RegExp(`trigger_internal_edge_job\\(''${endpoint}''\\)`, "i"),
+    );
+  }
+
+  assertMatch(sql, /p_function_name\s*=\s*ANY\s*\(ARRAY/i);
+  assertMatch(sql, /'X-Cron-Secret',\s*v_cron_secret/i);
+  assertMatch(sql, /SET\s+search_path\s*=\s*public,\s*net/i);
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});
