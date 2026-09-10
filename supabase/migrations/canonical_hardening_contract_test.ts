@@ -35,6 +35,24 @@ Deno.test("migrations pendentes preservam idempotência e autorização", async 
   );
 });
 
+Deno.test("default ACL de supabase_admin não concede TRUNCATE futuro", async () => {
+  const sql = await readMigration(
+    "20260910130000_revoke_supabase_admin_default_truncate.sql",
+  );
+  const assertions = await Deno.readTextFile(
+    new URL("../tests/db01_default_acl_assertions.sql", import.meta.url),
+  );
+
+  assertMatch(
+    sql,
+    /ALTER\s+DEFAULT\s+PRIVILEGES\s+FOR\s+ROLE\s+supabase_admin\s+IN\s+SCHEMA\s+public\s+REVOKE\s+TRUNCATE\s+ON\s+TABLES\s+FROM\s+anon,\s*authenticated/i,
+  );
+  assertMatch(sql, /d\.defaclrole\s*=\s*'supabase_admin'::regrole/i);
+  assertMatch(sql, /a\.privilege_type\s*=\s*'TRUNCATE'/i);
+  assertNotMatch(sql, /\b(GRANT|DROP\s+(TABLE|COLUMN|FUNCTION))\b/i);
+  assertMatch(assertions, /db01_default_acl_truncate_still_present/i);
+});
+
 Deno.test("hardening público fecha bypass de views e policies placeholder", async () => {
   const sql = await readMigration(
     "20260831130000_harden_public_access_and_privileged_rpcs.sql",
