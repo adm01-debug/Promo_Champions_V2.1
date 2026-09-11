@@ -31,6 +31,8 @@
     "security:secrets": "tsx scripts/security/check-no-committed-service-role.ts",
     "graphify:test": "node --test scripts/graphify/*.test.mjs",
     "graphify:verify": "node scripts/graphify/verify-output.mjs",
+    "graphify:impact": "node scripts/graphify/impact-report.mjs",
+    "graphify:contracts": "node scripts/graphify/static-contracts.mjs",
     "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs"
   },
   "dependencies": {

@@ -23,9 +23,26 @@ node scripts/graphify/verify-output.mjs --graph .graphify-local/lib/graphify-out
 
 O wrapper recusa caminho fora do repositório, link simbólico que sai da raiz, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Também exige confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
 
+Cada extração é feita em staging e só é promovida após validar o `graph.json`. A geração publicada inclui `snapshot.json`, com commit, digest dos arquivos do escopo, versão do extrator e digest da configuração, e `multigraph.json`, que preserva relações múltiplas e direção. O destino precisa ser novo; não reutilize snapshot manualmente.
+
 O Graphify 0.9.48 pode representar imports externos — por exemplo `node:fs` — e imports para outro lote como endpoint sem nó local. O validador contabiliza relações `imports`, `imports_from`, `dynamic_import` e `re_exports` desse tipo e avisa; qualquer endpoint ausente em outra relação continua sendo erro.
 
 O formato bruto preserva relações múltiplas, mas a consulta nativa pode reduzir relações entre o mesmo par de nós. O validador expõe esse risco; até o adaptador multigrafo estar validado, não use uma consulta do Graphify como prova única de impacto, permissão ou ausência de dependência.
+
+Use o adaptador local para impacto estático, sempre como sugestão de testes — nunca para reduzir automaticamente a suíte exigida:
+
+```bash
+npm run graphify:impact -- \
+  --graph .graphify-local/<geração>/multigraph.json \
+  --changed <id-do-nó>
+```
+
+O catálogo estático relaciona chamadas literais do código e eventos DDL previstos nas migrations. Ele não lê o banco, não interpreta SQL dinâmico como certeza e não substitui o catálogo observado:
+
+```bash
+npm run graphify:contracts -- \
+  --out .graphify-local/contratos-estaticos.json
+```
 
 Nesta fundação, cada `--out` deve ser novo. A CLI atual grava cache dentro da origem em uma atualização incremental com saída externa; por isso o wrapper recusa reutilizar snapshot até a etapa de atualização incremental ser validada contra renomes, remoções e concorrência. A recusa evita sujeira no código e não deve ser burlada com `--force`.
 
@@ -35,6 +52,7 @@ Nesta fundação, cada `--out` deve ser novo. A CLI atual grava cache dentro da 
 
 - O catálogo Supabase só será coletado por conexão de leitura identificada com o projeto canônico; hostname, proxy MCP ou ledger não bastam.
 - A extração PostgreSQL nativa do Graphify não representa colunas. O adaptador de catálogo, RLS, grants, triggers, storage e jobs será testado em ambiente descartável antes de leitura do canônico.
+- O coletor do catálogo canônico não está habilitado. O MCP disponível precisa primeiro confirmar o projeto `usyxfpqlsspldubptrdl` em uma sessão de leitura; erro de autenticação ou identidade divergente bloqueia a coleta.
 - Ausência de aresta não prova código morto; referência estática não prova autorização ou sucesso em produção.
 - Não publicar `graph.json`, HTML, cache ou relatório com conteúdo potencialmente sensível em artefato público.
 

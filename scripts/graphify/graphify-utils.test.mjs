@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { findSecretSignals, isPathInside, parsePositiveInteger, validateGraphDocument } from './graphify-utils.mjs';
+import { assertExactGraphifyVersion, findSecretSignals, isPathInside, parsePositiveInteger, redactSensitiveText, validateGraphDocument } from './graphify-utils.mjs';
 
 test('aceita caminho dentro da raiz e recusa travessia', () => {
   assert.equal(isPathInside('/repo', '/repo/src/modulo.ts'), true);
@@ -12,6 +12,13 @@ test('valida inteiro positivo', () => {
   assert.equal(parsePositiveInteger('2', '--max-workers'), 2);
   assert.throws(() => parsePositiveInteger('0', '--max-workers'));
   assert.throws(() => parsePositiveInteger('../2', '--max-workers'));
+  assert.throws(() => parsePositiveInteger('9', '--max-workers', 8));
+});
+
+test('exige a versão completa e exata do Graphify', () => {
+  assert.doesNotThrow(() => assertExactGraphifyVersion('graphify 0.9.48\n', '0.9.48'));
+  assert.throws(() => assertExactGraphifyVersion('graphify 0.9.480', '0.9.48'));
+  assert.throws(() => assertExactGraphifyVersion('graphify 0.9.48 beta', '0.9.48'));
 });
 
 test('recusa arestas órfãs e ids repetidos', () => {
@@ -66,11 +73,16 @@ test('identifica padrões sensíveis sem retornar seu conteúdo', () => {
   assert.deepEqual(signals, ['padrão sensível 1']);
 });
 
+test('redige padrões sensíveis de diagnósticos', () => {
+  const syntheticToken = `sb${'p_'}abcdefghijklmnopqrstuv`;
+  assert.equal(redactSensitiveText(`falha ${syntheticToken}`), 'falha [REDACTED]');
+});
+
 test('aceita grafo mínimo íntegro', () => {
   assert.deepEqual(
     validateGraphDocument({
       nodes: [{ id: 'a' }, { id: 'b' }],
-      edges: [{ source: 'a', target: 'b' }],
+      edges: [{ source: 'a', target: 'b', relation: 'calls', confidence: 'EXTRACTED' }],
     }),
     { nodes: 2, edges: 1, unresolvedImports: 0, multiRelationPairs: 0, collapseRisk: 0 }
   );
@@ -87,4 +99,11 @@ test('contabiliza perda potencial quando o mesmo par tem relações diferentes',
     }),
     { nodes: 2, edges: 2, unresolvedImports: 0, multiRelationPairs: 1, collapseRisk: 1 }
   );
+});
+
+test('recusa grafo vazio, endpoints vazios, relações ausentes e confiança inválida', () => {
+  assert.throws(() => validateGraphDocument({ nodes: [], edges: [] }));
+  assert.throws(() => validateGraphDocument({ nodes: [{ id: 'a' }], edges: [{ source: 'a', target: '', relation: 'imports' }] }));
+  assert.throws(() => validateGraphDocument({ nodes: [{ id: 'a' }, { id: 'b' }], edges: [{ source: 'a', target: 'b' }] }));
+  assert.throws(() => validateGraphDocument({ nodes: [{ id: 'a' }, { id: 'b' }], edges: [{ source: 'a', target: 'b', relation: 'calls', confidence: 'CERTA' }] }));
 });

@@ -16,12 +16,13 @@ function readArgument(flag) {
 try {
   const graphPath = path.resolve(readArgument('--graph'));
   const raw = fs.readFileSync(graphPath, 'utf8');
-  const signals = findSecretSignals(raw);
+  const document = JSON.parse(raw);
+  const signals = [...new Set([...findSecretSignals(raw), ...findSecretSignals(JSON.stringify(document))])];
   if (signals.length > 0) {
     throw new Error(`Artefato recusado por ${signals.join(', ')}.`);
   }
 
-  const summary = validateGraphDocument(JSON.parse(raw));
+  const summary = validateGraphDocument(document);
   console.info(`Graphify válido: ${summary.nodes} nós, ${summary.edges} arestas.`);
   if (summary.unresolvedImports > 0) {
     console.warn(
