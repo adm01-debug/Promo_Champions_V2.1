@@ -29,7 +29,9 @@
     "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",
     "smoke:target": "tsx scripts/smoke-target-backend.ts",
     "security:secrets": "tsx scripts/security/check-no-committed-service-role.ts",
-    "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs"
+    "graphify:test": "node --test scripts/graphify/*.test.mjs",
+    "graphify:verify": "node scripts/graphify/verify-output.mjs",
+    "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

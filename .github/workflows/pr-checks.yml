@@ -48,6 +48,9 @@ jobs:
       - name: Committed secrets scan
         run: npm run security:secrets
 
+      - name: Graphify wrapper tests
+        run: npm run graphify:test
+
   # Job próprio, FORA dos required checks do ruleset: npm audit consulta o
   # advisory DB em tempo de execução — um advisory novo ficaria vermelho e,
   # como required, bloquearia todo merge (inclusive a PR do próprio fix).

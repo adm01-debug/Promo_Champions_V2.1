@@ -53,3 +53,8 @@ a11y-report.json
 a11y-report-html/
 graphify-out/graph.json
 graphify-out/graph.html
+
+# Snapshots locais do Graphify — nunca entram no índice nem em artefatos de CI.
+.graphify-local/
+graphify-out/cache/
+**/graphify-out/cache/
