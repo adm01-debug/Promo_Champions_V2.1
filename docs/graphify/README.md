@@ -23,7 +23,9 @@ node scripts/graphify/verify-output.mjs --graph .graphify-local/lib/graphify-out
 
 O wrapper recusa caminho fora do repositório, link simbólico que sai da raiz, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Também exige confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
 
-O Graphify 0.9.48 representa imports externos — por exemplo `node:fs` — como `ref_node_*` sem nó local. O validador os contabiliza e avisa; qualquer endpoint interno ausente continua sendo erro.
+O Graphify 0.9.48 pode representar imports externos — por exemplo `node:fs` — e imports para outro lote como endpoint sem nó local. O validador contabiliza relações `imports`, `imports_from`, `dynamic_import` e `re_exports` desse tipo e avisa; qualquer endpoint ausente em outra relação continua sendo erro.
+
+O formato bruto preserva relações múltiplas, mas a consulta nativa pode reduzir relações entre o mesmo par de nós. O validador expõe esse risco; até o adaptador multigrafo estar validado, não use uma consulta do Graphify como prova única de impacto, permissão ou ausência de dependência.
 
 Nesta fundação, cada `--out` deve ser novo. A CLI atual grava cache dentro da origem em uma atualização incremental com saída externa; por isso o wrapper recusa reutilizar snapshot até a etapa de atualização incremental ser validada contra renomes, remoções e concorrência. A recusa evita sujeira no código e não deve ser burlada com `--force`.
 

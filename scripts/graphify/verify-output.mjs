@@ -23,9 +23,14 @@ try {
 
   const summary = validateGraphDocument(JSON.parse(raw));
   console.info(`Graphify válido: ${summary.nodes} nós, ${summary.edges} arestas.`);
-  if (summary.externalReferences > 0) {
+  if (summary.unresolvedImports > 0) {
     console.warn(
-      `Graphify reportou ${summary.externalReferences} referência(s) externa(s) de importação sem nó local.`
+      `Graphify reportou ${summary.unresolvedImports} importação(ões) externa(s) ou fora do escopo sem nó local.`
+    );
+  }
+  if (summary.collapseRisk > 0) {
+    console.warn(
+      `Graphify reportou risco de colapso: ${summary.collapseRisk} relação(ões) em ${summary.multiRelationPairs} par(es) de nós.`
     );
   }
 } catch (error) {

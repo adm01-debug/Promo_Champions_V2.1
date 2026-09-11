@@ -8,6 +8,8 @@ const SECRET_PATTERNS = [
   /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/,
 ];
 
+const IMPORT_RELATIONS = new Set(['imports', 'imports_from', 'dynamic_import', 're_exports']);
+
 export function isPathInside(root, candidate) {
   const relative = path.relative(root, candidate);
   return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
@@ -46,25 +48,40 @@ export function validateGraphDocument(document) {
     nodeIds.add(node.id);
   }
 
-  let externalReferences = 0;
+  let unresolvedImports = 0;
+  const edgeVariantsByEndpoint = new Map();
   for (const edge of document.edges) {
     if (!edge || typeof edge.source !== 'string' || typeof edge.target !== 'string') {
       throw new Error('graph.json contém aresta sem source/target textual.');
     }
     if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
-      const isExternalImport =
-        nodeIds.has(edge.source) &&
-        edge.relation === 'imports_from' &&
-        edge.target.startsWith('ref_node_');
-      if (isExternalImport) {
-        externalReferences += 1;
+      const isUnresolvedImport = nodeIds.has(edge.source) && IMPORT_RELATIONS.has(edge.relation);
+      if (isUnresolvedImport) {
+        unresolvedImports += 1;
         continue;
       }
       throw new Error('graph.json contém aresta com endpoint ausente.');
     }
+
+    const endpointKey = `${edge.source}\u0000${edge.target}`;
+    const variantKey = `${edge.relation ?? ''}\u0000${edge.context ?? ''}`;
+    const variants = edgeVariantsByEndpoint.get(endpointKey) ?? new Set();
+    variants.add(variantKey);
+    edgeVariantsByEndpoint.set(endpointKey, variants);
   }
 
-  return { nodes: document.nodes.length, edges: document.edges.length, externalReferences };
+  const multiRelationPairs = [...edgeVariantsByEndpoint.values()].filter(
+    variants => variants.size > 1
+  );
+  const collapseRisk = multiRelationPairs.reduce((total, variants) => total + variants.size - 1, 0);
+
+  return {
+    nodes: document.nodes.length,
+    edges: document.edges.length,
+    unresolvedImports,
+    multiRelationPairs: multiRelationPairs.length,
+    collapseRisk,
+  };
 }
 
 export function findSecretSignals(serialized) {

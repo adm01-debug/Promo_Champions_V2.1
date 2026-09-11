@@ -29,7 +29,7 @@ test('recusa arestas órfãs e ids repetidos', () => {
   );
 });
 
-test('mantém referências externas de importação explicitamente classificadas', () => {
+test('mantém importações externas ou fora do escopo explicitamente classificadas', () => {
   assert.deepEqual(
     validateGraphDocument({
       nodes: [{ id: 'modulo_local' }],
@@ -41,7 +41,22 @@ test('mantém referências externas de importação explicitamente classificadas
         },
       ],
     }),
-    { nodes: 1, edges: 1, externalReferences: 1 }
+    { nodes: 1, edges: 1, unresolvedImports: 1, multiRelationPairs: 0, collapseRisk: 0 }
+  );
+});
+
+test('não mascara órfão em relação que não é importação', () => {
+  assert.throws(() =>
+    validateGraphDocument({
+      nodes: [{ id: 'modulo_local' }],
+      edges: [{ source: 'modulo_local', target: 'simbolo_ausente', relation: 'calls' }],
+    })
+  );
+  assert.throws(() =>
+    validateGraphDocument({
+      nodes: [{ id: 'modulo_local' }],
+      edges: [{ source: 'origem_ausente', target: 'modulo_local', relation: 'imports' }],
+    })
   );
 });
 
@@ -57,6 +72,19 @@ test('aceita grafo mínimo íntegro', () => {
       nodes: [{ id: 'a' }, { id: 'b' }],
       edges: [{ source: 'a', target: 'b' }],
     }),
-    { nodes: 2, edges: 1, externalReferences: 0 }
+    { nodes: 2, edges: 1, unresolvedImports: 0, multiRelationPairs: 0, collapseRisk: 0 }
+  );
+});
+
+test('contabiliza perda potencial quando o mesmo par tem relações diferentes', () => {
+  assert.deepEqual(
+    validateGraphDocument({
+      nodes: [{ id: 'a' }, { id: 'b' }],
+      edges: [
+        { source: 'a', target: 'b', relation: 'imports_from', context: 'import' },
+        { source: 'a', target: 'b', relation: 're_exports', context: 're-export' },
+      ],
+    }),
+    { nodes: 2, edges: 2, unresolvedImports: 0, multiRelationPairs: 1, collapseRisk: 1 }
   );
 });
