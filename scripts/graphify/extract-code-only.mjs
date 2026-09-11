@@ -11,6 +11,7 @@ import {
   createStagingDirectory,
   digestFiles,
   digestValue,
+  inspectSourceScope,
   isPathInside,
   parsePositiveInteger,
   redactSensitiveText,
@@ -21,6 +22,8 @@ const DEFAULT_VERSION = '0.9.48';
 const LARGE_SCOPE_LIMIT = 500;
 const MAX_WORKERS = 8;
 const COMMAND_TIMEOUT_MS = 120_000;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_SCOPE_BYTES = 200 * 1024 * 1024;
 
 function fail(message) {
   throw new Error(message);
@@ -57,21 +60,6 @@ function gitHead(repositoryRoot) {
   const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: repositoryRoot, encoding: 'utf8' });
   if (result.status !== 0) fail('Não foi possível identificar o commit atual.');
   return result.stdout.trim();
-}
-
-function countFiles(directory) {
-  let total = 0;
-  const queue = [directory];
-  while (queue.length > 0) {
-    const current = queue.pop();
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name === 'graphify-out' || entry.name === '.graphify-local') continue;
-      const entryPath = path.join(current, entry.name);
-      if (entry.isDirectory()) queue.push(entryPath);
-      if (entry.isFile()) total += 1;
-    }
-  }
-  return total;
 }
 
 function run(command, args, label) {
@@ -127,7 +115,9 @@ try {
   outputRoot = outputPlan.resolvedRoot;
 
   const maxWorkers = parsePositiveInteger(optionValue(args, '--max-workers') ?? '1', '--max-workers', MAX_WORKERS);
-  const fileCount = fs.statSync(resolvedScope).isDirectory() ? countFiles(resolvedScope) : 1;
+  const scopeInspection = inspectSourceScope(resolvedScope, { maximumFileBytes: MAX_FILE_BYTES, maximumTotalBytes: MAX_SCOPE_BYTES });
+  const fileCount = scopeInspection.fileCount;
+  const sourceDigest = digestFiles(resolvedScope);
   if (fileCount > LARGE_SCOPE_LIMIT && !args.includes('--allow-large-scope')) {
     fail(`Escopo possui ${fileCount} arquivos; particione-o ou confirme --allow-large-scope.`);
   }
@@ -145,6 +135,7 @@ try {
     '--max-workers', String(maxWorkers),
   ], 'extração Graphify');
   run(process.execPath, [path.join(repositoryRoot, 'scripts/graphify/verify-output.mjs'), '--graph', graphPath], 'validação do snapshot');
+  if (sourceDigest !== digestFiles(resolvedScope)) fail('O escopo mudou durante a extração; execute novamente para evitar snapshot inconsistente.');
   const multigraph = createMultiGraphDocument(JSON.parse(fs.readFileSync(graphPath, 'utf8')));
   validateMultiGraphDocument(multigraph);
   fs.writeFileSync(path.join(stagingPath, 'multigraph.json'), `${JSON.stringify(multigraph, null, 2)}\n`, { mode: 0o600 });
@@ -155,11 +146,12 @@ try {
       commit: gitHead(repositoryRoot),
       scope: path.relative(repositoryRoot, resolvedScope),
       fileCount,
-      digest: digestFiles(resolvedScope),
+      totalBytes: scopeInspection.totalBytes,
+      digest: sourceDigest,
     },
     extractor: { name: 'graphify', version: expectedVersion, mode: 'code-only' },
     multigraph: { schemaVersion: multigraph.schemaVersion, edges: multigraph.edges.length, digest: digestValue(multigraph) },
-    configurationDigest: digestValue({ expectedVersion, maxWorkers, largeScopeLimit: LARGE_SCOPE_LIMIT }),
+    configurationDigest: digestValue({ schemaVersion: 1, multigraphSchemaVersion: multigraph.schemaVersion, expectedVersion, maxWorkers, largeScopeLimit: LARGE_SCOPE_LIMIT, maxFileBytes: MAX_FILE_BYTES, maxScopeBytes: MAX_SCOPE_BYTES }),
     createdAt: new Date().toISOString(),
   };
   fs.writeFileSync(path.join(stagingPath, 'snapshot.json'), `${JSON.stringify(metadata, null, 2)}\n`, { mode: 0o600 });

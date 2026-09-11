@@ -21,7 +21,7 @@ GRAPHIFY_BIN="$PWD/tools/graphify/.venv/bin/graphify" \
 node scripts/graphify/verify-output.mjs --graph .graphify-local/lib/graphify-out/graph.json
 ```
 
-O wrapper recusa caminho fora do repositório, link simbólico que sai da raiz, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Também exige confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
+O wrapper recusa caminho fora do repositório, qualquer link simbólico no escopo, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Limita cada arquivo a 10 MiB e o escopo a 200 MiB, além de exigir confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
 
 Cada extração é feita em staging e só é promovida após validar o `graph.json`. A geração publicada inclui `snapshot.json`, com commit, digest dos arquivos do escopo, versão do extrator e digest da configuração, e `multigraph.json`, que preserva relações múltiplas e direção. O destino precisa ser novo; não reutilize snapshot manualmente.
 

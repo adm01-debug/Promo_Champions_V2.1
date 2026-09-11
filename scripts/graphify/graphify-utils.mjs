@@ -90,20 +90,44 @@ export function createStagingDirectory(resolvedRoot) {
   return staging;
 }
 
-export function digestFiles(root) {
-  const digest = crypto.createHash('sha256');
-  const queue = [root];
-  const entries = [];
+function ignoredSourceEntry(name) {
+  return name === 'node_modules' || name === 'graphify-out' || name === '.graphify-local';
+}
+
+export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
+  const initial = fs.lstatSync(root);
+  if (initial.isSymbolicLink()) throw new Error('Escopo não pode ser link simbólico.');
+  const queue = initial.isDirectory() ? [root] : [];
+  const entries = initial.isFile() ? [root] : [];
+  let totalBytes = initial.isFile() ? initial.size : 0;
+  if (initial.isFile() && initial.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+  if (!initial.isFile() && !initial.isDirectory()) throw new Error('Escopo deve ser arquivo regular ou diretório.');
+
   while (queue.length > 0) {
     const current = queue.pop();
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name === 'graphify-out' || entry.name === '.graphify-local') continue;
+      if (ignoredSourceEntry(entry.name)) continue;
       const entryPath = path.join(current, entry.name);
-      if (entry.isDirectory()) queue.push(entryPath);
-      if (entry.isFile()) entries.push(entryPath);
+      const stat = fs.lstatSync(entryPath);
+      if (stat.isSymbolicLink()) throw new Error(`Escopo contém link simbólico: ${entryPath}`);
+      if (stat.isDirectory()) {
+        queue.push(entryPath);
+        continue;
+      }
+      if (!stat.isFile()) throw new Error(`Escopo contém entrada não regular: ${entryPath}`);
+      if (stat.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+      totalBytes += stat.size;
+      if (totalBytes > maximumTotalBytes) throw new Error(`Escopo excede o limite total de ${maximumTotalBytes} bytes.`);
+      entries.push(entryPath);
     }
   }
-  for (const entryPath of entries.sort()) {
+  return { files: entries.sort(), fileCount: entries.length, totalBytes };
+}
+
+export function digestFiles(root) {
+  const digest = crypto.createHash('sha256');
+  const { files } = inspectSourceScope(root);
+  for (const entryPath of files) {
     digest.update(path.relative(root, entryPath));
     digest.update('\u0000');
     digest.update(fs.readFileSync(entryPath));
