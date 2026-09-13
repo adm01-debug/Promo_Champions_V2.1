@@ -53,7 +53,6 @@ describe('useLeadRouting', () => {
     expect(mocks.rpc).toHaveBeenCalledWith('route_unassigned_client_portfolio', {
       p_client_id: 'client-1',
       p_strategy: 'round_robin',
-      p_salesperson_id: null,
       p_reason: 'Roteamento automático round-robin',
     });
     expect(mocks.from).not.toHaveBeenCalled();
@@ -71,7 +70,6 @@ describe('useLeadRouting', () => {
     expect(mocks.rpc).toHaveBeenLastCalledWith('route_unassigned_client_portfolio', {
       p_client_id: 'client-top',
       p_strategy: 'top_performer',
-      p_salesperson_id: null,
       p_reason: 'Roteamento automático para melhor desempenho',
     });
 

@@ -63,7 +63,7 @@ export function useLoginRateLimiter() {
         })
       : await supabase.rpc("record_failed_login_attempt", {
           p_email: normalizedEmail,
-          p_failure_reason: failureReason || null,
+          p_failure_reason: failureReason || undefined,
           p_user_agent: navigator.userAgent,
         });
 
