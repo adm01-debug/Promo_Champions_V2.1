@@ -59,8 +59,11 @@
     <!-- Fonts - use display=swap and preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+    <!-- Etapa 22: era preload + onload="…rel='stylesheet'" (CSS assíncrono). Um
+         handler inline viola script-src sem 'unsafe-inline' — verificado em
+         browser real: a fonte caía para o fallback em silêncio. display=swap
+         já evita bloquear a renderização pelo font-face; o CSS é minúsculo. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
 
     <!-- Structured Data: Organization -->
     <script type="application/ld+json">
