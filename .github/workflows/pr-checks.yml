@@ -138,11 +138,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: lint-and-typecheck
-    # Só em PRs internas humanas (job pesado). Secrets VITE_SUPABASE_URL,
-    # E2E_TEST_EMAIL e E2E_TEST_PASSWORD já estão configurados; falta apenas
-    # VITE_SUPABASE_PUBLISHABLE_KEY (anon key do dashboard). Sem ela o Vite
-    # não sobe (client.ts lança ao iniciar) — skip automático até ser preenchida.
-    # NÃO é required check nem alimenta o notify-failure por enquanto.
+    # Só em PRs internas humanas (job pesado). A execução exige configuração
+    # completa: URL, publishable key e conta E2E. Configuração parcial falha
+    # imediatamente para não produzir timeouts ou falso sinal de cobertura.
+    # Sem nenhum segredo, a suíte é marcada explicitamente como skipped.
     if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
     env:
       HUSKY: 0
@@ -160,14 +159,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Skip check (espera VITE_SUPABASE_PUBLISHABLE_KEY)
+      - name: Validar configuração E2E
         id: skip
         env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
-          if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+          REQUIRED=(VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY E2E_TEST_EMAIL E2E_TEST_PASSWORD)
+          MISSING=()
+          PRESENT=0
+          for NAME in "${REQUIRED[@]}"; do
+            if [ -z "${!NAME}" ]; then
+              MISSING+=("$NAME")
+            else
+              PRESENT=$((PRESENT + 1))
+            fi
+          done
+
+          if [ "$PRESENT" -eq 0 ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::VITE_SUPABASE_PUBLISHABLE_KEY ausente — E2E SKIPPED (adicione a anon key do projeto usyxfpqlsspldubptrdl nos secrets do repo)"
+            echo "::warning::E2E SKIPPED: nenhum segredo de integração está configurado"
+          elif [ "${#MISSING[@]}" -gt 0 ]; then
+            echo "::error::Configuração E2E parcial. Secrets ausentes: ${MISSING[*]}"
+            exit 1
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
@@ -181,6 +197,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: usyxfpqlsspldubptrdl
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: npm run test:e2e
