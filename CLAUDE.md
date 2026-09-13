@@ -7,19 +7,24 @@
 
 ## 1. Banco de dados OFICIAL
 
-| O que            | Valor                                                       |
-| ---------------- | ----------------------------------------------------------- |
-| Projeto Supabase | `usyxfpqlsspldubptrdl` (Cloud)                              |
-| URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                  |
-| Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl |
-| MCP para SQL     | `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP`                         |
-| Migrations       | **595+** (timestamp YYYYMMDDHHmmss)                         |
+| O que            | Valor                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| Projeto Supabase | `usyxfpqlsspldubptrdl` (Cloud)                                                         |
+| URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
+| Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
+| MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
+| Migrations       | **595+** (timestamp YYYYMMDDHHmmss)                                                    |
 
-> Corrigido em 2026-09-02: o ref `rapjswienfhkobhlamxb` citado aqui anteriormente estava
-> desatualizado (`supabase/config.toml` foi repontado para `usyxfpqlsspldubptrdl` em 30/08,
-> um dia depois deste arquivo ter sido escrito). Confirmado com prova direta via
-> `_internal_secrets.functions_base_url` no banco vivo, que retorna
-> `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1`.
+> Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
+> 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,
+> chave que **não existe** no banco. A prova reproduzível está em
+> `docs/estado/IDENTIDADE_BANCO_2026-09-13.md` (health endpoint do gateway MCP +
+> laço escrita-pela-API/leitura-pelo-MCP). Conclusão igual, evidência real.
+>
+> **Atenção ao rótulo do conector:** o MCP que funciona aparece no Claude como
+> "MCP - SUPABASE LOVABLE CLOUD - PROMO CHAMPIONS V2" — apesar do nome, aponta
+> para `usyxfpqlsspldubptrdl`. O conector `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP`
+> responde 401 e está inutilizável.
 
 ### Bancos que NAO sao deste projeto
 
