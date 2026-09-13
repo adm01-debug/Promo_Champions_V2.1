@@ -3,6 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
+import {
+  aggregatePageViews,
+  aggregateUserActivity,
+  type AnalyticsEvent,
+  type PageView,
+  type UserActivity,
+} from '@/lib/usageAnalytics';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -20,18 +27,6 @@ import {
   Cell,
 } from 'recharts';
 
-interface PageView {
-  path: string;
-  count: number;
-}
-
-interface UserActivity {
-  user_id: string;
-  name: string;
-  login_count: number;
-  last_active: string;
-}
-
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--chart-2))',
@@ -41,42 +36,39 @@ const COLORS = [
 ];
 
 const UsageAnalytics = () => {
-  // Page views from route_analytics
-  const { data: pageViews, isLoading: loadingPages } = useQuery<PageView[]>({
-    queryKey: ['usage-analytics-pages'],
+  const { data, isLoading } = useQuery<{
+    pageViews: PageView[];
+    userActivity: UserActivity[];
+  }>({
+    queryKey: ['usage-analytics'],
     queryFn: async () => {
-      // Aggregate from sales table as proxy for page activity
-      const { data } = await supabase.from('sales').select('status').limit(500);
-      const counts: Record<string, number> = {};
-      (data || []).forEach(r => {
-        const key = r.status || 'unknown';
-        counts[key] = (counts[key] || 0) + 1;
-      });
-      return Object.entries(counts)
-        .map(([path, count]) => ({ path, count }))
-        .sort((a, b) => b.count - a.count);
+      const [eventsResult, salespeopleResult] = await Promise.all([
+        supabase
+          .from('page_analytics')
+          .select('route, salesperson_id, entered_at')
+          .order('entered_at', { ascending: false })
+          .limit(10_000),
+        supabase.from('salespeople').select('id, name').eq('is_active', true),
+      ]);
+
+      if (eventsResult.error) throw eventsResult.error;
+      if (salespeopleResult.error) throw salespeopleResult.error;
+
+      const salespeople = new Map(
+        (salespeopleResult.data ?? []).map(({ id, name }) => [id, name])
+      );
+      const events = (eventsResult.data ?? []) as AnalyticsEvent[];
+
+      return {
+        pageViews: aggregatePageViews(events),
+        userActivity: aggregateUserActivity(events, salespeople),
+      };
     },
     staleTime: CACHE_TIMES.STALE_TIME,
   });
 
-  // User activity from salespeople
-  const { data: userActivity, isLoading: loadingUsers } = useQuery<UserActivity[]>({
-    queryKey: ['usage-analytics-users'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('salespeople')
-        .select('id, name, updated_at')
-        .eq('is_active', true)
-        .order('updated_at', { ascending: false });
-      return (data || []).map(u => ({
-        user_id: u.id,
-        name: u.name,
-        login_count: Math.floor(Math.random() * 50) + 10, // Placeholder — would come from auth logs
-        last_active: u.updated_at,
-      }));
-    },
-    staleTime: CACHE_TIMES.STALE_TIME,
-  });
+  const pageViews = data?.pageViews;
+  const userActivity = data?.userActivity;
 
   const topPages = useMemo(() => (pageViews || []).slice(0, 10), [pageViews]);
   const pieData = useMemo(() => (pageViews || []).slice(0, 5), [pageViews]);
@@ -85,8 +77,6 @@ const UsageAnalytics = () => {
     () => (pageViews || []).reduce((sum, p) => sum + p.count, 0),
     [pageViews]
   );
-
-  const isLoading = loadingPages || loadingUsers;
 
   return (
     <>
