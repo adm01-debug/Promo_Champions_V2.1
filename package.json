@@ -14,6 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "coverage:ratchet": "node scripts/check-coverage-ratchet.mjs",
+    "coverage:baseline:update": "node scripts/update-coverage-baseline.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",

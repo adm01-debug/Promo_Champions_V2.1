@@ -24,35 +24,24 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', 'tests/e2e', 'tests/load'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      // Escopo Tier-1: código puro crítico com cobertura enforced ≥85%.
-      // Expandir esta lista à medida que novos módulos ganharem suites de teste.
-      // Componentes React de página são cobertos por E2E (Playwright).
-      include: [
-        'src/lib/winloss/severityFromScore.ts',
-        'src/lib/winloss/scenarioChartKey.ts',
-        'src/lib/winloss/riskReasons.ts',
-        'src/lib/mergeTags.ts',
-        'src/lib/gamification.ts',
-        'src/lib/orderTracking/stages.ts',
-        'src/lib/utils.ts',
-        'src/utils/dateHelpers.ts',
-        'src/utils/fuzzing.ts',
-        'src/lib/revenueForecast/forecastEngine.ts',
-        'src/lib/revenueForecast/csvExport.ts',
-        'src/lib/auth/passwordErrorMessages.ts',
-        'src/components/reporting/funnelReportHelpers.ts',
-        'src/hooks/reports/salesReportHelpers.ts',
-        'src/services/salesService.ts',
-        'src/lib/staleAssetRecovery.ts',
-      ],
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      // Etapa 31 do plano de 50 etapas: a whitelist anterior (16 arquivos) media
+      // ~99% sobre <1% do código e circulava como se fosse a cobertura do sistema.
+      // Agora o escopo é todo src/ com exclusões justificadas (gerado, wrappers
+      // side-effectful cobertos por E2E, primitivas shadcn sem lógica própria).
+      // O número real é medido pelo job `coverage` do CI (etapa 32) e vive em
+      // coverage-baseline.json — o threshold abaixo é só o piso absoluto.
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
-        'src/**/*.test.{ts,tsx}',
-        'src/**/*.spec.{ts,tsx}',
+        'src/**/*.{test,spec}.{ts,tsx}',
         'src/vite-env.d.ts',
-        'src/test/',
+        'src/main.tsx',
+        'src/test/**',
         'src/integrations/supabase/types.ts',
-        // Exporters/PDF wrappers dependem de jsPDF/xlsx (side-effectful, testados via E2E).
+        // shadcn/ui: primitivas geradas, sem lógica de negócio própria.
+        'src/components/ui/**',
+        // Exporters/PDF/Excel: side-effectful, dependem de jsPDF/xlsx/DOM real,
+        // testados via E2E (Playwright), não por unit test isolado.
         'src/lib/pdfExporter.ts',
         'src/lib/quotePdfExporter.ts',
         'src/lib/salesReportPdf.ts',
@@ -65,11 +54,15 @@ export default defineConfig({
         'src/lib/webVitals.ts',
         'src/lib/swUpdater.ts',
       ],
+      // Medido em 2026-09-13 com este escopo: lines 2.89%, branches 33.43%,
+      // functions 10.41%, statements 2.89%. Threshold = real menos ~10% de
+      // margem (não "real - 2pp": com um ponto de partida deste tamanho,
+      // -2pp é folga demais). Sobe via etapa 32 (ratchet no CI) — nunca cai.
       thresholds: {
-        lines: 85,
-        branches: 75,
-        functions: 85,
-        statements: 85,
+        lines: 2.5,
+        branches: 30,
+        functions: 9,
+        statements: 2.5,
       },
     },
   },

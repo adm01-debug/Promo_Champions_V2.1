@@ -42,6 +42,14 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      # Etapa 48 do plano de 50 etapas: o guard e o teto (126, calibrado em
+      # 2026-09) já existiam, mas só rodavam no qa-exhaustive.yml semanal — a
+      # baseline podia crescer por até 7 dias sem que nenhuma PR percebesse.
+      # Roda por PR agora; o teto só desce (ajuste scripts/../--max-warnings
+      # ao consertar violações, nunca ao adicionar novas).
+      - name: Complexity & file-length ratchet
+        run: npm run lint:complexity
+
       - name: Run TypeScript check
         run: npm run typecheck
 
@@ -96,6 +104,13 @@ jobs:
 
       - name: Run Unit Tests (with coverage gate)
         run: npm run test:coverage
+
+      # Etapa 31/32 do plano de 50 etapas: o threshold do vitest.config.ts
+      # media 16 arquivos escolhidos a dedo (99,9% de <1% do código) e
+      # circulava como se fosse a cobertura do sistema. Agora o escopo é
+      # src/** inteiro e este passo garante que o número real só sobe.
+      - name: Coverage ratchet (nunca cai)
+        run: npm run coverage:ratchet
 
   edge-functions-lint:
     name: Edge Functions Lint (deno)
@@ -266,22 +281,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
-        run: npm run build
+      - name: Build project (with bundle analysis)
+        run: ANALYZE_BUNDLE=1 npm run build
 
-      - name: Report bundle sizes
-        run: |
-          echo "## 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
-          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
-          for f in dist/assets/*.js; do
-            SIZE=$(wc -c < "$f" | awk '{printf "%.1f KB", $1/1024}')
-            NAME=$(basename "$f")
-            echo "| \`$NAME\` | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          done
-          TOTAL=$(du -sh dist | cut -f1)
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total build size:** $TOTAL" >> $GITHUB_STEP_SUMMARY
+      # Etapa 42 do plano de 50 etapas: antes, este job só imprimia o tamanho
+      # dos chunks (`Report bundle sizes`) sem falhar nada — o único guard real
+      # (scripts/check-bundle-budget.mjs, por chunk, com budgets calibrados)
+      # só rodava em `npm run ci` local e no qa-exhaustive.yml semanal. Uma
+      # regressão de peso podia viver em main até 7 dias. Agora o mesmo guard
+      # roda em toda PR e quebra o job se algum chunk estourar o teto.
+      - name: Enforce per-chunk bundle budget
+        run: node scripts/check-bundle-budget.mjs | tee -a "$GITHUB_STEP_SUMMARY"
 
   gen-types-drift:
     name: Supabase Types Drift

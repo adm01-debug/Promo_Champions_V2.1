@@ -1,0 +1,7 @@
+{
+  "_comment": "Etapa 32 do plano de 50 etapas. Piso de cobertura que nunca pode cair — só sobe. Medido em 2026-09-13 sobre src/** (não a whitelist antiga de 16 arquivos). Atualize com `npm run coverage:baseline:update` sempre que a cobertura real subir; nunca edite os números manualmente para baixo.",
+  "lines": 2.89,
+  "branches": 33.43,
+  "functions": 10.41,
+  "statements": 2.89
+}
