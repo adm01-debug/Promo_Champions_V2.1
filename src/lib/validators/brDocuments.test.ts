@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { isValidCPF, isValidCNPJ, isValidCpfOrCnpj } from './brDocuments';
+import {
+  isValidCPF,
+  isValidCNPJ,
+  isValidCpfOrCnpj,
+  isValidCEP,
+  isValidPhoneBR,
+} from './brDocuments';
 
 describe('isValidCPF', () => {
   it.each(['111.444.777-35', '52998224725', ' 529.982.247-25 '])(
@@ -92,6 +98,66 @@ describe('isValidCpfOrCnpj', () => {
     'rejeita tamanho que não é nem CPF nem CNPJ: %s',
     value => {
       expect(isValidCpfOrCnpj(value)).toBe(false);
+    }
+  );
+});
+
+describe('isValidCEP', () => {
+  it.each(['01310-100', '01310100', ' 20040-020 '])(
+    'aceita CEP com formato válido: %s',
+    value => {
+      expect(isValidCEP(value)).toBe(true);
+    }
+  );
+
+  it.each(Array.from({ length: 10 }, (_, d) => String(d).repeat(8)))(
+    'rejeita CEP com todos os dígitos iguais: %s',
+    value => {
+      expect(isValidCEP(value)).toBe(false);
+    }
+  );
+
+  it.each(['1234567', '123456789', '', 'abcdefgh'])(
+    'rejeita CEP com tamanho ou conteúdo inválido: %s',
+    value => {
+      expect(isValidCEP(value)).toBe(false);
+    }
+  );
+});
+
+describe('isValidPhoneBR', () => {
+  it.each([
+    '+5511987654321', // celular E.164
+    '5511987654321', // celular sem +
+    '11987654321', // celular local
+    '1132654321', // fixo local (SP)
+    '+551132654321', // fixo E.164
+    '(11) 98765-4321', // celular formatado
+  ])('aceita telefone BR válido: %s', value => {
+    expect(isValidPhoneBR(value)).toBe(true);
+  });
+
+  it.each([
+    '11123654321', // 11 dígitos mas o 3º (1º do assinante) não é 9 — não é celular válido
+    '118765432', // 9 dígitos — curto demais para fixo (10) ou celular (11)
+    '2087654321', // DDD 20 não existe
+    '119876543210', // 12 dígitos locais — não bate com nenhum formato
+    '',
+    'abc',
+  ])('rejeita telefone BR inválido: %s', value => {
+    expect(isValidPhoneBR(value)).toBe(false);
+  });
+
+  it('rejeita fixo começando em 0 ou 1 (faixas reservadas)', () => {
+    expect(isValidPhoneBR('1102654321')).toBe(false);
+    expect(isValidPhoneBR('1112654321')).toBe(false);
+  });
+
+  // eslint-disable-next-line no-restricted-syntax
+  it.each([null, undefined] as unknown as string[])(
+    'degrada para false em vez de lançar exceção para %s',
+    value => {
+      expect(isValidPhoneBR(value)).toBe(false);
     }
   );
 });
