@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { decideRetry, type RetryableDraft } from "../_shared/retry-policy.ts";
 import {
   filterOptedOut,
@@ -51,7 +51,31 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
 
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
-  if (!isInternalServiceRequest(req)) {
+  if (!SUPABASE_URL || !SERVICE_ROLE) {
+    console.error(
+      "email-bulk-retry misconfigured: missing Supabase service credentials",
+    );
+    return json({ error: "service_not_configured" }, 503);
+  }
+
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+  let authorizedByCron = false;
+  try {
+    authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await admin
+        .from("_internal_secrets")
+        .select("value")
+        .eq("key", "coaching_cron_secret")
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+  } catch (error) {
+    console.error("email-bulk-retry cron authorization unavailable:", error);
+    return json({ error: "authorization_unavailable" }, 503);
+  }
+
+  if (!authorizedByCron) {
     try {
       if (!await isAdminOrManagerRequest(req)) {
         return json({ error: "forbidden" }, 403);
@@ -65,15 +89,7 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
     }
   }
 
-  if (!SUPABASE_URL || !SERVICE_ROLE) {
-    console.error(
-      "email-bulk-retry misconfigured: missing Supabase service credentials",
-    );
-    return json({ error: "service_not_configured" }, 503);
-  }
-
   try {
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const now = new Date();
 
     // Só rascunhos aprovados, não enviados e com erro registrado interessam.

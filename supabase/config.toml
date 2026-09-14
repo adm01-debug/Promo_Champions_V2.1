@@ -24,6 +24,12 @@ verify_jwt = false
 [functions.edge-retry-threshold-alert]
 verify_jwt = false
 
+[functions.deal-risk-digest]
+verify_jwt = false
+
+[functions.email-bulk-retry]
+verify_jwt = false
+
 [functions.log-web-vitals]
 verify_jwt = false
 

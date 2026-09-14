@@ -11,6 +11,8 @@ const functions = [
   ["cron-failure-alerter", "fn_admin_get_new_cron_failures"],
   ["process-call-recording-ingest", "dequeue_call_recording_ingest_jobs"],
   ["edge-retry-threshold-alert", '.from("edge_retry_events")'],
+  ["deal-risk-digest", ".from('deal_health_scores')"],
+  ["email-bulk-retry", '.from("email_bulk_drafts")'],
 ] as const;
 
 const readFunction = (name: string) =>
@@ -41,7 +43,7 @@ Deno.test("jobs operacionais autenticam antes de acessar dados privilegiados", a
 Deno.test("handlers operacionais usam middleware com nome explícito", async () => {
   for (const [name] of functions) {
     const source = await readFunction(name);
-    assertStringIncludes(source, `withRequestId("${name}"`);
+    assertMatch(source, new RegExp(`withRequestId\\(["']${name}["']`));
   }
 });
 
@@ -51,7 +53,7 @@ Deno.test("callback V4 desabilitado não derruba o worker no boot", async () => 
   assertMatch(source, /callback disabled \(missing config\)/);
 });
 
-Deno.test("configuração delega JWT ao gate interno dos cinco handlers", async () => {
+Deno.test("configuração delega JWT ao gate interno dos sete handlers", async () => {
   const config = await Deno.readTextFile(
     new URL("../../config.toml", import.meta.url),
   );

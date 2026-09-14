@@ -11,8 +11,12 @@ Deno.test("email-bulk-retry exige POST e autorização interna ou de gestão", a
     "o processador deve aceitar apenas POST",
   );
   assert(
-    source.includes("isInternalServiceRequest(req)"),
-    "cron deve provar service_role",
+    source.includes("isAuthorizedCronRequest(req"),
+    "cron deve aceitar service_role ou o segredo compartilhado",
+  );
+  assert(
+    source.includes('.eq("key", "coaching_cron_secret")'),
+    "cron deve buscar o segredo compartilhado no armazenamento interno",
   );
   assert(
     source.includes("isAdminOrManagerRequest(req)"),
