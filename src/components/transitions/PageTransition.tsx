@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { motion, AnimatePresence, Variants, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, Variants, Easing, useReducedMotion } from 'framer-motion';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +30,8 @@ export type TransitionVariant =
 export interface PageTransitionConfig {
   variant?: TransitionVariant;
   duration?: number; // segundos
-  ease?: number[] | string; // cubic-bezier ou string Framer
+  /** cubic-bezier [x1,y1,x2,y2] ou keyword do Framer (ex.: 'easeOut') */
+  ease?: Easing;
   /** distância em px para efeitos slide/parallax */
   distance?: number;
 }
