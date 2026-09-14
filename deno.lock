@@ -5749,7 +5749,7 @@
         "npm:@types/react-window@2",
         "npm:@types/react@^18.3.0",
         "npm:@vitejs/plugin-react-swc@^4.3.2",
-        "npm:@vitest/coverage-v8@5",
+        "npm:@vitest/coverage-v8@^1.6.1",
         "npm:@xyflow/react@^12.11.5",
         "npm:autoprefixer@^10.4.17",
         "npm:canvas-confetti@^1.9.4",
@@ -5804,7 +5804,7 @@
         "npm:vaul@^1.1.2",
         "npm:vite-plugin-pwa@1",
         "npm:vite@^8.3.0",
-        "npm:vitest@5",
+        "npm:vitest@^1.2.0",
         "npm:web-vitals@^5.3.0",
         "npm:zod@^4.5.4"
       ]
