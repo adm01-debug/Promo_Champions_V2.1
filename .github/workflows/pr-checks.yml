@@ -188,12 +188,27 @@ jobs:
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install Playwright Browsers
+      - name: Verificar validade das credenciais Supabase
+        id: precheck
         if: steps.skip.outputs.run == 'true'
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: |
+          if node scripts/e2e-precheck.mjs; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Playwright Browsers
+        if: steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
         run: npx playwright install --with-deps chromium webkit
 
       - name: Run E2E Tests
-        if: steps.skip.outputs.run == 'true'
+        if: steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -203,7 +218,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Upload Playwright Report
-        if: always() && steps.skip.outputs.run == 'true'
+        if: always() && steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
