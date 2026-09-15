@@ -52,33 +52,72 @@ function normalizeTable(table) {
   };
 }
 
-export function normalizeCatalog(raw, expectedProject) {
+function validateRawCatalog(raw, expectedProject) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Catálogo bruto inválido.');
   if (raw.rows || raw.records || raw.data) throw new Error('O adaptador aceita apenas metadados, nunca linhas de negócio.');
   if (raw.identity?.projectRef !== expectedProject) throw new Error('Projeto do catálogo não confere com o projeto esperado.');
   if (raw.identity?.readOnly !== true) throw new Error('O catálogo precisa comprovar sessão somente leitura.');
-  const tables = (raw.tables ?? []).map(normalizeTable);
+}
+
+function mapSchemas(raw) {
+  return (raw.schemas ?? []).map(schema => ({ id: objectId('schema', schema.name), name: schema.name }));
+}
+
+function mapFunctions(raw) {
+  return (raw.functions ?? []).map(fn => ({ id: objectId('function', `${fn.schema}.${fn.name}.${fn.signature ?? ''}`), schema: fn.schema, name: fn.name, signature: fn.signature ?? '', securityDefiner: Boolean(fn.securityDefiner), searchPath: safeText(fn.searchPath), grants: sanitizeMetadata(fn.grants ?? []) }));
+}
+
+function mapViews(raw) {
+  return (raw.views ?? []).map(view => ({ id: objectId('view', `${view.schema}.${view.name}`), schema: view.schema, name: view.name, materialized: Boolean(view.materialized), definition: safeText(view.definition) }));
+}
+
+function mapEnums(raw) {
+  return (raw.enums ?? []).map(enumeration => ({ id: objectId('enum', `${enumeration.schema}.${enumeration.name}`), schema: enumeration.schema, name: enumeration.name, values: enumeration.values ?? [] }));
+}
+
+function mapExtensions(raw) {
+  return (raw.extensions ?? []).map(extension => ({ id: objectId('extension', extension.name), name: extension.name, version: extension.version ?? null, schema: extension.schema ?? null }));
+}
+
+function mapRoles(raw) {
+  return (raw.roles ?? []).map(role => ({ id: objectId('role', role.name), name: role.name, canLogin: role.canLogin ?? null, memberships: sanitizeMetadata(role.memberships ?? []) }));
+}
+
+function mapBuckets(raw) {
+  return (raw.buckets ?? []).map(bucket => ({ id: objectId('bucket', bucket.name), name: bucket.name, public: Boolean(bucket.public), fileSizeLimit: bucket.fileSizeLimit ?? null, policies: sanitizeMetadata(bucket.policies ?? []) }));
+}
+
+function mapJobs(raw) {
+  return (raw.jobs ?? []).map(job => ({ id: objectId('job', String(job.id)), idValue: job.id, schedule: safeText(job.schedule), active: Boolean(job.active), command: safeText(job.command), target: job.target ?? null }));
+}
+
+function assertCollectionsUnique(normalized) {
+  for (const collection of COLLECTIONS) unique(normalized[collection], collection);
+  for (const table of normalized.tables) {
+    unique(table.columns, 'colunas'); unique(table.constraints, 'constraints'); unique(table.indexes, 'índices'); unique(table.policies, 'policies'); unique(table.triggers, 'triggers');
+  }
+}
+
+export function normalizeCatalog(raw, expectedProject) {
+  validateRawCatalog(raw, expectedProject);
   const normalized = {
     schemaVersion: 1,
     identity: { projectRef: raw.identity.projectRef, observedAt: raw.identity.observedAt ?? null, readOnly: true },
     // A declaração RO é uma evidência de proveniência, não uma prova técnica da sessão.
     provenance: { readOnlyDeclared: true, independentlyVerified: false },
     capabilities: sanitizeMetadata(raw.capabilities ?? {}),
-    schemas: (raw.schemas ?? []).map(schema => ({ id: objectId('schema', schema.name), name: schema.name })),
-    tables,
-    functions: (raw.functions ?? []).map(fn => ({ id: objectId('function', `${fn.schema}.${fn.name}.${fn.signature ?? ''}`), schema: fn.schema, name: fn.name, signature: fn.signature ?? '', securityDefiner: Boolean(fn.securityDefiner), searchPath: safeText(fn.searchPath), grants: sanitizeMetadata(fn.grants ?? []) })),
-    views: (raw.views ?? []).map(view => ({ id: objectId('view', `${view.schema}.${view.name}`), schema: view.schema, name: view.name, materialized: Boolean(view.materialized), definition: safeText(view.definition) })),
-    enums: (raw.enums ?? []).map(enumeration => ({ id: objectId('enum', `${enumeration.schema}.${enumeration.name}`), schema: enumeration.schema, name: enumeration.name, values: enumeration.values ?? [] })),
-    extensions: (raw.extensions ?? []).map(extension => ({ id: objectId('extension', extension.name), name: extension.name, version: extension.version ?? null, schema: extension.schema ?? null })),
-    roles: (raw.roles ?? []).map(role => ({ id: objectId('role', role.name), name: role.name, canLogin: role.canLogin ?? null, memberships: sanitizeMetadata(role.memberships ?? []) })),
-    buckets: (raw.buckets ?? []).map(bucket => ({ id: objectId('bucket', bucket.name), name: bucket.name, public: Boolean(bucket.public), fileSizeLimit: bucket.fileSizeLimit ?? null, policies: sanitizeMetadata(bucket.policies ?? []) })),
-    jobs: (raw.jobs ?? []).map(job => ({ id: objectId('job', String(job.id)), idValue: job.id, schedule: safeText(job.schedule), active: Boolean(job.active), command: safeText(job.command), target: job.target ?? null })),
+    schemas: mapSchemas(raw),
+    tables: (raw.tables ?? []).map(normalizeTable),
+    functions: mapFunctions(raw),
+    views: mapViews(raw),
+    enums: mapEnums(raw),
+    extensions: mapExtensions(raw),
+    roles: mapRoles(raw),
+    buckets: mapBuckets(raw),
+    jobs: mapJobs(raw),
     gaps: sanitizeMetadata(raw.gaps ?? []),
   };
-  for (const collection of COLLECTIONS) unique(normalized[collection], collection);
-  for (const table of normalized.tables) {
-    unique(table.columns, 'colunas'); unique(table.constraints, 'constraints'); unique(table.indexes, 'índices'); unique(table.policies, 'policies'); unique(table.triggers, 'triggers');
-  }
+  assertCollectionsUnique(normalized);
   normalized.digest = digestValue({ ...normalized, digest: undefined });
   return normalized;
 }
