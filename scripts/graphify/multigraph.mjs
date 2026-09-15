@@ -72,23 +72,36 @@ export function createMultiGraphDocument(graph) {
   };
 }
 
-export function validateMultiGraphDocument(document) {
+function validateMultiGraphShape(document) {
   if (!document || document.schemaVersion !== 1 || document.directed !== true || !Array.isArray(document.nodes) || !Array.isArray(document.edges)) {
     throw new Error('multigraph.json não atende ao esquema suportado.');
   }
+}
+
+function collectMultiGraphNodeIds(nodes) {
   const nodeIds = new Set();
-  for (const node of document.nodes) {
+  for (const node of nodes) {
     if (!node || typeof node.id !== 'string' || !node.id || nodeIds.has(node.id)) throw new Error('multigraph.json contém nó inválido ou duplicado.');
     nodeIds.add(node.id);
   }
+  return nodeIds;
+}
+
+function validateMultiGraphEdges(edges, nodeIds) {
   const edgeIds = new Set();
-  for (const edge of document.edges) {
+  for (const edge of edges) {
     if (!edge || typeof edge.id !== 'string' || !edge.id || edgeIds.has(edge.id)) throw new Error('multigraph.json contém aresta inválida ou duplicada.');
     if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target) || typeof edge.relation !== 'string' || !edge.relation) {
       throw new Error('multigraph.json contém relação sem endpoints ou tipo válido.');
     }
     edgeIds.add(edge.id);
   }
+}
+
+export function validateMultiGraphDocument(document) {
+  validateMultiGraphShape(document);
+  const nodeIds = collectMultiGraphNodeIds(document.nodes);
+  validateMultiGraphEdges(document.edges, nodeIds);
   if (document.sourceGraph?.edges !== document.edges.length) throw new Error('multigraph.json perdeu relações da fonte.');
   return { nodes: document.nodes.length, edges: document.edges.length };
 }

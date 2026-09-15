@@ -116,33 +116,46 @@ export function digestValue(value) {
   return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
-export function validateGraphDocument(document) {
+function validateGraphShape(document) {
   if (!document || typeof document !== 'object' || Array.isArray(document)) throw new Error('graph.json não contém um objeto JSON.');
   if (!Array.isArray(document.nodes) || !Array.isArray(document.edges)) throw new Error('graph.json deve conter arrays nodes e edges.');
   if (document.nodes.length === 0) throw new Error('graph.json não pode estar vazio.');
+}
 
+function collectNodeIds(nodes) {
   const nodeIds = new Set();
-  for (const node of document.nodes) {
+  for (const node of nodes) {
     if (!node || typeof node.id !== 'string' || node.id.trim().length === 0) throw new Error('graph.json contém nó sem id textual.');
     if (nodeIds.has(node.id)) throw new Error(`graph.json contém id de nó duplicado: ${node.id}`);
     nodeIds.add(node.id);
   }
+  return nodeIds;
+}
 
+function validateEdgeShape(edge) {
+  if (!edge || typeof edge.source !== 'string' || typeof edge.target !== 'string' || !edge.source.trim() || !edge.target.trim()) {
+    throw new Error('graph.json contém aresta sem source/target textual.');
+  }
+  if (typeof edge.relation !== 'string' || !edge.relation.trim()) throw new Error('graph.json contém aresta sem relação declarada.');
+  if (edge.confidence !== undefined && !CONFIDENCE_LEVELS.has(edge.confidence)) throw new Error('graph.json contém nível de confiança inválido.');
+}
+
+function resolveEdgeEndpoint(edge, nodeIds) {
+  if (nodeIds.has(edge.source) && nodeIds.has(edge.target)) return 'resolved';
+  const isUnresolvedImport = nodeIds.has(edge.source) && IMPORT_RELATIONS.has(edge.relation);
+  if (isUnresolvedImport) return 'unresolved-import';
+  throw new Error('graph.json contém aresta com endpoint ausente.');
+}
+
+function collectEdgeStats(edges, nodeIds) {
   let unresolvedImports = 0;
   const edgeVariantsByEndpoint = new Map();
-  for (const edge of document.edges) {
-    if (!edge || typeof edge.source !== 'string' || typeof edge.target !== 'string' || !edge.source.trim() || !edge.target.trim()) {
-      throw new Error('graph.json contém aresta sem source/target textual.');
-    }
-    if (typeof edge.relation !== 'string' || !edge.relation.trim()) throw new Error('graph.json contém aresta sem relação declarada.');
-    if (edge.confidence !== undefined && !CONFIDENCE_LEVELS.has(edge.confidence)) throw new Error('graph.json contém nível de confiança inválido.');
-    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
-      const isUnresolvedImport = nodeIds.has(edge.source) && IMPORT_RELATIONS.has(edge.relation);
-      if (isUnresolvedImport) {
-        unresolvedImports += 1;
-        continue;
-      }
-      throw new Error('graph.json contém aresta com endpoint ausente.');
+
+  for (const edge of edges) {
+    validateEdgeShape(edge);
+    if (resolveEdgeEndpoint(edge, nodeIds) === 'unresolved-import') {
+      unresolvedImports += 1;
+      continue;
     }
     const endpointKey = `${edge.source}\u0000${edge.target}`;
     const variantKey = `${edge.relation}\u0000${edge.context ?? ''}`;
@@ -150,6 +163,14 @@ export function validateGraphDocument(document) {
     variants.add(variantKey);
     edgeVariantsByEndpoint.set(endpointKey, variants);
   }
+
+  return { unresolvedImports, edgeVariantsByEndpoint };
+}
+
+export function validateGraphDocument(document) {
+  validateGraphShape(document);
+  const nodeIds = collectNodeIds(document.nodes);
+  const { unresolvedImports, edgeVariantsByEndpoint } = collectEdgeStats(document.edges, nodeIds);
 
   const multiRelationPairs = [...edgeVariantsByEndpoint.values()].filter(variants => variants.size > 1);
   return {
