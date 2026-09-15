@@ -4,12 +4,15 @@
 # === SECRETS E CREDENCIAIS ===
 .env
 .env.*
-!.env.example
-!.env.*.example
 *.pem
 *.key
 *.p8
 *.p12
+*.crt
+*.cer
+*.secret
+*.secrets
+*service-account*.json
 tokens.css
 .npmrc
 .netrc
@@ -36,6 +39,7 @@ coverage/
 .coverage/
 build/
 
-# === GRAFOS PROPRIOS ===
-graphify-out/graph.json
-graphify-out/graph.html
+# === SAIDAS E CACHE DO PRÓPRIO GRAPHIFY ===
+# Sempre excluir a árvore toda: entrada e saída não podem se realimentar.
+graphify-out/
+.graphify-local/
