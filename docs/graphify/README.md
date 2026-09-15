@@ -44,6 +44,22 @@ npm run graphify:contracts -- \
   --out .graphify-local/contratos-estaticos.json
 ```
 
+Quando uma sessão RO canônica for comprovada fora desta CLI, o adaptador aceita uma exportação de **metadados** já sanitizada; ele recusa linhas de negócio, projeto divergente e metadados que não se declarem read-only. A declaração no arquivo não substitui a verificação independente da conexão. A exportação bruta não é versionada:
+
+```bash
+npm run graphify:catalog -- \
+  --input .graphify-local/catalogo-bruto.json \
+  --out .graphify-local/catalogo-normalizado.json \
+  --expected-project usyxfpqlsspldubptrdl
+
+npm run graphify:reconcile -- \
+  --contracts .graphify-local/contratos-estaticos.json \
+  --catalog .graphify-local/catalogo-normalizado.json \
+  --out .graphify-local/reconciliacao.json
+```
+
+Uma ausência na reconciliação é uma pendência para investigação, nunca ordem de criar, alterar ou apagar objeto.
+
 Nesta fundação, cada `--out` deve ser novo. A CLI atual grava cache dentro da origem em uma atualização incremental com saída externa; por isso o wrapper recusa reutilizar snapshot até a etapa de atualização incremental ser validada contra renomes, remoções e concorrência. A recusa evita sujeira no código e não deve ser burlada com `--force`.
 
 `--allow-large-scope` só é permitido após registrar a justificativa e a medição do lote. Não use `--force`, exportação para banco de grafos, hook automático, modo semântico ou conexão PostgreSQL sem a etapa correspondente do plano de 50 etapas.
