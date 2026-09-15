@@ -60,6 +60,16 @@ npm run graphify:reconcile -- \
 
 Uma ausência na reconciliação é uma pendência para investigação, nunca ordem de criar, alterar ou apagar objeto.
 
+O índice documental lê somente links Markdown explícitos e classifica propostas, decisões e documentos históricos sem assumir que um texto representa a implementação atual:
+
+```bash
+npm run graphify:docs -- \
+  --docs docs \
+  --out .graphify-local/indice-documental.json
+```
+
+Referência ausente, texto livre ou URL externa são pendências de investigação; não provam funcionalidade implementada nem obsolescência do código.
+
 Nesta fundação, cada `--out` deve ser novo. A CLI atual grava cache dentro da origem em uma atualização incremental com saída externa; por isso o wrapper recusa reutilizar snapshot até a etapa de atualização incremental ser validada contra renomes, remoções e concorrência. A recusa evita sujeira no código e não deve ser burlada com `--force`.
 
 `--allow-large-scope` só é permitido após registrar a justificativa e a medição do lote. Não use `--force`, exportação para banco de grafos, hook automático, modo semântico ou conexão PostgreSQL sem a etapa correspondente do plano de 50 etapas.
