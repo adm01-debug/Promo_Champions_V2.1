@@ -32,6 +32,9 @@ if (process.env.GRAPHIFY_FIXTURE_ERROR === '1') {
   console.error('sb' + 'p_' + 'a'.repeat(40));
   process.exit(2);
 }
+if (process.env.GRAPHIFY_FIXTURE_MUTATE_SOURCE === '1') {
+  fs.appendFileSync(path.join(args[1], 'exemplo.ts'), '// alteração concorrente\\n');
+}
 const output = args[args.indexOf('--out') + 1];
 fs.mkdirSync(path.join(output, 'graphify-out'), { recursive: true });
 fs.writeFileSync(path.join(output, 'graphify-out', 'graph.json'), process.env.GRAPHIFY_FIXTURE_GRAPH || JSON.stringify({ nodes: [{ id: 'modulo' }], edges: [] }));
@@ -58,8 +61,21 @@ test('publica somente snapshot validado com metadados de origem', () => {
   const snapshot = JSON.parse(fs.readFileSync(path.join(destination, 'snapshot.json'), 'utf8'));
   assert.equal(snapshot.extractor.version, '0.9.48');
   assert.equal(snapshot.source.scope, 'src');
+  assert.equal(snapshot.source.totalBytes, Buffer.byteLength('export const exemplo = 1;\n'));
   assert.match(snapshot.source.digest, /^[a-f0-9]{64}$/);
   assert.equal(snapshot.multigraph.edges, 0);
+});
+
+test('aceita escopo de arquivo regular e registra uma única entrada', () => {
+  const fixture = createFixture();
+  const result = spawnSync(process.execPath, [path.join(fixture.repository, 'scripts/graphify/extract-code-only.mjs'), '--scope', 'src/exemplo.ts', '--out', '.graphify-local/arquivo'], {
+    cwd: fixture.repository,
+    encoding: 'utf8',
+    env: { ...process.env, GRAPHIFY_BIN: fixture.binary },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const snapshot = JSON.parse(fs.readFileSync(path.join(fixture.repository, '.graphify-local', 'arquivo', 'snapshot.json'), 'utf8'));
+  assert.equal(snapshot.source.fileCount, 1);
 });
 
 test('recusa link simbólico intermediário antes de criar saída externa', () => {
@@ -71,6 +87,24 @@ test('recusa link simbólico intermediário antes de criar saída externa', () =
   const result = execute(fixture, ['--out', '.graphify-local/atalho/saida']);
   assert.notEqual(result.status, 0);
   assert.equal(fs.existsSync(path.join(external, 'saida', 'graphify-out', 'graph.json')), false);
+});
+
+test('recusa link simbólico aninhado no escopo antes de chamar o extrator', () => {
+  const fixture = createFixture();
+  const external = path.join(fixture.base, 'externo.ts');
+  fs.writeFileSync(external, 'export const externo = 1;\n');
+  fs.symlinkSync(external, path.join(fixture.repository, 'src', 'atalho.ts'));
+  const result = execute(fixture, ['--out', '.graphify-local/symlink-aninhado']);
+  assert.notEqual(result.status, 0);
+  assert.equal(fs.existsSync(path.join(fixture.repository, '.graphify-local', 'symlink-aninhado')), false);
+});
+
+test('não publica snapshot se o escopo muda durante a extração', () => {
+  const fixture = createFixture();
+  const result = execute(fixture, ['--out', '.graphify-local/concorrente'], { GRAPHIFY_FIXTURE_MUTATE_SOURCE: '1' });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /mudou durante a extração/);
+  assert.equal(fs.existsSync(path.join(fixture.repository, '.graphify-local', 'concorrente')), false);
 });
 
 test('recusa quando a própria raiz de saídas é link simbólico externo', () => {
