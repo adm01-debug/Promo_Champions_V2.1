@@ -69,9 +69,7 @@ const renderWithProviders = (ui: React.ReactNode) => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <DashboardThemeProvider>
-          <BrowserRouter
-            future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-          >
+          <BrowserRouter>
             {ui}
           </BrowserRouter>
         </DashboardThemeProvider>
