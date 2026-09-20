@@ -28,5 +28,7 @@ jobs:
           cache: npm
       - uses: astral-sh/setup-uv@v5
       - run: npm ci
-      - run: uv lock --directory tools/graphify --check
+      - run: uv sync --directory tools/graphify --locked
+      - run: tools/graphify/.venv/bin/graphify --version
       - run: npm run graphify:test
+      - run: node scripts/graphify/extract-code-only.mjs --scope src/lib/revenueForecast --out .graphify-local/ci-smoke --max-workers 1

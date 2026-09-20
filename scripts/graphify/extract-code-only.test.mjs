@@ -37,9 +37,14 @@ if (process.env.GRAPHIFY_FIXTURE_MUTATE_SOURCE === '1') {
 }
 const output = args[args.indexOf('--out') + 1];
 fs.mkdirSync(path.join(output, 'graphify-out'), { recursive: true });
-fs.writeFileSync(path.join(output, 'graphify-out', 'graph.json'), process.env.GRAPHIFY_FIXTURE_GRAPH || JSON.stringify({ nodes: [{ id: 'modulo' }], edges: [] }));
+if (process.env.GRAPHIFY_FIXTURE_SYMLINK_OUTPUT) fs.symlinkSync(process.env.GRAPHIFY_FIXTURE_SYMLINK_OUTPUT, path.join(output, 'graphify-out', 'graph.json'));
+else fs.writeFileSync(path.join(output, 'graphify-out', 'graph.json'), process.env.GRAPHIFY_FIXTURE_GRAPH || JSON.stringify({ nodes: [{ id: 'modulo' }], edges: [] }));
 `);
   fs.chmodSync(binary, 0o700);
+  const pinnedBinary = path.join(repository, 'tools', 'graphify', '.venv', 'bin', 'graphify');
+  fs.mkdirSync(path.dirname(pinnedBinary), { recursive: true });
+  fs.copyFileSync(binary, pinnedBinary);
+  fs.chmodSync(pinnedBinary, 0o700);
   return { base, repository, binary };
 }
 
@@ -47,7 +52,7 @@ function execute(fixture, args, extraEnvironment = {}) {
   return spawnSync(process.execPath, [path.join(fixture.repository, 'scripts/graphify/extract-code-only.mjs'), '--scope', 'src', ...args], {
     cwd: fixture.repository,
     encoding: 'utf8',
-    env: { ...process.env, GRAPHIFY_BIN: fixture.binary, ...extraEnvironment },
+    env: { ...process.env, ...extraEnvironment },
   });
 }
 
@@ -71,7 +76,7 @@ test('aceita escopo de arquivo regular e registra uma única entrada', () => {
   const result = spawnSync(process.execPath, [path.join(fixture.repository, 'scripts/graphify/extract-code-only.mjs'), '--scope', 'src/exemplo.ts', '--out', '.graphify-local/arquivo'], {
     cwd: fixture.repository,
     encoding: 'utf8',
-    env: { ...process.env, GRAPHIFY_BIN: fixture.binary },
+    env: process.env,
   });
   assert.equal(result.status, 0, result.stderr);
   const snapshot = JSON.parse(fs.readFileSync(path.join(fixture.repository, '.graphify-local', 'arquivo', 'snapshot.json'), 'utf8'));
@@ -105,6 +110,15 @@ test('não publica snapshot se o escopo muda durante a extração', () => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /mudou durante a extração/);
   assert.equal(fs.existsSync(path.join(fixture.repository, '.graphify-local', 'concorrente')), false);
+});
+
+test('recusa symlink criado pelo extrator dentro do staging', () => {
+  const fixture = createFixture();
+  const external = path.join(fixture.base, 'externo.json');
+  fs.writeFileSync(external, JSON.stringify({ nodes: [{ id: 'externo' }], edges: [] }));
+  const result = execute(fixture, ['--out', '.graphify-local/symlink-saida'], { GRAPHIFY_FIXTURE_SYMLINK_OUTPUT: external });
+  assert.notEqual(result.status, 0);
+  assert.equal(fs.existsSync(path.join(fixture.repository, '.graphify-local', 'symlink-saida')), false);
 });
 
 test('recusa quando a própria raiz de saídas é link simbólico externo', () => {

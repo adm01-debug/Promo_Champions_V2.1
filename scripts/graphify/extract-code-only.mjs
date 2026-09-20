@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import process from 'node:process';
 import {
   assertExactGraphifyVersion,
+  assertSafeRegularTree,
   assertSafeNewOutputPath,
   createSafeOutputParents,
   createStagingDirectory,
@@ -15,6 +16,7 @@ import {
   isPathInside,
   parsePositiveInteger,
   redactSensitiveText,
+  sanitizeError,
 } from './graphify-utils.mjs';
 import { createMultiGraphDocument, validateMultiGraphDocument } from './multigraph.mjs';
 
@@ -60,6 +62,21 @@ function gitHead(repositoryRoot) {
   const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: repositoryRoot, encoding: 'utf8' });
   if (result.status !== 0) fail('Não foi possível identificar o commit atual.');
   return result.stdout.trim();
+}
+
+function gitState(repositoryRoot) {
+  const head = gitHead(repositoryRoot);
+  const result = spawnSync('git', ['status', '--porcelain=v1', '--untracked-files=no'], { cwd: repositoryRoot, encoding: 'utf8' });
+  if (result.status !== 0) fail('Não foi possível identificar o estado Git atual.');
+  return { commit: head, worktreeDigest: digestValue(result.stdout), clean: result.stdout.trim().length === 0 };
+}
+
+function pinnedGraphifyBinary(repositoryRoot) {
+  const binary = path.join(repositoryRoot, 'tools', 'graphify', '.venv', 'bin', 'graphify');
+  if (!fs.existsSync(binary)) fail('Runtime Graphify pinado ausente; execute uv sync --directory tools/graphify --locked.');
+  const stat = fs.lstatSync(binary);
+  if (!stat.isFile() || stat.isSymbolicLink()) fail('Runtime Graphify pinado inválido.');
+  return binary;
 }
 
 function run(command, args, label) {
@@ -118,11 +135,12 @@ try {
   const scopeInspection = inspectSourceScope(resolvedScope, { maximumFileBytes: MAX_FILE_BYTES, maximumTotalBytes: MAX_SCOPE_BYTES });
   const fileCount = scopeInspection.fileCount;
   const sourceDigest = digestFiles(resolvedScope);
+  const sourceGitState = gitState(repositoryRoot);
   if (fileCount > LARGE_SCOPE_LIMIT && !args.includes('--allow-large-scope')) {
     fail(`Escopo possui ${fileCount} arquivos; particione-o ou confirme --allow-large-scope.`);
   }
 
-  const graphifyBinary = process.env.GRAPHIFY_BIN || 'graphify';
+  const graphifyBinary = pinnedGraphifyBinary(repositoryRoot);
   const expectedVersion = optionValue(args, '--expected-version') ?? DEFAULT_VERSION;
   const version = run(graphifyBinary, ['--version'], 'verificação de versão do Graphify');
   assertExactGraphifyVersion(version.stdout, expectedVersion);
@@ -134,8 +152,15 @@ try {
     'extract', resolvedScope, '--code-only', '--no-cluster', '--out', stagingPath,
     '--max-workers', String(maxWorkers),
   ], 'extração Graphify');
+  assertSafeRegularTree(stagingPath);
+  const graphStat = fs.lstatSync(graphPath);
+  if (!graphStat.isFile() || graphStat.isSymbolicLink()) fail('graph.json precisa ser arquivo regular no staging.');
   run(process.execPath, [path.join(repositoryRoot, 'scripts/graphify/verify-output.mjs'), '--graph', graphPath], 'validação do snapshot');
   if (sourceDigest !== digestFiles(resolvedScope)) fail('O escopo mudou durante a extração; execute novamente para evitar snapshot inconsistente.');
+  const finalGitState = gitState(repositoryRoot);
+  if (sourceGitState.commit !== finalGitState.commit || sourceGitState.worktreeDigest !== finalGitState.worktreeDigest) {
+    fail('O estado Git mudou durante a extração; execute novamente para evitar snapshot inconsistente.');
+  }
   const multigraph = createMultiGraphDocument(JSON.parse(fs.readFileSync(graphPath, 'utf8')));
   validateMultiGraphDocument(multigraph);
   fs.writeFileSync(path.join(stagingPath, 'multigraph.json'), `${JSON.stringify(multigraph, null, 2)}\n`, { mode: 0o600 });
@@ -143,7 +168,9 @@ try {
   const metadata = {
     schemaVersion: 1,
     source: {
-      commit: gitHead(repositoryRoot),
+      commit: sourceGitState.commit,
+      worktreeDigest: sourceGitState.worktreeDigest,
+      clean: sourceGitState.clean,
       scope: path.relative(repositoryRoot, resolvedScope),
       fileCount,
       totalBytes: scopeInspection.totalBytes,
@@ -159,7 +186,7 @@ try {
   stagingPath = undefined;
   console.info(`Snapshot estrutural pronto em ${path.relative(repositoryRoot, path.join(outputPlan.candidate, 'graphify-out', 'graph.json'))}.`);
 } catch (error) {
-  console.error(`Extração Graphify recusada: ${redactSensitiveText(error.message)}.`);
+  console.error(`Extração Graphify recusada: ${sanitizeError(error)}.`);
   process.exitCode = 1;
 } finally {
   if (outputRoot) removeStaging(stagingPath, outputRoot);

@@ -8,7 +8,15 @@ import { assertSafeNewOutputPath, createSafeOutputParents, digestValue, isPathIn
 
 const CODE_EXTENSIONS = new Set(['.ts', '.tsx']);
 const SQL_EXTENSION = '.sql';
-const SQL_EVENT = /\b(CREATE|ALTER|DROP)\s+(?:OR\s+REPLACE\s+)?(MATERIALIZED\s+VIEW|TABLE|FUNCTION|VIEW|TYPE|INDEX|TRIGGER|POLICY)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?((?:"[^"]+"|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:"[^"]+"|[A-Za-z_][\w$]*))?)/gi;
+const SQL_EVENT = /\b(CREATE|ALTER|DROP)\s+(?:OR\s+REPLACE\s+)?(MATERIALIZED\s+VIEW|TABLE|FUNCTION|VIEW|TYPE|INDEX|TRIGGER)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?((?:"[^"]+"|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:"[^"]+"|[A-Za-z_][\w$]*))?)/gi;
+const UNSUPPORTED_SQL = [
+  ['privilégios/ACL', /\b(?:GRANT|REVOKE|ALTER\s+DEFAULT\s+PRIVILEGES)\b/i],
+  ['RLS/policy', /\b(?:ENABLE|FORCE)\s+ROW\s+LEVEL\s+SECURITY\b|\bCREATE\s+POLICY\b/i],
+  ['extensão', /\bCREATE\s+EXTENSION\b/i],
+  ['cron/job', /\b(?:cron\.schedule|pg_cron)\b/i],
+  ['Storage', /\bstorage\./i],
+  ['bloco procedural', /\bDO\s*\$/i],
+];
 const CODE_REFERENCES = [
   ['table', /(?<!storage)\.from\(\s*['"]([^'"]+)['"]/g],
   ['rpc', /\.rpc\(\s*['"]([^'"]+)['"]/g],
@@ -36,30 +44,47 @@ function lineAt(source, offset) {
   return source.slice(0, offset).split('\n').length;
 }
 
+function blank(match) {
+  return match.replace(/[^\n]/g, ' ');
+}
+
+function structuralSql(source) {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(/--[^\n]*/g, blank)
+    .replace(/'(?:''|[^'])*'/g, blank);
+}
+
 export function parseMigrationFile(filePath, source) {
   const name = path.basename(filePath);
   const version = /^(\d{8,14})_/.exec(name)?.[1] ?? null;
   const events = [];
-  for (const match of source.matchAll(SQL_EVENT)) {
+  const structural = structuralSql(source);
+  for (const match of structural.matchAll(SQL_EVENT)) {
     events.push({
       action: match[1].toUpperCase(),
       objectType: match[2].replace(/\s+/g, '_').toLowerCase(),
       objectName: match[3].replace(/\s+/g, ''),
-      line: lineAt(source, match.index),
+      line: lineAt(structural, match.index),
     });
   }
   const gaps = [];
   if (!version) gaps.push('Nome sem versão de migration reconhecida.');
-  if (/\bEXECUTE\b|\bFORMAT\s*\(/i.test(source)) gaps.push('SQL dinâmico: objetos podem não ser extraídos estaticamente.');
+  if (/\bEXECUTE\b|\bFORMAT\s*\(/i.test(structural)) gaps.push('SQL dinâmico: objetos podem não ser extraídos estaticamente.');
+  for (const [kind, expression] of UNSUPPORTED_SQL) {
+    if (expression.test(structural)) gaps.push(`Construto ${kind} ainda não é modelado estaticamente.`);
+  }
   return { version, events, gaps };
 }
 
-export function extractCodeReferences(filePath, source) {
+export function extractCodeReferences(_filePath, source) {
   const references = [];
   for (const [kind, expression] of CODE_REFERENCES) {
     expression.lastIndex = 0;
     for (const match of source.matchAll(expression)) {
-      references.push({ kind, name: match[1], line: lineAt(source, match.index) });
+      const prefix = source.slice(Math.max(0, match.index - 220), match.index);
+      const schema = kind === 'table' ? /\.schema\(\s*['"]([^'"]+)['"]\s*\)\s*$/.exec(prefix)?.[1] ?? 'public' : null;
+      references.push({ kind, name: schema ? `${schema}.${match[1]}` : match[1], schema, line: lineAt(source, match.index) });
     }
   }
   if (/\.(?:from|rpc|invoke|channel)\(\s*[^'"]/m.test(source)) {

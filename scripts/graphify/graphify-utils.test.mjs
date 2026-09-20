@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { assertExactGraphifyVersion, findSecretSignals, isPathInside, parsePositiveInteger, redactSensitiveText, validateGraphDocument } from './graphify-utils.mjs';
+import { assertExactGraphifyVersion, digestValue, findSecretSignals, isPathInside, parsePositiveInteger, redactSensitiveText, sanitizeMetadata, validateGraphDocument } from './graphify-utils.mjs';
 
 test('aceita caminho dentro da raiz e recusa travessia', () => {
   assert.equal(isPathInside('/repo', '/repo/src/modulo.ts'), true);
@@ -76,6 +76,16 @@ test('identifica padrões sensíveis sem retornar seu conteúdo', () => {
 test('redige padrões sensíveis de diagnósticos', () => {
   const syntheticToken = `sb${'p_'}abcdefghijklmnopqrstuv`;
   assert.equal(redactSensitiveText(`falha ${syntheticToken}`), 'falha [REDACTED]');
+});
+
+test('redige credenciais comuns e valores por chave sensível', () => {
+  const value = 'postgresql://admin:senha@example.invalid/db Bearer abcdefghijklmnopqrstuvwxyz sk_live_abcdefghijklmnopqrst';
+  assert.doesNotMatch(redactSensitiveText(value), /senha|abcdefghijklmnopqrstuvwxyz|sk_live/);
+  assert.deepEqual(sanitizeMetadata({ authorization: 'Bearer abcdefghijklmnopqrstuvwxyz', nested: { api_key: 'valor' }, name: 'seguro' }), { authorization: '[REDACTED]', nested: { api_key: '[REDACTED]' }, name: 'seguro' });
+});
+
+test('digest canônico não depende da ordem das chaves', () => {
+  assert.equal(digestValue({ z: 1, a: { y: 2, x: 3 } }), digestValue({ a: { x: 3, y: 2 }, z: 1 }));
 });
 
 test('aceita grafo mínimo íntegro', () => {
