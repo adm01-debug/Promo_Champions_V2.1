@@ -203,7 +203,8 @@ jobs:
           if node scripts/e2e-precheck.mjs; then
             echo "valid=true" >> "$GITHUB_OUTPUT"
           else
-            echo "valid=false" >> "$GITHUB_OUTPUT"
+            echo "::error::Credenciais E2E configuradas, mas inválidas. Corrija ou remova a configuração parcial; não é seguro aprovar o gate sem executar os cenários."
+            exit 1
           fi
 
       - name: Install Playwright Browsers
@@ -368,7 +369,8 @@ jobs:
     # e2e e lighthouse ficam de fora até os secrets de E2E existirem — hoje
     # falham/estouram timeout por ambiente, e alarme cronicamente falso ensina
     # a ignorar alarmes.
-    needs: [lint-and-typecheck, security-audit, test, edge-functions-lint, build, bundle-size]
+    needs:
+      [lint-and-typecheck, security-audit, test, edge-functions-lint, build, bundle-size]
     if: failure()
     steps:
       # Sem o secret SLACK_CI_WEBHOOK_URL configurado, o step apenas loga —
