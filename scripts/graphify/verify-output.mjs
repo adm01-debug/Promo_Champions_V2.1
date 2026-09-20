@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { findSecretSignals, validateGraphDocument } from './graphify-utils.mjs';
+import { findSecretSignals, sanitizeError, validateGraphDocument } from './graphify-utils.mjs';
 
 function readArgument(flag) {
   const index = process.argv.indexOf(flag);
@@ -35,6 +35,6 @@ try {
     );
   }
 } catch (error) {
-  console.error(`Falha ao validar saída do Graphify: ${error.message}`);
+  console.error(`Falha ao validar saída do Graphify: ${sanitizeError(error)}`);
   process.exitCode = 1;
 }

@@ -34,3 +34,13 @@ test('recusa documentação alcançada por link simbólico', () => {
   fs.symlinkSync(path.join(root, 'README.md'), path.join(root, 'docs', 'atalho.md'));
   assert.throws(() => indexDocuments(root));
 });
+
+test('não classifica como local um link para symlink externo', () => {
+  const root = fixture();
+  const external = path.join(os.tmpdir(), 'promo-graphify-external.md');
+  fs.writeFileSync(external, '# externo\n');
+  fs.symlinkSync(external, path.join(root, 'src', 'externo.md'));
+  fs.appendFileSync(path.join(root, 'docs', 'planos', 'PLANO.md'), '[Fora](../../src/externo.md)\n');
+  const index = indexDocuments(root);
+  assert.equal(index.links.find(link => link.target === '../../src/externo.md')?.kind, 'fora_do_repositorio');
+});
