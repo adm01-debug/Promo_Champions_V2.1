@@ -46,63 +46,94 @@ function lineAt(source, offset) {
   return source.slice(0, offset).split('\n').length;
 }
 
-// eslint-disable-next-line complexity -- Máquina de estados léxica: cada ramo representa um estado SQL mutuamente exclusivo e é coberto por regressões.
-function sqlMasks(source, { preserveStrings = false } = {}) {
-  let result = '';
-  let index = 0;
-  let state = 'code';
-  let dollarTag = null;
-  const appendBlank = character => { result += character === '\n' ? '\n' : ' '; };
+function appendMasked(scanner, value) {
+  scanner.result += scanner.preserveStrings ? value : value.replace(/[^\n]/g, ' ');
+}
 
-  while (index < source.length) {
-    const character = source[index];
-    const next = source[index + 1];
-    if (state === 'code') {
-      if (character === '-' && next === '-') { appendBlank(character); appendBlank(next); index += 2; state = 'line-comment'; continue; }
-      if (character === '/' && next === '*') { appendBlank(character); appendBlank(next); index += 2; state = 'block-comment'; continue; }
-      if (character === "'") { result += preserveStrings ? character : ' '; index += 1; state = 'single-quote'; continue; }
-      if (character === '"') { result += character; index += 1; state = 'double-quote'; continue; }
-      if (character === '$') {
-        const match = /^\$[A-Za-z_][\w$]*\$|^\$\$/.exec(source.slice(index));
-        if (match) { dollarTag = match[0]; result += preserveStrings ? dollarTag : ' '.repeat(dollarTag.length); index += dollarTag.length; state = 'dollar-quote'; continue; }
-      }
-      result += character;
-      index += 1;
-      continue;
-    }
-    if (state === 'line-comment') {
-      appendBlank(character);
-      index += 1;
-      if (character === '\n') state = 'code';
-      continue;
-    }
-    if (state === 'block-comment') {
-      if (character === '*' && next === '/') { appendBlank(character); appendBlank(next); index += 2; state = 'code'; continue; }
-      appendBlank(character);
-      index += 1;
-      continue;
-    }
-    if (state === 'single-quote') {
-      if (character === "'" && next === "'") { result += preserveStrings ? "''" : '  '; index += 2; continue; }
-      result += preserveStrings ? character : (character === '\n' ? '\n' : ' ');
-      index += 1;
-      if (character === "'") state = 'code';
-      continue;
-    }
-    if (state === 'double-quote') {
-      result += character;
-      index += 1;
-      if (character === '"' && next === '"') { result += next; index += 1; continue; }
-      if (character === '"') state = 'code';
-      continue;
-    }
-    if (state === 'dollar-quote') {
-      if (source.startsWith(dollarTag, index)) { result += preserveStrings ? dollarTag : ' '.repeat(dollarTag.length); index += dollarTag.length; state = 'code'; dollarTag = null; continue; }
-      result += preserveStrings ? character : (character === '\n' ? '\n' : ' ');
-      index += 1;
-    }
+function consumeCode(scanner) {
+  const { source, index } = scanner;
+  const character = source[index];
+  const next = source[index + 1];
+  if (character === '-' && next === '-') {
+    appendMasked(scanner, '--'); scanner.index += 2; scanner.state = 'line-comment'; return;
   }
-  return result;
+  if (character === '/' && next === '*') {
+    appendMasked(scanner, '/*'); scanner.index += 2; scanner.state = 'block-comment'; return;
+  }
+  if (character === "'") {
+    appendMasked(scanner, character); scanner.index += 1; scanner.state = 'single-quote'; return;
+  }
+  if (character === '"') {
+    scanner.result += character; scanner.index += 1; scanner.state = 'double-quote'; return;
+  }
+  const tag = character === '$' ? /^\$[A-Za-z_][\w$]*\$|^\$\$/.exec(source.slice(index))?.[0] : null;
+  if (tag) {
+    appendMasked(scanner, tag); scanner.index += tag.length; scanner.state = 'dollar-quote'; scanner.dollarTag = tag; return;
+  }
+  scanner.result += character;
+  scanner.index += 1;
+}
+
+function consumeLineComment(scanner) {
+  const character = scanner.source[scanner.index];
+  appendMasked(scanner, character);
+  scanner.index += 1;
+  if (character === '\n') scanner.state = 'code';
+}
+
+function consumeBlockComment(scanner) {
+  const { source, index } = scanner;
+  if (source[index] === '*' && source[index + 1] === '/') {
+    appendMasked(scanner, '*/'); scanner.index += 2; scanner.state = 'code'; return;
+  }
+  appendMasked(scanner, source[index]);
+  scanner.index += 1;
+}
+
+function consumeSingleQuote(scanner) {
+  const { source, index } = scanner;
+  if (source[index] === "'" && source[index + 1] === "'") {
+    appendMasked(scanner, "''"); scanner.index += 2; return;
+  }
+  const character = source[index];
+  appendMasked(scanner, character);
+  scanner.index += 1;
+  if (character === "'") scanner.state = 'code';
+}
+
+function consumeDoubleQuote(scanner) {
+  const { source, index } = scanner;
+  const character = source[index];
+  scanner.result += character;
+  scanner.index += 1;
+  if (character === '"' && source[index + 1] === '"') {
+    scanner.result += source[index + 1]; scanner.index += 1; return;
+  }
+  if (character === '"') scanner.state = 'code';
+}
+
+function consumeDollarQuote(scanner) {
+  const { source, index, dollarTag } = scanner;
+  if (source.startsWith(dollarTag, index)) {
+    appendMasked(scanner, dollarTag); scanner.index += dollarTag.length; scanner.state = 'code'; scanner.dollarTag = null; return;
+  }
+  appendMasked(scanner, source[index]);
+  scanner.index += 1;
+}
+
+const SQL_STATE_CONSUMERS = {
+  code: consumeCode,
+  'line-comment': consumeLineComment,
+  'block-comment': consumeBlockComment,
+  'single-quote': consumeSingleQuote,
+  'double-quote': consumeDoubleQuote,
+  'dollar-quote': consumeDollarQuote,
+};
+
+function sqlMasks(source, { preserveStrings = false } = {}) {
+  const scanner = { source, preserveStrings, result: '', index: 0, state: 'code', dollarTag: null };
+  while (scanner.index < source.length) SQL_STATE_CONSUMERS[scanner.state](scanner);
+  return scanner.result;
 }
 
 function structuralSql(source) {

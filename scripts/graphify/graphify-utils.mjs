@@ -134,32 +134,42 @@ function ignoredSourceEntry(name) {
   return name === 'node_modules' || name === 'graphify-out' || name === '.graphify-local';
 }
 
-// eslint-disable-next-line complexity -- Validação de fronteira de segurança; cada condição recusa uma classe distinta de caminho/entrada insegura.
-export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
+function initialScope(root, maximumFileBytes) {
   const initial = fs.lstatSync(root);
   if (initial.isSymbolicLink()) throw new Error('Escopo não pode ser link simbólico.');
   if (initial.isFile() && SENSITIVE_PATH.test(root)) throw new Error('Escopo contém arquivo sensível e não pode ser analisado.');
+  if (initial.isFile() && initial.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+  if (!initial.isFile() && !initial.isDirectory()) throw new Error('Escopo deve ser arquivo regular ou diretório.');
+  return initial;
+}
+
+function inspectScopeEntry(entryPath, maximumFileBytes) {
+  const stat = fs.lstatSync(entryPath);
+  if (stat.isSymbolicLink()) throw new Error(`Escopo contém link simbólico: ${entryPath}`);
+  if (stat.isDirectory()) return { stat, kind: 'directory' };
+  if (!stat.isFile()) throw new Error(`Escopo contém entrada não regular: ${entryPath}`);
+  if (SENSITIVE_PATH.test(entryPath)) throw new Error('Escopo contém arquivo sensível e não pode ser analisado.');
+  if (stat.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+  return { stat, kind: 'file' };
+}
+
+export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
+  const initial = initialScope(root, maximumFileBytes);
   const queue = initial.isDirectory() ? [root] : [];
   const entries = initial.isFile() ? [root] : [];
   let totalBytes = initial.isFile() ? initial.size : 0;
-  if (initial.isFile() && initial.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
-  if (!initial.isFile() && !initial.isDirectory()) throw new Error('Escopo deve ser arquivo regular ou diretório.');
 
   while (queue.length > 0) {
     const current = queue.pop();
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       if (ignoredSourceEntry(entry.name)) continue;
       const entryPath = path.join(current, entry.name);
-      const stat = fs.lstatSync(entryPath);
-      if (stat.isSymbolicLink()) throw new Error(`Escopo contém link simbólico: ${entryPath}`);
-      if (stat.isDirectory()) {
+      const inspected = inspectScopeEntry(entryPath, maximumFileBytes);
+      if (inspected.kind === 'directory') {
         queue.push(entryPath);
         continue;
       }
-      if (!stat.isFile()) throw new Error(`Escopo contém entrada não regular: ${entryPath}`);
-      if (SENSITIVE_PATH.test(entryPath)) throw new Error('Escopo contém arquivo sensível e não pode ser analisado.');
-      if (stat.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
-      totalBytes += stat.size;
+      totalBytes += inspected.stat.size;
       if (totalBytes > maximumTotalBytes) throw new Error(`Escopo excede o limite total de ${maximumTotalBytes} bytes.`);
       entries.push(entryPath);
     }
