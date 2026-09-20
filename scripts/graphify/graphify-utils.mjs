@@ -134,6 +134,7 @@ function ignoredSourceEntry(name) {
   return name === 'node_modules' || name === 'graphify-out' || name === '.graphify-local';
 }
 
+// eslint-disable-next-line complexity -- Validação de fronteira de segurança; cada condição recusa uma classe distinta de caminho/entrada insegura.
 export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
   const initial = fs.lstatSync(root);
   if (initial.isSymbolicLink()) throw new Error('Escopo não pode ser link simbólico.');

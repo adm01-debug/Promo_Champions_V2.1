@@ -9,9 +9,11 @@ import { assertSafeNewOutputPath, createSafeOutputParents, digestValue, isPathIn
 const CODE_EXTENSIONS = new Set(['.ts', '.tsx']);
 const SQL_EXTENSION = '.sql';
 const SQL_EVENT = /\b(CREATE|ALTER|DROP)\s+(?:OR\s+REPLACE\s+)?(MATERIALIZED\s+VIEW|TABLE|FUNCTION|VIEW|TYPE|INDEX|TRIGGER)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?((?:"[^"]+"|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:"[^"]+"|[A-Za-z_][\w$]*))?)/gi;
+const IDENTIFIER = '(?:"[^"]+"|[A-Za-z_][\\w$]*)(?:\\s*\\.\\s*(?:"[^"]+"|[A-Za-z_][\\w$]*))?';
+const POLICY_EVENT = new RegExp(`\\b(CREATE|ALTER|DROP)\\s+POLICY\\s+(?:IF\\s+EXISTS\\s+)?(${IDENTIFIER})\\s+ON\\s+(${IDENTIFIER})`, 'gi');
+const RLS_EVENT = new RegExp(`\\bALTER\\s+TABLE\\s+(?:ONLY\\s+)?(${IDENTIFIER})\\s+(ENABLE|DISABLE|FORCE|NO\\s+FORCE)\\s+ROW\\s+LEVEL\\s+SECURITY`, 'gi');
 const UNSUPPORTED_SQL = [
   ['privilégios/ACL', /\b(?:GRANT|REVOKE|ALTER\s+DEFAULT\s+PRIVILEGES)\b/i],
-  ['RLS/policy', /\b(?:ENABLE|FORCE)\s+ROW\s+LEVEL\s+SECURITY\b|\bCREATE\s+POLICY\b/i],
   ['extensão', /\bCREATE\s+EXTENSION\b/i],
   ['cron/job', /\b(?:cron\.schedule|pg_cron)\b/i],
   ['Storage', /\bstorage\./i],
@@ -44,15 +46,81 @@ function lineAt(source, offset) {
   return source.slice(0, offset).split('\n').length;
 }
 
-function blank(match) {
-  return match.replace(/[^\n]/g, ' ');
+// eslint-disable-next-line complexity -- Máquina de estados léxica: cada ramo representa um estado SQL mutuamente exclusivo e é coberto por regressões.
+function sqlMasks(source, { preserveStrings = false } = {}) {
+  let result = '';
+  let index = 0;
+  let state = 'code';
+  let dollarTag = null;
+  const appendBlank = character => { result += character === '\n' ? '\n' : ' '; };
+
+  while (index < source.length) {
+    const character = source[index];
+    const next = source[index + 1];
+    if (state === 'code') {
+      if (character === '-' && next === '-') { appendBlank(character); appendBlank(next); index += 2; state = 'line-comment'; continue; }
+      if (character === '/' && next === '*') { appendBlank(character); appendBlank(next); index += 2; state = 'block-comment'; continue; }
+      if (character === "'") { result += preserveStrings ? character : ' '; index += 1; state = 'single-quote'; continue; }
+      if (character === '"') { result += character; index += 1; state = 'double-quote'; continue; }
+      if (character === '$') {
+        const match = /^\$[A-Za-z_][\w$]*\$|^\$\$/.exec(source.slice(index));
+        if (match) { dollarTag = match[0]; result += preserveStrings ? dollarTag : ' '.repeat(dollarTag.length); index += dollarTag.length; state = 'dollar-quote'; continue; }
+      }
+      result += character;
+      index += 1;
+      continue;
+    }
+    if (state === 'line-comment') {
+      appendBlank(character);
+      index += 1;
+      if (character === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (character === '*' && next === '/') { appendBlank(character); appendBlank(next); index += 2; state = 'code'; continue; }
+      appendBlank(character);
+      index += 1;
+      continue;
+    }
+    if (state === 'single-quote') {
+      if (character === "'" && next === "'") { result += preserveStrings ? "''" : '  '; index += 2; continue; }
+      result += preserveStrings ? character : (character === '\n' ? '\n' : ' ');
+      index += 1;
+      if (character === "'") state = 'code';
+      continue;
+    }
+    if (state === 'double-quote') {
+      result += character;
+      index += 1;
+      if (character === '"' && next === '"') { result += next; index += 1; continue; }
+      if (character === '"') state = 'code';
+      continue;
+    }
+    if (state === 'dollar-quote') {
+      if (source.startsWith(dollarTag, index)) { result += preserveStrings ? dollarTag : ' '.repeat(dollarTag.length); index += dollarTag.length; state = 'code'; dollarTag = null; continue; }
+      result += preserveStrings ? character : (character === '\n' ? '\n' : ' ');
+      index += 1;
+    }
+  }
+  return result;
 }
 
 function structuralSql(source) {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, blank)
-    .replace(/--[^\n]*/g, blank)
-    .replace(/'(?:''|[^'])*'/g, blank);
+  return sqlMasks(source);
+}
+
+function functionStatements(source, structural) {
+  const statements = [];
+  let start = 0;
+  for (let index = 0; index < structural.length; index += 1) {
+    if (structural[index] !== ';') continue;
+    const structuralStatement = structural.slice(start, index + 1);
+    if (/^\s*CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\b/i.test(structuralStatement)) {
+      statements.push(source.slice(start, index + 1));
+    }
+    start = index + 1;
+  }
+  return statements;
 }
 
 export function parseMigrationFile(filePath, source) {
@@ -68,9 +136,30 @@ export function parseMigrationFile(filePath, source) {
       line: lineAt(structural, match.index),
     });
   }
+  for (const match of structural.matchAll(POLICY_EVENT)) {
+    events.push({
+      action: match[1].toUpperCase(),
+      objectType: 'policy',
+      objectName: `${match[3].replace(/\s+/g, '')}.${match[2].replace(/\s+/g, '')}`,
+      line: lineAt(structural, match.index),
+    });
+  }
+  for (const match of structural.matchAll(RLS_EVENT)) {
+    events.push({
+      action: 'ALTER',
+      objectType: 'row_level_security',
+      objectName: match[1].replace(/\s+/g, ''),
+      operation: match[2].replace(/\s+/g, ' ').toUpperCase(),
+      line: lineAt(structural, match.index),
+    });
+  }
   const gaps = [];
   if (!version) gaps.push('Nome sem versão de migration reconhecida.');
-  if (/\bEXECUTE\b|\bFORMAT\s*\(/i.test(structural)) gaps.push('SQL dinâmico: objetos podem não ser extraídos estaticamente.');
+  const commentFree = sqlMasks(source, { preserveStrings: true });
+  if (functionStatements(commentFree, structural).some(statement => /\bEXECUTE\b|\bFORMAT\s*\(/i.test(statement))) gaps.push('SQL dinâmico em corpo de função: objetos podem não ser extraídos estaticamente.');
+  if (/\b(?:CREATE|ALTER|DROP)\s+POLICY\b|\b(?:ENABLE|DISABLE|FORCE|NO\s+FORCE)\s+ROW\s+LEVEL\s+SECURITY\b/i.test(structural) && !events.some(event => event.objectType === 'policy' || event.objectType === 'row_level_security')) {
+    gaps.push('RLS/policy com sintaxe não reconhecida estaticamente.');
+  }
   for (const [kind, expression] of UNSUPPORTED_SQL) {
     if (expression.test(structural)) gaps.push(`Construto ${kind} ainda não é modelado estaticamente.`);
   }

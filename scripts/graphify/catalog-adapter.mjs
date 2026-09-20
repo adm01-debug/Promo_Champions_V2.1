@@ -53,7 +53,7 @@ function normalizeTable(table) {
     rls: { enabled: observedBoolean(table.rls?.enabled), forced: observedBoolean(table.rls?.forced) },
     columns: (table.columns ?? []).map(column => ({
       id: objectId('column', `${qualified}.${requiredText(column?.name, 'Nome da coluna')}`), name: requiredText(column?.name, 'Nome da coluna'), type: column.type ?? null,
-      nullable: column.nullable ?? null, default: safeText(column.default), generated: Boolean(column.generated), identity: Boolean(column.identity),
+      nullable: observedBoolean(column.nullable), default: safeText(column.default), generated: observedBoolean(column.generated), identity: observedBoolean(column.identity),
     })),
     constraints: (table.constraints ?? []).map(constraint => ({ id: objectId('constraint', `${qualified}.${requiredText(constraint?.name, 'Nome da constraint')}`), name: requiredText(constraint?.name, 'Nome da constraint'), type: constraint.type, definition: safeText(constraint.definition) })),
     indexes: (table.indexes ?? []).map(index => ({ id: objectId('index', `${qualified}.${requiredText(index?.name, 'Nome do índice')}`), name: requiredText(index?.name, 'Nome do índice'), unique: observedBoolean(index.unique), definition: safeText(index.definition) })),

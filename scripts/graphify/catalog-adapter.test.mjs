@@ -28,7 +28,10 @@ test('normaliza catálogo rico sem incluir linhas de negócio', () => {
   assert.doesNotMatch(catalog.gaps[0], /sbp_123456789012345678901234567890/);
   assert.equal(catalog.provenance.independentlyVerified, false);
   assert.equal(catalog.capabilities.Authorization, '[REDACTED]');
-  assert.equal(normalizeCatalog({ ...fixture(), tables: [{ schema: 'public', name: 'partial' }] }, 'usyxfpqlsspldubptrdl').tables[0].rls.enabled, null);
+  const partial = normalizeCatalog({ ...fixture(), tables: [{ schema: 'public', name: 'partial', columns: [{ name: 'unknown' }] }] }, 'usyxfpqlsspldubptrdl').tables[0];
+  assert.equal(partial.rls.enabled, null);
+  assert.equal(partial.columns[0].generated, null);
+  assert.equal(partial.columns[0].identity, null);
 });
 
 test('recusa projeto, sessão e linhas não comprovados', () => {
